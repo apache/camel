@@ -1232,7 +1232,7 @@ public final class PropertyBindingSupport {
      */
     public static Object newInstanceConstructorParameters(CamelContext camelContext, Class<?> type, String parameters)
             throws Exception {
-        String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',');
+        String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',', false);
         Constructor found = findMatchingConstructor(type.getConstructors(), params);
         if (found != null) {
             Object[] arr = new Object[found.getParameterCount()];
@@ -1330,7 +1330,7 @@ public final class PropertyBindingSupport {
     public static Object newInstanceFactoryParameters(
             CamelContext camelContext, Class<?> type, String factoryMethod, String parameters)
             throws Exception {
-        String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',');
+        String[] params = StringQuoteHelper.splitSafeQuote(parameters, ',', false);
         Method found = findMatchingFactoryMethod(type.getMethods(), factoryMethod, params);
         if (found != null) {
             Object[] arr = new Object[found.getParameterCount()];
