@@ -37,8 +37,7 @@ public final class StringQuoteHelper {
     /**
      * Returns the text wrapped single quotes
      */
-    public static String
-    singleQuote(String text) {
+    public static String singleQuote(String text) {
         return quote(text, "'");
     }
 
