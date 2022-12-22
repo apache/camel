@@ -10,7 +10,9 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 The `org.apache.camel.support.jsse.SSLContextParameters` is now using `ResourceLoader` from `CamelContext`
 to load keystore and other resources in a standard way. Therefore, the `SSLContextParameters` now must have been pre-configured
-with a `CamelContext` otherwise an exception is thrown.
+with a `CamelContext` otherwise an exception is thrown. This also changes the default resource type from file to classpath.
+If using a file resource for a keystore and the keystore is not found, or entries/aliases aren't found, try explicitly
+specifying the file resource type, .e.g `file:myKeystore.jks`.
 
 The model class `org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition`
 has been renamed to `org.apache.camel.model.errorhandler.RefErrorHandlerDefinition`.
