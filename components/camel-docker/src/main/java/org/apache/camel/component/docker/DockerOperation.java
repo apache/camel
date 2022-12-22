@@ -27,13 +27,13 @@ public enum DockerOperation {
     /**
      * Events *
      */
-    EVENTS("events", false, true, false,
+    EVENTS("events", true, false, false,
            DockerConstants.DOCKER_INITIAL_RANGE, Long.class),
 
     /**
      * Stats *
      */
-    STATS("stats", false, true, false,
+    STATS("stats", true, false, false,
           DockerConstants.DOCKER_CONTAINER_ID, Long.class),
 
     /**
