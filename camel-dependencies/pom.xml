@@ -50,6 +50,7 @@
     <arquillian-jetty-embedded-9-version>1.0.0.CR3</arquillian-jetty-embedded-9-version>
     <arquillian-version>1.6.0.Final</arquillian-version>
     <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
+    <as2-lib-version>4.11.0</as2-lib-version>
     <ascii-table-version>1.8.0</ascii-table-version>
     <asm-version>8.0.1</asm-version>
     <asn1bean-version>1.13.0</asn1bean-version>

@@ -29,10 +29,6 @@
     <artifactId>camel-as2-parent</artifactId>
     <packaging>pom</packaging>
 
-    <properties>
-        <as2-lib-version>4.11.0</as2-lib-version>
-    </properties>
-
     <name>Camel :: AS2 :: Parent</name>
     <description>Camel AS2 parent</description>
 
