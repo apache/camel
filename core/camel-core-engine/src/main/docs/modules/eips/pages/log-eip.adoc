@@ -79,7 +79,7 @@ The logger instance may be used as well:
 [source,java]
 ----
 from("direct:start")
-    .log(LoggingLeven.DEBUG, org.slf4j.LoggerFactory.getLogger("com.mycompany.mylogger"), "Processing ${id}")
+    .log(LoggingLevel.DEBUG, org.slf4j.LoggerFactory.getLogger("com.mycompany.mylogger"), "Processing ${id}")
     .to("bean:foo");
 ----
 
