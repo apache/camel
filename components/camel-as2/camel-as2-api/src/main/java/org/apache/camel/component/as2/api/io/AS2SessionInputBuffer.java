@@ -52,6 +52,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
     private int bufferlen;
     private CharBuffer cbuf;
 
+    private boolean lastLineReadEnrichedByCarriageReturn;
     private boolean lastLineReadTerminatedByLineFeed;
 
     public AS2SessionInputBuffer(final HttpTransportMetricsImpl metrics,
@@ -190,6 +191,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
         final int maxLineLen = this.constraints.getMaxLineLength();
         int noRead = 0;
         boolean retry = true;
+        this.lastLineReadEnrichedByCarriageReturn = false;
         this.lastLineReadTerminatedByLineFeed = false;
         while (retry) {
             // attempt to find end of line (LF)
@@ -198,6 +200,9 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
                 if (this.buffer[i] == HTTP.LF) {
                     pos = i;
                     this.lastLineReadTerminatedByLineFeed = true;
+                    if (i > 0 && this.buffer[i - 1] == HTTP.CR) {
+                        this.lastLineReadEnrichedByCarriageReturn = true;
+                    }
                     break;
                 }
             }
@@ -250,6 +255,10 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
 
     public boolean isLastLineReadTerminatedByLineFeed() {
         return lastLineReadTerminatedByLineFeed;
+    }
+
+    public boolean isLastLineReadEnrichedByCarriageReturn() {
+        return lastLineReadEnrichedByCarriageReturn;
     }
 
     @Override

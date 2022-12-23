@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.io.AS2SessionInputBuffer;
@@ -37,6 +38,7 @@ import org.apache.camel.component.as2.api.util.ContentTypeUtils;
 import org.apache.camel.component.as2.api.util.DispositionNotificationContentUtils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
+import org.apache.commons.codec.DecoderException;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
@@ -50,6 +52,7 @@ import org.apache.http.message.BasicLineParser;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.message.LineParser;
 import org.apache.http.message.ParserCursor;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.Args;
 import org.apache.http.util.CharArrayBuffer;
 import org.bouncycastle.cms.CMSCompressedData;
@@ -907,22 +910,14 @@ public final class EntityParser {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
 
         try {
+            byte[] signature = parseBodyPartBytes(inbuffer, boundary, contentType, contentTransferEncoding);
+
             Charset charset = contentType.getCharset();
             if (charset == null) {
                 charset = StandardCharsets.US_ASCII;
             }
-            CharsetDecoder charsetDecoder = charset.newDecoder();
-
-            inbuffer.setCharsetDecoder(charsetDecoder);
-
-            String pkcs7SignatureBodyContent = parseBodyPartText(inbuffer, boundary);
-
-            byte[] signature = EntityUtils.decode(pkcs7SignatureBodyContent.getBytes(charset), contentTransferEncoding);
-
             String charsetName = charset.toString();
-            ApplicationPkcs7SignatureEntity applicationPkcs7SignatureEntity = new ApplicationPkcs7SignatureEntity(
-                    signature, charsetName, contentTransferEncoding, false);
-            return applicationPkcs7SignatureEntity;
+            return new ApplicationPkcs7SignatureEntity(signature, charsetName, contentTransferEncoding, false);
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse PKCS7 Signature entity");
             parseException.initCause(e);
@@ -942,21 +937,8 @@ public final class EntityParser {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
 
         try {
-            Charset charset = contentType.getCharset();
-            if (charset == null) {
-                charset = StandardCharsets.US_ASCII;
-            }
-            CharsetDecoder charsetDecoder = charset.newDecoder();
-
-            inbuffer.setCharsetDecoder(charsetDecoder);
-
-            String pkcs7EncryptedBodyContent = parseBodyPartText(inbuffer, boundary);
-
-            byte[] encryptedContent = EntityUtils.decode(pkcs7EncryptedBodyContent.getBytes(charset), contentTransferEncoding);
-
-            ApplicationPkcs7MimeEnvelopedDataEntity applicationPkcs7MimeEntity = new ApplicationPkcs7MimeEnvelopedDataEntity(
-                    encryptedContent, contentTransferEncoding, false);
-            return applicationPkcs7MimeEntity;
+            byte[] encryptedContent = parseBodyPartBytes(inbuffer, boundary, contentType, contentTransferEncoding);
+            return new ApplicationPkcs7MimeEnvelopedDataEntity(encryptedContent, contentTransferEncoding, false);
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse PKCS7 Mime entity");
             parseException.initCause(e);
@@ -976,22 +958,8 @@ public final class EntityParser {
         CharsetDecoder previousDecoder = inbuffer.getCharsetDecoder();
 
         try {
-            Charset charset = contentType.getCharset();
-            if (charset == null) {
-                charset = StandardCharsets.US_ASCII;
-            }
-            CharsetDecoder charsetDecoder = charset.newDecoder();
-
-            inbuffer.setCharsetDecoder(charsetDecoder);
-
-            String pkcs7CompressedBodyContent = parseBodyPartText(inbuffer, boundary);
-
-            byte[] compressedContent = EntityUtils.decode(pkcs7CompressedBodyContent.getBytes(charset),
-                    contentTransferEncoding);
-
-            ApplicationPkcs7MimeCompressedDataEntity applicationPkcs7MimeEntity = new ApplicationPkcs7MimeCompressedDataEntity(
-                    compressedContent, contentTransferEncoding, false);
-            return applicationPkcs7MimeEntity;
+            byte[] compressedContent = parseBodyPartBytes(inbuffer, boundary, contentType, contentTransferEncoding);
+            return new ApplicationPkcs7MimeCompressedDataEntity(compressedContent, contentTransferEncoding, false);
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse PKCS7 Mime entity");
             parseException.initCause(e);
@@ -999,6 +967,36 @@ public final class EntityParser {
         } finally {
             inbuffer.setCharsetDecoder(previousDecoder);
         }
+    }
+
+    public static byte[] parseBodyPartBytes(
+            final AS2SessionInputBuffer inbuffer,
+            final String boundary,
+            ContentType contentType,
+            String contentTransferEncoding)
+            throws IOException, CamelException, DecoderException {
+
+        Charset charset = contentType.getCharset();
+        if (charset != null) {
+            CharsetDecoder charsetDecoder = charset.newDecoder();
+            inbuffer.setCharsetDecoder(charsetDecoder);
+        } else {
+            inbuffer.setCharsetDecoder(null);
+        }
+
+        String bodyContent = parseBodyPartText(inbuffer, boundary);
+
+        byte[] bodyContentBytes;
+        if (charset != null) {
+            bodyContentBytes = bodyContent.getBytes(charset);
+        } else {
+            bodyContentBytes = new byte[bodyContent.length()];
+            for (int i = 0; i < bodyContent.length(); i++) {
+                bodyContentBytes[i] = (byte) bodyContent.charAt(i);
+            }
+        }
+
+        return EntityUtils.decode(bodyContentBytes, contentTransferEncoding);
     }
 
     public static String parseBodyPartText(
@@ -1021,8 +1019,11 @@ public final class EntityParser {
             }
 
             buffer.append(line);
+            if (inbuffer.isLastLineReadEnrichedByCarriageReturn()) {
+                buffer.append((char) HTTP.CR);
+            }
             if (inbuffer.isLastLineReadTerminatedByLineFeed()) {
-                buffer.append("\r\n");
+                buffer.append((char) HTTP.LF);
             }
             line.clear();
         }
