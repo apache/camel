@@ -16,16 +16,28 @@
  */
 package org.apache.camel.component.as2.api;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStore;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.*;
 
+import com.helger.as2lib.client.AS2Client;
+import com.helger.as2lib.client.AS2ClientRequest;
+import com.helger.as2lib.client.AS2ClientResponse;
+import com.helger.as2lib.client.AS2ClientSettings;
+import com.helger.as2lib.crypto.ECompressionType;
+import com.helger.as2lib.crypto.ECryptoAlgorithmCrypt;
+import com.helger.as2lib.crypto.ECryptoAlgorithmSign;
+import com.helger.mail.cte.EContentTransferEncoding;
+import com.helger.security.keystore.EKeyStoreType;
 import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
 import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificationEntity;
@@ -76,6 +88,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,6 +98,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class AS2MessageTest {
 
@@ -145,6 +160,10 @@ public class AS2MessageTest {
     private static X509Certificate signingCert;
     private static List<X509Certificate> certList;
 
+    private static File keystoreFile;
+
+    private static ApplicationEDIEntity ediEntity;
+
     private AS2SignedDataGenerator gen;
 
     @BeforeAll
@@ -169,6 +188,17 @@ public class AS2MessageTest {
         signingKP = kpg.generateKeyPair();
         signingCert = Utils.makeCertificate(signingKP, signingDN, issueKP, issueDN);
 
+        //
+        // initialize as2-lib keystore file
+        //
+        KeyStore ks = KeyStore.getInstance(EKeyStoreType.PKCS12.getID());
+        ks.load(null, "test".toCharArray());
+        ks.setKeyEntry("openas2a_alias", issueKP.getPrivate(), "test".toCharArray(), new X509Certificate[] { issueCert });
+        ks.setKeyEntry("openas2b_alias", signingKP.getPrivate(), "test".toCharArray(), new X509Certificate[] { signingCert });
+        keystoreFile = File.createTempFile("camel-as2", "keystore-p12");
+        keystoreFile.deleteOnExit();
+        ks.store(new FileOutputStream(keystoreFile), "test".toCharArray());
+
         certList = new ArrayList<>();
 
         certList.add(signingCert);
@@ -188,6 +218,7 @@ public class AS2MessageTest {
                     context.setAttribute(AS2ServerManager.SUBJECT, SUBJECT);
                     context.setAttribute(AS2ServerManager.FROM, AS2_NAME);
                     LOG.debug(AS2Utils.printMessage(request));
+                    ediEntity = HttpMessageUtils.extractEdiPayload(request, testServer.getDecryptingPrivateKey());
                 } catch (Exception e) {
                     throw new HttpException("Failed to parse AS2 Message Entity", e);
                 }
@@ -280,6 +311,52 @@ public class AS2MessageTest {
         assertTrue(ediEntity.getContentType().getValue().startsWith(AS2MediaType.APPLICATION_EDIFACT),
                 "Unexpected content type for entity");
         assertTrue(ediEntity.isMainBody(), "Entity not set as main body of request");
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "false,false,false", "false,false,true", "false,true,false", "false,true,true", "true,false,false",
+            "true,false,true", "true,true,false", "true,true,true" })
+    void binaryContentTransferEncodingTest(boolean encrypt, boolean sign, boolean compress) {
+        // test with as2-lib because Camel AS2 client doesn't support binary content transfer encoding at the moment
+        // inspired from https://github.com/phax/as2-lib/wiki/Submodule-as2%E2%80%90lib#as2-client
+
+        // Start client configuration
+        final AS2ClientSettings aSettings = new AS2ClientSettings();
+        aSettings.setKeyStore(EKeyStoreType.PKCS12, keystoreFile, "test");
+
+        // Fixed sender
+        aSettings.setSenderData(AS2_NAME, FROM, "openas2a_alias");
+
+        // Fixed receiver
+        aSettings.setReceiverData(AS2_NAME, "openas2b_alias", "http://" + TARGET_HOST + ":" + TARGET_PORT + "/");
+        aSettings.setReceiverCertificate(issueCert);
+
+        // AS2 stuff
+        aSettings.setPartnershipName(aSettings.getSenderAS2ID() + "_" + aSettings.getReceiverAS2ID());
+
+        // Build client request
+        final AS2ClientRequest aRequest = new AS2ClientRequest("AS2 test message from as2-lib");
+        aRequest.setData(EDI_MESSAGE, StandardCharsets.US_ASCII);
+        aRequest.setContentType(AS2MediaType.APPLICATION_EDIFACT);
+
+        // reproduce https://issues.apache.org/jira/projects/CAMEL/issues/CAMEL-15111
+        aSettings.setEncryptAndSign(encrypt ? ECryptoAlgorithmCrypt.CRYPT_AES128_GCM : null,
+                sign ? ECryptoAlgorithmSign.DIGEST_SHA_512 : null);
+        if (compress) {
+            aSettings.setCompress(ECompressionType.ZLIB, false);
+        }
+        aRequest.setContentTransferEncoding(EContentTransferEncoding.BINARY);
+
+        // Send message
+        ediEntity = null;
+        final AS2ClientResponse aResponse = new AS2Client().sendSynchronous(aSettings, aRequest);
+
+        // Assertions
+        if (aResponse.hasException()) {
+            fail(aResponse.getException());
+        }
+        assertEquals(EDI_MESSAGE, ediEntity.getEdiMessage().replaceAll("\r", ""));
     }
 
     @Test
