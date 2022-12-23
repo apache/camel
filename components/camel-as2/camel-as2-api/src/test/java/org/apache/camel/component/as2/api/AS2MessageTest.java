@@ -193,8 +193,8 @@ public class AS2MessageTest {
         //
         KeyStore ks = KeyStore.getInstance(EKeyStoreType.PKCS12.getID());
         ks.load(null, "test".toCharArray());
-        ks.setKeyEntry("openas2a_alias", issueKP.getPrivate(), "test".toCharArray(), new X509Certificate[]{issueCert});
-        ks.setKeyEntry("openas2b_alias", signingKP.getPrivate(), "test".toCharArray(), new X509Certificate[]{signingCert});
+        ks.setKeyEntry("openas2a_alias", issueKP.getPrivate(), "test".toCharArray(), new X509Certificate[] { issueCert });
+        ks.setKeyEntry("openas2b_alias", signingKP.getPrivate(), "test".toCharArray(), new X509Certificate[] { signingCert });
         keystoreFile = File.createTempFile("camel-as2", "keystore-p12");
         keystoreFile.deleteOnExit();
         ks.store(new FileOutputStream(keystoreFile), "test".toCharArray());
@@ -314,8 +314,9 @@ public class AS2MessageTest {
     }
 
     @ParameterizedTest
-    @CsvSource({"false,false,false", "false,false,true", "false,true,false", "false,true,true"
-            , "true,false,false", "true,false,true", "true,true,false", "true,true,true"})
+    @CsvSource({
+            "false,false,false", "false,false,true", "false,true,false", "false,true,true", "true,false,false",
+            "true,false,true", "true,true,false", "true,true,true" })
     void binaryContentTransferEncodingTest(boolean encrypt, boolean sign, boolean compress) {
         // test with as2-lib because Camel AS2 client doesn't support binary content transfer encoding at the moment
         // inspired from https://github.com/phax/as2-lib/wiki/Submodule-as2%E2%80%90lib#as2-client
