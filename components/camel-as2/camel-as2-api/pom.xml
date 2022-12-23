@@ -100,7 +100,7 @@
         <dependency>
             <groupId>com.helger.as2</groupId>
             <artifactId>as2-lib</artifactId>
-            <version>4.11.0</version>
+            <version>${as2-lib-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
