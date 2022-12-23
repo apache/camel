@@ -162,9 +162,9 @@ public class AS2MessageTest {
 
     private static File keystoreFile;
 
-    private AS2SignedDataGenerator gen;
-
     private static ApplicationEDIEntity ediEntity;
+
+    private AS2SignedDataGenerator gen;
 
     @BeforeAll
     public static void setUpOnce() throws Exception {
@@ -352,8 +352,9 @@ public class AS2MessageTest {
         final AS2ClientResponse aResponse = new AS2Client().sendSynchronous(aSettings, aRequest);
 
         // Assertions
-        if (aResponse.hasException())
+        if (aResponse.hasException()) {
             fail(aResponse.getException());
+        }
         assertEquals(EDI_MESSAGE, ediEntity.getEdiMessage().replaceAll("\r", ""));
     }
 
