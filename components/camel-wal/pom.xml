@@ -30,12 +30,12 @@
     <artifactId>camel-wal</artifactId>
     <packaging>jar</packaging>
     <name>Camel :: WAL</name>
-    <description>Camel WAL component for the Resume API</description>
+    <description>Write Ahead Log Strategy for Resume API</description>
 
     <properties>
         <firstVersion>3.20.0</firstVersion>
         <label>java</label>
-        <title>Camel WAL component for the Resume API</title>
+        <title>Write Ahead Log Strategy for Resume API</title>
     </properties>
 
     <dependencies>
