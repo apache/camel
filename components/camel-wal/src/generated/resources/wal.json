@@ -2,8 +2,8 @@
   "other": {
     "kind": "other",
     "name": "wal",
-    "title": "Camel WAL component for the Resume API",
-    "description": "Camel WAL component for the Resume API",
+    "title": "Write Ahead Log Strategy for Resume API",
+    "description": "Write Ahead Log Strategy for Resume API",
     "deprecated": false,
     "firstVersion": "3.20.0",
     "label": "java",

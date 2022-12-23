@@ -1,11 +1,10 @@
-= WAL Component
-:doctitle: Write Ahead Log Strategy
+= Write Ahead Log Strategy for Resume API Component
+:doctitle: Write Ahead Log Strategy for Resume API
 :shortname: wal
 :artifactid: camel-wal
-:description: A write-ahead resume strategy
-:since: 3.20.0
+:description: Write Ahead Log Strategy for Resume API
+:since: 3.20
 :supportlevel: Preview
-//Manually maintained attributes
 
 *Since Camel {since}*
 
