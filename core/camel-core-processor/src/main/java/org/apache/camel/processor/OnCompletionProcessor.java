@@ -217,7 +217,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         Exchange answer;
 
         if (isCreateCopy()) {
-            // for asynchronous routing we must use a copy as we dont want it
+            // for asynchronous routing we must use a copy as we don't want it
             // to cause side effects of the original exchange
             // (the original thread will run in parallel)
             answer = ExchangeHelper.createCorrelatedCopy(exchange, false);
@@ -277,31 +277,12 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         public void onComplete(final Exchange exchange) {
-            String currentRouteId = ExchangeHelper.getRouteId(exchange);
-            if (!routeScoped && currentRouteId != null && !routeId.equals(currentRouteId)) {
+            if (shouldSkip(exchange, onFailureOnly)) {
                 return;
             }
 
-            if (routeScoped) {
-                // check if we visited the route
-                List<String> routeIds = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_ROUTE_IDS, List.class);
-                if (routeIds == null || !routeIds.contains(routeId)) {
-                    return;
-                }
-            }
-
-            if (onFailureOnly) {
-                return;
-            }
-
-            if (onWhen != null && !onWhen.matches(exchange)) {
-                // predicate did not match so do not route the onComplete
-                return;
-            }
-
-            // must use a copy as we dont want it to cause side effects of the original exchange
+            // must use a copy as we don't want it to cause side effects of the original exchange
             final Exchange copy = prepareExchange(exchange);
 
             if (executorService != null) {
@@ -321,16 +302,11 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
         @Override
         public void onFailure(final Exchange exchange) {
-            if (onCompleteOnly) {
+            if (shouldSkip(exchange, onCompleteOnly)) {
                 return;
             }
 
-            if (onWhen != null && !onWhen.matches(exchange)) {
-                // predicate did not match so do not route the onComplete
-                return;
-            }
-
-            // must use a copy as we dont want it to cause side effects of the original exchange
+            // must use a copy as we don't want it to cause side effects of the original exchange
             final Exchange copy = prepareExchange(exchange);
             final Exception original = copy.getException();
             if (original != null) {
@@ -356,6 +332,33 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
                 // restore exception after processing
                 copy.setException(original);
             }
+        }
+
+        @SuppressWarnings("unchecked")
+        private boolean shouldSkip(Exchange exchange, boolean onCompleteOrOnFailureOnly) {
+            String currentRouteId = ExchangeHelper.getRouteId(exchange);
+            if (!routeScoped && currentRouteId != null && !routeId.equals(currentRouteId)) {
+                return true;
+            }
+
+            if (routeScoped) {
+                // check if we visited the route
+                List<String> routeIds = exchange.getProperty(ExchangePropertyKey.ON_COMPLETION_ROUTE_IDS, List.class);
+                if (routeIds == null || !routeIds.contains(routeId)) {
+                    return true;
+                }
+            }
+
+            if (onCompleteOrOnFailureOnly) {
+                return true;
+            }
+
+            if (onWhen != null && !onWhen.matches(exchange)) {
+                // predicate did not match so do not route the onComplete
+                return true;
+            }
+
+            return false;
         }
 
         @Override
@@ -411,7 +414,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
                 return;
             }
 
-            // must use a copy as we dont want it to cause side effects of the original exchange
+            // must use a copy as we don't want it to cause side effects of the original exchange
             final Exchange copy = prepareExchange(exchange);
 
             if (executorService != null) {
