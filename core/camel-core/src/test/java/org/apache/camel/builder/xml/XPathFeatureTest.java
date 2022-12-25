@@ -70,15 +70,20 @@ public class XPathFeatureTest extends ContextTestSupport {
     }
 
     @Test
-    public void testXPathResult() throws Exception {
-        String result = (String) xpath("/").stringResult().evaluate(createExchange(XML_DATA));
-        assertEquals("  ", result, "Get a wrong result");
+    public void testXPathDocTypeDisallowed() throws Exception {
+        try {
+            xpath("/").stringResult().evaluate(createExchange(XML_DATA));
+            fail();
+        } catch (Exception e) {
+            assertIsInstanceOf(SAXParseException.class, e.getCause());
+        }
     }
 
     @Test
     public void testXPath() throws Exception {
-        // Set this feature will enable the external general entities
+        // Set these features will enable the external general entities
         System.setProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://xml.org/sax/features/external-general-entities", "true");
+        System.setProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://apache.org/xml/features/disallow-doctype-decl", "false");
         try {
             xpath("/").stringResult().evaluate(createExchange(XML_DATA));
             fail("Expect an Exception here");
@@ -88,6 +93,7 @@ public class XPathFeatureTest extends ContextTestSupport {
                     "Get a wrong exception cause: " + ex.getCause().getClass() + " instead of " + FileNotFoundException.class);
         } finally {
             System.clearProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://xml.org/sax/features/external-general-entities");
+            System.clearProperty(DOM_BUILDER_FACTORY_FEATURE + ":" + "http://apache.org/xml/features/disallow-doctype-decl");
         }
     }
 
