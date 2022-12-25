@@ -1046,4 +1046,46 @@ public class AS2MessageTest {
         assertFalse(signatureEntity.isMainBody(), "First mime type set as main body of request");
     }
 
+    @ParameterizedTest
+    @CsvSource({ "false,false", "false,true", "true,false", "true,true" })
+    void compressionSignatureOrderTest(boolean encrypt, boolean compressBeforeSign) {
+        // test with as2-lib because Camel AS2 client doesn't support different orders at the moment
+        // inspired from https://github.com/phax/as2-lib/wiki/Submodule-as2%E2%80%90lib#as2-client
+
+        // Start client configuration
+        final AS2ClientSettings aSettings = new AS2ClientSettings();
+        aSettings.setKeyStore(EKeyStoreType.PKCS12, keystoreFile, "test");
+
+        // Fixed sender
+        aSettings.setSenderData(AS2_NAME, FROM, "openas2a_alias");
+
+        // Fixed receiver
+        aSettings.setReceiverData(AS2_NAME, "openas2b_alias", "http://" + TARGET_HOST + ":" + TARGET_PORT + "/");
+        aSettings.setReceiverCertificate(issueCert);
+
+        // AS2 stuff
+        aSettings.setPartnershipName(aSettings.getSenderAS2ID() + "_" + aSettings.getReceiverAS2ID());
+
+        // Build client request
+        final AS2ClientRequest aRequest = new AS2ClientRequest("AS2 test message from as2-lib");
+        aRequest.setData(EDI_MESSAGE, StandardCharsets.US_ASCII);
+        aRequest.setContentType(AS2MediaType.APPLICATION_EDIFACT);
+
+        // reproduce https://issues.apache.org/jira/browse/CAMEL-18842
+        aSettings.setEncryptAndSign(encrypt ? ECryptoAlgorithmCrypt.CRYPT_AES128_GCM : null,
+                ECryptoAlgorithmSign.DIGEST_SHA_512);
+        aSettings.setCompress(ECompressionType.ZLIB, compressBeforeSign);
+        aRequest.setContentTransferEncoding(EContentTransferEncoding.BINARY);
+
+        // Send message
+        ediEntity = null;
+        final AS2ClientResponse aResponse = new AS2Client().sendSynchronous(aSettings, aRequest);
+
+        // Assertions
+        if (aResponse.hasException()) {
+            fail(aResponse.getException());
+        }
+        assertEquals(EDI_MESSAGE, ediEntity.getEdiMessage().replaceAll("\r", ""));
+    }
+
 }
