@@ -66,8 +66,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXNotRecognizedException;
-import org.xml.sax.SAXNotSupportedException;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using JAXB2 to marshal to

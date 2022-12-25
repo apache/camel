@@ -978,6 +978,13 @@ public class XmlConverter {
                     XMLConstants.FEATURE_SECURE_PROCESSING, true, e.getMessage(), e);
         }
         try {
+            // disable DOCTYPE declaration
+            factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", Boolean.TRUE);
+        } catch (ParserConfigurationException e) {
+            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.",
+                    "http://apache.org/xml/features/disallow-doctype-decl", true, e.getMessage(), e);
+        }
+        try {
             // Disable the external-general-entities by default
             factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (ParserConfigurationException e) {
