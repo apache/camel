@@ -11,7 +11,7 @@ Apache Camel is designed to work first class with Spring in a number of ways, su
 
 == Using Camel on Spring Boot
 
-See the Camel Spring Boot documentation.
+See the xref:camel-spring-boot::index.adoc[Camel Spring Boot] documentation.
 
 == Using Camel with Spring XML files
 
@@ -23,7 +23,7 @@ To use Camel with Spring XML files see the xref:spring-xml-extensions.adoc[Sprin
 
 == Using Spring dependency injection
 
-Spring dependency injection is integrated first-class when using Spring and Spring together.
+Spring dependency injection is integrated first-class when using Camel and Spring together.
 
 For example when using Camel on Spring Boot, then you can use any kind of Spring dependency and
 be able to inject Camel resources such as 'CamelContext', xref:endpoint.adoc[Endpoint] and many more.
