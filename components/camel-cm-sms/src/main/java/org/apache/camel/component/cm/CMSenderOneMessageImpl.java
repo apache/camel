@@ -65,7 +65,6 @@ public class CMSenderOneMessageImpl implements CMSender {
     private final UUID productToken;
 
     public CMSenderOneMessageImpl(final String url, final UUID productToken) {
-
         this.url = url;
         this.productToken = productToken;
     }
@@ -87,13 +86,13 @@ public class CMSenderOneMessageImpl implements CMSender {
     }
 
     private String createXml(final CMMessage message) {
-
         try {
-
             final ByteArrayOutputStream xml = new ByteArrayOutputStream();
             final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
             factory.setNamespaceAware(true);
 
             // Get the DocumentBuilder
@@ -170,9 +169,7 @@ public class CMSenderOneMessageImpl implements CMSender {
             final Result dest = new StreamResult(xml);
             aTransformer.transform(src, dest);
             return xml.toString();
-        } catch (final TransformerException e) {
-            throw new XMLConstructionException(String.format("Cant serialize CMMessage %s", message), e);
-        } catch (final ParserConfigurationException e) {
+        } catch (final TransformerException | ParserConfigurationException e) {
             throw new XMLConstructionException(String.format("Cant serialize CMMessage %s", message), e);
         }
     }

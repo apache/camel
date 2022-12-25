@@ -14,6 +14,10 @@ XML parsers & XML transformers has been made more secure by disabling access to 
 
 The `StAXJAXBIteratorExpression` has been made more secure by disabling XML parser to access external DTD/Schema.
 
+=== camel-cm-sms
+
+XML parsers has been made more secure by disabling access to external DTD/Schema.
+
 === camel-schematron
 
 XML parsers has been made more secure by disabling access to external DTD/Schema.
