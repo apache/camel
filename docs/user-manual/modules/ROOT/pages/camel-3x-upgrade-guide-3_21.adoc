@@ -10,6 +10,10 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 XML parsers & XML transformers has been made more secure by disabling access to external DTD/Schema.
 
+=== camel-jaxb
+
+XML parser has been made more secure by disabling access to external DTD/Schema in the `jaxb` data format.
+
 === camel-stax
 
 The `StAXJAXBIteratorExpression` has been made more secure by disabling XML parser to access external DTD/Schema.

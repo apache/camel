@@ -66,6 +66,8 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using JAXB2 to marshal to
@@ -361,7 +363,7 @@ public class JaxbDataFormat extends ServiceSupport
         this.contextPathIsClassName = contextPathIsClassName;
     }
 
-    public SchemaFactory getSchemaFactory() {
+    public SchemaFactory getSchemaFactory() throws SAXException {
         if (schemaFactory == null) {
             return getOrCreateSchemaFactory();
         }
@@ -602,7 +604,7 @@ public class JaxbDataFormat extends ServiceSupport
     }
 
     private Source[] getSources() throws FileNotFoundException, MalformedURLException {
-        // we support multiple schema by delimiting they by ','
+        // we support multiple schema by delimiting by comma
         String[] schemas = schema.split(",");
         Source[] sources = new Source[schemas.length];
         for (int i = 0; i < schemas.length; i++) {
@@ -612,7 +614,7 @@ public class JaxbDataFormat extends ServiceSupport
         return sources;
     }
 
-    private SchemaFactory getOrCreateSchemaFactory() {
+    private SchemaFactory getOrCreateSchemaFactory() throws SAXException {
         SchemaFactory factory = SCHEMA_FACTORY_POOL.poll();
         if (factory == null) {
             factory = createSchemaFactory();
@@ -620,15 +622,17 @@ public class JaxbDataFormat extends ServiceSupport
         return factory;
     }
 
-    public static SchemaFactory createSchemaFactory() {
-        return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    public static SchemaFactory createSchemaFactory() throws SAXException {
+        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        return factory;
     }
 
     private void returnSchemaFactory(SchemaFactory factory) {
         if (factory != schemaFactory) {
             boolean result = SCHEMA_FACTORY_POOL.offer(factory);
             if (!result) {
-                LOG.error("offer() failed for SCHEMA_FACTORY_POOL");
+                LOG.debug("offer() failed for SCHEMA_FACTORY_POOL");
             }
         }
     }
