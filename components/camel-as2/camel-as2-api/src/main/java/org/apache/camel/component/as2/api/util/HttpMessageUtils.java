@@ -212,6 +212,10 @@ public final class HttpMessageUtils {
         MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();
         if (mimeEntity instanceof ApplicationEDIEntity) {
             ediEntity = (ApplicationEDIEntity) mimeEntity;
+        } else if (mimeEntity instanceof ApplicationPkcs7MimeCompressedDataEntity) {
+            ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity
+                    = (ApplicationPkcs7MimeCompressedDataEntity) mimeEntity;
+            ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity);
         } else {
             throw new HttpException(
                     "Failed to extract EDI payload: invalid content type '" + mimeEntity.getContentTypeValue()
@@ -244,6 +248,10 @@ public final class HttpMessageUtils {
                 MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();
                 if (mimeEntity instanceof ApplicationEDIEntity) {
                     ediEntity = (ApplicationEDIEntity) mimeEntity;
+                } else if (mimeEntity instanceof ApplicationPkcs7MimeCompressedDataEntity) {
+                    ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity
+                            = (ApplicationPkcs7MimeCompressedDataEntity) mimeEntity;
+                    ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity);
                 } else {
 
                     throw new HttpException(
