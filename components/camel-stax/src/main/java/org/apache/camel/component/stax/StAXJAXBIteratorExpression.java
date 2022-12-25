@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -122,6 +123,8 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
                 inputStream = exchange.getIn().getMandatoryBody(InputStream.class);
                 XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
                 xmlInputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, isNamespaceAware);
+                xmlInputFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+                xmlInputFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
                 reader = xmlInputFactory.createXMLEventReader(inputStream);
             }
 

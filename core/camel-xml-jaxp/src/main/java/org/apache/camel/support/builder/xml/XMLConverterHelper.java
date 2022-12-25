@@ -186,6 +186,9 @@ public class XMLConverterHelper {
             LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.",
                     javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e.getMessage(), e);
         }
+        LOG.debug("Configuring TransformerFactory to not allow access to external DTD/Stylesheet");
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
         factory.setErrorListener(new XmlErrorListener());
         configureSaxonTransformerFactory(factory);
         return factory;
