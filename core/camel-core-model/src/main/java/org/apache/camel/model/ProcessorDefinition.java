@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -87,7 +88,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     @XmlAttribute
     protected Boolean inheritErrorHandler;
     @XmlTransient
-    private final LinkedList<Block> blocks = new LinkedList<>();
+    private final Deque<Block> blocks = new LinkedList<>();
     @XmlTransient
     private ProcessorDefinition<?> parent;
     @XmlTransient
