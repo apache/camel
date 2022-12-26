@@ -209,10 +209,12 @@ public class KeyStoreParameters extends JsseParameters {
         try {
             aliasEnum = ks.aliases();
         } catch (KeyStoreException e) {
-            e.printStackTrace();
+            // ignore - only used for logging purposes
         }
-        while (aliasEnum.hasMoreElements()) {
-            aliases.add(aliasEnum.nextElement());
+        if (aliasEnum != null) {
+            while (aliasEnum.hasMoreElements()) {
+                aliases.add(aliasEnum.nextElement());
+            }
         }
         return aliases;
     }
