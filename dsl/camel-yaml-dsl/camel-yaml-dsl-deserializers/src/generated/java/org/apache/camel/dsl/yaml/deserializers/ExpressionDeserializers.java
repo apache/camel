@@ -4,6 +4,7 @@ package org.apache.camel.dsl.yaml.deserializers;
 import java.lang.Object;
 import java.lang.Override;
 import java.lang.String;
+import java.lang.SuppressWarnings;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerSupport;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -14,6 +15,7 @@ import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 import org.snakeyaml.engine.v2.nodes.NodeTuple;
 
+@SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")
 public final class ExpressionDeserializers extends YamlDeserializerSupport {
     private ExpressionDeserializers() {
     }

@@ -4,6 +4,7 @@ package org.apache.camel.dsl.yaml.deserializers;
 import java.lang.Object;
 import java.lang.Override;
 import java.lang.String;
+import java.lang.SuppressWarnings;
 import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerBase;
@@ -238,6 +239,7 @@ import org.apache.camel.spi.annotations.YamlType;
 import org.snakeyaml.engine.v2.nodes.MappingNode;
 import org.snakeyaml.engine.v2.nodes.Node;
 
+@SuppressWarnings("PMD.UnnecessaryFullyQualifiedName")
 public final class ModelDeserializers extends YamlDeserializerSupport {
     private ModelDeserializers() {
     }

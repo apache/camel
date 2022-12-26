@@ -115,6 +115,11 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         type.addModifiers(Modifier.PUBLIC, Modifier.FINAL);
         type.superclass(CN_DESERIALIZER_SUPPORT);
 
+        // PMD suppression
+        AnnotationSpec.Builder suppress = AnnotationSpec.builder(SuppressWarnings.class);
+        suppress.addMember("value", "$L", "\"PMD.UnnecessaryFullyQualifiedName\"");
+        type.addAnnotation(suppress.build());
+
         // add private constructor
         type.addMethod(MethodSpec.constructorBuilder()
             .addModifiers(Modifier.PRIVATE)
@@ -294,6 +299,11 @@ public class GenerateYamlDeserializersMojo extends GenerateYamlSupportMojo {
         TypeSpec.Builder deserializers = TypeSpec.classBuilder("ModelDeserializers");
         deserializers.addModifiers(Modifier.PUBLIC, Modifier.FINAL);
         deserializers.superclass(CN_DESERIALIZER_SUPPORT);
+
+        // PMD suppression
+        AnnotationSpec.Builder suppress = AnnotationSpec.builder(SuppressWarnings.class);
+        suppress.addMember("value", "$L", "\"PMD.UnnecessaryFullyQualifiedName\"");
+        deserializers.addAnnotation(suppress.build());
 
         // add private constructor
         deserializers.addMethod(MethodSpec.constructorBuilder()
