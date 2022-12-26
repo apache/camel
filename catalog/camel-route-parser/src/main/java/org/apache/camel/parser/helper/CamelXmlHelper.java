@@ -216,7 +216,7 @@ public final class CamelXmlHelper {
                         if (first) {
                             first = false;
                             String actual = getIdOrIndex(node, rootNodeCounts);
-                            if (!equal(actual, path)) {
+                            if (!Objects.equals(actual, path)) {
                                 node = null;
                             }
                         } else {
@@ -244,7 +244,7 @@ public final class CamelXmlHelper {
                 Node child = childNodes.item(i);
                 if (child instanceof Element) {
                     String actual = getIdOrIndex(child, nodeCounts);
-                    if (equal(actual, path)) {
+                    if (Objects.equals(actual, path)) {
                         return child;
                     }
                 }
@@ -293,10 +293,6 @@ public final class CamelXmlHelper {
 
     private static boolean isNodeName(String name, Node node) {
         return name.equals(node.getLocalName()) || name.equals(node.getNodeName());
-    }
-
-    private static boolean equal(Object a, Object b) {
-        return Objects.equals(a, b);
     }
 
 }
