@@ -56,10 +56,10 @@ public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
 
         // test that loaded route works
         getMockEndpoint("mock:bar").expectedBodiesReceived("Bye World");
-        getMockEndpoint("mock:error").expectedBodiesReceived("Kabom");
+        getMockEndpoint("mock:error").expectedBodiesReceived("Kaboom");
 
         template.sendBody("direct:bar", "Bye World");
-        template.sendBody("direct:bar", "Kabom");
+        template.sendBody("direct:bar", "Kaboom");
 
         assertMockEndpointsSatisfied();
     }
@@ -69,7 +69,7 @@ public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
         @Override
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);
-            if ("Kabom".equals(body)) {
+            if ("Kaboom".equals(body)) {
                 throw new IllegalArgumentException("Damn");
             }
         }

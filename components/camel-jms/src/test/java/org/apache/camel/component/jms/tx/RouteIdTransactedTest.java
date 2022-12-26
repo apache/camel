@@ -50,7 +50,7 @@ public class RouteIdTransactedTest extends CamelSpringTestSupport {
         getMockEndpoint("mock:error").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        template.sendBody("activemq:queue:RouteIdTransactedTest", "Kabom");
+        template.sendBody("activemq:queue:RouteIdTransactedTest", "Kaboom");
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -67,7 +67,7 @@ public class RouteIdTransactedTest extends CamelSpringTestSupport {
                         .onException(IllegalArgumentException.class).handled(true).to("log:bar").to("mock:error").end()
                         .transacted()
                         .choice()
-                        .when(body().contains("Kabom")).throwException(new IllegalArgumentException("Damn"))
+                        .when(body().contains("Kaboom")).throwException(new IllegalArgumentException("Damn"))
                         .otherwise()
                         .to("mock:result")
                         .end();

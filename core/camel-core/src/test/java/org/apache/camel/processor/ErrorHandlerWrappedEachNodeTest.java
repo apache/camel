@@ -29,25 +29,25 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class ErrorHandlerWrappedEachNodeTest extends ContextTestSupport {
 
-    private static int kabom;
+    private static int kaboom;
     private static int hi;
 
     @Test
-    public void testKabom() throws Exception {
-        kabom = 0;
+    public void testKaboom() throws Exception {
+        kaboom = 0;
         hi = 0;
 
         MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedBodiesReceived("Hi Kabom");
+        result.expectedBodiesReceived("Hi Kaboom");
 
         getMockEndpoint("mock:error").expectedMessageCount(0);
 
-        template.sendBody("direct:start", "Kabom");
+        template.sendBody("direct:start", "Kaboom");
 
         assertMockEndpointsSatisfied();
 
-        // we invoke kabom 3 times
-        assertEquals(3, kabom);
+        // we invoke kaboom 3 times
+        assertEquals(3, kaboom);
         // but hi is only invoke 1 time
         assertEquals(1, hi);
     }
@@ -60,7 +60,7 @@ public class ErrorHandlerWrappedEachNodeTest extends ContextTestSupport {
                 // use dead letter channel that supports redeliveries
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(3).redeliveryDelay(0).logStackTrace(false));
 
-                from("direct:start").pipeline("bean:foo?method=hi", "bean:foo?method=kabom").to("mock:result");
+                from("direct:start").pipeline("bean:foo?method=hi", "bean:foo?method=kaboom").to("mock:result");
             }
         };
     }
@@ -74,9 +74,9 @@ public class ErrorHandlerWrappedEachNodeTest extends ContextTestSupport {
 
     public static final class MyFooBean {
 
-        public void kabom() throws Exception {
-            if (kabom++ < 2) {
-                throw new IllegalArgumentException("Kabom");
+        public void kaboom() throws Exception {
+            if (kaboom++ < 2) {
+                throw new IllegalArgumentException("Kaboom");
             }
         }
 

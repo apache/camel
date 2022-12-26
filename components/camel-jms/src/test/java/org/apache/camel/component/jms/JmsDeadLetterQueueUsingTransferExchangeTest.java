@@ -40,11 +40,11 @@ public class JmsDeadLetterQueueUsingTransferExchangeTest extends AbstractJMSTest
     }
 
     @Test
-    public void testKabom() throws Exception {
+    public void testKaboom() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:JmsDeadLetterQueueUsingTransferExchangeTest.dead");
-        mock.expectedBodiesReceived("Kabom");
+        mock.expectedBodiesReceived("Kaboom");
 
-        template.sendBody("direct:start", "Kabom");
+        template.sendBody("direct:start", "Kaboom");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -63,8 +63,8 @@ public class JmsDeadLetterQueueUsingTransferExchangeTest extends AbstractJMSTest
 
                 from("direct:start").process(exchange -> {
                     String body = exchange.getIn().getBody(String.class);
-                    if ("Kabom".equals(body)) {
-                        throw new IllegalArgumentException("Kabom");
+                    if ("Kaboom".equals(body)) {
+                        throw new IllegalArgumentException("Kaboom");
                     }
                 }).to("mock:result");
 

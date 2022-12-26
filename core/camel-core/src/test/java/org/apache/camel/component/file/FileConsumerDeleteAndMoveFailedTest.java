@@ -31,7 +31,7 @@ public class FileConsumerDeleteAndMoveFailedTest extends FileConsumerDeleteAndFa
                         .setBody(simple("${body} IS processed!")).process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String body = exchange.getIn().getBody(String.class);
-                                if (body != null && body.startsWith("Kabom")) {
+                                if (body != null && body.startsWith("Kaboom")) {
                                     throw new IllegalArgumentException("Forced");
                                 }
                             }
