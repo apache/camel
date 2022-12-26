@@ -160,9 +160,11 @@ public class CMSenderOneMessageImpl implements CMSender {
                 msgElement.appendChild(maxMessagePartsElement);
             }
 
-            // Creatate XML as String
+            // Create XML as String
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
             final Transformer aTransformer = transformerFactory.newTransformer();
             aTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
             final Source src = new DOMSource(doc);
