@@ -93,7 +93,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertTrue(notify.matchesWaitTime(), "Should complete 1 message");
 
         // check that there is a message in the database and JMS queue
-        assertEquals(1, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(1, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", int.class));
         Object out = consumer.receiveBody("activemq2:queue:outbox", 3000);
         assertEquals("DONE-A", out);
     }
@@ -117,7 +117,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertTrue(notify.matchesWaitTime(), "Should complete 7 messages");
 
         // check that there is no message in the database and JMS queue
-        assertEquals(0, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(0, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", int.class));
         assertNull(consumer.receiveBody("activemq2:queue:outbox", 3000));
 
         // the message should have been moved to the AMQ DLQ queue
@@ -143,7 +143,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertTrue(notify.matchesWaitTime(), "Should complete 7 messages");
 
         // check that there is no message in the database and JMS queue
-        assertEquals(0, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(0, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", int.class));
         assertNull(consumer.receiveBody("activemq2:queue:outbox", 3000));
 
         // the message should have been moved to the AMQ DLQ queue
@@ -168,7 +168,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertTrue(notify.matchesWaitTime(), "Should complete 3 messages");
 
         // check that there is two messages in the database and JMS queue
-        assertEquals(2, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(2, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", int.class));
         assertEquals("DONE-D", consumer.receiveBody("activemq2:queue:outbox", 3000));
         assertEquals("DONE-E", consumer.receiveBody("activemq2:queue:outbox", 3000));
     }
@@ -204,7 +204,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertTrue(notify.matchesWaitTime(), "Should complete 4 messages");
 
         // check that there is three messages in the database and JMS queue
-        assertEquals(3, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(3, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", int.class));
         assertEquals("DONE-D", consumer.receiveBody("activemq2:queue:outbox", 3000));
         assertEquals("DONE-E", consumer.receiveBody("activemq2:queue:outbox", 3000));
         assertEquals("DONE-F", consumer.receiveBody("activemq2:queue:outbox", 3000));
@@ -212,7 +212,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
     protected void checkInitialState() {
         // check there are no messages in the database and JMS queue
-        assertEquals(0, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", Integer.class));
+        assertEquals(0, jdbcTemplate.queryForObject("select count(*) from CAMEL_MESSAGEPROCESSED", int.class));
         assertNull(consumer.receiveBody("activemq2:queue:outbox", 2000));
     }
 
@@ -226,9 +226,9 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
                 from("activemq2:queue:inbox")
                         .transacted("required")
-                        .to("mock:a")
+                        .to(mockA)
                         .idempotentConsumer(header("uid"), repository)
-                        .to("mock:b")
+                        .to(mockB)
                         .transform(simple("DONE-${body}"))
                         .to("activemq2:queue:outbox");
             }
