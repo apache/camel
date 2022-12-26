@@ -371,8 +371,7 @@ public class XmlParseTest extends XmlTestSupport {
 
     protected RouteDefinition assertOneRoute(String uri) throws JAXBException {
         RouteContainer context = assertParseAsJaxb(uri);
-        RouteDefinition route = assertOneElement(context.getRoutes());
-        return route;
+        return assertOneElement(context.getRoutes());
     }
 
     protected void assertFrom(RouteDefinition route, String uri) {
