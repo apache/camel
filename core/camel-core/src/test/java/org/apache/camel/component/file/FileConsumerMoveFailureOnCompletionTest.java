@@ -29,11 +29,11 @@ public class FileConsumerMoveFailureOnCompletionTest extends ContextTestSupport 
     public void testMoveFailedRollbackOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
-        mock.expectedFileExists(testFile("error/bye-error.txt"), "Kabom");
+        mock.expectedFileExists(testFile("error/bye-error.txt"), "Kaboom");
 
         getMockEndpoint("mock:failed").expectedMessageCount(1);
 
-        template.sendBodyAndHeader(fileUri(), "Kabom", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Kaboom", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -43,12 +43,12 @@ public class FileConsumerMoveFailureOnCompletionTest extends ContextTestSupport 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedFileExists(testFile(".camel/hello.txt"), "Hello World");
-        mock.expectedFileExists(testFile("error/bye-error.txt"), "Kabom");
+        mock.expectedFileExists(testFile("error/bye-error.txt"), "Kaboom");
 
         getMockEndpoint("mock:failed").expectedMessageCount(1);
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(fileUri(), "Kabom", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Kaboom", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -63,7 +63,7 @@ public class FileConsumerMoveFailureOnCompletionTest extends ContextTestSupport 
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String body = exchange.getIn().getBody(String.class);
-                                if ("Kabom".equals(body)) {
+                                if ("Kaboom".equals(body)) {
                                     throw new IllegalArgumentException("Forced");
                                 }
                             }

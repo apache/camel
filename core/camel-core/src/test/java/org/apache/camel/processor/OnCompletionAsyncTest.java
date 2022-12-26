@@ -73,18 +73,18 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         });
         context.start();
 
-        getMockEndpoint("mock:before").expectedBodiesReceived("Kabom");
+        getMockEndpoint("mock:before").expectedBodiesReceived("Kaboom");
         getMockEndpoint("mock:before").expectedPropertyReceived(Exchange.ON_COMPLETION, true);
-        getMockEndpoint("mock:after").expectedBodiesReceived("OnComplete:Kabom");
+        getMockEndpoint("mock:after").expectedBodiesReceived("OnComplete:Kaboom");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
         try {
-            template.requestBody("direct:start", "Kabom");
+            template.requestBody("direct:start", "Kaboom");
             fail("Should throw exception");
         } catch (CamelExecutionException e) {
-            assertEquals("Kabom", e.getCause().getMessage());
+            assertEquals("Kaboom", e.getCause().getMessage());
         }
 
         assertMockEndpointsSatisfied();
@@ -129,18 +129,18 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
         });
         context.start();
 
-        getMockEndpoint("mock:before").expectedBodiesReceived("Kabom");
+        getMockEndpoint("mock:before").expectedBodiesReceived("Kaboom");
         getMockEndpoint("mock:before").expectedPropertyReceived(Exchange.ON_COMPLETION, true);
-        getMockEndpoint("mock:after").expectedBodiesReceived("OnComplete:Kabom");
+        getMockEndpoint("mock:after").expectedBodiesReceived("OnComplete:Kaboom");
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
         try {
-            template.requestBody("direct:start", "Kabom");
+            template.requestBody("direct:start", "Kaboom");
             fail("Should throw exception");
         } catch (CamelExecutionException e) {
-            assertEquals("Kabom", e.getCause().getMessage());
+            assertEquals("Kaboom", e.getCause().getMessage());
         }
 
         assertMockEndpointsSatisfied();
@@ -181,8 +181,8 @@ public class OnCompletionAsyncTest extends ContextTestSupport {
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            if (exchange.getIn().getBody(String.class).contains("Kabom")) {
-                throw new IllegalArgumentException("Kabom");
+            if (exchange.getIn().getBody(String.class).contains("Kaboom")) {
+                throw new IllegalArgumentException("Kaboom");
             }
             exchange.getIn().setBody("Bye World");
         }

@@ -48,7 +48,7 @@ public class JmsOnCompletionTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBody("activemq:queue:JmsOnCompletionTest.start", "Kabom");
+        template.sendBody("activemq:queue:JmsOnCompletionTest.start", "Kaboom");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -82,8 +82,8 @@ public class JmsOnCompletionTest extends AbstractJMSTest {
 
         @Override
         public void process(Exchange exchange) {
-            if ("Kabom".equals(exchange.getIn().getBody())) {
-                throw new IllegalArgumentException("Kabom");
+            if ("Kaboom".equals(exchange.getIn().getBody())) {
+                throw new IllegalArgumentException("Kaboom");
             }
             exchange.getIn().setBody("Bye World");
         }

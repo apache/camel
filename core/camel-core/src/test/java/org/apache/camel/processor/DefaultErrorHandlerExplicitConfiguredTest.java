@@ -36,7 +36,7 @@ public class DefaultErrorHandlerExplicitConfiguredTest extends DefaultErrorHandl
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
-                        if ("Kabom".equals(body)) {
+                        if ("Kaboom".equals(body)) {
                             throw new IllegalArgumentException("Boom");
                         }
                         exchange.getIn().setBody("Bye World");

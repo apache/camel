@@ -51,10 +51,10 @@ public class OnCompletionGlobalTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
 
         try {
-            template.sendBody("direct:start", "Kabom");
+            template.sendBody("direct:start", "Kaboom");
             fail("Should throw exception");
         } catch (CamelExecutionException e) {
-            assertEquals("Kabom", e.getCause().getMessage());
+            assertEquals("Kaboom", e.getCause().getMessage());
         }
 
         assertMockEndpointsSatisfied();
@@ -83,8 +83,8 @@ public class OnCompletionGlobalTest extends ContextTestSupport {
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            if ("Kabom".equals(exchange.getIn().getBody())) {
-                throw new IllegalArgumentException("Kabom");
+            if ("Kaboom".equals(exchange.getIn().getBody())) {
+                throw new IllegalArgumentException("Kaboom");
             }
             exchange.getIn().setBody("Bye World");
         }

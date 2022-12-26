@@ -69,7 +69,7 @@ public class DefaultErrorHandlerTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
 
         try {
-            template.sendBody("direct:start", "Kabom");
+            template.sendBody("direct:start", "Kaboom");
             fail("Should have thrown a RuntimeCamelException");
         } catch (RuntimeCamelException e) {
             // expected
@@ -89,7 +89,7 @@ public class DefaultErrorHandlerTest extends ContextTestSupport {
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
-                        if ("Kabom".equals(body)) {
+                        if ("Kaboom".equals(body)) {
                             throw new IllegalArgumentException("Boom");
                         }
                         exchange.getIn().setBody("Bye World");

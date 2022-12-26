@@ -33,7 +33,7 @@ public class FileConsumerDeleteAndFailureTest extends ContextTestSupport {
         mock.expectedFileExists(testFile("error/bye.txt"));
 
         template.sendBodyAndHeader(fileUri(), "Hello World", Exchange.FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(fileUri(), "Kabom", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUri(), "Kaboom", Exchange.FILE_NAME, "bye.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -49,7 +49,7 @@ public class FileConsumerDeleteAndFailureTest extends ContextTestSupport {
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String body = exchange.getIn().getBody(String.class);
-                                if (body != null && body.startsWith("Kabom")) {
+                                if (body != null && body.startsWith("Kaboom")) {
                                     throw new IllegalArgumentException("Forced");
                                 }
                             }

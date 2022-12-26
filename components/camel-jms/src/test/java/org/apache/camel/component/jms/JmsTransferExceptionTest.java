@@ -54,7 +54,7 @@ public class JmsTransferExceptionTest extends AbstractJMSTest {
         // then we expect our producer template to throw
         // an exception with the remote exception as cause
         String uri = getUri();
-        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> template.requestBody(uri, "Kabom"),
+        RuntimeCamelException e = assertThrows(RuntimeCamelException.class, () -> template.requestBody(uri, "Kaboom"),
                 "Should have thrown an exception");
 
         assertEquals("Boom", e.getCause().getMessage());
@@ -81,7 +81,7 @@ public class JmsTransferExceptionTest extends AbstractJMSTest {
                             counter++;
 
                             String body = exchange.getIn().getBody(String.class);
-                            if (body.equals("Kabom")) {
+                            if (body.equals("Kaboom")) {
                                 throw new IllegalArgumentException("Boom");
                             }
                             exchange.getMessage().setBody("Bye World");

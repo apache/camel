@@ -62,8 +62,8 @@ public class OnCompletionUseOriginalBodyTest extends ContextTestSupport {
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            if (exchange.getIn().getBody(String.class).contains("Kabom")) {
-                throw new IllegalArgumentException("Kabom");
+            if (exchange.getIn().getBody(String.class).contains("Kaboom")) {
+                throw new IllegalArgumentException("Kaboom");
             }
             exchange.getIn().setBody("Bye World");
         }

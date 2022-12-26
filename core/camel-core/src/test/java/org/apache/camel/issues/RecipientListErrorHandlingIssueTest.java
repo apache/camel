@@ -46,16 +46,16 @@ public class RecipientListErrorHandlingIssueTest extends ContextTestSupport {
                 from("direct:start").recipientList(header("foo"));
 
                 from("direct:foo").setBody(constant("Bye World")).to("mock:foo");
-                from("direct:kabom").throwException(new IllegalArgumentException("Damn"));
+                from("direct:kaboom").throwException(new IllegalArgumentException("Damn"));
             }
         });
         context.start();
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:error").expectedMessageCount(1);
-        getMockEndpoint("mock:error").message(0).header("target").isEqualTo("direct://kabom");
+        getMockEndpoint("mock:error").message(0).header("target").isEqualTo("direct://kaboom");
 
-        String foo = "direct:foo,direct:kabom";
+        String foo = "direct:foo,direct:kaboom";
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", foo);
 
         assertMockEndpointsSatisfied();
@@ -71,7 +71,7 @@ public class RecipientListErrorHandlingIssueTest extends ContextTestSupport {
                 from("direct:start").recipientList(header("foo"));
 
                 from("direct:foo").setBody(constant("Bye World")).to("mock:foo");
-                from("direct:kabom").throwException(new IllegalArgumentException("Damn"));
+                from("direct:kaboom").throwException(new IllegalArgumentException("Damn"));
             }
         });
         context.start();
@@ -79,9 +79,9 @@ public class RecipientListErrorHandlingIssueTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:foo").message(0).header(Exchange.TO_ENDPOINT).isEqualTo("mock://foo");
         getMockEndpoint("mock:error").expectedMessageCount(1);
-        getMockEndpoint("mock:error").message(0).header(Exchange.FAILURE_ENDPOINT).isEqualTo("direct://kabom");
+        getMockEndpoint("mock:error").message(0).header(Exchange.FAILURE_ENDPOINT).isEqualTo("direct://kaboom");
 
-        String foo = "direct:foo,direct:kabom";
+        String foo = "direct:foo,direct:kaboom";
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", foo);
 
         assertMockEndpointsSatisfied();

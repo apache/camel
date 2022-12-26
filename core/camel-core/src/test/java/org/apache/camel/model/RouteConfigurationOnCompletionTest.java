@@ -59,7 +59,7 @@ public class RouteConfigurationOnCompletionTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
         try {
-            template.sendBody("direct:start", "Kabom");
+            template.sendBody("direct:start", "Kaboom");
             fail("Should have thrown exception");
         } catch (Exception e) {
             // expected
@@ -71,12 +71,12 @@ public class RouteConfigurationOnCompletionTest extends ContextTestSupport {
     @Test
     public void testOkAndFail() throws Exception {
         getMockEndpoint("mock:ok").expectedBodiesReceived("Bye World");
-        getMockEndpoint("mock:fail").expectedBodiesReceived("Kabom");
+        getMockEndpoint("mock:fail").expectedBodiesReceived("Kaboom");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         template.sendBody("direct:start", "Hello World");
         try {
-            template.sendBody("direct:start", "Kabom");
+            template.sendBody("direct:start", "Kaboom");
             fail("Should throw exception");
         } catch (Exception e) {
             // expected
