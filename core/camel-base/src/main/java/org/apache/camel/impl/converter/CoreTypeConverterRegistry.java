@@ -397,9 +397,10 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         boolean statisticsEnabled = !tryConvert && statistics.isStatisticsEnabled(); // we only capture if not try-convert in use
 
         if (trace) {
-            LOG.trace("Finding type converter to convert {} -> {} with value: {}",
+            // Replace pattern-breaking characters
+            LOG.trace("Finding type converter to convert {} -> {}",
                     value == null ? "null" : value.getClass().getCanonicalName(),
-                    type.getCanonicalName(), value);
+                    type.getCanonicalName());
         }
 
         if (value == null) {
