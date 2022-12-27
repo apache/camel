@@ -218,8 +218,8 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
      * This is the logical implementation to handle request with {@link CamelServlet} This is where most exceptions
      * should be handled
      *
-     * @param  request          the {@link HttpServletRequest}
-     * @param  response         the {@link HttpServletResponse}
+     * @param request  the {@link HttpServletRequest}
+     * @param response the {@link HttpServletResponse}
      */
     protected void doService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.trace("Service: {}", request);
