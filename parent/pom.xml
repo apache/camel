@@ -243,8 +243,8 @@
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.7.1</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
-        <httpcore4-version>4.4.15</httpcore4-version>
-        <httpclient4-version>4.5.13</httpclient4-version>
+        <httpcore4-version>4.4.16</httpcore4-version>
+        <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.21.4.1</huaweicloud-obs-version>
         <huaweicloud-sdk-version>3.0.76</huaweicloud-sdk-version>
@@ -307,7 +307,7 @@
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>3.7.1</jedis-client-version>
         <jetcd-version>0.5.11</jetcd-version>
-        <jetty9-version>9.4.49.v20220914</jetty9-version>
+        <jetty9-version>9.4.50.v20221201</jetty9-version>
         <jetty-version>${jetty9-version}</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
@@ -391,7 +391,7 @@
         <maven-shade-plugin-version>3.2.3</maven-shade-plugin-version>
         <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
-        <metrics-version>4.2.13</metrics-version>
+        <metrics-version>4.2.14</metrics-version>
         <micrometer-version>1.10.2</micrometer-version>
         <microprofile-config-version>2.0.1</microprofile-config-version>
         <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
@@ -415,7 +415,7 @@
         <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.85.Final</netty-version>
+        <netty-version>4.1.86.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.69</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
@@ -495,14 +495,14 @@
         <spock-version>2.1-groovy-3.0</spock-version>
         <spring-batch-version>4.3.7</spring-batch-version>
         <spring-data-redis-version>2.6.2</spring-data-redis-version>
-        <spring-integration-version>5.5.15</spring-integration-version>
+        <spring-integration-version>5.5.16</spring-integration-version>
         <spring-ldap-version>2.4.1</spring-ldap-version>
         <spring-vault-core-version>2.3.2</spring-vault-core-version>
         <spring-version-range>[5,6)</spring-version-range>
         <spring-version>${spring5-version}</spring-version>
         <spring5-version>5.3.24</spring5-version>
         <spring-rabbitmq-version>2.4.7</spring-rabbitmq-version>
-        <spring-security-version>5.7.4</spring-security-version>
+        <spring-security-version>5.7.6</spring-security-version>
         <spring-ws-version>3.1.4</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
@@ -520,7 +520,7 @@
         <tika-version>2.4.1</tika-version>
         <twilio-version>7.55.3</twilio-version>
         <twitter4j-version>4.0.7</twitter4j-version>
-        <undertow-version>2.2.19.Final</undertow-version>
+        <undertow-version>2.2.22.Final</undertow-version>
         <univocity-parsers-version>2.9.1</univocity-parsers-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
         <vavr-version>0.10.2</vavr-version>
