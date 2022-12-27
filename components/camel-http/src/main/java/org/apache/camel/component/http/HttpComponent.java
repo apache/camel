@@ -472,7 +472,10 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // validate that we could resolve all httpClient. parameters as this component is lenient
         validateParameters(uri, httpClientOptions, null);
 
-        if (redirectHandlingDisabled) {
+        // endpoint parameter can override component level
+        boolean fr = getParameter(parameters, "followRedirects", Boolean.class, followRedirects);
+
+        if (redirectHandlingDisabled || !fr) {
             clientBuilder.disableRedirectHandling();
         }
         if (automaticRetriesDisabled) {
@@ -493,7 +496,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         if (defaultUserAgentDisabled) {
             clientBuilder.disableDefaultUserAgent();
         }
-        if (followRedirects) {
+        if (fr) {
             clientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
         }
 
