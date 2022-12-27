@@ -89,8 +89,24 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         log.trace("servlet '{}' initialized with: async={}", servletName, async);
     }
 
-    @Override
-    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void service(HttpServletRequest request, HttpServletResponse response) {
+        log.trace("Service: {}", request);
+        try {
+            handleService(request, response);
+        } catch (Exception e) {
+            // do not leak exception back to caller
+            log.warn("Error handling request due to: " + e.getMessage(), e);
+            try {
+                if (!response.isCommitted()) {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+            } catch (Exception e1) {
+                // ignore
+            }
+        }
+    }
+
+    protected void handleService(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (isAsync()) {
             if (executorRef != null) {
                 HttpConsumer consumer = doResolve(req, resp); // can be done sync
@@ -132,7 +148,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
     }
 
     private void onError(HttpServletResponse resp, Exception e) {
-        //An error shouldn't occur as we should handle most of error in doService
+        //An error shouldn't occur as we should handle most error in doService
         log.error("Error processing request", e);
         try {
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -204,8 +220,6 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
      *
      * @param  request          the {@link HttpServletRequest}
      * @param  response         the {@link HttpServletResponse}
-     * @throws ServletException
-     * @throws IOException
      */
     protected void doService(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.trace("Service: {}", request);
