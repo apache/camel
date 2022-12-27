@@ -271,7 +271,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
                 StringJoiner sj = new StringJoiner("\n    ");
                 for (String id : ids) {
                     Route route = getCamelContext().getRoute(id);
-                    if (route.isCustomId()) {
+                    if (!route.isCustomId()) {
                         sj.add(route.getEndpoint().getEndpointUri());
                     }
                 }
