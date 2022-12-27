@@ -18,6 +18,9 @@ package org.apache.camel.component.as2.api;
 
 import java.io.IOException;
 import java.net.Socket;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.SSLSocket;
 
 import org.apache.camel.component.as2.api.io.AS2BHttpClientConnection;
 import org.apache.camel.component.as2.api.protocol.RequestAS2;
@@ -47,9 +50,10 @@ public class AS2ClientConnection {
     private String as2Version;
     private String userAgent;
     private String clientFqdn;
+    private Socket socket;
 
     public AS2ClientConnection(String as2Version, String userAgent, String clientFqdn, String targetHostName,
-                               Integer targetPortNumber) throws IOException {
+                               Integer targetPortNumber, SSLContext sslContext) throws IOException {
 
         this.as2Version = Args.notNull(as2Version, "as2Version");
         this.userAgent = Args.notNull(userAgent, "userAgent");
@@ -69,8 +73,16 @@ public class AS2ClientConnection {
                 .add(new RequestExpectContinue(true)).build();
 
         // Create Socket
-        Socket socket = new Socket(targetHost.getHostName(), targetHost.getPort());
-
+        //Socket socket = new Socket(targetHost.getHostName(), targetHost.getPort());
+	
+	if (sslContext==null) {
+		socket = new Socket(targetHost.getHostName(), targetHost.getPort());
+	} else {
+		SSLSocketFactory factory = sslContext.getSocketFactory();
+		socket = (SSLSocket) factory.createSocket(targetHost.getHostName(), targetHost.getPort());
+		//socket.setEnabledProtocols(new String[]{"TLSv1.3"});
+	}
+	
         // Create Connection
         httpConnection = new AS2BHttpClientConnection(8 * 1024);
         httpConnection.bind(socket);

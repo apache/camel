@@ -53,7 +53,7 @@ public final class AS2ConnectionHelper {
     public static AS2ClientConnection createAS2ClientConnection(AS2Configuration configuration) throws IOException {
         return new AS2ClientConnection(
                 configuration.getAs2Version(), configuration.getUserAgent(), configuration.getClientFqdn(),
-                configuration.getTargetHostname(), configuration.getTargetPortNumber());
+                configuration.getTargetHostname(), configuration.getTargetPortNumber(), configuration.getSslContext());
     }
 
     /**
@@ -71,7 +71,7 @@ public final class AS2ConnectionHelper {
                         configuration.getAs2Version(), configuration.getServer(),
                         configuration.getServerFqdn(), configuration.getServerPortNumber(), configuration.getSigningAlgorithm(),
                         configuration.getSigningCertificateChain(), configuration.getSigningPrivateKey(),
-                        configuration.getDecryptingPrivateKey(), configuration.getMdnMessageTemplate());
+                        configuration.getDecryptingPrivateKey(), configuration.getMdnMessageTemplate(), configuration.getSslContext());
                 serverConnections.put(configuration.getServerPortNumber(), serverConnection);
             }
             return serverConnection;

@@ -27,6 +27,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.support.jsse.KeyStoreParameters;
+import org.apache.camel.support.jsse.KeyManagersParameters;
+import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.camel.support.jsse.SSLContextServerParameters;
+import org.apache.camel.support.jsse.TrustManagersParameters;
+import javax.net.ssl.*;
+import java.io.*;
+import java.security.*;
+import java.security.cert.CertificateException; 
+import java.util.Collections;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -140,6 +151,8 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
     private static List<X509Certificate> certList;
 
     private static KeyPair decryptingKP;
+    private static SSLContext clientSslContext;
+    private static SSLContext serverSslContext;
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -149,7 +162,7 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
     @Test
     public void receivePlainEDIMessageTest() throws Exception {
         AS2ClientConnection clientConnection
-                = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+                = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, clientSslContext);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
@@ -210,9 +223,8 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
 
     @Test
     public void receiveMultipartSignedMessageTest() throws Exception {
-
         AS2ClientConnection clientConnection
-                = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+                = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, clientSslContext);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.SIGNED,
@@ -290,7 +302,7 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
     @Test
     public void receiveEnvelopedMessageTest() throws Exception {
         AS2ClientConnection clientConnection
-                = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+                = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, clientSslContext);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.ENCRYPTED,
@@ -358,7 +370,7 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
     @Test
     public void sendEditMessageToFailingProcessorTest() throws Exception {
         AS2ClientConnection clientConnection
-                = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT);
+                = new AS2ClientConnection(AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, clientSslContext);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
 
         HttpCoreContext context = clientManager.send(EDI_MESSAGE, "/process_error", SUBJECT, FROM, AS2_NAME, AS2_NAME,
@@ -434,12 +446,58 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
         decryptingKP = signingKP;
 
     }
+    
+   public SSLContext setupClientContext(CamelContext context) throws Exception {
+    	SSLContextParameters sslContextParameters = new SSLContextParameters();
 
+        KeyStoreParameters truststoreParameters = new KeyStoreParameters();
+        truststoreParameters.setResource("jsse/localhost.p12");
+        truststoreParameters.setPassword("changeit");
+        
+        KeyManagersParameters kmp = new KeyManagersParameters();
+        kmp.setKeyPassword("changeit");
+        kmp.setKeyStore(truststoreParameters);
+
+        TrustManagersParameters clientSSLTrustManagers = new TrustManagersParameters();
+        clientSSLTrustManagers.setKeyStore(truststoreParameters);
+        sslContextParameters.setKeyManagers(kmp);
+        sslContextParameters.setTrustManagers(clientSSLTrustManagers);
+
+        SSLContext sslContext = sslContextParameters.createSSLContext(context);
+        return sslContext;
+    }
+    
+    public SSLContext setupServerContext(CamelContext context) throws Exception {
+	KeyStoreParameters ksp = new KeyStoreParameters();
+        ksp.setResource("jsse/localhost.p12");
+        ksp.setPassword("changeit");
+
+        KeyManagersParameters kmp = new KeyManagersParameters();
+        kmp.setKeyPassword("changeit");
+        kmp.setKeyStore(ksp);
+
+        TrustManagersParameters tmp = new TrustManagersParameters();
+        tmp.setKeyStore(ksp);
+
+        SSLContextServerParameters scsp = new SSLContextServerParameters();
+
+        SSLContextParameters sslContextParameters = new SSLContextParameters();
+        sslContextParameters.setKeyManagers(kmp);
+        sslContextParameters.setTrustManagers(tmp);
+        sslContextParameters.setServerParameters(scsp);
+	
+	SSLContext sslContext = sslContextParameters.createSSLContext(context);
+	return sslContext;
+    }
+    
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
+        this.clientSslContext = setupClientContext(context);
+        this.serverSslContext = setupClientContext(context);
         AS2Component as2Component = (AS2Component) context.getComponent("as2");
         AS2Configuration configuration = as2Component.getConfiguration();
+        configuration.setSslContext(serverSslContext);
         configuration.setDecryptingPrivateKey(decryptingKP.getPrivate());
         return context;
     }

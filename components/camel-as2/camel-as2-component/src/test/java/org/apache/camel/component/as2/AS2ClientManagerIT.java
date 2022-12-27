@@ -849,7 +849,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
                 AS2_VERSION, ORIGIN_SERVER_NAME,
                 SERVER_FQDN, PARTNER_TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
                 serverCertList.toArray(new Certificate[0]), serverSigningKP.getPrivate(), serverSigningKP.getPrivate(),
-                MDN_MESSAGE_TEMPLATE);
+                MDN_MESSAGE_TEMPLATE, null);
         requestHandler = new RequestHandler();
         serverConnection.listen("/", requestHandler);
     }
@@ -858,6 +858,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         //
         // set up our certificates
         //
+        
         KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA", "BC");
 
         kpg.initialize(1024, new SecureRandom());

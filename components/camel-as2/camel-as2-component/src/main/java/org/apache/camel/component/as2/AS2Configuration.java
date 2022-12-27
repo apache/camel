@@ -31,6 +31,7 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.http.entity.ContentType;
+import javax.net.ssl.SSLContext;
 
 /**
  * Component configuration for AS2 component.
@@ -100,7 +101,7 @@ public class AS2Configuration {
     @UriParam
     private String attachedFileName;
     @UriParam
-    private String sslContext;
+    private SSLContext sslContext;
 
     public AS2ApiName getApiName() {
         return apiName;
@@ -439,15 +440,15 @@ public class AS2Configuration {
         this.attachedFileName = attachedFileName;
     }
     
-    public String getSSLContext() {
-    	return sslContext;
+    public SSLContext getSslContext() {
+        return sslContext;
     }
 
     /**
-     * The name of the SSLContext
+     * Add sslContext
      */
-    public void setSSLContext(String sslContext) {
+    public void setSslContext(SSLContext sslContext) {
         this.sslContext = sslContext;
     }
- 
+    
 }
