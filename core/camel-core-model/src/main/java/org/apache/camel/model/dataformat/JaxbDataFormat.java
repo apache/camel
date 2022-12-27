@@ -90,6 +90,9 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
               description = "Whether the data format should set the Content-Type header with the type from the data format."
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
+    @XmlAttribute
+    @Metadata(label = "security", defaultValue = "false")
+    private String accessExternalSchemaProtocols;
 
     public JaxbDataFormat() {
         super("jaxb");
@@ -121,6 +124,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         this.noNamespaceSchemaLocation = builder.noNamespaceSchemaLocation;
         this.jaxbProviderProperties = builder.jaxbProviderProperties;
         this.contentTypeHeader = builder.contentTypeHeader;
+        this.accessExternalSchemaProtocols = builder.accessExternalSchemaProtocols;
     }
 
     public String getContextPath() {
@@ -347,6 +351,24 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         this.contentTypeHeader = contentTypeHeader;
     }
 
+    public String getAccessExternalSchemaProtocols() {
+        return accessExternalSchemaProtocols;
+    }
+
+    /**
+     * Only in use if schema validation has been enabled.
+     *
+     * Restrict access to the protocols specified for external reference set by the schemaLocation attribute, Import and Include element.
+     * Examples of protocols are file, http, jar:file.
+     *
+     * false or none to deny all access to external references;
+     * a specific protocol, such as file, to give permission to only the protocol;
+     * the keyword all to grant permission to all protocols.
+     */
+    public void setAccessExternalSchemaProtocols(String accessExternalSchemaProtocols) {
+        this.accessExternalSchemaProtocols = accessExternalSchemaProtocols;
+    }
+
     /**
      * {@code Builder} is a specific builder for {@link JaxbDataFormat}.
      */
@@ -372,6 +394,7 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         private String noNamespaceSchemaLocation;
         private String jaxbProviderProperties;
         private String contentTypeHeader;
+        private String accessExternalSchemaProtocols;
 
         /**
          * Package name where your JAXB classes are located.
@@ -618,6 +641,21 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
 
         public Builder contentTypeHeader(boolean contentTypeHeader) {
             this.contentTypeHeader = Boolean.toString(contentTypeHeader);
+            return this;
+        }
+
+        /**
+         * Only in use if schema validation has been enabled.
+         *
+         * Restrict access to the protocols specified for external reference set by the schemaLocation attribute, Import and Include element.
+         * Examples of protocols are file, http, jar:file.
+         *
+         * false or none to deny all access to external references;
+         * a specific protocol, such as file, to give permission to only the protocol;
+         * the keyword all to grant permission to all protocols.
+         */
+        public Builder accessExternalSchemaProtocols(String accessExternalSchemaProtocols) {
+            this.accessExternalSchemaProtocols = accessExternalSchemaProtocols;
             return this;
         }
 

@@ -12,7 +12,9 @@ XML parsers & XML transformers has been made more secure by disabling DOCTYPE an
 
 === camel-jaxb
 
-XML parser has been made more secure by disabling DOCTYPE and/or access to external DTD/Schema. in the `jaxb` data format.
+When using schema validation, then access to external DTD/Schema is disabled by default.
+To enable access, then set `accessExternalSchemaProtocols=all` or specify allowed protocols, such as
+`accessExternalSchemaProtocols=file`.
 
 === camel-stax
 

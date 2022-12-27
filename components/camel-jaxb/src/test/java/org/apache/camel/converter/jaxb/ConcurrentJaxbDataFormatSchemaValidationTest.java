@@ -116,6 +116,7 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
                 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
                 jaxbDataFormat.setContextPath(Person.class.getPackage().getName());
                 jaxbDataFormat.setSchema("classpath:person.xsd,classpath:address.xsd");
+                jaxbDataFormat.setAccessExternalSchemaProtocols("file");
 
                 from("seda:marshall?concurrentConsumers=" + concurrencyLevel)
                         .marshal(jaxbDataFormat)

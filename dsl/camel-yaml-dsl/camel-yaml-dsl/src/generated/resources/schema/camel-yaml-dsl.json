@@ -5130,6 +5130,9 @@
       "org.apache.camel.model.dataformat.JaxbDataFormat" : {
         "type" : "object",
         "properties" : {
+          "access-external-schema-protocols" : {
+            "type" : "string"
+          },
           "content-type-header" : {
             "type" : "boolean"
           },

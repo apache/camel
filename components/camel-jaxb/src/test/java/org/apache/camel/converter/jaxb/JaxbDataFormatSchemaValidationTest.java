@@ -138,6 +138,7 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
                 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
                 jaxbDataFormat.setContextPath(Person.class.getPackage().getName());
                 jaxbDataFormat.setSchema("classpath:person.xsd,classpath:address.xsd");
+                jaxbDataFormat.setAccessExternalSchemaProtocols("file");
 
                 from("direct:marshall")
                         .marshal(jaxbDataFormat)

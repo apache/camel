@@ -7014,6 +7014,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.JaxbDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
+                    @YamlProperty(name = "access-external-schema-protocols", type = "string"),
                     @YamlProperty(name = "content-type-header", type = "boolean"),
                     @YamlProperty(name = "context-path", type = "string", required = true),
                     @YamlProperty(name = "context-path-is-class-name", type = "boolean"),
@@ -7050,6 +7051,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(JaxbDataFormat target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "access-external-schema-protocols": {
+                    String val = asText(node);
+                    target.setAccessExternalSchemaProtocols(val);
+                    break;
+                }
                 case "content-type-header": {
                     String val = asText(node);
                     target.setContentTypeHeader(val);

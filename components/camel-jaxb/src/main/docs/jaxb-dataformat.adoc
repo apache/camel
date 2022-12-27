@@ -10,10 +10,8 @@
 
 *Since Camel {since}*
 
-JAXB is a Data Format which uses the JAXB2 XML
-marshalling standard to unmarshal an XML
-payload into Java objects or to marshal Java objects into an XML
-payload.
+JAXB is a Data Format which uses the JAXB XML marshalling standard to unmarshal an XML
+payload into Java objects or to marshal Java objects into an XML payload.
 
 == Options
 
@@ -184,8 +182,6 @@ Exchange property `Exchange.CHARSET_NAME`. This property will override the encod
 
 == Controlling namespace prefix mapping
 
-*Since Camel 2.11*
-
 When marshalling using xref:jaxb-dataformat.adoc[JAXB] or xref:jaxb-dataformat.adoc[SOAP] then
 the JAXB implementation will automatically assign namespace prefixes, such
 as `ns2`, `ns3`, `ns4` etc. To control this mapping, Camel allows you to refer
@@ -218,12 +214,13 @@ with the id `myMap`, which was what we defined above.
 
 == Schema validation
 
-*Since Camel 2.11*
-
 The `JaxbDataFormat` supports validation by
 marshalling and unmarshalling from / to XML. You can use the prefix
 `classpath:`, `file:` or `http:` to specify how the resource should be
 resolved. You can separate multiple schema files by using the `,` character.
+
+NOTE: if the XSD schema files import/access other files,
+then you need to enable file protocol (or others to allow access)
 
 Using the Java DSL, you can configure it in the following way:
 
@@ -232,6 +229,7 @@ Using the Java DSL, you can configure it in the following way:
 JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
 jaxbDataFormat.setContextPath(Person.class.getPackage().getName());
 jaxbDataFormat.setSchema("classpath:person.xsd,classpath:address.xsd");
+jaxbDataFormat.setAccessExternalSchemaProtocols("file");
 -----------------------------------------------------------------------
 
 You can do the same using the XML DSL:
@@ -239,25 +237,12 @@ You can do the same using the XML DSL:
 [source,xml]
 -------------------------------------------------------------------------
 <marshal>
-    <jaxb id="jaxb" schema="classpath:person.xsd,classpath:address.xsd"/>
+    <jaxb id="jaxb" schema="classpath:person.xsd,classpath:address.xsd"
+          accessExternalSchemaProtocols="file"/>
 </marshal>
 -------------------------------------------------------------------------
 
-Camel will create and pool the underling `SchemaFactory` instances on
-the fly, because the `SchemaFactory` shipped with the JDK is not thread safe.
-
-However, if you have a `SchemaFactory` implementation which is thread
-safe, you can configure the `JaxbDataFormat` to use this one:
-
-[source,java]
---------------------------------------------------------
-JaxbDataFormat jaxbDataFormat = new JaxbDataFormat();
-jaxbDataFormat.setSchemaFactory(thradSafeSchemaFactory);
---------------------------------------------------------
-
 == Schema Location
-
-*Since Camel 2.14*
 
 The `JaxbDataFormat` supports to specify the `SchemaLocation` when marshalling the XML.
 
@@ -281,8 +266,6 @@ You can do the same using the XML DSL:
 
 == Marshal data that is already XML
 
-*Since Camel 2.14.1*
-
 The JAXB marshaller requires that the message body is JAXB compatible,
 e.g it is a `JAXBElement`, a java instance that has JAXB annotations, or
 extends `JAXBElement`. There can be situations where the message body is
@@ -294,14 +277,14 @@ In those situations the marshaller will fallback to marshal the message body as-
 
 == Dependencies
 
-To use JAXB in your camel routes you need to add the a dependency on
+To use JAXB in your camel routes you need to add dependency on
 *camel-jaxb* which implements this data format.
 
 If you use maven you could just add the following to your pom.xml,
 substituting the version number for the latest & greatest release (see
 the download page for the latest versions).
 
-[source,java]
+[source,xml]
 -------------------------------------
 <dependency>
   <groupId>org.apache.camel</groupId>

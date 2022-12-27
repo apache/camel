@@ -27,7 +27,8 @@
         <route>
             <from uri="direct:marshall" />
             <marshal>
-                <jaxb contextPath="org.apache.camel.converter.jaxb.person:org.apache.camel.converter.jaxb.message" schema="classpath:person.xsd,classpath:address.xsd,classpath:message.xsd" />
+                <jaxb contextPath="org.apache.camel.converter.jaxb.person:org.apache.camel.converter.jaxb.message"
+                      schema="classpath:person.xsd,classpath:address.xsd,classpath:message.xsd" accessExternalSchemaProtocols="file" />
             </marshal>
             <to uri="mock:marshall" />
         </route>
@@ -35,7 +36,8 @@
         <route>
             <from uri="direct:unmarshall" />
             <unmarshal>
-                <jaxb contextPath="org.apache.camel.converter.jaxb.person:org.apache.camel.converter.jaxb.message" schema="classpath:person.xsd,classpath:address.xsd,classpath:message.xsd" />
+                <jaxb contextPath="org.apache.camel.converter.jaxb.person:org.apache.camel.converter.jaxb.message"
+                      schema="classpath:person.xsd,classpath:address.xsd,classpath:message.xsd" accessExternalSchemaProtocols="file" />
             </unmarshal>
             <to uri="mock:unmarshall" />
         </route>

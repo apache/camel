@@ -192,6 +192,7 @@ public class CamelJaxbTest extends CamelTestSupport {
                 JaxbDataFormat dataFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
                 dataFormat.setSchemaLocation("person.xsd");
                 dataFormat.setIgnoreJAXBElement(false);
+                dataFormat.setAccessExternalSchemaProtocols("file");
 
                 JaxbDataFormat dataFormatWithoutContentType = new JaxbDataFormat("org.apache.camel.foo.bar");
                 dataFormat.setIgnoreJAXBElement(false);

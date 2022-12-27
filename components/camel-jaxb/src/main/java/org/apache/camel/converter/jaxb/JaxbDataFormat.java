@@ -27,8 +27,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -77,8 +75,6 @@ public class JaxbDataFormat extends ServiceSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(JaxbDataFormat.class);
 
-    private static final BlockingQueue<SchemaFactory> SCHEMA_FACTORY_POOL = new LinkedBlockingQueue<>();
-
     private SchemaFactory schemaFactory;
     private CamelContext camelContext;
     private JAXBContext context;
@@ -107,6 +103,7 @@ public class JaxbDataFormat extends ServiceSupport
     private Schema cachedSchema;
     private Map<String, Object> jaxbProviderProperties;
     private boolean contentTypeHeader = true;
+    private String accessExternalSchemaProtocols;
 
     public JaxbDataFormat() {
     }
@@ -362,9 +359,6 @@ public class JaxbDataFormat extends ServiceSupport
     }
 
     public SchemaFactory getSchemaFactory() throws SAXException {
-        if (schemaFactory == null) {
-            return getOrCreateSchemaFactory();
-        }
         return schemaFactory;
     }
 
@@ -505,6 +499,14 @@ public class JaxbDataFormat extends ServiceSupport
         this.contentTypeHeader = contentTypeHeader;
     }
 
+    public String getAccessExternalSchemaProtocols() {
+        return accessExternalSchemaProtocols;
+    }
+
+    public void setAccessExternalSchemaProtocols(String accessExternalSchemaProtocols) {
+        this.accessExternalSchemaProtocols = accessExternalSchemaProtocols;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
@@ -593,12 +595,8 @@ public class JaxbDataFormat extends ServiceSupport
     }
 
     private Schema createSchema(Source[] sources) throws SAXException {
-        SchemaFactory factory = getOrCreateSchemaFactory();
-        try {
-            return factory.newSchema(sources);
-        } finally {
-            returnSchemaFactory(factory);
-        }
+        SchemaFactory factory = createSchemaFactory(accessExternalSchemaProtocols);
+        return factory.newSchema(sources);
     }
 
     private Source[] getSources() throws FileNotFoundException, MalformedURLException {
@@ -612,27 +610,19 @@ public class JaxbDataFormat extends ServiceSupport
         return sources;
     }
 
-    private SchemaFactory getOrCreateSchemaFactory() throws SAXException {
-        SchemaFactory factory = SCHEMA_FACTORY_POOL.poll();
-        if (factory == null) {
-            factory = createSchemaFactory();
-        }
-        return factory;
-    }
-
-    public static SchemaFactory createSchemaFactory() throws SAXException {
+    private static SchemaFactory createSchemaFactory(String protocols) throws SAXException {
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-        return factory;
-    }
-
-    private void returnSchemaFactory(SchemaFactory factory) {
-        if (factory != schemaFactory) {
-            boolean result = SCHEMA_FACTORY_POOL.offer(factory);
-            if (!result) {
-                LOG.debug("offer() failed for SCHEMA_FACTORY_POOL");
-            }
+        if (protocols == null || "false".equals(protocols) || "none".equals(protocols)) {
+            protocols = "";
+            LOG.debug("Configuring SchemaFactory to not allow access to external DTD/Schema");
+        } else {
+            LOG.debug("Configuring SchemaFactory to allow access to external DTD/Schema using protocols: {}", protocols);
         }
+        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, protocols);
+        factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, protocols);
+        return factory;
     }
 
 }

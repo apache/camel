@@ -2159,6 +2159,7 @@ public class ModelParser extends BaseParser {
     protected JaxbDataFormat doParseJaxbDataFormat() throws IOException, XmlPullParserException {
         return doParse(new JaxbDataFormat(), (def, key, val) -> {
             switch (key) {
+                case "accessExternalSchemaProtocols": def.setAccessExternalSchemaProtocols(val); break;
                 case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "contextPath": def.setContextPath(val); break;
                 case "contextPathIsClassName": def.setContextPathIsClassName(val); break;
