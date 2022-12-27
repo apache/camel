@@ -358,12 +358,11 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
     /**
      * Only in use if schema validation has been enabled.
      *
-     * Restrict access to the protocols specified for external reference set by the schemaLocation attribute, Import and Include element.
-     * Examples of protocols are file, http, jar:file.
+     * Restrict access to the protocols specified for external reference set by the schemaLocation attribute, Import and
+     * Include element. Examples of protocols are file, http, jar:file.
      *
-     * false or none to deny all access to external references;
-     * a specific protocol, such as file, to give permission to only the protocol;
-     * the keyword all to grant permission to all protocols.
+     * false or none to deny all access to external references; a specific protocol, such as file, to give permission to
+     * only the protocol; the keyword all to grant permission to all protocols.
      */
     public void setAccessExternalSchemaProtocols(String accessExternalSchemaProtocols) {
         this.accessExternalSchemaProtocols = accessExternalSchemaProtocols;
@@ -647,12 +646,11 @@ public class JaxbDataFormat extends DataFormatDefinition implements ContentTypeH
         /**
          * Only in use if schema validation has been enabled.
          *
-         * Restrict access to the protocols specified for external reference set by the schemaLocation attribute, Import and Include element.
-         * Examples of protocols are file, http, jar:file.
+         * Restrict access to the protocols specified for external reference set by the schemaLocation attribute, Import
+         * and Include element. Examples of protocols are file, http, jar:file.
          *
-         * false or none to deny all access to external references;
-         * a specific protocol, such as file, to give permission to only the protocol;
-         * the keyword all to grant permission to all protocols.
+         * false or none to deny all access to external references; a specific protocol, such as file, to give
+         * permission to only the protocol; the keyword all to grant permission to all protocols.
          */
         public Builder accessExternalSchemaProtocols(String accessExternalSchemaProtocols) {
             this.accessExternalSchemaProtocols = accessExternalSchemaProtocols;
