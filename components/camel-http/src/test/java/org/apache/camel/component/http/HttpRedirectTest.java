@@ -70,7 +70,7 @@ public class HttpRedirectTest extends BaseHttpTest {
     }
 
     @Test
-    public void httpRedirect() throws Exception {
+    public void httpRedirectFalse() throws Exception {
 
         String uri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
                      + "/test?httpClient.redirectsEnabled=false&httpClient.socketTimeout=60000&httpClient.connectTimeout=60000"
@@ -93,7 +93,7 @@ public class HttpRedirectTest extends BaseHttpTest {
 
         String uri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
                      + "/test?httpClient.socketTimeout=60000&httpClient.connectTimeout=60000"
-                     + "&httpClient.staleConnectionCheckEnabled=false";
+                     + "&httpClient.staleConnectionCheckEnabled=false&followRedirects=true";
         Exchange out = template.request(uri, exchange -> {
             // no data
         });
