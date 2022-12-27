@@ -2,8 +2,9 @@
 
 The `camel-console` is available from *Camel 3.15* and newer versions.
 
-The Camel Developer Console is intended assisting developers and can display
-various information about a running Camel application.
+IMPORTANT: The Camel Developer Console is intended assisting developers and can display
+various information about a running Camel application. This is very handy during development and testing.
+However, the Camel Developer Console is not recommended for production use.
 
 Camel comes with a set of consoles out of the box from `camel-console` and `camel-catalog-console` JARs.
 These consoles can display general information about the running JVM and the OS Environment, and of course
