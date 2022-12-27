@@ -59,9 +59,25 @@ public class CamelContinuationServlet extends CamelServlet {
     private final Map<String, String> expiredExchanges = new ConcurrentHashMap<>();
 
     @Override
-    protected void doService(final HttpServletRequest request, final HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doService(HttpServletRequest request, HttpServletResponse response) {
         log.trace("Service: {}", request);
+        try {
+            handleDoService(request, response);
+        } catch (Exception e) {
+            // do not leak exception back to caller
+            log.warn("Error handling request due to: " + e.getMessage(), e);
+            try {
+                if (!response.isCommitted()) {
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }
+            } catch (Exception e1) {
+                // ignore
+            }
+        }
+    }
+
+    protected void handleDoService(final HttpServletRequest request, final HttpServletResponse response)
+            throws ServletException, IOException {
 
         // is there a consumer registered for the request.
         HttpConsumer consumer = getServletResolveConsumerStrategy().resolve(request, getConsumers());
