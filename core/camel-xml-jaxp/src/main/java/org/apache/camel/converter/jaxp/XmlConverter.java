@@ -1056,8 +1056,16 @@ public class XmlConverter {
                     javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e.getMessage());
         }
         LOG.debug("Configuring TransformerFactory to not allow access to external DTD/Stylesheet");
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        try {
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        } catch (Exception e) {
+            // ignore
+        }
+        try {
+            factory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+        } catch (Exception e) {
+            // ignore
+        }
         factory.setErrorListener(new XmlErrorListener());
         configureSaxonTransformerFactory(factory);
         return factory;
