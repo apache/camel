@@ -232,6 +232,15 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
 
     private final class TracingEventNotifier extends EventNotifierSupport {
 
+        public TracingEventNotifier() {
+            // ignore these
+            setIgnoreCamelContextEvents(true);
+            setIgnoreCamelContextInitEvents(true);
+            setIgnoreRouteEvents(true);
+            // we need also async processing started events
+            setIgnoreExchangeAsyncProcessingStartedEvents(false);
+        }
+
         @Override
         public void notify(CamelEvent event) throws Exception {
             try {
