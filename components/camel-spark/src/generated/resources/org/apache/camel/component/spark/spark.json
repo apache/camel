@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-spark",
-    "version": "3.20.0-SNAPSHOT",
+    "version": "3.20.1-SNAPSHOT",
     "scheme": "spark",
     "extendsScheme": "",
     "syntax": "spark:endpointType",

@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-aws-cloudtrail",
-    "version": "3.20.0-SNAPSHOT",
+    "version": "3.20.1-SNAPSHOT",
     "scheme": "aws-cloudtrail",
     "extendsScheme": "",
     "syntax": "aws-cloudtrail:label",
