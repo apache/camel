@@ -111,8 +111,8 @@ public abstract class AbstractDevConsole extends ServiceSupport implements DevCo
     /**
      * Invokes and gets the output from this console in json format.
      *
-     * The returned object can for example be an <tt>org.apache.camel.util.json.JsonObject</tt> from camel-util-json
-     * to represent JSon data.
+     * The returned object can for example be an <tt>org.apache.camel.util.json.JsonObject</tt> from camel-util-json to
+     * represent JSon data.
      *
      * @see DevConsole#call(MediaType, Map)
      */
