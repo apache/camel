@@ -133,6 +133,26 @@ public class CamelEventNotifierTest {
 
         assertIsSatisfied(2L, TimeUnit.SECONDS, outbound);
 
+        assertThat("Events count is incorrect!", events.size(), equalTo(10));
+        assertThat("Events types are incorrect!", events,
+                contains(
+                        CamelContextInitializingEvent.class,
+                        CamelContextInitializedEvent.class,
+                        CamelContextStartingEvent.class,
+                        CamelContextStartedEvent.class,
+                        ExchangeSendingEvent.class,
+                        ExchangeCreatedEvent.class,
+                        ExchangeSendingEvent.class,
+                        ExchangeSentEvent.class,
+                        ExchangeCompletedEvent.class,
+                        ExchangeSentEvent.class));
+    }
+
+    @Test
+    @InSequence(3)
+    public void stopCamelContext(CamelContext context, List<Class> events) {
+        context.stop();
+
         assertThat("Events count is incorrect!", events.size(), equalTo(12));
         assertThat("Events types are incorrect!", events,
                 contains(
@@ -142,33 +162,9 @@ public class CamelEventNotifierTest {
                         CamelContextStartedEvent.class,
                         ExchangeSendingEvent.class,
                         ExchangeCreatedEvent.class,
-                        ExchangeAsyncProcessingStartedEvent.class,
                         ExchangeSendingEvent.class,
                         ExchangeSentEvent.class,
                         ExchangeCompletedEvent.class,
-                        ExchangeAsyncProcessingStartedEvent.class,
-                        ExchangeSentEvent.class));
-    }
-
-    @Test
-    @InSequence(3)
-    public void stopCamelContext(CamelContext context, List<Class> events) {
-        context.stop();
-
-        assertThat("Events count is incorrect!", events.size(), equalTo(14));
-        assertThat("Events types are incorrect!", events,
-                contains(
-                        CamelContextInitializingEvent.class,
-                        CamelContextInitializedEvent.class,
-                        CamelContextStartingEvent.class,
-                        CamelContextStartedEvent.class,
-                        ExchangeSendingEvent.class,
-                        ExchangeCreatedEvent.class,
-                        ExchangeAsyncProcessingStartedEvent.class,
-                        ExchangeSendingEvent.class,
-                        ExchangeSentEvent.class,
-                        ExchangeCompletedEvent.class,
-                        ExchangeAsyncProcessingStartedEvent.class,
                         ExchangeSentEvent.class,
                         CamelContextStoppingEvent.class,
                         CamelContextStoppedEvent.class));
