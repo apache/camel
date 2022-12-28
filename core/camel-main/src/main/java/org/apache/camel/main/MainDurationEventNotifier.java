@@ -62,6 +62,11 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
         this.restartDuration = restartDuration;
         this.action = action.toLowerCase();
         this.doneMessages = new AtomicInteger();
+
+        if (maxMessages == 0 && maxIdleSeconds == 0) {
+            // we do not need exchange events
+            setIgnoreExchangeEvents(true);
+        }
     }
 
     @Override
@@ -102,7 +107,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
             if (result && shutdownStrategy.isRunAllowed()) {
                 if ("shutdown".equalsIgnoreCase(action)) {
                     LOG.info("Duration max messages triggering shutdown of the JVM");
-                    // use thread to shutdown Camel as otherwise we would block current thread
+                    // use thread to shut down Camel as otherwise we would block current thread
                     camelContext.getExecutorServiceManager().newThread("CamelMainShutdownCamelContext", this::shutdownTask)
                             .start();
                 } else if ("stop".equalsIgnoreCase(action)) {

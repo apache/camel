@@ -10,6 +10,10 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 XML parsers & XML transformers has been made more secure by disabling DOCTYPE and/or access to external DTD/Schema.
 
+=== camel-main
+
+The option `camel.main.routesReloadRestartDuration` has changed its default value from `true` to `false`.
+
 === camel-jaxb
 
 When using schema validation, then access to external DTD/Schema is disabled by default.
