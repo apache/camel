@@ -38,7 +38,7 @@ public abstract class SimpleEventNotifierSupport extends ServiceSupport implemen
     boolean ignoreExchangeEvents;
     boolean ignoreExchangeCreatedEvent;
     boolean ignoreExchangeCompletedEvent;
-    boolean ignoreExchangeAsyncProcessingStartedEvents;
+    boolean ignoreExchangeAsyncProcessingStartedEvents = true; // special need for camel-tracing/camel-opentelemtry
     boolean ignoreExchangeFailedEvents;
     boolean ignoreExchangeRedeliveryEvents;
     boolean ignoreExchangeSendingEvents;
