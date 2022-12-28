@@ -19,6 +19,7 @@ package org.apache.camel.impl.console;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.Configurer;
@@ -37,11 +38,11 @@ public class EventConsole extends AbstractDevConsole {
     private int capacity = 25;
 
     private CamelEvent[] events;
-    private volatile int posEvents = -1;
+    private final AtomicInteger posEvents = new AtomicInteger();
     private CamelEvent.RouteEvent[] routeEvents;
-    private volatile int posRoutes = -1;
+    private final AtomicInteger posRoutes = new AtomicInteger();
     private CamelEvent.ExchangeEvent[] exchangeEvents;
-    private volatile int posExchanges = -1;
+    private final AtomicInteger posExchanges = new AtomicInteger();
     private final ConsoleEventNotifier listener = new ConsoleEventNotifier();
 
     public EventConsole() {
@@ -61,7 +62,6 @@ public class EventConsole extends AbstractDevConsole {
         if (capacity > 1000 || capacity < 25) {
             throw new IllegalArgumentException("Capacity must be between 25 and 1000");
         }
-        // capacity capped arrays, and we do not care about concurrency to avoid locking or slowdowns
         this.events = new CamelEvent[capacity];
         this.routeEvents = new CamelEvent.RouteEvent[capacity];
         this.exchangeEvents = new CamelEvent.ExchangeEvent[capacity];
@@ -80,18 +80,15 @@ public class EventConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        if (posEvents != -1) {
-            sb.append(appendTextEvents(events, "Camel", posEvents, capacity));
-            sb.append("\n");
-        }
-        if (posRoutes != -1) {
-            sb.append(appendTextEvents(routeEvents, "Route", posRoutes, capacity));
-            sb.append("\n");
-        }
-        if (posExchanges != -1) {
-            sb.append(appendTextEvents(exchangeEvents, "Exchange", posExchanges, capacity));
-            sb.append("\n");
-        }
+        int pos = posEvents.get();
+        sb.append(appendTextEvents(events, "Camel", pos, capacity));
+        sb.append("\n");
+        pos = posRoutes.get();
+        sb.append(appendTextEvents(routeEvents, "Route", pos, capacity));
+        sb.append("\n");
+        pos = posExchanges.get();
+        sb.append(appendTextEvents(exchangeEvents, "Exchange", pos, capacity));
+        sb.append("\n");
 
         return sb.toString();
     }
@@ -99,23 +96,20 @@ public class EventConsole extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        if (posEvents != -1) {
-            List<JsonObject> arr = appendJSonEvents(events, posEvents, capacity);
-            if (!arr.isEmpty()) {
-                root.put("events", arr);
-            }
+        int pos = posEvents.get();
+        List<JsonObject> arr = appendJSonEvents(events, pos, capacity);
+        if (!arr.isEmpty()) {
+            root.put("events", arr);
         }
-        if (posRoutes != -1) {
-            List<JsonObject> arr = appendJSonEvents(routeEvents, posRoutes, capacity);
-            if (!arr.isEmpty()) {
-                root.put("routeEvents", arr);
-            }
+        pos = posRoutes.get();
+        arr = appendJSonEvents(routeEvents, pos, capacity);
+        if (!arr.isEmpty()) {
+            root.put("routeEvents", arr);
         }
-        if (posExchanges != -1) {
-            List<JsonObject> arr = appendJSonEvents(exchangeEvents, posExchanges, capacity);
-            if (!arr.isEmpty()) {
-                root.put("exchangeEvents", arr);
-            }
+        pos = posExchanges.get();
+        arr = appendJSonEvents(exchangeEvents, pos, capacity);
+        if (!arr.isEmpty()) {
+            root.put("exchangeEvents", arr);
         }
 
         return root;
@@ -180,19 +174,17 @@ public class EventConsole extends AbstractDevConsole {
 
         @Override
         public void notify(CamelEvent event) throws Exception {
-            // for high concurrent load then exchange events may override
-            // that is okay as we do not want this console to cause slow-downs
             if (event instanceof CamelEvent.ExchangeEvent) {
                 CamelEvent.ExchangeEvent ce = (CamelEvent.ExchangeEvent) event;
-                posExchanges = ++posExchanges % capacity;
-                exchangeEvents[posExchanges] = ce;
+                int pos = posExchanges.getAndUpdate(operand -> ++operand % capacity);
+                exchangeEvents[pos] = ce;
             } else if (event instanceof CamelEvent.RouteEvent) {
                 CamelEvent.RouteEvent re = (CamelEvent.RouteEvent) event;
-                posRoutes = ++posRoutes % capacity;
-                routeEvents[posRoutes] = re;
+                int pos = posRoutes.getAndUpdate(operand -> ++operand % capacity);
+                routeEvents[pos] = re;
             } else {
-                posEvents = ++posEvents % capacity;
-                events[posEvents] = event;
+                int pos = posEvents.getAndUpdate(operand -> ++operand % capacity);
+                events[pos] = event;
             }
         }
 
