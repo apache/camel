@@ -37,7 +37,6 @@ import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartingEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStoppedEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStoppingEvent;
-import org.apache.camel.spi.CamelEvent.ExchangeAsyncProcessingStartedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
