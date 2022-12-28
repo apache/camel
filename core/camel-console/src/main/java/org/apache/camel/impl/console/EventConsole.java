@@ -182,7 +182,7 @@ public class EventConsole extends AbstractDevConsole {
                 do {
                     added = routeEvents.offer(re);
                     if (!added) {
-                        exchangeEvents.poll();
+                        routeEvents.poll();
                     }
                 } while (!added);
             } else {
@@ -190,7 +190,7 @@ public class EventConsole extends AbstractDevConsole {
                 do {
                     added = events.offer(event);
                     if (!added) {
-                        exchangeEvents.poll();
+                        events.poll();
                     }
                 } while (!added);
             }
