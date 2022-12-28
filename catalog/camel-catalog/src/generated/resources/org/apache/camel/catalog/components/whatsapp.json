@@ -8,7 +8,7 @@
     "firstVersion": "3.19.0",
     "label": "cloud,api,chat",
     "javaType": "org.apache.camel.component.whatsapp.WhatsAppComponent",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-whatsapp",
     "version": "3.20.1-SNAPSHOT",
