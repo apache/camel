@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.console;
+package org.apache.camel.support.console;
 
 import java.util.Map;
 
@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.util.json.JsonObject;
 
 /**
  * Base implementation for {@link DevConsole}.
@@ -112,9 +111,12 @@ public abstract class AbstractDevConsole extends ServiceSupport implements DevCo
     /**
      * Invokes and gets the output from this console in json format.
      *
+     * The returned object can for example be an <tt>org.apache.camel.util.json.JsonObject</tt> from camel-util-json
+     * to represent JSon data.
+     *
      * @see DevConsole#call(MediaType, Map)
      */
-    protected abstract JsonObject doCallJson(Map<String, Object> options);
+    protected abstract Map<String, Object> doCallJson(Map<String, Object> options);
 
     /**
      * Invokes and gets the output from this console in text format.

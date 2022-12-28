@@ -10,6 +10,15 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 XML parsers & XML transformers has been made more secure by disabling DOCTYPE and/or access to external DTD/Schema.
 
+=== camel-console
+
+The class `org.apache.camel.impl.console.AbstractDevConsole` has moved from `camel-console` to `camel-support`
+and moved to package `org.apache.camel.support.console.AbstractDevConsole`.
+
+Component developers that has plugins for Camel Developer Console, should just use
+`camel-support` and `camel-util-json` as dependencies,
+and then extend `AbstractDevConsole` for custom console implementations.
+
 === camel-main
 
 The option `camel.main.routesReloadRestartDuration` has changed its default value from `true` to `false`.

@@ -27,6 +27,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("endpoint")

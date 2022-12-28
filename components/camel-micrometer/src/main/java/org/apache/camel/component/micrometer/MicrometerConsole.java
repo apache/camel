@@ -29,7 +29,7 @@ import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
-import org.apache.camel.impl.console.AbstractDevConsole;
+import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.util.json.JsonObject;
 

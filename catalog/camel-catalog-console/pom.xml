@@ -40,13 +40,17 @@
 
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-console</artifactId>
+            <artifactId>camel-catalog</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-catalog</artifactId>
+            <artifactId>camel-support</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-util-json</artifactId>
             <version>${project.version}</version>
         </dependency>
 
