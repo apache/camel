@@ -62,10 +62,10 @@ import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultContextReloadStrategy;
-import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.LifecycleStrategySupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.SimpleEventNotifierSupport;
 import org.apache.camel.support.service.BaseService;
 import org.apache.camel.support.startup.LoggingStartupStepRecorder;
 import org.apache.camel.util.FileUtil;
@@ -713,8 +713,7 @@ public abstract class BaseMainSupport extends BaseService {
         // we want to log the property placeholder summary after routes has been started,
         // but before camel context logs that it has been started, so we need to use an event listener
         if (standalone && mainConfigurationProperties.isAutoConfigurationLogSummary()) {
-            camelContext.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
-                // TODO: ignore as much as possible
+            camelContext.getManagementStrategy().addEventNotifier(new SimpleEventNotifierSupport() {
                 @Override
                 public boolean isEnabled(CamelEvent event) {
                     return event instanceof CamelEvent.CamelContextRoutesStartedEvent;

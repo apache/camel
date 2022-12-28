@@ -118,8 +118,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private String routesReloadPattern;
     @Metadata(defaultValue = "true")
     private boolean routesReloadRemoveAllRoutes = true;
-    @Metadata(defaultValue = "true")
-    private boolean routesReloadRestartDuration = true;
+    private boolean routesReloadRestartDuration;
     private boolean lightweight;
     @Metadata(defaultValue = "default", enums = "default,prototype,pooled")
     private String exchangeFactory = "default";
