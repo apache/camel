@@ -24,7 +24,7 @@ import java.util.Map;
 
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.google.secret.manager.vault.PubsubReloadTriggerTask;
-import org.apache.camel.impl.console.AbstractDevConsole;
+import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.annotations.DevConsole;

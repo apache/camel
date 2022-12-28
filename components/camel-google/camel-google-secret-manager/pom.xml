@@ -69,7 +69,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-console</artifactId>
+            <artifactId>camel-util-json</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>

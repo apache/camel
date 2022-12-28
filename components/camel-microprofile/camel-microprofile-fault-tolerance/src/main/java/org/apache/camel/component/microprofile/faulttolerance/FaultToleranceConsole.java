@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.console.AbstractDevConsole;
+import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.util.json.JsonObject;
 

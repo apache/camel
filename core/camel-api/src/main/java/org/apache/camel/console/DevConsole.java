@@ -56,7 +56,7 @@ public interface DevConsole {
      * Whether this console supports the given media type.
      *
      * @param  mediaType the media type
-     * @return           true if support, false if not
+     * @return           true if supported, false if not
      */
     boolean supportMediaType(MediaType mediaType);
 
