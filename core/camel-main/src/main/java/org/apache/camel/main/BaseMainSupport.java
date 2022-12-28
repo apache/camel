@@ -714,6 +714,7 @@ public abstract class BaseMainSupport extends BaseService {
         // but before camel context logs that it has been started, so we need to use an event listener
         if (standalone && mainConfigurationProperties.isAutoConfigurationLogSummary()) {
             camelContext.getManagementStrategy().addEventNotifier(new EventNotifierSupport() {
+                // TODO: ignore as much as possible
                 @Override
                 public boolean isEnabled(CamelEvent event) {
                     return event instanceof CamelEvent.CamelContextRoutesStartedEvent;
