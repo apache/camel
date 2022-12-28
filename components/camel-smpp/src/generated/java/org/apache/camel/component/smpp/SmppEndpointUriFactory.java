@@ -41,6 +41,7 @@ public class SmppEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("httpProxyUsername");
         props.add("initialReconnectDelay");
         props.add("lazySessionCreation");
+        props.add("messageReceiverRouteId");
         props.add("lazyStartProducer");
         props.add("maxReconnect");
         props.add("numberingPlanIndicator");
