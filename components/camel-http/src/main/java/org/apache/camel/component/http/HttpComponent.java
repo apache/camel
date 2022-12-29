@@ -97,9 +97,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
               description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
     protected HostnameVerifier x509HostnameVerifier = new DefaultHostnameVerifier();
     @Metadata(label = "producer,advanced", description = "To use a custom org.apache.http.client.CookieStore."
-                                                + " By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store."
-                                                + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie"
-                                                + " shouldn't be stored as we are just bridging (eg acting as a proxy).")
+                                                         + " By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store."
+                                                         + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie"
+                                                         + " shouldn't be stored as we are just bridging (eg acting as a proxy).")
     protected CookieStore cookieStore;
 
     // timeout
