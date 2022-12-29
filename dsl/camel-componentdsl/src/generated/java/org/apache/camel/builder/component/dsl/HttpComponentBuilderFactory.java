@@ -49,41 +49,19 @@ public interface HttpComponentBuilderFactory {
      */
     interface HttpComponentBuilder extends ComponentBuilder<HttpComponent> {
         /**
-         * To use a custom org.apache.http.client.CookieStore. By default the
-         * org.apache.http.impl.client.BasicCookieStore is used which is an
-         * in-memory only cookie store. Notice if bridgeEndpoint=true then the
-         * cookie store is forced to be a noop cookie store as cookie shouldn't
-         * be stored as we are just bridging (eg acting as a proxy).
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.http.client.CookieStore&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param cookieStore the value to set
-         * @return the dsl builder
-         */
-        default HttpComponentBuilder cookieStore(
-                org.apache.http.client.CookieStore cookieStore) {
-            doSetProperty("cookieStore", cookieStore);
-            return this;
-        }
-        /**
-         * If this option is true then IN exchange headers will be copied to OUT
-         * exchange headers according to copy strategy. Setting this to false,
-         * allows to only include the headers from the HTTP response (not
-         * propagating IN headers).
+         * Whether to the HTTP request should follow redirects. By default the
+         * HTTP request does not follow redirects.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
-         * @param copyHeaders the value to set
+         * @param followRedirects the value to set
          * @return the dsl builder
          */
-        default HttpComponentBuilder copyHeaders(boolean copyHeaders) {
-            doSetProperty("copyHeaders", copyHeaders);
+        default HttpComponentBuilder followRedirects(boolean followRedirects) {
+            doSetProperty("followRedirects", followRedirects);
             return this;
         }
         /**
@@ -110,6 +88,44 @@ public interface HttpComponentBuilderFactory {
             return this;
         }
         /**
+         * To use a custom org.apache.http.client.CookieStore. By default the
+         * org.apache.http.impl.client.BasicCookieStore is used which is an
+         * in-memory only cookie store. Notice if bridgeEndpoint=true then the
+         * cookie store is forced to be a noop cookie store as cookie shouldn't
+         * be stored as we are just bridging (eg acting as a proxy).
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.http.client.CookieStore&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param cookieStore the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder cookieStore(
+                org.apache.http.client.CookieStore cookieStore) {
+            doSetProperty("cookieStore", cookieStore);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange headers will be copied to OUT
+         * exchange headers according to copy strategy. Setting this to false,
+         * allows to only include the headers from the HTTP response (not
+         * propagating IN headers).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param copyHeaders the value to set
+         * @return the dsl builder
+         */
+        default HttpComponentBuilder copyHeaders(boolean copyHeaders) {
+            doSetProperty("copyHeaders", copyHeaders);
+            return this;
+        }
+        /**
          * This threshold in bytes controls whether the response payload should
          * be stored in memory as a byte array or be streaming based. Set this
          * to -1 to always use streaming mode.
@@ -117,7 +133,7 @@ public interface HttpComponentBuilderFactory {
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8192
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param responsePayloadStreamingThreshold the value to set
          * @return the dsl builder
@@ -125,22 +141,6 @@ public interface HttpComponentBuilderFactory {
         default HttpComponentBuilder responsePayloadStreamingThreshold(
                 int responsePayloadStreamingThreshold) {
             doSetProperty("responsePayloadStreamingThreshold", responsePayloadStreamingThreshold);
-            return this;
-        }
-        /**
-         * Whether to the HTTP request should follow redirects. By default the
-         * HTTP request does not follow redirects.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param followRedirects the value to set
-         * @return the dsl builder
-         */
-        default HttpComponentBuilder followRedirects(boolean followRedirects) {
-            doSetProperty("followRedirects", followRedirects);
             return this;
         }
         /**
@@ -732,11 +732,11 @@ public interface HttpComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
+            case "followRedirects": ((HttpComponent) component).setFollowRedirects((boolean) value); return true;
+            case "lazyStartProducer": ((HttpComponent) component).setLazyStartProducer((boolean) value); return true;
             case "cookieStore": ((HttpComponent) component).setCookieStore((org.apache.http.client.CookieStore) value); return true;
             case "copyHeaders": ((HttpComponent) component).setCopyHeaders((boolean) value); return true;
-            case "lazyStartProducer": ((HttpComponent) component).setLazyStartProducer((boolean) value); return true;
             case "responsePayloadStreamingThreshold": ((HttpComponent) component).setResponsePayloadStreamingThreshold((int) value); return true;
-            case "followRedirects": ((HttpComponent) component).setFollowRedirects((boolean) value); return true;
             case "skipRequestHeaders": ((HttpComponent) component).setSkipRequestHeaders((boolean) value); return true;
             case "skipResponseHeaders": ((HttpComponent) component).setSkipResponseHeaders((boolean) value); return true;
             case "allowJavaSerializedObject": ((HttpComponent) component).setAllowJavaSerializedObject((boolean) value); return true;

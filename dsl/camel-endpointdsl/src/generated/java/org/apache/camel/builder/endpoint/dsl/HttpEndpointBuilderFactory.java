@@ -105,42 +105,6 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HeaderFilterStrategy to filter header to and from
-         * Camel message.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param headerFilterStrategy the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder headerFilterStrategy(
-                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * To use a custom HeaderFilterStrategy to filter header to and from
-         * Camel message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param headerFilterStrategy the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder headerFilterStrategy(
-                String headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
          * If the option is true, HttpProducer will ignore the Exchange.HTTP_URI
          * header, and use the endpoint's URI for request. You may also set the
          * option throwExceptionOnFailure to be false to let the HttpProducer
@@ -178,47 +142,6 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to clear expired cookies before sending the HTTP request.
-         * This ensures the cookies store does not keep growing by adding new
-         * cookies which is newer removed when they are expired. If the
-         * component has disabled cookie management then this option is disabled
-         * too.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param clearExpiredCookies the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder clearExpiredCookies(
-                boolean clearExpiredCookies) {
-            doSetProperty("clearExpiredCookies", clearExpiredCookies);
-            return this;
-        }
-        /**
-         * Whether to clear expired cookies before sending the HTTP request.
-         * This ensures the cookies store does not keep growing by adding new
-         * cookies which is newer removed when they are expired. If the
-         * component has disabled cookie management then this option is disabled
-         * too.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param clearExpiredCookies the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder clearExpiredCookies(
-                String clearExpiredCookies) {
-            doSetProperty("clearExpiredCookies", clearExpiredCookies);
-            return this;
-        }
-        /**
          * Specifies whether a Connection Close header must be added to HTTP
          * Request. By default connectionClose is false.
          * 
@@ -252,55 +175,36 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * If this option is true then IN exchange headers will be copied to OUT
-         * exchange headers according to copy strategy. Setting this to false,
-         * allows to only include the headers from the HTTP response (not
-         * propagating IN headers).
+         * Whether to the HTTP request should follow redirects. By default the
+         * HTTP request does not follow redirects.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
-         * @param copyHeaders the value to set
+         * @param followRedirects the value to set
          * @return the dsl builder
          */
-        default HttpEndpointBuilder copyHeaders(boolean copyHeaders) {
-            doSetProperty("copyHeaders", copyHeaders);
+        default HttpEndpointBuilder followRedirects(boolean followRedirects) {
+            doSetProperty("followRedirects", followRedirects);
             return this;
         }
         /**
-         * If this option is true then IN exchange headers will be copied to OUT
-         * exchange headers according to copy strategy. Setting this to false,
-         * allows to only include the headers from the HTTP response (not
-         * propagating IN headers).
+         * Whether to the HTTP request should follow redirects. By default the
+         * HTTP request does not follow redirects.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
-         * @param copyHeaders the value to set
+         * @param followRedirects the value to set
          * @return the dsl builder
          */
-        default HttpEndpointBuilder copyHeaders(String copyHeaders) {
-            doSetProperty("copyHeaders", copyHeaders);
-            return this;
-        }
-        /**
-         * To use custom host header for producer. When not set in query will be
-         * ignored. When set will override host header derived from url.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param customHostHeader the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder customHostHeader(String customHostHeader) {
-            doSetProperty("customHostHeader", customHostHeader);
+        default HttpEndpointBuilder followRedirects(String followRedirects) {
+            doSetProperty("followRedirects", followRedirects);
             return this;
         }
         /**
@@ -336,82 +240,6 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder httpMethod(String httpMethod) {
             doSetProperty("httpMethod", httpMethod);
-            return this;
-        }
-        /**
-         * If this option is true, The http producer won't read response body
-         * and cache the input stream.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param ignoreResponseBody the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder ignoreResponseBody(
-                boolean ignoreResponseBody) {
-            doSetProperty("ignoreResponseBody", ignoreResponseBody);
-            return this;
-        }
-        /**
-         * If this option is true, The http producer won't read response body
-         * and cache the input stream.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param ignoreResponseBody the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder ignoreResponseBody(String ignoreResponseBody) {
-            doSetProperty("ignoreResponseBody", ignoreResponseBody);
-            return this;
-        }
-        /**
-         * If the option is true, HttpProducer will set the Host header to the
-         * value contained in the current exchange Host header, useful in
-         * reverse proxy applications where you want the Host header received by
-         * the downstream server to reflect the URL called by the upstream
-         * client, this allows applications which use the Host header to
-         * generate accurate URL's for a proxied service.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param preserveHostHeader the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder preserveHostHeader(
-                boolean preserveHostHeader) {
-            doSetProperty("preserveHostHeader", preserveHostHeader);
-            return this;
-        }
-        /**
-         * If the option is true, HttpProducer will set the Host header to the
-         * value contained in the current exchange Host header, useful in
-         * reverse proxy applications where you want the Host header received by
-         * the downstream server to reflect the URL called by the upstream
-         * client, this allows applications which use the Host header to
-         * generate accurate URL's for a proxied service.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer
-         * 
-         * @param preserveHostHeader the value to set
-         * @return the dsl builder
-         */
-        default HttpEndpointBuilder preserveHostHeader(String preserveHostHeader) {
-            doSetProperty("preserveHostHeader", preserveHostHeader);
             return this;
         }
         /**
@@ -826,6 +654,83 @@ public interface HttpEndpointBuilderFactory {
             return (HttpEndpointBuilder) this;
         }
         /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder headerFilterStrategy(
+                String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * Whether to clear expired cookies before sending the HTTP request.
+         * This ensures the cookies store does not keep growing by adding new
+         * cookies which is newer removed when they are expired. If the
+         * component has disabled cookie management then this option is disabled
+         * too.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param clearExpiredCookies the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder clearExpiredCookies(
+                boolean clearExpiredCookies) {
+            doSetProperty("clearExpiredCookies", clearExpiredCookies);
+            return this;
+        }
+        /**
+         * Whether to clear expired cookies before sending the HTTP request.
+         * This ensures the cookies store does not keep growing by adding new
+         * cookies which is newer removed when they are expired. If the
+         * component has disabled cookie management then this option is disabled
+         * too.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param clearExpiredCookies the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder clearExpiredCookies(
+                String clearExpiredCookies) {
+            doSetProperty("clearExpiredCookies", clearExpiredCookies);
+            return this;
+        }
+        /**
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option is a:
@@ -900,6 +805,59 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * If this option is true then IN exchange headers will be copied to OUT
+         * exchange headers according to copy strategy. Setting this to false,
+         * allows to only include the headers from the HTTP response (not
+         * propagating IN headers).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param copyHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder copyHeaders(boolean copyHeaders) {
+            doSetProperty("copyHeaders", copyHeaders);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange headers will be copied to OUT
+         * exchange headers according to copy strategy. Setting this to false,
+         * allows to only include the headers from the HTTP response (not
+         * propagating IN headers).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param copyHeaders the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder copyHeaders(String copyHeaders) {
+            doSetProperty("copyHeaders", copyHeaders);
+            return this;
+        }
+        /**
+         * To use custom host header for producer. When not set in query will be
+         * ignored. When set will override host header derived from url.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer (advanced)
+         * 
+         * @param customHostHeader the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder customHostHeader(
+                String customHostHeader) {
+            doSetProperty("customHostHeader", customHostHeader);
+            return this;
+        }
+        /**
          * Whether the HTTP DELETE should include the message body or not. By
          * default HTTP DELETE do not include any HTTP body. However in some
          * rare cases users may need to be able to include the message body.
@@ -936,41 +894,6 @@ public interface HttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to the HTTP request should follow redirects. By default the
-         * HTTP request does not follow redirects.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param followRedirects the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHttpEndpointBuilder followRedirects(
-                boolean followRedirects) {
-            doSetProperty("followRedirects", followRedirects);
-            return this;
-        }
-        /**
-         * Whether to the HTTP request should follow redirects. By default the
-         * HTTP request does not follow redirects.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param followRedirects the value to set
-         * @return the dsl builder
-         */
-        default AdvancedHttpEndpointBuilder followRedirects(
-                String followRedirects) {
-            doSetProperty("followRedirects", followRedirects);
-            return this;
-        }
-        /**
          * Whether the HTTP GET should include the message body or not. By
          * default HTTP GET do not include any HTTP body. However in some rare
          * cases users may need to be able to include the message body.
@@ -1003,6 +926,41 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder getWithBody(String getWithBody) {
             doSetProperty("getWithBody", getWithBody);
+            return this;
+        }
+        /**
+         * If this option is true, The http producer won't read response body
+         * and cache the input stream.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param ignoreResponseBody the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder ignoreResponseBody(
+                boolean ignoreResponseBody) {
+            doSetProperty("ignoreResponseBody", ignoreResponseBody);
+            return this;
+        }
+        /**
+         * If this option is true, The http producer won't read response body
+         * and cache the input stream.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param ignoreResponseBody the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder ignoreResponseBody(
+                String ignoreResponseBody) {
+            doSetProperty("ignoreResponseBody", ignoreResponseBody);
             return this;
         }
         /**
@@ -1071,6 +1029,49 @@ public interface HttpEndpointBuilderFactory {
         default AdvancedHttpEndpointBuilder okStatusCodeRange(
                 String okStatusCodeRange) {
             doSetProperty("okStatusCodeRange", okStatusCodeRange);
+            return this;
+        }
+        /**
+         * If the option is true, HttpProducer will set the Host header to the
+         * value contained in the current exchange Host header, useful in
+         * reverse proxy applications where you want the Host header received by
+         * the downstream server to reflect the URL called by the upstream
+         * client, this allows applications which use the Host header to
+         * generate accurate URL's for a proxied service.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param preserveHostHeader the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder preserveHostHeader(
+                boolean preserveHostHeader) {
+            doSetProperty("preserveHostHeader", preserveHostHeader);
+            return this;
+        }
+        /**
+         * If the option is true, HttpProducer will set the Host header to the
+         * value contained in the current exchange Host header, useful in
+         * reverse proxy applications where you want the Host header received by
+         * the downstream server to reflect the URL called by the upstream
+         * client, this allows applications which use the Host header to
+         * generate accurate URL's for a proxied service.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer (advanced)
+         * 
+         * @param preserveHostHeader the value to set
+         * @return the dsl builder
+         */
+        default AdvancedHttpEndpointBuilder preserveHostHeader(
+                String preserveHostHeader) {
+            doSetProperty("preserveHostHeader", preserveHostHeader);
             return this;
         }
         /**

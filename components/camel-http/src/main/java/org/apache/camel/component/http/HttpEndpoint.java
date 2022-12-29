@@ -116,7 +116,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                                                          + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy)."
                                                          + " If a cookieHandler is set then the cookie store is also forced to be a noop cookie store as cookie handling is then performed by the cookieHandler.")
     private CookieStore cookieStore = new BasicCookieStore();
-    @UriParam(label = "producer", defaultValue = "true",
+    @UriParam(label = "producer,advanced", defaultValue = "true",
               description = "Whether to clear expired cookies before sending the HTTP request."
                             + " This ensures the cookies store does not keep growing by adding new cookies which is newer removed when they are expired."
                             + " If the component has disabled cookie management then this option is disabled too.")
@@ -137,7 +137,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @UriParam(label = "security",
               description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
     private HostnameVerifier x509HostnameVerifier;
-    @UriParam(label = "producer", description = "To use custom host header for producer. When not set in query will "
+    @UriParam(label = "producer,advanced", description = "To use custom host header for producer. When not set in query will "
                                                 + "be ignored. When set will override host header derived from url.")
     private String customHostHeader;
     @UriParam(label = "producer,advanced",
@@ -146,7 +146,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                             + " parsing overhead with many object allocations for the JVM garbage collector.")
     private boolean skipRequestHeaders;
 
-    @UriParam(label = "producer,advanced", defaultValue = "false",
+    @UriParam(label = "producer", defaultValue = "false",
               description = "Whether to the HTTP request should follow redirects."
                             + " By default the HTTP request does not follow redirects ")
     private boolean followRedirects;

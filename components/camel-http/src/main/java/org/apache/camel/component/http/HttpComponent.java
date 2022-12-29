@@ -96,7 +96,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Metadata(label = "security",
               description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier.")
     protected HostnameVerifier x509HostnameVerifier = new DefaultHostnameVerifier();
-    @Metadata(label = "producer", description = "To use a custom org.apache.http.client.CookieStore."
+    @Metadata(label = "producer,advanced", description = "To use a custom org.apache.http.client.CookieStore."
                                                 + " By default the org.apache.http.impl.client.BasicCookieStore is used which is an in-memory only cookie store."
                                                 + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie"
                                                 + " shouldn't be stored as we are just bridging (eg acting as a proxy).")
@@ -151,7 +151,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     protected long connectionTimeToLive = -1;
     @Metadata(label = "security", defaultValue = "false", description = "Enable usage of global SSL context parameters.")
     protected boolean useGlobalSslContextParameters;
-    @Metadata(label = "producer", defaultValue = "8192",
+    @Metadata(label = "producer,advanced", defaultValue = "8192",
               description = "This threshold in bytes controls whether the response payload"
                             + " should be stored in memory as a byte array or be streaming based. Set this to -1 to always use streaming mode.")
     protected int responsePayloadStreamingThreshold = 8192;
@@ -170,7 +170,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
     @Metadata(label = "advanced",
               description = "Disables the default user agent set by this builder if none has been provided by the user")
     protected boolean defaultUserAgentDisabled;
-    @Metadata(label = "producer",
+    @Metadata(label = "producer,advanced",
               defaultValue = "true",
               description = "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
                             + " Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).")
@@ -186,7 +186,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                             + " with many object allocations for the JVM garbage collector.")
     protected boolean skipResponseHeaders;
 
-    @Metadata(label = "producer,advanced", defaultValue = "false",
+    @Metadata(label = "producer", defaultValue = "false",
               description = "Whether to the HTTP request should follow redirects."
                             + " By default the HTTP request does not follow redirects ")
     protected boolean followRedirects;

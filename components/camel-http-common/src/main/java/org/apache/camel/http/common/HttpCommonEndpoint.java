@@ -39,7 +39,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     @UriPath(label = "common", description = "The url of the HTTP endpoint to call.")
     @Metadata(required = true)
     URI httpUri;
-    @UriParam(label = "common",
+    @UriParam(label = "common,advanced",
               description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     @UriParam(label = "common,advanced",
@@ -53,7 +53,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
               description = "If the option is true, HttpProducer will ignore the Exchange.HTTP_URI header, and use the endpoint's URI for request."
                             + " You may also set the option throwExceptionOnFailure to be false to let the HttpProducer send all the fault response back.")
     boolean bridgeEndpoint;
-    @UriParam(label = "producer",
+    @UriParam(label = "producer,advanced",
               description = "If the option is true, HttpProducer will set the Host header to the value contained in the current exchange Host header, "
                             + "useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, "
                             + "this allows applications which use the Host header to generate accurate URL's for a proxied service")
@@ -77,7 +77,8 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
                             + " The http producer will by default cache the response body stream. If setting this option to true,"
                             + " then the producers will not cache the response body stream but use the response stream as-is as the message body.")
     boolean disableStreamCache;
-    @UriParam(description = "If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized"
+    @UriParam(label = "common",
+            description = "If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized"
                             + " in the response as a application/x-java-serialized-object content type."
                             + " On the producer side the exception will be deserialized and thrown as is, instead of the HttpOperationFailedException."
                             + " The caused exception is required to be serialized."
@@ -102,10 +103,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     @UriParam(label = "consumer",
               description = "To use a custom buffer size on the javax.servlet.ServletResponse.")
     Integer responseBufferSize;
-    @UriParam(label = "producer",
+    @UriParam(label = "producer,advanced",
               description = "If this option is true, The http producer won't read response body and cache the input stream")
     boolean ignoreResponseBody;
-    @UriParam(label = "producer", defaultValue = "true",
+    @UriParam(label = "producer,advanced", defaultValue = "true",
               description = "If this option is true then IN exchange headers will be copied to OUT exchange headers according to copy strategy."
                             + " Setting this to false, allows to only include the headers from the HTTP response (not propagating IN headers).")
     boolean copyHeaders = true;
