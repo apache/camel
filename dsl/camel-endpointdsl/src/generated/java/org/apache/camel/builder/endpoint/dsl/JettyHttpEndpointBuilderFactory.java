@@ -139,39 +139,52 @@ public interface JettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HeaderFilterStrategy to filter header to and from
-         * Camel message.
+         * If enabled and an Exchange failed processing on the consumer side,
+         * and if the caused Exception was send back serialized in the response
+         * as a application/x-java-serialized-object content type. On the
+         * producer side the exception will be deserialized and thrown as is,
+         * instead of the HttpOperationFailedException. The caused exception is
+         * required to be serialized. This is by default turned off. If you
+         * enable this then be aware that Java will deserialize the incoming
+         * data from the request to Java and that can be a potential security
+         * risk.
          * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
+         * Default: false
          * Group: common
          * 
-         * @param headerFilterStrategy the value to set
+         * @param transferException the value to set
          * @return the dsl builder
          */
-        default JettyHttpEndpointBuilder headerFilterStrategy(
-                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+        default JettyHttpEndpointBuilder transferException(
+                boolean transferException) {
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
-         * To use a custom HeaderFilterStrategy to filter header to and from
-         * Camel message.
+         * If enabled and an Exchange failed processing on the consumer side,
+         * and if the caused Exception was send back serialized in the response
+         * as a application/x-java-serialized-object content type. On the
+         * producer side the exception will be deserialized and thrown as is,
+         * instead of the HttpOperationFailedException. The caused exception is
+         * required to be serialized. This is by default turned off. If you
+         * enable this then be aware that Java will deserialize the incoming
+         * data from the request to Java and that can be a potential security
+         * risk.
          * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
          * 
+         * Default: false
          * Group: common
          * 
-         * @param headerFilterStrategy the value to set
+         * @param transferException the value to set
          * @return the dsl builder
          */
-        default JettyHttpEndpointBuilder headerFilterStrategy(
-                String headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+        default JettyHttpEndpointBuilder transferException(
+                String transferException) {
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -577,55 +590,6 @@ public interface JettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * If enabled and an Exchange failed processing on the consumer side,
-         * and if the caused Exception was send back serialized in the response
-         * as a application/x-java-serialized-object content type. On the
-         * producer side the exception will be deserialized and thrown as is,
-         * instead of the HttpOperationFailedException. The caused exception is
-         * required to be serialized. This is by default turned off. If you
-         * enable this then be aware that Java will deserialize the incoming
-         * data from the request to Java and that can be a potential security
-         * risk.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param transferException the value to set
-         * @return the dsl builder
-         */
-        default JettyHttpEndpointBuilder transferException(
-                boolean transferException) {
-            doSetProperty("transferException", transferException);
-            return this;
-        }
-        /**
-         * If enabled and an Exchange failed processing on the consumer side,
-         * and if the caused Exception was send back serialized in the response
-         * as a application/x-java-serialized-object content type. On the
-         * producer side the exception will be deserialized and thrown as is,
-         * instead of the HttpOperationFailedException. The caused exception is
-         * required to be serialized. This is by default turned off. If you
-         * enable this then be aware that Java will deserialize the incoming
-         * data from the request to Java and that can be a potential security
-         * risk.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param transferException the value to set
-         * @return the dsl builder
-         */
-        default JettyHttpEndpointBuilder transferException(
-                String transferException) {
-            doSetProperty("transferException", transferException);
-            return this;
-        }
-        /**
          * Whether or not to use Jetty continuations for the Jetty Server.
          * 
          * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
@@ -696,6 +660,42 @@ public interface JettyHttpEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default JettyHttpEndpointBuilder basic() {
             return (JettyHttpEndpointBuilder) this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJettyHttpEndpointBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedJettyHttpEndpointBuilder headerFilterStrategy(
+                String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
         }
         /**
          * To use a custom HttpBinding to control the mapping between Camel
