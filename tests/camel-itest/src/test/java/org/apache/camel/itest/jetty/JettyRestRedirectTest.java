@@ -19,6 +19,7 @@ package org.apache.camel.itest.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,10 @@ public class JettyRestRedirectTest extends CamelTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
+                // enable follow redirects
+                HttpComponent http = context.getComponent("http", HttpComponent.class);
+                http.setFollowRedirects(true);
+
                 restConfiguration().component("jetty").host("localhost").scheme("http").port(port).producerComponent("http");
                 rest("/metadata/profile")
                         .get("/{id}").to("direct:profileLookup")
