@@ -142,42 +142,6 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HeaderFilterStrategy to filter header to and from
-         * Camel message.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param headerFilterStrategy the value to set
-         * @return the dsl builder
-         */
-        default AtmosphereWebsocketEndpointConsumerBuilder headerFilterStrategy(
-                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * To use a custom HeaderFilterStrategy to filter header to and from
-         * Camel message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param headerFilterStrategy the value to set
-         * @return the dsl builder
-         */
-        default AtmosphereWebsocketEndpointConsumerBuilder headerFilterStrategy(
-                String headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
          * Whether to send to all (broadcast) or send to a single receiver.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -468,6 +432,42 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AtmosphereWebsocketEndpointConsumerBuilder basic() {
             return (AtmosphereWebsocketEndpointConsumerBuilder) this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAtmosphereWebsocketEndpointConsumerBuilder headerFilterStrategy(
+                String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
         }
         /**
          * To use a custom HttpBinding to control the mapping between Camel
@@ -1008,42 +1008,6 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HeaderFilterStrategy to filter header to and from
-         * Camel message.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param headerFilterStrategy the value to set
-         * @return the dsl builder
-         */
-        default AtmosphereWebsocketEndpointProducerBuilder headerFilterStrategy(
-                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * To use a custom HeaderFilterStrategy to filter header to and from
-         * Camel message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param headerFilterStrategy the value to set
-         * @return the dsl builder
-         */
-        default AtmosphereWebsocketEndpointProducerBuilder headerFilterStrategy(
-                String headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
          * Whether to send to all (broadcast) or send to a single receiver.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -1208,6 +1172,42 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AtmosphereWebsocketEndpointProducerBuilder basic() {
             return (AtmosphereWebsocketEndpointProducerBuilder) this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAtmosphereWebsocketEndpointProducerBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAtmosphereWebsocketEndpointProducerBuilder headerFilterStrategy(
+                String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
         }
         /**
          * To use a custom HttpBinding to control the mapping between Camel
@@ -1403,42 +1403,6 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HeaderFilterStrategy to filter header to and from
-         * Camel message.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param headerFilterStrategy the value to set
-         * @return the dsl builder
-         */
-        default AtmosphereWebsocketEndpointBuilder headerFilterStrategy(
-                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * To use a custom HeaderFilterStrategy to filter header to and from
-         * Camel message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param headerFilterStrategy the value to set
-         * @return the dsl builder
-         */
-        default AtmosphereWebsocketEndpointBuilder headerFilterStrategy(
-                String headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
          * Whether to send to all (broadcast) or send to a single receiver.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -1562,6 +1526,42 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
                 AdvancedAtmosphereWebsocketEndpointProducerBuilder {
         default AtmosphereWebsocketEndpointBuilder basic() {
             return (AtmosphereWebsocketEndpointBuilder) this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAtmosphereWebsocketEndpointBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedAtmosphereWebsocketEndpointBuilder headerFilterStrategy(
+                String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
         }
         /**
          * To use a custom HttpBinding to control the mapping between Camel

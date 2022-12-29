@@ -42,39 +42,6 @@ public interface ServletEndpointBuilderFactory {
             return (AdvancedServletEndpointBuilder) this;
         }
         /**
-         * If this option is false the Servlet will disable the HTTP streaming
-         * and set the content-length header on the response.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param chunked the value to set
-         * @return the dsl builder
-         */
-        default ServletEndpointBuilder chunked(boolean chunked) {
-            doSetProperty("chunked", chunked);
-            return this;
-        }
-        /**
-         * If this option is false the Servlet will disable the HTTP streaming
-         * and set the content-length header on the response.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param chunked the value to set
-         * @return the dsl builder
-         */
-        default ServletEndpointBuilder chunked(String chunked) {
-            doSetProperty("chunked", chunked);
-            return this;
-        }
-        /**
          * Determines whether or not the raw input stream from Servlet is cached
          * or not (Camel will read the stream into a in memory/overflow to file,
          * Stream caching) cache. By default Camel will cache the Servlet input
@@ -138,42 +105,6 @@ public interface ServletEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom HeaderFilterStrategy to filter header to and from
-         * Camel message.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param headerFilterStrategy the value to set
-         * @return the dsl builder
-         */
-        default ServletEndpointBuilder headerFilterStrategy(
-                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
-         * To use a custom HeaderFilterStrategy to filter header to and from
-         * Camel message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param headerFilterStrategy the value to set
-         * @return the dsl builder
-         */
-        default ServletEndpointBuilder headerFilterStrategy(
-                String headerFilterStrategy) {
-            doSetProperty("headerFilterStrategy", headerFilterStrategy);
-            return this;
-        }
-        /**
          * Configure the consumer to work in async mode.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -202,6 +133,88 @@ public interface ServletEndpointBuilderFactory {
          */
         default ServletEndpointBuilder async(String async) {
             doSetProperty("async", async);
+            return this;
+        }
+        /**
+         * If this option is false the Servlet will disable the HTTP streaming
+         * and set the content-length header on the response.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param chunked the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder chunked(boolean chunked) {
+            doSetProperty("chunked", chunked);
+            return this;
+        }
+        /**
+         * If this option is false the Servlet will disable the HTTP streaming
+         * and set the content-length header on the response.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param chunked the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder chunked(String chunked) {
+            doSetProperty("chunked", chunked);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side,
+         * and if the caused Exception was send back serialized in the response
+         * as a application/x-java-serialized-object content type. On the
+         * producer side the exception will be deserialized and thrown as is,
+         * instead of the HttpOperationFailedException. The caused exception is
+         * required to be serialized. This is by default turned off. If you
+         * enable this then be aware that Java will deserialize the incoming
+         * data from the request to Java and that can be a potential security
+         * risk.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder transferException(
+                boolean transferException) {
+            doSetProperty("transferException", transferException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side,
+         * and if the caused Exception was send back serialized in the response
+         * as a application/x-java-serialized-object content type. On the
+         * producer side the exception will be deserialized and thrown as is,
+         * instead of the HttpOperationFailedException. The caused exception is
+         * required to be serialized. This is by default turned off. If you
+         * enable this then be aware that Java will deserialize the incoming
+         * data from the request to Java and that can be a potential security
+         * risk.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param transferException the value to set
+         * @return the dsl builder
+         */
+        default ServletEndpointBuilder transferException(
+                String transferException) {
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -333,55 +346,6 @@ public interface ServletEndpointBuilderFactory {
             doSetProperty("servletName", servletName);
             return this;
         }
-        /**
-         * If enabled and an Exchange failed processing on the consumer side,
-         * and if the caused Exception was send back serialized in the response
-         * as a application/x-java-serialized-object content type. On the
-         * producer side the exception will be deserialized and thrown as is,
-         * instead of the HttpOperationFailedException. The caused exception is
-         * required to be serialized. This is by default turned off. If you
-         * enable this then be aware that Java will deserialize the incoming
-         * data from the request to Java and that can be a potential security
-         * risk.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param transferException the value to set
-         * @return the dsl builder
-         */
-        default ServletEndpointBuilder transferException(
-                boolean transferException) {
-            doSetProperty("transferException", transferException);
-            return this;
-        }
-        /**
-         * If enabled and an Exchange failed processing on the consumer side,
-         * and if the caused Exception was send back serialized in the response
-         * as a application/x-java-serialized-object content type. On the
-         * producer side the exception will be deserialized and thrown as is,
-         * instead of the HttpOperationFailedException. The caused exception is
-         * required to be serialized. This is by default turned off. If you
-         * enable this then be aware that Java will deserialize the incoming
-         * data from the request to Java and that can be a potential security
-         * risk.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: false
-         * Group: consumer
-         * 
-         * @param transferException the value to set
-         * @return the dsl builder
-         */
-        default ServletEndpointBuilder transferException(
-                String transferException) {
-            doSetProperty("transferException", transferException);
-            return this;
-        }
     }
 
     /**
@@ -392,6 +356,42 @@ public interface ServletEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default ServletEndpointBuilder basic() {
             return (ServletEndpointBuilder) this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedServletEndpointBuilder headerFilterStrategy(
+                org.apache.camel.spi.HeaderFilterStrategy headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * To use a custom HeaderFilterStrategy to filter header to and from
+         * Camel message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.spi.HeaderFilterStrategy&lt;/code&gt;
+         * type.
+         * 
+         * Group: common (advanced)
+         * 
+         * @param headerFilterStrategy the value to set
+         * @return the dsl builder
+         */
+        default AdvancedServletEndpointBuilder headerFilterStrategy(
+                String headerFilterStrategy) {
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
         }
         /**
          * To use a custom HttpBinding to control the mapping between Camel
