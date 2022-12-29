@@ -138,7 +138,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
               description = "To use a custom X509HostnameVerifier such as DefaultHostnameVerifier or NoopHostnameVerifier")
     private HostnameVerifier x509HostnameVerifier;
     @UriParam(label = "producer,advanced", description = "To use custom host header for producer. When not set in query will "
-                                                + "be ignored. When set will override host header derived from url.")
+                                                         + "be ignored. When set will override host header derived from url.")
     private String customHostHeader;
     @UriParam(label = "producer,advanced",
               description = "Whether to skip mapping all the Camel headers as HTTP request headers."

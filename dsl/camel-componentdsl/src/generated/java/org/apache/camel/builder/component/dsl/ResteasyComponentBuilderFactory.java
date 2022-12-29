@@ -106,21 +106,19 @@ public interface ResteasyComponentBuilderFactory {
             return this;
         }
         /**
-         * If this option is true then IN exchange headers will be copied to OUT
-         * exchange headers according to copy strategy. Setting this to false,
-         * allows to only include the headers from the HTTP response (not
-         * propagating IN headers).
+         * Whether to the HTTP request should follow redirects. By default the
+         * HTTP request does not follow redirects.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
-         * Default: true
+         * Default: false
          * Group: producer
          * 
-         * @param copyHeaders the value to set
+         * @param followRedirects the value to set
          * @return the dsl builder
          */
-        default ResteasyComponentBuilder copyHeaders(boolean copyHeaders) {
-            doSetProperty("copyHeaders", copyHeaders);
+        default ResteasyComponentBuilder followRedirects(boolean followRedirects) {
+            doSetProperty("followRedirects", followRedirects);
             return this;
         }
         /**
@@ -148,6 +146,24 @@ public interface ResteasyComponentBuilderFactory {
             return this;
         }
         /**
+         * If this option is true then IN exchange headers will be copied to OUT
+         * exchange headers according to copy strategy. Setting this to false,
+         * allows to only include the headers from the HTTP response (not
+         * propagating IN headers).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param copyHeaders the value to set
+         * @return the dsl builder
+         */
+        default ResteasyComponentBuilder copyHeaders(boolean copyHeaders) {
+            doSetProperty("copyHeaders", copyHeaders);
+            return this;
+        }
+        /**
          * This threshold in bytes controls whether the response payload should
          * be stored in memory as a byte array or be streaming based. Set this
          * to -1 to always use streaming mode.
@@ -155,7 +171,7 @@ public interface ResteasyComponentBuilderFactory {
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
          * Default: 8192
-         * Group: producer
+         * Group: producer (advanced)
          * 
          * @param responsePayloadStreamingThreshold the value to set
          * @return the dsl builder
@@ -163,22 +179,6 @@ public interface ResteasyComponentBuilderFactory {
         default ResteasyComponentBuilder responsePayloadStreamingThreshold(
                 int responsePayloadStreamingThreshold) {
             doSetProperty("responsePayloadStreamingThreshold", responsePayloadStreamingThreshold);
-            return this;
-        }
-        /**
-         * Whether to the HTTP request should follow redirects. By default the
-         * HTTP request does not follow redirects.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: producer (advanced)
-         * 
-         * @param followRedirects the value to set
-         * @return the dsl builder
-         */
-        default ResteasyComponentBuilder followRedirects(boolean followRedirects) {
-            doSetProperty("followRedirects", followRedirects);
             return this;
         }
         /**
@@ -411,10 +411,10 @@ public interface ResteasyComponentBuilderFactory {
             case "bridgeErrorHandler": ((ResteasyComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "muteException": ((ResteasyComponent) component).setMuteException((boolean) value); return true;
             case "proxyConsumersClasses": ((ResteasyComponent) component).setProxyConsumersClasses((java.lang.String) value); return true;
-            case "copyHeaders": ((ResteasyComponent) component).setCopyHeaders((boolean) value); return true;
-            case "lazyStartProducer": ((ResteasyComponent) component).setLazyStartProducer((boolean) value); return true;
-            case "responsePayloadStreamingThreshold": ((ResteasyComponent) component).setResponsePayloadStreamingThreshold((int) value); return true;
             case "followRedirects": ((ResteasyComponent) component).setFollowRedirects((boolean) value); return true;
+            case "lazyStartProducer": ((ResteasyComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "copyHeaders": ((ResteasyComponent) component).setCopyHeaders((boolean) value); return true;
+            case "responsePayloadStreamingThreshold": ((ResteasyComponent) component).setResponsePayloadStreamingThreshold((int) value); return true;
             case "skipRequestHeaders": ((ResteasyComponent) component).setSkipRequestHeaders((boolean) value); return true;
             case "skipResponseHeaders": ((ResteasyComponent) component).setSkipResponseHeaders((boolean) value); return true;
             case "allowJavaSerializedObject": ((ResteasyComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
