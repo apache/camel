@@ -178,10 +178,10 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     }
 
     /**
-     * If set (FQN class names), when parsing resources the parser will try to use the given types when possible, in the order that they
-     * are provided (from highest to lowest priority). For example, if a custom type which declares to implement the
-     * Patient resource is passed in here, and the parser is parsing a Bundle containing a Patient resource, the parser
-     * will use the given custom type.
+     * If set (FQN class names), when parsing resources the parser will try to use the given types when possible, in the
+     * order that they are provided (from highest to lowest priority). For example, if a custom type which declares to
+     * implement the Patient resource is passed in here, and the parser is parsing a Bundle containing a Patient
+     * resource, the parser will use the given custom type.
      *
      * Multiple class names can be separated by comma.
      *
@@ -250,8 +250,8 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     }
 
     /**
-     * If provided, specifies the elements which should be encoded, to the exclusion of all others.
-     * Multiple elements can be separated by comma when using String parameter.
+     * If provided, specifies the elements which should be encoded, to the exclusion of all others. Multiple elements
+     * can be separated by comma when using String parameter.
      *
      * Valid values for this field would include:
      * <ul>
@@ -271,8 +271,8 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     }
 
     /**
-     * If provided, specifies the elements which should be encoded, to the exclusion of all others.
-     * Multiple elements can be separated by comma when using String parameter.
+     * If provided, specifies the elements which should be encoded, to the exclusion of all others. Multiple elements
+     * can be separated by comma when using String parameter.
      *
      * Valid values for this field would include:
      * <ul>
@@ -296,8 +296,8 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     }
 
     /**
-     * If provided, specifies the elements which should NOT be encoded.
-     * Multiple elements can be separated by comma when using String parameter.
+     * If provided, specifies the elements which should NOT be encoded. Multiple elements can be separated by comma when
+     * using String parameter.
      *
      * Valid values for this field would include:
      * <ul>
@@ -320,8 +320,8 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     }
 
     /**
-     * If provided, specifies the elements which should NOT be encoded.
-     * Multiple elements can be separated by comma when using String parameter.
+     * If provided, specifies the elements which should NOT be encoded. Multiple elements can be separated by comma when
+     * using String parameter.
      *
      * Valid values for this field would include:
      * <ul>
@@ -418,8 +418,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     /**
      * If supplied value(s), any resource references at the specified paths will have their resource versions encoded
      * instead of being automatically stripped during the encoding process. This setting has no effect on the parsing
-     * process.
-     * Multiple elements can be separated by comma when using String parameter.
+     * process. Multiple elements can be separated by comma when using String parameter.
      * <p>
      * This method provides a finer-grained level of control than {@link #setStripVersionsFromReferences(String)} and
      * any paths specified by this method will be encoded even if {@link #setStripVersionsFromReferences(String)} has
@@ -442,8 +441,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     /**
      * If supplied value(s), any resource references at the specified paths will have their resource versions encoded
      * instead of being automatically stripped during the encoding process. This setting has no effect on the parsing
-     * process.
-     * Multiple elements can be separated by comma when using String parameter.
+     * process. Multiple elements can be separated by comma when using String parameter.
      * <p>
      * This method provides a finer-grained level of control than {@link #setStripVersionsFromReferences(String)} and
      * any paths specified by this method will be encoded even if {@link #setStripVersionsFromReferences(String)} has
@@ -653,8 +651,8 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         }
 
         /**
-         * If provided, specifies the elements which should be encoded, to the exclusion of all others.
-         * Multiple elements can be separated by comma when using String parameter.
+         * If provided, specifies the elements which should be encoded, to the exclusion of all others. Multiple
+         * elements can be separated by comma when using String parameter.
          *
          * Valid values for this field would include:
          * <ul>
@@ -677,8 +675,8 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         }
 
         /**
-         * If provided, specifies the elements which should NOT be encoded.
-         * Multiple elements can be separated by comma when using String parameter.
+         * If provided, specifies the elements which should NOT be encoded. Multiple elements can be separated by comma
+         * when using String parameter.
          *
          * Valid values for this field would include:
          * <ul>
@@ -703,8 +701,8 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         }
 
         /**
-         * If provided, specifies the elements which should NOT be encoded.
-         * Multiple elements can be separated by comma when using String parameter.
+         * If provided, specifies the elements which should NOT be encoded. Multiple elements can be separated by comma
+         * when using String parameter.
          *
          * Valid values for this field would include:
          * <ul>
@@ -843,8 +841,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         /**
          * If supplied value(s), any resource references at the specified paths will have their resource versions
          * encoded instead of being automatically stripped during the encoding process. This setting has no effect on
-         * the parsing process.
-         * Multiple elements can be separated by comma when using String parameter.
+         * the parsing process. Multiple elements can be separated by comma when using String parameter.
          * <p>
          * This method provides a finer-grained level of control than {@link #setStripVersionsFromReferences(String)}
          * and any paths specified by this method will be encoded even if
@@ -869,8 +866,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         /**
          * If supplied value(s), any resource references at the specified paths will have their resource versions
          * encoded instead of being automatically stripped during the encoding process. This setting has no effect on
-         * the parsing process.
-         * Multiple elements can be separated by comma when using String parameter.
+         * the parsing process. Multiple elements can be separated by comma when using String parameter.
          * <p>
          * This method provides a finer-grained level of control than {@link #setStripVersionsFromReferences(String)}
          * and any paths specified by this method will be encoded even if
