@@ -10,6 +10,30 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 A route now have `<routeProperty>` in the top instead of the bottom.
 
+=== YAML DSL
+
+Using _allowed values_ in Rest with YAML DSL is fixed to use correct name as other DSLs.
+
+Before:
+
+[source,yaml]
+----
+    value:
+    - available
+    - pending
+    - sold
+----
+
+After:
+
+[source,yaml]
+----
+    allowedValues:
+    - available
+    - pending
+    - sold
+----
+
 == Upgrading Camel 3.19 to 3.20
 
 === camel-api
