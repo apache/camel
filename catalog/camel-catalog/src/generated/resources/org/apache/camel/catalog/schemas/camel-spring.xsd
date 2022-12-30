@@ -10392,6 +10392,21 @@ output as much as possible. Default value: false
           </xs:annotation>
         </xs:attribute>
                 
+        <xs:attribute name="preferTypes" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+If set (FQN class names), when parsing resources the parser will try to use the
+given types when possible, in the order that they are provided (from highest to
+lowest priority). For example, if a custom type which declares to implement the
+Patient resource is passed in here, and the parser is parsing a Bundle
+containing a Patient resource, the parser will use the given custom type.
+Multiple class names can be separated by comma.
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
         <xs:attribute name="serverBaseUrl" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -10431,12 +10446,13 @@ in that bundle). Default value: false
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="encodeElements">
+        <xs:attribute name="encodeElements" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
 If provided, specifies the elements which should be encoded, to the exclusion of
-all others. Valid values for this field would include: Patient - Encode patient
+all others. Multiple elements can be separated by comma when using String
+parameter. Valid values for this field would include: Patient - Encode patient
 and all its children Patient.name - Encode only the patient's name
 Patient.name.family - Encode only the patient's family name .text - Encode the
 text element on any resource (only the very first position may contain a
@@ -10445,37 +10461,24 @@ fields (min 0) to be encoded.
             ]]>
             </xs:documentation>
           </xs:annotation>
-                    
-          <xs:simpleType>
-                        
-            <xs:list itemType="xs:string"/>
-                      
-          </xs:simpleType>
-                  
         </xs:attribute>
                 
-        <xs:attribute name="dontEncodeElements">
+        <xs:attribute name="dontEncodeElements" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
-If provided, specifies the elements which should NOT be encoded. Valid values
-for this field would include: Patient - Don't encode patient and all its
-children Patient.name - Don't encode the patient's name Patient.name.family -
-Don't encode the patient's family name .text - Don't encode the text element on
-any resource (only the very first position may contain a wildcard) DSTU2 note:
-Note that values including meta, such as Patient.meta will work for DSTU2
-parsers, but values with subelements on meta such as Patient.meta.lastUpdated
-will only work in DSTU3 mode.
+If provided, specifies the elements which should NOT be encoded. Multiple
+elements can be separated by comma when using String parameter. Valid values for
+this field would include: Patient - Don't encode patient and all its children
+Patient.name - Don't encode the patient's name Patient.name.family - Don't
+encode the patient's family name .text - Don't encode the text element on any
+resource (only the very first position may contain a wildcard) DSTU2 note: Note
+that values including meta, such as Patient.meta will work for DSTU2 parsers,
+but values with subelements on meta such as Patient.meta.lastUpdated will only
+work in DSTU3 mode.
             ]]>
             </xs:documentation>
           </xs:annotation>
-                    
-          <xs:simpleType>
-                        
-            <xs:list itemType="xs:string"/>
-                      
-          </xs:simpleType>
-                  
         </xs:attribute>
                 
         <xs:attribute name="stripVersionsFromReferences" type="xs:string">
@@ -10532,13 +10535,14 @@ encoded values. Default value: false
           </xs:annotation>
         </xs:attribute>
                 
-        <xs:attribute name="dontStripVersionsFromReferencesAtPaths">
+        <xs:attribute name="dontStripVersionsFromReferencesAtPaths" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
 If supplied value(s), any resource references at the specified paths will have
 their resource versions encoded instead of being automatically stripped during
-the encoding process. This setting has no effect on the parsing process. This
+the encoding process. This setting has no effect on the parsing process.
+Multiple elements can be separated by comma when using String parameter. This
 method provides a finer-grained level of control than
 setStripVersionsFromReferences(String) and any paths specified by this method
 will be encoded even if setStripVersionsFromReferences(String) has been set to
@@ -10546,13 +10550,6 @@ true (which is the default).
             ]]>
             </xs:documentation>
           </xs:annotation>
-                    
-          <xs:simpleType>
-                        
-            <xs:list itemType="xs:string"/>
-                      
-          </xs:simpleType>
-                  
         </xs:attribute>
                 
         <xs:attribute name="contentTypeHeader" type="xs:string">
