@@ -12,7 +12,7 @@ A route now have `<routeProperty>` in the top instead of the bottom.
 
 === YAML DSL
 
-Using _allowed values_ in Rest with YAML DSL is fixed to use correct name as other DSLs.
+Using _allowable values_ in Rest with YAML DSL is fixed to use correct name as other DSLs.
 
 Before:
 
@@ -28,7 +28,7 @@ After:
 
 [source,yaml]
 ----
-    allowedValues:
+    allowableValues:
     - available
     - pending
     - sold
