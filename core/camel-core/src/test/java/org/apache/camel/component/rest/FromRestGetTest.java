@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.rest;
 
-import java.util.Arrays;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
