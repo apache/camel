@@ -22,6 +22,7 @@ import org.apache.camel.dsl.yaml.support.model.MyBean
 import org.apache.camel.dsl.yaml.support.model.MyFooBar
 import org.apache.camel.model.ToDefinition
 import org.apache.camel.model.rest.GetDefinition
+import org.apache.camel.model.rest.ParamDefinition
 import org.apache.camel.model.rest.PostDefinition
 import org.apache.camel.model.rest.RestDefinition
 import org.apache.camel.model.rest.VerbDefinition
@@ -187,4 +188,24 @@ class RestTest extends YamlTestSupport {
             context.restDefinitions != null
             !context.restDefinitions.isEmpty()
     }
+
+    def "load rest (allowableValues)"() {
+        setup:
+            def rloc = 'classpath:/routes/rest-allowable-values-dsl.yaml'
+            def rdsl = context.resourceLoader.resolveResource(rloc)
+        when:
+            loadRoutes rdsl
+        then:
+            context.restDefinitions != null
+            !context.restDefinitions.isEmpty()
+
+            with(context.restDefinitions[0].verbs[0].params[0], ParamDefinition) {
+                allowableValues.size() == 3
+                allowableValues[0].value == 'available'
+                allowableValues[1].value == 'pending'
+                allowableValues[2].value == 'sold'
+            }
+    }
+
+
 }

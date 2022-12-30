@@ -18,6 +18,7 @@ package org.apache.camel.maven.packaging;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
@@ -503,10 +505,8 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
             Set<EipOptionModel> eipOptions, String prefix) {
         String fieldName = fieldElement.getName();
         if (element != null) {
-
             Metadata metadata = fieldElement.getAnnotation(Metadata.class);
-
-            String name = fetchName(element.name(), fieldName, prefix);
+            String name = fetchElementName(element, fieldElement, prefix);
             Class<?> fieldTypeElement = fieldElement.getType();
             String fieldTypeName = getTypeName(GenericsUtil.resolveType(originalClassType, fieldElement));
             boolean isDuration = false;
@@ -1032,6 +1032,24 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         String name = elementRef;
         if (Strings.isNullOrEmpty(name) || "##default".equals(name)) {
             name = fieldName;
+        }
+        name = prefix + name;
+        return name;
+    }
+
+    private String fetchElementName(XmlElement element, Field fieldElement, String prefix) {
+        String fieldName = fieldElement.getName();
+        String name = element.name();
+        if (Strings.isNullOrEmpty(name) || "##default".equals(name)) {
+            name = fieldName;
+        }
+        // special for value definition which can be wrapped
+        if ("value".equals(name)) {
+            XmlElementWrapper wrapper = fieldElement.getAnnotation(XmlElementWrapper.class);
+            String n = wrapper.name();
+            if (!"##default".equals(n)) {
+                name = n;
+            }
         }
         name = prefix + name;
         return name;

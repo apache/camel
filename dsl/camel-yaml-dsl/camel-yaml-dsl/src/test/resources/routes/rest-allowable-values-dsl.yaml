@@ -1,0 +1,19 @@
+- rest:
+    path: /v3
+    get:
+      - param:
+          - name: status
+            type: query
+            dataType: string
+            defaultValue: available
+            description: Status values that need to be considered for filter
+            required: false
+            allowableValues:
+              - available
+              - pending
+              - sold
+        id: findPetsByStatus
+        path: /pet/findByStatus
+        description: Multiple status values can be provided with comma separated strings
+        produces: application/xml,application/json
+        to: direct:findPetsByStatus

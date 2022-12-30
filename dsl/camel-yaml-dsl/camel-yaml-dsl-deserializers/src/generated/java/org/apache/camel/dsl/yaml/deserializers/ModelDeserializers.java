@@ -96,6 +96,7 @@ import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.model.TryDefinition;
 import org.apache.camel.model.UnmarshalDefinition;
 import org.apache.camel.model.ValidateDefinition;
+import org.apache.camel.model.ValueDefinition;
 import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.WhenSkipSendToEndpointDefinition;
 import org.apache.camel.model.WireTapDefinition;
@@ -9949,17 +9950,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.ParamDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
+                    @YamlProperty(name = "allowable-values", type = "array:org.apache.camel.model.ValueDefinition"),
                     @YamlProperty(name = "array-type", type = "string"),
                     @YamlProperty(name = "collection-format", type = "enum:csv,multi,pipes,ssv,tsv"),
                     @YamlProperty(name = "data-format", type = "string"),
                     @YamlProperty(name = "data-type", type = "string"),
                     @YamlProperty(name = "default-value", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
-                    @YamlProperty(name = "examples", type = "array:org.apache.camel.model.rest.RestPropertyDefinition"),
                     @YamlProperty(name = "name", type = "string", required = true),
                     @YamlProperty(name = "required", type = "boolean"),
-                    @YamlProperty(name = "type", type = "enum:body,formData,header,path,query", required = true),
-                    @YamlProperty(name = "value", type = "array:string")
+                    @YamlProperty(name = "type", type = "enum:body,formData,header,path,query", required = true)
             }
     )
     public static class ParamDefinitionDeserializer extends YamlDeserializerBase<ParamDefinition> {
@@ -9976,8 +9976,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(ParamDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "value": {
-                    java.util.List<String> val = asStringList(node);
+                case "allowable-values": {
+                    java.util.List<org.apache.camel.model.ValueDefinition> val = asFlatList(node, org.apache.camel.model.ValueDefinition.class);
                     target.setAllowableValues(val);
                     break;
                 }
@@ -10008,11 +10008,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "description": {
                     String val = asText(node);
                     target.setDescription(val);
-                    break;
-                }
-                case "examples": {
-                    java.util.List<org.apache.camel.model.rest.RestPropertyDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestPropertyDefinition.class);
-                    target.setExamples(val);
                     break;
                 }
                 case "name": {
@@ -12217,14 +12212,14 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.rest.ResponseHeaderDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
+                    @YamlProperty(name = "allowable-values", type = "array:org.apache.camel.model.ValueDefinition"),
                     @YamlProperty(name = "array-type", type = "string"),
                     @YamlProperty(name = "collection-format", type = "enum:csv,multi,pipes,ssv,tsv"),
                     @YamlProperty(name = "data-format", type = "string"),
                     @YamlProperty(name = "data-type", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
                     @YamlProperty(name = "example", type = "string"),
-                    @YamlProperty(name = "name", type = "string", required = true),
-                    @YamlProperty(name = "value", type = "array:string")
+                    @YamlProperty(name = "name", type = "string", required = true)
             }
     )
     public static class ResponseHeaderDefinitionDeserializer extends YamlDeserializerBase<ResponseHeaderDefinition> {
@@ -12241,8 +12236,8 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(ResponseHeaderDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "value": {
-                    java.util.List<String> val = asStringList(node);
+                case "allowable-values": {
+                    java.util.List<org.apache.camel.model.ValueDefinition> val = asFlatList(node, org.apache.camel.model.ValueDefinition.class);
                     target.setAllowableValues(val);
                     break;
                 }
@@ -17977,6 +17972,45 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     }
                     existing.add(val);
                     target.setValidators(existing);
+                    break;
+                }
+                default: {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+
+    @YamlType(
+            nodes = "value",
+            inline = true,
+            types = org.apache.camel.model.ValueDefinition.class,
+            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
+            properties = @YamlProperty(name = "value", type = "string")
+    )
+    public static class ValueDefinitionDeserializer extends YamlDeserializerBase<ValueDefinition> {
+        public ValueDefinitionDeserializer() {
+            super(ValueDefinition.class);
+        }
+
+        @Override
+        protected ValueDefinition newInstance() {
+            return new ValueDefinition();
+        }
+
+        @Override
+        protected ValueDefinition newInstance(String value) {
+            return new ValueDefinition(value);
+        }
+
+        @Override
+        protected boolean setProperty(ValueDefinition target, String propertyKey,
+                String propertyName, Node node) {
+            switch(propertyKey) {
+                case "value": {
+                    String val = asText(node);
+                    target.setValue(val);
                     break;
                 }
                 default: {

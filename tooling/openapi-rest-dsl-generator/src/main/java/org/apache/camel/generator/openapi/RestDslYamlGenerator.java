@@ -251,6 +251,21 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
                         BooleanNode bn = xmlMapper.createObjectNode().booleanNode(b);
                         on.set("required", bn);
                     }
+                    String k = "allowableValues";
+                    r = pc.get(k);
+                    if (r == null) {
+                        k = "allowable-values";
+                        r = pc.get(k);
+                    }
+                    if (r != null) {
+                        // remove value node
+                        JsonNode v = r.get("value");
+                        if (v.isArray()) {
+                            ObjectNode on = (ObjectNode) pc;
+                            on.set(k, v);
+                            on.remove("value");
+                        }
+                    }
                 }
             }
         }

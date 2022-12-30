@@ -28,13 +28,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
 import org.apache.camel.model.language.XPathExpression;
+import org.apache.camel.model.rest.ParamDefinition;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.model.rest.VerbDefinition;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ModelParserTest {
 
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
-    private static final List<String> REST_XMLS = Arrays.asList("barRest.xml", "simpleRest.xml", "simpleRestToD.xml");
+    private static final List<String> REST_XMLS = Arrays.asList("barRest.xml", "simpleRest.xml", "simpleRestToD.xml", "restAllowedValues.xml");
     private static final List<String> TEMPLATE_XMLS = Arrays.asList("barTemplate.xml");
     private static final List<String> TEMPLATED_ROUTE_XMLS = Arrays.asList("barTemplatedRoute.xml");
 
@@ -160,6 +164,38 @@ public class ModelParserTest {
         Assertions.assertEquals(22, route.getInput().getLineNumber());
         Assertions.assertEquals(23, route.getOutputs().get(0).getLineNumber());
         Assertions.assertEquals(25, route.getOutputs().get(1).getLineNumber());
+    }
+
+    @Test
+    public void testRouteProperty() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile(), "routeProperty.xml").toPath();
+        ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+        RoutesDefinition routes = parser.parseRoutesDefinition().orElse(null);
+        assertNotNull(routes);
+        RouteDefinition route = routes.getRoutes().get(0);
+
+        PropertyDefinition p1 = route.getRouteProperties().get(0);
+        Assertions.assertEquals("a", p1.getKey());
+        Assertions.assertEquals("1", p1.getValue());
+        PropertyDefinition p2 = route.getRouteProperties().get(1);
+        Assertions.assertEquals("b", p2.getKey());
+        Assertions.assertEquals("2", p2.getValue());
+    }
+
+    @Test
+    public void testRestAllowedValues() throws Exception {
+        Path dir = getResourceFolder();
+        Path path = new File(dir.toFile(), "restAllowedValues.xml").toPath();
+        ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+        RestsDefinition rests = parser.parseRestsDefinition().orElse(null);
+        assertNotNull(rests);
+        RestDefinition rest = rests.getRests().get(0);
+        Assertions.assertEquals(2, rest.getVerbs().size());
+        VerbDefinition verb = rest.getVerbs().get(0);
+        Assertions.assertEquals(1, verb.getParams().size());
+        ParamDefinition param = verb.getParams().get(0);
+        Assertions.assertEquals(4, param.getAllowableValues().size());
     }
 
     private Path getResourceFolder() {

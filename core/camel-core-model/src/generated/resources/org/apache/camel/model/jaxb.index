@@ -105,5 +105,6 @@ TransformDefinition
 TryDefinition
 UnmarshalDefinition
 ValidateDefinition
+ValueDefinition
 WhenDefinition
 WireTapDefinition

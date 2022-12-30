@@ -3605,6 +3605,18 @@
           }
         }
       },
+      "org.apache.camel.model.ValueDefinition" : {
+        "oneOf" : [ {
+          "type" : "string"
+        }, {
+          "type" : "object",
+          "properties" : {
+            "value" : {
+              "type" : "string"
+            }
+          }
+        } ]
+      },
       "org.apache.camel.model.WhenDefinition" : {
         "type" : "object",
         "anyOf" : [ {
@@ -7339,6 +7351,12 @@
       "org.apache.camel.model.rest.ParamDefinition" : {
         "type" : "object",
         "properties" : {
+          "allowable-values" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ValueDefinition"
+            }
+          },
           "array-type" : {
             "type" : "string"
           },
@@ -7358,12 +7376,6 @@
           "description" : {
             "type" : "string"
           },
-          "examples" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestPropertyDefinition"
-            }
-          },
           "name" : {
             "type" : "string"
           },
@@ -7373,12 +7385,6 @@
           "type" : {
             "type" : "string",
             "enum" : [ "body", "formData", "header", "path", "query" ]
-          },
-          "value" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
           }
         },
         "required" : [ "name", "type" ]
@@ -7602,6 +7608,12 @@
       "org.apache.camel.model.rest.ResponseHeaderDefinition" : {
         "type" : "object",
         "properties" : {
+          "allowable-values" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.ValueDefinition"
+            }
+          },
           "array-type" : {
             "type" : "string"
           },
@@ -7623,12 +7635,6 @@
           },
           "name" : {
             "type" : "string"
-          },
-          "value" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
           }
         },
         "required" : [ "name" ]

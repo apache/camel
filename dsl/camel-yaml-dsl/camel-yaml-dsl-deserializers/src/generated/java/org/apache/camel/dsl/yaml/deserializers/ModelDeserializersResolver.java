@@ -524,6 +524,8 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.ValidateDefinition": return new ModelDeserializers.ValidateDefinitionDeserializer();
             case "validators": return new ModelDeserializers.ValidatorsDefinitionDeserializer();
             case "org.apache.camel.model.validator.ValidatorsDefinition": return new ModelDeserializers.ValidatorsDefinitionDeserializer();
+            case "value": return new ModelDeserializers.ValueDefinitionDeserializer();
+            case "org.apache.camel.model.ValueDefinition": return new ModelDeserializers.ValueDefinitionDeserializer();
             case "weighted": return new ModelDeserializers.WeightedLoadBalancerDefinitionDeserializer();
             case "org.apache.camel.model.loadbalancer.WeightedLoadBalancerDefinition": return new ModelDeserializers.WeightedLoadBalancerDefinitionDeserializer();
             case "when": return new ModelDeserializers.WhenDefinitionDeserializer();
