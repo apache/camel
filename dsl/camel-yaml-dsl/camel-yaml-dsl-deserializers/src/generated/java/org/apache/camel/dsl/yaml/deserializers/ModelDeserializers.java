@@ -7333,6 +7333,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.JsonApiDataFormat.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
+                    @YamlProperty(name = "data-format-types", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "main-format-type", type = "string")
             }
@@ -7352,7 +7353,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 String propertyName, Node node) {
             switch(propertyKey) {
                 case "data-format-types": {
-                    java.lang.Class<?>[] val = asClassArray(node);
+                    String val = asText(node);
                     target.setDataFormatTypes(val);
                     break;
                 }
@@ -7362,7 +7363,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "main-format-type": {
-                    java.lang.Class<?> val = asClass(node);
+                    String val = asText(node);
                     target.setMainFormatType(val);
                     break;
                 }
@@ -12529,7 +12530,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "api-vendor-extension": {
                     String val = asText(node);
-                    target.setApiVendorExtension(java.lang.Boolean.valueOf(val));
+                    target.setApiVendorExtension(val);
                     break;
                 }
                 case "binding-mode": {
@@ -12538,7 +12539,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "client-request-validation": {
                     String val = asText(node);
-                    target.setClientRequestValidation(java.lang.Boolean.valueOf(val));
+                    target.setClientRequestValidation(val);
                     break;
                 }
                 case "component": {
@@ -12573,7 +12574,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "enable-cors": {
                     String val = asText(node);
-                    target.setEnableCORS(java.lang.Boolean.valueOf(val));
+                    target.setEnableCORS(val);
                     break;
                 }
                 case "endpoint-property": {
@@ -12592,7 +12593,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "inline-routes": {
                     String val = asText(node);
-                    target.setInlineRoutes(java.lang.Boolean.valueOf(val));
+                    target.setInlineRoutes(val);
                     break;
                 }
                 case "json-data-format": {
@@ -12622,12 +12623,12 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "skip-binding-on-error-code": {
                     String val = asText(node);
-                    target.setSkipBindingOnErrorCode(java.lang.Boolean.valueOf(val));
+                    target.setSkipBindingOnErrorCode(val);
                     break;
                 }
                 case "use-x-forward-headers": {
                     String val = asText(node);
-                    target.setUseXForwardHeaders(java.lang.Boolean.valueOf(val));
+                    target.setUseXForwardHeaders(val);
                     break;
                 }
                 case "xml-data-format": {

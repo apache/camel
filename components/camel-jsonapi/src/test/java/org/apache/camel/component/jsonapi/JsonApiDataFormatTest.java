@@ -92,8 +92,8 @@ public class JsonApiDataFormatTest extends CamelTestSupport {
     public void testJsonApiUnmarshalWrongType() {
         Class<?>[] formats = { MyBook.class, MyAuthor.class };
         JsonApiDataFormat jsonApiDataFormat = new JsonApiDataFormat();
-        jsonApiDataFormat.setDataFormatTypes(formats);
-        jsonApiDataFormat.setMainFormatType(MyBook.class);
+        jsonApiDataFormat.setDataFormatTypeClasses(formats);
+        jsonApiDataFormat.setMainFormatTypeClass(MyBook.class);
 
         String jsonApiInput = "{\"data\":{\"type\":\"animal\",\"id\":\"camel\",\"attributes\":{\"humps\":\"2\"}}}";
 

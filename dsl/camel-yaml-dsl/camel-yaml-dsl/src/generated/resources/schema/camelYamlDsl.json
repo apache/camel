@@ -5116,6 +5116,9 @@
       "org.apache.camel.model.dataformat.JsonApiDataFormat" : {
         "type" : "object",
         "properties" : {
+          "dataFormatTypes" : {
+            "type" : "string"
+          },
           "id" : {
             "type" : "string"
           },
