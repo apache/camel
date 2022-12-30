@@ -2376,6 +2376,16 @@ To configure validators.
     </xs:annotation>
   </xs:element>
     
+  <xs:element name="value" type="tns:valueDefinition">
+    <xs:annotation>
+      <xs:documentation xml:lang="en">
+        <![CDATA[
+A single value
+      ]]>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+    
   <xs:element name="weighted" type="tns:weightedLoadBalancerDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en">
@@ -18956,6 +18966,12 @@ exception to throw instead.
       
   </xs:complexType>
     
+  <xs:simpleType name="valueDefinition">
+        
+    <xs:restriction base="xs:string"/>
+      
+  </xs:simpleType>
+    
   <xs:complexType name="wireTapDefinition">
         
     <xs:complexContent>
@@ -21387,7 +21403,7 @@ Sets the id of the route.
                     
           <xs:sequence>
                         
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="value" type="xs:string">
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="allowableValue" type="tns:valueDefinition">
               <xs:annotation>
                 <xs:documentation xml:lang="en">
                   <![CDATA[
@@ -21403,15 +21419,7 @@ Sets the parameter list of allowable values (enum).
               
       </xs:element>
             
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="examples" type="tns:restPropertyDefinition">
-        <xs:annotation>
-          <xs:documentation xml:lang="en">
-            <![CDATA[
-Sets the parameter examples.
-          ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="examples" nillable="true" type="tns:restPropertyDefinition"/>
           
     </xs:sequence>
         
@@ -21602,15 +21610,7 @@ The response model.
                     
           <xs:sequence>
                         
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="value" type="xs:string">
-              <xs:annotation>
-                <xs:documentation xml:lang="en">
-                  <![CDATA[
-Sets the parameter list of allowable values.
-                ]]>
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:value"/>
                       
           </xs:sequence>
                   

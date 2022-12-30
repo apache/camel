@@ -348,7 +348,7 @@ public class RestSwaggerReader {
                         SerializableParameter serializableParameter = (SerializableParameter) parameter;
 
                         final boolean isArray = param.getDataType().equalsIgnoreCase("array");
-                        final List<String> allowableValues = param.getAllowableValues();
+                        final List<String> allowableValues = param.getAllowableValuesAsStringList();
                         final boolean hasAllowableValues = allowableValues != null && !allowableValues.isEmpty();
                         if (param.getDataType() != null) {
                             serializableParameter.setType(param.getDataType());
@@ -530,8 +530,8 @@ public class RestSwaggerReader {
                             sp.setFormat(format);
                         }
                         sp.setDescription(header.getDescription());
-                        if (!header.getAllowableValues().isEmpty()) {
-                            sp.setEnum(header.getAllowableValues());
+                        if (header.getAllowableValues() != null) {
+                            sp.setEnum(header.getAllowableValuesAsStringList());
                         }
                         // add example
                         if (header.getExample() != null) {
@@ -547,9 +547,9 @@ public class RestSwaggerReader {
                         ip.setDescription(header.getDescription());
 
                         List<Integer> values;
-                        if (!header.getAllowableValues().isEmpty()) {
+                        if (header.getAllowableValues() != null) {
                             values = new ArrayList<>();
-                            for (String text : header.getAllowableValues()) {
+                            for (String text : header.getAllowableValuesAsStringList()) {
                                 values.add(Integer.valueOf(text));
                             }
                             ip.setEnum(values);
@@ -568,9 +568,9 @@ public class RestSwaggerReader {
                         lp.setDescription(header.getDescription());
 
                         List<Long> values;
-                        if (!header.getAllowableValues().isEmpty()) {
+                        if (header.getAllowableValues() != null) {
                             values = new ArrayList<>();
-                            for (String text : header.getAllowableValues()) {
+                            for (String text : header.getAllowableValuesAsStringList()) {
                                 values.add(Long.valueOf(text));
                             }
                             lp.setEnum(values);
@@ -589,9 +589,9 @@ public class RestSwaggerReader {
                         fp.setDescription(header.getDescription());
 
                         List<Float> values;
-                        if (!header.getAllowableValues().isEmpty()) {
+                        if (header.getAllowableValues() != null) {
                             values = new ArrayList<>();
-                            for (String text : header.getAllowableValues()) {
+                            for (String text : header.getAllowableValuesAsStringList()) {
                                 values.add(Float.valueOf(text));
                             }
                             fp.setEnum(values);
@@ -610,9 +610,9 @@ public class RestSwaggerReader {
                         dp.setDescription(header.getDescription());
 
                         List<Double> values;
-                        if (!header.getAllowableValues().isEmpty()) {
+                        if (header.getAllowableValues() != null) {
                             values = new ArrayList<>();
-                            for (String text : header.getAllowableValues()) {
+                            for (String text : header.getAllowableValuesAsStringList()) {
                                 values.add(Double.valueOf(text));
                             }
                             dp.setEnum(values);

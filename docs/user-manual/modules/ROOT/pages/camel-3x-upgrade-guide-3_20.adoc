@@ -4,6 +4,12 @@ This document is for helping you upgrade your Apache Camel application
 from Camel 3.x to 3.y. For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
 from both 3.0 to 3.1 and 3.1 to 3.2.
 
+== Upgrading Camel 3.20 to 3.20.1
+
+=== XML DSL
+
+A route now have `<routeProperty>` in the top instead of the bottom.
+
 == Upgrading Camel 3.19 to 3.20
 
 === camel-api

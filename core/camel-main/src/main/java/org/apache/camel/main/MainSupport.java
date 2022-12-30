@@ -314,8 +314,8 @@ public abstract class MainSupport extends BaseMainSupport {
 
     @Override
     protected void configureLifecycle(CamelContext camelContext) throws Exception {
-        if ((mainConfigurationProperties.getDurationMaxSeconds() > 0
-                && mainConfigurationProperties.isRoutesReloadRestartDuration())
+        if (mainConfigurationProperties.getDurationMaxSeconds() > 0
+                && mainConfigurationProperties.isRoutesReloadRestartDuration()
                 || mainConfigurationProperties.getDurationMaxMessages() > 0
                 || mainConfigurationProperties.getDurationMaxIdleSeconds() > 0) {
             // register lifecycle, so we can trigger to shutdown the JVM when maximum number of messages has been processed

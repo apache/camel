@@ -1554,6 +1554,9 @@ public class ModelParser extends BaseParser {
             return processorDefinitionAttributeHandler().accept(def, key, val);
         }, expressionNodeElementHandler(), noValueHandler());
     }
+    protected List<ValueDefinition> doParseValueDefinition() throws IOException, XmlPullParserException {
+        return doParseValue(() -> new ValueDefinition(), (def, val) -> def.setValue(val));
+    }
     protected WireTapDefinition doParseWireTapDefinition() throws IOException, XmlPullParserException {
         return doParse(new WireTapDefinition(), (def, key, val) -> {
             switch (key) {
@@ -2967,7 +2970,7 @@ public class ModelParser extends BaseParser {
             return true;
         }, (def, key) -> {
             switch (key) {
-                case "value": doAdd(doParseText(), def.getAllowableValues(), def::setAllowableValues); break;
+                case "allowableValues": doAddValues(doParseValueDefinition(), def.getAllowableValues(), def::setAllowableValues); break;
                 case "examples": doAdd(doParseRestPropertyDefinition(), def.getExamples(), def::setExamples); break;
                 default: return false;
             }
@@ -3077,8 +3080,8 @@ public class ModelParser extends BaseParser {
             }
             return true;
         }, (def, key) -> {
-            if ("value".equals(key)) {
-                doAdd(doParseText(), def.getAllowableValues(), def::setAllowableValues);
+            if ("allowableValues".equals(key)) {
+                doAddValues(doParseValueDefinition(), def.getAllowableValues(), def::setAllowableValues);
                 return true;
             }
             return false;

@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -138,6 +139,56 @@ public class BaseParser {
         }
     }
 
+    protected <T> List<T> doParseValue(Supplier<T> definitionSupplier, ValueHandler<T> valueHandler)
+            throws IOException, XmlPullParserException {
+
+        List<T> answer = new ArrayList<>();
+
+        while (true) {
+            int event = parser.next();
+            if (event == XmlPullParser.TEXT) {
+                if (!parser.isWhitespace()) {
+                    T definition = definitionSupplier.get();
+                    if (definition instanceof LineNumberAware) {
+                        // we want to get the line number where the tag starts (in case its multi-line)
+                        int line = parser.getStartLineNumber();
+                        if (line == -1) {
+                            line = parser.getLineNumber();
+                        }
+                        ((LineNumberAware) definition).setLineNumber(line);
+                        if (resource != null) {
+                            ((LineNumberAware) definition).setLocation(resource.getLocation());
+                        }
+                    }
+                    valueHandler.accept(definition, parser.getText());
+                    answer.add(definition);
+                }
+            } else if (event == XmlPullParser.START_TAG) {
+                String ns = parser.getNamespace();
+                String name = parser.getName();
+                if (Objects.equals(ns, namespace)) {
+                    if (!"value".equals(name)) {
+                        handleUnexpectedElement(ns, name);
+                    }
+                } else {
+                    handleUnexpectedElement(ns, name);
+                }
+            } else if (event == XmlPullParser.END_TAG) {
+                String ns = parser.getNamespace();
+                String name = parser.getName();
+                if (Objects.equals(ns, namespace)) {
+                    if ("value".equals(name)) {
+                        continue;
+                    }
+                }
+                return answer;
+            } else {
+                throw new XmlPullParserException(
+                        "expected START_TAG or END_TAG not " + XmlPullParser.TYPES[event], parser, null);
+            }
+        }
+    }
+
     protected Class<?> asClass(String val) throws XmlPullParserException {
         try {
             return Class.forName(val);
@@ -175,15 +226,12 @@ public class BaseParser {
         existing.add(element);
     }
 
-    @SuppressWarnings("unchecked")
-    protected <T> void doAdd(T element, T[] existing, Consumer<T[]> setter) {
-        int len = existing != null ? existing.length : 0;
-        T[] newArray = (T[]) Array.newInstance(element.getClass(), len + 1);
-        if (len > 0) {
-            System.arraycopy(existing, 0, newArray, 0, len);
+    protected <T> void doAddValues(List<T> elements, List<T> existing, Consumer<List<T>> setter) {
+        if (existing == null) {
+            existing = new ArrayList<>();
+            setter.accept(existing);
         }
-        newArray[len] = element;
-        setter.accept(newArray);
+        existing.addAll(elements);
     }
 
     protected String doParseText() throws IOException, XmlPullParserException {

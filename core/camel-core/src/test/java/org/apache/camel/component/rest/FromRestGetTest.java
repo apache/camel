@@ -73,8 +73,14 @@ public class FromRestGetTest extends ContextTestSupport {
 
         assertEquals("integer", rest.getVerbs().get(0).getParams().get(0).getDataType());
         assertEquals("string", rest.getVerbs().get(0).getParams().get(1).getDataType());
-        assertEquals(Arrays.asList("1", "2", "3", "4"), rest.getVerbs().get(0).getParams().get(0).getAllowableValues());
-        assertEquals(Arrays.asList("a", "b", "c", "d"), rest.getVerbs().get(0).getParams().get(1).getAllowableValues());
+        assertEquals("1", rest.getVerbs().get(0).getParams().get(0).getAllowableValues().get(0).getValue());
+        assertEquals("2", rest.getVerbs().get(0).getParams().get(0).getAllowableValues().get(1).getValue());
+        assertEquals("3", rest.getVerbs().get(0).getParams().get(0).getAllowableValues().get(2).getValue());
+        assertEquals("4", rest.getVerbs().get(0).getParams().get(0).getAllowableValues().get(3).getValue());
+        assertEquals("a", rest.getVerbs().get(0).getParams().get(1).getAllowableValues().get(0).getValue());
+        assertEquals("b", rest.getVerbs().get(0).getParams().get(1).getAllowableValues().get(1).getValue());
+        assertEquals("c", rest.getVerbs().get(0).getParams().get(1).getAllowableValues().get(2).getValue());
+        assertEquals("d", rest.getVerbs().get(0).getParams().get(1).getAllowableValues().get(3).getValue());
         assertEquals("1", rest.getVerbs().get(0).getParams().get(0).getDefaultValue());
         assertEquals("b", rest.getVerbs().get(0).getParams().get(1).getDefaultValue());
 

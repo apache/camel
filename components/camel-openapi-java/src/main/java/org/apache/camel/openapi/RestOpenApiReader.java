@@ -626,7 +626,7 @@ public class RestOpenApiReader {
                     Oas30Parameter parameter30 = (Oas30Parameter) parameter;
                     Oas30Schema oas30Schema = null;
                     final boolean isArray = getValue(camelContext, param.getDataType()).equalsIgnoreCase("array");
-                    final List<String> allowableValues = getValue(camelContext, param.getAllowableValues());
+                    final List<String> allowableValues = getValue(camelContext, param.getAllowableValuesAsStringList());
                     final boolean hasAllowableValues = allowableValues != null && !allowableValues.isEmpty();
                     if (param.getDataType() != null) {
                         parameter30.schema = parameter30.createSchema();
@@ -869,7 +869,7 @@ public class RestOpenApiReader {
 
                     Oas20Parameter serializableParameter = (Oas20Parameter) parameter;
                     final boolean isArray = getValue(camelContext, param.getDataType()).equalsIgnoreCase("array");
-                    final List<String> allowableValues = getValue(camelContext, param.getAllowableValues());
+                    final List<String> allowableValues = getValue(camelContext, param.getAllowableValuesAsStringList());
                     final boolean hasAllowableValues = allowableValues != null && !allowableValues.isEmpty();
                     if (param.getDataType() != null) {
                         serializableParameter.type = param.getDataType();
@@ -1234,9 +1234,9 @@ public class RestOpenApiReader {
         ip.description = getValue(camelContext, header.getDescription());
 
         List<String> values;
-        if (!header.getAllowableValues().isEmpty()) {
+        if (header.getAllowableValues() != null) {
             values = new ArrayList<>();
-            for (String text : header.getAllowableValues()) {
+            for (String text : header.getAllowableValuesAsStringList()) {
                 values.add(getValue(camelContext, text));
             }
             schema.enum_ = values;
@@ -1349,9 +1349,9 @@ public class RestOpenApiReader {
         ip.description = getValue(camelContext, header.getDescription());
 
         List<String> values;
-        if (!header.getAllowableValues().isEmpty()) {
+        if (header.getAllowableValues() != null) {
             values = new ArrayList<>();
-            for (String text : header.getAllowableValues()) {
+            for (String text : header.getAllowableValuesAsStringList()) {
                 values.add(getValue(camelContext, text));
             }
             ip.enum_ = values;

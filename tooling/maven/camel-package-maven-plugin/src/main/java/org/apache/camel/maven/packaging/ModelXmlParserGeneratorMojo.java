@@ -51,6 +51,7 @@ import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -378,6 +379,12 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                 String en = "##default";
                 if (((AccessibleObject)member).getAnnotation(XmlElement.class) != null) {
                     en = ((AccessibleObject)member).getAnnotation(XmlElement.class).name();
+                    // special for value which can be wrapped
+                    if ("value".equals(en)) {
+                        if (((AccessibleObject)member).getAnnotation(XmlElementWrapper.class) != null) {
+                            en = ((AccessibleObject)member).getAnnotation(XmlElementWrapper.class).name();
+                        }
+                    }
                 }
                 if ("##default".equals(en)) {
                     en = member instanceof Method ? propname(fn) : fn;
@@ -416,7 +423,13 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                     }
                     pc = n + ".valueOf(doParseText())";
                 }
-                cases.put(en, list ? "doAdd(" + pc + ", def." + gn + "(), def::" + sn + ");" : "def." + sn + "(" + pc + ");");
+
+                // special for allowableValues
+                if ("allowableValues".equals(en)) {
+                    cases.put(en, list ? "doAddValues(" + pc + ", def." + gn + "(), def::" + sn + ");" : "def." + sn + "(" + pc + ");");
+                } else {
+                    cases.put(en, list ? "doAdd(" + pc + ", def." + gn + "(), def::" + sn + ");" : "def." + sn + "(" + pc + ");");
+                }
             });
             String expressionHandler = null;
             for (Class<?> parent = clazz.getSuperclass(); parent != Object.class; parent = parent.getSuperclass()) {
@@ -536,8 +549,14 @@ public class ModelXmlParserGeneratorMojo extends AbstractGeneratorMojo {
                                  + (elementMembers.isEmpty() ? elements : lowercase(name) + "ElementHandler()") + "," + value + ");\n");
                 }
             } else {
-                parser.addMethod().setSignature("protected " + qname + " doParse" + name + "() throws IOException, XmlPullParserException")
-                    .setBody("return doParse(new " + qname + "()," + attributes + "," + elements + "," + value + ");\n");
+                // special for value definition
+                if ("ValueDefinition".equals(name)) {
+                    parser.addMethod().setSignature("protected List<" + qname + "> doParse" + name + "() throws IOException, XmlPullParserException")
+                            .setBody("return doParseValue(() -> new " + qname + "()" + "," + value + ");\n");
+                } else {
+                    parser.addMethod().setSignature("protected " + qname + " doParse" + name + "() throws IOException, XmlPullParserException")
+                            .setBody("return doParse(new " + qname + "()," + attributes + "," + elements + "," + value + ");\n");
+                }
             }
         }
 

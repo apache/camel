@@ -56,7 +56,7 @@ import org.apache.camel.spi.RoutePolicy;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "route")
-@XmlType(propOrder = { "input", "inputType", "outputType", "outputs", "routeProperties" })
+@XmlType(propOrder = { "routeProperties", "input", "inputType", "outputType", "outputs" })
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
 public class RouteDefinition extends OutputDefinition<RouteDefinition>
