@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.fhir;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -24,6 +25,8 @@ import ca.uhn.fhir.context.FhirVersionEnum;
 import ca.uhn.fhir.context.ParserOptions;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.parser.IParserErrorHandler;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatContentTypeHeader;
 import org.apache.camel.spi.DataFormatName;
@@ -32,7 +35,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 
-public abstract class FhirDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader {
+public abstract class FhirDataFormat extends ServiceSupport implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
+
+    private CamelContext camelContext;
 
     private FhirContext fhirContext;
     private String fhirVersion;
@@ -42,6 +47,7 @@ public abstract class FhirDataFormat extends ServiceSupport implements DataForma
     private String serverBaseUrl;
     private boolean prettyPrint;
     private List<Class<? extends IBaseResource>> preferTypes;
+    private String preferTypesNames;
     private boolean omitResourceId;
     private IIdType forceResourceId;
     private boolean encodeElementsAppliesToChildResourcesOnly;
@@ -52,6 +58,16 @@ public abstract class FhirDataFormat extends ServiceSupport implements DataForma
     private boolean summaryMode;
     private boolean suppressNarratives;
     private List<String> dontStripVersionsFromReferencesAtPaths;
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     public FhirContext getFhirContext() {
         return fhirContext;
@@ -115,6 +131,14 @@ public abstract class FhirDataFormat extends ServiceSupport implements DataForma
 
     public void setPreferTypes(List<Class<? extends IBaseResource>> preferTypes) {
         this.preferTypes = preferTypes;
+    }
+
+    public String getPreferTypesNames() {
+        return preferTypesNames;
+    }
+
+    public void setPreferTypesNames(String preferTypesNames) {
+        this.preferTypesNames = preferTypesNames;
     }
 
     public boolean isOmitResourceId() {
@@ -229,6 +253,17 @@ public abstract class FhirDataFormat extends ServiceSupport implements DataForma
         parser.setOmitResourceId(isOmitResourceId());
         parser.setPrettyPrint(isPrettyPrint());
         parser.setEncodeElementsAppliesToChildResourcesOnly(isEncodeElementsAppliesToChildResourcesOnly());
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        if (preferTypes == null && preferTypesNames != null) {
+            preferTypes = new ArrayList<>();
+            for (String name : preferTypesNames.split(",")) {
+                Class<IBaseResource> clazz = camelContext.getClassResolver().resolveMandatoryClass(name, IBaseResource.class);
+                preferTypes.add(clazz);
+            }
+        }
     }
 
     @Override

@@ -68,7 +68,7 @@ public class FhirDataformatConfigSpringTest extends CamelSpringTestSupport {
         assertTrue(fhirJson.getForceResourceId().getClass().isAssignableFrom(IdType.class));
         assertTrue(fhirJson.getParserErrorHandler().getClass().isAssignableFrom(LenientErrorHandler.class));
         assertTrue(fhirJson.getParserOptions().getClass().isAssignableFrom(ParserOptions.class));
-        assertNotNull(fhirJson.getPreferTypes());
+        assertNotNull(fhirJson.getPreferTypesNames());
         assertEquals("serverBaseUrl", fhirJson.getServerBaseUrl());
         assertTrue(fhirJson.getOverrideResourceIdWithBundleEntryFullUrl());
         assertTrue(fhirJson.getStripVersionsFromReferences());

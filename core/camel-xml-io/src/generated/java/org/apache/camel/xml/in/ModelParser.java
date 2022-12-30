@@ -2064,13 +2064,14 @@ public class ModelParser extends BaseParser {
         return (def, key, val) -> {
             switch (key) {
                 case "contentTypeHeader": def.setContentTypeHeader(val); break;
-                case "dontEncodeElements": def.setDontEncodeElements(asStringSet(val)); break;
-                case "dontStripVersionsFromReferencesAtPaths": def.setDontStripVersionsFromReferencesAtPaths(asStringList(val)); break;
-                case "encodeElements": def.setEncodeElements(asStringSet(val)); break;
+                case "dontEncodeElements": def.setDontEncodeElements(val); break;
+                case "dontStripVersionsFromReferencesAtPaths": def.setDontStripVersionsFromReferencesAtPaths(val); break;
+                case "encodeElements": def.setEncodeElements(val); break;
                 case "encodeElementsAppliesToChildResourcesOnly": def.setEncodeElementsAppliesToChildResourcesOnly(val); break;
                 case "fhirVersion": def.setFhirVersion(val); break;
                 case "omitResourceId": def.setOmitResourceId(val); break;
                 case "overrideResourceIdWithBundleEntryFullUrl": def.setOverrideResourceIdWithBundleEntryFullUrl(val); break;
+                case "preferTypes": def.setPreferTypes(val); break;
                 case "prettyPrint": def.setPrettyPrint(val); break;
                 case "serverBaseUrl": def.setServerBaseUrl(val); break;
                 case "stripVersionsFromReferences": def.setStripVersionsFromReferences(val); break;

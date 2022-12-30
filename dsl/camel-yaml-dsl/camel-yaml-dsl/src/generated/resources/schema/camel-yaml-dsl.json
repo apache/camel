@@ -4893,22 +4893,13 @@
             "type" : "boolean"
           },
           "dont-encode-elements" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+            "type" : "string"
           },
           "dont-strip-versions-from-references-at-paths" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+            "type" : "string"
           },
           "encode-elements" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+            "type" : "string"
           },
           "encode-elements-applies-to-child-resources-only" : {
             "type" : "boolean"
@@ -4925,6 +4916,9 @@
           },
           "override-resource-id-with-bundle-entry-full-url" : {
             "type" : "boolean"
+          },
+          "prefer-types" : {
+            "type" : "string"
           },
           "pretty-print" : {
             "type" : "boolean"
@@ -4950,22 +4944,13 @@
             "type" : "boolean"
           },
           "dont-encode-elements" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+            "type" : "string"
           },
           "dont-strip-versions-from-references-at-paths" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+            "type" : "string"
           },
           "encode-elements" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+            "type" : "string"
           },
           "encode-elements-applies-to-child-resources-only" : {
             "type" : "boolean"
@@ -4982,6 +4967,9 @@
           },
           "override-resource-id-with-bundle-entry-full-url" : {
             "type" : "boolean"
+          },
+          "prefer-types" : {
+            "type" : "string"
           },
           "pretty-print" : {
             "type" : "boolean"

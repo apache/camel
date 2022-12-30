@@ -4797,22 +4797,13 @@
             "type" : "boolean"
           },
           "dontEncodeElements" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+            "type" : "string"
           },
           "dontStripVersionsFromReferencesAtPaths" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+            "type" : "string"
           },
           "encodeElements" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+            "type" : "string"
           },
           "encodeElementsAppliesToChildResourcesOnly" : {
             "type" : "boolean"
@@ -4829,6 +4820,9 @@
           },
           "overrideResourceIdWithBundleEntryFullUrl" : {
             "type" : "boolean"
+          },
+          "preferTypes" : {
+            "type" : "string"
           },
           "prettyPrint" : {
             "type" : "boolean"
@@ -4854,22 +4848,13 @@
             "type" : "boolean"
           },
           "dontEncodeElements" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+            "type" : "string"
           },
           "dontStripVersionsFromReferencesAtPaths" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+            "type" : "string"
           },
           "encodeElements" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+            "type" : "string"
           },
           "encodeElementsAppliesToChildResourcesOnly" : {
             "type" : "boolean"
@@ -4886,6 +4871,9 @@
           },
           "overrideResourceIdWithBundleEntryFullUrl" : {
             "type" : "boolean"
+          },
+          "preferTypes" : {
+            "type" : "string"
           },
           "prettyPrint" : {
             "type" : "boolean"

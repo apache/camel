@@ -16,7 +16,11 @@
  */
 package org.apache.camel.reifier.dataformat;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
@@ -32,12 +36,9 @@ public class FhirDataFormatReifier<T extends FhirDataformat> extends DataFormatR
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
         properties.put("fhirContext", definition.getFhirContext());
         properties.put("fhirVersion", definition.getFhirVersion());
-        properties.put("dontStripVersionsFromReferencesAtPaths", definition.getDontStripVersionsFromReferencesAtPaths());
-        properties.put("dontEncodeElements", definition.getDontEncodeElements());
-        properties.put("encodeElements", definition.getEncodeElements());
         properties.put("serverBaseUrl", definition.getServerBaseUrl());
         properties.put("forceResourceId", definition.getForceResourceId());
-        properties.put("preferTypes", definition.getPreferTypes());
+        properties.put("preferTypesNames", definition.getPreferTypes());
         properties.put("parserOptions", definition.getParserOptions());
         properties.put("parserErrorHandler", definition.getParserErrorHandler());
         properties.put("encodeElementsAppliesToChildResourcesOnly", definition.getEncodeElementsAppliesToChildResourcesOnly());
@@ -47,6 +48,19 @@ public class FhirDataFormatReifier<T extends FhirDataformat> extends DataFormatR
         properties.put("summaryMode", definition.getSummaryMode());
         properties.put("overrideResourceIdWithBundleEntryFullUrl", definition.getOverrideResourceIdWithBundleEntryFullUrl());
         properties.put("stripVersionsFromReferences", definition.getStripVersionsFromReferences());
+        // convert string to list/set for the following options
+        if (definition.getDontStripVersionsFromReferencesAtPaths() != null) {
+            List<String> list = Arrays.stream(definition.getDontStripVersionsFromReferencesAtPaths().split(",")).collect(Collectors.toList());
+            properties.put("dontStripVersionsFromReferencesAtPaths", list);
+        }
+        if (definition.getDontEncodeElements() != null) {
+            Set<String> set = Arrays.stream(definition.getDontEncodeElements().split(",")).collect(Collectors.toSet());
+            properties.put("dontEncodeElements", set);
+        }
+        if (definition.getEncodeElements() != null) {
+            Set<String> set = Arrays.stream(definition.getEncodeElements().split(",")).collect(Collectors.toSet());
+            properties.put("encodeElements", set);
+        }
     }
 
 }
