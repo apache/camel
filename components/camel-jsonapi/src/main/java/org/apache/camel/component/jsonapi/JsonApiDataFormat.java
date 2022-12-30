@@ -18,9 +18,13 @@ package org.apache.camel.component.jsonapi;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.github.jasminb.jsonapi.JSONAPIDocument;
 import com.github.jasminb.jsonapi.ResourceConverter;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
@@ -31,21 +35,35 @@ import org.apache.camel.support.service.ServiceSupport;
  * JSonApi data format for marshal/unmarshal
  */
 @Dataformat("jsonApi")
-public class JsonApiDataFormat extends ServiceSupport implements DataFormat, DataFormatName {
+public class JsonApiDataFormat extends ServiceSupport implements DataFormat, DataFormatName, CamelContextAware {
 
-    private Class<?>[] dataFormatTypes;
-    private Class<?> mainFormatType;
+    private CamelContext camelContext;
+
+    private String dataFormatTypes;
+    private Class<?>[] dataFormatTypeClasses;
+    private String mainFormatType;
+    private Class<?> mainFormatTypeClass;
 
     public JsonApiDataFormat() {
     }
 
-    public JsonApiDataFormat(Class<?>[] dataFormatTypes) {
-        this.dataFormatTypes = dataFormatTypes;
+    public JsonApiDataFormat(Class<?>[] dataFormatTypesClasses) {
+        this.dataFormatTypeClasses = dataFormatTypesClasses;
     }
 
-    public JsonApiDataFormat(Class<?> mainFormatType, Class<?>[] dataFormatTypes) {
-        this.mainFormatType = mainFormatType;
-        this.dataFormatTypes = dataFormatTypes;
+    public JsonApiDataFormat(Class<?> mainFormatTypeClass, Class<?>[] dataFormatTypes) {
+        this.mainFormatTypeClass = mainFormatTypeClass;
+        this.dataFormatTypeClasses = dataFormatTypes;
+    }
+
+    @Override
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    @Override
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     @Override
@@ -55,16 +73,76 @@ public class JsonApiDataFormat extends ServiceSupport implements DataFormat, Dat
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        ResourceConverter converter = new ResourceConverter(dataFormatTypes);
+        ResourceConverter converter = new ResourceConverter(dataFormatTypeClasses);
         byte[] objectAsBytes = converter.writeDocument(new JSONAPIDocument<>(graph));
         stream.write(objectAsBytes);
     }
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        ResourceConverter converter = new ResourceConverter(dataFormatTypes);
-        JSONAPIDocument<?> jsonApiDocument = converter.readDocument(stream, mainFormatType);
+        ResourceConverter converter = new ResourceConverter(dataFormatTypeClasses);
+        JSONAPIDocument<?> jsonApiDocument = converter.readDocument(stream, mainFormatTypeClass);
         return jsonApiDocument.get();
+    }
+
+    public String getDataFormatTypes() {
+        return dataFormatTypes;
+    }
+
+    /**
+     * The classes (FQN name) to take into account for the marshalling.
+     * Multiple class names can be separated by comma.
+     */
+    public void setDataFormatTypes(String dataFormatTypes) {
+        this.dataFormatTypes = dataFormatTypes;
+    }
+
+    public Class<?>[] getDataFormatTypeClasses() {
+        return dataFormatTypeClasses;
+    }
+
+    /**
+     * The classes to take into account for the marshalling.
+     */
+    public void setDataFormatTypeClasses(Class<?>[] dataFormatTypeClasses) {
+        this.dataFormatTypeClasses = dataFormatTypeClasses;
+    }
+
+    public String getMainFormatType() {
+        return mainFormatType;
+    }
+
+    /**
+     * The class (FQN name) to take into account while unmarshalling
+     */
+    public void setMainFormatType(String mainFormatType) {
+        this.mainFormatType = mainFormatType;
+    }
+
+    public Class<?> getMainFormatTypeClass() {
+        return mainFormatTypeClass;
+    }
+
+    /**
+     * The class to take into account while unmarshalling
+     */
+    public void setMainFormatTypeClass(Class<?> mainFormatTypeClass) {
+        this.mainFormatTypeClass = mainFormatTypeClass;
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        if (dataFormatTypeClasses == null && dataFormatTypes != null) {
+            List<Class<?>> classes = new ArrayList<>();
+            for (String name : dataFormatTypes.split(",")) {
+                Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(name);
+                classes.add(clazz);
+            }
+            dataFormatTypeClasses = classes.toArray(new Class<?>[0]);
+        }
+        if (mainFormatTypeClass == null && mainFormatType != null) {
+            mainFormatTypeClass = getCamelContext().getClassResolver().resolveMandatoryClass(mainFormatType);
+        }
     }
 
     @Override
@@ -77,17 +155,4 @@ public class JsonApiDataFormat extends ServiceSupport implements DataFormat, Dat
         // noop
     }
 
-    /**
-     * The classes to take into account while marshalling
-     */
-    public void setDataFormatTypes(Class<?>[] dataFormatTypes) {
-        this.dataFormatTypes = dataFormatTypes;
-    }
-
-    /**
-     * The classes to take into account while unmarshalling
-     */
-    public void setMainFormatType(Class<?> mainFormatType) {
-        this.mainFormatType = mainFormatType;
-    }
 }

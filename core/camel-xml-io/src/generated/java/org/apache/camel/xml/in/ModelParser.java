@@ -2189,8 +2189,8 @@ public class ModelParser extends BaseParser {
     protected JsonApiDataFormat doParseJsonApiDataFormat() throws IOException, XmlPullParserException {
         return doParse(new JsonApiDataFormat(), (def, key, val) -> {
             switch (key) {
-                case "dataFormatTypes": def.setDataFormatTypes(asClassArray(val)); break;
-                case "mainFormatType": def.setMainFormatType(asClass(val)); break;
+                case "dataFormatTypes": def.setDataFormatTypes(val); break;
+                case "mainFormatType": def.setMainFormatType(val); break;
                 default: return identifiedTypeAttributeHandler().accept(def, key, val);
             }
             return true;
@@ -3093,22 +3093,22 @@ public class ModelParser extends BaseParser {
                 case "apiContextPath": def.setApiContextPath(val); break;
                 case "apiContextRouteId": def.setApiContextRouteId(val); break;
                 case "apiHost": def.setApiHost(val); break;
-                case "apiVendorExtension": def.setApiVendorExtension(Boolean.valueOf(val)); break;
+                case "apiVendorExtension": def.setApiVendorExtension(val); break;
                 case "bindingMode": def.setBindingMode(RestBindingMode.valueOf(val)); break;
-                case "clientRequestValidation": def.setClientRequestValidation(Boolean.valueOf(val)); break;
+                case "clientRequestValidation": def.setClientRequestValidation(val); break;
                 case "component": def.setComponent(val); break;
                 case "contextPath": def.setContextPath(val); break;
-                case "enableCORS": def.setEnableCORS(Boolean.valueOf(val)); break;
+                case "enableCORS": def.setEnableCORS(val); break;
                 case "host": def.setHost(val); break;
                 case "hostNameResolver": def.setHostNameResolver(RestHostNameResolver.valueOf(val)); break;
-                case "inlineRoutes": def.setInlineRoutes(Boolean.valueOf(val)); break;
+                case "inlineRoutes": def.setInlineRoutes(val); break;
                 case "jsonDataFormat": def.setJsonDataFormat(val); break;
                 case "port": def.setPort(val); break;
                 case "producerApiDoc": def.setProducerApiDoc(val); break;
                 case "producerComponent": def.setProducerComponent(val); break;
                 case "scheme": def.setScheme(val); break;
-                case "skipBindingOnErrorCode": def.setSkipBindingOnErrorCode(Boolean.valueOf(val)); break;
-                case "useXForwardHeaders": def.setUseXForwardHeaders(Boolean.valueOf(val)); break;
+                case "skipBindingOnErrorCode": def.setSkipBindingOnErrorCode(val); break;
+                case "useXForwardHeaders": def.setUseXForwardHeaders(val); break;
                 case "xmlDataFormat": def.setXmlDataFormat(val); break;
                 default: return false;
             }

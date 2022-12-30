@@ -59,8 +59,8 @@ public class RestConfigurationDefinition {
     @Metadata(label = "consumer,advanced")
     private String apiHost;
     @XmlAttribute
-    @Metadata(label = "consumer,advanced", defaultValue = "true")
-    private Boolean useXForwardHeaders;
+    @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "true")
+    private String useXForwardHeaders;
     @XmlAttribute
     @Metadata(label = "producer,advanced")
     private String producerApiDoc;
@@ -75,7 +75,7 @@ public class RestConfigurationDefinition {
     private String apiContextRouteId;
     @XmlAttribute
     @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
-    private Boolean apiVendorExtension;
+    private String apiVendorExtension;
     @XmlAttribute
     @Metadata(label = "consumer,advanced", defaultValue = "allLocalIp")
     private RestHostNameResolver hostNameResolver;
@@ -84,16 +84,16 @@ public class RestConfigurationDefinition {
     private RestBindingMode bindingMode;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
-    private Boolean skipBindingOnErrorCode;
+    private String skipBindingOnErrorCode;
     @XmlAttribute
     @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
-    private Boolean clientRequestValidation;
+    private String clientRequestValidation;
     @XmlAttribute
     @Metadata(label = "consumer,advanced", javaType = "java.lang.Boolean", defaultValue = "false")
-    private Boolean enableCORS;
+    private String enableCORS;
     @XmlAttribute
     @Metadata(label = "consumer", javaType = "java.lang.Boolean", defaultValue = "false")
-    private Boolean inlineRoutes;
+    private String inlineRoutes;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String jsonDataFormat;
@@ -272,7 +272,7 @@ public class RestConfigurationDefinition {
         this.apiContextRouteId = apiContextRouteId;
     }
 
-    public Boolean getApiVendorExtension() {
+    public String getApiVendorExtension() {
         return apiVendorExtension;
     }
 
@@ -281,7 +281,7 @@ public class RestConfigurationDefinition {
      * as vendor extension (eg keys starting with x-) such as route ids, class names etc. Not all 3rd party API gateways
      * and tools supports vendor-extensions when importing your API docs.
      */
-    public void setApiVendorExtension(Boolean apiVendorExtension) {
+    public void setApiVendorExtension(String apiVendorExtension) {
         this.apiVendorExtension = apiVendorExtension;
     }
 
@@ -310,7 +310,7 @@ public class RestConfigurationDefinition {
         this.bindingMode = bindingMode;
     }
 
-    public Boolean getSkipBindingOnErrorCode() {
+    public String getSkipBindingOnErrorCode() {
         return skipBindingOnErrorCode;
     }
 
@@ -318,11 +318,11 @@ public class RestConfigurationDefinition {
      * Whether to skip binding on output if there is a custom HTTP error code header. This allows to build custom error
      * messages that do not bind to json / xml etc, as success messages otherwise will do.
      */
-    public void setSkipBindingOnErrorCode(Boolean skipBindingOnErrorCode) {
+    public void setSkipBindingOnErrorCode(String skipBindingOnErrorCode) {
         this.skipBindingOnErrorCode = skipBindingOnErrorCode;
     }
 
-    public Boolean getClientRequestValidation() {
+    public String getClientRequestValidation() {
         return clientRequestValidation;
     }
 
@@ -334,11 +334,11 @@ public class RestConfigurationDefinition {
      * (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the
      * message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.
      */
-    public void setClientRequestValidation(Boolean clientRequestValidation) {
+    public void setClientRequestValidation(String clientRequestValidation) {
         this.clientRequestValidation = clientRequestValidation;
     }
 
-    public Boolean getEnableCORS() {
+    public String getEnableCORS() {
         return enableCORS;
     }
 
@@ -347,11 +347,11 @@ public class RestConfigurationDefinition {
      * <p/>
      * The default value is false.
      */
-    public void setEnableCORS(Boolean enableCORS) {
+    public void setEnableCORS(String enableCORS) {
         this.enableCORS = enableCORS;
     }
 
-    public Boolean getInlineRoutes() {
+    public String getInlineRoutes() {
         return inlineRoutes;
     }
 
@@ -364,7 +364,7 @@ public class RestConfigurationDefinition {
      *
      * This option is default <tt>false</tt>.
      */
-    public void setInlineRoutes(Boolean inlineRoutes) {
+    public void setInlineRoutes(String inlineRoutes) {
         this.inlineRoutes = inlineRoutes;
     }
 
@@ -469,7 +469,7 @@ public class RestConfigurationDefinition {
         this.corsHeaders = corsHeaders;
     }
 
-    public Boolean getUseXForwardHeaders() {
+    public String getUseXForwardHeaders() {
         return useXForwardHeaders;
     }
 
@@ -478,7 +478,7 @@ public class RestConfigurationDefinition {
      * <p/>
      * The default value is true.
      */
-    public void setUseXForwardHeaders(Boolean useXForwardHeaders) {
+    public void setUseXForwardHeaders(String useXForwardHeaders) {
         this.useXForwardHeaders = useXForwardHeaders;
     }
 
@@ -590,6 +590,16 @@ public class RestConfigurationDefinition {
      * support vendor extensions and this option can then be turned off.
      */
     public RestConfigurationDefinition apiVendorExtension(boolean vendorExtension) {
+        setApiVendorExtension(vendorExtension ? "true" : "false");
+        return this;
+    }
+
+    /**
+     * Whether vendor extension is enabled in the Rest APIs. If enabled then Camel will include additional information
+     * as vendor extension (eg keys starting with x-) such as route ids, class names etc. Some API tooling may not
+     * support vendor extensions and this option can then be turned off.
+     */
+    public RestConfigurationDefinition apiVendorExtension(String vendorExtension) {
         setApiVendorExtension(vendorExtension);
         return this;
     }
@@ -633,6 +643,14 @@ public class RestConfigurationDefinition {
      * To specify whether to skip binding output if there is a custom HTTP error code
      */
     public RestConfigurationDefinition skipBindingOnErrorCode(boolean skipBindingOnErrorCode) {
+        setSkipBindingOnErrorCode(skipBindingOnErrorCode ? "true" : "false");
+        return this;
+    }
+
+    /**
+     * To specify whether to skip binding output if there is a custom HTTP error code
+     */
+    public RestConfigurationDefinition skipBindingOnErrorCode(String skipBindingOnErrorCode) {
         setSkipBindingOnErrorCode(skipBindingOnErrorCode);
         return this;
     }
@@ -646,6 +664,19 @@ public class RestConfigurationDefinition {
      * message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.
      */
     public RestConfigurationDefinition clientRequestValidation(boolean clientRequestValidation) {
+        setClientRequestValidation(clientRequestValidation ? "true" : "false");
+        return this;
+    }
+
+    /**
+     * Whether to enable validation of the client request to check:
+     *
+     * 1) Content-Type header matches what the Rest DSL consumes; returns HTTP Status 415 if validation error. 2) Accept
+     * header matches what the Rest DSL produces; returns HTTP Status 406 if validation error. 3) Missing required data
+     * (query parameters, HTTP headers, body); returns HTTP Status 400 if validation error. 4) Parsing error of the
+     * message body (JSon, XML or Auto binding mode must be enabled); returns HTTP Status 400 if validation error.
+     */
+    public RestConfigurationDefinition clientRequestValidation(String clientRequestValidation) {
         setClientRequestValidation(clientRequestValidation);
         return this;
     }
@@ -655,6 +686,15 @@ public class RestConfigurationDefinition {
      * response.
      */
     public RestConfigurationDefinition enableCORS(boolean enableCORS) {
+        setEnableCORS(enableCORS ? "true" : "false");
+        return this;
+    }
+
+    /**
+     * To specify whether to enable CORS which means Camel will automatic include CORS in the HTTP headers in the
+     * response.
+     */
+    public RestConfigurationDefinition enableCORS(String enableCORS) {
         setEnableCORS(enableCORS);
         return this;
     }
@@ -668,8 +708,22 @@ public class RestConfigurationDefinition {
      *
      * This option is default <tt>false</tt>.
      */
-    public RestConfigurationDefinition inlineRoutes(boolean inlineRoutes) {
+    public RestConfigurationDefinition inlineRoutes(String inlineRoutes) {
         setInlineRoutes(inlineRoutes);
+        return this;
+    }
+
+    /**
+     * Inline routes in rest-dsl which are linked using direct endpoints.
+     *
+     * By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per
+     * service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as
+     * a single route, however this requires to use direct endpoints, which must be unique per service.
+     *
+     * This option is default <tt>false</tt>.
+     */
+    public RestConfigurationDefinition inlineRoutes(boolean inlineRoutes) {
+        setInlineRoutes(inlineRoutes ? "true" : "false");
         return this;
     }
 
@@ -786,6 +840,14 @@ public class RestConfigurationDefinition {
      * To specify whether to use X-Forward headers for Host and related setting
      */
     public RestConfigurationDefinition useXForwardHeaders(boolean useXForwardHeaders) {
+        setUseXForwardHeaders(useXForwardHeaders ? "true" : "false");
+        return this;
+    }
+
+    /**
+     * To specify whether to use X-Forward headers for Host and related setting
+     */
+    public RestConfigurationDefinition useXForwardHeaders(String useXForwardHeaders) {
         setUseXForwardHeaders(useXForwardHeaders);
         return this;
     }
@@ -818,7 +880,7 @@ public class RestConfigurationDefinition {
             target.setHost(CamelContextHelper.parseText(context, host));
         }
         if (useXForwardHeaders != null) {
-            target.setUseXForwardHeaders(useXForwardHeaders);
+            target.setUseXForwardHeaders(CamelContextHelper.parseBoolean(context, useXForwardHeaders));
         }
         if (apiHost != null) {
             target.setApiHost(CamelContextHelper.parseText(context, apiHost));
@@ -836,7 +898,7 @@ public class RestConfigurationDefinition {
             target.setApiContextRouteId(CamelContextHelper.parseText(context, apiContextRouteId));
         }
         if (apiVendorExtension != null) {
-            target.setApiVendorExtension(apiVendorExtension);
+            target.setApiVendorExtension(CamelContextHelper.parseBoolean(context, apiVendorExtension));
         }
         if (contextPath != null) {
             target.setContextPath(CamelContextHelper.parseText(context, contextPath));
@@ -848,16 +910,16 @@ public class RestConfigurationDefinition {
             target.setBindingMode(bindingMode.name());
         }
         if (skipBindingOnErrorCode != null) {
-            target.setSkipBindingOnErrorCode(skipBindingOnErrorCode);
+            target.setSkipBindingOnErrorCode(CamelContextHelper.parseBoolean(context, skipBindingOnErrorCode));
         }
         if (clientRequestValidation != null) {
-            target.setClientRequestValidation(clientRequestValidation);
+            target.setClientRequestValidation(CamelContextHelper.parseBoolean(context, clientRequestValidation));
         }
         if (enableCORS != null) {
-            target.setEnableCORS(enableCORS);
+            target.setEnableCORS(CamelContextHelper.parseBoolean(context, enableCORS));
         }
         if (inlineRoutes != null) {
-            target.setInlineRoutes(inlineRoutes);
+            target.setInlineRoutes(CamelContextHelper.parseBoolean(context, inlineRoutes));
         }
         if (jsonDataFormat != null) {
             target.setJsonDataFormat(jsonDataFormat);
