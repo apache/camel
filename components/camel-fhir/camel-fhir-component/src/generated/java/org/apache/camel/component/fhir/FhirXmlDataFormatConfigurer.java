@@ -26,6 +26,8 @@ public class FhirXmlDataFormatConfigurer extends PropertyConfigurerSupport imple
         case "serverBaseUrl": dataformat.setServerBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "prettyprint":
         case "prettyPrint": dataformat.setPrettyPrint(property(camelContext, boolean.class, value)); return true;
+        case "prefertypes":
+        case "preferTypes": dataformat.setPreferTypes(property(camelContext, java.util.List.class, value)); return true;
         case "omitresourceid":
         case "omitResourceId": dataformat.setOmitResourceId(property(camelContext, boolean.class, value)); return true;
         case "encodeelementsappliestochildresourcesonly":

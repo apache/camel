@@ -42,9 +42,9 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     @XmlTransient
     @Metadata(label = "advanced")
     private Object parserOptions;
-    @XmlTransient
+    @XmlAttribute
     @Metadata(label = "advanced")
-    private Object preferTypes;
+    private String preferTypes;
     @XmlTransient
     @Metadata(label = "advanced")
     private Object forceResourceId;
@@ -59,10 +59,10 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     private String encodeElementsAppliesToChildResourcesOnly;
     @XmlAttribute
     @Metadata(label = "advanced")
-    private Set<String> encodeElements;
+    private String encodeElements;
     @XmlAttribute
     @Metadata(label = "advanced")
-    private Set<String> dontEncodeElements;
+    private String dontEncodeElements;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "java.lang.Boolean")
     private String stripVersionsFromReferences;
@@ -77,7 +77,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     private String suppressNarratives;
     @XmlAttribute
     @Metadata(label = "advanced")
-    private List<String> dontStripVersionsFromReferencesAtPaths;
+    private String dontStripVersionsFromReferencesAtPaths;
     @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean", defaultValue = "true",
               description = "Whether the data format should set the Content-Type header with the type from the data format."
@@ -173,19 +173,21 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         this.parserOptions = parserOptions;
     }
 
-    public Object getPreferTypes() {
+    public String getPreferTypes() {
         return preferTypes;
     }
 
     /**
-     * If set, when parsing resources the parser will try to use the given types when possible, in the order that they
+     * If set (FQN class names), when parsing resources the parser will try to use the given types when possible, in the order that they
      * are provided (from highest to lowest priority). For example, if a custom type which declares to implement the
      * Patient resource is passed in here, and the parser is parsing a Bundle containing a Patient resource, the parser
      * will use the given custom type.
      *
+     * Multiple class names can be separated by comma.
+     *
      * @param preferTypes The preferred types, or <code>null</code>
      */
-    public void setPreferTypes(Object preferTypes) {
+    public void setPreferTypes(String preferTypes) {
         this.preferTypes = preferTypes;
     }
 
@@ -243,13 +245,15 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         this.encodeElementsAppliesToChildResourcesOnly = encodeElementsAppliesToChildResourcesOnly;
     }
 
-    public Set<String> getEncodeElements() {
+    public String getEncodeElements() {
         return encodeElements;
     }
 
     /**
-     * If provided, specifies the elements which should be encoded, to the exclusion of all others. Valid values for
-     * this field would include:
+     * If provided, specifies the elements which should be encoded, to the exclusion of all others.
+     * Multiple elements can be separated by comma when using String parameter.
+     *
+     * Valid values for this field would include:
      * <ul>
      * <li><b>Patient</b> - Encode patient and all its children</li>
      * <li><b>Patient.name</b> - Encode only the patient's name</li>
@@ -263,15 +267,39 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
      * @see                  #setDontEncodeElements(Set)
      */
     public void setEncodeElements(Set<String> encodeElements) {
+        this.encodeElements = String.join(",", encodeElements);
+    }
+
+    /**
+     * If provided, specifies the elements which should be encoded, to the exclusion of all others.
+     * Multiple elements can be separated by comma when using String parameter.
+     *
+     * Valid values for this field would include:
+     * <ul>
+     * <li><b>Patient</b> - Encode patient and all its children</li>
+     * <li><b>Patient.name</b> - Encode only the patient's name</li>
+     * <li><b>Patient.name.family</b> - Encode only the patient's family name</li>
+     * <li><b>*.text</b> - Encode the text element on any resource (only the very first position may contain a
+     * wildcard)</li>
+     * <li><b>*.(mandatory)</b> - This is a special case which causes any mandatory fields (min > 0) to be encoded</li>
+     * </ul>
+     *
+     * @param encodeElements The elements to encode
+     * @see                  #setDontEncodeElements(Set)
+     */
+    public void setEncodeElements(String encodeElements) {
         this.encodeElements = encodeElements;
     }
 
-    public Set<String> getDontEncodeElements() {
+    public String getDontEncodeElements() {
         return dontEncodeElements;
     }
 
     /**
-     * If provided, specifies the elements which should NOT be encoded. Valid values for this field would include:
+     * If provided, specifies the elements which should NOT be encoded.
+     * Multiple elements can be separated by comma when using String parameter.
+     *
+     * Valid values for this field would include:
      * <ul>
      * <li><b>Patient</b> - Don't encode patient and all its children</li>
      * <li><b>Patient.name</b> - Don't encode the patient's name</li>
@@ -284,10 +312,34 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
      * values with subelements on meta such as <code>Patient.meta.lastUpdated</code> will only work in DSTU3+ mode.
      * </p>
      *
-     * @param dontEncodeElements The elements to encode
+     * @param dontEncodeElements The elements to NOT encode
      * @see                      #setEncodeElements(Set)
      */
     public void setDontEncodeElements(Set<String> dontEncodeElements) {
+        this.dontEncodeElements = String.join(",", dontEncodeElements);
+    }
+
+    /**
+     * If provided, specifies the elements which should NOT be encoded.
+     * Multiple elements can be separated by comma when using String parameter.
+     *
+     * Valid values for this field would include:
+     * <ul>
+     * <li><b>Patient</b> - Don't encode patient and all its children</li>
+     * <li><b>Patient.name</b> - Don't encode the patient's name</li>
+     * <li><b>Patient.name.family</b> - Don't encode the patient's family name</li>
+     * <li><b>*.text</b> - Don't encode the text element on any resource (only the very first position may contain a
+     * wildcard)</li>
+     * </ul>
+     * <p>
+     * DSTU2 note: Note that values including meta, such as <code>Patient.meta</code> will work for DSTU2 parsers, but
+     * values with subelements on meta such as <code>Patient.meta.lastUpdated</code> will only work in DSTU3+ mode.
+     * </p>
+     *
+     * @param dontEncodeElements The elements to NOT encode
+     * @see                      #setEncodeElements(Set)
+     */
+    public void setDontEncodeElements(String dontEncodeElements) {
         this.dontEncodeElements = dontEncodeElements;
     }
 
@@ -359,7 +411,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         this.suppressNarratives = suppressNarratives;
     }
 
-    public List<String> getDontStripVersionsFromReferencesAtPaths() {
+    public String getDontStripVersionsFromReferencesAtPaths() {
         return dontStripVersionsFromReferencesAtPaths;
     }
 
@@ -367,6 +419,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
      * If supplied value(s), any resource references at the specified paths will have their resource versions encoded
      * instead of being automatically stripped during the encoding process. This setting has no effect on the parsing
      * process.
+     * Multiple elements can be separated by comma when using String parameter.
      * <p>
      * This method provides a finer-grained level of control than {@link #setStripVersionsFromReferences(String)} and
      * any paths specified by this method will be encoded even if {@link #setStripVersionsFromReferences(String)} has
@@ -383,6 +436,30 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
      * @see                                          #setStripVersionsFromReferences(String)
      */
     public void setDontStripVersionsFromReferencesAtPaths(List<String> dontStripVersionsFromReferencesAtPaths) {
+        this.dontStripVersionsFromReferencesAtPaths = String.join(",", dontStripVersionsFromReferencesAtPaths);
+    }
+
+    /**
+     * If supplied value(s), any resource references at the specified paths will have their resource versions encoded
+     * instead of being automatically stripped during the encoding process. This setting has no effect on the parsing
+     * process.
+     * Multiple elements can be separated by comma when using String parameter.
+     * <p>
+     * This method provides a finer-grained level of control than {@link #setStripVersionsFromReferences(String)} and
+     * any paths specified by this method will be encoded even if {@link #setStripVersionsFromReferences(String)} has
+     * been set to <code>true</code> (which is the default)
+     * </p>
+     *
+     * @param dontStripVersionsFromReferencesAtPaths A collection of paths for which the resource versions will not be
+     *                                               removed automatically when serializing, e.g.
+     *                                               "Patient.managingOrganization" or "AuditEvent.object.reference".
+     *                                               Note that only resource name and field names with dots separating
+     *                                               is allowed here (no repetition indicators, FluentPath expressions,
+     *                                               etc.). Set to <code>null</code> to use the value set in the
+     *                                               {@link #setParserOptions(Object)}
+     * @see                                          #setStripVersionsFromReferences(String)
+     */
+    public void setDontStripVersionsFromReferencesAtPaths(String dontStripVersionsFromReferencesAtPaths) {
         this.dontStripVersionsFromReferencesAtPaths = dontStripVersionsFromReferencesAtPaths;
     }
 
@@ -407,18 +484,18 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         private String prettyPrint;
         private Object parserErrorHandler;
         private Object parserOptions;
-        private Object preferTypes;
+        private String preferTypes;
         private Object forceResourceId;
         private String serverBaseUrl;
         private String omitResourceId;
         private String encodeElementsAppliesToChildResourcesOnly;
-        private Set<String> encodeElements;
-        private Set<String> dontEncodeElements;
+        private String encodeElements;
+        private String dontEncodeElements;
         private String stripVersionsFromReferences;
         private String overrideResourceIdWithBundleEntryFullUrl;
         private String summaryMode;
         private String suppressNarratives;
-        private List<String> dontStripVersionsFromReferencesAtPaths;
+        private String dontStripVersionsFromReferencesAtPaths;
         private String contentTypeHeader;
 
         public T fhirContext(Object fhirContext) {
@@ -484,7 +561,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
          *
          * @param preferTypes The preferred types, or <code>null</code>
          */
-        public T preferTypes(Object preferTypes) {
+        public T preferTypes(String preferTypes) {
             this.preferTypes = preferTypes;
             return (T) this;
         }
@@ -571,12 +648,39 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
          * @see                  #setDontEncodeElements(Set)
          */
         public T encodeElements(Set<String> encodeElements) {
+            this.encodeElements = String.join(",", encodeElements);
+            return (T) this;
+        }
+
+        /**
+         * If provided, specifies the elements which should be encoded, to the exclusion of all others.
+         * Multiple elements can be separated by comma when using String parameter.
+         *
+         * Valid values for this field would include:
+         * <ul>
+         * <li><b>Patient</b> - Encode patient and all its children</li>
+         * <li><b>Patient.name</b> - Encode only the patient's name</li>
+         * <li><b>Patient.name.family</b> - Encode only the patient's family name</li>
+         * <li><b>*.text</b> - Encode the text element on any resource (only the very first position may contain a
+         * wildcard)</li>
+         * <li><b>*.(mandatory)</b> - This is a special case which causes any mandatory fields (min > 0) to be
+         * encoded</li>
+         * </ul>
+         * Multiple elements can be separated by comma.
+         *
+         * @param encodeElements The elements to encode (multiple elements can be separated by comma)
+         * @see                  #setDontEncodeElements(Set)
+         */
+        public T encodeElements(String encodeElements) {
             this.encodeElements = encodeElements;
             return (T) this;
         }
 
         /**
-         * If provided, specifies the elements which should NOT be encoded. Valid values for this field would include:
+         * If provided, specifies the elements which should NOT be encoded.
+         * Multiple elements can be separated by comma when using String parameter.
+         *
+         * Valid values for this field would include:
          * <ul>
          * <li><b>Patient</b> - Don't encode patient and all its children</li>
          * <li><b>Patient.name</b> - Don't encode the patient's name</li>
@@ -590,10 +694,36 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
          * mode.
          * </p>
          *
-         * @param dontEncodeElements The elements to encode
+         * @param dontEncodeElements The elements to NOT encode (multiple elements can be separated by comma)
          * @see                      #setEncodeElements(Set)
          */
         public T dontEncodeElements(Set<String> dontEncodeElements) {
+            this.dontEncodeElements = String.join(",", dontEncodeElements);
+            return (T) this;
+        }
+
+        /**
+         * If provided, specifies the elements which should NOT be encoded.
+         * Multiple elements can be separated by comma when using String parameter.
+         *
+         * Valid values for this field would include:
+         * <ul>
+         * <li><b>Patient</b> - Don't encode patient and all its children</li>
+         * <li><b>Patient.name</b> - Don't encode the patient's name</li>
+         * <li><b>Patient.name.family</b> - Don't encode the patient's family name</li>
+         * <li><b>*.text</b> - Don't encode the text element on any resource (only the very first position may contain a
+         * wildcard)</li>
+         * </ul>
+         * <p>
+         * DSTU2 note: Note that values including meta, such as <code>Patient.meta</code> will work for DSTU2 parsers,
+         * but values with subelements on meta such as <code>Patient.meta.lastUpdated</code> will only work in DSTU3+
+         * mode.
+         * </p>
+         *
+         * @param dontEncodeElements The elements to NOT encode
+         * @see                      #setEncodeElements(Set)
+         */
+        public T dontEncodeElements(String dontEncodeElements) {
             this.dontEncodeElements = dontEncodeElements;
             return (T) this;
         }
@@ -714,6 +844,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
          * If supplied value(s), any resource references at the specified paths will have their resource versions
          * encoded instead of being automatically stripped during the encoding process. This setting has no effect on
          * the parsing process.
+         * Multiple elements can be separated by comma when using String parameter.
          * <p>
          * This method provides a finer-grained level of control than {@link #setStripVersionsFromReferences(String)}
          * and any paths specified by this method will be encoded even if
@@ -731,6 +862,32 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
          * @see                                          #setStripVersionsFromReferences(String)
          */
         public T dontStripVersionsFromReferencesAtPaths(List<String> dontStripVersionsFromReferencesAtPaths) {
+            this.dontStripVersionsFromReferencesAtPaths = String.join(",", dontStripVersionsFromReferencesAtPaths);
+            return (T) this;
+        }
+
+        /**
+         * If supplied value(s), any resource references at the specified paths will have their resource versions
+         * encoded instead of being automatically stripped during the encoding process. This setting has no effect on
+         * the parsing process.
+         * Multiple elements can be separated by comma when using String parameter.
+         * <p>
+         * This method provides a finer-grained level of control than {@link #setStripVersionsFromReferences(String)}
+         * and any paths specified by this method will be encoded even if
+         * {@link #setStripVersionsFromReferences(String)} has been set to <code>true</code> (which is the default)
+         * </p>
+         *
+         * @param dontStripVersionsFromReferencesAtPaths A collection of paths for which the resource versions will not
+         *                                               be removed automatically when serializing, e.g.
+         *                                               "Patient.managingOrganization" or
+         *                                               "AuditEvent.object.reference". Note that only resource name and
+         *                                               field names with dots separating is allowed here (no repetition
+         *                                               indicators, FluentPath expressions, etc.). Set to
+         *                                               <code>null</code> to use the value set in the
+         *                                               {@link #setParserOptions(Object)}
+         * @see                                          #setStripVersionsFromReferences(String)
+         */
+        public T dontStripVersionsFromReferencesAtPaths(String dontStripVersionsFromReferencesAtPaths) {
             this.dontStripVersionsFromReferencesAtPaths = dontStripVersionsFromReferencesAtPaths;
             return (T) this;
         }

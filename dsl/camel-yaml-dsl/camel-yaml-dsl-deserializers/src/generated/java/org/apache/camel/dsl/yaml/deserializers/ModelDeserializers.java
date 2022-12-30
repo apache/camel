@@ -5035,14 +5035,15 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "content-type-header", type = "boolean"),
-                    @YamlProperty(name = "dont-encode-elements", type = "array:string"),
-                    @YamlProperty(name = "dont-strip-versions-from-references-at-paths", type = "array:string"),
-                    @YamlProperty(name = "encode-elements", type = "array:string"),
+                    @YamlProperty(name = "dont-encode-elements", type = "string"),
+                    @YamlProperty(name = "dont-strip-versions-from-references-at-paths", type = "string"),
+                    @YamlProperty(name = "encode-elements", type = "string"),
                     @YamlProperty(name = "encode-elements-applies-to-child-resources-only", type = "boolean"),
                     @YamlProperty(name = "fhir-version", type = "enum:DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "omit-resource-id", type = "boolean"),
                     @YamlProperty(name = "override-resource-id-with-bundle-entry-full-url", type = "boolean"),
+                    @YamlProperty(name = "prefer-types", type = "string"),
                     @YamlProperty(name = "pretty-print", type = "boolean"),
                     @YamlProperty(name = "server-base-url", type = "string"),
                     @YamlProperty(name = "strip-versions-from-references", type = "boolean"),
@@ -5070,17 +5071,17 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "dont-encode-elements": {
-                    java.util.Set<String> val = asStringSet(node);
+                    String val = asText(node);
                     target.setDontEncodeElements(val);
                     break;
                 }
                 case "dont-strip-versions-from-references-at-paths": {
-                    java.util.List<String> val = asStringList(node);
+                    String val = asText(node);
                     target.setDontStripVersionsFromReferencesAtPaths(val);
                     break;
                 }
                 case "encode-elements": {
-                    java.util.Set<String> val = asStringSet(node);
+                    String val = asText(node);
                     target.setEncodeElements(val);
                     break;
                 }
@@ -5107,6 +5108,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "override-resource-id-with-bundle-entry-full-url": {
                     String val = asText(node);
                     target.setOverrideResourceIdWithBundleEntryFullUrl(val);
+                    break;
+                }
+                case "prefer-types": {
+                    String val = asText(node);
+                    target.setPreferTypes(val);
                     break;
                 }
                 case "pretty-print": {
@@ -5151,14 +5157,15 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "content-type-header", type = "boolean"),
-                    @YamlProperty(name = "dont-encode-elements", type = "array:string"),
-                    @YamlProperty(name = "dont-strip-versions-from-references-at-paths", type = "array:string"),
-                    @YamlProperty(name = "encode-elements", type = "array:string"),
+                    @YamlProperty(name = "dont-encode-elements", type = "string"),
+                    @YamlProperty(name = "dont-strip-versions-from-references-at-paths", type = "string"),
+                    @YamlProperty(name = "encode-elements", type = "string"),
                     @YamlProperty(name = "encode-elements-applies-to-child-resources-only", type = "boolean"),
                     @YamlProperty(name = "fhir-version", type = "enum:DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "omit-resource-id", type = "boolean"),
                     @YamlProperty(name = "override-resource-id-with-bundle-entry-full-url", type = "boolean"),
+                    @YamlProperty(name = "prefer-types", type = "string"),
                     @YamlProperty(name = "pretty-print", type = "boolean"),
                     @YamlProperty(name = "server-base-url", type = "string"),
                     @YamlProperty(name = "strip-versions-from-references", type = "boolean"),
@@ -5186,17 +5193,17 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     break;
                 }
                 case "dont-encode-elements": {
-                    java.util.Set<String> val = asStringSet(node);
+                    String val = asText(node);
                     target.setDontEncodeElements(val);
                     break;
                 }
                 case "dont-strip-versions-from-references-at-paths": {
-                    java.util.List<String> val = asStringList(node);
+                    String val = asText(node);
                     target.setDontStripVersionsFromReferencesAtPaths(val);
                     break;
                 }
                 case "encode-elements": {
-                    java.util.Set<String> val = asStringSet(node);
+                    String val = asText(node);
                     target.setEncodeElements(val);
                     break;
                 }
@@ -5223,6 +5230,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "override-resource-id-with-bundle-entry-full-url": {
                     String val = asText(node);
                     target.setOverrideResourceIdWithBundleEntryFullUrl(val);
+                    break;
+                }
+                case "prefer-types": {
+                    String val = asText(node);
+                    target.setPreferTypes(val);
                     break;
                 }
                 case "pretty-print": {

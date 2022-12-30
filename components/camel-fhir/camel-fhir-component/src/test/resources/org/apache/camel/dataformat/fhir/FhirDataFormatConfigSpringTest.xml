@@ -49,29 +49,10 @@
     <property name="overrideResourceIdWithBundleEntryFullUrl" value="TRUE" />
     <property name="summaryMode" value="TRUE" />
     <property name="suppressNarratives" value="TRUE" />
-    <property name="dontStripVersionsFromReferencesAtPaths">
-      <list>
-        <value>foo</value>
-        <value>bar</value>
-      </list>
-    </property>
-    <property name="preferTypes">
-      <list>
-        <ref bean="patient"/>
-      </list>
-    </property>
-    <property name="encodeElements">
-      <set>
-        <value>foo</value>
-        <value>bar</value>
-      </set>
-    </property>
-    <property name="dontEncodeElements">
-      <set>
-        <value>foo</value>
-        <value>bar</value>
-      </set>
-    </property>
+    <property name="dontStripVersionsFromReferencesAtPaths" value="foo,bar"/>
+    <property name="preferTypes" value="org.hl7.fhir.r4.model.Patient"/>
+    <property name="encodeElements" value="foo,bar"/>
+    <property name="dontEncodeElements" value="foo,bar"/>
   </bean>
   <bean id="fhirJson" class="org.apache.camel.model.dataformat.FhirJsonDataFormat">
     <property name="parserErrorHandler" ref="errorHandler" />
@@ -86,35 +67,15 @@
     <property name="overrideResourceIdWithBundleEntryFullUrl" value="TRUE" />
     <property name="summaryMode" value="TRUE" />
     <property name="suppressNarratives" value="TRUE" />
-    <property name="dontStripVersionsFromReferencesAtPaths">
-      <list>
-        <value>foo</value>
-        <value>bar</value>
-      </list>
-    </property>
-    <property name="preferTypes">
-      <list>
-        <ref bean="patient"/>
-      </list>
-    </property>
-    <property name="encodeElements">
-      <set>
-        <value>foo</value>
-        <value>bar</value>
-      </set>
-    </property>
-    <property name="dontEncodeElements">
-      <set>
-        <value>foo</value>
-        <value>bar</value>
-      </set>
-    </property>
+    <property name="dontStripVersionsFromReferencesAtPaths" value="foo,bar"/>
+    <property name="preferTypes" value="org.hl7.fhir.r4.model.Patient"/>
+    <property name="encodeElements" value="foo,bar"/>
+    <property name="dontEncodeElements" value="foo,bar"/>
   </bean>
 
   <bean id="fhirContext" class="ca.uhn.fhir.context.FhirContext" factory-method="forR4"/>
   <bean id ="errorHandler" class="ca.uhn.fhir.parser.LenientErrorHandler"/>
   <bean id="parserOptions" class="ca.uhn.fhir.context.ParserOptions" />
   <bean id="forceResourceId" class="org.hl7.fhir.r4.model.IdType" />
-  <bean id="patient" class="org.hl7.fhir.r4.model.Patient" />
 
 </beans>
