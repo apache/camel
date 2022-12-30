@@ -61,8 +61,7 @@ public class JsonApiDataFormat extends DataFormatDefinition {
     }
 
     /**
-     * The classes to take into account for the marshalling.
-     * Multiple classes can be separated by comma.
+     * The classes to take into account for the marshalling. Multiple classes can be separated by comma.
      */
     public void setDataFormatTypes(String dataFormatTypes) {
         this.dataFormatTypes = dataFormatTypes;
@@ -121,8 +120,8 @@ public class JsonApiDataFormat extends DataFormatDefinition {
         }
 
         /**
-         * The classes (FQN name) to take into account for the marshalling.
-         * Multiple class names can be separated by comma.
+         * The classes (FQN name) to take into account for the marshalling. Multiple class names can be separated by
+         * comma.
          */
         public Builder dataFormatTypes(String dataFormatTypes) {
             this.dataFormatTypes = dataFormatTypes;

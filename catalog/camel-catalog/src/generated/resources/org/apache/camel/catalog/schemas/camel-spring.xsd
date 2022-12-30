@@ -11549,28 +11549,22 @@ true
                 
         <xs:sequence/>
                 
-        <xs:attribute name="dataFormatTypes">
+        <xs:attribute name="dataFormatTypes" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
-The classes to take into account for the marshalling.
+The classes to take into account for the marshalling. Multiple classes can be
+separated by comma.
             ]]>
             </xs:documentation>
           </xs:annotation>
-                    
-          <xs:simpleType>
-                        
-            <xs:list itemType="xs:string"/>
-                      
-          </xs:simpleType>
-                  
         </xs:attribute>
                 
         <xs:attribute name="mainFormatType" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
               <![CDATA[
-The classes to take into account while unmarshalling.
+The class to take into account while unmarshalling.
             ]]>
             </xs:documentation>
           </xs:annotation>
@@ -16001,6 +15995,8 @@ Reference to the routes in the xml dsl.
                 
         <xs:sequence>
                     
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="routeProperty" type="tns:propertyDefinition"/>
+                    
           <xs:element minOccurs="0" ref="tns:from"/>
                     
           <xs:element minOccurs="0" ref="tns:inputType"/>
@@ -16144,8 +16140,6 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:serviceCall"/>
                       
           </xs:choice>
-                    
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="routeProperty" type="tns:propertyDefinition"/>
                   
         </xs:sequence>
                 
@@ -21398,20 +21392,19 @@ Sets the id of the route.
     <xs:sequence>
             
       <xs:element minOccurs="0" name="allowableValues">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            <![CDATA[
+Sets the parameter list of allowable values (enum).
+          ]]>
+          </xs:documentation>
+        </xs:annotation>
                 
         <xs:complexType>
                     
           <xs:sequence>
                         
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="allowableValue" type="tns:valueDefinition">
-              <xs:annotation>
-                <xs:documentation xml:lang="en">
-                  <![CDATA[
-Sets the parameter list of allowable values (enum).
-                ]]>
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:value"/>
                       
           </xs:sequence>
                   
@@ -21605,6 +21598,13 @@ The response model.
     <xs:sequence>
             
       <xs:element minOccurs="0" name="allowableValues">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            <![CDATA[
+Sets the parameter list of allowable values.
+          ]]>
+          </xs:documentation>
+        </xs:annotation>
                 
         <xs:complexType>
                     
@@ -22177,7 +22177,7 @@ hostname.
       </xs:annotation>
     </xs:attribute>
         
-    <xs:attribute name="useXForwardHeaders" type="xs:boolean">
+    <xs:attribute name="useXForwardHeaders" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
           <![CDATA[
@@ -22237,7 +22237,7 @@ will by default use an auto assigned route id.
       </xs:annotation>
     </xs:attribute>
         
-    <xs:attribute name="apiVendorExtension" type="xs:boolean">
+    <xs:attribute name="apiVendorExtension" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
           <![CDATA[
@@ -22271,7 +22271,7 @@ Sets the binding mode to use. The default value is off. Default value: off
       </xs:annotation>
     </xs:attribute>
         
-    <xs:attribute name="skipBindingOnErrorCode" type="xs:boolean">
+    <xs:attribute name="skipBindingOnErrorCode" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
           <![CDATA[
@@ -22283,7 +22283,7 @@ as success messages otherwise will do. Default value: false
       </xs:annotation>
     </xs:attribute>
         
-    <xs:attribute name="clientRequestValidation" type="xs:boolean">
+    <xs:attribute name="clientRequestValidation" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
           <![CDATA[
@@ -22299,7 +22299,7 @@ Status 400 if validation error. Default value: false
       </xs:annotation>
     </xs:attribute>
         
-    <xs:attribute name="enableCORS" type="xs:boolean">
+    <xs:attribute name="enableCORS" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
           <![CDATA[
@@ -22310,7 +22310,7 @@ Default value: false
       </xs:annotation>
     </xs:attribute>
         
-    <xs:attribute name="inlineRoutes" type="xs:boolean">
+    <xs:attribute name="inlineRoutes" type="xs:string">
       <xs:annotation>
         <xs:documentation xml:lang="en">
           <![CDATA[
