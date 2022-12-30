@@ -590,9 +590,6 @@ public class SmppConfiguration implements Cloneable {
      * Set this on producer in order to benefit from transceiver (TRX) binding type. So once set, you don't need to
      * define an 'SMTPP consumer' endpoint anymore. You would set this to a 'Direct consumer' endpoint instead.
      *
-     * Example: from(...)....to("smpp://...&messageReceiverRouteId=sampleMessageReceiverRouteId");
-     * from("direct:sampleMessageReceiver).id("sampleMessageReceiverRouteId")...;
-     *
      * DISCALIMER: This feature is only tested with 'Direct consumer' endpoint. The behavior with any other consumer
      * type is unknown and not tested.
      */
