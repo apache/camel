@@ -90,8 +90,7 @@ public class JsonApiDataFormat extends ServiceSupport implements DataFormat, Dat
     }
 
     /**
-     * The classes (FQN name) to take into account for the marshalling.
-     * Multiple class names can be separated by comma.
+     * The classes (FQN name) to take into account for the marshalling. Multiple class names can be separated by comma.
      */
     public void setDataFormatTypes(String dataFormatTypes) {
         this.dataFormatTypes = dataFormatTypes;
