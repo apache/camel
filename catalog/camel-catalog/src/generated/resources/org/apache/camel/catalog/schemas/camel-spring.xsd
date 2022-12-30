@@ -15986,6 +15986,8 @@ Reference to the routes in the xml dsl.
                 
         <xs:sequence>
                     
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="routeProperty" type="tns:propertyDefinition"/>
+                    
           <xs:element minOccurs="0" ref="tns:from"/>
                     
           <xs:element minOccurs="0" ref="tns:inputType"/>
@@ -16129,8 +16131,6 @@ Reference to the routes in the xml dsl.
             <xs:element ref="tns:serviceCall"/>
                       
           </xs:choice>
-                    
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="routeProperty" type="tns:propertyDefinition"/>
                   
         </xs:sequence>
                 
@@ -21383,20 +21383,19 @@ Sets the id of the route.
     <xs:sequence>
             
       <xs:element minOccurs="0" name="allowableValues">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            <![CDATA[
+Sets the parameter list of allowable values (enum).
+          ]]>
+          </xs:documentation>
+        </xs:annotation>
                 
         <xs:complexType>
                     
           <xs:sequence>
                         
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="allowableValue" type="tns:valueDefinition">
-              <xs:annotation>
-                <xs:documentation xml:lang="en">
-                  <![CDATA[
-Sets the parameter list of allowable values (enum).
-                ]]>
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" ref="tns:value"/>
                       
           </xs:sequence>
                   
@@ -21590,6 +21589,13 @@ The response model.
     <xs:sequence>
             
       <xs:element minOccurs="0" name="allowableValues">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            <![CDATA[
+Sets the parameter list of allowable values.
+          ]]>
+          </xs:documentation>
+        </xs:annotation>
                 
         <xs:complexType>
                     

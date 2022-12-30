@@ -20,7 +20,7 @@
     "arrayType": { "kind": "attribute", "displayName": "Array Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "string", "description": "Sets the parameter array type. Required if data type is array. Describes the type of items in the array." },
     "dataType": { "kind": "attribute", "displayName": "Data Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "string", "description": "Sets the parameter data type." },
     "dataFormat": { "kind": "attribute", "displayName": "Data Format", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the parameter data format." },
-    "allowableValue": { "kind": "element", "displayName": "Allowable Value", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.ValueDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the parameter list of allowable values (enum)." },
+    "allowableValues": { "kind": "element", "displayName": "Allowable Values", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.ValueDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the parameter list of allowable values (enum)." },
     "description": { "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the parameter description." }
   }
 }
