@@ -94,7 +94,7 @@ mvn camel-karaf:run
 
 Support of deprecated use of named dataSource in the URI has been removed.
 
-You have to use `sql:select * from table where id=# order by name?dataSource=#myDS` instead of `sql:select * from table where id=# order by name?dataSource=myDS`.
+You have to use `sql:select * from table where id=# order by name?dataSource=\#myDS` instead of `sql:select * from table where id=# order by name?dataSource=myDS`.
 
 === Spring Boot Starters
 
