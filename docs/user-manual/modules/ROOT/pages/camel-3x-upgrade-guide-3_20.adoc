@@ -34,6 +34,18 @@ After:
     - sold
 ----
 
+=== camel-fhir
+
+The following 4 advanced options in fhir data format has been made available for all DSLs:
+
+- fhirContext
+- parserErrorHandler
+- parserOptions
+- forceResourceId
+
+Previously they were only possible to configure by manually creating a bean instance of the model,
+and configure them via Java code or classic Spring XML `<bean>` style.
+
 == Upgrading Camel 3.19 to 3.20
 
 === camel-api

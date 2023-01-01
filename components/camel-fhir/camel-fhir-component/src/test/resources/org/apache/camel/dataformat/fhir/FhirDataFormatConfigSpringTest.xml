@@ -37,9 +37,9 @@
   </camelContext>
 
   <bean id="fhirXml" class="org.apache.camel.model.dataformat.FhirXmlDataFormat">
-    <property name="parserErrorHandler" ref="errorHandler" />
-    <property name="parserOptions" ref="parserOptions" />
-    <property name="forceResourceId" ref="forceResourceId" />
+    <property name="parserErrorHandler" value="#bean:errorHandler" />
+    <property name="parserOptions" value="#bean:parserOptions" />
+    <property name="forceResourceId" value="#bean:forceResourceId" />
     <property name="fhirContext" value="#bean:fhirContext"/>
     <property name="serverBaseUrl" value="serverBaseUrl"/>
     <property name="prettyPrint" value="TRUE" />
@@ -55,9 +55,9 @@
     <property name="dontEncodeElements" value="foo,bar"/>
   </bean>
   <bean id="fhirJson" class="org.apache.camel.model.dataformat.FhirJsonDataFormat">
-    <property name="parserErrorHandler" ref="errorHandler" />
-    <property name="parserOptions" ref="parserOptions" />
-    <property name="forceResourceId" ref="forceResourceId" />
+    <property name="parserErrorHandler" value="errorHandler" />
+    <property name="parserOptions" value="parserOptions" />
+    <property name="forceResourceId" value="forceResourceId" />
     <property name="fhirContext" value="#bean:fhirContext"/>
     <property name="serverBaseUrl" value="serverBaseUrl"/>
     <property name="prettyPrint" value="TRUE" />

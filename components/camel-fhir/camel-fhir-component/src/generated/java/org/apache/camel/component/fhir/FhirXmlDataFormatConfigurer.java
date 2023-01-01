@@ -18,10 +18,16 @@ public class FhirXmlDataFormatConfigurer extends PropertyConfigurerSupport imple
     public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
         FhirXmlDataFormat dataformat = (FhirXmlDataFormat) target;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "fhircontext":
+        case "fhirContext": dataformat.setFhirContext(property(camelContext, ca.uhn.fhir.context.FhirContext.class, value)); return true;
         case "fhirversion":
         case "fhirVersion": dataformat.setFhirVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "contenttypeheader":
         case "contentTypeHeader": dataformat.setContentTypeHeader(property(camelContext, boolean.class, value)); return true;
+        case "parsererrorhandler":
+        case "parserErrorHandler": dataformat.setParserErrorHandler(property(camelContext, ca.uhn.fhir.parser.IParserErrorHandler.class, value)); return true;
+        case "parseroptions":
+        case "parserOptions": dataformat.setParserOptions(property(camelContext, ca.uhn.fhir.context.ParserOptions.class, value)); return true;
         case "serverbaseurl":
         case "serverBaseUrl": dataformat.setServerBaseUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "prettyprint":
@@ -30,6 +36,8 @@ public class FhirXmlDataFormatConfigurer extends PropertyConfigurerSupport imple
         case "preferTypes": dataformat.setPreferTypes(property(camelContext, java.util.List.class, value)); return true;
         case "omitresourceid":
         case "omitResourceId": dataformat.setOmitResourceId(property(camelContext, boolean.class, value)); return true;
+        case "forceresourceid":
+        case "forceResourceId": dataformat.setForceResourceId(property(camelContext, org.hl7.fhir.instance.model.api.IIdType.class, value)); return true;
         case "encodeelementsappliestochildresourcesonly":
         case "encodeElementsAppliesToChildResourcesOnly": dataformat.setEncodeElementsAppliesToChildResourcesOnly(property(camelContext, boolean.class, value)); return true;
         case "encodeelements":

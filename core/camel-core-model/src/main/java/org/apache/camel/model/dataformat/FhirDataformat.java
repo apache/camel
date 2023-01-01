@@ -27,27 +27,27 @@ import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.Metadata;
 
 public abstract class FhirDataformat extends DataFormatDefinition implements ContentTypeHeaderAware {
-    @XmlTransient
-    @Metadata(label = "advanced")
-    private Object fhirContext;
     @XmlAttribute
     @Metadata(enums = "DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5", defaultValue = "R4")
     private String fhirVersion;
     @XmlAttribute
+    @Metadata(label = "advanced")
+    private String fhirContext;
+    @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String prettyPrint;
-    @XmlTransient
+    @XmlAttribute
     @Metadata(label = "advanced")
-    private Object parserErrorHandler;
-    @XmlTransient
+    private String parserErrorHandler;
+    @XmlAttribute
     @Metadata(label = "advanced")
-    private Object parserOptions;
+    private String parserOptions;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String preferTypes;
-    @XmlTransient
+    @XmlAttribute
     @Metadata(label = "advanced")
-    private Object forceResourceId;
+    private String forceResourceId;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String serverBaseUrl;
@@ -114,11 +114,16 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         this.contentTypeHeader = builder.contentTypeHeader;
     }
 
-    public Object getFhirContext() {
+    public String getFhirContext() {
         return fhirContext;
     }
 
-    public void setFhirContext(Object fhirContext) {
+    /**
+     * To use a custom fhir context.
+     *
+     * Reference to object of type ca.uhn.fhir.context.FhirContext
+     */
+    public void setFhirContext(String fhirContext) {
         this.fhirContext = fhirContext;
     }
 
@@ -147,29 +152,28 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         this.prettyPrint = prettyPrint;
     }
 
-    public Object getParserErrorHandler() {
+    public String getParserErrorHandler() {
         return parserErrorHandler;
     }
 
     /**
-     * Registers an error handler which will be invoked when any parse errors are found
+     * Registers an error handler which will be invoked when any parse errors are found.
      *
-     * @param parserErrorHandler The error handler to set. Must not be null.
+     * Reference to object of type ca.uhn.fhir.parser.IParserErrorHandler
      */
-    public void setParserErrorHandler(Object parserErrorHandler) {
+    public void setParserErrorHandler(String parserErrorHandler) {
         this.parserErrorHandler = parserErrorHandler;
     }
 
-    public Object getParserOptions() {
+    public String getParserOptions() {
         return parserOptions;
     }
 
     /**
      * Sets the parser options object which will be used to supply default options to newly created parsers.
-     *
-     * @param parserOptions The parser options object
+     * Reference to object of type ca.uhn.fhir.context.ParserOptions.
      */
-    public void setParserOptions(Object parserOptions) {
+    public void setParserOptions(String parserOptions) {
         this.parserOptions = parserOptions;
     }
 
@@ -191,14 +195,16 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         this.preferTypes = preferTypes;
     }
 
-    public Object getForceResourceId() {
+    public String getForceResourceId() {
         return forceResourceId;
     }
 
     /**
-     * When encoding, force this resource ID to be encoded as the resource ID
+     * When encoding, force this resource ID to be encoded as the resource ID.
+     *
+     * Reference to object of type org.hl7.fhir.instance.model.api.IIdType
      */
-    public void setForceResourceId(Object forceResourceId) {
+    public void setForceResourceId(String forceResourceId) {
         this.forceResourceId = forceResourceId;
     }
 
@@ -361,8 +367,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
      * @param stripVersionsFromReferences Set this to
      *                                    <code>false<code> to prevent the parser from removing resource versions
      *                                    from references (or <code>null</code> to apply the default setting from the
-     *                                    {@link #setParserOptions(Object)}
-     * @see                               #setDontStripVersionsFromReferencesAtPaths(List)
+     *                                    parser options
      */
     public void setStripVersionsFromReferences(String stripVersionsFromReferences) {
         this.stripVersionsFromReferences = stripVersionsFromReferences;
@@ -381,7 +386,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
      * @param overrideResourceIdWithBundleEntryFullUrl Set this to <code>false</code> to prevent the parser from
      *                                                 overriding resource ids with the Bundle.entry.fullUrl (or
      *                                                 <code>null</code> to apply the default setting from the
-     *                                                 {@link #setParserOptions(Object)})
+     *                                                 parser options
      */
     public void setOverrideResourceIdWithBundleEntryFullUrl(String overrideResourceIdWithBundleEntryFullUrl) {
         this.overrideResourceIdWithBundleEntryFullUrl = overrideResourceIdWithBundleEntryFullUrl;
@@ -431,8 +436,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
      *                                               Note that only resource name and field names with dots separating
      *                                               is allowed here (no repetition indicators, FluentPath expressions,
      *                                               etc.). Set to <code>null</code> to use the value set in the
-     *                                               {@link #setParserOptions(Object)}
-     * @see                                          #setStripVersionsFromReferences(String)
+     *                                               parser options
      */
     public void setDontStripVersionsFromReferencesAtPaths(List<String> dontStripVersionsFromReferencesAtPaths) {
         this.dontStripVersionsFromReferencesAtPaths = String.join(",", dontStripVersionsFromReferencesAtPaths);
@@ -454,8 +458,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
      *                                               Note that only resource name and field names with dots separating
      *                                               is allowed here (no repetition indicators, FluentPath expressions,
      *                                               etc.). Set to <code>null</code> to use the value set in the
-     *                                               {@link #setParserOptions(Object)}
-     * @see                                          #setStripVersionsFromReferences(String)
+     *                                               parser options
      */
     public void setDontStripVersionsFromReferencesAtPaths(String dontStripVersionsFromReferencesAtPaths) {
         this.dontStripVersionsFromReferencesAtPaths = dontStripVersionsFromReferencesAtPaths;
@@ -477,13 +480,13 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     abstract static class AbstractBuilder<T extends AbstractBuilder<T, F>, F extends FhirDataformat>
             implements DataFormatBuilder<F> {
 
-        private Object fhirContext;
+        private String fhirContext;
         private String fhirVersion;
         private String prettyPrint;
-        private Object parserErrorHandler;
-        private Object parserOptions;
+        private String parserErrorHandler;
+        private String parserOptions;
         private String preferTypes;
-        private Object forceResourceId;
+        private String forceResourceId;
         private String serverBaseUrl;
         private String omitResourceId;
         private String encodeElementsAppliesToChildResourcesOnly;
@@ -496,7 +499,12 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         private String dontStripVersionsFromReferencesAtPaths;
         private String contentTypeHeader;
 
-        public T fhirContext(Object fhirContext) {
+        /**
+         * To use a custom fhir context.
+         *
+         * Reference to object of type ca.uhn.fhir.context.FhirContext
+         */
+        public T fhirContext(String fhirContext) {
             this.fhirContext = fhirContext;
             return (T) this;
         }
@@ -532,11 +540,11 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         }
 
         /**
-         * Registers an error handler which will be invoked when any parse errors are found
+         * Registers an error handler which will be invoked when any parse errors are found.
          *
-         * @param parserErrorHandler The error handler to set. Must not be null.
+         * Reference to object of type ca.uhn.fhir.parser.IParserErrorHandler
          */
-        public T parserErrorHandler(Object parserErrorHandler) {
+        public T parserErrorHandler(String parserErrorHandler) {
             this.parserErrorHandler = parserErrorHandler;
             return (T) this;
         }
@@ -544,9 +552,9 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
         /**
          * Sets the parser options object which will be used to supply default options to newly created parsers.
          *
-         * @param parserOptions The parser options object
+         * Reference to object of type ca.uhn.fhir.context.ParserOptions
          */
-        public T parserOptions(Object parserOptions) {
+        public T parserOptions(String parserOptions) {
             this.parserOptions = parserOptions;
             return (T) this;
         }
@@ -566,8 +574,10 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
 
         /**
          * When encoding, force this resource ID to be encoded as the resource ID
+         *
+         * Reference to object of type org.hl7.fhir.instance.model.api.IIdType
          */
-        public T forceResourceId(Object forceResourceId) {
+        public T forceResourceId(String forceResourceId) {
             this.forceResourceId = forceResourceId;
             return (T) this;
         }
@@ -740,8 +750,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
          * @param stripVersionsFromReferences Set this to
          *                                    <code>false<code> to prevent the parser from removing resource versions
          *                                    from references (or <code>null</code> to apply the default setting from
-         *                                    the {@link #setParserOptions(Object)}
-         * @see                               #setDontStripVersionsFromReferencesAtPaths(List)
+         *                                    the parser options.
          */
         public T stripVersionsFromReferences(String stripVersionsFromReferences) {
             this.stripVersionsFromReferences = stripVersionsFromReferences;
@@ -762,8 +771,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
          * @param stripVersionsFromReferences Set this to
          *                                    <code>false<code> to prevent the parser from removing resource versions
          *                                    from references (or <code>null</code> to apply the default setting from
-         *                                    the {@link #setParserOptions(Object)}
-         * @see                               #setDontStripVersionsFromReferencesAtPaths(List)
+         *                                    the parser options.
          */
         public T stripVersionsFromReferences(boolean stripVersionsFromReferences) {
             this.stripVersionsFromReferences = Boolean.toString(stripVersionsFromReferences);
@@ -779,7 +787,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
          * @param overrideResourceIdWithBundleEntryFullUrl Set this to <code>false</code> to prevent the parser from
          *                                                 overriding resource ids with the Bundle.entry.fullUrl (or
          *                                                 <code>null</code> to apply the default setting from the
-         *                                                 {@link #setParserOptions(Object)})
+         *                                                 parser options.
          */
         public T overrideResourceIdWithBundleEntryFullUrl(String overrideResourceIdWithBundleEntryFullUrl) {
             this.overrideResourceIdWithBundleEntryFullUrl = overrideResourceIdWithBundleEntryFullUrl;
@@ -795,7 +803,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
          * @param overrideResourceIdWithBundleEntryFullUrl Set this to <code>false</code> to prevent the parser from
          *                                                 overriding resource ids with the Bundle.entry.fullUrl (or
          *                                                 <code>null</code> to apply the default setting from the
-         *                                                 {@link #setParserOptions(Object)})
+         *                                                 parser options.
          */
         public T overrideResourceIdWithBundleEntryFullUrl(boolean overrideResourceIdWithBundleEntryFullUrl) {
             this.overrideResourceIdWithBundleEntryFullUrl = Boolean.toString(overrideResourceIdWithBundleEntryFullUrl);
@@ -855,8 +863,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
          *                                               field names with dots separating is allowed here (no repetition
          *                                               indicators, FluentPath expressions, etc.). Set to
          *                                               <code>null</code> to use the value set in the
-         *                                               {@link #setParserOptions(Object)}
-         * @see                                          #setStripVersionsFromReferences(String)
+         *                                               parser options.
          */
         public T dontStripVersionsFromReferencesAtPaths(List<String> dontStripVersionsFromReferencesAtPaths) {
             this.dontStripVersionsFromReferencesAtPaths = String.join(",", dontStripVersionsFromReferencesAtPaths);
@@ -880,8 +887,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
          *                                               field names with dots separating is allowed here (no repetition
          *                                               indicators, FluentPath expressions, etc.). Set to
          *                                               <code>null</code> to use the value set in the
-         *                                               {@link #setParserOptions(Object)}
-         * @see                                          #setStripVersionsFromReferences(String)
+         *                                               parser options.
          */
         public T dontStripVersionsFromReferencesAtPaths(String dontStripVersionsFromReferencesAtPaths) {
             this.dontStripVersionsFromReferencesAtPaths = dontStripVersionsFromReferencesAtPaths;

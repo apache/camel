@@ -50,6 +50,10 @@ public abstract class AbstractReifier implements BeanRepository {
         this.camelContext = ObjectHelper.notNull(camelContext, "CamelContext");
     }
 
+    protected CamelContext getCamelContext() {
+        return camelContext;
+    }
+
     protected String parseString(String text) {
         return CamelContextHelper.parseText(camelContext, text);
     }
