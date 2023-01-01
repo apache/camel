@@ -18,6 +18,7 @@ package org.apache.camel.maven.packaging;
 
 import org.apache.camel.tooling.model.SupportLevel;
 import org.apache.camel.tooling.util.CamelVersionHelper;
+import org.apache.camel.tooling.util.Version;
 
 public final class SupportLevelHelper {
 
@@ -30,8 +31,14 @@ public final class SupportLevelHelper {
                     "FirstVersion is not specified. This can be done in @UriEndpoint or in pom.xml file.");
         }
 
-        boolean justNew = CamelVersionHelper.isGE(currentVersion, firstVersion);
-        boolean prevNew = CamelVersionHelper.isGE(CamelVersionHelper.prevMinor(currentVersion), firstVersion);
+        // we only want major/minor (strip patch)
+        Version v1 = new Version(firstVersion);
+        v1 = new Version(v1.getMajor() + "." + v1.getMinor());
+        Version v2 = new Version(currentVersion);
+        v2 = new Version(v2.getMajor() + "." + v2.getMinor());
+
+        boolean justNew = CamelVersionHelper.isGE(v2.toString(), v1.toString());
+        boolean prevNew = CamelVersionHelper.isGE(CamelVersionHelper.prevMinor(v2.toString()), v1.toString());
         if (justNew || prevNew) {
             // its a new component (2 releases back) that is added to this version so lets mark it as preview by default
             return SupportLevel.Preview;
