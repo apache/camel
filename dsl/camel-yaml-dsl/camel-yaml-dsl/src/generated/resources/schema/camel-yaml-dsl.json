@@ -4904,9 +4904,15 @@
           "encode-elements-applies-to-child-resources-only" : {
             "type" : "boolean"
           },
+          "fhir-context" : {
+            "type" : "string"
+          },
           "fhir-version" : {
             "type" : "string",
             "enum" : [ "DSTU2", "DSTU2_HL7ORG", "DSTU2_1", "DSTU3", "R4", "R5" ]
+          },
+          "force-resource-id" : {
+            "type" : "string"
           },
           "id" : {
             "type" : "string"
@@ -4916,6 +4922,12 @@
           },
           "override-resource-id-with-bundle-entry-full-url" : {
             "type" : "boolean"
+          },
+          "parser-error-handler" : {
+            "type" : "string"
+          },
+          "parser-options" : {
+            "type" : "string"
           },
           "prefer-types" : {
             "type" : "string"
@@ -4955,9 +4967,15 @@
           "encode-elements-applies-to-child-resources-only" : {
             "type" : "boolean"
           },
+          "fhir-context" : {
+            "type" : "string"
+          },
           "fhir-version" : {
             "type" : "string",
             "enum" : [ "DSTU2", "DSTU2_HL7ORG", "DSTU2_1", "DSTU3", "R4", "R5" ]
+          },
+          "force-resource-id" : {
+            "type" : "string"
           },
           "id" : {
             "type" : "string"
@@ -4967,6 +4985,12 @@
           },
           "override-resource-id-with-bundle-entry-full-url" : {
             "type" : "boolean"
+          },
+          "parser-error-handler" : {
+            "type" : "string"
+          },
+          "parser-options" : {
+            "type" : "string"
           },
           "prefer-types" : {
             "type" : "string"

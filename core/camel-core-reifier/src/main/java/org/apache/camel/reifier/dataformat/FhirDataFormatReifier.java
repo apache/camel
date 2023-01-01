@@ -34,13 +34,13 @@ public class FhirDataFormatReifier<T extends FhirDataformat> extends DataFormatR
 
     @Override
     protected void prepareDataFormatConfig(Map<String, Object> properties) {
-        properties.put("fhirContext", definition.getFhirContext());
         properties.put("fhirVersion", definition.getFhirVersion());
+        properties.put("fhirContext", asRef(definition.getFhirContext()));
         properties.put("serverBaseUrl", definition.getServerBaseUrl());
-        properties.put("forceResourceId", definition.getForceResourceId());
+        properties.put("forceResourceId", asRef(definition.getForceResourceId()));
         properties.put("preferTypesNames", definition.getPreferTypes());
-        properties.put("parserOptions", definition.getParserOptions());
-        properties.put("parserErrorHandler", definition.getParserErrorHandler());
+        properties.put("parserOptions", asRef(definition.getParserOptions()));
+        properties.put("parserErrorHandler", asRef(definition.getParserErrorHandler()));
         properties.put("encodeElementsAppliesToChildResourcesOnly", definition.getEncodeElementsAppliesToChildResourcesOnly());
         properties.put("omitResourceId", definition.getOmitResourceId());
         properties.put("prettyPrint", definition.getPrettyPrint());

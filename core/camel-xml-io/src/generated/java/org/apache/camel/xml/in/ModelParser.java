@@ -2068,9 +2068,13 @@ public class ModelParser extends BaseParser {
                 case "dontStripVersionsFromReferencesAtPaths": def.setDontStripVersionsFromReferencesAtPaths(val); break;
                 case "encodeElements": def.setEncodeElements(val); break;
                 case "encodeElementsAppliesToChildResourcesOnly": def.setEncodeElementsAppliesToChildResourcesOnly(val); break;
+                case "fhirContext": def.setFhirContext(val); break;
                 case "fhirVersion": def.setFhirVersion(val); break;
+                case "forceResourceId": def.setForceResourceId(val); break;
                 case "omitResourceId": def.setOmitResourceId(val); break;
                 case "overrideResourceIdWithBundleEntryFullUrl": def.setOverrideResourceIdWithBundleEntryFullUrl(val); break;
+                case "parserErrorHandler": def.setParserErrorHandler(val); break;
+                case "parserOptions": def.setParserOptions(val); break;
                 case "preferTypes": def.setPreferTypes(val); break;
                 case "prettyPrint": def.setPrettyPrint(val); break;
                 case "serverBaseUrl": def.setServerBaseUrl(val); break;

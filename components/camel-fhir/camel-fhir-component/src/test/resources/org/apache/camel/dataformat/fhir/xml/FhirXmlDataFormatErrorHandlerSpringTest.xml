@@ -37,16 +37,14 @@
   </camelContext>
 
   <bean id="strict" class="org.apache.camel.model.dataformat.FhirXmlDataFormat">
-    <property name="parserErrorHandler">
-      <bean class="ca.uhn.fhir.parser.StrictErrorHandler"/>
-    </property>
-    <property name="fhirContext" ref="fhirContext"/>
+    <property name="parserErrorHandler" value="strictEH"/>
+    <property name="fhirContext" value="fhirContext"/>
   </bean>
   <bean id="lenient" class="org.apache.camel.model.dataformat.FhirXmlDataFormat">
-    <property name="parserErrorHandler">
-      <bean class="ca.uhn.fhir.parser.LenientErrorHandler"/>
-    </property>
-    <property name="fhirContext" ref="fhirContext"/>
+    <property name="parserErrorHandler" value="lenientEH"/>
+    <property name="fhirContext" value="fhirContext"/>
   </bean>
   <bean id="fhirContext" class="ca.uhn.fhir.context.FhirContext" factory-method="forR4"/>
+  <bean id="strictEH" class="ca.uhn.fhir.parser.StrictErrorHandler"/>
+  <bean id="lenientEH" class="ca.uhn.fhir.parser.LenientErrorHandler"/>
 </beans>

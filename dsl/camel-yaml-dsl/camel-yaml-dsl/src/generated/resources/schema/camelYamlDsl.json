@@ -4808,9 +4808,15 @@
           "encodeElementsAppliesToChildResourcesOnly" : {
             "type" : "boolean"
           },
+          "fhirContext" : {
+            "type" : "string"
+          },
           "fhirVersion" : {
             "type" : "string",
             "enum" : [ "DSTU2", "DSTU2_HL7ORG", "DSTU2_1", "DSTU3", "R4", "R5" ]
+          },
+          "forceResourceId" : {
+            "type" : "string"
           },
           "id" : {
             "type" : "string"
@@ -4820,6 +4826,12 @@
           },
           "overrideResourceIdWithBundleEntryFullUrl" : {
             "type" : "boolean"
+          },
+          "parserErrorHandler" : {
+            "type" : "string"
+          },
+          "parserOptions" : {
+            "type" : "string"
           },
           "preferTypes" : {
             "type" : "string"
@@ -4859,9 +4871,15 @@
           "encodeElementsAppliesToChildResourcesOnly" : {
             "type" : "boolean"
           },
+          "fhirContext" : {
+            "type" : "string"
+          },
           "fhirVersion" : {
             "type" : "string",
             "enum" : [ "DSTU2", "DSTU2_HL7ORG", "DSTU2_1", "DSTU3", "R4", "R5" ]
+          },
+          "forceResourceId" : {
+            "type" : "string"
           },
           "id" : {
             "type" : "string"
@@ -4871,6 +4889,12 @@
           },
           "overrideResourceIdWithBundleEntryFullUrl" : {
             "type" : "boolean"
+          },
+          "parserErrorHandler" : {
+            "type" : "string"
+          },
+          "parserOptions" : {
+            "type" : "string"
           },
           "preferTypes" : {
             "type" : "string"

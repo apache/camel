@@ -5039,10 +5039,14 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "dont-strip-versions-from-references-at-paths", type = "string"),
                     @YamlProperty(name = "encode-elements", type = "string"),
                     @YamlProperty(name = "encode-elements-applies-to-child-resources-only", type = "boolean"),
+                    @YamlProperty(name = "fhir-context", type = "string"),
                     @YamlProperty(name = "fhir-version", type = "enum:DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5"),
+                    @YamlProperty(name = "force-resource-id", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "omit-resource-id", type = "boolean"),
                     @YamlProperty(name = "override-resource-id-with-bundle-entry-full-url", type = "boolean"),
+                    @YamlProperty(name = "parser-error-handler", type = "string"),
+                    @YamlProperty(name = "parser-options", type = "string"),
                     @YamlProperty(name = "prefer-types", type = "string"),
                     @YamlProperty(name = "pretty-print", type = "boolean"),
                     @YamlProperty(name = "server-base-url", type = "string"),
@@ -5090,9 +5094,19 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setEncodeElementsAppliesToChildResourcesOnly(val);
                     break;
                 }
+                case "fhir-context": {
+                    String val = asText(node);
+                    target.setFhirContext(val);
+                    break;
+                }
                 case "fhir-version": {
                     String val = asText(node);
                     target.setFhirVersion(val);
+                    break;
+                }
+                case "force-resource-id": {
+                    String val = asText(node);
+                    target.setForceResourceId(val);
                     break;
                 }
                 case "id": {
@@ -5108,6 +5122,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "override-resource-id-with-bundle-entry-full-url": {
                     String val = asText(node);
                     target.setOverrideResourceIdWithBundleEntryFullUrl(val);
+                    break;
+                }
+                case "parser-error-handler": {
+                    String val = asText(node);
+                    target.setParserErrorHandler(val);
+                    break;
+                }
+                case "parser-options": {
+                    String val = asText(node);
+                    target.setParserOptions(val);
                     break;
                 }
                 case "prefer-types": {
@@ -5161,10 +5185,14 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "dont-strip-versions-from-references-at-paths", type = "string"),
                     @YamlProperty(name = "encode-elements", type = "string"),
                     @YamlProperty(name = "encode-elements-applies-to-child-resources-only", type = "boolean"),
+                    @YamlProperty(name = "fhir-context", type = "string"),
                     @YamlProperty(name = "fhir-version", type = "enum:DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5"),
+                    @YamlProperty(name = "force-resource-id", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "omit-resource-id", type = "boolean"),
                     @YamlProperty(name = "override-resource-id-with-bundle-entry-full-url", type = "boolean"),
+                    @YamlProperty(name = "parser-error-handler", type = "string"),
+                    @YamlProperty(name = "parser-options", type = "string"),
                     @YamlProperty(name = "prefer-types", type = "string"),
                     @YamlProperty(name = "pretty-print", type = "boolean"),
                     @YamlProperty(name = "server-base-url", type = "string"),
@@ -5212,9 +5240,19 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     target.setEncodeElementsAppliesToChildResourcesOnly(val);
                     break;
                 }
+                case "fhir-context": {
+                    String val = asText(node);
+                    target.setFhirContext(val);
+                    break;
+                }
                 case "fhir-version": {
                     String val = asText(node);
                     target.setFhirVersion(val);
+                    break;
+                }
+                case "force-resource-id": {
+                    String val = asText(node);
+                    target.setForceResourceId(val);
                     break;
                 }
                 case "id": {
@@ -5230,6 +5268,16 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "override-resource-id-with-bundle-entry-full-url": {
                     String val = asText(node);
                     target.setOverrideResourceIdWithBundleEntryFullUrl(val);
+                    break;
+                }
+                case "parser-error-handler": {
+                    String val = asText(node);
+                    target.setParserErrorHandler(val);
+                    break;
+                }
+                case "parser-options": {
+                    String val = asText(node);
+                    target.setParserOptions(val);
                     break;
                 }
                 case "prefer-types": {
