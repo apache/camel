@@ -10380,6 +10380,17 @@ DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5. Default value: R4
           </xs:annotation>
         </xs:attribute>
                 
+        <xs:attribute name="fhirContext" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+To use a custom fhir context. Reference to object of type
+ca.uhn.fhir.context.FhirContext.
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
         <xs:attribute name="prettyPrint" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -10387,6 +10398,29 @@ DSTU2,DSTU2_HL7ORG,DSTU2_1,DSTU3,R4,R5. Default value: R4
 Sets the pretty print flag, meaning that the parser will encode resources with
 human-readable spacing and newlines between elements instead of condensing
 output as much as possible. Default value: false
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="parserErrorHandler" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Registers an error handler which will be invoked when any parse errors are
+found. Reference to object of type ca.uhn.fhir.parser.IParserErrorHandler.
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="parserOptions" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+Sets the parser options object which will be used to supply default options to
+newly created parsers. Reference to object of type
+ca.uhn.fhir.context.ParserOptions.
             ]]>
             </xs:documentation>
           </xs:annotation>
@@ -10402,6 +10436,17 @@ lowest priority). For example, if a custom type which declares to implement the
 Patient resource is passed in here, and the parser is parsing a Bundle
 containing a Patient resource, the parser will use the given custom type.
 Multiple class names can be separated by comma.
+            ]]>
+            </xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="forceResourceId" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en">
+              <![CDATA[
+When encoding, force this resource ID to be encoded as the resource ID.
+Reference to object of type org.hl7.fhir.instance.model.api.IIdType.
             ]]>
             </xs:documentation>
           </xs:annotation>

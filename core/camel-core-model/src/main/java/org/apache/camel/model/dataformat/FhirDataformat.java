@@ -170,8 +170,8 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
     }
 
     /**
-     * Sets the parser options object which will be used to supply default options to newly created parsers.
-     * Reference to object of type ca.uhn.fhir.context.ParserOptions.
+     * Sets the parser options object which will be used to supply default options to newly created parsers. Reference
+     * to object of type ca.uhn.fhir.context.ParserOptions.
      */
     public void setParserOptions(String parserOptions) {
         this.parserOptions = parserOptions;
@@ -385,8 +385,8 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
      *
      * @param overrideResourceIdWithBundleEntryFullUrl Set this to <code>false</code> to prevent the parser from
      *                                                 overriding resource ids with the Bundle.entry.fullUrl (or
-     *                                                 <code>null</code> to apply the default setting from the
-     *                                                 parser options
+     *                                                 <code>null</code> to apply the default setting from the parser
+     *                                                 options
      */
     public void setOverrideResourceIdWithBundleEntryFullUrl(String overrideResourceIdWithBundleEntryFullUrl) {
         this.overrideResourceIdWithBundleEntryFullUrl = overrideResourceIdWithBundleEntryFullUrl;
@@ -435,8 +435,8 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
      *                                               "Patient.managingOrganization" or "AuditEvent.object.reference".
      *                                               Note that only resource name and field names with dots separating
      *                                               is allowed here (no repetition indicators, FluentPath expressions,
-     *                                               etc.). Set to <code>null</code> to use the value set in the
-     *                                               parser options
+     *                                               etc.). Set to <code>null</code> to use the value set in the parser
+     *                                               options
      */
     public void setDontStripVersionsFromReferencesAtPaths(List<String> dontStripVersionsFromReferencesAtPaths) {
         this.dontStripVersionsFromReferencesAtPaths = String.join(",", dontStripVersionsFromReferencesAtPaths);
@@ -457,8 +457,8 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
      *                                               "Patient.managingOrganization" or "AuditEvent.object.reference".
      *                                               Note that only resource name and field names with dots separating
      *                                               is allowed here (no repetition indicators, FluentPath expressions,
-     *                                               etc.). Set to <code>null</code> to use the value set in the
-     *                                               parser options
+     *                                               etc.). Set to <code>null</code> to use the value set in the parser
+     *                                               options
      */
     public void setDontStripVersionsFromReferencesAtPaths(String dontStripVersionsFromReferencesAtPaths) {
         this.dontStripVersionsFromReferencesAtPaths = dontStripVersionsFromReferencesAtPaths;
@@ -862,8 +862,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
          *                                               "AuditEvent.object.reference". Note that only resource name and
          *                                               field names with dots separating is allowed here (no repetition
          *                                               indicators, FluentPath expressions, etc.). Set to
-         *                                               <code>null</code> to use the value set in the
-         *                                               parser options.
+         *                                               <code>null</code> to use the value set in the parser options.
          */
         public T dontStripVersionsFromReferencesAtPaths(List<String> dontStripVersionsFromReferencesAtPaths) {
             this.dontStripVersionsFromReferencesAtPaths = String.join(",", dontStripVersionsFromReferencesAtPaths);
@@ -886,8 +885,7 @@ public abstract class FhirDataformat extends DataFormatDefinition implements Con
          *                                               "AuditEvent.object.reference". Note that only resource name and
          *                                               field names with dots separating is allowed here (no repetition
          *                                               indicators, FluentPath expressions, etc.). Set to
-         *                                               <code>null</code> to use the value set in the
-         *                                               parser options.
+         *                                               <code>null</code> to use the value set in the parser options.
          */
         public T dontStripVersionsFromReferencesAtPaths(String dontStripVersionsFromReferencesAtPaths) {
             this.dontStripVersionsFromReferencesAtPaths = dontStripVersionsFromReferencesAtPaths;
