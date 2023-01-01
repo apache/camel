@@ -35,6 +35,10 @@ public final class CamelVersionHelper {
      * @return       <tt>true</tt> if GE, <tt>false</tt> otherwise
      */
     public static boolean isGE(String base, String other) {
+        return isGE(base, other, false);
+    }
+
+    public static boolean isGE(String base, String other, boolean majorMinorOnly) {
         if (base == null || base.isEmpty()) {
             throw new IllegalArgumentException("Empty base version");
         }
@@ -77,58 +81,6 @@ public final class CamelVersionHelper {
 
         Version ver = new Version(base);
         return ver.prevMinor();
-    }
-
-    private static final class Version implements Comparable<Version> {
-
-        private final String version;
-
-        private Version(String version) {
-            this.version = version;
-        }
-
-        private String getVersion() {
-            return version;
-        }
-
-        @Override
-        public int compareTo(Version that) {
-            if (that == null) {
-                return 1;
-            }
-            String[] thisParts = this.getVersion().split("\\.");
-            String[] thatParts = that.getVersion().split("\\.");
-            int length = Math.max(thisParts.length, thatParts.length);
-            for (int i = 0; i < length; i++) {
-                long thisPart = i < thisParts.length ? Long.parseLong(thisParts[i]) : 0;
-                long thatPart = i < thatParts.length ? Long.parseLong(thatParts[i]) : 0;
-                if (thisPart < thatPart) {
-                    return -1;
-                } else if (thisPart > thatPart) {
-                    return 1;
-                }
-            }
-            return 0;
-        }
-
-        public String prevMinor() {
-            String[] parts = this.getVersion().split("\\.");
-            int major = Integer.parseInt(parts[0]);
-            int minor = Integer.parseInt(parts[1]);
-            int patch = parts.length == 3 ? Integer.parseInt(parts[2]) : 0;
-
-            if (minor > 0) {
-                minor -= 1;
-            }
-
-            String prev = major + "." + minor + "." + patch;
-            return prev;
-        }
-
-        @Override
-        public String toString() {
-            return version;
-        }
     }
 
 }
