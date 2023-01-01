@@ -8,7 +8,7 @@
     "firstVersion": "3.19.0",
     "label": "blockchain,identity",
     "javaType": "org.apache.camel.component.aries.HyperledgerAriesComponent",
-    "supportLevel": "Stable",
+    "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-hyperledger-aries",
     "version": "3.20.1-SNAPSHOT",

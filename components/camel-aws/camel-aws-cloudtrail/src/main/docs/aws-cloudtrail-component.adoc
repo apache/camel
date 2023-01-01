@@ -4,7 +4,7 @@
 :artifactid: camel-aws-cloudtrail
 :description: Consume events from Amazon Cloudtrail using AWS SDK version 2.x.
 :since: 3.19
-:supportlevel: Stable
+:supportlevel: Preview
 :component-header: Only consumer is supported
 //Manually maintained attributes
 :group: AWS

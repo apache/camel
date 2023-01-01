@@ -4,7 +4,7 @@
 :artifactid: camel-mapstruct
 :description: Type Conversion using Mapstruct
 :since: 3.19
-:supportlevel: Stable
+:supportlevel: Preview
 :component-header: Only producer is supported
 //Manually maintained attributes
 :camel-spring-boot-name: mapstruct

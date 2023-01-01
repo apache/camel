@@ -8,7 +8,7 @@
     "firstVersion": "3.19.0",
     "label": "transformation",
     "javaType": "org.apache.camel.component.mapstruct.MapstructComponent",
-    "supportLevel": "Stable",
+    "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-mapstruct",
     "version": "3.20.1-SNAPSHOT",

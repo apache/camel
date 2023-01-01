@@ -4,7 +4,7 @@
 :artifactid: camel-cli-connector
 :description: Runtime adapter connecting with Camel CLI
 :since: 3.19
-:supportlevel: Stable
+:supportlevel: Preview
 
 *Since Camel {since}*
 
