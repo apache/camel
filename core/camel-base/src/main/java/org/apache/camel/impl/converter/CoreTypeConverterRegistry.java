@@ -393,15 +393,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
             final Class<?> type, final Exchange exchange, final Object value,
             final boolean tryConvert)
             throws Exception {
-        boolean trace = LOG.isTraceEnabled();
         boolean statisticsEnabled = !tryConvert && statistics.isStatisticsEnabled(); // we only capture if not try-convert in use
-
-        if (trace) {
-            // Replace pattern-breaking characters
-            LOG.trace("Finding type converter to convert {} -> {}",
-                    value == null ? "null" : value.getClass().getCanonicalName(),
-                    type.getCanonicalName());
-        }
 
         if (value == null) {
             // no type conversion was needed
@@ -454,14 +446,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
 
         // attempt bulk first which is the fastest
         for (BulkTypeConverters bulk : bulkTypeConverters) {
-            if (trace) {
-                LOG.trace("Using bulk converter: {} to convert [{}=>{}]", bulk.getClass().getSimpleName(), value.getClass(),
-                        type);
-            }
-            Object rc;
-
-            rc = bulk.convertTo(value.getClass(), type, exchange, value);
-
+            Object rc = bulk.convertTo(value.getClass(), type, exchange, value);
             if (rc != null) {
                 return rc;
             }
@@ -470,9 +455,6 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         // try to find a suitable type converter
         TypeConverter converter = getOrFindTypeConverter(type, value.getClass());
         if (converter != null) {
-            if (trace) {
-                LOG.trace("Using converter: {} to convert [{}=>{}]", converter, value.getClass(), type);
-            }
             Object rc;
             if (tryConvert) {
                 rc = converter.tryConvertTo(type, exchange, value);
@@ -532,20 +514,8 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 // if fallback can promote then let it be promoted to a first class type converter
                 if (fallback.isCanPromote()) {
                     // add it as a known type converter since we found a fallback that could do it
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug(
-                                "Promoting fallback type converter as a known type converter to convert from: {} to: {} for the fallback converter: {}",
-                                type.getCanonicalName(), value.getClass().getCanonicalName(),
-                                fallback.getFallbackTypeConverter());
-                    }
                     addTypeConverter(type, value.getClass(), fallback.getFallbackTypeConverter());
                 }
-
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Fallback type converter {} converted type from: {} to: {}",
-                            fallback.getFallbackTypeConverter(), type.getCanonicalName(), value.getClass().getCanonicalName());
-                }
-
                 // return converted value
                 return rc;
             }
