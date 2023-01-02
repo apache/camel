@@ -525,7 +525,7 @@ class rewrite implements Callable<Integer> {
         exec("git", "commit", "-a", "-m", "Switch to jakarta namespace");
 
         // Jetty 9 -> 11 migration
-        exec("git", "cherry-pick", "-x", "5e57bb6cc86bfdbc474f91fc2c152cb0fc03a9ff");
+        exec("git", "cherry-pick", "-x", "4dd107e0f8f0946105506aa43d187e70fefb3f9c");
         // Salesforce migration
         exec("git", "cherry-pick", "-x", "eda15c498fb3834996924607e353ecb1e37cffcc");
 
