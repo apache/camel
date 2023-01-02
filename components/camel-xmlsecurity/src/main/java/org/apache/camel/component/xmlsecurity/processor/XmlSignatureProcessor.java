@@ -134,6 +134,9 @@ public abstract class XmlSignatureProcessor implements Processor {
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         schemaFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
         schemaFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        LOG.debug("Configuring SchemaFactory to not allow access to external DTD/Schema");
+        schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        schemaFactory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
         schemaFactory.setResourceResolver(new DefaultLSResourceResolver(
                 getCamelContext(), getConfiguration()
                         .getSchemaResourceUri()));
