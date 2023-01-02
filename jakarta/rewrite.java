@@ -44,12 +44,12 @@ class rewrite implements Callable<Integer> {
             files.forEach(p -> {
                 String name = p.getFileName().toString();
                 if (name.equals("pom.xml")) {
-                    regex(p, "<version>3\\.20\\.0-SNAPSHOT</version>", "<version>4.0.0-SNAPSHOT</version>");
+                    regex(p, "<version>3\\.21\\.0-SNAPSHOT</version>", "<version>4.0.0-SNAPSHOT</version>");
                 } else if (p.toString().contains("/src/generated/resources/")) {
                     if (name.endsWith(".properties")) {
-                        regex(p, "version=3.20.0-SNAPSHOT", "version=4.0.0-SNAPSHOT");
+                        regex(p, "version=3.21.0-SNAPSHOT", "version=4.0.0-SNAPSHOT");
                     } else if (name.endsWith(".json")) {
-                        regex(p, "\"version\": \"3\\.20\\.0-SNAPSHOT\"", "\"version\": \"4.0.0-SNAPSHOT\"");
+                        regex(p, "\"version\": \"3\\.21\\.0-SNAPSHOT\"", "\"version\": \"4.0.0-SNAPSHOT\"");
                     }
                 }
             });
