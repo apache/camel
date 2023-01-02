@@ -23,7 +23,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.20.1-SNAPSHOT</version>
+        <version>3.20.1</version>
     </parent>
 
     <artifactId>camel-spring-integration</artifactId>
