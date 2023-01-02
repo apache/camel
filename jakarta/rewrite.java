@@ -355,7 +355,10 @@ class rewrite implements Callable<Integer> {
                     // RestEasy
                     "<(resteasy-version)>.*?</\\1>", "<$1>6.2.1.Final</$1>",
                     " *<dependency>\\s*<groupId>org.jboss.resteasy</groupId>\\s*<artifactId>resteasy-spring</artifactId>\\s*<scope>test</scope>\\s*</dependency>", "",
-                    "<groupId>com.fasterxml.jackson.jaxrs</groupId>(\\s*)<artifactId>jackson-jaxrs-json-provider</artifactId>", "<groupId>com.fasterxml.jackson.jakarta.rs</groupId>$1<artifactId>jackson-jakarta-rs-json-provider</artifactId>"
+                    "<groupId>com.fasterxml.jackson.jaxrs</groupId>(\\s*)<artifactId>jackson-jaxrs-json-provider</artifactId>", "<groupId>com.fasterxml.jackson.jakarta.rs</groupId>$1<artifactId>jackson-jakarta-rs-json-provider</artifactId>",
+                    // Arquillian
+                    "<(arquillian-version)>.*?</\\1>", "<$1>1.7.0.Alpha13</$1>",
+                    "<(arquillian-weld-embedded-version)>.*?</\\1>", "<$1>3.0.2.Final</$1>"
                 ));
         }
 
