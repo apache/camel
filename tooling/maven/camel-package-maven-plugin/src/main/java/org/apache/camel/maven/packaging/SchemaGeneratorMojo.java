@@ -645,14 +645,16 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
 
         // nodePrefixId
         docComment = findJavaDoc(null, "nodePrefixId", null, classElement, true);
-        ep = createOption("nodePrefixId", "Node Prefix Id", "attribute", "java.lang.String", false, "", "", docComment, false, null,
-                        false, null, null, false, false);
+        ep = createOption("nodePrefixId", "Node Prefix Id", "attribute", "java.lang.String", false, "", "", docComment, false,
+                null,
+                false, null, null, false, false);
         eipOptions.add(ep);
 
         // routeConfigurationId
         docComment = findJavaDoc(null, "routeConfigurationId", null, classElement, true);
-        ep = createOption("routeConfigurationId", "Route Configuration Id", "attribute", "java.lang.String", false, "", "", docComment, false, null,
-                        false, null, null, false, false);
+        ep = createOption("routeConfigurationId", "Route Configuration Id", "attribute", "java.lang.String", false, "", "",
+                docComment, false, null,
+                false, null, null, false, false);
         eipOptions.add(ep);
 
         // precondition
