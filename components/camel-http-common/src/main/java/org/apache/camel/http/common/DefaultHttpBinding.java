@@ -320,6 +320,10 @@ public class DefaultHttpBinding implements HttpBinding {
             LOG.trace("HTTP attachment {} = {}", name, object);
             if (object instanceof File) {
                 String fileName = request.getParameter(name);
+                // fix file name if using malicious parameter name
+                if (fileName != null) {
+                    fileName = fileName.replaceAll("[\n\r\t]", "_");
+                }
                 // is the file name accepted
                 boolean accepted = true;
                 if (fileNameExtWhitelist != null) {
