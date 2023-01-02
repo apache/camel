@@ -369,6 +369,10 @@ public class MailBinding {
             } else {
                 String disposition = part.getDisposition();
                 String fileName = part.getFileName();
+                // fix file name if using malicious parameter name
+                if (fileName != null) {
+                    fileName = fileName.replaceAll("[\n\r\t]", "_");
+                }
 
                 if (isAttachment(disposition) && (fileName == null || fileName.isEmpty())) {
                     if (generateMissingAttachmentNames != null
