@@ -173,8 +173,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private String key;
     @UriParam(label = "producer")
     private Integer partitionKey;
-    @UriParam(label = "producer", enums = "-1,0,1,all", defaultValue = "1")
-    private String requestRequiredAcks = "1";
+    @UriParam(label = "producer", enums = "all,-1,0,1", defaultValue = "all")
+    private String requestRequiredAcks = "all";
     // buffer.memory
     @UriParam(label = "producer", defaultValue = "33554432")
     private Integer bufferMemorySize = 33554432;
@@ -182,8 +182,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "producer", defaultValue = "none", enums = "none,gzip,snappy,lz4,zstd")
     private String compressionCodec = "none";
     // retries
-    @UriParam(label = "producer", defaultValue = "0")
-    private Integer retries = 0;
+    @UriParam(label = "producer")
+    private Integer retries;
     // use individual headers if exchange.body contains Iterable or similar of Message or Exchange
     @UriParam(label = "producer", defaultValue = "false")
     private boolean batchWithIndividualHeaders;
@@ -236,7 +236,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     private Integer reconnectBackoffMs = 50;
     // enable.idempotence
     // reconnect.backoff.ms
-    @UriParam(label = "producer", defaultValue = "false")
+    @UriParam(label = "producer", defaultValue = "true")
     private boolean enableIdempotence;
     @UriParam(label = "producer", description = "To use a custom KafkaHeaderSerializer to serialize kafka headers values")
     private KafkaHeaderSerializer headerSerializer = new DefaultKafkaHeaderSerializer();
@@ -1302,16 +1302,19 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     /**
      * The number of acknowledgments the producer requires the leader to have received before considering a request
-     * complete. This controls the durability of records that are sent. The following settings are common: acks=0 If set
-     * to zero then the producer will not wait for any acknowledgment from the server at all. The record will be
-     * immediately added to the socket buffer and considered sent. No guarantee can be made that the server has received
-     * the record in this case, and the retries configuration will not take effect (as the client won't generally know
-     * of any failures). The offset given back for each record will always be set to -1. acks=1 This will mean the
-     * leader will write the record to its local log but will respond without awaiting full acknowledgement from all
-     * followers. In this case should the leader fail immediately after acknowledging the record but before the
+     * complete. This controls the durability of records that are sent. The following settings are allowed:
+     *
+     * acks=0 If set to zero then the producer will not wait for any acknowledgment from the server at all. The record
+     * will be immediately added to the socket buffer and considered sent. No guarantee can be made that the server has
+     * received the record in this case, and the retries configuration will not take effect (as the client won't
+     * generally know of any failures). The offset given back for each record will always be set to -1. acks=1 This will
+     * mean the leader will write the record to its local log but will respond without awaiting full acknowledgement
+     * from all followers. In this case should the leader fail immediately after acknowledging the record but before the
      * followers have replicated it then the record will be lost. acks=all This means the leader will wait for the full
      * set of in-sync replicas to acknowledge the record. This guarantees that the record will not be lost as long as at
-     * least one in-sync replica remains alive. This is the strongest available guarantee.
+     * least one in-sync replica remains alive. This is the strongest available guarantee. This is equivalent to the
+     * acks=-1 setting. Note that enabling idempotence requires this config value to be 'all'. If conflicting
+     * configurations are set and idempotence is not explicitly enabled, idempotence is disabled.
      */
     public void setRequestRequiredAcks(String requestRequiredAcks) {
         this.requestRequiredAcks = requestRequiredAcks;
@@ -1324,9 +1327,16 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     /**
      * Setting a value greater than zero will cause the client to resend any record whose send fails with a potentially
      * transient error. Note that this retry is no different than if the client resent the record upon receiving the
-     * error. Allowing retries will potentially change the ordering of records because if two records are sent to a
-     * single partition, and the first fails and is retried but the second succeeds, then the second record may appear
-     * first.
+     * error. Produce requests will be failed before the number of retries has been exhausted if the timeout configured
+     * by delivery.timeout.ms expires first before successful acknowledgement. Users should generally prefer to leave
+     * this config unset and instead use delivery.timeout.ms to control retry behavior.
+     *
+     * Enabling idempotence requires this config value to be greater than 0. If conflicting configurations are set and
+     * idempotence is not explicitly enabled, idempotence is disabled.
+     *
+     * Allowing retries while setting enable.idempotence to false and max.in.flight.requests.per.connection to 1 will
+     * potentially change the ordering of records because if two batches are sent to a single partition, and the first
+     * fails and is retried but the second succeeds, then the records in the second batch may appear first.
      */
     public void setRetries(Integer retries) {
         this.retries = retries;
@@ -1725,10 +1735,15 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * If set to 'true' the producer will ensure that exactly one copy of each message is written in the stream. If
-     * 'false', producer retries may write duplicates of the retried message in the stream. If set to true this option
-     * will require max.in.flight.requests.per.connection to be set to 1 and retries cannot be zero and additionally
-     * acks must be set to 'all'.
+     * When set to 'true', the producer will ensure that exactly one copy of each message is written in the stream. If
+     * 'false', producer retries due to broker failures, etc., may write duplicates of the retried message in the
+     * stream. Note that enabling idempotence requires max.in.flight.requests.per.connection to be less than or equal to
+     * 5 (with message ordering preserved for any allowable value), retries to be greater than 0, and acks must be
+     * 'all'.
+     *
+     * Idempotence is enabled by default if no conflicting configurations are set. If conflicting configurations are set
+     * and idempotence is not explicitly enabled, idempotence is disabled. If idempotence is explicitly enabled and
+     * conflicting configurations are set, a ConfigException is thrown.
      */
     public void setEnableIdempotence(boolean enableIdempotence) {
         this.enableIdempotence = enableIdempotence;

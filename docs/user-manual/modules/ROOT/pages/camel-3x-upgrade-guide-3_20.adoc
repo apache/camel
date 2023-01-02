@@ -46,6 +46,15 @@ The following 4 advanced options in fhir data format has been made available for
 Previously they were only possible to configure by manually creating a bean instance of the model,
 and configure them via Java code or classic Spring XML `<bean>` style.
 
+=== camel-kafka
+
+The following options has changed default value as they were mistakenly out of sync with Apache Kafka.
+This caused camel-kafka producer to not enable idempotence out of the box, that otherwise plain Apache Kafka client would do:
+
+- enableIdempotence: changed from `false` to `true`
+- requestRequiredAcks: changed from `1` to `all`
+- retries: changed from `0` to _unset_
+
 == Upgrading Camel 3.19 to 3.20
 
 === camel-api
