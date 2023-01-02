@@ -450,10 +450,8 @@ public interface CamelEvent {
         }
     }
 
-
     /**
-     * Special event only in use for camel-tracing / camel-opentelemtry.
-     * This event is NOT (by default) in use.
+     * Special event only in use for camel-tracing / camel-opentelemtry. This event is NOT (by default) in use.
      */
     interface ExchangeAsyncProcessingStartedEvent extends ExchangeEvent {
         @Override
