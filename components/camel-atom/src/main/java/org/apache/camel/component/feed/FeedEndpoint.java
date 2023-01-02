@@ -38,7 +38,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
                                                    + "individually or whether the entire feed should be sent as a single message")
     protected boolean splitEntries = true;
 
-    @UriParam(defaultValue = "true", description = "Sets whether to add the feed object as a header.")
+    @UriParam(label = "advanced", defaultValue = "true", description = "Sets whether to add the feed object as a header.")
     private boolean feedHeader = true;
     @UriParam(description = "Sets whether to sort entries by published date. Only works when splitEntries = true.")
     private boolean sortEntries;
@@ -46,9 +46,13 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
                                                    + "single feed poll should be delivered immediately. If true, only one entry is processed "
                                                    + "per delay. Only applicable when splitEntries = true.")
     private boolean throttleEntries = true;
-    @UriParam(description = "Sets the username to be used for basic authentication when polling from a HTTP feed.")
+    @UriParam(label = "security", secret = true, description = "Sets the username to be used for basic authentication when polling from a HTTP feed. "
+            + "Notice: Basic authentication is not a secured method, and is not recommended to be used.")
+    @Deprecated
     private String username;
-    @UriParam(description = "Sets the password to be used for basic authentication when polling from a HTTP feed.")
+    @UriParam(label = "security", secret = true, description = "Sets the password to be used for basic authentication when polling from a HTTP feed."
+            + "Notice: Basic authentication is not a secured method, and is not recommended to be used.")
+    @Deprecated
     private String password;
 
     public FeedEndpoint() {
