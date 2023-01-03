@@ -43,52 +43,6 @@ public interface RssEndpointBuilderFactory {
             return (AdvancedRssEndpointBuilder) this;
         }
         /**
-         * Sets whether to add the feed object as a header.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param feedHeader the value to set
-         * @return the dsl builder
-         */
-        default RssEndpointBuilder feedHeader(boolean feedHeader) {
-            doSetProperty("feedHeader", feedHeader);
-            return this;
-        }
-        /**
-         * Sets whether to add the feed object as a header.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: consumer
-         * 
-         * @param feedHeader the value to set
-         * @return the dsl builder
-         */
-        default RssEndpointBuilder feedHeader(String feedHeader) {
-            doSetProperty("feedHeader", feedHeader);
-            return this;
-        }
-        /**
-         * Sets the password to be used for basic authentication when polling
-         * from a HTTP feed.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param password the value to set
-         * @return the dsl builder
-         */
-        default RssEndpointBuilder password(String password) {
-            doSetProperty("password", password);
-            return this;
-        }
-        /**
          * If the polling consumer did not poll any files, you can enable this
          * option to send an empty message (no body) instead.
          * 
@@ -222,21 +176,6 @@ public interface RssEndpointBuilderFactory {
          */
         default RssEndpointBuilder throttleEntries(String throttleEntries) {
             doSetProperty("throttleEntries", throttleEntries);
-            return this;
-        }
-        /**
-         * Sets the username to be used for basic authentication when polling
-         * from a HTTP feed.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param username the value to set
-         * @return the dsl builder
-         */
-        default RssEndpointBuilder username(String username) {
-            doSetProperty("username", username);
             return this;
         }
         /**
@@ -706,6 +645,40 @@ public interface RssEndpointBuilderFactory {
             doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
+        /**
+         * Sets the password to be used for basic authentication when polling
+         * from a HTTP feed.Notice: Basic authentication is not a secured
+         * method, and is not recommended to be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param password the value to set
+         * @return the dsl builder
+         */
+        @Deprecated
+        default RssEndpointBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Sets the username to be used for basic authentication when polling
+         * from a HTTP feed. Notice: Basic authentication is not a secured
+         * method, and is not recommended to be used.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param username the value to set
+         * @return the dsl builder
+         */
+        @Deprecated
+        default RssEndpointBuilder username(String username) {
+            doSetProperty("username", username);
+            return this;
+        }
     }
 
     /**
@@ -867,6 +840,37 @@ public interface RssEndpointBuilderFactory {
          */
         default AdvancedRssEndpointBuilder pollStrategy(String pollStrategy) {
             doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * Sets whether to add the feed object as a header.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param feedHeader the value to set
+         * @return the dsl builder
+         */
+        default AdvancedRssEndpointBuilder feedHeader(boolean feedHeader) {
+            doSetProperty("feedHeader", feedHeader);
+            return this;
+        }
+        /**
+         * Sets whether to add the feed object as a header.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: advanced
+         * 
+         * @param feedHeader the value to set
+         * @return the dsl builder
+         */
+        default AdvancedRssEndpointBuilder feedHeader(String feedHeader) {
+            doSetProperty("feedHeader", feedHeader);
             return this;
         }
     }
