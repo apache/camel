@@ -85,6 +85,7 @@ import static java.lang.invoke.MethodHandles.publicLookup;
  * <p/>
  * This reader supports the <a href="http://swagger.io/specification/">Swagger Specification 2.0</a>
  */
+@Deprecated
 public class RestSwaggerReader {
 
     /**

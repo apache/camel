@@ -1,10 +1,11 @@
-= Swagger Java Component
+= Swagger Java Component (deprecated)
 :doctitle: Swagger Java
 :shortname: swagger-java
 :artifactid: camel-swagger-java
 :description: Rest-dsl support for using swagger api-doc
 :since: 2.16
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 //Manually maintained attributes
 :camel-spring-boot-name: swagger-java
 

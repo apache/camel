@@ -25,6 +25,7 @@ import io.swagger.models.properties.StringProperty;
 /**
  * A ModelConverter appends vendor extensions to include the java class name of the model classes.
  */
+@Deprecated
 public class RestModelConverters {
 
     public Map<String, Model> readClass(Class clazz) {

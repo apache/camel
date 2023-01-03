@@ -1,4 +1,6 @@
-= Camel REST DSL Swagger Maven Plugin
+= Camel REST DSL Swagger Maven Plugin (deprecated)
+
+IMPORTANT: This plugin is deprecated, use camel-restdsl-openapi-plugin instead.
 
 The Camel REST DSL Swagger Maven Plugin supports the following goals
 

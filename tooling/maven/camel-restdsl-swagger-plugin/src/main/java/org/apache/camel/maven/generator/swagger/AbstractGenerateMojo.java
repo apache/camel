@@ -51,6 +51,7 @@ import static org.twdata.maven.mojoexecutor.MojoExecutor.groupId;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.plugin;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.version;
 
+@Deprecated
 abstract class AbstractGenerateMojo extends AbstractMojo {
 
     // this list should be in priority order

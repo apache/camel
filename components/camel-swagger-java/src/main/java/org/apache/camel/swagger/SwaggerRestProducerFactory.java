@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.support.ResourceHelper.resolveMandatoryResourceAsInputStream;
 
+@Deprecated
 public class SwaggerRestProducerFactory implements RestProducerFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(SwaggerRestProducerFactory.class);

@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.RestApiProcessorFactory;
 import org.apache.camel.spi.RestConfiguration;
 
+@Deprecated
 public class SwaggerRestApiProcessorFactory implements RestApiProcessorFactory {
 
     @Override

@@ -18,6 +18,7 @@ package org.apache.camel.swagger;
 
 import java.io.IOException;
 
+@Deprecated
 public interface RestApiResponseAdapter {
 
     void setHeader(String name, String value);

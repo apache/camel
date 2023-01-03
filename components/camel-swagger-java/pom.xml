@@ -29,7 +29,7 @@
     <artifactId>camel-swagger-java</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Swagger Java</name>
+    <name>Camel :: Swagger Java (deprecated)</name>
     <description>Rest-dsl support for using swagger api-doc</description>
 
     <properties>

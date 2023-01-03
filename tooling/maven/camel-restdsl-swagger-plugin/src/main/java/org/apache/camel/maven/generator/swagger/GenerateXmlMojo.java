@@ -35,6 +35,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 
 @Mojo(name = "generate-xml", inheritByDefault = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES,
       requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
+@Deprecated
 public class GenerateXmlMojo extends AbstractGenerateMojo {
 
     @Parameter(defaultValue = "false")

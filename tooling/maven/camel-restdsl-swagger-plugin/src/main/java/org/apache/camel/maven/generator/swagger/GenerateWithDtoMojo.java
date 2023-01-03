@@ -23,6 +23,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 
 @Mojo(name = "generate-with-dto", inheritByDefault = false, defaultPhase = LifecyclePhase.GENERATE_SOURCES,
       requiresDependencyResolution = ResolutionScope.COMPILE, threadSafe = true)
+@Deprecated
 public class GenerateWithDtoMojo extends GenerateMojo {
 
     @Override

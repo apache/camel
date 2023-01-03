@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import org.apache.camel.Exchange;
 
+@Deprecated
 public class ExchangeRestApiResponseAdapter implements RestApiResponseAdapter {
 
     private final Exchange exchange;

@@ -29,7 +29,7 @@
     <artifactId>camel-restdsl-swagger-plugin</artifactId>
     <packaging>maven-plugin</packaging>
 
-    <name>Camel :: Maven Plugins :: Swagger REST DSL Generator Maven plugin</name>
+    <name>Camel :: Maven Plugins :: Swagger REST DSL Generator Maven plugin (deprecated)</name>
     <description>Maven plugin that generates REST DSL RouteBuilder from Swagger specification</description>
 
     <dependencyManagement>

@@ -4,7 +4,7 @@
     "name": "swagger-java",
     "title": "Swagger Java",
     "description": "Rest-dsl support for using swagger api-doc",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.16.0",
     "label": "rest,api",
     "supportLevel": "Stable",

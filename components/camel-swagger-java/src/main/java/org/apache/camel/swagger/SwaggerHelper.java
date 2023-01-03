@@ -22,6 +22,7 @@ import io.swagger.models.Path;
 import io.swagger.models.Swagger;
 import org.apache.camel.util.FileUtil;
 
+@Deprecated
 public final class SwaggerHelper {
 
     private SwaggerHelper() {

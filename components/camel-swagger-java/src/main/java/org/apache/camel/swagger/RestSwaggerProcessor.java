@@ -27,6 +27,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class RestSwaggerProcessor implements Processor {
 
     private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerProcessor.class);
