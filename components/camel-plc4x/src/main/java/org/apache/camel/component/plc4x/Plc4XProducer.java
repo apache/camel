@@ -18,6 +18,7 @@ package org.apache.camel.component.plc4x;
 
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
@@ -78,9 +79,9 @@ public class Plc4XProducer extends DefaultAsyncProducer {
         int currentlyOpenRequests = openRequests.incrementAndGet();
         try {
             log.debug("Currently open requests including {}:{}", exchange, currentlyOpenRequests);
-            Object plcWriteResponse = completableFuture.get();
+            Object plcWriteResponse = completableFuture.get(5000, TimeUnit.MILLISECONDS);
             if (exchange.getPattern().isOutCapable()) {
-                Message out = exchange.getOut();
+                Message out = exchange.getMessage();
                 out.copyFrom(exchange.getIn());
                 out.setBody(plcWriteResponse);
             } else {
@@ -96,10 +97,10 @@ public class Plc4XProducer extends DefaultAsyncProducer {
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             process(exchange);
-            Message out = exchange.getOut();
+            Message out = exchange.getMessage();
             out.copyFrom(exchange.getIn());
         } catch (Exception e) {
-            exchange.setOut(null);
+            exchange.setMessage(null);
             exchange.setException(e);
         }
         callback.done(true);
