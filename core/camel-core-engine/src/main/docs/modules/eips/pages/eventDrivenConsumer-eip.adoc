@@ -9,7 +9,7 @@ The default consumer model is event based (i.e. asynchronous)
 as this means that the Camel container can then manage pooling,
 threading and concurrency for you in a declarative manner.
 
-TIP: The alternative consumer mode is xref:pollEnrich-eip.adoc[Polling Consumer].
+TIP: The alternative consumer mode is xref:polling-consumer.adoc[Polling Consumer].
 
 image::eip/EventDrivenConsumerSolution.gif[image]
 
