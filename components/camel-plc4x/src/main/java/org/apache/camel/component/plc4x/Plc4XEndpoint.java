@@ -32,7 +32,6 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.plc4x.java.PlcDriverManager;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
-import org.apache.plc4x.java.api.exceptions.PlcRuntimeException;
 import org.apache.plc4x.java.utils.connectionpool.PooledPlcDriverManager;
 
 /**
@@ -60,13 +59,10 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     private PlcConnection connection;
     private String uri;
 
-    public Plc4XEndpoint(String endpointUri, Component component) throws PlcConnectionException {
+    public Plc4XEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
         this.plcDriverManager = new PlcDriverManager();
-        //Here we establish the connection in the endpoint, as it is created once during the context
-        // to avoid disconnecting and reconnecting for every request
         this.uri = endpointUri.replaceFirst("plc4x:/?/?", "");
-        this.connection = plcDriverManager.getConnection(this.uri);
     }
 
     public int getPeriod() {
@@ -88,35 +84,26 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     public void setTrigger(String trigger) {
         this.trigger = trigger;
         plcDriverManager = new PooledPlcDriverManager();
-        String plc4xURI = uri.replaceFirst("plc4x:/?/?", "");
-        // TODO: is this mutation really intentional
-        uri = plc4xURI;
-        try {
-            connection = plcDriverManager.getConnection(plc4xURI);
-        } catch (PlcConnectionException e) {
-            throw new PlcRuntimeException(e);
-        }
     }
 
-    public PlcConnection getConnection() {
+    public PlcConnection getConnection() throws PlcConnectionException {
+        if (this.connection == null) {
+            this.connection = plcDriverManager.getConnection(this.uri);
+        }
         return connection;
     }
 
+    public void reconnect() throws PlcConnectionException {
+        connection.connect();
+    }
+
     @Override
-    public Producer createProducer() throws Exception {
-        //Checking if connection is still up and reconnecting if not
-        if (!connection.isConnected()) {
-            connection = plcDriverManager.getConnection(uri.replaceFirst("plc4x:/?/?", ""));
-        }
+    public Producer createProducer() {
         return new Plc4XProducer(this);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        //Checking if connection is still up and reconnecting if not
-        if (!connection.isConnected()) {
-            connection = plcDriverManager.getConnection(uri.replaceFirst("plc4x:/?/?", ""));
-        }
         Plc4XConsumer consumer = new Plc4XConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
