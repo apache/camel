@@ -46,12 +46,14 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
                                                    + "single feed poll should be delivered immediately. If true, only one entry is processed "
                                                    + "per delay. Only applicable when splitEntries = true.")
     private boolean throttleEntries = true;
-    @UriParam(label = "security", secret = true, description = "Sets the username to be used for basic authentication when polling from a HTTP feed. "
-            + "Notice: Basic authentication is not a secured method, and is not recommended to be used.")
+    @UriParam(label = "security", secret = true,
+              description = "Sets the username to be used for basic authentication when polling from a HTTP feed. "
+                            + "Notice: Basic authentication is not a secured method, and is not recommended to be used.")
     @Deprecated
     private String username;
-    @UriParam(label = "security", secret = true, description = "Sets the password to be used for basic authentication when polling from a HTTP feed."
-            + "Notice: Basic authentication is not a secured method, and is not recommended to be used.")
+    @UriParam(label = "security", secret = true,
+              description = "Sets the password to be used for basic authentication when polling from a HTTP feed."
+                            + "Notice: Basic authentication is not a secured method, and is not recommended to be used.")
     @Deprecated
     private String password;
 
