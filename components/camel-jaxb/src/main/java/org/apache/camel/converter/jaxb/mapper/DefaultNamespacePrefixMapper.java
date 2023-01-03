@@ -35,7 +35,7 @@ public class DefaultNamespacePrefixMapper extends NamespacePrefixMapper implemen
 
     @Override
     public String getRegistrationKey() {
-        return "com.sun.xml.bind.namespacePrefixMapper";
+        return "org.glassfish.jaxb.namespacePrefixMapper";
     }
 
     @Override

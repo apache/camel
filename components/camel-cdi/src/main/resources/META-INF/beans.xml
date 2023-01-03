@@ -21,7 +21,7 @@
 
     <scan>
         <exclude name="org.apache.camel.cdi.transaction.*">
-            <if-class-not-available name="javax.transaction.Transaction"/>
+            <if-class-not-available name="jakarta.transaction.Transaction"/>
         </exclude>
         <exclude name="org.apache.camel.cdi.xml.*"/>
     </scan>

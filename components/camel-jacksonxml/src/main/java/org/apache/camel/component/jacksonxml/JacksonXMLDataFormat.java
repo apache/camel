@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationModule;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -519,7 +519,7 @@ public class JacksonXMLDataFormat extends ServiceSupport
 
         if (enableJaxbAnnotationModule) {
             // Enables JAXB processing
-            JaxbAnnotationModule module = new JaxbAnnotationModule();
+            JakartaXmlBindAnnotationModule module = new JakartaXmlBindAnnotationModule();
             LOG.info("Registering module: {}", module);
             xmlMapper.registerModule(module);
         }

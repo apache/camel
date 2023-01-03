@@ -142,9 +142,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- GRPC does not support the jakarta annotation, see https://github.com/grpc/grpc-java/issues/9179 -->
         <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
             <scope>test</scope>
         </dependency>
 

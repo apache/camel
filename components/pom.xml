@@ -308,7 +308,7 @@
         <module>camel-stream</module>
         <module>camel-stringtemplate</module>
         <module>camel-stitch</module>
-        <module>camel-swagger-java</module>
+        <!--module>camel-swagger-java</module-->
         <module>camel-swift</module>
         <module>camel-openapi-java</module>
         <module>camel-syslog</module>
