@@ -276,6 +276,26 @@ public interface SmppsComponentBuilderFactory {
             return this;
         }
         /**
+         * Set this on producer in order to benefit from transceiver (TRX)
+         * binding type. So once set, you don't need to define an 'SMTPP
+         * consumer' endpoint anymore. You would set this to a 'Direct consumer'
+         * endpoint instead. DISCALIMER: This feature is only tested with
+         * 'Direct consumer' endpoint. The behavior with any other consumer type
+         * is unknown and not tested.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param messageReceiverRouteId the value to set
+         * @return the dsl builder
+         */
+        default SmppsComponentBuilder messageReceiverRouteId(
+                java.lang.String messageReceiverRouteId) {
+            doSetProperty("messageReceiverRouteId", messageReceiverRouteId);
+            return this;
+        }
+        /**
          * Defines the numeric plan indicator (NPI) to be used in the SME. The
          * following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2:
          * Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9:
@@ -801,6 +821,7 @@ public interface SmppsComponentBuilderFactory {
             case "destAddrTon": getOrCreateConfiguration((SmppComponent) component).setDestAddrTon((byte) value); return true;
             case "lazySessionCreation": getOrCreateConfiguration((SmppComponent) component).setLazySessionCreation((boolean) value); return true;
             case "lazyStartProducer": ((SmppComponent) component).setLazyStartProducer((boolean) value); return true;
+            case "messageReceiverRouteId": getOrCreateConfiguration((SmppComponent) component).setMessageReceiverRouteId((java.lang.String) value); return true;
             case "numberingPlanIndicator": getOrCreateConfiguration((SmppComponent) component).setNumberingPlanIndicator((byte) value); return true;
             case "priorityFlag": getOrCreateConfiguration((SmppComponent) component).setPriorityFlag((byte) value); return true;
             case "protocolId": getOrCreateConfiguration((SmppComponent) component).setProtocolId((byte) value); return true;

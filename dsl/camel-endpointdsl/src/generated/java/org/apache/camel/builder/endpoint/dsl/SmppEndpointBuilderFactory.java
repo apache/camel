@@ -1125,6 +1125,26 @@ public interface SmppEndpointBuilderFactory {
             return this;
         }
         /**
+         * Set this on producer in order to benefit from transceiver (TRX)
+         * binding type. So once set, you don't need to define an 'SMTPP
+         * consumer' endpoint anymore. You would set this to a 'Direct consumer'
+         * endpoint instead. DISCALIMER: This feature is only tested with
+         * 'Direct consumer' endpoint. The behavior with any other consumer type
+         * is unknown and not tested.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param messageReceiverRouteId the value to set
+         * @return the dsl builder
+         */
+        default SmppEndpointProducerBuilder messageReceiverRouteId(
+                String messageReceiverRouteId) {
+            doSetProperty("messageReceiverRouteId", messageReceiverRouteId);
+            return this;
+        }
+        /**
          * Defines the numeric plan indicator (NPI) to be used in the SME. The
          * following NPI values are defined: 0: Unknown 1: ISDN (E163/E164) 2:
          * Data (X.121) 3: Telex (F.69) 6: Land Mobile (E.212) 8: National 9:
