@@ -35,7 +35,7 @@ public final class EKS2ClientFactory {
      * @return               EKSClient
      */
     public static EKS2InternalClient getEksClient(EKS2Configuration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
+        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
                 ? new EKS2ClientIAMOptimizedImpl(configuration) : new EKS2ClientStandardImpl(configuration);
     }
 }

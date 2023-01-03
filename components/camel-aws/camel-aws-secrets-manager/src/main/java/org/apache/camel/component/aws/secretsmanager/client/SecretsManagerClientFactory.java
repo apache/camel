@@ -35,7 +35,7 @@ public final class SecretsManagerClientFactory {
      * @return               SecretsManagerClient
      */
     public static SecretsManagerInternalClient getSecretsManagerClient(SecretsManagerConfiguration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
+        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
                 ? new SecretsManagerClientIAMOptimized(configuration) : new SecretsManagerClientStandardImpl(configuration);
     }
 }

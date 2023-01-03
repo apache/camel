@@ -55,7 +55,7 @@ public class Cw2Component extends DefaultComponent {
         // parameters
         setProperties(endpoint, parameters);
 
-        if (!configuration.isUseDefaultCredentialsProvider() && configuration.getAmazonCwClient() == null
+        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider()) && configuration.getAmazonCwClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
                     "useDefaultCredentialsProvider is set to false, AmazonCwClient or accessKey and secretKey must be specified");

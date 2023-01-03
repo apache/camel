@@ -35,7 +35,7 @@ public final class Translate2ClientFactory {
      * @return               TranslateClient
      */
     public static Translate2InternalClient getTranslateClient(Translate2Configuration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
+        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
                 ? new Translate2ClientIAMOptimized(configuration) : new Translate2ClientStandardImpl(configuration);
     }
 }

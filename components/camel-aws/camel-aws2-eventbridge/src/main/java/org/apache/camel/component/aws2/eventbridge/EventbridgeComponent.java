@@ -57,7 +57,8 @@ public class EventbridgeComponent extends DefaultComponent {
         configuration.setEventbusName(remaining);
         EventbridgeEndpoint endpoint = new EventbridgeEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (!configuration.isUseDefaultCredentialsProvider() && configuration.getEventbridgeClient() == null
+        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())
+                && configuration.getEventbridgeClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
                     "useDefaultCredentialsProvider is set to false, Amazon Eventbridge client or accessKey and secretKey must be specified");

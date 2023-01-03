@@ -59,7 +59,7 @@ public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
                 }
             }
             S3Client client;
-            if (!configuration.isUseDefaultCredentialsProvider()) {
+            if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())) {
                 AwsBasicCredentials cred
                         = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
                 S3ClientBuilder clientBuilder = S3Client.builder();

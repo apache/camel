@@ -35,7 +35,7 @@ public final class AWS2EC2ClientFactory {
      * @return               Ec2Client
      */
     public static AWS2EC2InternalClient getEc2Client(AWS2EC2Configuration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
+        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
                 ? new AWS2EC2ClientIAMOptimizedImpl(configuration) : new AWS2EC2ClientStandardImpl(configuration);
     }
 }

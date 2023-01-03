@@ -53,7 +53,7 @@ public class AWS2EC2Component extends DefaultComponent {
                 = this.configuration != null ? this.configuration.copy() : new AWS2EC2Configuration();
         AWS2EC2Endpoint endpoint = new AWS2EC2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (!configuration.isUseDefaultCredentialsProvider() && configuration.getAmazonEc2Client() == null
+        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider()) && configuration.getAmazonEc2Client() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
                     "useDefaultCredentialsProvider is set to false, amazonEC2Client or accessKey and secretKey must be specified");

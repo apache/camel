@@ -35,7 +35,7 @@ public final class ECS2ClientFactory {
      * @return               EcsClient
      */
     public static ECS2InternalClient getEcsClient(ECS2Configuration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
+        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
                 ? new ECS2ClientIAMOptimizedImpl(configuration) : new ECS2ClientStandardImpl(configuration);
     }
 }

@@ -35,7 +35,7 @@ public final class Ses2ClientFactory {
      * @return               SesClient
      */
     public static Ses2InternalClient getSesClient(Ses2Configuration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
+        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
                 ? new Ses2ClientOptimizedImpl(configuration) : new Ses2ClientStandardImpl(configuration);
     }
 }

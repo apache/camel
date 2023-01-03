@@ -35,7 +35,7 @@ public final class STS2ClientFactory {
      * @return               StsClient
      */
     public static STS2InternalClient getStsClient(STS2Configuration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
+        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
                 ? new STS2ClientIAMOptimized(configuration) : new STS2ClientStandardImpl(configuration);
     }
 }

@@ -58,7 +58,7 @@ public class Ddb2StreamConsumerHealthCheck extends AbstractHealthCheck {
                 }
             }
             DynamoDbStreamsClient client;
-            if (!configuration.isUseDefaultCredentialsProvider()) {
+            if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())) {
                 AwsBasicCredentials cred
                         = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
                 DynamoDbStreamsClientBuilder clientBuilder = DynamoDbStreamsClient.builder();

@@ -59,7 +59,7 @@ public class Athena2ClientHealthCheck extends AbstractHealthCheck {
                 }
             }
             AthenaClient client;
-            if (!athena2Endpoint.getConfiguration().isUseDefaultCredentialsProvider()) {
+            if (Boolean.FALSE.equals(athena2Endpoint.getConfiguration().isUseDefaultCredentialsProvider())) {
                 AwsBasicCredentials cred = AwsBasicCredentials.create(athena2Endpoint.getConfiguration().getAccessKey(),
                         athena2Endpoint.getConfiguration().getSecretKey());
                 AthenaClientBuilder clientBuilder = AthenaClient.builder();

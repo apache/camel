@@ -35,7 +35,7 @@ public final class EventbridgeClientFactory {
      * @return               EventBridgeClient
      */
     public static EventbridgeInternalClient getEventbridgeClient(EventbridgeConfiguration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
+        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
                 ? new EventbridgeClientIAMOptimizedImpl(configuration) : new EventbridgeClientStandardImpl(configuration);
     }
 }

@@ -35,7 +35,7 @@ public final class Ddb2ClientFactory {
      * @return               DynamoDBClient
      */
     public static Ddb2InternalClient getDynamoDBClient(Ddb2Configuration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
+        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
                 ? new Ddb2ClientIAMOptimizedImpl(configuration) : new Ddb2ClientStandardImpl(configuration);
     }
 }
