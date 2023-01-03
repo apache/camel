@@ -256,13 +256,31 @@ A route which receives an SMS using the Spring XML DSL:
   </route>
 ----------------------------------------------------------------------------------------------------------------
 
+An example of using transceiver (TRX) binding type:
+
+[source,java]
+--------------------------------------------------------------------------------------------------------------------------
+from("direct:start")
+        .to("smpp://j@localhost:8056?password=jpwd&systemType=producer" +
+            "&messageReceiverRouteId=sampleMessageReceiverRouteId");
+
+from("direct:messageReceiver").id("sampleMessageReceiverRouteId")
+        .to("bean:foo");
+--------------------------------------------------------------------------------------------------------------------------
+
+Please note that with TRX binding type, you wouldn't define a corresponding redundant SMPP consumer. Camel will use the
+specified route by `messageReceiverRouteId` as the corresponding consumer. Internally it uses one and same SmppSession
+as producer for the provided consumer.
+
+When the SMPP Server doesn't support TRX then you have to define separate producer (TX by default) and consumer (RX by default).
+
 [TIP]
 ====
 *SMSC simulator*
 
 If you need an SMSC simulator for your test, you can use the simulator
 provided by
-http://opensmpp.logica.com/CommonPart/Download/download2.html#simulator[Logica].
+https://github.com/opentelecoms-org/jsmpp/wiki/GettingStarted#running-smpp-server[JSMPP].
 ====
 
 == Debug logging

@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * JUnit test class for <code>org.apache.camel.component.smpp.SmppConfiguration</code>
@@ -81,6 +82,7 @@ public class SmppConfigurationTest {
         assertEquals(3, configuration.getPduProcessorDegree());
         assertEquals(100, configuration.getPduProcessorQueueCapacity());
         assertEquals(false, configuration.isSingleDLR());
+        assertNull(configuration.getMessageReceiverRouteId());
     }
 
     @Test
@@ -120,6 +122,7 @@ public class SmppConfigurationTest {
         assertEquals(80, configuration.getPduProcessorQueueCapacity());
         assertEquals(1, configuration.getPduProcessorDegree());
         assertEquals(true, configuration.isSingleDLR());
+        assertEquals("testMessageReceiverRouteId", configuration.getMessageReceiverRouteId());
     }
 
     @Test
@@ -180,6 +183,7 @@ public class SmppConfigurationTest {
         assertEquals(config.getSessionStateListener(), configuration.getSessionStateListener());
         assertEquals(config.getProxyHeaders(), configuration.getProxyHeaders());
         assertEquals(config.isSingleDLR(), configuration.isSingleDLR());
+        assertEquals(config.getMessageReceiverRouteId(), configuration.getMessageReceiverRouteId());
     }
 
     @Test
@@ -217,6 +221,7 @@ public class SmppConfigurationTest {
                           + "reconnectDelay=5000, "
                           + "maxReconnect=2147483647, "
                           + "lazySessionCreation=false, "
+                          + "messageReceiverRouteId=null, "
                           + "httpProxyHost=null, "
                           + "httpProxyPort=3128, "
                           + "httpProxyUsername=null, "
@@ -266,5 +271,6 @@ public class SmppConfigurationTest {
         config.setPduProcessorQueueCapacity(80);
         config.setPduProcessorDegree(1);
         config.setSingleDLR(true);
+        config.setMessageReceiverRouteId("testMessageReceiverRouteId");
     }
 }

@@ -98,6 +98,8 @@ public class SmppConfiguration implements Cloneable {
     private int maxReconnect = Integer.MAX_VALUE;
     @UriParam(label = "producer")
     private boolean lazySessionCreation;
+    @UriParam(label = "producer")
+    private String messageReceiverRouteId;
     @UriParam(label = "proxy")
     private String httpProxyHost;
     @UriParam(label = "proxy", defaultValue = "3128")
@@ -580,6 +582,21 @@ public class SmppConfiguration implements Cloneable {
         this.lazySessionCreation = lazySessionCreation;
     }
 
+    public String getMessageReceiverRouteId() {
+        return messageReceiverRouteId;
+    }
+
+    /**
+     * Set this on producer in order to benefit from transceiver (TRX) binding type. So once set, you don't need to
+     * define an 'SMTPP consumer' endpoint anymore. You would set this to a 'Direct consumer' endpoint instead.
+     *
+     * DISCALIMER: This feature is only tested with 'Direct consumer' endpoint. The behavior with any other consumer
+     * type is unknown and not tested.
+     */
+    public void setMessageReceiverRouteId(String messageReceiverRouteId) {
+        this.messageReceiverRouteId = messageReceiverRouteId;
+    }
+
     public String getHttpProxyHost() {
         return httpProxyHost;
     }
@@ -750,6 +767,7 @@ public class SmppConfiguration implements Cloneable {
                + ", reconnectDelay=" + reconnectDelay
                + ", maxReconnect=" + maxReconnect
                + ", lazySessionCreation=" + lazySessionCreation
+               + ", messageReceiverRouteId=" + messageReceiverRouteId
                + ", httpProxyHost=" + httpProxyHost
                + ", httpProxyPort=" + httpProxyPort
                + ", httpProxyUsername=" + httpProxyUsername
