@@ -113,7 +113,7 @@ public class ArangoDbProducer extends DefaultProducer {
         return exchange -> {
             try {
                 ArangoCollection collection = calculateDocumentCollection();
-                Boolean isMultiInsert = (Boolean) exchange.getMessage().getHeader(MULTI_INSERT, false);
+                boolean isMultiInsert = exchange.getMessage().getHeader(MULTI_INSERT, false, Boolean.class);
 
                 // save multiple document
                 if (isMultiInsert) {
@@ -152,7 +152,7 @@ public class ArangoDbProducer extends DefaultProducer {
             try {
                 ArangoCollection collection = calculateDocumentCollection();
 
-                Boolean isMultiUpdate = (Boolean) exchange.getMessage().getHeader(MULTI_UPDATE, false);
+                boolean isMultiUpdate = exchange.getMessage().getHeader(MULTI_UPDATE, false, Boolean.class);
 
                 // update multiple documents
                 if (isMultiUpdate) {
@@ -175,7 +175,7 @@ public class ArangoDbProducer extends DefaultProducer {
             try {
                 ArangoCollection collection = calculateDocumentCollection();
 
-                Boolean isMultiUpdate = (Boolean) exchange.getMessage().getHeader(MULTI_DELETE, false);
+                boolean isMultiUpdate = exchange.getMessage().getHeader(MULTI_DELETE, false, Boolean.class);
                 // if multiple documents to delete
                 if (isMultiUpdate) {
                     Collection<String> keysToDelete = exchange.getMessage().getMandatoryBody(Collection.class);
