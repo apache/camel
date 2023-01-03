@@ -40,7 +40,7 @@ public class Plc4XEndpointTest {
 
     // TODO: figure out what this is
     @Test
-    public void createProducer() throws Exception {
+    public void createProducer() {
         assertThat(sut.createProducer(), notNullValue());
     }
 

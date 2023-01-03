@@ -36,15 +36,24 @@ public class Plc4XProducer extends DefaultAsyncProducer {
     private final Logger log = LoggerFactory.getLogger(Plc4XProducer.class);
     private PlcConnection plcConnection;
     private AtomicInteger openRequests;
+    private final Plc4XEndpoint plc4XEndpoint;
 
-    public Plc4XProducer(Plc4XEndpoint endpoint) throws PlcException {
+    public Plc4XProducer(Plc4XEndpoint endpoint) {
         super(endpoint);
-        String plc4xURI = endpoint.getEndpointUri().replaceFirst("plc4x:/?/?", "");
-        this.plcConnection = endpoint.getConnection();
-        if (!plcConnection.getMetadata().canWrite()) {
-            throw new PlcException("This connection (" + plc4xURI + ") doesn't support writing.");
-        }
+        plc4XEndpoint = endpoint;
         openRequests = new AtomicInteger();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        this.plcConnection = plc4XEndpoint.getConnection();
+        if (!plcConnection.isConnected()) {
+            plc4XEndpoint.reconnect();
+        }
+        if (!plcConnection.getMetadata().canWrite()) {
+            throw new PlcException("This connection (" + plc4XEndpoint.getUri() + ") doesn't support writing.");
+        }
     }
 
     @Override
@@ -99,6 +108,7 @@ public class Plc4XProducer extends DefaultAsyncProducer {
 
     @Override
     protected void doStop() throws Exception {
+        super.doStop();
         int openRequestsAtStop = openRequests.get();
         log.debug("Stopping with {} open requests", openRequestsAtStop);
         if (openRequestsAtStop > 0) {
