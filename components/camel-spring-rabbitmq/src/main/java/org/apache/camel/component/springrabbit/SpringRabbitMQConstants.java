@@ -39,7 +39,6 @@ public final class SpringRabbitMQConstants {
     public static final String DELIVERY_LIMIT = "x-delivery-limit";
     public static final String EXPIRES = "x-expires";
     public static final String SINGLE_ACTIVE_CONSUMER = "x-single-active-consumer";
-    public static final String QUEUE_TYPE = "x-queue-type";
 
     private SpringRabbitMQConstants() {
         // Constants class
