@@ -168,6 +168,10 @@ public class SalesforceSession extends ServiceSupport {
                 fields.put("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer");
                 fields.put("assertion", generateJwtAssertion());
                 break;
+            case CLIENT_CREDENTIALS:
+                fields.put("grant_type", "client_credentials");
+                fields.put("client_secret", config.getClientSecret());
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported login configuration type: " + type);
         }

@@ -164,6 +164,7 @@ public class SalesforceLoginConfig {
         final boolean hasPassword = ObjectHelper.isNotEmpty(password);
         final boolean hasRefreshToken = ObjectHelper.isNotEmpty(refreshToken);
         final boolean hasKeystore = keystore != null && ObjectHelper.isNotEmpty(keystore.getResource());
+        final boolean hasClientCredentials = ObjectHelper.isNotEmpty(clientId) && ObjectHelper.isNotEmpty(clientSecret);
 
         if (hasPassword && !hasRefreshToken && !hasKeystore) {
             return AuthenticationType.USERNAME_PASSWORD;
@@ -175,6 +176,10 @@ public class SalesforceLoginConfig {
 
         if (!hasPassword && !hasRefreshToken && hasKeystore) {
             return AuthenticationType.JWT;
+        }
+
+        if (!hasPassword && !hasRefreshToken && !hasKeystore && hasClientCredentials) {
+            return AuthenticationType.CLIENT_CREDENTIALS;
         }
 
         if (hasPassword && hasRefreshToken || hasPassword && hasKeystore || hasRefreshToken && hasKeystore) {
@@ -252,6 +257,9 @@ public class SalesforceLoginConfig {
             case JWT:
                 ObjectHelper.notNull(userName, "userName (JWT authentication)");
                 ObjectHelper.notNull(keystore, "keystore (JWT authentication)");
+                break;
+            case CLIENT_CREDENTIALS:
+                ObjectHelper.notNull(clientSecret, "clientSecret (Client Credentials authentication)");
                 break;
             default:
                 throw new IllegalArgumentException("Unknown authentication type: " + type);
