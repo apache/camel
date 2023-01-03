@@ -35,7 +35,7 @@ public final class AWS2S3ClientFactory {
      * @return               AWSS3Client
      */
     public static AWS2CamelS3InternalClient getAWSS3Client(AWS2S3Configuration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
+        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
                 ? new AWS2S3ClientIAMOptimizedImpl(configuration) : new AWS2S3ClientStandardImpl(configuration);
     }
 }

@@ -35,7 +35,7 @@ public final class Cw2ClientFactory {
      * @return               CloudWatchClient
      */
     public static Cw2InternalClient getCloudWatchClient(Cw2Configuration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
+        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
                 ? new Cw2ClientIAMOptimizedImpl(configuration) : new Cw2ClientStandardImpl(configuration);
     }
 }

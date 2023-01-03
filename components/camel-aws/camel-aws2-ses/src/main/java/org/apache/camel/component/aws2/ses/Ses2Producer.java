@@ -98,7 +98,7 @@ public class Ses2Producer extends DefaultProducer {
     private software.amazon.awssdk.services.ses.model.Message createMessage(Exchange exchange) {
         software.amazon.awssdk.services.ses.model.Message.Builder message
                 = software.amazon.awssdk.services.ses.model.Message.builder();
-        Boolean isHtmlEmail = exchange.getIn().getHeader(Ses2Constants.HTML_EMAIL, false, Boolean.class);
+        final boolean isHtmlEmail = exchange.getIn().getHeader(Ses2Constants.HTML_EMAIL, false, Boolean.class);
         String content = exchange.getIn().getBody(String.class);
         if (isHtmlEmail) {
             message.body(Body.builder().html(Content.builder().data(content).build()).build());

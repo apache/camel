@@ -162,7 +162,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
 
             ListObjectsResponse listObjects = getAmazonS3Client().listObjects(listObjectsRequest.build());
 
-            if (listObjects.isTruncated()) {
+            if (Boolean.TRUE.equals(listObjects.isTruncated())) {
                 marker = listObjects.nextMarker();
                 LOG.trace("Returned list is truncated, so setting next marker: {}", marker);
             } else {

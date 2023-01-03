@@ -53,7 +53,7 @@ public class KMS2Component extends DefaultComponent {
 
         KMS2Endpoint endpoint = new KMS2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (!configuration.isUseDefaultCredentialsProvider() && configuration.getKmsClient() == null
+        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider()) && configuration.getKmsClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
                     "useDefaultCredentialsProvider is set to false, Amazon kms client or accessKey and secretKey must be specified");

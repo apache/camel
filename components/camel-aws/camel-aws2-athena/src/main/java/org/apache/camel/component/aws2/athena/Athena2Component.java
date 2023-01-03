@@ -51,7 +51,8 @@ public class Athena2Component extends DefaultComponent {
                 = this.configuration != null ? this.configuration.copy() : new Athena2Configuration();
         Athena2Endpoint endpoint = new Athena2Endpoint(uri, this, configurationClone);
         setProperties(endpoint, parameters);
-        if (!configurationClone.isUseDefaultCredentialsProvider() && configurationClone.getAmazonAthenaClient() == null
+        if (Boolean.FALSE.equals(configurationClone.isUseDefaultCredentialsProvider())
+                && configurationClone.getAmazonAthenaClient() == null
                 && (configurationClone.getAccessKey() == null
                         || configurationClone.getSecretKey() == null)) {
             throw new IllegalArgumentException(

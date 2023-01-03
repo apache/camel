@@ -35,7 +35,7 @@ public final class IAM2ClientFactory {
      * @return               IamClient
      */
     public static IAM2InternalClient getIamClient(IAM2Configuration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
+        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
                 ? new IAM2ClientOptimizedImpl(configuration) : new IAM2ClientStandardImpl(configuration);
     }
 }

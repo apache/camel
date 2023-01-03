@@ -57,7 +57,7 @@ public class Ses2Component extends DefaultComponent {
         configuration.setFrom(remaining);
         Ses2Endpoint endpoint = new Ses2Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (!configuration.isUseDefaultCredentialsProvider() && configuration.getAmazonSESClient() == null
+        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider()) && configuration.getAmazonSESClient() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
                     "useDefaultCredentialsProvider is set to false, AmazonSESClient or accessKey and secretKey must be specified");

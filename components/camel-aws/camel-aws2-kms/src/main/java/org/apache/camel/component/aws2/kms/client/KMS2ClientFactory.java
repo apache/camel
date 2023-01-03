@@ -35,7 +35,7 @@ public final class KMS2ClientFactory {
      * @return               KMSClient
      */
     public static KMS2InternalClient getKmsClient(KMS2Configuration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
+        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
                 ? new KMS2ClientOptimizedImpl(configuration) : new KMS2ClientStandardImpl(configuration);
     }
 }

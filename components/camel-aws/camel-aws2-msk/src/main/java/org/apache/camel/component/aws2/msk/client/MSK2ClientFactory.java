@@ -35,7 +35,7 @@ public final class MSK2ClientFactory {
      * @return               MqClient
      */
     public static MSK2InternalClient getKafkaClient(MSK2Configuration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
+        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
                 ? new MSK2ClientOptimizedImpl(configuration) : new MSK2ClientStandardImpl(configuration);
     }
 }

@@ -35,7 +35,7 @@ public final class MQ2ClientFactory {
      * @return               MqClient
      */
     public static MQ2InternalClient getMqClient(MQ2Configuration configuration) {
-        return configuration.isUseDefaultCredentialsProvider()
+        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
                 ? new MQ2ClientOptimizedImpl(configuration) : new MQ2ClientStandardImpl(configuration);
     }
 }
