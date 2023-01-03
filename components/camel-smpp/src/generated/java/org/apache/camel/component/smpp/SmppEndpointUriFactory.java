@@ -22,7 +22,7 @@ public class SmppEndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(43);
+        Set<String> props = new HashSet<>(44);
         props.add("addressRange");
         props.add("alphabet");
         props.add("bridgeErrorHandler");
@@ -41,9 +41,9 @@ public class SmppEndpointUriFactory extends org.apache.camel.support.component.E
         props.add("httpProxyUsername");
         props.add("initialReconnectDelay");
         props.add("lazySessionCreation");
-        props.add("messageReceiverRouteId");
         props.add("lazyStartProducer");
         props.add("maxReconnect");
+        props.add("messageReceiverRouteId");
         props.add("numberingPlanIndicator");
         props.add("password");
         props.add("pduProcessorDegree");
