@@ -483,7 +483,8 @@ public class HttpProducer extends DefaultProducer {
         Header header = httpResponse.getFirstHeader(HttpConstants.CONTENT_ENCODING);
         String contentEncoding = header != null ? header.getValue() : null;
 
-        if (!exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
+        final boolean gzipEncoding = exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class);
+        if (!gzipEncoding) {
             is = GZIPHelper.uncompressGzip(contentEncoding, is);
         }
         // Honor the character encoding
