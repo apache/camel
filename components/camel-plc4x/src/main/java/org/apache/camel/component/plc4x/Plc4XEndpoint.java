@@ -56,7 +56,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     private int period;
     @UriParam
     @Metadata(description = "Whether to reconnect when no connection is present upon doing a request")
-    private boolean autoReconnect = false;
+    private boolean autoReconnect;
 
     private PlcDriverManager plcDriverManager;
     private PlcConnection connection;
