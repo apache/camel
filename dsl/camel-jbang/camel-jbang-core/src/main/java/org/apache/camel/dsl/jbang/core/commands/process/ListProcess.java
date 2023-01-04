@@ -32,7 +32,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "ps", description = "List running Camel integrations")
-public class ListProcess extends ProcessBaseCommand {
+public class ListProcess extends WatchableProcessCommand {
 
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by pid, name or age", defaultValue = "pid")
@@ -46,8 +46,7 @@ public class ListProcess extends ProcessBaseCommand {
         super(main);
     }
 
-    @Override
-    public Integer call() throws Exception {
+    protected Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids("*");
