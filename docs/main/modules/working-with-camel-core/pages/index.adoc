@@ -49,8 +49,6 @@ Learn about additional ways to customize your integrations. Explore alternatives
 * xref:manual::rest-dsl.adoc[Rest DSL]
 * xref:manual::route-builder.adoc[Route Builder]
 * xref:manual::route-configuration.adoc[Route Configuration]
-* xref:manual::route-controller.adoc[Route Controller]
-* xref:manual::route-policy.adoc[Route Policy]
 * xref:manual::routes.adoc[Routes]
 * xref:manual::route-template.adoc[Route Template]
 * xref:manual::security.adoc[Security]
