@@ -31,7 +31,6 @@ public class Plc4XComponentTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedMessageCount(2);
-
         template.asyncSendBody("direct:plc4x", Collections.singletonList("irrelevant"));
         template.asyncSendBody("direct:plc4x2", Collections.singletonList("irrelevant"));
 
@@ -41,11 +40,12 @@ public class Plc4XComponentTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() {
+            public void configure() throws Exception {
                 Map<String, Object> tags = new HashMap<>();
                 tags.put("Test1", "%TestQuery");
                 Plc4XEndpoint producer = getContext().getEndpoint("plc4x:mock:10.10.10.1/1/1", Plc4XEndpoint.class);
                 producer.setTags(tags);
+                producer.reconnect();
                 from("direct:plc4x")
                         .setBody(constant(Collections.singletonMap("test", Collections.singletonMap("testAddress", false))))
                         .to("plc4x:mock:10.10.10.1/1/1")

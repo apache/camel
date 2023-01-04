@@ -105,7 +105,14 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     }
 
     public void reconnect() throws PlcConnectionException {
+        if (connection == null) {
+            connection = plcDriverManager.getConnection(uri);
+        }
         connection.connect();
+        // If reconnection fails without Exception, reset connection
+        if (!connection.isConnected()) {
+            connection = plcDriverManager.getConnection(uri);
+        }
     }
 
     @Override
