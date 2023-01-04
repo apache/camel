@@ -404,7 +404,9 @@ public class DisruptorReference {
             blockingLatch.await();
             final Exchange exchange = event.getSynchronizedExchange().cancelAndGetOriginalExchange();
 
-            if (exchange.getProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE, false, boolean.class)) {
+            final boolean ignoreExchange
+                    = exchange.getProperty(DisruptorEndpoint.DISRUPTOR_IGNORE_EXCHANGE, false, boolean.class);
+            if (ignoreExchange) {
                 // Property was set and it was set to true, so don't process Exchange.
                 LOGGER.trace("Ignoring exchange {}", exchange);
             } else {
