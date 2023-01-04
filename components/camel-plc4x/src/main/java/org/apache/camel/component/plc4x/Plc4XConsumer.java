@@ -91,7 +91,7 @@ public class Plc4XConsumer extends DefaultConsumer {
                 plc4XEndpoint.reconnect();
                 LOGGER.debug("Successfully reconnected");
             } catch (PlcConnectionException e) {
-                LOGGER.error("Unable to reconnect, skipping request", e);
+                LOGGER.warn("Unable to reconnect, skipping request", e);
                 return;
             }
         }
@@ -134,7 +134,7 @@ public class Plc4XConsumer extends DefaultConsumer {
                 exchange.getIn().setBody(response);
                 getProcessor().process(exchange);
             } catch (PlcConnectionException e) {
-                LOGGER.error("Unable to reconnect, skipping request", e);
+                LOGGER.warn("Unable to reconnect, skipping request", e);
             } catch (Exception e) {
                 getExceptionHandler().handleException(e);
             }

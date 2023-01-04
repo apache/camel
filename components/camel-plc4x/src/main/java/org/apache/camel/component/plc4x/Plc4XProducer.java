@@ -65,7 +65,7 @@ public class Plc4XProducer extends DefaultAsyncProducer {
                 plc4XEndpoint.reconnect();
                 log.debug("Successfully reconnected");
             } catch (PlcConnectionException e) {
-                log.error("Unable to reconnect, skipping request");
+                log.warn("Unable to reconnect, skipping request", e);
                 return;
             }
         }
