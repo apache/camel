@@ -672,8 +672,10 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                         List<String> values = entry.getValue();
                         Object evalue;
                         if (values.size() > 1) {
-                            if (exchange.getProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.FALSE,
-                                    Boolean.class)) {
+                            final Boolean headersMerged
+                                    = exchange.getProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.FALSE,
+                                            Boolean.class);
+                            if (headersMerged) {
                                 StringBuilder sb = new StringBuilder();
                                 for (Iterator<String> it = values.iterator(); it.hasNext();) {
                                     sb.append(it.next());
