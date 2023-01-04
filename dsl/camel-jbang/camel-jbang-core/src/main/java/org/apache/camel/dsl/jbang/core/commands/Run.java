@@ -93,6 +93,8 @@ class Run extends CamelCommand {
     private boolean silentRun;
     private boolean pipeRun;
 
+    private File logFile;
+
     //CHECKSTYLE:OFF
     @Parameters(description = "The Camel file(s) to run. If no files specified then application.properties is used as source for which files to run.",
             arity = "0..9", paramLabel = "<files>", parameterConsumer = FilesConsumer.class)
@@ -560,6 +562,11 @@ class Run extends CamelCommand {
         main.start();
         main.run();
 
+        // cleanup and delete log file
+        if (logFile != null) {
+            FileUtil.deleteFile(logFile);
+        }
+
         return main.getExitCode();
     }
 
@@ -701,6 +708,13 @@ class Run extends CamelCommand {
             writeSettings("loggingLevel", loggingLevel);
             writeSettings("loggingColor", loggingColor ? "true" : "false");
             writeSettings("loggingJson", loggingJson ? "true" : "false");
+            if (!pipeRun) {
+                // remember log file
+                File dir = new File(System.getProperty("user.home"), ".camel");
+                String name = RuntimeUtil.getPid() + ".log";
+                logFile = new File(dir, name);
+                logFile.deleteOnExit();
+            }
         } else {
             RuntimeUtil.configureLog("off", false, false, false, false);
             writeSettings("loggingLevel", "off");
