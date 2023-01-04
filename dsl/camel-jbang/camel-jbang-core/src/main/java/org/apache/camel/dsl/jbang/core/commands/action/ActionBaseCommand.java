@@ -33,9 +33,6 @@ import org.apache.camel.util.json.Jsoner;
 
 abstract class ActionBaseCommand extends CamelCommand {
 
-    private static final String[] DSL_EXT = new String[] { "groovy", "java", "js", "jsh", "kts", "xml", "yaml" };
-    private static final Pattern PATTERN = Pattern.compile("([\\w|\\-.])+");
-
     public ActionBaseCommand(CamelJBangMain main) {
         super(main);
     }
