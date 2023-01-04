@@ -155,7 +155,7 @@ public class GrokDataFormat extends ServiceSupport implements DataFormat, DataFo
         int start = 0;
         while (start < charBuffer.length()) { //Allow multiple matches per line
             Match gm = grok.match(charBuffer.subSequence(start, charBuffer.length()));
-            if (!gm.isNull()) {
+            if (Boolean.FALSE.equals(gm.isNull())) {
                 if (flattened) {
                     resultList.add(gm.captureFlattened());
                 } else {
