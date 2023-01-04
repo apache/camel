@@ -38,7 +38,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "thread-dump", description = "List threads in a running Camel integration")
-public class CamelThreadDump extends ActionBaseCommand {
+public class CamelThreadDump extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
     String name;
@@ -66,7 +66,7 @@ public class CamelThreadDump extends ActionBaseCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);
@@ -132,6 +132,7 @@ public class CamelThreadDump extends ActionBaseCommand {
         // sort rows
         rows.sort(this::sortRow);
 
+        clearScreen();
         if (!rows.isEmpty()) {
             int total = jo.getInteger("threadCount");
             int peak = jo.getInteger("peakThreadCount");

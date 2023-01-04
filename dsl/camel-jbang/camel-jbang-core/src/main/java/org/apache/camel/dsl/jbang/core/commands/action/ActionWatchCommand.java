@@ -14,29 +14,44 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.process;
+package org.apache.camel.dsl.jbang.core.commands.action;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "get",
-                     description = "Get status of Camel integrations (use get --help to see sub commands)")
-public class CamelStatus extends CamelCommand {
+abstract class ActionWatchCommand extends ActionBaseCommand {
 
     @CommandLine.Option(names = { "--watch" },
                         description = "Execute periodically and showing output fullscreen")
     boolean watch;
 
-    public CamelStatus(CamelJBangMain main) {
+    public ActionWatchCommand(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer call() throws Exception {
-        // default to get the integrations
-        CamelContextStatus cmd = new CamelContextStatus(getMain());
-        cmd.watch = watch;
-        return new CommandLine(cmd).execute();
+        int exit;
+        if (watch) {
+            do {
+                // output command
+                exit = doCall();
+                // use 2-sec delay in watch mode
+                Thread.sleep(2000);
+            } while (exit == 0);
+        } else {
+            exit = doCall();
+        }
+        return exit;
     }
+
+    protected void clearScreen() {
+        AnsiConsole.out().print(Ansi.ansi().eraseScreen());
+        AnsiConsole.out().print(Ansi.ansi().cursor(0, 0));
+    }
+
+    protected abstract Integer doCall() throws Exception;
+
 }

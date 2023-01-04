@@ -25,7 +25,7 @@ import picocli.CommandLine;
 public class CamelTop extends CamelCommand {
 
     @CommandLine.Option(names = { "--watch" },
-            description = "Execute periodically and showing output fullscreen")
+                        description = "Execute periodically and showing output fullscreen")
     boolean watch;
 
     public CamelTop(CamelJBangMain main) {

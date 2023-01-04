@@ -39,7 +39,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "route-controller", description = "List status of route controller in a running Camel integration")
-public class RouteControllerAction extends ActionBaseCommand {
+public class RouteControllerAction extends ActionWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
     String name;
@@ -67,7 +67,7 @@ public class RouteControllerAction extends ActionBaseCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);
@@ -134,6 +134,7 @@ public class RouteControllerAction extends ActionBaseCommand {
         // sort rows
         rows.sort(this::sortRow);
 
+        clearScreen();
         if (!rows.isEmpty()) {
             if (supervising) {
                 if (header) {
