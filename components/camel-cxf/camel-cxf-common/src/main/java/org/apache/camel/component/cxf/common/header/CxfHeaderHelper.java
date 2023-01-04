@@ -240,7 +240,9 @@ public final class CxfHeaderHelper {
         if (values.size() == 1) {
             return values.get(0);
         }
-        if (exchange.getProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.FALSE, Boolean.class)) {
+        final boolean headersMerged
+                = exchange.getProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.FALSE, Boolean.class);
+        if (headersMerged) {
             return String.join(", ", values);
         }
         return values;
