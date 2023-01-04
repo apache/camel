@@ -155,7 +155,7 @@ from("direct:test").routeId("myroute")
     .end();
 ----
 
-And by using the `doEndTry()` we can end the block correctly, and an XML representation of the route would be as follows:
+And by using the `endDoTry()` we can end the block correctly, and an XML representation of the route would be as follows:
 
 [source,xml]
 ----
