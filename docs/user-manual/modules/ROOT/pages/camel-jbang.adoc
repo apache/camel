@@ -663,6 +663,19 @@ Stopping running Camel integration (pid: 61818)
 Stopping running Camel integration (pid: 62506)
 ----
 
+==== Watching local Camel integrations
+
+Most of the management commands can run in _watch_ mode, which repetitively output the status in full-screen mode.
+This is done using the `--watch` parameter as follows:
+
+[source,bash]
+----
+camel ps --watch
+  PID   NAME                          READY  STATUS    AGE
+ 61818  sample.camel.MyCamelApplica…   1/1   Running  26m38s
+ 62506  dude                           1/1   Running   4m34s
+----
+
 ==== Controlling Spring Boot and Quarkus integrations
 
 The Camel JBang CLI will by default only control Camel integrations that are running using the CLI, eg `camel run foo.java`.
@@ -716,6 +729,8 @@ shows how long time ago the last processed message for 3 stages (started/complet
 The value of `0s/0s/-` means that the last started and completed message just happened (0 seconds ago),
 and  that there has not been any failed message yet. And this example `9s/9s/1h3m` means that last started and
 completed message is 9 seconds ago, and last failed is 1 hour and 3 minutes ago.
+
+TIP: You can run in _watch_ mode using: `camel get --watch`
 
 You can also see the status of every routes, from all the local Camel integrations with `camel get route`:
 
