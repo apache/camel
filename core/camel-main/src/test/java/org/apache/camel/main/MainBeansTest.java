@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -23,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -137,6 +139,34 @@ public class MainBeansTest {
         assertEquals("mydb", foo.get("database"));
         assertEquals("scott", foo.get("username"));
         assertEquals("tiger", foo.get("password"));
+
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeansListSquare() throws Exception {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // defining a list bean (un-ordered)
+        main.addProperty("camel.beans.myprojects[0]", "Camel");
+        main.addProperty("camel.beans.myprojects[2]", "Quarkus");
+        main.addProperty("camel.beans.myprojects[1]", "Kafka");
+
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Object bean = camelContext.getRegistry().lookupByName("myprojects");
+        assertNotNull(bean);
+        assertInstanceOf(List.class, bean);
+
+        List<?> list = (List<?>) bean;
+        assertEquals(3, list.size());
+        assertEquals("Camel", list.get(0));
+        assertEquals("Kafka", list.get(1));
+        assertEquals("Quarkus", list.get(2));
 
         main.stop();
     }

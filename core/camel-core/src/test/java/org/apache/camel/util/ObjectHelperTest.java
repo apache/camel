@@ -48,6 +48,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ObjectHelper;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -1077,5 +1078,25 @@ public class ObjectHelperTest {
         assertEquals("foo-bar",
                 StreamSupport.stream(ObjectHelper.createIterable(content, ";+", false, true).spliterator(), false)
                         .collect(Collectors.joining("-")));
+    }
+
+    @Test
+    public void testAddListByIndex() {
+        List<Object> list = new ArrayList<>();
+        org.apache.camel.util.ObjectHelper.addListByIndex(list, 0, "aaa");
+        org.apache.camel.util.ObjectHelper.addListByIndex(list, 2, "ccc");
+        org.apache.camel.util.ObjectHelper.addListByIndex(list, 1, "bbb");
+
+        Assertions.assertEquals(3, list.size());
+        Assertions.assertEquals("aaa", list.get(0));
+        Assertions.assertEquals("bbb", list.get(1));
+        Assertions.assertEquals("ccc", list.get(2));
+
+        org.apache.camel.util.ObjectHelper.addListByIndex(list, 99, "zzz");
+        Assertions.assertEquals(100, list.size());
+        Assertions.assertNull(list.get(4));
+        Assertions.assertNull(list.get(50));
+        Assertions.assertNull(list.get(98));
+        Assertions.assertEquals("zzz", list.get(99));
     }
 }

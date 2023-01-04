@@ -1316,4 +1316,29 @@ public final class ObjectHelper {
         return objects != null ? Arrays.asList(objects) : Collections.emptyList();
     }
 
+    /**
+     * Adds the value to the list at the given index
+     */
+    public static void addListByIndex(List<Object> list, int idx, Object value) {
+        if (idx < list.size()) {
+            list.set(idx, value);
+        } else if (idx == list.size()) {
+            list.add(value);
+        } else {
+            // If the list implementation is based on an array, we
+            // can increase tha capacity to the required value to
+            // avoid potential re-allocation when invoking List::add.
+            //
+            // Note that ArrayList is the default List impl that
+            // is automatically created if the property is null.
+            if (list instanceof ArrayList) {
+                ((ArrayList<?>) list).ensureCapacity(idx + 1);
+            }
+            while (list.size() < idx) {
+                list.add(null);
+            }
+            list.add(idx, value);
+        }
+    }
+
 }
