@@ -493,29 +493,16 @@ public final class MainHelper {
     }
 
     public static OrderedLocationProperties extractProperties(OrderedLocationProperties properties, String optionPrefix) {
-        if (properties == null) {
-            return new OrderedLocationProperties();
-        }
-        OrderedLocationProperties rc = new OrderedLocationProperties();
-
-        Set<Object> toRemove = new HashSet<>();
-        for (var entry : properties.entrySet()) {
-            String key = entry.getKey().toString();
-            String loc = properties.getLocation(key);
-            if (key.startsWith(optionPrefix)) {
-                Object value = properties.get(key);
-                key = key.substring(optionPrefix.length());
-                rc.put(loc, key, value);
-                toRemove.add(entry.getKey());
-            }
-        }
-        toRemove.forEach(properties::remove);
-
-        return rc;
+        return extractProperties(properties, optionPrefix, null, true);
     }
 
     public static OrderedLocationProperties extractProperties(
             OrderedLocationProperties properties, String optionPrefix, String optionSuffix) {
+        return extractProperties(properties, optionPrefix, optionSuffix, true);
+    }
+
+    public static OrderedLocationProperties extractProperties(
+            OrderedLocationProperties properties, String optionPrefix, String optionSuffix, boolean remove) {
         if (properties == null) {
             return new OrderedLocationProperties();
         }
@@ -528,11 +515,13 @@ public final class MainHelper {
             if (key.startsWith(optionPrefix)) {
                 Object value = properties.get(key);
                 key = key.substring(optionPrefix.length());
-                if (key.endsWith(optionSuffix)) {
+                if (optionSuffix != null && key.endsWith(optionSuffix)) {
                     key = key.substring(0, key.length() - optionSuffix.length());
                 }
                 rc.put(loc, key, value);
-                toRemove.add(entry.getKey());
+                if (remove) {
+                    toRemove.add(entry.getKey());
+                }
             }
         }
         toRemove.forEach(properties::remove);

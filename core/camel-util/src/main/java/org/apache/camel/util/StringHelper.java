@@ -1156,4 +1156,13 @@ public final class StringHelper {
         }
     }
 
+    public static boolean isDigit(String s) {
+        for (char ch : s.toCharArray()) {
+            if (!Character.isDigit(ch)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

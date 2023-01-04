@@ -1405,8 +1405,13 @@ public abstract class BaseMainSupport extends BaseService {
         // create map beans if none already exists
         for (String name : beansMap) {
             if (camelContext.getRegistry().lookupByName(name) == null) {
-                // register bean as a map
-                Map<String, Object> bean = new LinkedHashMap<>();
+
+                // is the config list or map style
+                OrderedLocationProperties config = MainHelper.extractProperties(properties, name + "[", "]", false);
+                boolean list = config.keySet().stream().map(Object::toString).allMatch(StringHelper::isDigit);
+
+                // register bean as a list or map
+                Object bean = list ? new ArrayList<>() : new LinkedHashMap<>();
                 if (logSummary) {
                     LOG.info("Binding bean: {} (type: {}) to the registry", name, ObjectHelper.classCanonicalName(bean));
                 } else {
@@ -1428,7 +1433,7 @@ public abstract class BaseMainSupport extends BaseService {
             setPropertiesOnTarget(camelContext, bean, config, optionPrefix + name + ".", failIfNotSet, ignoreCase,
                     autoConfiguredProperties);
         }
-        // then set properties per bean (map style)
+        // then set properties per bean (map/list style)
         for (String name : beansMap) {
             Object bean = camelContext.getRegistry().lookupByName(name);
             if (bean == null) {
