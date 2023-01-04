@@ -137,7 +137,7 @@ But it is **not**, both __docatch1__ and __docatch2__ are in the inner doTry, an
 
 So in this example the route will throw the 1st exception which is then handled in __docatch1__ which then throw a 2nd exception, that is not caught.
 
-So what you must do is to end the doCatch block correct (notice how we use `doEndTry()` two times) as shown below:
+So what you must do is to end the doCatch block correct (notice how we use `endDoTry()` two times) as shown below:
 
 [source,java]
 ----
@@ -155,7 +155,7 @@ from("direct:test").routeId("myroute")
     .end();
 ----
 
-And by using the `doEndTry()` we can end the block correctly, and an XML representation of the route would be as follows:
+And by using the `endDoTry()` we can end the block correctly, and an XML representation of the route would be as follows:
 
 [source,xml]
 ----
