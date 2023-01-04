@@ -94,14 +94,14 @@ Here is an example to specify endpoint URI in Java DSL:
 transformer()
     .fromType("xml")
     .toType("json")
-    .withUri("dozer:myDozer?mappingFile=myMapping.xml...");
+    .withUri("component:componentPathOptions?mappingFile=myMapping.xml...");
 ----
 
 And here is an example to specify endpoint ref in XML DSL:
 
 [source,xml]
 ----
-<endpointTransformer ref="myDozerEndpoint" fromType="xml" toType="json"/>
+<endpointTransformer ref="myEndpoint" fromType="xml" toType="json"/>
 ----
 
 == Custom Transformer Options

@@ -86,3 +86,10 @@ For example as shown below for the context health check:
   }
 }
 ----
+
+
+=== Deprecated Components
+
+The following components that had been marked as deprecated, were removed in this release:
+
+* camel-dozer

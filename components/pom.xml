@@ -128,7 +128,6 @@
         <module>camel-djl</module>
         <module>camel-dns</module>
         <module>camel-docker</module>
-        <module>camel-dozer</module>
         <module>camel-drill</module>
         <module>camel-dropbox</module>
         <module>camel-dynamic-router</module>
