@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.plc4x.java.api.PlcConnection;
+import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcIncompatibleDatatypeException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.scraper.config.JobConfigurationImpl;
@@ -85,6 +86,15 @@ public class Plc4XConsumer extends DefaultConsumer {
     }
 
     private void startUnTriggered() {
+        if (plc4XEndpoint.isAutoReconnect() && !plcConnection.isConnected()) {
+            try {
+                plc4XEndpoint.reconnect();
+                LOGGER.debug("Successfully reconnected");
+            } catch (PlcConnectionException e) {
+                LOGGER.warn("Unable to reconnect, skipping request", e);
+                return;
+            }
+        }
         PlcReadRequest.Builder builder = plcConnection.readRequestBuilder();
         for (Map.Entry<String, Object> tag : tags.entrySet()) {
             try {
@@ -116,9 +126,15 @@ public class Plc4XConsumer extends DefaultConsumer {
 
         TriggeredScraperImpl scraper = new TriggeredScraperImpl(configuration, (job, alias, response) -> {
             try {
+                if (plc4XEndpoint.isAutoReconnect() && !plcConnection.isConnected()) {
+                    plc4XEndpoint.reconnect();
+                    LOGGER.debug("Successfully reconnected");
+                }
                 Exchange exchange = plc4XEndpoint.createExchange();
                 exchange.getIn().setBody(response);
                 getProcessor().process(exchange);
+            } catch (PlcConnectionException e) {
+                LOGGER.warn("Unable to reconnect, skipping request", e);
             } catch (Exception e) {
                 getExceptionHandler().handleException(e);
             }

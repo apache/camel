@@ -21,6 +21,8 @@ public class Plc4XEndpointConfigurer extends PropertyConfigurerSupport implement
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         Plc4XEndpoint target = (Plc4XEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autoreconnect":
+        case "autoReconnect": target.setAutoReconnect(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "exceptionhandler":
@@ -39,6 +41,8 @@ public class Plc4XEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autoreconnect":
+        case "autoReconnect": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "exceptionhandler":
@@ -58,6 +62,8 @@ public class Plc4XEndpointConfigurer extends PropertyConfigurerSupport implement
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         Plc4XEndpoint target = (Plc4XEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "autoreconnect":
+        case "autoReconnect": return target.isAutoReconnect();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "exceptionhandler":
