@@ -2421,51 +2421,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.ClassEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * CMIS (camel-cmis)
-     * Read and write data from to/from a CMIS compliant content repositories.
-     * 
-     * Category: cms,database
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-cmis
-     * 
-     * Syntax: <code>cmis:cmsUrl</code>
-     * 
-     * Path parameter: cmsUrl (required)
-     * URL to the cmis repository
-     * 
-     * @param path cmsUrl
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.CMISEndpointBuilderFactory.CMISEndpointBuilder cmis(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.CMISEndpointBuilderFactory.endpointBuilder("cmis", path);
-    }
-    /**
-     * CMIS (camel-cmis)
-     * Read and write data from to/from a CMIS compliant content repositories.
-     * 
-     * Category: cms,database
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-cmis
-     * 
-     * Syntax: <code>cmis:cmsUrl</code>
-     * 
-     * Path parameter: cmsUrl (required)
-     * URL to the cmis repository
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path cmsUrl
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.CMISEndpointBuilderFactory.CMISEndpointBuilder cmis(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.CMISEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * CM SMS Gateway (camel-cm-sms)
      * Send SMS messages via CM SMS Gateway.
      * 

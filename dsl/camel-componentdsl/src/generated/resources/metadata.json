@@ -1149,28 +1149,6 @@
     "producerOnly": true,
     "lenientProperties": false
   },
-  "CmisComponentBuilderFactory": {
-    "kind": "component",
-    "name": "cmis",
-    "title": "CMIS",
-    "description": "Read and write data from to\/from a CMIS compliant content repositories.",
-    "deprecated": true,
-    "firstVersion": "2.11.0",
-    "label": "cms,database",
-    "javaType": "org.apache.camel.component.cmis.CMISComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-cmis",
-    "version": "3.21.0-SNAPSHOT",
-    "scheme": "cmis",
-    "extendsScheme": "",
-    "syntax": "cmis:cmsUrl",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "CoapComponentBuilderFactory": {
     "kind": "component",
     "name": "coap",
