@@ -22,6 +22,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelGCAction;
+import org.apache.camel.dsl.jbang.core.commands.action.CamelLogAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelReloadAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelResetStatsAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStartAction;
@@ -72,6 +73,7 @@ public class CamelJBangMain implements Callable<Integer> {
         commandLine = new CommandLine(main)
                 .addSubcommand("init", new CommandLine(new Init(main)))
                 .addSubcommand("run", new CommandLine(new Run(main)))
+                .addSubcommand("log", new CommandLine(new CamelLogAction(main)))
                 .addSubcommand("ps", new CommandLine(new ListProcess(main)))
                 .addSubcommand("stop", new CommandLine(new StopProcess(main)))
                 .addSubcommand("get", new CommandLine(new CamelStatus(main))

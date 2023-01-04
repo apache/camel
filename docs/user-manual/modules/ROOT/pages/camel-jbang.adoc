@@ -779,6 +779,22 @@ camel top route
 
 TIP: Use `camel top --help` to display all the available commands as additional will be added in upcoming releases.
 
+==== Tailing logs
+
+When you run Camel integrations then they will by default run in the foreground and output logs.
+
+You can from another terminal access the logs from any Camel integration with the `log` command, as follows:
+
+[source,bash]
+----
+camel log chuck
+2023-01-04 17:59:19.288  INFO 44619 --- [           main] org.apache.camel.main.MainSupport        : Apache Camel (JBang) 3.21.0 is starting
+2023-01-04 17:59:19.395  INFO 44619 --- [           main] org.apache.camel.main.MainSupport        : Using Java 17.0.5 with PID 44619. Started by davsclaus in /Users/davsclaus/workspace/
+...
+----
+
+You can also watch logs for all Camel integrations by `camel log`, or you can specify by name/pids (separate by comma) `camel log bar,chuck`.
+
 ==== Starting and Stopping routes
 
 The `camel cmd` is intended for executing miscellaneous commands in the running Camel integrations.
