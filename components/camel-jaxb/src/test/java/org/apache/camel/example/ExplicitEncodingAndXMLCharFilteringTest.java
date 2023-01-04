@@ -30,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -74,7 +75,7 @@ public class ExplicitEncodingAndXMLCharFilteringTest extends CamelTestSupport {
 
                 from("direct:start")
                         .marshal(jaxb)
-                        .to(fileUri(testDirectory, "?fileName=output.xml&charset=iso-8859-1"));
+                        .to(TestSupport.fileUri(testDirectory, "?fileName=output.xml&charset=iso-8859-1"));
             }
         };
     }

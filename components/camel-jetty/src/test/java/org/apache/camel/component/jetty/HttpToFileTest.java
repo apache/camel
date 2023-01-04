@@ -22,6 +22,7 @@ import java.time.Duration;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.TestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -65,7 +66,7 @@ public class HttpToFileTest extends BaseJettyTest {
 
                 // store the content from the queue as a file
                 from("seda:in").setHeader(Exchange.FILE_NAME, constant("hello.txt")).convertBodyTo(String.class)
-                        .to(fileUri(testDirectory)).to("mock:result");
+                        .to(TestSupport.fileUri(testDirectory)).to("mock:result");
             }
         };
     }

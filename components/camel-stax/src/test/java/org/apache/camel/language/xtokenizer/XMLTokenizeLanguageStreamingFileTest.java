@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.support.builder.Namespaces;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -44,7 +45,7 @@ public class XMLTokenizeLanguageStreamingFileTest extends CamelTestSupport {
                   + "<c:child some_attr='b' anotherAttr='b'></c:child>" + "<c:child some_attr='c' anotherAttr='c'></c:child>"
                   + "<c:child some_attr='d' anotherAttr='d'></c:child>" + "</c:parent>";
 
-        template.sendBodyAndHeader(fileUri(testDirectory), body, Exchange.FILE_NAME, "myxml.xml");
+        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory), body, Exchange.FILE_NAME, "myxml.xml");
 
         MockEndpoint.assertIsSatisfied(context);
     }
@@ -55,7 +56,7 @@ public class XMLTokenizeLanguageStreamingFileTest extends CamelTestSupport {
             Namespaces ns = new Namespaces("C", "urn:c");
 
             public void configure() {
-                from(fileUri(testDirectory, "?initialDelay=0&delay=10")).split().xtokenize("//C:child", ns).streaming()
+                from(TestSupport.fileUri(testDirectory, "?initialDelay=0&delay=10")).split().xtokenize("//C:child", ns).streaming()
                         .to("mock:result").end();
             }
         };

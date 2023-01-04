@@ -596,4 +596,12 @@ public final class TestSupport {
                 .getResource(String.format("%s%s", FactoryFinder.DEFAULT_PATH, Debugger.FACTORY))
                != null;
     }
+
+    public static String fileUri(Path testDirectory) {
+        return "file:" + testDirectory;
+    }
+
+    public static String fileUri(Path testDirectory, String query) {
+        return "file:" + testDirectory + (query.startsWith("?") ? "" : "/") + query;
+    }
 }

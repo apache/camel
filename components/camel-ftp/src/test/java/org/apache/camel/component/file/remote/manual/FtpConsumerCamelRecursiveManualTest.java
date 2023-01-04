@@ -21,6 +21,7 @@ import java.nio.file.Path;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -41,7 +42,8 @@ public class FtpConsumerCamelRecursiveManualTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("ftp:localhost/one/two?username=camel&password=camel&recursive=true&noop=true").to(fileUri(testDirectory))
+                from("ftp:localhost/one/two?username=camel&password=camel&recursive=true&noop=true")
+                        .to(TestSupport.fileUri(testDirectory))
                         .to("mock:result");
             }
         };

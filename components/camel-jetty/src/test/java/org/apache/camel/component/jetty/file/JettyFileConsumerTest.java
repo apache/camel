@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.TestSupport;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -74,7 +75,7 @@ public class JettyFileConsumerTest extends BaseJettyTest {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         File jpg = new File("src/test/resources/java.jpg");
-        template.sendBodyAndHeader(fileUri(testDirectory, "binary"), jpg, Exchange.FILE_NAME, "java.jpg");
+        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory, "binary"), jpg, Exchange.FILE_NAME, "java.jpg");
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -88,13 +89,14 @@ public class JettyFileConsumerTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:{{port}}/myapp/myservice").to(fileUri(testDirectory, "test?fileName=temp.xml"))
+                from("jetty:http://localhost:{{port}}/myapp/myservice")
+                        .to(TestSupport.fileUri(testDirectory, "test?fileName=temp.xml"))
                         .setBody(constant("OK"));
 
                 from("jetty:http://localhost:{{port}}/myapp/myservice2").to("log:foo?showAll=true")
-                        .to(fileUri(testDirectory, "test?fileName=java.jpg")).setBody(constant("OK"));
+                        .to(TestSupport.fileUri(testDirectory, "test?fileName=java.jpg")).setBody(constant("OK"));
 
-                from(fileUri(testDirectory, "binary?noop=true")).to("http://localhost:{{port}}/myapp/myservice2")
+                from(TestSupport.fileUri(testDirectory, "binary?noop=true")).to("http://localhost:{{port}}/myapp/myservice2")
                         .to("mock:result");
             }
         };

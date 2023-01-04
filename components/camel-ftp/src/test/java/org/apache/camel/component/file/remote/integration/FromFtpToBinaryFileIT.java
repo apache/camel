@@ -25,6 +25,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -85,7 +86,7 @@ public class FromFtpToBinaryFileIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                String fileUrl = fileUri(testDirectory, "?noop=true&fileExist=Override");
+                String fileUrl = TestSupport.fileUri(testDirectory, "?noop=true&fileExist=Override");
                 from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.jpg")).to(fileUrl, "mock:result");
             }
         };

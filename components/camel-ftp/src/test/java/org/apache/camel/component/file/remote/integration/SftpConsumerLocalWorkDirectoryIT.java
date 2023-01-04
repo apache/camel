@@ -27,6 +27,7 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.remote.sftp.integration.SftpServerTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.TestSupport;
 import org.apache.camel.util.FileUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -101,7 +102,7 @@ public class SftpConsumerLocalWorkDirectoryIT extends SftpServerTestSupport {
                         assertTrue(body.exists(), "Local work file should exists");
                         assertEquals(FileUtil.normalizePath(testDirectory.resolve("lwd/hello.txt").toString()), body.getPath());
                     }
-                }).to("mock:result", fileUri(testDirectory, "out"));
+                }).to("mock:result", TestSupport.fileUri(testDirectory, "out"));
             }
         };
     }

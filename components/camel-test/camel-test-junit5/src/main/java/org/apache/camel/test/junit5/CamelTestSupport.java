@@ -17,7 +17,6 @@
 package org.apache.camel.test.junit5;
 
 import java.lang.annotation.Annotation;
-import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -1049,13 +1048,4 @@ public abstract class CamelTestSupport
         }
     }
 
-    @Deprecated
-    protected static String fileUri(Path testDirectory) {
-        return "file:" + testDirectory;
-    }
-
-    @Deprecated
-    protected static String fileUri(Path testDirectory, String query) {
-        return "file:" + testDirectory + (query.startsWith("?") ? "" : "/") + query;
-    }
 }

@@ -21,6 +21,7 @@ import java.nio.file.Path;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.api.io.TempDir;
@@ -83,7 +84,7 @@ public class SftpChangedReadLockIT extends SftpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl()).routeId("foo").noAutoStartup().to(fileUri(testDirectory, "out"), "mock:result");
+                from(getFtpUrl()).routeId("foo").noAutoStartup().to(TestSupport.fileUri(testDirectory, "out"), "mock:result");
             }
         };
     }

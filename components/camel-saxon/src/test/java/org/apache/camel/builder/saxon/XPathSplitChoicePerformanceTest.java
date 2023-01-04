@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -88,7 +89,7 @@ public class XPathSplitChoicePerformanceTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri(testDirectory, "?noop=true"))
+                from(TestSupport.fileUri(testDirectory, "?noop=true"))
                         .process(new Processor() {
                             public void process(Exchange exchange) {
                                 log.info("Starting to process file");
