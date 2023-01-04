@@ -1,7 +1,7 @@
 = Routes
 
-A Camel _route_ is where the integration flow is defined.
-For example to integrate two systems then a Camel route can be _coded_ to specify how these systems are integrated.
+A Camel _route_ is where the integration flow is defined. For example, you can write a Camel route to specify how two systems can be integrated.
+
 
 An example could be to take files from a FTP server and send to a ActiveMQ messaging system.
 
