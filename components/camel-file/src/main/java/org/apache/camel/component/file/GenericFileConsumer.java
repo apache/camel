@@ -592,7 +592,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         // if it is a file then check we have the file in the idempotent registry
         // already
-        if (endpoint.isIdempotent()) {
+        if (Boolean.TRUE.equals(endpoint.isIdempotent())) {
             if (notUnique(file)) {
                 return false;
             }
