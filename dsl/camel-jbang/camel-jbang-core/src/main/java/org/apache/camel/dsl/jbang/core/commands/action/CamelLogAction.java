@@ -16,22 +16,15 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.action;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.json.JsonObject;
-import org.fusesource.jansi.Ansi;
-import picocli.CommandLine;
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.LineNumberReader;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
+
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import picocli.CommandLine;
 
 @CommandLine.Command(name = "log",
                      description = "Tail logs from running Camel integrations")
@@ -40,7 +33,7 @@ public class CamelLogAction extends ActionBaseCommand {
     private static final char FIRST_ESC_CHAR = 27;
     private static final char SECOND_ESC_CHAR = '[';
 
-//    private static final String ANSI_ESCAPE = ("" + FIRST_ESC_CHAR) + ("" + SECOND_ESC_CHAR) + ("" + '\\') + ("" + 'd') + ("" + '+') + ("" + 'm');
+    //    private static final String ANSI_ESCAPE = ("" + FIRST_ESC_CHAR) + ("" + SECOND_ESC_CHAR) + ("" + '\\') + ("" + 'd') + ("" + '+') + ("" + 'm');
 
     private static final String ANSI_ESCAPE = "0x1b\\[\\d*m";
 
@@ -51,7 +44,7 @@ public class CamelLogAction extends ActionBaseCommand {
     boolean loggingColor = true;
 
     @CommandLine.Option(names = { "--tail" },
-            description = "The number of lines from the end of the logs to show. Defaults to showing all logs.")
+                        description = "The number of lines from the end of the logs to show. Defaults to showing all logs.")
     int tail;
 
     public CamelLogAction(CamelJBangMain main) {
