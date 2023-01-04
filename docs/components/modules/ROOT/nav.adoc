@@ -57,7 +57,6 @@
 ** xref:chunk-component.adoc[Chunk]
 ** xref:class-component.adoc[Class]
 ** xref:cm-sms-component.adoc[CM SMS Gateway]
-** xref:cmis-component.adoc[CMIS]
 ** xref:coap-component.adoc[CoAP]
 ** xref:cometd-component.adoc[CometD]
 ** xref:consul-component.adoc[Consul]

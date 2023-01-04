@@ -49,7 +49,6 @@ public interface EndpointBuilderFactory
             org.apache.camel.builder.endpoint.dsl.BraintreeEndpointBuilderFactory.BraintreeBuilders,
             org.apache.camel.builder.endpoint.dsl.BrowseEndpointBuilderFactory.BrowseBuilders,
             org.apache.camel.builder.endpoint.dsl.CMEndpointBuilderFactory.CMBuilders,
-            org.apache.camel.builder.endpoint.dsl.CMISEndpointBuilderFactory.CMISBuilders,
             org.apache.camel.builder.endpoint.dsl.CaffeineCacheEndpointBuilderFactory.CaffeineCacheBuilders,
             org.apache.camel.builder.endpoint.dsl.CaffeineLoadCacheEndpointBuilderFactory.CaffeineLoadCacheBuilders,
             org.apache.camel.builder.endpoint.dsl.CassandraEndpointBuilderFactory.CassandraBuilders,

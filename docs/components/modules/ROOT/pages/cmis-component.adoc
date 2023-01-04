@@ -1,1 +1,0 @@
-../../../../../components/camel-cmis/src/main/docs/cmis-component.adoc

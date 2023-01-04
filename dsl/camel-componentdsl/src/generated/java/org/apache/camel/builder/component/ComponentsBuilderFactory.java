@@ -731,20 +731,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.CmSmsComponentBuilderFactory.cmSms();
     }
     /**
-     * CMIS (camel-cmis)
-     * Read and write data from to/from a CMIS compliant content repositories.
-     * 
-     * Category: cms,database
-     * Since: 2.11
-     * Maven coordinates: org.apache.camel:camel-cmis
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.CmisComponentBuilderFactory.CmisComponentBuilder cmis() {
-        return org.apache.camel.builder.component.dsl.CmisComponentBuilderFactory.cmis();
-    }
-    /**
      * CoAP (camel-coap)
      * Send and receive messages to/from COAP capable devices.
      * 

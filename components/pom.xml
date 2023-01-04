@@ -110,7 +110,6 @@
         <module>camel-chunk</module>
         <module>camel-cloudevents</module>
         <module>camel-cm-sms</module>
-        <module>camel-cmis</module>
         <module>camel-coap</module>
         <module>camel-cometd</module>
         <module>camel-consul</module>
