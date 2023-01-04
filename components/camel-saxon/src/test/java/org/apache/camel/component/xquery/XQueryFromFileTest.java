@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -41,7 +42,8 @@ public class XQueryFromFileTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader(fileUri(testDirectory), "<mail><subject>Hey</subject><body>Hello world!</body></mail>",
+        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory),
+                "<mail><subject>Hey</subject><body>Hello world!</body></mail>",
                 Exchange.FILE_NAME, "body.xml");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -60,7 +62,7 @@ public class XQueryFromFileTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri(testDirectory))
+                from(TestSupport.fileUri(testDirectory))
                         .to("xquery:org/apache/camel/component/xquery/transform.xquery")
                         .to("mock:result");
             }

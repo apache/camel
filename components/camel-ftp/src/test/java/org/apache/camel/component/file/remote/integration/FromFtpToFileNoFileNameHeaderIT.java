@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -74,7 +75,7 @@ public class FromFtpToFileNoFileNameHeaderIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                String fileUrl = fileUri(testDirectory, "?fileExist=Override&noop=true");
+                String fileUrl = TestSupport.fileUri(testDirectory, "?fileExist=Override&noop=true");
                 // we do not set any filename in the header property so the
                 // filename should be the one
                 // from the FTP server we downloaded

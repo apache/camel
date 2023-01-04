@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -54,7 +55,7 @@ public class RemoteFileProduceOverruleOnlyOnceIT extends FtpServerTestSupport {
             @Override
             public void configure() {
                 from("direct:input").to("ftp://admin:admin@localhost:{{ftp.server.port}}/out/").to(
-                        fileUri(testDirectory, "out"),
+                        TestSupport.fileUri(testDirectory, "out"),
                         "mock:result");
             }
         };

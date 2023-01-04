@@ -25,6 +25,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -80,7 +81,7 @@ public class FtpSimpleConsumeStreamingStepwiseIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.jpg"))
-                        .to(fileUri(testDirectory), "mock:result");
+                        .to(TestSupport.fileUri(testDirectory), "mock:result");
             }
         };
     }

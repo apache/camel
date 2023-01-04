@@ -22,6 +22,7 @@ import java.nio.file.Path;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -82,7 +83,7 @@ public class FtpConsumerResumeDownloadIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(getFtpUrl()).routeId("myRoute").noAutoStartup().to("mock:result", fileUri(lwd, "out"));
+                from(getFtpUrl()).routeId("myRoute").noAutoStartup().to("mock:result", TestSupport.fileUri(lwd, "out"));
             }
         };
     }

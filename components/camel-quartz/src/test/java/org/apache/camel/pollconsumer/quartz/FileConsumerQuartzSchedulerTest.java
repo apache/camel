@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -33,7 +34,7 @@ public class FileConsumerQuartzSchedulerTest extends CamelTestSupport {
     public void testQuartzScheduler() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBodyAndHeader(fileUri(testDirectory), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory), "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         context.getRouteController().startRoute("foo");
 
@@ -45,7 +46,8 @@ public class FileConsumerQuartzSchedulerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri(testDirectory, "?scheduler=quartz&scheduler.cron=0/2+*+*+*+*+?")).routeId("foo").noAutoStartup()
+                from(TestSupport.fileUri(testDirectory, "?scheduler=quartz&scheduler.cron=0/2+*+*+*+*+?")).routeId("foo")
+                        .noAutoStartup()
                         .to("mock:result");
             }
         };

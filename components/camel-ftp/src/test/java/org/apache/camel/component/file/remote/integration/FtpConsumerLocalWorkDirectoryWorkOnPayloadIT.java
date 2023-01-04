@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote.integration;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit5.TestSupport;
 
 public class FtpConsumerLocalWorkDirectoryWorkOnPayloadIT extends FtpConsumerLocalWorkDirectoryIT {
 
@@ -32,7 +33,7 @@ public class FtpConsumerLocalWorkDirectoryWorkOnPayloadIT extends FtpConsumerLoc
                         exchange.getIn().setBody("Hello World");
 
                     }
-                }).to("mock:result", fileUri(testDirectory, "out"));
+                }).to("mock:result", TestSupport.fileUri(testDirectory, "out"));
             }
         };
     }

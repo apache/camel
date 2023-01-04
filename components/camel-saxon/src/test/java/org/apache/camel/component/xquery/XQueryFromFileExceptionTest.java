@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -42,7 +43,7 @@ public class XQueryFromFileExceptionTest extends CamelTestSupport {
 
         String body = "<person user='James'><firstName>James</firstName>"
                       + "<lastName>Strachan</lastName><city>London</city></person>";
-        template.sendBodyAndHeader(fileUri(testDirectory), body, Exchange.FILE_NAME, "hello.xml");
+        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory), body, Exchange.FILE_NAME, "hello.xml");
 
         MockEndpoint.assertIsSatisfied(context);
 
@@ -60,7 +61,7 @@ public class XQueryFromFileExceptionTest extends CamelTestSupport {
         // the last tag is not ended properly
         String body = "<person user='James'><firstName>James</firstName>"
                       + "<lastName>Strachan</lastName><city>London</city></person";
-        template.sendBodyAndHeader(fileUri(testDirectory), body, Exchange.FILE_NAME, "hello2.xml");
+        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory), body, Exchange.FILE_NAME, "hello2.xml");
 
         MockEndpoint.assertIsSatisfied(context);
 

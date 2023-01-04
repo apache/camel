@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
@@ -83,7 +84,7 @@ public class FtpChangedRootDirReadLockIT extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(getFtpUrl()).to(fileUri(testDirectory), "mock:result");
+                from(getFtpUrl()).to(TestSupport.fileUri(testDirectory), "mock:result");
             }
         };
     }

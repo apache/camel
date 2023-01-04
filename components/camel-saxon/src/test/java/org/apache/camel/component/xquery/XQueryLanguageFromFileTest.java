@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -42,11 +43,11 @@ public class XQueryLanguageFromFileTest extends CamelTestSupport {
         other.expectedMessageCount(1);
         other.message(0).body(String.class).contains("Bye World");
 
-        template.sendBodyAndHeader(fileUri(testDirectory),
+        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory),
                 "<mail from=\"davsclaus@apache.org\"><subject>Hey</subject><body>Hello World!</body></mail>",
                 Exchange.FILE_NAME, "claus.xml");
 
-        template.sendBodyAndHeader(fileUri(testDirectory),
+        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory),
                 "<mail from=\"janstey@apache.org\"><subject>Hey</subject><body>Bye World!</body></mail>",
                 Exchange.FILE_NAME, "janstey.xml");
 
@@ -58,7 +59,7 @@ public class XQueryLanguageFromFileTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(fileUri(testDirectory))
+                from(TestSupport.fileUri(testDirectory))
                         .choice()
                         .when().xquery("/mail/@from = 'davsclaus@apache.org'")
                         .convertBodyTo(String.class)

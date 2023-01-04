@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.TestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -44,7 +45,8 @@ public class FromFileToFtpDeleteIT extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader(fileUri(testDirectory, "delete"), "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(TestSupport.fileUri(testDirectory, "delete"), "Hello World", Exchange.FILE_NAME,
+                "hello.txt");
 
         MockEndpoint.assertIsSatisfied(context);
         assertTrue(notify.matchesWaitTime());
@@ -60,7 +62,7 @@ public class FromFileToFtpDeleteIT extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(fileUri(testDirectory, "delete?delete=true")).to(getFtpUrl()).to("mock:result");
+                from(TestSupport.fileUri(testDirectory, "delete?delete=true")).to(getFtpUrl()).to("mock:result");
             }
         };
     }
