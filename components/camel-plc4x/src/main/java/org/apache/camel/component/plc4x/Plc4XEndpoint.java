@@ -54,6 +54,9 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     @UriParam
     @Metadata(label = "consumer", description = "Interval on which the Trigger should be checked")
     private int period;
+    @UriParam
+    @Metadata(description = "Whether to reconnect when no connection is present upon doing a request")
+    private boolean autoReconnect = false;
 
     private PlcDriverManager plcDriverManager;
     private PlcConnection connection;
@@ -84,6 +87,14 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     public void setTrigger(String trigger) {
         this.trigger = trigger;
         plcDriverManager = new PooledPlcDriverManager();
+    }
+
+    public void setAutoReconnect(boolean autoReconnect) {
+        this.autoReconnect = autoReconnect;
+    }
+
+    public boolean isAutoReconnect() {
+        return autoReconnect;
     }
 
     public PlcConnection getConnection() throws PlcConnectionException {

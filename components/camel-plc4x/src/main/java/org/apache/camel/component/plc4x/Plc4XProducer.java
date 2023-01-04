@@ -26,6 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.plc4x.java.api.PlcConnection;
+import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcException;
 import org.apache.plc4x.java.api.exceptions.PlcInvalidFieldException;
 import org.apache.plc4x.java.api.messages.PlcWriteRequest;
@@ -59,6 +60,15 @@ public class Plc4XProducer extends DefaultAsyncProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        if (plc4XEndpoint.isAutoReconnect() && !plcConnection.isConnected()) {
+            try {
+                plc4XEndpoint.reconnect();
+                log.debug("Successfully reconnected");
+            } catch (PlcConnectionException e) {
+                log.error("Unable to reconnect, skipping request");
+                return;
+            }
+        }
         Message in = exchange.getIn();
         Object body = in.getBody();
         PlcWriteRequest.Builder builder = plcConnection.writeRequestBuilder();
