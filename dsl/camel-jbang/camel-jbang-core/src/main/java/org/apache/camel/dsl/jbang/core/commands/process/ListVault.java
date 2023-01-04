@@ -34,7 +34,7 @@ import picocli.CommandLine.Command;
 
 @Command(name = "vault",
          description = "List secrets from security vaults used by running Camel integrations")
-public class ListVault extends ProcessBaseCommand {
+public class ListVault extends ProcessWatchCommand {
 
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by pid, name", defaultValue = "pid")
@@ -45,7 +45,7 @@ public class ListVault extends ProcessBaseCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids("*");

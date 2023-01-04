@@ -32,7 +32,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "ps", description = "List running Camel integrations")
-public class ListProcess extends WatchableProcessCommand {
+public class ListProcess extends ProcessWatchCommand {
 
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by pid, name or age", defaultValue = "pid")

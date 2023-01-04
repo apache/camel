@@ -24,13 +24,13 @@ import picocli.CommandLine;
 /**
  * Base class for commands that can run in watch mode.
  */
-public abstract class WatchableProcessCommand extends ProcessBaseCommand {
+abstract class ProcessWatchCommand extends ProcessBaseCommand {
 
     @CommandLine.Option(names = { "--watch" },
                         description = "Execute periodically and showing output fullscreen")
     boolean watch;
 
-    public WatchableProcessCommand(CamelJBangMain main) {
+    public ProcessWatchCommand(CamelJBangMain main) {
         super(main);
     }
 

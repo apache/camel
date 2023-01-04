@@ -24,6 +24,10 @@ import picocli.CommandLine;
                      description = "Get status of Camel integrations (use get --help to see sub commands)")
 public class CamelStatus extends CamelCommand {
 
+    @CommandLine.Option(names = { "--watch" },
+            description = "Execute periodically and showing output fullscreen")
+    boolean watch;
+
     public CamelStatus(CamelJBangMain main) {
         super(main);
     }
@@ -31,7 +35,8 @@ public class CamelStatus extends CamelCommand {
     @Override
     public Integer call() throws Exception {
         // default to get the integrations
-        new CommandLine(new CamelContextStatus(getMain())).execute();
-        return 0;
+        CamelContextStatus cmd = new CamelContextStatus(getMain());
+        cmd.watch = watch;
+        return new CommandLine(cmd).execute();
     }
 }

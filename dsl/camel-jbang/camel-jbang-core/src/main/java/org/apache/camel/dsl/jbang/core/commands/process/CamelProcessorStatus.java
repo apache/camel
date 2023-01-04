@@ -35,7 +35,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "processor", description = "Get status of Camel processors")
-public class CamelProcessorStatus extends ProcessBaseCommand {
+public class CamelProcessorStatus extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -61,7 +61,7 @@ public class CamelProcessorStatus extends ProcessBaseCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);

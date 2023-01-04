@@ -41,7 +41,6 @@ import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogOther;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextTop;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelCount;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelEndpointStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelProcessorStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelProcessorTop;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelRouteStatus;
@@ -52,6 +51,7 @@ import org.apache.camel.dsl.jbang.core.commands.process.Hawtio;
 import org.apache.camel.dsl.jbang.core.commands.process.Jolokia;
 import org.apache.camel.dsl.jbang.core.commands.process.ListBlocked;
 import org.apache.camel.dsl.jbang.core.commands.process.ListCircuitBreaker;
+import org.apache.camel.dsl.jbang.core.commands.process.ListEndpoint;
 import org.apache.camel.dsl.jbang.core.commands.process.ListEvent;
 import org.apache.camel.dsl.jbang.core.commands.process.ListHealth;
 import org.apache.camel.dsl.jbang.core.commands.process.ListInflight;
@@ -80,7 +80,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("processor", new CommandLine(new CamelProcessorStatus(main)))
                         .addSubcommand("count", new CommandLine(new CamelCount(main)))
                         .addSubcommand("health", new CommandLine(new ListHealth(main)))
-                        .addSubcommand("endpoint", new CommandLine(new CamelEndpointStatus(main)))
+                        .addSubcommand("endpoint", new CommandLine(new ListEndpoint(main)))
                         .addSubcommand("event", new CommandLine(new ListEvent(main)))
                         .addSubcommand("inflight", new CommandLine(new ListInflight(main)))
                         .addSubcommand("blocked", new CommandLine(new ListBlocked(main)))
