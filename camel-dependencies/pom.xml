@@ -173,7 +173,6 @@
     <djl-version>0.19.0</djl-version>
     <dnsjava-version>3.5.1</dnsjava-version>
     <docker-java-version>3.2.13</docker-java-version>
-    <dozer-version>6.5.2</dozer-version>
     <dropbox-version>5.4.4</dropbox-version>
     <eddsa-version>0.3.0</eddsa-version>
     <egit-github-core-version>2.1.5</egit-github-core-version>

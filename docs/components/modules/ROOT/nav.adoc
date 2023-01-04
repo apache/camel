@@ -87,7 +87,6 @@
 ** xref:disruptor-vm-component.adoc[Disruptor VM]
 ** xref:dns-component.adoc[DNS]
 ** xref:docker-component.adoc[Docker]
-** xref:dozer-component.adoc[Dozer]
 ** xref:drill-component.adoc[Drill]
 ** xref:dropbox-component.adoc[Dropbox]
 ** xref:dynamic-router-component.adoc[Dynamic Router]

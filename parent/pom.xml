@@ -152,7 +152,6 @@
         <djl-pytorch-native-version>1.8.1</djl-pytorch-native-version>
         <djl-tensorflow-native-version>2.4.1</djl-tensorflow-native-version>
         <docker-java-version>3.2.13</docker-java-version>
-        <dozer-version>6.5.2</dozer-version>
         <dropbox-version>5.4.4</dropbox-version>
         <debezium-version>1.9.6.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.28</debezium-mysql-connector-version>
@@ -1267,11 +1266,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-docker</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-dozer</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -3537,13 +3531,6 @@
                 <groupId>com.lmax</groupId>
                 <artifactId>disruptor</artifactId>
                 <version>${disruptor-version}</version>
-            </dependency>
-
-            <!-- optional dozer dependencies -->
-            <dependency>
-                <groupId>com.github.dozermapper</groupId>
-                <artifactId>dozer-core</artifactId>
-                <version>${dozer-version}</version>
             </dependency>
 
             <!-- optional Dropbox dependencies -->

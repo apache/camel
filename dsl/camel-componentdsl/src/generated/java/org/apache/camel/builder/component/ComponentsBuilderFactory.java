@@ -1188,20 +1188,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.DockerComponentBuilderFactory.docker();
     }
     /**
-     * Dozer (camel-dozer)
-     * Map between Java beans using the Dozer mapping library.
-     * 
-     * Category: transformation
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-dozer
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.DozerComponentBuilderFactory.DozerComponentBuilder dozer() {
-        return org.apache.camel.builder.component.dsl.DozerComponentBuilderFactory.dozer();
-    }
-    /**
      * Drill (camel-drill)
      * Perform queries against an Apache Drill cluster.
      * 

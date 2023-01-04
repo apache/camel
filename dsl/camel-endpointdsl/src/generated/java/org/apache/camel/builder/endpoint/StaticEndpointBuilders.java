@@ -3952,51 +3952,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.DockerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Dozer (camel-dozer)
-     * Map between Java beans using the Dozer mapping library.
-     * 
-     * Category: transformation
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-dozer
-     * 
-     * Syntax: <code>dozer:name</code>
-     * 
-     * Path parameter: name (required)
-     * A human readable name of the mapping.
-     * 
-     * @param path name
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.DozerEndpointBuilderFactory.DozerEndpointBuilder dozer(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.DozerEndpointBuilderFactory.endpointBuilder("dozer", path);
-    }
-    /**
-     * Dozer (camel-dozer)
-     * Map between Java beans using the Dozer mapping library.
-     * 
-     * Category: transformation
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-dozer
-     * 
-     * Syntax: <code>dozer:name</code>
-     * 
-     * Path parameter: name (required)
-     * A human readable name of the mapping.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path name
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.DozerEndpointBuilderFactory.DozerEndpointBuilder dozer(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.DozerEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Drill (camel-drill)
      * Perform queries against an Apache Drill cluster.
      * 
