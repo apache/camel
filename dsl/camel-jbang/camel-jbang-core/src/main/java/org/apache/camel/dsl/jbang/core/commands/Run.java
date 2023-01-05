@@ -674,7 +674,7 @@ class Run extends CamelCommand {
         return file;
     }
 
-    private KameletMain createMainInstance() throws Exception {
+    private KameletMain createMainInstance() {
         KameletMain main;
         if (localKameletDir == null || localKameletDir.isEmpty()) {
             main = new KameletMain();
