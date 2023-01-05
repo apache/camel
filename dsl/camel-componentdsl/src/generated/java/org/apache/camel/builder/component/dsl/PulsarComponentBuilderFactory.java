@@ -570,6 +570,21 @@ public interface PulsarComponentBuilderFactory {
             return this;
         }
         /**
+         * Control whether chunking of messages is enabled for the producer.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param chunkingEnabled the value to set
+         * @return the dsl builder
+         */
+        default PulsarComponentBuilder chunkingEnabled(boolean chunkingEnabled) {
+            doSetProperty("chunkingEnabled", chunkingEnabled);
+            return this;
+        }
+        /**
          * Compression type to use.
          * 
          * The option is a:
@@ -836,6 +851,7 @@ public interface PulsarComponentBuilderFactory {
             case "batchingMaxMessages": getOrCreateConfiguration((PulsarComponent) component).setBatchingMaxMessages((int) value); return true;
             case "batchingMaxPublishDelayMicros": getOrCreateConfiguration((PulsarComponent) component).setBatchingMaxPublishDelayMicros((long) value); return true;
             case "blockIfQueueFull": getOrCreateConfiguration((PulsarComponent) component).setBlockIfQueueFull((boolean) value); return true;
+            case "chunkingEnabled": getOrCreateConfiguration((PulsarComponent) component).setChunkingEnabled((boolean) value); return true;
             case "compressionType": getOrCreateConfiguration((PulsarComponent) component).setCompressionType((org.apache.pulsar.client.api.CompressionType) value); return true;
             case "initialSequenceId": getOrCreateConfiguration((PulsarComponent) component).setInitialSequenceId((long) value); return true;
             case "lazyStartProducer": ((PulsarComponent) component).setLazyStartProducer((boolean) value); return true;
