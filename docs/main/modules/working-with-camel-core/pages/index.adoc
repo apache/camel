@@ -8,12 +8,12 @@
 
 == Routes
 
-A Camel route is where the integration flow is defined. For example, you can write a Camel route to specify how two systems can be integrated. The following 2 guides provide the fundamental knowledge about Camel routes:
+A Camel route is where the integration flow is defined. For example, you can write a Camel route to specify how two systems can be integrated. The following 2 guides provide the fundamental knowledge of Camel routes:
 
 * xref:manual::routes.adoc[Routes]: the basic guide about Camel Routes.
 * xref:manual::route-builder.adoc[Route Builder]: describes the base class from which you can create Routes.
 
-If you have the basic knowledge about _routes_ you can use the following guides to learn how to write them in different languages, handle errors, and customize them.
+If you have basic knowledge about _routes_, you can use the following guides to learn how to write them in different languages, handle errors, and customize them.
 
 * Routes (Basic + DSL)
 ** xref:manual::java-dsl.adoc[Java DSL]: the default language to write _routes_.
@@ -73,7 +73,7 @@ Learn about additional ways to customize your integrations. Explore alternatives
 ** xref:manual::exchange-pooling.adoc[Exchange Pooling]
 ** xref:manual::json.adoc[JSON Data Format]
 ** xref:manual::languages.adoc[Languages]
-** xref:manual::parameter-binding-annotations.adoc[Parameter Binding Annotations]
+** xref:manual::parameter-binding-annotations.adoc[Parameter-Binding Annotations]
 ** xref:manual::processor.adoc[Processor]
 ** xref:manual::property-binding.adoc[Property Binding]
 ** xref:manual::registry.adoc[Registry]
