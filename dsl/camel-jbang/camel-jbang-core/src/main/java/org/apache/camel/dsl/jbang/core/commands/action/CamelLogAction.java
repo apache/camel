@@ -18,7 +18,9 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.LineNumberReader;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +37,7 @@ import org.fusesource.jansi.AnsiConsole;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "log",
-        description = "Tail logs from running Camel integrations")
+                     description = "Tail logs from running Camel integrations")
 public class CamelLogAction extends ActionBaseCommand {
 
     private static final int NAME_MAX_WIDTH = 20;
@@ -43,7 +45,7 @@ public class CamelLogAction extends ActionBaseCommand {
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = {"--logging-color"}, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
 
     @CommandLine.Option(names = { "--tail" },
@@ -62,7 +64,7 @@ public class CamelLogAction extends ActionBaseCommand {
     public Integer call() throws Exception {
         List<Row> rows = new ArrayList<>();
 
-        List<Long> pids = findPids("*");
+        List<Long> pids = findPids(name);
         ProcessHandle.allProcesses()
                 .filter(ph -> pids.contains(ph.pid()))
                 .forEach(ph -> {
@@ -90,11 +92,11 @@ public class CamelLogAction extends ActionBaseCommand {
                 });
 
         if (!rows.isEmpty()) {
-            if (tail > 0) {
-                tailLogFiles(rows);
-                dumpLogFiles(rows);
-            }
-            // read new log lines from multiple files
+            // read existing log files
+            tailLogFiles(rows);
+            dumpLogFiles(rows);
+
+            // scan and read new log lines
             do {
                 int lines = readLogFiles(rows);
                 if (lines > 0) {
@@ -110,6 +112,7 @@ public class CamelLogAction extends ActionBaseCommand {
 
     private int readLogFiles(List<Row> rows) throws Exception {
         int lines = 0;
+
         for (Row row : rows) {
             if (row.reader == null) {
                 File log = logFile(row.pid);
@@ -118,13 +121,22 @@ public class CamelLogAction extends ActionBaseCommand {
                 }
             }
             if (row.reader != null) {
-                String line = row.reader.readLine();
-                if (line != null) {
-                    lines++;
-                    row.fifo.offer(line);
+                try {
+                    String line = row.reader.readLine();
+                    if (line != null) {
+                        lines++;
+                        // switch fifo to be unlimited as we use it for new log lines
+                        if (row.fifo == null || row.fifo instanceof ArrayBlockingQueue) {
+                            row.fifo = new ArrayDeque<>();
+                        }
+                        row.fifo.offer(line);
+                    }
+                } catch (IOException e) {
+                    // ignore
                 }
             }
         }
+
         return lines;
     }
 
@@ -220,17 +232,19 @@ public class CamelLogAction extends ActionBaseCommand {
             if (log.exists()) {
                 row.reader = new LineNumberReader(new FileReader(log));
                 String line;
-                if (tail > 0) {
+                if (tail == 0) {
+                    row.fifo = new ArrayDeque<>();
+                } else {
                     row.fifo = new ArrayBlockingQueue<>(tail);
-                    do {
-                        line = row.reader.readLine();
-                        if (line != null) {
-                            while (!row.fifo.offer(line)) {
-                                row.fifo.poll();
-                            }
-                        }
-                    } while (line != null);
                 }
+                do {
+                    line = row.reader.readLine();
+                    if (line != null) {
+                        while (!row.fifo.offer(line)) {
+                            row.fifo.poll();
+                        }
+                    }
+                } while (line != null);
             }
         }
     }
