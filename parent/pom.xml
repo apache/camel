@@ -360,7 +360,7 @@
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.18.0</log4j2-version>
         <logback-version>1.2.11</logback-version>
-        <lucene-version>8.11.1</lucene-version>
+        <lucene-version>8.11.2</lucene-version>
         <lucene-version-range>[8,9)</lucene-version-range>
         <lightcouch-version>0.2.0</lightcouch-version>
         <mapstruct-version>1.5.2.Final</mapstruct-version>
