@@ -56,6 +56,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "blockIfQueueFull": getOrCreateConfiguration(target).setBlockIfQueueFull(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "chunkingenabled":
+        case "chunkingEnabled": getOrCreateConfiguration(target).setChunkingEnabled(property(camelContext, boolean.class, value)); return true;
         case "compressiontype":
         case "compressionType": getOrCreateConfiguration(target).setCompressionType(property(camelContext, org.apache.pulsar.client.api.CompressionType.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.pulsar.PulsarConfiguration.class, value)); return true;
@@ -153,6 +155,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "blockIfQueueFull": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "chunkingenabled":
+        case "chunkingEnabled": return boolean.class;
         case "compressiontype":
         case "compressionType": return org.apache.pulsar.client.api.CompressionType.class;
         case "configuration": return org.apache.camel.component.pulsar.PulsarConfiguration.class;
@@ -246,6 +250,8 @@ public class PulsarComponentConfigurer extends PropertyConfigurerSupport impleme
         case "blockIfQueueFull": return getOrCreateConfiguration(target).isBlockIfQueueFull();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "chunkingenabled":
+        case "chunkingEnabled": return getOrCreateConfiguration(target).isChunkingEnabled();
         case "compressiontype":
         case "compressionType": return getOrCreateConfiguration(target).getCompressionType();
         case "configuration": return target.getConfiguration();

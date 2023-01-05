@@ -45,6 +45,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "blockIfQueueFull": target.getPulsarConfiguration().setBlockIfQueueFull(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "chunkingenabled":
+        case "chunkingEnabled": target.getPulsarConfiguration().setChunkingEnabled(property(camelContext, boolean.class, value)); return true;
         case "compressiontype":
         case "compressionType": target.getPulsarConfiguration().setCompressionType(property(camelContext, org.apache.pulsar.client.api.CompressionType.class, value)); return true;
         case "consumername":
@@ -132,6 +134,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "blockIfQueueFull": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "chunkingenabled":
+        case "chunkingEnabled": return boolean.class;
         case "compressiontype":
         case "compressionType": return org.apache.pulsar.client.api.CompressionType.class;
         case "consumername":
@@ -220,6 +224,8 @@ public class PulsarEndpointConfigurer extends PropertyConfigurerSupport implemen
         case "blockIfQueueFull": return target.getPulsarConfiguration().isBlockIfQueueFull();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "chunkingenabled":
+        case "chunkingEnabled": return target.getPulsarConfiguration().isChunkingEnabled();
         case "compressiontype":
         case "compressionType": return target.getPulsarConfiguration().getCompressionType();
         case "consumername":
