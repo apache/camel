@@ -40,9 +40,11 @@ If you have basic knowledge about _routes_, you can use the following guides to 
 
 == Components
 
+Components are a fundamental building block of Apache Camel and are used to connect routes to a wide variety of external systems and services.
+
 * Components
-** xref:manual::component-dsl.adoc[Component DSL]
-** xref:manual::component.adoc[Component]
+** xref:manual::component.adoc[Component]: the comprehensive guide about components.
+
 
 == Other Guides
 
