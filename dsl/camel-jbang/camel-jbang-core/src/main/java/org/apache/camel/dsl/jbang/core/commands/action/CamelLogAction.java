@@ -19,33 +19,40 @@ package org.apache.camel.dsl.jbang.core.commands.action;
 import java.io.File;
 import java.io.FileReader;
 import java.io.LineNumberReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonObject;
+import org.fusesource.jansi.Ansi;
+import org.fusesource.jansi.AnsiConsole;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "log",
-                     description = "Tail logs from running Camel integrations")
+        description = "Tail logs from running Camel integrations")
 public class CamelLogAction extends ActionBaseCommand {
 
-    private static final char FIRST_ESC_CHAR = 27;
-    private static final char SECOND_ESC_CHAR = '[';
-
-    //    private static final String ANSI_ESCAPE = ("" + FIRST_ESC_CHAR) + ("" + SECOND_ESC_CHAR) + ("" + '\\') + ("" + 'd') + ("" + '+') + ("" + 'm');
-
-    private static final String ANSI_ESCAPE = "0x1b\\[\\d*m";
+    private static final int NAME_MAX_WIDTH = 20;
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    @CommandLine.Option(names = {"--logging-color"}, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
 
     @CommandLine.Option(names = { "--tail" },
                         description = "The number of lines from the end of the logs to show. Defaults to showing all logs.")
     int tail;
+
+    private int nameMaxWidth;
+
+    private final Map<String, Ansi.Color> colors = new HashMap<>();
 
     public CamelLogAction(CamelJBangMain main) {
         super(main);
@@ -53,48 +60,103 @@ public class CamelLogAction extends ActionBaseCommand {
 
     @Override
     public Integer call() throws Exception {
-        List<Long> pids = findPids(name);
+        List<Row> rows = new ArrayList<>();
 
-        if (pids.size() == 1) {
-            // single log file then no need to interleave logs
-            File log = logFile(pids.get(0));
-            if (log.exists()) {
-                LineNumberReader lnr = new LineNumberReader(new FileReader(log));
-                String line;
-
-                // dump only last N lines
-                if (tail > 0) {
-                    Queue<String> fifo = new ArrayBlockingQueue<>(tail);
-                    do {
-                        line = lnr.readLine();
-                        if (line != null) {
-                            while (!fifo.offer(line)) {
-                                fifo.poll();
-                            }
+        List<Long> pids = findPids("*");
+        ProcessHandle.allProcesses()
+                .filter(ph -> pids.contains(ph.pid()))
+                .forEach(ph -> {
+                    JsonObject root = loadStatus(ph.pid());
+                    if (root != null) {
+                        Row row = new Row();
+                        row.pid = "" + ph.pid();
+                        JsonObject context = (JsonObject) root.get("context");
+                        if (context == null) {
+                            return;
                         }
-                    } while (line != null);
-                    fifo.forEach(this::printLine);
-                }
-
-                // continue read new log lines
-                do {
-                    line = lnr.readLine();
-                    if (line != null) {
-                        printLine(line);
-                    } else {
-                        Thread.sleep(50);
+                        row.name = context.getString("name");
+                        if ("CamelJBang".equals(row.name)) {
+                            row.name = ProcessHelper.extractName(root, ph);
+                        }
+                        int len = row.name.length();
+                        if (len > NAME_MAX_WIDTH) {
+                            len = NAME_MAX_WIDTH;
+                        }
+                        if (len > nameMaxWidth) {
+                            nameMaxWidth = len;
+                        }
+                        rows.add(row);
                     }
-                } while (true);
+                });
+
+        if (!rows.isEmpty()) {
+            if (tail > 0) {
+                tailLogFiles(rows);
+                dumpLogFiles(rows);
             }
-        } else {
-            // TODO: interleave logs based on PID + timestamp
-            System.out.println("Logs from multiple Camel integrations is currently not yet implemented");
+            // read new log lines from multiple files
         }
+
+        // continue read new log lines
+//        do {
+//            String line = lnr.readLine();
+//            if (line != null) {
+//                printLine(line);
+//            } else {
+//                Thread.sleep(50);
+//            }
+//        } while (true);
         return 0;
     }
 
-    protected void printLine(String line) {
+    private void dumpLogFiles(List<Row> rows) {
+        List<String> lines = new ArrayList<>();
+        for (Row row : rows) {
+            Queue<String> queue = row.fifo;
+            if (queue != null) {
+                for (String l : queue) {
+                    lines.add(row.name + ": " + l);
+                }
+                row.fifo.clear();
+            }
+        }
+        // sort lines
+        lines.sort(this::compareLogLine);
+        if (tail > 0) {
+            // cut according to tail
+            int pos = lines.size() - tail;
+            if (pos > 0) {
+                lines = lines.subList(pos, lines.size());
+            }
+        }
+        lines.forEach(l -> {
+            String name = StringHelper.before(l, ": ");
+            String line = StringHelper.after(l, ": ");
+            printLine(name, line);
+        });
+    }
+
+    private int compareLogLine(String l1, String l2) {
+        String t1 = StringHelper.after(l1, ": ");
+        t1 = StringHelper.before(t1, "  ");
+        String t2 = StringHelper.after(l2, ": ");
+        t2 = StringHelper.before(t2, "  ");
+        return t1.compareTo(t2);
+    }
+
+    protected void printLine(String name, String line) {
         if (loggingColor) {
+            if (name != null) {
+                Ansi.Color color = colors.get(name);
+                if (color == null) {
+                    // grab a new color
+                    int idx = (colors.size() % 6) + 1;
+                    color = Ansi.Color.values()[idx];
+                    colors.put(name, color);
+                }
+                String n = String.format("%-" + nameMaxWidth + "s", name);
+                AnsiConsole.out().print(Ansi.ansi().fg(color).a(n).a(": ").reset());
+            }
             System.out.println(line);
         } else {
             // unescape ANSI colors
@@ -118,14 +180,46 @@ public class CamelLogAction extends ActionBaseCommand {
                 sb.append(ch);
             }
             line = sb.toString();
+            if (name != null) {
+                String n = String.format("%-" + nameMaxWidth + "s", name);
+                System.out.print(n);
+                System.out.print(": ");
+            }
             System.out.println(line);
         }
     }
 
-    private static File logFile(long pid) {
+    private static File logFile(String pid) {
         File dir = new File(System.getProperty("user.home"), ".camel");
         String name = pid + ".log";
         return new File(dir, name);
+    }
+
+    private void tailLogFiles(List<Row> rows) throws Exception {
+        for (Row row : rows) {
+            File log = logFile(row.pid);
+            if (log.exists()) {
+                LineNumberReader lnr = new LineNumberReader(new FileReader(log));
+                String line;
+                if (tail > 0) {
+                    row.fifo = new ArrayBlockingQueue<>(tail);
+                    do {
+                        line = lnr.readLine();
+                        if (line != null) {
+                            while (!row.fifo.offer(line)) {
+                                row.fifo.poll();
+                            }
+                        }
+                    } while (line != null);
+                }
+            }
+        }
+    }
+
+    private static class Row {
+        String pid;
+        String name;
+        Queue<String> fifo;
     }
 
 }
