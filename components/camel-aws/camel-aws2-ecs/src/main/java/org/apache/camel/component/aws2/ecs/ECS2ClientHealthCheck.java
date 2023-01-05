@@ -32,12 +32,10 @@ import software.amazon.awssdk.services.ecs.model.ListClustersRequest;
 public class ECS2ClientHealthCheck extends AbstractHealthCheck {
 
     private final ECS2Endpoint ecs2Endpoint;
-    private final String clientId;
 
     public ECS2ClientHealthCheck(ECS2Endpoint ecs2Endpoint, String clientId) {
         super("camel", "aws2-ecs-client-" + clientId);
         this.ecs2Endpoint = ecs2Endpoint;
-        this.clientId = clientId;
     }
 
     @Override

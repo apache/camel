@@ -30,12 +30,10 @@ import software.amazon.awssdk.services.ec2.Ec2Client;
 public class AWS2EC2HealthCheck extends AbstractHealthCheck {
 
     private final AWS2EC2Endpoint aws2EC2Endpoint;
-    private final String clientId;
 
     public AWS2EC2HealthCheck(AWS2EC2Endpoint aws2EC2Endpoint, String clientId) {
         super("camel", "aws2-ec2-client-" + clientId);
         this.aws2EC2Endpoint = aws2EC2Endpoint;
-        this.clientId = clientId;
     }
 
     @Override

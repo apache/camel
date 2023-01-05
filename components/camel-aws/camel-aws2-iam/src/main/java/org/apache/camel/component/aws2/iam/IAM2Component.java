@@ -23,17 +23,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * For working with Amazon IAM SDK v2.
  */
 @Component("aws2-iam")
 public class IAM2Component extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(IAM2Component.class);
-
     @Metadata
     private IAM2Configuration configuration = new IAM2Configuration();
 

@@ -23,17 +23,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * For working with Amazon's Elastic Compute Cloud (EC2) SDK v2.
  */
 @Component("aws2-ec2")
 public class AWS2EC2Component extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AWS2EC2Component.class);
-
     @Metadata
     private AWS2EC2Configuration configuration = new AWS2EC2Configuration();
 

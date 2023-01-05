@@ -32,12 +32,10 @@ import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
 
     private final AWS2S3Consumer aws2S3Consumer;
-    private final String routeId;
 
     public AWS2S3ConsumerHealthCheck(AWS2S3Consumer aws2S3Consumer, String routeId) {
         super("camel", "aws2-s3-consumer-" + routeId);
         this.aws2S3Consumer = aws2S3Consumer;
-        this.routeId = routeId;
     }
 
     @Override
