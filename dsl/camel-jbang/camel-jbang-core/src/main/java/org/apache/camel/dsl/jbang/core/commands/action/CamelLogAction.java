@@ -20,14 +20,18 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
+import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.StringHelper;
@@ -51,6 +55,10 @@ public class CamelLogAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--tail" },
                         description = "The number of lines from the end of the logs to show. Defaults to showing all logs.")
     int tail;
+
+    @CommandLine.Option(names = { "--since" },
+                        description = "Return logs newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified.")
+    String since;
 
     private int nameMaxWidth;
 
@@ -92,8 +100,19 @@ public class CamelLogAction extends ActionBaseCommand {
                 });
 
         if (!rows.isEmpty()) {
-            // read existing log files
-            tailLogFiles(rows);
+            // read existing log files (skip by tail/since)
+            Date limit = null;
+            if (since != null) {
+                long millis;
+                if (StringHelper.isDigit(since)) {
+                    // is in seconds by default
+                    millis = TimePatternConverter.toMilliSeconds(since) * 1000;
+                } else {
+                    millis = TimePatternConverter.toMilliSeconds(since);
+                }
+                limit = new Date(System.currentTimeMillis() - millis);
+            }
+            tailLogFiles(rows, tail, limit);
             dumpLogFiles(rows);
 
             // scan and read new log lines
@@ -190,27 +209,7 @@ public class CamelLogAction extends ActionBaseCommand {
             }
             System.out.println(line);
         } else {
-            // unescape ANSI colors
-            StringBuilder sb = new StringBuilder();
-            boolean escaping = false;
-            char[] arr = line.toCharArray();
-            for (int i = 0; i < arr.length; i++) {
-                char ch = arr[i];
-                if (escaping) {
-                    if (ch == 'm') {
-                        escaping = false;
-                    }
-                    continue;
-                }
-                char ch2 = i < arr.length - 1 ? arr[i + 1] : 0;
-                if (ch == 27 && ch2 == '[') {
-                    escaping = true;
-                    continue;
-                }
-
-                sb.append(ch);
-            }
-            line = sb.toString();
+            line = unescapeAnsi(line);
             if (name != null) {
                 String n = String.format("%-" + nameMaxWidth + "s", name);
                 System.out.print(n);
@@ -226,7 +225,7 @@ public class CamelLogAction extends ActionBaseCommand {
         return new File(dir, name);
     }
 
-    private void tailLogFiles(List<Row> rows) throws Exception {
+    private void tailLogFiles(List<Row> rows, int tail, Date limit) throws Exception {
         for (Row row : rows) {
             File log = logFile(row.pid);
             if (log.exists()) {
@@ -240,13 +239,58 @@ public class CamelLogAction extends ActionBaseCommand {
                 do {
                     line = row.reader.readLine();
                     if (line != null) {
-                        while (!row.fifo.offer(line)) {
-                            row.fifo.poll();
+                        boolean valid = isValidSince(limit, line);
+                        if (valid) {
+                            while (!row.fifo.offer(line)) {
+                                row.fifo.poll();
+                            }
                         }
                     }
                 } while (line != null);
             }
         }
+    }
+
+    private boolean isValidSince(Date limit, String line) {
+        if (limit == null) {
+            return true;
+        }
+        // the log can be in color or not so we need to unescape always
+        line = unescapeAnsi(line);
+        String ts = StringHelper.before(line, "  ");
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        try {
+            Date row = sdf.parse(ts);
+            return row.compareTo(limit) >= 0;
+        } catch (ParseException e) {
+            // ignore
+        }
+        return false;
+    }
+
+    private String unescapeAnsi(String line) {
+        // unescape ANSI colors
+        StringBuilder sb = new StringBuilder();
+        boolean escaping = false;
+        char[] arr = line.toCharArray();
+        for (int i = 0; i < arr.length; i++) {
+            char ch = arr[i];
+            if (escaping) {
+                if (ch == 'm') {
+                    escaping = false;
+                }
+                continue;
+            }
+            char ch2 = i < arr.length - 1 ? arr[i + 1] : 0;
+            if (ch == 27 && ch2 == '[') {
+                escaping = true;
+                continue;
+            }
+
+            sb.append(ch);
+        }
+        return sb.toString();
     }
 
     private static class Row {
