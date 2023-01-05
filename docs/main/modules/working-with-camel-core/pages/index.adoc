@@ -9,7 +9,9 @@ We have prepared these two guides to explain in greater detail a few of the conc
 
 == Routes
 
-A Camel route is where the integration flow is defined. For example, you can write a Camel route to specify how two systems can be integrated. The following 2 guides provide the fundamental knowledge of Camel routes:
+In Apache Camel, a _route_ is a set of processing steps that are applied to a message as it travels from a source to a destination. A route typically consists of a series of processing steps that are connected in a linear sequence.
+
+In other words, a Camel _route_ is where the integration flow is defined. For example, you can write a Camel route to specify how two systems can be integrated. The following 2 guides provide the fundamental knowledge of Camel routes:
 
 * xref:manual::routes.adoc[Routes]: the basic guide about Camel Routes.
 * xref:manual::route-builder.adoc[Route Builder]: describes the base class from which you can create Routes.
