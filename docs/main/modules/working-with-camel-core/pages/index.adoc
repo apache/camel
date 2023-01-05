@@ -27,6 +27,8 @@ If you have basic knowledge about _routes_, you can use the following guides to 
 ** xref:manual::predicate.adoc[Predicate]
 
 * Routes (Error Handling)
+** xref:manual::defaulterrorhandler.adoc[Default Error Handler]
+** xref:manual::error-handler.adoc[Error Handler]
 ** xref:manual::exception-clause.adoc[Exception Clause]
 ** xref:manual::try-catch-finally.adoc[Try, Catch and Finally]
 
@@ -37,7 +39,6 @@ If you have basic knowledge about _routes_, you can use the following guides to 
 ** xref:manual::using-propertyplaceholder.adoc[Using Property Placeholder]
 
 == Components
-
 
 * Components
 ** xref:manual::component-dsl.adoc[Component DSL]
@@ -68,8 +69,6 @@ Learn about additional ways to customize your integrations. Explore alternatives
 ** xref:manual::producertemplate.adoc[Producer Template]
 ** xref:manual::pojo-consuming.adoc[POJO Consuming]
 ** xref:manual::pojo-producing.adoc[POJO Producing]
-** xref:manual::error-handler.adoc[Error Handler]
-** xref:manual::defaulterrorhandler.adoc[Default Error Handler]
 ** xref:manual::delay-interceptor.adoc[Delayer]
 ** xref:manual::configuring-route-startup-ordering-and-autostartup.adoc[Configuring Route Startup Ordering]
 ** xref:manual::endpoint.adoc[Endpoint]
