@@ -23,17 +23,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * For working with Amazon Translate SDK v2.
  */
 @Component("aws2-translate")
 public class Translate2Component extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Translate2Component.class);
-
     @Metadata
     private Translate2Configuration configuration = new Translate2Configuration();
 

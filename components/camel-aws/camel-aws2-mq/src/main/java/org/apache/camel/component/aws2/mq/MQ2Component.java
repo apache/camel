@@ -23,17 +23,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * For working with Amazon MQ SDK v2.
  */
 @Component("aws2-mq")
 public class MQ2Component extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(MQ2Component.class);
-
     @Metadata
     private MQ2Configuration configuration = new MQ2Configuration();
 

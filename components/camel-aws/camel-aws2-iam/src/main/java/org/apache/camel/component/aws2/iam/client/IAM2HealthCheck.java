@@ -28,12 +28,10 @@ import software.amazon.awssdk.services.iam.IamClient;
 
 public class IAM2HealthCheck extends AbstractHealthCheck {
     private final IAM2Endpoint endpoint;
-    private final String clientId;
 
     public IAM2HealthCheck(IAM2Endpoint endpoint, String clientId) {
         super("camel", "aws2-iam-client-" + clientId);
         this.endpoint = endpoint;
-        this.clientId = clientId;
     }
 
     @Override

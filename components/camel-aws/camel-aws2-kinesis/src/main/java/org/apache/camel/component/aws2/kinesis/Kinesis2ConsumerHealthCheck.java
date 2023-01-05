@@ -31,12 +31,10 @@ import software.amazon.awssdk.services.kinesis.KinesisClientBuilder;
 public class Kinesis2ConsumerHealthCheck extends AbstractHealthCheck {
 
     private final Kinesis2Consumer kinesis2Consumer;
-    private final String routeId;
 
     public Kinesis2ConsumerHealthCheck(Kinesis2Consumer kinesis2Consumer, String routeId) {
         super("camel", "aws2-kinesis-consumer-" + routeId);
         this.kinesis2Consumer = kinesis2Consumer;
-        this.routeId = routeId;
     }
 
     @Override

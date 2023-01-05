@@ -28,12 +28,10 @@ import software.amazon.awssdk.services.sns.SnsClient;
 public class Sns2HealthCheck extends AbstractHealthCheck {
 
     private final Sns2Endpoint sns2Endpoint;
-    private final String clientId;
 
     public Sns2HealthCheck(Sns2Endpoint sns2Endpoint, String clientId) {
         super("camel", "aws2-sns-client-" + clientId);
         this.sns2Endpoint = sns2Endpoint;
-        this.clientId = clientId;
     }
 
     @Override

@@ -32,12 +32,10 @@ import software.amazon.awssdk.services.cloudwatch.model.ListDashboardsRequest;
 public class Cw2ClientHealthCheck extends AbstractHealthCheck {
 
     private final Cw2Endpoint cw2Endpoint;
-    private final String clientId;
 
     public Cw2ClientHealthCheck(Cw2Endpoint cw2Endpoint, String clientId) {
         super("camel", "aws2-cw-client-" + clientId);
         this.cw2Endpoint = cw2Endpoint;
-        this.clientId = clientId;
     }
 
     @Override

@@ -31,12 +31,10 @@ import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 public class Ddb2ClientHealthCheck extends AbstractHealthCheck {
 
     private final Ddb2Endpoint ddb2Endpoint;
-    private final String clientId;
 
     public Ddb2ClientHealthCheck(Ddb2Endpoint ddb2Endpoint, String clientId) {
         super("camel", "aws2-ddb-client-" + clientId);
         this.ddb2Endpoint = ddb2Endpoint;
-        this.clientId = clientId;
     }
 
     @Override

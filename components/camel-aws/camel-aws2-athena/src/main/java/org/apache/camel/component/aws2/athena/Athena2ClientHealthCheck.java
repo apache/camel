@@ -32,12 +32,10 @@ import software.amazon.awssdk.services.athena.AthenaClientBuilder;
 public class Athena2ClientHealthCheck extends AbstractHealthCheck {
 
     private final Athena2Endpoint athena2Endpoint;
-    private final String clientId;
 
     public Athena2ClientHealthCheck(Athena2Endpoint athena2Endpoint, String clientId) {
         super("camel", "aws2-athena-client-" + clientId);
         this.athena2Endpoint = athena2Endpoint;
-        this.clientId = clientId;
     }
 
     @Override

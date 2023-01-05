@@ -23,17 +23,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * For working with Amazon KMS.
  */
 @Component("aws2-kms")
 public class KMS2Component extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(KMS2Component.class);
-
     @Metadata
     private KMS2Configuration configuration = new KMS2Configuration();
 

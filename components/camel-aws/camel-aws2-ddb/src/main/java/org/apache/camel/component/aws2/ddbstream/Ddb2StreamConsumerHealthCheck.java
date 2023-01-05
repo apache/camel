@@ -31,12 +31,10 @@ import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClientBui
 public class Ddb2StreamConsumerHealthCheck extends AbstractHealthCheck {
 
     private final Ddb2StreamConsumer ddb2StreamConsumer;
-    private final String routeId;
 
     public Ddb2StreamConsumerHealthCheck(Ddb2StreamConsumer ddb2StreamConsumer, String routeId) {
         super("camel", "aws2-ddbstream-consumer-" + routeId);
         this.ddb2StreamConsumer = ddb2StreamConsumer;
-        this.routeId = routeId;
     }
 
     @Override

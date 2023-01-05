@@ -31,12 +31,10 @@ import software.amazon.awssdk.services.sqs.SqsClientBuilder;
 public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
 
     private final Sqs2Consumer sqs2Consumer;
-    private final String routeId;
 
     public Sqs2ConsumerHealthCheck(Sqs2Consumer sqs2Consumer, String routeId) {
         super("camel", "aws2-sqs-consumer-" + routeId);
         this.sqs2Consumer = sqs2Consumer;
-        this.routeId = routeId;
     }
 
     @Override

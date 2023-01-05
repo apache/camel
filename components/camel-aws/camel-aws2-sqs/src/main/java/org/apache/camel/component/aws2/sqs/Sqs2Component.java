@@ -23,8 +23,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.regions.Region;
 
 /**
@@ -32,9 +30,6 @@ import software.amazon.awssdk.regions.Region;
  */
 @Component("aws2-sqs")
 public class Sqs2Component extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Sqs2Component.class);
-
     @Metadata
     private Sqs2Configuration configuration = new Sqs2Configuration();
 
