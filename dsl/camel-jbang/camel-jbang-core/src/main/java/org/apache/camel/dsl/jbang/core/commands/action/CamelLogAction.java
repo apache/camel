@@ -95,18 +95,37 @@ public class CamelLogAction extends ActionBaseCommand {
                 dumpLogFiles(rows);
             }
             // read new log lines from multiple files
+            do {
+                int lines = readLogFiles(rows);
+                if (lines > 0) {
+                    dumpLogFiles(rows);
+                } else {
+                    Thread.sleep(50);
+                }
+            } while (true);
         }
 
-        // continue read new log lines
-//        do {
-//            String line = lnr.readLine();
-//            if (line != null) {
-//                printLine(line);
-//            } else {
-//                Thread.sleep(50);
-//            }
-//        } while (true);
         return 0;
+    }
+
+    private int readLogFiles(List<Row> rows) throws Exception {
+        int lines = 0;
+        for (Row row : rows) {
+            if (row.reader == null) {
+                File log = logFile(row.pid);
+                if (log.exists()) {
+                    row.reader = new LineNumberReader(new FileReader(log));
+                }
+            }
+            if (row.reader != null) {
+                String line = row.reader.readLine();
+                if (line != null) {
+                    lines++;
+                    row.fifo.offer(line);
+                }
+            }
+        }
+        return lines;
     }
 
     private void dumpLogFiles(List<Row> rows) {
@@ -199,12 +218,12 @@ public class CamelLogAction extends ActionBaseCommand {
         for (Row row : rows) {
             File log = logFile(row.pid);
             if (log.exists()) {
-                LineNumberReader lnr = new LineNumberReader(new FileReader(log));
+                row.reader = new LineNumberReader(new FileReader(log));
                 String line;
                 if (tail > 0) {
                     row.fifo = new ArrayBlockingQueue<>(tail);
                     do {
-                        line = lnr.readLine();
+                        line = row.reader.readLine();
                         if (line != null) {
                             while (!row.fifo.offer(line)) {
                                 row.fifo.poll();
@@ -220,6 +239,7 @@ public class CamelLogAction extends ActionBaseCommand {
         String pid;
         String name;
         Queue<String> fifo;
+        LineNumberReader reader;
     }
 
 }
