@@ -121,6 +121,12 @@ to learn more about configuring endpoints. For example, how to refer to beans in
 to use raw values for password options, and using xref:using-propertyplaceholder.adoc[property placeholders] etc.
 ====
 
+== Component DSL
+
+Component-DSL is a builder API that allows using type-safe construction of Camel Components and injecting them directly to the xref:camelcontext.adoc[Camel Context] instead of initializing through a constructor.
+
+** xref:manual::component-dsl.adoc[Component DSL]
+
 == Writing Components
 
 This is an advanced topic and described in more detail in the xref:writing-components.adoc[Writing Components Guide].
