@@ -18,6 +18,7 @@ package org.apache.camel.component.pulsar.integration;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -28,10 +29,15 @@ import org.apache.camel.component.pulsar.PulsarComponent;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.SimpleRegistry;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.junit.jupiter.api.Test;
+
+import static org.apache.pulsar.client.api.PulsarClientException.InvalidMessageException;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PulsarProducerInIT extends PulsarITSupport {
 
@@ -41,13 +47,25 @@ public class PulsarProducerInIT extends PulsarITSupport {
     @Produce("direct:start")
     private ProducerTemplate producerTemplate;
 
+    @Produce("direct:start1")
+    private ProducerTemplate producerTemplate1;
+
     @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive"
                     + "&subscriptionName=camel-subscription&consumerQueueSize=1"
                     + "&consumerName=camel-consumer" + "&producerName=" + PRODUCER)
     private Endpoint from;
 
+    @EndpointInject("pulsar:" + TOPIC_URI + "1?numberOfConsumers=1&subscriptionType=Exclusive"
+                    + "&subscriptionName=camel-subscription&consumerQueueSize=1"
+                    + "&batchingEnabled=false" + "&chunkingEnabled=true"
+                    + "&consumerName=camel-consumer" + "&producerName=" + PRODUCER)
+    private Endpoint from1;
+
     @EndpointInject("mock:result")
     private MockEndpoint to;
+
+    @EndpointInject("mock:result1")
+    private MockEndpoint to1;
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -57,6 +75,9 @@ public class PulsarProducerInIT extends PulsarITSupport {
             public void configure() {
                 from("direct:start").to(from);
                 from(from).to(to);
+
+                from("direct:start1").to(from1);
+                from(from1).to(to1);
             }
         };
     }
@@ -95,5 +116,19 @@ public class PulsarProducerInIT extends PulsarITSupport {
         producerTemplate.sendBody(10);
 
         MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to);
+    }
+
+    @Test
+    public void testLargeMessageWithChunkingDisabled() {
+        Throwable e = assertThrows(CamelExecutionException.class,
+                () -> producerTemplate.sendBody(new byte[10 * 1024 * 1024]));
+        assertTrue(ExceptionUtils.getThrowableList(e).stream().anyMatch(ex -> ex instanceof InvalidMessageException));
+    }
+
+    @Test
+    public void testLargeMessageWithChunkingEnabled() throws Exception {
+        to1.expectedMessageCount(1);
+        producerTemplate1.sendBody(new byte[10 * 1024 * 1024]);
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, to1);
     }
 }
