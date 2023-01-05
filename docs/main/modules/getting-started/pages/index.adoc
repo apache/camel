@@ -50,7 +50,10 @@ The Javadoc API that are the most relevant for Camel end users are in the follow
 
 We'll start this guide by creating a simple integration. You need to have https://maven.apache.org/[Apache Maven] and a https://adoptium.net/temurin/[JDK] version 11 or greater installed on your system.
 
-*Note*: we strongly recommend you use an LTS version of Java (i.e., 11 or 17). We regularly test Camel in our continuous integration (CI) environment using Java's LTS versions.
+[NOTE]
+====
+We strongly recommend you use an LTS version of Java (i.e., 11 or 17). We regularly test Camel in our continuous integration (CI) environment using Java's LTS versions.
+====
 
 === Generating the project
 
@@ -72,7 +75,10 @@ If you have never used archetypes before, the command looks lengthy. We'll expla
 * `-DartifactId`: the artifact name for the project you are creating.
 * `-Dversion`: the version for your project.
 
-*Note*: later we will describe other ways to generate a Camel project.
+[NOTE]
+====
+later we will describe other ways to generate a Camel project.
+====
 
 === Building and running the project
 
@@ -135,7 +141,10 @@ target/messages/uk
 target/messages/uk/message1.xml
 ----
 
-*Note*: use the Windows Explorer or the Windows equivalent of the `find` command available on Linux, macOS or *BSDs.
+[NOTE]
+====
+Use the Windows Explorer or the Windows equivalent of the `find` command available on Linux, macOS or *BSDs.
+====
 
 == Understanding the project
 
@@ -153,7 +162,10 @@ When we talk about inter-process communication, such as client/server or microse
 
 The distinction between the address and the software contactable at that address is often not important.
 
-*Note*: in the past, other technologies (such as CORBA) used the terminology _endpoint_ in ways that could appear ambiguous. To prevent any confusion, we clarify that Camel uses it solely in the way we have described above.
+[NOTE]
+====
+in the past, other technologies (such as CORBA) used the terminology _endpoint_ in ways that could appear ambiguous. To prevent any confusion, we clarify that Camel uses it solely in the way we have described above.
+====
 
 Camel provides out-of-the-box support for endpoints implemented with many communication technologies. Here are some examples of the supported endpoint technologies:
 
@@ -172,11 +184,17 @@ a server can read an incoming message from a mail server.
 
 In a Camel-based application, you create routes. A route is used to connect a source _endpoint_ to a destination _endpoint_.
 
-*Note*: other projects in the integration, microservices and middleware space use the terms _source_ and _sink_ for the source and destination endpoints. The Camel Core project does not use this terminology.
+[NOTE]
+====
+Other projects in the integration, microservices and middleware space use the terms _source_ and _sink_ for the source and destination endpoints. The Camel Core project does not use this terminology.
+====
 
 A _route_ describes the step-by-step movement of a `Message` from a source endpoint, through arbitrary types of decision-making routines (such as filters and routers) to a destination endpoint (if any).
 
-*Note*: at this point, you might want to use an IDE to open the project and view the files.
+[NOTE]
+====
+At this point, you might want to use an IDE to open the project and view the files.
+====
 
 In the project you created, there should be 2 source files located in the directory `src/main/java/org/apache/camel/learn`:
 
@@ -307,15 +325,21 @@ You did not manipulate the _CamelContext_ in the sample application you created,
 5.  Eventually invoke the `stop()` operation on the context object. Doing this, gracefully stops all the endpoints and Camel-internal
 threads.
 
-*Note*: the `CamelContext.start()` operation does not block indefinitely. Rather, it starts threads internal to each `Component` and
+[NOTE]
+====
+the `CamelContext.start()` operation does not block indefinitely. Rather, it starts threads internal to each `Component` and
 `Endpoint` and then `start()` returns. Conversely, `CamelContext.stop()` waits for all the threads internal to each `Endpoint` and `Component` to terminate, and then `stop()` returns.
+====
 
 If you neglect to call `CamelContext.start()` in your application, Camel will not process the messages because internal threads will not have been created.
 
 If you neglect to call `CamelContext.stop()` before terminating your application, it may terminate in an inconsistent state.
 If you neglect to call `CamelContext.stop()` in a JUnit test, it may fail because the messages did not have a chance to be fully processed.
 
-*Note*: our documentation contains an in-depth overview of the xref:manual::camelcontext.adoc[CamelContext] if you want to learn more about it.
+[NOTE]
+====
+our documentation contains an in-depth overview of the xref:manual::camelcontext.adoc[CamelContext] if you want to learn more about it.
+====
 
 [[BookGettingStarted-Components]]
 === Components
@@ -335,7 +359,10 @@ The public API of the `Message` interface provides getters and setters methods. 
 
 The `Exchange` interface provides an abstraction for an exchange of messages. An exchange of messages is a request message and its corresponding reply or exception message. In Camel, the request, reply and exception messages are called _in_, _out_ and _fault_ messages.
 
-*Note*: our documentation contains more details about xref:manual::exchange.adoc[Exchange] and the xref:components:eips:event-message.adoc[Message] if you want to learn more about them.
+[NOTE]
+====
+our documentation contains more details about xref:manual::exchange.adoc[Exchange] and the xref:components:eips:event-message.adoc[Message] if you want to learn more about them.
+====
 
 [[BookGettingStarted-Processor]]
 === Processor
@@ -371,11 +398,17 @@ public interface Processor {
 }
 ----
 
-*Note*: the parameter to the `process()` method is an `Exchange` rather than a `Message`. This provides flexibility. For example to get the input message and process it, an implementation of this method initially might call the method `exchange.getIn()`. If an error occurs during processing, then the method it can call `exchange.setException()`.
+[NOTE]
+====
+the parameter to the `process()` method is an `Exchange` rather than a `Message`. This provides flexibility. For example to get the input message and process it, an implementation of this method initially might call the method `exchange.getIn()`. If an error occurs during processing, then the method it can call `exchange.setException()`.
+====
 
 An application-level developer might also want to implement the `Processor` interface with a class that executes some business logic.
 
-*Note*: our documentation contains an in-depth overview of the xref:manual::processor.adoc[Processor].
+[NOTE]
+====
+our documentation contains an in-depth overview of the xref:manual::processor.adoc[Processor].
+====
 
 ==== Built-in processors
 
@@ -399,7 +432,10 @@ Camel provides three ways for an application developer to specify routes:
 
 For many people, the term “domain-specific language” implies a compiler or interpreter that can process an input file containing keywords and syntax specific to a particular domain. This is not the approach taken by Camel. Our documentation consistently uses the term _“Java DSL”_ instead of “DSL”, but this does not entirely avoid potential confusion. The Camel _“Java DSL”_ is a class library that you can use in a way that looks almost like a DSL, except that it has a bit of Java syntactic baggage.
 
-*Note*: our documentation contains an in-depth overview of the xref:manual::java-dsl.adoc[Java DSL].
+[NOTE]
+====
+our documentation contains an in-depth overview of the xref:manual::java-dsl.adoc[Java DSL].
+====
 
 [[BookGettingStarted-ContinueLearningaboutCamel]]
 == Continue Learning about Camel
