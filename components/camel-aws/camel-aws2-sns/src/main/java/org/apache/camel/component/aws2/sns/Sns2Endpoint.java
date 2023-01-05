@@ -119,9 +119,8 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
         if (healthCheckRepository != null) {
             clientHealthCheck = new Sns2HealthCheck(this, getId());
+            healthCheckRepository.addHealthCheck(clientHealthCheck);
         }
-
-        healthCheckRepository.addHealthCheck(clientHealthCheck);
 
         if (configuration.getTopicArn() == null) {
             try {
