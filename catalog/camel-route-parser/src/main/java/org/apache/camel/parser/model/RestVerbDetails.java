@@ -30,7 +30,6 @@ public class RestVerbDetails {
 
     // camel verb details
     private String method;
-    private String uri;
     private String path;
     private String consumes;
     private String produces;
