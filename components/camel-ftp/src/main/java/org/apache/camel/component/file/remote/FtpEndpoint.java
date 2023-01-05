@@ -222,6 +222,11 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         return operations;
     }
 
+    /**
+     * Create the FTP client
+     *
+     * @throws Exception may throw client-specific exceptions if the client cannot be created
+     */
     protected FTPClient createFtpClient() throws Exception {
         FTPClient client = new FTPClient();
         // use parser factory that can load classes via Camel to work in all runtimes

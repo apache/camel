@@ -85,9 +85,6 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
         return getFtpsConfiguration().getProtocol();
     }
 
-    /**
-     * Create the FTPS client.
-     */
     @Override
     protected FTPClient createFtpClient() throws Exception {
         FTPSClient client;
