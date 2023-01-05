@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -59,6 +60,12 @@ public class CamelLogAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--since" },
                         description = "Return logs newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified.")
     String since;
+
+    @CommandLine.Option(names = { "--find" },
+                        description = "Find and highlight matching text (ignore case).")
+    String find;
+
+    String findAnsi;
 
     private int nameMaxWidth;
 
@@ -101,6 +108,10 @@ public class CamelLogAction extends ActionBaseCommand {
 
         if (!rows.isEmpty()) {
             // read existing log files (skip by tail/since)
+            if (find != null) {
+                findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+                find = Pattern.quote(find);
+            }
             Date limit = null;
             if (since != null) {
                 long millis;
@@ -207,7 +218,6 @@ public class CamelLogAction extends ActionBaseCommand {
                 String n = String.format("%-" + nameMaxWidth + "s", name);
                 AnsiConsole.out().print(Ansi.ansi().fg(color).a(n).a(": ").reset());
             }
-            System.out.println(line);
         } else {
             line = unescapeAnsi(line);
             if (name != null) {
@@ -215,8 +225,14 @@ public class CamelLogAction extends ActionBaseCommand {
                 System.out.print(n);
                 System.out.print(": ");
             }
-            System.out.println(line);
         }
+        if (find != null) {
+            String before = StringHelper.before(line, "---");
+            String after = StringHelper.after(line, "---");
+            after = after.replaceAll("(?i)" + find, findAnsi);
+            line = before + "---" + after;
+        }
+        System.out.println(line);
     }
 
     private static File logFile(String pid) {
