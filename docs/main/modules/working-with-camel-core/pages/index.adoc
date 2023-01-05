@@ -36,14 +36,17 @@ If you have basic knowledge about _routes_, you can use the following guides to 
 ** xref:manual::route-template.adoc[Route Template]
 ** xref:manual::using-propertyplaceholder.adoc[Using Property Placeholder]
 
-== Other Guides
-
-Learn about additional ways to customize your integrations. Explore alternatives to consume and produce data as well as writing and defining routes.
+== Components
 
 
 * Components
 ** xref:manual::component-dsl.adoc[Component DSL]
 ** xref:manual::component.adoc[Component]
+
+== Other Guides
+
+Learn about additional ways to customize your integrations. Explore alternatives to consume and produce data as well as writing and defining routes.
+
 * Data Processing
 ** xref:manual::dataformat-dsl.adoc[Data Format DSL]
 * Other

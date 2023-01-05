@@ -320,19 +320,9 @@ If you neglect to call `CamelContext.stop()` in a JUnit test, it may fail becaus
 [[BookGettingStarted-Components]]
 === Components
 
-A Component is essentially a factory of Endpoint instances. Typically, Camel-based applications shouldn't need to interact directly with a component. However, they are some circumstances where manipulating the component may be beneficial for the application, performance, operation, or scalability of the application. In such cases, the applications may use the context to get access to an instance of the endpoint they need to manipulate. The applications can do so by using the method `CamelContext.getEndpoint()`. This method returns an implementation of the `Component` interface that is appropriate for the component requested. For instance, consider the following code:
+Components are another fundamental building block of Apache Camel and are used to connect routes to a wide variety of external systems and services. Camel comes with a large number of built-in components that provide connectivity to a wide range of technologies and protocols, such as HTTP, JMS, file, and many others. You can also create a custom components if the built-in components do not meet your needs.
 
-[source,java]
-----
-myCamelContext.getEndpoint("pop3://john.smith@mailserv.example.com?password=myPassword");
-----
-
-For the URI given in the above example, the `CamelContext` object would map the `pop3` prefix to an instance of the `MailComponent` class.
-
-The parameter to `getEndpoint()` is a URI. The URI _scheme_ (that is,
-the part before `:`) specifies the name of a component. Internally, the `CamelContext` object maintains a mapping from the names of components to `Component` objects.
-
-*Note*: our documentation contains an in-depth overview of the xref:manual::component.adoc[Component] if you want to learn more about it, including important details necessary to write your own.
+Typically, Camel-based applications shouldn't need to interact directly with a component. However, there are some circumstances where manipulating the component may be beneficial for the performance, operation, or scalability of the application. Our documentation contains an in-depth overview of the xref:manual::component.adoc[Component] if you want to learn more about it, including important details necessary to write your own.
 
 [[BookGettingStarted-message-and-exchange]]
 
