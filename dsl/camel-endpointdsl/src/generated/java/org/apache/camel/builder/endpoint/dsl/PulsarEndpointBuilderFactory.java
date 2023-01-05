@@ -1061,6 +1061,39 @@ public interface PulsarEndpointBuilderFactory {
             return this;
         }
         /**
+         * Control whether chunking of messages is enabled for the producer.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param chunkingEnabled the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointProducerBuilder chunkingEnabled(
+                boolean chunkingEnabled) {
+            doSetProperty("chunkingEnabled", chunkingEnabled);
+            return this;
+        }
+        /**
+         * Control whether chunking of messages is enabled for the producer.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param chunkingEnabled the value to set
+         * @return the dsl builder
+         */
+        default PulsarEndpointProducerBuilder chunkingEnabled(
+                String chunkingEnabled) {
+            doSetProperty("chunkingEnabled", chunkingEnabled);
+            return this;
+        }
+        /**
          * Compression type to use.
          * 
          * The option is a:
