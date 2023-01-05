@@ -132,7 +132,8 @@ public class PulsarProducer extends DefaultAsyncProducer {
                         .batchingMaxMessages(configuration.getMaxPendingMessages())
                         .enableBatching(configuration.isBatchingEnabled()).batcherBuilder(configuration.getBatcherBuilder())
                         .initialSequenceId(configuration.getInitialSequenceId())
-                        .compressionType(configuration.getCompressionType());
+                        .compressionType(configuration.getCompressionType())
+                        .enableChunking(configuration.isChunkingEnabled());
                 if (ObjectHelper.isNotEmpty(configuration.getMessageRouter())) {
                     producerBuilder.messageRouter(configuration.getMessageRouter());
                 } else {
