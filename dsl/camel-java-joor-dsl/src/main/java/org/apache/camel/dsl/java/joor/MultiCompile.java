@@ -72,6 +72,17 @@ public final class MultiCompile {
      * @return      the compilation result
      */
     public static CompilationUnit.Result compileUnit(CompilationUnit unit) {
+        return compileUnit(unit, new ArrayList<>());
+    }
+
+    /**
+     * Compiles multiple files as one unit
+     *
+     * @param  unit    the files to compile in the same unit
+     * @param  options the compilation options to use
+     * @return         the compilation result
+     */
+    public static CompilationUnit.Result compileUnit(CompilationUnit unit, List<String> options) {
         CompilationUnit.Result result = CompilationUnit.result();
 
         // some classes may already be compiled so try to load them first
@@ -91,10 +102,6 @@ public final class MultiCompile {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
         try {
-            ClassFileManager fileManager = new ClassFileManager(compiler.getStandardFileManager(null, null, null));
-            StringWriter out = new StringWriter();
-
-            List<String> options = new ArrayList<>();
             if (!options.contains("-classpath")) {
                 StringBuilder classpath = new StringBuilder();
                 String separator = System.getProperty("path.separator");
@@ -121,16 +128,18 @@ public final class MultiCompile {
                 }
 
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Java JooR Compile -classpath: {}", classpath);
+                    LOG.debug("Java jOOR Compile -classpath: {}", classpath);
                 }
                 options.addAll(Arrays.asList("-classpath", classpath.toString()));
             }
 
             DiagnosticCollector<javax.tools.JavaFileObject> dc = new DiagnosticCollector<>();
+            ClassFileManager fileManager = new ClassFileManager(compiler.getStandardFileManager(null, null, null));
+            StringWriter out = new StringWriter();
             CompilationTask task = compiler.getTask(out, fileManager, dc, options, null, files);
 
             boolean success = task.call();
-            // after compilation then we need to cleanup some unexpected output
+            // after compilation then we need to clean up some unexpected output
             cleanupWaste();
 
             if (!success || fileManager.isEmpty()) {
