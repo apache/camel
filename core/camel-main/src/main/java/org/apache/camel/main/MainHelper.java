@@ -508,7 +508,7 @@ public final class MainHelper {
 
     public static OrderedLocationProperties extractProperties(
             OrderedLocationProperties properties, String optionPrefix, String optionSuffix,
-            boolean remove, Function<String, String> onRemove) {
+            boolean remove, Function<String, String> keyTransformer) {
         if (properties == null) {
             return new OrderedLocationProperties();
         }
@@ -520,14 +520,14 @@ public final class MainHelper {
             String loc = properties.getLocation(key);
             if (key.startsWith(optionPrefix)) {
                 Object value = properties.get(key);
-                if (onRemove != null) {
-                    key = onRemove.apply(key);
+                if (keyTransformer != null) {
+                    key = keyTransformer.apply(key);
                 } else {
                     key = key.substring(optionPrefix.length());
                 }
                 if (optionSuffix != null && key.endsWith(optionSuffix)) {
-                    if (onRemove != null) {
-                        key = onRemove.apply(key);
+                    if (keyTransformer != null) {
+                        key = keyTransformer.apply(key);
                     } else {
                         key = key.substring(0, key.length() - optionSuffix.length());
                     }
