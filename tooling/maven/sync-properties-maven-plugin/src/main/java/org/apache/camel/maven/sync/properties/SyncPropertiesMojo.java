@@ -62,7 +62,8 @@ public class SyncPropertiesMojo extends AbstractMojo {
 
         try {
             String sourceStr = IOHelper.toString(ReaderFactory.newXmlReader(Files.newInputStream(sourcePom.toPath())));
-            String targetStr = IOHelper.toString(ReaderFactory.newXmlReader(SyncPropertiesMojo.class.getResourceAsStream("/camel-dependencies-template.xml")));
+            String targetStr = IOHelper.toString(ReaderFactory
+                    .newXmlReader(SyncPropertiesMojo.class.getResourceAsStream("/camel-dependencies-template.xml")));
 
             String version = findGroup(sourceStr, "<parent>.*?(?<v><version>.*?</version>).*?</parent>", "v");
             String properties = findGroup(sourceStr, "(?<p><properties>.*?</properties>)", "p");
