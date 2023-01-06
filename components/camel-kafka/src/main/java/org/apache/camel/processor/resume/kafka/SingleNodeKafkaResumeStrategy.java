@@ -42,6 +42,7 @@ import org.apache.camel.resume.ResumeStrategyConfiguration;
 import org.apache.camel.resume.cache.ResumeCache;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -456,8 +457,7 @@ public class SingleNodeKafkaResumeStrategy implements KafkaResumeStrategy, Camel
         } else {
             throw new RuntimeCamelException(
                     "Invalid resume strategy configuration of type " +
-                                            resumeStrategyConfiguration == null
-                                                    ? "null" : resumeStrategyConfiguration.getClass().getName());
+                                            ObjectHelper.className(resumeStrategyConfiguration));
         }
     }
 
