@@ -1445,7 +1445,7 @@ public abstract class BaseMainSupport extends BaseService {
                         "Cannot resolve bean with name " + name);
             }
             // configure all the properties on the bean at once (to ensure they are configured in right order)
-            OrderedLocationProperties config = MainHelper.extractProperties(properties, name + "[", "]", true, (key) -> {
+            OrderedLocationProperties config = MainHelper.extractProperties(properties, name + "[", "]", true, key -> {
                 // when configuring map/list we want the keys to include the square brackets
                 // (so we know it is a map/list style and not dot style syntax)
                 // and therefore only remove the option prefix name
