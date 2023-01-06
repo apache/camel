@@ -254,7 +254,12 @@ public class ConsulRegistry implements Registry {
         this.port = port;
     }
 
-    static class ConsulRegistryUtils {
+    static final class ConsulRegistryUtils {
+
+        private ConsulRegistryUtils() {
+
+        }
+
         /**
          * Decodes using Base64.
          *
