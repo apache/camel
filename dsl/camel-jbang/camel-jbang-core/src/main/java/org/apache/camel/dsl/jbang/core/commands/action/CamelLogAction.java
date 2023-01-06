@@ -26,15 +26,19 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.fusesource.jansi.Ansi;
@@ -86,38 +90,10 @@ public class CamelLogAction extends ActionBaseCommand {
 
     @Override
     public Integer call() throws Exception {
-        List<Row> rows = new ArrayList<>();
+        Map<Long, Row> rows = new LinkedHashMap<>();
 
-        List<Long> pids = findPids(name);
-        ProcessHandle.allProcesses()
-                .filter(ph -> pids.contains(ph.pid()))
-                .forEach(ph -> {
-                    JsonObject root = loadStatus(ph.pid());
-                    if (root != null) {
-                        Row row = new Row();
-                        row.pid = "" + ph.pid();
-                        JsonObject context = (JsonObject) root.get("context");
-                        if (context == null) {
-                            return;
-                        }
-                        row.name = context.getString("name");
-                        if ("CamelJBang".equals(row.name)) {
-                            row.name = ProcessHelper.extractName(root, ph);
-                        }
-                        int len = row.name.length();
-                        if (len < NAME_MIN_WIDTH) {
-                            len = NAME_MIN_WIDTH;
-                        }
-                        if (len > NAME_MAX_WIDTH) {
-                            len = NAME_MAX_WIDTH;
-                        }
-                        if (len > nameMaxWidth) {
-                            nameMaxWidth = len;
-                        }
-                        rows.add(row);
-                    }
-                });
-
+        // find new pids
+        updatePids(rows);
         if (!rows.isEmpty()) {
             // read existing log files (skip by tail/since)
             if (find != null) {
@@ -151,26 +127,86 @@ public class CamelLogAction extends ActionBaseCommand {
             // dump existing log lines
             tailLogFiles(rows, tail, limit);
             dumpLogFiles(rows);
+        }
 
-            if (follow) {
-                do {
+        if (follow) {
+            boolean waitMessage = true;
+            StopWatch watch = new StopWatch();
+            do {
+                if (rows.isEmpty()) {
+                    if (waitMessage) {
+                        System.out.println("Waiting for logs ...");
+                        waitMessage = false;
+                    }
+                    Thread.sleep(250);
+                    updatePids(rows);
+                } else {
+                    waitMessage = true;
+                    if (watch.taken() > 1000) {
+                        // check for new logs
+                        updatePids(rows);
+                        watch.restart();
+                    }
                     int lines = readLogFiles(rows);
                     if (lines > 0) {
                         dumpLogFiles(rows);
                     } else {
                         Thread.sleep(50);
                     }
-                } while (true);
-            }
+                }
+            } while (true);
         }
 
         return 0;
     }
 
-    private int readLogFiles(List<Row> rows) throws Exception {
+    private void updatePids(Map<Long, Row> rows) {
+        List<Long> pids = findPids(name);
+        ProcessHandle.allProcesses()
+                .filter(ph -> pids.contains(ph.pid()))
+                .forEach(ph -> {
+                    JsonObject root = loadStatus(ph.pid());
+                    if (root != null) {
+                        Row row = new Row();
+                        row.pid = "" + ph.pid();
+                        JsonObject context = (JsonObject) root.get("context");
+                        if (context == null) {
+                            return;
+                        }
+                        row.name = context.getString("name");
+                        if ("CamelJBang".equals(row.name)) {
+                            row.name = ProcessHelper.extractName(root, ph);
+                        }
+                        int len = row.name.length();
+                        if (len < NAME_MIN_WIDTH) {
+                            len = NAME_MIN_WIDTH;
+                        }
+                        if (len > NAME_MAX_WIDTH) {
+                            len = NAME_MAX_WIDTH;
+                        }
+                        if (len > nameMaxWidth) {
+                            nameMaxWidth = len;
+                        }
+                        rows.put(ph.pid(), row);
+                    }
+                });
+
+        // remove pids that are no long active from the rows
+        Set<Long> remove = new HashSet<>();
+        for (long pid : rows.keySet()) {
+            if (!pids.contains(pid)) {
+                remove.add(pid);
+            }
+        }
+        for (long pid : remove) {
+            rows.remove(pid);
+        }
+    }
+
+    private int readLogFiles(Map<Long, Row> rows) throws Exception {
         int lines = 0;
 
-        for (Row row : rows) {
+        for (Row row : rows.values()) {
             if (row.reader == null) {
                 File log = logFile(row.pid);
                 if (log.exists()) {
@@ -203,9 +239,9 @@ public class CamelLogAction extends ActionBaseCommand {
         return lines;
     }
 
-    private void dumpLogFiles(List<Row> rows) {
+    private void dumpLogFiles(Map<Long, Row> rows) {
         List<String> lines = new ArrayList<>();
-        for (Row row : rows) {
+        for (Row row : rows.values()) {
             Queue<String> queue = row.fifo;
             if (queue != null) {
                 for (String l : queue) {
@@ -283,8 +319,8 @@ public class CamelLogAction extends ActionBaseCommand {
         return new File(dir, name);
     }
 
-    private void tailLogFiles(List<Row> rows, int tail, Date limit) throws Exception {
-        for (Row row : rows) {
+    private void tailLogFiles(Map<Long, Row> rows, int tail, Date limit) throws Exception {
+        for (Row row : rows.values()) {
             File log = logFile(row.pid);
             if (log.exists()) {
                 row.reader = new LineNumberReader(new FileReader(log));
@@ -375,6 +411,7 @@ public class CamelLogAction extends ActionBaseCommand {
         String name;
         Queue<String> fifo;
         LineNumberReader reader;
+
     }
 
 }
