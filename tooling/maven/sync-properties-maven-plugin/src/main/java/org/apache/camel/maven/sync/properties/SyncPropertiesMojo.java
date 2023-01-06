@@ -17,21 +17,14 @@
 package org.apache.camel.maven.sync.properties;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Properties;
-import java.util.TreeMap;
+import java.nio.file.Files;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.tooling.util.PackageHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.OrderedProperties;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -39,6 +32,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.ReaderFactory;
 
 /**
  * Copy the properties from a source POM to a different destination POM for syncing purposes.
@@ -65,67 +59,22 @@ public class SyncPropertiesMojo extends AbstractMojo {
         dir = PackageHelper.findCamelDirectory(baseDir, "camel-dependencies");
         File targetPom = new File(dir, "pom.xml");
         dir = PackageHelper.findCamelDirectory(baseDir, "etc");
-        File licenseHeader = new File(dir, "apache-header.xml");
 
         try {
-            Properties parentProp;
-            String generatedVersion;
+            String sourceStr = IOHelper.toString(ReaderFactory.newXmlReader(Files.newInputStream(sourcePom.toPath())));
+            String targetStr = IOHelper.toString(ReaderFactory.newXmlReader(SyncPropertiesMojo.class.getResourceAsStream("/camel-dependencies-template.xml")));
 
-            if (getLog().isDebugEnabled()) {
-                getLog().debug("Reading source file " + sourcePom.toPath());
-            }
+            String version = findGroup(sourceStr, "<parent>.*?(?<v><version>.*?</version>).*?</parent>", "v");
+            String properties = findGroup(sourceStr, "(?<p><properties>.*?</properties>)", "p");
 
-            try (FileReader reader = new FileReader(sourcePom)) {
-                MavenXpp3Reader mavenReader = new MavenXpp3Reader();
-                Model model = mavenReader.read(reader);
+            version = version.replaceAll("\\$", "\\\\\\$");
+            properties = properties.replaceAll("\\$", "\\\\\\$");
 
-                MavenProject sourceProject = new MavenProject(model);
-                parentProp = sourceProject.getProperties();
-                generatedVersion = sourceProject.getVersion();
-            }
-
-            InputStream is = null;
-            try {
-                is = SyncPropertiesMojo.class.getResourceAsStream("/camel-dependencies-template.xml");
-                MavenXpp3Reader mavenReader = new MavenXpp3Reader();
-                Model model = mavenReader.read(is);
-
-                // sort the properties
-                OrderedProperties op = new OrderedProperties();
-                op.putAll(new TreeMap<>(parentProp));
-
-                MavenProject targetProject = new MavenProject(model);
-                targetProject.getModel().setProperties(op);
-
-                if (getLog().isDebugEnabled()) {
-                    getLog().debug("Set version of target pom to " + generatedVersion);
-                }
-                targetProject.setVersion(generatedVersion);
-
-                MavenXpp3Writer mavenWriter = new MavenXpp3Writer();
-                mavenWriter.write(new FileWriter(targetPom), model);
-            } finally {
-                IOHelper.close(is);
-            }
-
-            // add license header in top
-            getLog().debug("Add license header...");
-            String text = IOHelper.loadText(new FileInputStream(targetPom));
-            String text2 = IOHelper.loadText(new FileInputStream(licenseHeader));
-            StringBuilder sb = new StringBuilder(text);
-            int pos = sb.indexOf("<project");
-            sb.insert(pos, text2);
-
-            // avoid annoying http -> https change when rebuilding
-            getLog().debug("Replacing xsd location ...");
-            String out = sb.toString();
-            out = out.replace("https://maven.apache.org/xsd/maven-4.0.0.xsd", "http://maven.apache.org/xsd/maven-4.0.0.xsd");
-
-            // avoid IDE complaining about empty tag
-            out = out.replace("<relativePath></relativePath>", "<relativePath />");
+            targetStr = targetStr.replaceFirst("\\Q<version>@version@</version>\\E", version);
+            targetStr = targetStr.replaceFirst("\\Q<properties>@properties@</properties>\\E", properties);
 
             // write lines
-            boolean updated = FileUtil.updateFile(targetPom.toPath(), out, StandardCharsets.UTF_8);
+            boolean updated = FileUtil.updateFile(targetPom.toPath(), targetStr, StandardCharsets.UTF_8);
             if (updated) {
                 getLog().info("Updated: " + targetPom);
             }
@@ -133,6 +82,14 @@ public class SyncPropertiesMojo extends AbstractMojo {
         } catch (Exception ex) {
             throw new MojoExecutionException("Cannot copy the properties between POMs", ex);
         }
+    }
+
+    private String findGroup(String str, String regex, String group) {
+        Matcher m = Pattern.compile(regex, Pattern.DOTALL).matcher(str);
+        if (m.find()) {
+            return m.group(group);
+        }
+        return str;
     }
 
 }
