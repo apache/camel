@@ -184,7 +184,7 @@ public class ResteasyCamelServlet extends HttpServletDispatcher implements HttpR
 
         // skipServletProcessing is set to true then don't process in servlet. Just continue to camel route
         // if skipServletProcessing is true then check httpMethodRestrict
-        if (getServletEndpoint(consumer).getSkipServletProcessing()) {
+        if (Boolean.TRUE.equals(getServletEndpoint(consumer).getSkipServletProcessing())) {
             if (getServletEndpoint(consumer).getHttpMethodRestrict() != null
                     && !httpServletRequest.getMethod().equals(getServletEndpoint(consumer).getHttpMethodRestrict())) {
                 httpServletResponse.setStatus(405);
