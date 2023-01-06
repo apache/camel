@@ -11,16 +11,16 @@ We have prepared these two guides to explain in greater detail a few of the conc
 
 In Apache Camel, a _route_ is a set of processing steps that are applied to a message as it travels from a source to a destination. A route typically consists of a series of processing steps that are connected in a linear sequence.
 
-In other words, a Camel _route_ is where the integration flow is defined. For example, you can write a Camel route to specify how two systems can be integrated. The following 2 guides provide the fundamental knowledge of Camel routes:
+In other words, a Camel _route_ is where the integration flow is defined. For example, you can write a Camel route to specify how two systems can be integrated. The following guide provides the fundamental knowledge of Camel routes:
 
 * xref:manual::routes.adoc[Routes]: the basic guide about Camel Routes.
-* xref:manual::route-builder.adoc[Route Builder]: describes the base class from which you can create Routes.
 
 If you have basic knowledge about _routes_, you can use the following guides to learn how to write them in different languages, handle errors, and customize them.
 
 * Routes (Basic + DSL)
 ** xref:manual::java-dsl.adoc[Java DSL]: the default language to write _routes_.
 ** xref:manual::dsl.adoc[DSL overview]: writing routes in other languages (XML, YAML, etc).
+** xref:manual::uris.adoc[URIs]
 
 * Routes (Writing)
 ** xref:manual::expression.adoc[Expression]
@@ -92,7 +92,6 @@ Learn about additional ways to customize your integrations. Explore alternatives
 ** xref:manual::service-registry.adoc[Service Registry]
 ** xref:manual::spring.adoc[Spring]
 ** xref:manual::spring-xml-extensions.adoc[Spring XML Extensions]
-** xref:manual::uris.adoc[URIs]
 ** xref:manual::validator.adoc[Validator]
 ** xref:manual::what-are-the-dependencies.adoc[Camel Requirements]
 ** xref:manual::testing.adoc[Testing]
