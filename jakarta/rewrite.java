@@ -37,6 +37,8 @@ class rewrite implements Callable<Integer> {
         exec("git", "rebase", "origin/main");
         // Create/reset branch 'rewritten'
         exec("git", "checkout", "-B", "jakarta/rewritten", "jakarta/rewrite");
+        // Merge jms
+        exec("git", "merge", "jakarta/jms", "-m", "Merge jakarta/jms");
 
         // Switch version to 4.0.0-SNAPSHOT
         System.out.println("Switch version to 4.0.0-SNAPSHOT");
@@ -531,8 +533,6 @@ class rewrite implements Callable<Integer> {
         exec("git", "cherry-pick", "-x", "4dd107e0f8f0946105506aa43d187e70fefb3f9c");
         // Salesforce migration
         exec("git", "cherry-pick", "-x", "eda15c498fb3834996924607e353ecb1e37cffcc");
-        // JMS migration
-        exec("git", "cherry-pick", "-x", "d41e59720725c2268b03a94b7416ad06f348fb57");
         // Other fixes
         exec("git", "cherry-pick", "-x", "034027ac8b8fd040fe1c1eaa2ae6dc951c07c42d");
 
