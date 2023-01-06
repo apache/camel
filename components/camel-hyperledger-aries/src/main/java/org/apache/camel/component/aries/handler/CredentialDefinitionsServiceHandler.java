@@ -83,17 +83,8 @@ public class CredentialDefinitionsServiceHandler extends AbstractServiceHandler 
                 }
                 AssertState.notNull(schemaVersion, "Cannot obtain schemaVersion");
 
-                Boolean autoSchema = null;
                 Object auxValue = spec.get("autoSchema");
-                if (auxValue instanceof Boolean) {
-                    autoSchema = Boolean.valueOf((Boolean) auxValue);
-                }
-                if (auxValue instanceof String) {
-                    autoSchema = Boolean.valueOf((String) auxValue);
-                }
-                if (autoSchema == null) {
-                    autoSchema = endpoint.getConfiguration().isAutoSchema();
-                }
+                boolean autoSchema = isAutoSchema(auxValue);
 
                 // Search existing schemas
                 DID publicDid = createClient().walletDidPublic().get();
@@ -140,5 +131,16 @@ public class CredentialDefinitionsServiceHandler extends AbstractServiceHandler 
         } else {
             throw new UnsupportedServiceException(service);
         }
+    }
+
+    private boolean isAutoSchema(Object auxValue) {
+        if (auxValue instanceof Boolean) {
+            return Boolean.valueOf((Boolean) auxValue);
+        }
+        if (auxValue instanceof String) {
+            return Boolean.valueOf((String) auxValue);
+        }
+
+        return endpoint.getConfiguration().isAutoSchema();
     }
 }
