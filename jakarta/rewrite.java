@@ -71,6 +71,7 @@ class rewrite implements Callable<Integer> {
                 ));
         }
         regex(Paths.get("components/camel-jasypt/pom.xml"), "<manifestFile>.*?</manifestFile>\\s*", "");
+        regex(Paths.get("tests/test-bundles/pom.xml"), "<module>mock-javamail_1.7</module>", "<!--module>mock-javamail_1.7</module-->");
 
         // Switch to javax.annotation.processing.Generated
         System.out.println("Switch to javax.annotation.processing.Generated");
@@ -536,7 +537,7 @@ class rewrite implements Callable<Integer> {
         // Other fixes
         exec("git", "cherry-pick", "-x", "034027ac8b8fd040fe1c1eaa2ae6dc951c07c42d");
 
-        // rm -Rf **\/src/generated target **\/target && mvn source:jar install -DskipTests 
+        // rm -Rf **\/src/generated && mvn clean && mvn source:jar install -DskipTests
 
         return 0;
     }
