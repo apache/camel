@@ -537,7 +537,8 @@ class rewrite implements Callable<Integer> {
         // Other fixes
         exec("git", "cherry-pick", "-x", "6d9ff02a6f390017f3f92a8f8f05671a9357d572");
 
-        // rm -Rf **\/src/generated && mvn clean && mvn source:jar install -DskipTests
+        // find . \( -path "*/src/generated" -o -name "target" \) -exec rm -Rf {} \;
+        // mvn source:jar install -DskipTests
 
         return 0;
     }
