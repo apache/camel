@@ -53,7 +53,8 @@ public class CamelLogAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--follow" }, defaultValue = "true", description = "Keep following and outputting new log lines (use ctrl + c to exit).")
+    @CommandLine.Option(names = { "--follow" }, defaultValue = "true",
+                        description = "Keep following and outputting new log lines (use ctrl + c to exit).")
     boolean follow = true;
 
     @CommandLine.Option(names = { "--tail" },
