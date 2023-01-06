@@ -22,14 +22,11 @@ import org.apache.camel.support.DefaultConsumer;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.event.BestSolutionChangedEvent;
 import org.optaplanner.core.api.solver.event.SolverEventListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * OptaPlanner component for Camel
  */
 public class OptaPlannerConsumer extends DefaultConsumer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(OptaPlannerConsumer.class);
     private final OptaPlannerEndpoint endpoint;
     private final OptaPlannerConfiguration configuration;
     private SolverEventListener<Object> solverListener;
