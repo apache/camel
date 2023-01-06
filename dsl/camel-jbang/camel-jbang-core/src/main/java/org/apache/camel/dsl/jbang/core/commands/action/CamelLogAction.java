@@ -53,7 +53,8 @@ public class CamelLogAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
 
-    @CommandLine.Option(names = { "--follow" }, defaultValue = "true", description = "Keep following and outputting new log lines (use ctrl + c to exit).")
+    @CommandLine.Option(names = { "--follow" }, defaultValue = "true",
+                        description = "Keep following and outputting new log lines (use ctrl + c to exit).")
     boolean follow = true;
 
     @CommandLine.Option(names = { "--tail" },
@@ -67,6 +68,10 @@ public class CamelLogAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--find" },
                         description = "Find and highlight matching text (ignore case).", arity = "0..*")
     String[] find;
+
+    @CommandLine.Option(names = { "--grep" },
+                        description = "Filter logs to only output lines matching text (ignore case).", arity = "0..*")
+    String[] grep;
 
     String findAnsi;
 
@@ -119,6 +124,14 @@ public class CamelLogAction extends ActionBaseCommand {
                     find[i] = f;
                 }
             }
+            if (grep != null) {
+                findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
+                for (int i = 0; i < grep.length; i++) {
+                    String f = grep[i];
+                    f = Pattern.quote(f);
+                    grep[i] = f;
+                }
+            }
             Date limit = null;
             if (since != null) {
                 long millis;
@@ -164,12 +177,18 @@ public class CamelLogAction extends ActionBaseCommand {
                 try {
                     String line = row.reader.readLine();
                     if (line != null) {
-                        lines++;
-                        // switch fifo to be unlimited as we use it for new log lines
-                        if (row.fifo == null || row.fifo instanceof ArrayBlockingQueue) {
-                            row.fifo = new ArrayDeque<>();
+                        boolean valid = true;
+                        if (grep != null) {
+                            valid = isValidGrep(line);
                         }
-                        row.fifo.offer(line);
+                        if (valid) {
+                            lines++;
+                            // switch fifo to be unlimited as we use it for new log lines
+                            if (row.fifo == null || row.fifo instanceof ArrayBlockingQueue) {
+                                row.fifo = new ArrayDeque<>();
+                            }
+                            row.fifo.offer(line);
+                        }
                     }
                 } catch (IOException e) {
                     // ignore
@@ -236,11 +255,18 @@ public class CamelLogAction extends ActionBaseCommand {
                 System.out.print(": ");
             }
         }
-        if (find != null) {
+        if (find != null || grep != null) {
             String before = StringHelper.before(line, "---");
             String after = StringHelper.after(line, "---");
-            for (String f : find) {
-                after = after.replaceAll("(?i)" + f, findAnsi);
+            if (find != null) {
+                for (String f : find) {
+                    after = after.replaceAll("(?i)" + f, findAnsi);
+                }
+            }
+            if (grep != null) {
+                for (String g : grep) {
+                    after = after.replaceAll("(?i)" + g, findAnsi);
+                }
             }
             line = before + "---" + after;
         }
@@ -268,6 +294,9 @@ public class CamelLogAction extends ActionBaseCommand {
                     line = row.reader.readLine();
                     if (line != null) {
                         boolean valid = isValidSince(limit, line);
+                        if (valid && grep != null) {
+                            valid = isValidGrep(line);
+                        }
                         if (valid) {
                             while (!row.fifo.offer(line)) {
                                 row.fifo.poll();
@@ -293,6 +322,22 @@ public class CamelLogAction extends ActionBaseCommand {
             return row.compareTo(limit) >= 0;
         } catch (ParseException e) {
             // ignore
+        }
+        return false;
+    }
+
+    private boolean isValidGrep(String line) {
+        if (grep == null) {
+            return true;
+        }
+        // the log can be in color or not so we need to unescape always
+        line = unescapeAnsi(line);
+        String after = StringHelper.after(line, "---");
+        for (String g : grep) {
+            boolean m = Pattern.compile("(?i)" + g).matcher(after).find();
+            if (m) {
+                return true;
+            }
         }
         return false;
     }
