@@ -503,6 +503,12 @@ public final class MainHelper {
 
     public static OrderedLocationProperties extractProperties(
             OrderedLocationProperties properties, String optionPrefix, String optionSuffix, boolean remove) {
+        return extractProperties(properties, optionPrefix, optionSuffix, remove, null);
+    }
+
+    public static OrderedLocationProperties extractProperties(
+            OrderedLocationProperties properties, String optionPrefix, String optionSuffix,
+            boolean remove, Function<String, String> onRemove) {
         if (properties == null) {
             return new OrderedLocationProperties();
         }
@@ -514,9 +520,17 @@ public final class MainHelper {
             String loc = properties.getLocation(key);
             if (key.startsWith(optionPrefix)) {
                 Object value = properties.get(key);
-                key = key.substring(optionPrefix.length());
+                if (onRemove != null) {
+                    key = onRemove.apply(key);
+                } else {
+                    key = key.substring(optionPrefix.length());
+                }
                 if (optionSuffix != null && key.endsWith(optionSuffix)) {
-                    key = key.substring(0, key.length() - optionSuffix.length());
+                    if (onRemove != null) {
+                        key = onRemove.apply(key);
+                    } else {
+                        key = key.substring(0, key.length() - optionSuffix.length());
+                    }
                 }
                 rc.put(loc, key, value);
                 if (remove) {

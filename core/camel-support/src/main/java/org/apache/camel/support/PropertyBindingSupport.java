@@ -493,6 +493,11 @@ public final class PropertyBindingSupport {
                 if (configurer != null) {
                     bound = setSimplePropertyViaConfigurer(camelContext, target, key, value, ignoreCase, configurer);
                 }
+                if (!bound && reflection) {
+                    // fallback to reflection based
+                    bound = setSimplePropertyViaReflection(camelContext, target, key, value, fluentBuilder, allowPrivateSetter,
+                            reflection, ignoreCase);
+                }
                 // if the target value is a map type, then we can skip reflection
                 // and set the entry
                 if (!bound && Map.class.isAssignableFrom(target.getClass())) {
@@ -511,12 +516,6 @@ public final class PropertyBindingSupport {
                         // ignore
                     }
                 }
-                if (!bound && reflection) {
-                    // fallback to reflection based
-                    bound = setSimplePropertyViaReflection(camelContext, target, key, value, fluentBuilder, allowPrivateSetter,
-                            reflection, ignoreCase);
-                }
-
             }
         } catch (PropertyBindingException e) {
             throw e;
@@ -544,9 +543,19 @@ public final class PropertyBindingSupport {
 
         int pos = name.indexOf('[');
         String lookupKey = name.substring(pos + 1, name.length() - 1);
+        lookupKey = StringHelper.removeLeadingAndEndingQuotes(lookupKey);
         String key = name.substring(0, pos);
 
-        Object obj = bi.getOrElseProperty(target, key, null, ignoreCase);
+        Object obj = null;
+        if (pos == 0) {
+            // there are no prefix key to invoke as getter first, so check if target is an object
+            // we can use for collection
+            if (target instanceof Map || target instanceof List || target.getClass().isArray()) {
+                obj = target;
+            }
+        } else {
+            obj = bi.getOrElseProperty(target, key, null, ignoreCase);
+        }
         if (obj == null) {
             // it was supposed to be a list or map, but its null, so lets create a new list or map and set it automatically
             Method getter = bi.getPropertyGetter(target.getClass(), key, ignoreCase);
@@ -635,6 +644,7 @@ public final class PropertyBindingSupport {
 
         int pos = name.indexOf('[');
         String lookupKey = name.substring(pos + 1, name.length() - 1);
+        lookupKey = StringHelper.removeLeadingAndEndingQuotes(lookupKey);
         String key = name.substring(0, pos);
         String undashKey = undashKey(key);
 
