@@ -58,6 +58,10 @@ public class CamelLogAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
 
+    @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
+                        description = "Print timestamp")
+    boolean timestamp = true;
+
     @CommandLine.Option(names = { "--follow" }, defaultValue = "true",
                         description = "Keep following and outputting new log lines (use ctrl + c to exit).")
     boolean follow = true;
@@ -267,6 +271,9 @@ public class CamelLogAction extends ActionBaseCommand {
     }
 
     private int compareLogLine(String l1, String l2) {
+        l1 = unescapeAnsi(l1);
+        l2 = unescapeAnsi(l2);
+
         String t1 = StringHelper.after(l1, ": ");
         t1 = StringHelper.before(t1, "  ");
         String t2 = StringHelper.after(l2, ": ");
@@ -275,6 +282,14 @@ public class CamelLogAction extends ActionBaseCommand {
     }
 
     protected void printLine(String name, String line) {
+        if (!timestamp) {
+            // after timestamp is after 2 sine-space
+            int pos = line.indexOf(' ');
+            pos = line.indexOf(' ', pos + 1);
+            if (pos != -1) {
+                line = line.substring(pos + 1);
+            }
+        }
         if (loggingColor) {
             if (name != null) {
                 Ansi.Color color = colors.get(name);
