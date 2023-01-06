@@ -788,12 +788,43 @@ You can from another terminal access the logs from any Camel integration with th
 [source,bash]
 ----
 camel log chuck
-2023-01-04 17:59:19.288  INFO 44619 --- [           main] org.apache.camel.main.MainSupport        : Apache Camel (JBang) 3.21.0 is starting
-2023-01-04 17:59:19.395  INFO 44619 --- [           main] org.apache.camel.main.MainSupport        : Using Java 17.0.5 with PID 44619. Started by davsclaus in /Users/davsclaus/workspace/
+chuck     : 2023-01-04 17:59:19.288  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Apache Camel (JBang) 3.21.0 is starting
+chuck     : 2023-01-04 17:59:19.395  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Using Java 17.0.5 with PID 44619. Started by davsclaus in /Users/davsclaus/workspace/
 ...
 ----
 
 You can also watch logs for all Camel integrations by `camel log`, or you can specify by name/pids (separate by comma) `camel log bar,chuck`.
+
+It is also possible to find and highlight keywords from the log using `--find`, such as:
+
+[source,bash]
+----
+camel log chuck --find=invoice
+----
+
+You can find multiple items by repeating the option, i.e.:
+
+[source,bash]
+----
+camel log chuck --find=invoice --find=order
+----
+
+There is also a _grep_ option that will filter the logs to only show lines that matches text (ignore case).
+
+[source,bash]
+----
+camel log chuck --grep=error
+----
+
+The log command will by default tail the logs for new lines. If you want to exit the command immediately, you
+can turn off following as shown:
+
+[source,bash]
+----
+camel log chuck --grep=error --follow=false
+----
+
+This will grep the logs for log lines with matches text `error` and output only these logs, and exit.
 
 ==== Starting and Stopping routes
 
