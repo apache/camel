@@ -531,11 +531,11 @@ class rewrite implements Callable<Integer> {
         exec("git", "commit", "-a", "-m", "Switch to jakarta namespace");
 
         // Jetty 9 -> 11 migration
-        exec("git", "cherry-pick", "-x", "4dd107e0f8f0946105506aa43d187e70fefb3f9c");
+        exec("git", "cherry-pick", "-x", "a77b3b898a52caa6bef69b51e58050d44ce98999");
         // Salesforce migration
-        exec("git", "cherry-pick", "-x", "eda15c498fb3834996924607e353ecb1e37cffcc");
+        exec("git", "cherry-pick", "-x", "2ff288739cfc15e112fb47c21c29c9e8a05933e6");
         // Other fixes
-        exec("git", "cherry-pick", "-x", "034027ac8b8fd040fe1c1eaa2ae6dc951c07c42d");
+        exec("git", "cherry-pick", "-x", "6d9ff02a6f390017f3f92a8f8f05671a9357d572");
 
         // rm -Rf **\/src/generated && mvn clean && mvn source:jar install -DskipTests
 
