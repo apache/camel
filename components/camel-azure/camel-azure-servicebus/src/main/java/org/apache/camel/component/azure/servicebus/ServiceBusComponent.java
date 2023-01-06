@@ -27,17 +27,12 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Azure ServiceBus component
  */
 @Component("azure-servicebus")
 public class ServiceBusComponent extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ServiceBusComponent.class);
-
     @Metadata
     private ServiceBusConfiguration configuration = new ServiceBusConfiguration();
 
