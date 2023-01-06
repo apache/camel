@@ -45,7 +45,8 @@ import picocli.CommandLine;
                      description = "Tail logs from running Camel integrations")
 public class CamelLogAction extends ActionBaseCommand {
 
-    private static final int NAME_MAX_WIDTH = 20;
+    private static final int NAME_MAX_WIDTH = 25;
+    private static final int NAME_MIN_WIDTH = 10;
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
     String name = "*";
@@ -104,6 +105,9 @@ public class CamelLogAction extends ActionBaseCommand {
                             row.name = ProcessHelper.extractName(root, ph);
                         }
                         int len = row.name.length();
+                        if (len < NAME_MIN_WIDTH) {
+                            len = NAME_MIN_WIDTH;
+                        }
                         if (len > NAME_MAX_WIDTH) {
                             len = NAME_MAX_WIDTH;
                         }
