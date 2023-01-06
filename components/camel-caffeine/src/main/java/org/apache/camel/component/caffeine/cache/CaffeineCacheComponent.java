@@ -27,8 +27,6 @@ import org.apache.camel.component.caffeine.CaffeineConfiguration;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.caffeine.CaffeineHelper.defineBuilder;
 
@@ -37,9 +35,6 @@ import static org.apache.camel.component.caffeine.CaffeineHelper.defineBuilder;
  */
 @Component("caffeine-cache")
 public class CaffeineCacheComponent extends DefaultComponent {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CaffeineCacheComponent.class);
-
     private final Map<String, Cache> caches = new ConcurrentHashMap<>();
 
     @Metadata(label = "advanced")

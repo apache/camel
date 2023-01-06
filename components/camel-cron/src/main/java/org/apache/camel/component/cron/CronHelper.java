@@ -22,12 +22,8 @@ import org.apache.camel.component.cron.api.CamelCronService;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class CronHelper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CronHelper.class);
-
     private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/cron/";
     private static final String FACTORY_KEY = "cron-service";
 

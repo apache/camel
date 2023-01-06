@@ -23,12 +23,8 @@ import org.apache.camel.component.infinispan.cluster.InfinispanClusterView;
 import org.apache.camel.util.ObjectHelper;
 import org.infinispan.configuration.cache.Configuration;
 import org.infinispan.manager.EmbeddedCacheManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class InfinispanEmbeddedClusterService extends InfinispanClusterService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InfinispanEmbeddedClusterService.class);
-
     private InfinispanEmbeddedClusterConfiguration configuration;
 
     public InfinispanEmbeddedClusterService() {

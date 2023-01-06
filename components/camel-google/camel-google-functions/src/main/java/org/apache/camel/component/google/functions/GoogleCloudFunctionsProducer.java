@@ -41,15 +41,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The GoogleCloudFunctions producer.
  */
 public class GoogleCloudFunctionsProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(GoogleCloudFunctionsProducer.class);
-
     private GoogleCloudFunctionsEndpoint endpoint;
 
     public GoogleCloudFunctionsProducer(GoogleCloudFunctionsEndpoint endpoint) {
