@@ -26,17 +26,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Azure Queue Storage component using azure java sdk v12.x
  */
 @Component("azure-storage-queue")
 public class QueueComponent extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(QueueComponent.class);
-
     @Metadata
     private QueueConfiguration configuration = new QueueConfiguration();
 
