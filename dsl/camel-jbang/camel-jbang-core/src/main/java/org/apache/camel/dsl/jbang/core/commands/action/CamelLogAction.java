@@ -53,6 +53,9 @@ public class CamelLogAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
     boolean loggingColor = true;
 
+    @CommandLine.Option(names = { "--follow" }, defaultValue = "true", description = "Keep following and outputting new log lines (use ctrl + c to exit).")
+    boolean follow = true;
+
     @CommandLine.Option(names = { "--tail" },
                         description = "The number of lines from the end of the logs to show. Defaults to showing all logs.")
     int tail;
@@ -127,18 +130,21 @@ public class CamelLogAction extends ActionBaseCommand {
                 }
                 limit = new Date(System.currentTimeMillis() - millis);
             }
+
+            // dump existing log lines
             tailLogFiles(rows, tail, limit);
             dumpLogFiles(rows);
 
-            // scan and read new log lines
-            do {
-                int lines = readLogFiles(rows);
-                if (lines > 0) {
-                    dumpLogFiles(rows);
-                } else {
-                    Thread.sleep(50);
-                }
-            } while (true);
+            if (follow) {
+                do {
+                    int lines = readLogFiles(rows);
+                    if (lines > 0) {
+                        dumpLogFiles(rows);
+                    } else {
+                        Thread.sleep(50);
+                    }
+                } while (true);
+            }
         }
 
         return 0;
