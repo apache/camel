@@ -77,7 +77,7 @@ public class JdbcProducer extends DefaultProducer {
     private void processingSqlBySettingAutoCommit(Exchange exchange) throws Exception {
         String sql = exchange.getIn().getBody(String.class);
         Connection conn = null;
-        Boolean autoCommit = null;
+        boolean autoCommit = false;
         boolean shouldCloseResources = true;
 
         try {
@@ -139,7 +139,7 @@ public class JdbcProducer extends DefaultProducer {
             final String preparedQuery
                     = getEndpoint().getPrepareStatementStrategy().prepareQuery(sql, getEndpoint().isAllowNamedParameters());
 
-            Boolean shouldRetrieveGeneratedKeys
+            boolean shouldRetrieveGeneratedKeys
                     = exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
 
             if (shouldRetrieveGeneratedKeys) {
@@ -214,7 +214,7 @@ public class JdbcProducer extends DefaultProducer {
 
             LOG.debug("Executing JDBC Statement: {}", sql);
 
-            Boolean shouldRetrieveGeneratedKeys
+            boolean shouldRetrieveGeneratedKeys
                     = exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
 
             boolean stmtExecutionResult;
@@ -286,8 +286,8 @@ public class JdbcProducer extends DefaultProducer {
         }
     }
 
-    private void resetAutoCommit(Connection con, Boolean autoCommit) {
-        if (con != null && autoCommit != null) {
+    private void resetAutoCommit(Connection con, boolean autoCommit) {
+        if (con != null) {
             try {
                 con.setAutoCommit(autoCommit);
             } catch (Throwable sqle) {
