@@ -2,8 +2,7 @@
 
 Apache Camel offers a Java based DSL.
 
-The Java DSL is available by extending the `RouteBuilder` class,
-and implement the `configure` method.
+In the Java DSL you create a route by extending the xref:manual::route-builder.adoc[`RouteBuilder` class], and implementing the `configure` method.
 
 == Java DSL example
 
@@ -61,6 +60,22 @@ Then we use the xref:components:eips:choice-eip.adoc[Content Based Router] EIP
     .otherwise()
         .to("file:target/messages/others");
 -------------------------------------------------------
+
+=== Routes using Java lambda style
+
+Camel now supports to define Camel routes in Java DSL using Lambda style. This can be beneficial for microservices or serverless where
+you may want to quickly define a few routes.
+
+For example using lambda style you can define a Camel route that takes messages from Kafka and send to JMS in a single line of code:
+
+[source,java]
+----
+rb -> rb.from("kafka:cheese").to("jms:queue:foo");
+----
+
+There is a bit more to this as the lambda route must be coded in a Java method that returns an instance of `LambdaRouteBuilder`.
+See more at the xref:lambda-route-builder.adoc[LambdaRouteBuilder] documentation.
+
 
 == More Details
 
