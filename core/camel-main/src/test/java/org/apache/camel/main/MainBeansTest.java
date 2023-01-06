@@ -246,6 +246,32 @@ public class MainBeansTest {
         main.stop();
     }
 
+    @Test
+    public void testBindBeansDottedAndSquareHybridMap() {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // defining a factory bean
+        main.addProperty("camel.beans.myfactory", "#class:org.apache.camel.main.MyFooFactory");
+        main.addProperty("camel.beans.myfactory.hostName", "localhost");
+        main.addProperty("camel.beans.myfactory[region]", "emea");
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Object bean = camelContext.getRegistry().lookupByName("myfactory");
+        assertNotNull(bean);
+        assertInstanceOf(MyFooFactory.class, bean);
+
+        MyFooFactory factory = (MyFooFactory) bean;
+        assertNull(factory.get("hostName"));
+        assertEquals("localhost", factory.getHostName());
+        assertEquals("emea", factory.get("region"));
+
+        main.stop();
+    }
+
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
         public void configure() throws Exception {
