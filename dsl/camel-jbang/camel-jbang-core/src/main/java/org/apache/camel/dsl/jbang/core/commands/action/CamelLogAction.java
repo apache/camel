@@ -62,8 +62,8 @@ public class CamelLogAction extends ActionBaseCommand {
     String since;
 
     @CommandLine.Option(names = { "--find" },
-                        description = "Find and highlight matching text (ignore case).")
-    String find;
+                        description = "Find and highlight matching text (ignore case).", arity = "0..*")
+    String[] find;
 
     String findAnsi;
 
@@ -110,7 +110,11 @@ public class CamelLogAction extends ActionBaseCommand {
             // read existing log files (skip by tail/since)
             if (find != null) {
                 findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
-                find = Pattern.quote(find);
+                for (int i = 0; i < find.length; i++) {
+                    String f = find[i];
+                    f = Pattern.quote(f);
+                    find[i] = f;
+                }
             }
             Date limit = null;
             if (since != null) {
@@ -229,7 +233,9 @@ public class CamelLogAction extends ActionBaseCommand {
         if (find != null) {
             String before = StringHelper.before(line, "---");
             String after = StringHelper.after(line, "---");
-            after = after.replaceAll("(?i)" + find, findAnsi);
+            for (String f : find) {
+                after = after.replaceAll("(?i)" + f, findAnsi);
+            }
             line = before + "---" + after;
         }
         System.out.println(line);
