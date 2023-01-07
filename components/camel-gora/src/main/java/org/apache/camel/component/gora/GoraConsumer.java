@@ -90,6 +90,6 @@ public class GoraConsumer extends ScheduledPollConsumer {
 
         getProcessor().process(exchange);
 
-        return Long.valueOf(result.getOffset()).intValue();
+        return (int) result.getOffset();
     }
 }
