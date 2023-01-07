@@ -826,6 +826,31 @@ camel log chuck --grep=error --follow=false
 
 This will grep the logs for log lines with matches text `error` and output only these logs, and exit.
 
+==== Running Camel integrations in background
+
+The `run-background` command runs Camel in background. Therefore, to understand what happens then you can use the management commands
+such as `camel ps`, `camel get` and `camel log`.
+
+[source,bash]
+----
+$ camel run-background chuck.yaml
+Running Camel integration: chuck in background with PID: 80093
+
+$ camel ps
+  PID   NAME    READY  STATUS   AGE
+ 80093  chuck    1/1   Running  33s
+----
+
+To stop the integration you can use `camel stop`
+
+[source,bash]
+----
+$ camel stop chuck
+Shutting down Camel integration (pid: 80093)
+----
+
+TIP: To stop all Camel integrations you can use `camel stop --all`.
+
 ==== Starting and Stopping routes
 
 The `camel cmd` is intended for executing miscellaneous commands in the running Camel integrations.
