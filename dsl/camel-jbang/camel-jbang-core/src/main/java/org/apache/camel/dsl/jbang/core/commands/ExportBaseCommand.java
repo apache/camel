@@ -143,9 +143,9 @@ abstract class ExportBaseCommand extends CamelCommand {
     public Integer call() throws Exception {
         // configure logging first
         if (logging) {
-            RuntimeUtil.configureLog(loggingLevel, false, false, false, true);
+            RuntimeUtil.configureLog(loggingLevel, false, false, false, true, false);
         } else {
-            RuntimeUtil.configureLog("off", false, false, false, true);
+            RuntimeUtil.configureLog("off", false, false, false, true, false);
         }
         // export
         return export();

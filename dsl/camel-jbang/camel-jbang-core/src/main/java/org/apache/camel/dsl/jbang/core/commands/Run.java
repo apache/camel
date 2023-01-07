@@ -39,6 +39,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Stack;
 import java.util.StringJoiner;
+import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -92,6 +93,7 @@ class Run extends CamelCommand {
 
     private boolean silentRun;
     private boolean pipeRun;
+    private boolean backgroundRun;
 
     private File logFile;
 
@@ -101,6 +103,9 @@ class Run extends CamelCommand {
     Path[] filePaths; // Defined only for file path completion; the field never used
 
     List<String> files = new ArrayList<>();
+
+    @Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
+    boolean background;
 
     @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
             description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
@@ -222,6 +227,11 @@ class Run extends CamelCommand {
         return run();
     }
 
+    protected Integer runBackground() throws Exception {
+        backgroundRun = true;
+        return run();
+    }
+
     private void writeSetting(KameletMain main, Properties existing, String key, String value) {
         String val = existing != null ? existing.getProperty(key, value) : value;
         if (val != null) {
@@ -262,9 +272,11 @@ class Run extends CamelCommand {
     }
 
     private int run() throws Exception {
-        File work = new File(WORK_DIR);
-        removeDir(work);
-        work.mkdirs();
+        if (!backgroundRun) {
+            File work = new File(WORK_DIR);
+            removeDir(work);
+            work.mkdirs();
+        }
 
         Properties profileProperties = null;
         File profilePropertiesFile = new File(getProfile() + ".properties");
@@ -277,7 +289,7 @@ class Run extends CamelCommand {
             loggingJson
                     = "true".equals(profileProperties.getProperty("loggingJson", loggingJson ? "true" : "false"));
             if (propertiesFiles == null) {
-                propertiesFiles = "file:" + profilePropertiesFile.getName();
+                propertiesFiles = "file:" + getProfile() + ".properties";
             } else {
                 propertiesFiles = propertiesFiles + ",file:" + profilePropertiesFile.getName();
             }
@@ -286,6 +298,7 @@ class Run extends CamelCommand {
             mavenSettingsSecurity = profileProperties.getProperty("camel.jbang.maven-settings-security", mavenSettingsSecurity);
             openapi = profileProperties.getProperty("camel.jbang.openApi", openapi);
             download = "true".equals(profileProperties.getProperty("camel.jbang.download", download ? "true" : "false"));
+            background = "true".equals(profileProperties.getProperty("camel.jbang.background", background ? "true" : "false"));
         }
 
         // generate open-api early
@@ -393,7 +406,7 @@ class Run extends CamelCommand {
                 () -> maxIdleSeconds > 0 ? String.valueOf(maxIdleSeconds) : null);
         writeSetting(main, profileProperties, "camel.jbang.platform-http.port",
                 () -> port > 0 ? String.valueOf(port) : null);
-        writeSetting(main, profileProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null);
+        writeSetting(main, profileProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null); // TODO: "true" instead of "jfr" ?
         writeSetting(main, profileProperties, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
 
         StringJoiner js = new StringJoiner(",");
@@ -559,15 +572,17 @@ class Run extends CamelCommand {
             writeSettings("camel.component.properties.location", loc);
         }
 
-        main.start();
-        main.run();
-
-        // cleanup and delete log file
-        if (logFile != null) {
-            FileUtil.deleteFile(logFile);
+        RunMainTask run = new RunMainTask(main, logFile);
+        if (background) {
+            // run as background
+            ProcessBuilder pb = new ProcessBuilder();
+            pb.command("camel", "run-background");
+            Process p = pb.start();
+            System.out.println("Running Camel integration: " + name + " in background with PID: " + p.pid());
+            return 0;
+        } else {
+            return run.call();
         }
-
-        return main.getExitCode();
     }
 
     private String loadFromCode(String code) throws IOException {
@@ -704,7 +719,7 @@ class Run extends CamelCommand {
         if (silentRun) {
             // do not configure logging
         } else if (logging) {
-            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson, pipeRun, false);
+            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson, pipeRun, false, background);
             writeSettings("loggingLevel", loggingLevel);
             writeSettings("loggingColor", loggingColor ? "true" : "false");
             writeSettings("loggingJson", loggingJson ? "true" : "false");
@@ -716,7 +731,7 @@ class Run extends CamelCommand {
                 logFile.deleteOnExit();
             }
         } else {
-            RuntimeUtil.configureLog("off", false, false, false, false);
+            RuntimeUtil.configureLog("off", false, false, false, false, false);
             writeSettings("loggingLevel", "off");
         }
     }
@@ -918,6 +933,30 @@ class Run extends CamelCommand {
         protected void doConsumeParameters(Stack<String> args, Run cmd) {
             String arg = args.pop();
             cmd.files.add(arg);
+        }
+    }
+
+    static class RunMainTask implements Callable<Integer> {
+
+        private final KameletMain main;
+        private final File logFile;
+
+        public RunMainTask(KameletMain main, File logFile) {
+            this.main = main;
+            this.logFile = logFile;
+        }
+
+        @Override
+        public Integer call() throws Exception {
+            main.start();
+            main.run();
+
+            // cleanup and delete log file
+            if (logFile != null) {
+                FileUtil.deleteFile(logFile);
+            }
+
+            return main.getExitCode();
         }
     }
 
