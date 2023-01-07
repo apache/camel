@@ -38,8 +38,6 @@ public class Ses2Component extends DefaultComponent {
 
     public Ses2Component(CamelContext context) {
         super(context);
-
-        registerExtension(new Ses2ComponentVerifierExtension());
     }
 
     @Override
