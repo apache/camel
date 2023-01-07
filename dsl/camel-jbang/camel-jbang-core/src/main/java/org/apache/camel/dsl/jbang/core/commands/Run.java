@@ -309,7 +309,9 @@ class Run extends CamelCommand {
             String routes = profileProperties != null ? profileProperties.getProperty("camel.main.routesIncludePattern") : null;
             if (routes == null) {
                 if (!silentRun) {
-                    System.out.println("Cannot run because " + getProfile() + ".properties file does not exist or camel.main.routesIncludePattern is not configured");
+                    System.out
+                            .println("Cannot run because " + getProfile()
+                                     + ".properties file does not exist or camel.main.routesIncludePattern is not configured");
                     return 1;
                 } else {
                     // silent-run then auto-detect all files (except properties as they are loaded explicit or via profile)
