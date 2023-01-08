@@ -105,6 +105,9 @@ class Run extends CamelCommand {
     @Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
     boolean background;
 
+    @Option(names = { "--camel-version" }, description = "To run using a different Camel version than the default version.")
+    String camelVersion;
+
     @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
             description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
     String profile;
@@ -290,6 +293,7 @@ class Run extends CamelCommand {
             openapi = profileProperties.getProperty("camel.jbang.openApi", openapi);
             download = "true".equals(profileProperties.getProperty("camel.jbang.download", download ? "true" : "false"));
             background = "true".equals(profileProperties.getProperty("camel.jbang.background", background ? "true" : "false"));
+            camelVersion = profileProperties.getProperty("camel.jbang.camel-version", camelVersion);
         }
 
         // generate open-api early
@@ -565,10 +569,52 @@ class Run extends CamelCommand {
             writeSettings("camel.component.properties.location", loc);
         }
 
-        if (background) {
+        // okay we have validated all input and are ready to run
+
+        if (camelVersion != null) {
+            // run in another JVM with different camel version (foreground or background)
+            return runCamelVersion(main);
+        } else if (background) {
+            // spawn new JVM to run in background
             return runBackground(main);
         } else {
+            // run default in current JVM with same camel version
             return runKameletMain(main);
+        }
+    }
+
+    protected int runCamelVersion(KameletMain main) throws Exception {
+        String cmd = ProcessHandle.current().info().commandLine().orElse(null);
+        if (cmd != null) {
+            cmd = StringHelper.after(cmd, "main.CamelJBang ");
+        }
+        if (cmd == null) {
+            System.err.println("No Camel integration files to run");
+            return 1;
+        }
+        if (background) {
+            cmd = cmd.replaceFirst("--background=true", "");
+            cmd = cmd.replaceFirst("--background", "");
+        }
+        cmd = cmd.replaceFirst("--camel-version=" + camelVersion, "");
+        // need to use jbang command to specify camel version
+        cmd = "jbang run -Dcamel.jbang.version=" + camelVersion + " camel@apache/camel " + cmd;
+
+        ProcessBuilder pb = new ProcessBuilder();
+        String[] arr = cmd.split("\\s+"); // TODO: safe split
+        List<String> args = Arrays.asList(arr);
+        pb.command(args);
+        if (background) {
+            Process p = pb.start();
+            System.out.println("Running Camel integration: " + name + " (version: " + camelVersion
+                               + ") in background with PID: " + p.pid());
+            return 0;
+        } else {
+            // TODO: this makes camel CLI confused: camel get
+            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+            Process p = pb.start();
+            // wait for that process to exit as we run in foreground
+            return p.waitFor();
         }
     }
 
@@ -586,7 +632,7 @@ class Run extends CamelCommand {
         cmd = "camel " + cmd;
 
         ProcessBuilder pb = new ProcessBuilder();
-        String[] arr = cmd.split("\\s+");
+        String[] arr = cmd.split("\\s+"); // TODO: safe split
         List<String> args = Arrays.asList(arr);
         pb.command(args);
         Process p = pb.start();
