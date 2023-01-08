@@ -760,7 +760,7 @@ public final class PropertyBindingSupport {
             boolean ignoreCase) {
 
         try {
-            if (target != null && name != null) {
+            if (name != null) {
                 return doSetSimplePropertyViaReflection(camelContext, target, name, value, false, ignoreCase, fluentBuilder,
                         allowPrivateSetter, reference);
             }
