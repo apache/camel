@@ -385,33 +385,36 @@ abstract class ExportBaseCommand extends CamelCommand {
         }
 
         FileOutputStream fos = new FileOutputStream(new File(targetDir, "application.properties"), false);
-        for (Map.Entry<Object, Object> entry : prop2.entrySet()) {
-            String k = entry.getKey().toString();
-            String v = entry.getValue().toString();
+        try {
+            for (Map.Entry<Object, Object> entry : prop2.entrySet()) {
+                String k = entry.getKey().toString();
+                String v = entry.getValue().toString();
 
-            boolean skip = k.startsWith("camel.jbang.") || k.startsWith("jkube.");
-            if (skip) {
-                continue;
-            }
+                boolean skip = k.startsWith("camel.jbang.") || k.startsWith("jkube.");
+                if (skip) {
+                    continue;
+                }
 
-            // files are now loaded in classpath
-            v = v.replaceAll("file:", "classpath:");
-            if ("camel.main.routesIncludePattern".equals(k)) {
-                // camel.main.routesIncludePattern should remove all .java as we use spring boot
-                // to load them
-                // camel.main.routesIncludePattern should remove all file: classpath: as we copy
-                // them to src/main/resources/camel where camel auto-load from
-                v = Arrays.stream(v.split(","))
-                        .filter(n -> !n.endsWith(".java") && !n.startsWith("file:") && !n.startsWith("classpath:"))
-                        .collect(Collectors.joining(","));
+                // files are now loaded in classpath
+                v = v.replaceAll("file:", "classpath:");
+                if ("camel.main.routesIncludePattern".equals(k)) {
+                    // camel.main.routesIncludePattern should remove all .java as we use spring boot
+                    // to load them
+                    // camel.main.routesIncludePattern should remove all file: classpath: as we copy
+                    // them to src/main/resources/camel where camel auto-load from
+                    v = Arrays.stream(v.split(","))
+                            .filter(n -> !n.endsWith(".java") && !n.startsWith("file:") && !n.startsWith("classpath:"))
+                            .collect(Collectors.joining(","));
+                }
+                if (!v.isBlank()) {
+                    String line = applicationPropertyLine(k, v);
+                    fos.write(line.getBytes(StandardCharsets.UTF_8));
+                    fos.write("\n".getBytes(StandardCharsets.UTF_8));
+                }
             }
-            if (!v.isBlank()) {
-                String line = applicationPropertyLine(k, v);
-                fos.write(line.getBytes(StandardCharsets.UTF_8));
-                fos.write("\n".getBytes(StandardCharsets.UTF_8));
-            }
+        } finally {
+            IOHelper.close(fos);
         }
-        IOHelper.close(fos);
     }
 
     protected void copyMavenWrapper() throws Exception {
