@@ -828,17 +828,27 @@ This will grep the logs for log lines with matches text `error` and output only 
 
 ==== Running Camel integrations in background
 
-The `run-background` command runs Camel in background. Therefore, to understand what happens then you can use the management commands
-such as `camel ps`, `camel get` and `camel log`.
+The `run` command allows to run Camel in the background with the `--background` option.
+Therefore, to see and understand what happens then the management commands
+cane be used, such as `camel ps`, `camel get`, and `camel log`.
 
 [source,bash]
 ----
-$ camel run-background chuck.yaml
+$ camel run chuck.yaml --background
 Running Camel integration: chuck in background with PID: 80093
 
 $ camel ps
   PID   NAME    READY  STATUS   AGE
  80093  chuck    1/1   Running  33s
+----
+
+To see the log use `camel log`
+[source,bash]
+----
+$ camel log
+chuck     : 2023-01-04 17:59:19.288  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Apache Camel (JBang) 3.21.0 is starting
+chuck     : 2023-01-04 17:59:19.395  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Using Java 17.0.5 with PID 44619. Started by davsclaus in /Users/davsclaus/workspace/
+...
 ----
 
 To stop the integration you can use `camel stop`

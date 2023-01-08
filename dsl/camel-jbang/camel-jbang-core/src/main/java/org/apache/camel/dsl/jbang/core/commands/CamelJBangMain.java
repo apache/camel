@@ -73,7 +73,6 @@ public class CamelJBangMain implements Callable<Integer> {
         commandLine = new CommandLine(main)
                 .addSubcommand("init", new CommandLine(new Init(main)))
                 .addSubcommand("run", new CommandLine(new Run(main)))
-                .addSubcommand("run-background", new CommandLine(new RunBackground(main)))
                 .addSubcommand("log", new CommandLine(new CamelLogAction(main)))
                 .addSubcommand("ps", new CommandLine(new ListProcess(main)))
                 .addSubcommand("stop", new CommandLine(new StopProcess(main)))

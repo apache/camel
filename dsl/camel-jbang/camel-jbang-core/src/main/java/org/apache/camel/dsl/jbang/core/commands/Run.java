@@ -565,7 +565,33 @@ class Run extends CamelCommand {
             writeSettings("camel.component.properties.location", loc);
         }
 
-        return runKameletMain(main);
+        if (background) {
+            return runBackground(main);
+        } else {
+            return runKameletMain(main);
+        }
+    }
+
+    protected int runBackground(KameletMain main) throws Exception {
+        String cmd = ProcessHandle.current().info().commandLine().orElse(null);
+        if (cmd != null) {
+            cmd = StringHelper.after(cmd, "main.CamelJBang ");
+        }
+        if (cmd == null) {
+            System.err.println("No Camel integration files to run");
+            return 1;
+        }
+        cmd = cmd.replaceFirst("--background=true", "");
+        cmd = cmd.replaceFirst("--background", "");
+        cmd = "camel " + cmd;
+
+        ProcessBuilder pb = new ProcessBuilder();
+        String[] arr = cmd.split("\\s+");
+        List<String> args = Arrays.asList(arr);
+        pb.command(args);
+        Process p = pb.start();
+        System.out.println("Running Camel integration: " + name + " in background with PID: " + p.pid());
+        return 0;
     }
 
     protected int runKameletMain(KameletMain main) throws Exception {
