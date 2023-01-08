@@ -30,6 +30,7 @@ import java.util.List;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.git.GitEndpoint;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
@@ -106,8 +107,12 @@ public abstract class RepositoryFactory {
     private static File getTempFileFromHttp(String url) throws IOException {
         Path tempFile = Files.createTempFile(null, null);
         FileOutputStream outputStream = new FileOutputStream(tempFile.toString());
-        ReadableByteChannel byteChannel = Channels.newChannel(new URL(url).openStream());
-        outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
+        try {
+            ReadableByteChannel byteChannel = Channels.newChannel(new URL(url).openStream());
+            outputStream.getChannel().transferFrom(byteChannel, 0, Long.MAX_VALUE);
+        } finally {
+            IOHelper.close(outputStream);
+        }
         return tempFile.toFile();
     }
 
