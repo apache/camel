@@ -292,7 +292,7 @@ class Run extends CamelCommand {
             repos = profileProperties.getProperty("camel.jbang.repos", repos);
             mavenSettings = profileProperties.getProperty("camel.jbang.maven-settings", mavenSettings);
             mavenSettingsSecurity = profileProperties.getProperty("camel.jbang.maven-settings-security", mavenSettingsSecurity);
-            openapi = profileProperties.getProperty("camel.jbang.openApi", openapi);
+            openapi = profileProperties.getProperty("camel.jbang.open-api", openapi);
             download = "true".equals(profileProperties.getProperty("camel.jbang.download", download ? "true" : "false"));
             background = "true".equals(profileProperties.getProperty("camel.jbang.background", background ? "true" : "false"));
             camelVersion = profileProperties.getProperty("camel.jbang.camel-version", camelVersion);
@@ -358,7 +358,7 @@ class Run extends CamelCommand {
         if (modeline) {
             writeSetting(main, profileProperties, "camel.main.modeline", "true");
         }
-        writeSetting(main, profileProperties, "camel.jbang.openApi", openapi);
+        writeSetting(main, profileProperties, "camel.jbang.open-api", openapi);
         writeSetting(main, profileProperties, "camel.jbang.repos", repos);
         writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
