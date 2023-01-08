@@ -27,6 +27,8 @@
 			http://activemq.apache.org/schema/core/activemq-core.xsd
 	">
 
+    <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer" />
+
     <amq:broker brokerName="myBroker"
                 id="broker"
                 useJmx="false"
@@ -41,9 +43,10 @@
                                      minimumMessageSize="1"
                                      optimizedDispatch="true"
                                      lazyDispatch="false"
-                                     producerFlowControl="false"
+                                     producerFlowControl="${producer-flow-control:false}"
                                      memoryLimit="500 kb"
-                                     strictOrderDispatch="true">
+                                     strictOrderDispatch="true"
+                                     sendFailIfNoSpace="${send-fail-if-no-space:false}">
                         <amq:dispatchPolicy>
                             <amq:strictOrderDispatchPolicy/>
                         </amq:dispatchPolicy>
