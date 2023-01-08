@@ -539,19 +539,29 @@ You can specify which Camel version to run as shown:
 
 [source,bash]
 ----
-jbang run -Dcamel.jbang.version=3.17.0 camel@apache/camel [command]
+jbang run -Dcamel.jbang.version=3.18.4 camel@apache/camel [command]
 ----
 
 NOTE: Older versions of Camel may not work as well with Camel JBang as the newest versions.
 Starting from Camel 3.18 onwards is the versions that are recommended to be used onwards.
 
-And you can also try bleeding edge development by using SNAPSHOT such as:
+In *Camel 3.21* onwards the `run` command has built-in support, using `--camel-version`,
+for specifying Camel version to use for the running Camel integration.
+
+[source,bash]
+----
+camel run * --camel-version=3.18.4
+----
+
+TIP: This makes it easy to try different Camel versions, for example when you need to reproduce an issue,
+and find out how it works in different Camel version.
+
+You can also try bleeding edge development by using SNAPSHOT such as:
 
 [source,bash]
 ----
 jbang run --fresh -Dcamel.jbang.version=3.21.0-SNAPSHOT camel@apache/camel [command]
 ----
-
 
 === Running Camel K integrations or bindings
 
