@@ -62,9 +62,8 @@ public class Ses2Endpoint extends DefaultEndpoint {
 
         if (healthCheckRepository != null) {
             clientHealthCheck = new Ses2HealthCheck(this, getId());
+            healthCheckRepository.addHealthCheck(clientHealthCheck);
         }
-
-        healthCheckRepository.addHealthCheck(clientHealthCheck);
     }
 
     @Override
