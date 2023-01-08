@@ -49,6 +49,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
+import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.impl.lw.LightweightCamelContext;
@@ -360,7 +362,8 @@ class Run extends CamelCommand {
         writeSetting(main, profileProperties, "camel.jbang.repos", repos);
         writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
-        writeSetting(main, profileProperties, "camel.main.routesCompileDirectory", WORK_DIR);
+        // the runtime version of Camel is what is loaded via the catalog
+        writeSetting(main, profileProperties, "camel.jbang.camel-version", new DefaultCamelCatalog().getCatalogVersion());
         // merge existing dependencies with --deps
         String deps = RuntimeUtil.getDependencies(profileProperties);
         if (deps.isBlank()) {
@@ -610,7 +613,6 @@ class Run extends CamelCommand {
                                + ") in background with PID: " + p.pid());
             return 0;
         } else {
-            // TODO: this makes camel CLI confused: camel get
             pb.inheritIO(); // run in foreground (with IO so logs are visible)
             Process p = pb.start();
             // wait for that process to exit as we run in foreground
