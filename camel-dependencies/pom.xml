@@ -335,7 +335,7 @@
     <jnats-version>2.16.5</jnats-version>
     <jodatime2-version>2.11.1</jodatime2-version>
     <johnzon-version>1.2.19</johnzon-version>
-    <jolokia-version>1.7.1</jolokia-version>
+    <jolokia-version>1.7.2</jolokia-version>
     <jolt-version>0.1.7</jolt-version>
     <jool-version>0.9.14</jool-version>
     <jooq-version>3.16.11</jooq-version>
