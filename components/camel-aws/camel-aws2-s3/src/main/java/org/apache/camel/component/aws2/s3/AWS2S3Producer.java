@@ -41,6 +41,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -586,8 +587,11 @@ public class AWS2S3Producer extends DefaultProducer {
             presigner = getConfiguration().getAmazonS3Presigner();
         } else {
             S3Presigner.Builder builder = S3Presigner.builder();
-            builder.credentialsProvider(StaticCredentialsProvider.create(
-                    AwsBasicCredentials.create(getConfiguration().getAccessKey(), getConfiguration().getSecretKey())))
+            builder.credentialsProvider(
+                    getConfiguration().isUseDefaultCredentialsProvider()
+                            ? DefaultCredentialsProvider.create() : StaticCredentialsProvider.create(
+                                    AwsBasicCredentials.create(getConfiguration().getAccessKey(),
+                                            getConfiguration().getSecretKey())))
                     .region(Region.of(getConfiguration().getRegion()));
 
             String uriEndpointOverride = getConfiguration().getUriEndpointOverride();
