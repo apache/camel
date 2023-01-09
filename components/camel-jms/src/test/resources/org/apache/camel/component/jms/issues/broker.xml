@@ -29,7 +29,7 @@
 
     <bean class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer" />
 
-    <amq:broker brokerName="myBroker"
+    <amq:broker brokerName="myBroker2"
                 id="broker"
                 useJmx="false"
                 persistent="false"
