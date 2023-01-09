@@ -543,7 +543,7 @@ jbang run -Dcamel.jbang.version=3.18.4 camel@apache/camel [command]
 ----
 
 NOTE: Older versions of Camel may not work as well with Camel JBang as the newest versions.
-Starting from Camel 3.18 onwards is the versions that are recommended to be used onwards.
+Starting from Camel 3.20 onwards is the versions that are recommended to be used onwards.
 
 In *Camel 3.21* onwards the `run` command has built-in support, using `--camel-version`,
 for specifying Camel version to use for the running Camel integration.
