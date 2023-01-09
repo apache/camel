@@ -798,8 +798,8 @@ You can from another terminal access the logs from any Camel integration with th
 [source,bash]
 ----
 camel log chuck
-chuck     : 2023-01-04 17:59:19.288  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Apache Camel (JBang) 3.21.0 is starting
-chuck     : 2023-01-04 17:59:19.395  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Using Java 17.0.5 with PID 44619. Started by davsclaus in /Users/davsclaus/workspace/
+chuck     | 2023-01-04 17:59:19.288  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Apache Camel (JBang) 3.21.0 is starting
+chuck     | 2023-01-04 17:59:19.395  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Using Java 17.0.5 with PID 44619. Started by davsclaus in /Users/davsclaus/workspace/
 ...
 ----
 
@@ -856,8 +856,8 @@ To see the log use `camel log`
 [source,bash]
 ----
 $ camel log
-chuck     : 2023-01-04 17:59:19.288  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Apache Camel (JBang) 3.21.0 is starting
-chuck     : 2023-01-04 17:59:19.395  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Using Java 17.0.5 with PID 44619. Started by davsclaus in /Users/davsclaus/workspace/
+chuck     | 2023-01-04 17:59:19.288  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Apache Camel (JBang) 3.21.0 is starting
+chuck     | 2023-01-04 17:59:19.395  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Using Java 17.0.5 with PID 44619. Started by davsclaus in /Users/davsclaus/workspace/
 ...
 ----
 
