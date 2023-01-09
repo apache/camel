@@ -59,12 +59,16 @@ public class CamelLogAction extends ActionBaseCommand {
     boolean loggingColor = true;
 
     @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
-                        description = "Print timestamp")
+                        description = "Print timestamp.")
     boolean timestamp = true;
 
     @CommandLine.Option(names = { "--follow" }, defaultValue = "true",
                         description = "Keep following and outputting new log lines (use ctrl + c to exit).")
     boolean follow = true;
+
+    @CommandLine.Option(names = { "--prefix" }, defaultValue = "true",
+                        description = "Print prefix with running Camel integration name.")
+    boolean prefix = true;
 
     @CommandLine.Option(names = { "--tail" },
                         description = "The number of lines from the end of the logs to show. Defaults to showing all logs.")
@@ -282,6 +286,9 @@ public class CamelLogAction extends ActionBaseCommand {
     }
 
     protected void printLine(String name, String line) {
+        if (!prefix) {
+            name = null;
+        }
         if (!timestamp) {
             // after timestamp is after 2 sine-space
             int pos = line.indexOf(' ');
