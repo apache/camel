@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.artemis.services;
 
+import org.apache.activemq.artemis.core.server.QueueQueryResult;
 import org.apache.camel.test.infra.common.services.SimpleTestServiceBuilder;
 import org.apache.camel.test.infra.common.services.SingletonService;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -64,6 +65,11 @@ public final class ArtemisServiceFactory {
         @Override
         public long countMessages(String queue) throws Exception {
             return getService().countMessages(queue);
+        }
+
+        @Override
+        public QueueQueryResult getQueueQueryResult(String queueQuery) throws Exception {
+            return getService().getQueueQueryResult(queueQuery);
         }
 
         @Override
@@ -151,5 +157,9 @@ public final class ArtemisServiceFactory {
         }
 
         return amqpService;
+    }
+
+    public static ArtemisService createTCPAllProtocolsService() {
+        return new ArtemisTCPAllProtocolsService();
     }
 }
