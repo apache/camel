@@ -273,34 +273,12 @@ class Run extends CamelCommand {
         removeDir(work);
         work.mkdirs();
 
-        Properties profileProperties = null;
-        File profilePropertiesFile = new File(getProfile() + ".properties");
-        if (profilePropertiesFile.exists()) {
-            profileProperties = loadProfileProperties(profilePropertiesFile);
-            // logging level/color may be configured in the properties file
-            loggingLevel = profileProperties.getProperty("loggingLevel", loggingLevel);
-            loggingColor
-                    = "true".equals(profileProperties.getProperty("loggingColor", loggingColor ? "true" : "false"));
-            loggingJson
-                    = "true".equals(profileProperties.getProperty("loggingJson", loggingJson ? "true" : "false"));
-            if (propertiesFiles == null) {
-                propertiesFiles = "file:" + getProfile() + ".properties";
-            } else {
-                propertiesFiles = propertiesFiles + ",file:" + profilePropertiesFile.getName();
-            }
-            repos = profileProperties.getProperty("camel.jbang.repos", repos);
-            mavenSettings = profileProperties.getProperty("camel.jbang.maven-settings", mavenSettings);
-            mavenSettingsSecurity = profileProperties.getProperty("camel.jbang.maven-settings-security", mavenSettingsSecurity);
-            openapi = profileProperties.getProperty("camel.jbang.open-api", openapi);
-            download = "true".equals(profileProperties.getProperty("camel.jbang.download", download ? "true" : "false"));
-            background = "true".equals(profileProperties.getProperty("camel.jbang.background", background ? "true" : "false"));
-            camelVersion = profileProperties.getProperty("camel.jbang.camel-version", camelVersion);
-        }
-
-        // generate open-api early
+        Properties profileProperties = loadProfileProperties();
+        configureLogging();
         if (openapi != null) {
             generateOpenApi();
         }
+
         // route code as option
         if (code != null) {
             // store code in temporary file
@@ -332,11 +310,7 @@ class Run extends CamelCommand {
             files = files.stream().distinct().collect(Collectors.toList());
         }
 
-        // configure logging first
-        configureLogging();
-
         final KameletMain main = createMainInstance();
-
         main.setRepos(repos);
         main.setDownload(download);
         main.setFresh(fresh);
@@ -495,7 +469,6 @@ class Run extends CamelCommand {
                 sjReload.add(file.substring(5));
             }
         }
-
         writeSetting(main, profileProperties, "camel.main.name", name);
 
         if (js.length() > 0) {
@@ -572,7 +545,6 @@ class Run extends CamelCommand {
         }
 
         // okay we have validated all input and are ready to run
-
         if (camelVersion != null) {
             // run in another JVM with different camel version (foreground or background)
             return runCamelVersion(main);
@@ -583,6 +555,34 @@ class Run extends CamelCommand {
             // run default in current JVM with same camel version
             return runKameletMain(main);
         }
+    }
+
+    private Properties loadProfileProperties() throws Exception {
+        Properties answer = null;
+
+        File profilePropertiesFile = new File(getProfile() + ".properties");
+        if (profilePropertiesFile.exists()) {
+            answer = loadProfileProperties(profilePropertiesFile);
+            // logging level/color may be configured in the properties file
+            loggingLevel = answer.getProperty("loggingLevel", loggingLevel);
+            loggingColor
+                    = "true".equals(answer.getProperty("loggingColor", loggingColor ? "true" : "false"));
+            loggingJson
+                    = "true".equals(answer.getProperty("loggingJson", loggingJson ? "true" : "false"));
+            if (propertiesFiles == null) {
+                propertiesFiles = "file:" + getProfile() + ".properties";
+            } else {
+                propertiesFiles = propertiesFiles + ",file:" + profilePropertiesFile.getName();
+            }
+            repos = answer.getProperty("camel.jbang.repos", repos);
+            mavenSettings = answer.getProperty("camel.jbang.maven-settings", mavenSettings);
+            mavenSettingsSecurity = answer.getProperty("camel.jbang.maven-settings-security", mavenSettingsSecurity);
+            openapi = answer.getProperty("camel.jbang.open-api", openapi);
+            download = "true".equals(answer.getProperty("camel.jbang.download", download ? "true" : "false"));
+            background = "true".equals(answer.getProperty("camel.jbang.background", background ? "true" : "false"));
+            camelVersion = answer.getProperty("camel.jbang.camel-version", camelVersion);
+        }
+        return answer;
     }
 
     protected int runCamelVersion(KameletMain main) throws Exception {
