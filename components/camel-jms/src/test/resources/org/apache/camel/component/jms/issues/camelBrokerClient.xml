@@ -28,12 +28,16 @@ http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/came
         <template id="template"/>
     </camelContext>
 
-    <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
-     <property name="connectionFactory">
-       <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+    <bean class="org.apache.activemq.ActiveMQConnectionFactory" id="activeMQConnectionFactory">
         <property name="brokerURL" value="vm://myBroker"/>
-       </bean>
-     </property>
     </bean>
 
+    <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
+        <property name="connectionFactory" ref="activeMQConnectionFactory" />
+    </bean>
+
+    <!-- setup spring jms TX manager -->
+    <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
+        <property name="connectionFactory" ref="activeMQConnectionFactory"/>
+    </bean>
 </beans>
