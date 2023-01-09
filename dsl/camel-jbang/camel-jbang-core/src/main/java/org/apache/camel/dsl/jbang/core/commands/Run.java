@@ -600,7 +600,11 @@ class Run extends CamelCommand {
         }
         cmd = cmd.replaceFirst("--camel-version=" + camelVersion, "");
         // need to use jbang command to specify camel version
-        cmd = "jbang run -Dcamel.jbang.version=" + camelVersion + " camel@apache/camel " + cmd;
+        String jbang = "jbang run -Dcamel.jbang.version=" + camelVersion;
+        if (repos != null) {
+            jbang += " --repos=" + repos;
+        }
+        cmd = jbang + " camel@apache/camel " + cmd;
 
         ProcessBuilder pb = new ProcessBuilder();
         String[] arr = cmd.split("\\s+"); // TODO: safe split
