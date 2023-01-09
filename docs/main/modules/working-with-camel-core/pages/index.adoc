@@ -44,18 +44,23 @@ Components are a fundamental building block of Apache Camel and are used to conn
 
 * xref:manual::component.adoc[Component]: the comprehensive guide about components.
 
+== Data Processing and Transformation
+
+As you progress with creating your routes, you will often need to manipulate the data in transit so that you can collect, transform, or store it for future use.
+Apache Camel comes with many features to help you transform data in transit.
+The following guides can help you discover ways to manipulate the data:
+
+* Data Processing
+** xref:manual::bean-integration.adoc[Bean Integration]
+** xref:manual::processor.adoc[Processor]
+
+* Data Transformation
+** xref:manual::data-format.adoc[Data Format]
+
 == Other Guides
 
 Learn about additional ways to customize your integrations. Explore alternatives to consume and produce data as well as writing and defining routes.
 
-* Data Processing
-** xref:manual::dataformat-dsl.adoc[Data Format DSL]
-** xref:manual::bean-binding.adoc[Bean Binding]
-** xref:manual::bean-injection.adoc[Bean Injection]
-** xref:manual::bean-integration.adoc[Bean Integration]
-** xref:manual::consumertemplate.adoc[Consumer Template]
-** xref:manual::producertemplate.adoc[Producer Template]
-** xref:manual::processor.adoc[Processor]
 * Exchange
 ** xref:manual::exchange.adoc[Exchange]
 ** xref:manual::exchange-pattern.adoc[Exchange Pattern]
@@ -95,5 +100,6 @@ Learn about additional ways to customize your integrations. Explore alternatives
 ** xref:manual::validator.adoc[Validator]
 ** xref:manual::what-are-the-dependencies.adoc[Camel Requirements]
 ** xref:manual::testing.adoc[Testing]
+
 
 You can find additional documentation in the xref:manual::architecture.adoc[architecture documentation] in the old user manual.

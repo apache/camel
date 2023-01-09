@@ -25,3 +25,7 @@ supports formats such as XML, CSV, JSon, YAML, Avro, Protobuf, and many more.
 == Example
 
 See xref:components:eips:marshal-eip.adoc[Marshal] for more information and examples.
+
+== See Also
+
+** xref:manual::dataformat-dsl.adoc[Data Format DSL]
