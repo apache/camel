@@ -48,6 +48,7 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
+import org.apache.camel.impl.engine.DefaultRoutesLoader;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.CamelBeanPostProcessor;
@@ -468,18 +469,6 @@ public abstract class BaseMainSupport extends BaseService {
                         mainConfigurationProperties.setRoutesIncludePattern(value);
                         return null;
                     });
-            autoConfigurationSingleOption(camelContext, autoConfiguredProperties, "camel.main.routesCompileDirectory",
-                    value -> {
-                        mainConfigurationProperties.setRoutesCompileDirectory(value);
-                        return null;
-                    });
-            autoConfigurationSingleOption(camelContext, autoConfiguredProperties, "camel.main.routesCompileLoadFirst",
-                    value -> {
-                        boolean bool = CamelContextHelper.parseBoolean(camelContext, value);
-                        mainConfigurationProperties.setRoutesCompileLoadFirst(bool);
-                        return null;
-                    });
-
             // eager load properties from modeline by scanning DSL sources and gather properties for auto configuration
             if (camelContext.isModeline() || mainConfigurationProperties.isModeline()) {
                 modelineRoutes(camelContext);
@@ -607,7 +596,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected void configureRoutesLoader(CamelContext camelContext) {
         // use main based routes loader
-        camelContext.adapt(ExtendedCamelContext.class).setRoutesLoader(new MainRoutesLoader(mainConfigurationProperties));
+        camelContext.adapt(ExtendedCamelContext.class).setRoutesLoader(new DefaultRoutesLoader());
     }
 
     protected void modelineRoutes(CamelContext camelContext) throws Exception {
