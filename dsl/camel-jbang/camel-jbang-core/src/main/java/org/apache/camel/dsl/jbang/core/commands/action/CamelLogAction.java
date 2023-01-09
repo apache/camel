@@ -249,7 +249,7 @@ public class CamelLogAction extends ActionBaseCommand {
             Queue<String> queue = row.fifo;
             if (queue != null) {
                 for (String l : queue) {
-                    lines.add(row.name + ": " + l);
+                    lines.add(row.name + "| " + l);
                 }
                 row.fifo.clear();
             }
@@ -264,8 +264,8 @@ public class CamelLogAction extends ActionBaseCommand {
             }
         }
         lines.forEach(l -> {
-            String name = StringHelper.before(l, ": ");
-            String line = StringHelper.after(l, ": ");
+            String name = StringHelper.before(l, "| ");
+            String line = StringHelper.after(l, "| ");
             printLine(name, line);
         });
     }
@@ -274,9 +274,9 @@ public class CamelLogAction extends ActionBaseCommand {
         l1 = unescapeAnsi(l1);
         l2 = unescapeAnsi(l2);
 
-        String t1 = StringHelper.after(l1, ": ");
+        String t1 = StringHelper.after(l1, "| ");
         t1 = StringHelper.before(t1, "  ");
-        String t2 = StringHelper.after(l2, ": ");
+        String t2 = StringHelper.after(l2, "| ");
         t2 = StringHelper.before(t2, "  ");
         return t1.compareTo(t2);
     }
@@ -300,14 +300,14 @@ public class CamelLogAction extends ActionBaseCommand {
                     colors.put(name, color);
                 }
                 String n = String.format("%-" + nameMaxWidth + "s", name);
-                AnsiConsole.out().print(Ansi.ansi().fg(color).a(n).a(": ").reset());
+                AnsiConsole.out().print(Ansi.ansi().fg(color).a(n).a("| ").reset());
             }
         } else {
             line = unescapeAnsi(line);
             if (name != null) {
                 String n = String.format("%-" + nameMaxWidth + "s", name);
                 System.out.print(n);
-                System.out.print(": ");
+                System.out.print("| ");
             }
         }
         if (find != null || grep != null) {
