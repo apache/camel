@@ -20,9 +20,9 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
-import org.apache.camel.test.infra.activemq.services.ActiveMQService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
+import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -33,7 +33,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 @Tags({ @Tag("jms") })
 public abstract class AbstractJMSTest extends CamelTestSupport {
     @RegisterExtension
-    public ActiveMQService service = ActiveMQServiceFactory.createVMService();
+    public ArtemisService service = ArtemisServiceFactory.createVMService();
 
     public static String queueNameForClass(String desiredName, Class<?> requestingClass) {
         return desiredName + "." + requestingClass.getSimpleName();
@@ -50,7 +50,7 @@ public abstract class AbstractJMSTest extends CamelTestSupport {
         return buildComponent(connectionFactory);
     }
 
-    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
         ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service);
 
         return setupComponent(camelContext, connectionFactory, componentName);

@@ -23,7 +23,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.test.infra.activemq.services.AbstractActiveMQEmbeddedService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQService;
 import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
-import org.apache.camel.test.infra.activemq.services.ConnectionFactoryAware;
+import org.apache.camel.test.infra.messaging.services.ConnectionFactoryAware;
 
 public final class ConnectionFactoryHelper {
     private ConnectionFactoryHelper() {

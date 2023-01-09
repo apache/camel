@@ -16,16 +16,17 @@
  */
 package org.apache.camel.component.jms;
 
+import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
-import org.apache.activemq.command.ActiveMQDestination;
-import org.apache.activemq.command.ActiveMQMessage;
+import org.apache.activemq.artemis.jms.client.ActiveMQDestination;
+import org.apache.activemq.artemis.jms.client.ActiveMQMessage;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.activemq.services.ActiveMQService;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -55,10 +56,10 @@ public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
         JmsMessage msg = out.getIn(JmsMessage.class);
         Message jms = msg.getJmsMessage();
         ActiveMQMessage amq = assertIsInstanceOf(ActiveMQMessage.class, jms);
-        ActiveMQDestination original = amq.getOriginalDestination();
+        ActiveMQDestination original = (ActiveMQDestination) amq.getJMSDestination();
         assertNotNull(original);
-        assertEquals("ActiveMQOriginalDestinationTest", original.getPhysicalName());
-        assertEquals("Queue", original.getDestinationTypeAsString());
+        assertEquals("ActiveMQOriginalDestinationTest.dest", original.getName());
+        assertEquals("QUEUE", original.getType().name());
     }
 
     @Override
@@ -67,7 +68,7 @@ public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
     }
 
     @Override
-    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
         JmsComponent component = super.setupComponent(camelContext, service, componentName);
 
         component.setMessageCreatedStrategy(new OriginalDestinationPropagateStrategy());
@@ -103,10 +104,19 @@ public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
                 Message jms = msg.getJmsMessage();
                 if (message instanceof ActiveMQMessage) {
                     ActiveMQMessage amq = (ActiveMQMessage) jms;
-                    ActiveMQDestination from = amq.getDestination();
+                    ActiveMQDestination from = null;
+                    try {
+                        from = (ActiveMQDestination) amq.getJMSDestination();
+                    } catch (JMSException e) {
+                        throw new RuntimeException(e);
+                    }
 
                     if (from != null && message instanceof ActiveMQMessage) {
-                        ((ActiveMQMessage) message).setOriginalDestination(from);
+                        try {
+                            ((ActiveMQMessage) message).setJMSDestination(amq.getJMSDestination());
+                        } catch (JMSException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
             }

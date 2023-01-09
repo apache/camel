@@ -20,9 +20,9 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
-import org.apache.camel.test.infra.activemq.services.ActiveMQService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
+import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -33,7 +33,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 @Tags({ @Tag("jms") })
 public abstract class AbstractPersistentJMSTest extends CamelTestSupport {
     @RegisterExtension
-    public ActiveMQService service = ActiveMQServiceFactory.createPersistentVMService();
+    public ArtemisService service = ArtemisServiceFactory.createPersistentVMService();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

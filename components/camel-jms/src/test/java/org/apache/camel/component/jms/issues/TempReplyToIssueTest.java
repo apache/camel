@@ -46,7 +46,7 @@ public class TempReplyToIssueTest extends AbstractJMSTest {
             @Body String body, Exchange exchange)
             throws Exception {
         assertNotNull(jmsReplyTo);
-        assertTrue(jmsReplyTo.toString().startsWith("temp-queue"), "Should be a temp queue");
+        assertTrue(jmsReplyTo.toString().startsWith("ActiveMQTemporaryQueue"), "Should be a temp queue");
 
         // we send the reply manually (notice we just use a bogus endpoint uri)
         ProducerTemplate producer = exchange.getContext().createProducerTemplate();

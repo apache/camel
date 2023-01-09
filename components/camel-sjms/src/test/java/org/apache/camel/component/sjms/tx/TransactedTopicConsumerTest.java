@@ -20,8 +20,6 @@ import org.junit.jupiter.api.Test;
 
 public class TransactedTopicConsumerTest extends TransactedConsumerSupport {
 
-    private static final String BROKER_URI = "vm://ttc_test_broker?broker.persistent=false&broker.useJmx=false";
-
     /**
      * We want to verify that when consuming from a single destination with multiple routes that we are thread safe and
      * behave accordingly.
@@ -41,6 +39,6 @@ public class TransactedTopicConsumerTest extends TransactedConsumerSupport {
 
     @Override
     public String getBrokerUri() {
-        return BROKER_URI;
+        return service.serviceAddress();
     }
 }

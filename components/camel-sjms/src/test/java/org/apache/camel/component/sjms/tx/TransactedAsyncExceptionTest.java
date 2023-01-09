@@ -24,21 +24,25 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TransactedAsyncExceptionTest extends CamelTestSupport {
 
-    private static final String BROKER_URI = "vm://tqc_test_broker?broker.persistent=false&broker.useJmx=false";
-
     private static final int TRANSACTION_REDELIVERY_COUNT = 10;
+
+    @RegisterExtension
+    public ArtemisService service = ArtemisServiceFactory.createSingletonVMService();
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -90,13 +94,7 @@ public class TransactedAsyncExceptionTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(BROKER_URI);
-
-        connectionFactory.getRedeliveryPolicy().setInitialRedeliveryDelay(0);
-        connectionFactory.getRedeliveryPolicy().setRedeliveryDelay(0);
-        connectionFactory.getRedeliveryPolicy().setUseCollisionAvoidance(false);
-        connectionFactory.getRedeliveryPolicy().setUseExponentialBackOff(false);
-        connectionFactory.getRedeliveryPolicy().setMaximumRedeliveries(TRANSACTION_REDELIVERY_COUNT);
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(service.serviceAddress());
 
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
@@ -109,5 +107,4 @@ public class TransactedAsyncExceptionTest extends CamelTestSupport {
     protected int getShutdownTimeout() {
         return 2;
     }
-
 }

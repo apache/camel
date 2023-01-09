@@ -21,9 +21,9 @@ import javax.jms.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
-import org.apache.camel.test.infra.activemq.services.ActiveMQService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQServiceFactory;
+import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
@@ -40,7 +40,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 @Timeout(30)
 public class JmsAsyncStartStopListenerTest extends CamelTestSupport {
     @RegisterExtension
-    public ActiveMQService service = ActiveMQServiceFactory.createPersistentVMService();
+    public ArtemisService service = ArtemisServiceFactory.createPersistentVMService();
 
     protected final String componentName = "activemq";
 

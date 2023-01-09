@@ -21,7 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.infra.activemq.services.ActiveMQService;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,7 +63,7 @@ public class RequestReplyCorrelatedWithCustomHeaderTest extends AbstractJMSTest 
     }
 
     @Override
-    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
         final JmsComponent component = super.setupComponent(camelContext, service, componentName);
         component.getConfiguration().setCorrelationProperty("CustomCorrelation");
         return component;
