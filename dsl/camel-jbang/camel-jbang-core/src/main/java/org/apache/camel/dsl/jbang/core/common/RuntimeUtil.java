@@ -33,15 +33,13 @@ public final class RuntimeUtil {
     }
 
     public static void configureLog(
-            String level, boolean color, boolean json, boolean pipe, boolean export, boolean background) {
+            String level, boolean color, boolean json, boolean pipe, boolean export) {
         if (INIT_DONE.compareAndSet(false, true)) {
             long pid = ProcessHandle.current().pid();
             System.setProperty("pid", "" + pid);
 
             if (export) {
                 Configurator.initialize("CamelJBang", "log4j2-export.properties");
-            } else if (background) {
-                Configurator.initialize("CamelJBang", "log4j2-background.properties");
             } else if (pipe) {
                 Configurator.initialize("CamelJBang", "log4j2-pipe.properties");
             } else if (json) {

@@ -787,7 +787,7 @@ class Run extends CamelCommand {
         if (silentRun) {
             // do not configure logging
         } else if (logging) {
-            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson, pipeRun, false, background);
+            RuntimeUtil.configureLog(loggingLevel, loggingColor, loggingJson, pipeRun, false);
             writeSettings("loggingLevel", loggingLevel);
             writeSettings("loggingColor", loggingColor ? "true" : "false");
             writeSettings("loggingJson", loggingJson ? "true" : "false");
@@ -799,7 +799,7 @@ class Run extends CamelCommand {
                 logFile.deleteOnExit();
             }
         } else {
-            RuntimeUtil.configureLog("off", false, false, false, false, false);
+            RuntimeUtil.configureLog("off", false, false, false, false);
             writeSettings("loggingLevel", "off");
         }
     }
