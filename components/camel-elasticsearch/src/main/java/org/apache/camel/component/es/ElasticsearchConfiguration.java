@@ -213,8 +213,8 @@ public class ElasticsearchConfiguration {
     }
 
     /**
-     * The certificate that can be used to access the ES Cluster.
-     * It can be loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.
+     * The certificate that can be used to access the ES Cluster. It can be loaded by default from classpath, but you
+     * can prefix with classpath:, file:, or http: to load the resource from different systems.
      */
     public String getCertificatePath() {
         return certificatePath;
