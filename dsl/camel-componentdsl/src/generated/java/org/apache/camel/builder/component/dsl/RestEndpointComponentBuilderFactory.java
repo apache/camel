@@ -108,27 +108,6 @@ public interface RestEndpointComponentBuilderFactory {
             return this;
         }
         /**
-         * The Camel Rest component to use for the producer REST transport, such
-         * as http, undertow. If no component has been explicitly configured,
-         * then Camel will lookup if there is a Camel component that integrates
-         * with the Rest DSL, or if a org.apache.camel.spi.RestProducerFactory
-         * is registered in the registry. If either one is found, then that is
-         * being used.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param componentName the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default RestEndpointComponentBuilder componentName(
-                java.lang.String componentName) {
-            doSetProperty("componentName", componentName);
-            return this;
-        }
-        /**
          * Host and port of HTTP service to use (override host in swagger
          * schema).
          * 
@@ -228,7 +207,6 @@ public interface RestEndpointComponentBuilderFactory {
             case "bridgeErrorHandler": ((RestComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "consumerComponentName": ((RestComponent) component).setConsumerComponentName((java.lang.String) value); return true;
             case "apiDoc": ((RestComponent) component).setApiDoc((java.lang.String) value); return true;
-            case "componentName": ((RestComponent) component).setComponentName((java.lang.String) value); return true;
             case "host": ((RestComponent) component).setHost((java.lang.String) value); return true;
             case "lazyStartProducer": ((RestComponent) component).setLazyStartProducer((boolean) value); return true;
             case "producerComponentName": ((RestComponent) component).setProducerComponentName((java.lang.String) value); return true;

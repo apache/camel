@@ -38,9 +38,6 @@ public class RestComponent extends DefaultComponent {
 
     public static final String DEFAULT_REST_CONFIGURATION_ID = "rest-configuration";
 
-    @Deprecated
-    @Metadata(label = "producer")
-    private String componentName;
     @Metadata(label = "consumer")
     private String consumerComponentName;
     @Metadata(label = "producer")
@@ -165,24 +162,6 @@ public class RestComponent extends DefaultComponent {
      */
     public void setProducerComponentName(String producerComponentName) {
         this.producerComponentName = producerComponentName;
-    }
-
-    @Deprecated
-    public String getComponentName() {
-        return producerComponentName;
-    }
-
-    /**
-     * The Camel Rest component to use for the producer REST transport, such as http, undertow. If no component has been
-     * explicitly configured, then Camel will lookup if there is a Camel component that integrates with the Rest DSL, or
-     * if a org.apache.camel.spi.RestProducerFactory is registered in the registry. If either one is found, then that is
-     * being used.
-     *
-     * @deprecated use producerComponentName instead
-     */
-    @Deprecated
-    public void setComponentName(String componentName) {
-        this.producerComponentName = componentName;
     }
 
     public String getApiDoc() {
