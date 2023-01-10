@@ -67,56 +67,23 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-broker</artifactId>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-artemis</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-kahadb-store</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-pool</artifactId>
-            <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
         <!-- artemis connection pool -->
         <dependency>
             <groupId>org.messaginghub</groupId>
             <artifactId>pooled-jms</artifactId>
-            <version>1.2.1</version>
+            <version>${pooled-jms-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io-version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>artemis-server</artifactId>
-            <version>${activemq-artemis-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>artemis-jms-server</artifactId>
-            <version>${activemq-artemis-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>artemis-jms-client</artifactId>
-            <version>${activemq-artemis-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>artemis-amqp-protocol</artifactId>
-            <version>${activemq-artemis-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

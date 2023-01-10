@@ -21,15 +21,8 @@ import javax.jms.ConnectionFactory;
 import javax.jms.MessageConsumer;
 import javax.jms.Session;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.artemis.api.core.SimpleString;
-import org.apache.activemq.artemis.api.core.TransportConfiguration;
 import org.apache.activemq.artemis.api.jms.ActiveMQJMSClient;
-import org.apache.activemq.artemis.core.config.Configuration;
-import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
-import org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnectorFactory;
-import org.apache.activemq.artemis.core.server.QueueQueryResult;
-import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -38,25 +31,25 @@ import org.apache.camel.component.sjms.jms.DestinationCreationStrategy;
 import org.apache.camel.component.sjms2.Sjms2Component;
 import org.apache.camel.component.sjms2.jms.Jms2ObjectFactory;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * A support class that builds up and tears down an ActiveMQ Artemis instance to be used for unit testing.
  */
 public class Jms2TestSupport extends CamelTestSupport {
 
+    @RegisterExtension
+    public ArtemisService service = ArtemisServiceFactory.createTCPAllProtocolsService();
+
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     @Produce
     protected ProducerTemplate template;
-    protected String brokerUri;
-    protected int port;
-    private EmbeddedActiveMQ broker;
     private Connection connection;
     private Session session;
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
@@ -64,33 +57,6 @@ public class Jms2TestSupport extends CamelTestSupport {
     @Override
     protected boolean useJmx() {
         return false;
-    }
-
-    @Override
-    protected void doPreSetup() throws Exception {
-        broker = new EmbeddedActiveMQ();
-        deleteDirectory("target/data");
-        port = AvailablePortFinder.getNextAvailable();
-        brokerUri = "tcp://localhost:" + port;
-        configureBroker(this.broker);
-        startBroker();
-    }
-
-    protected void configureBroker(EmbeddedActiveMQ broker) throws Exception {
-        Configuration configuration = new ConfigurationImpl()
-                .setPersistenceEnabled(false)
-                .setJournalDirectory("target/data/journal")
-                .setSecurityEnabled(false)
-                .addAcceptorConfiguration("connector", brokerUri + "?protocols=CORE,AMQP,HORNETQ,OPENWIRE")
-                .addAcceptorConfiguration("vm", "vm://broker")
-                .addConnectorConfiguration("connector", new TransportConfiguration(NettyConnectorFactory.class.getName()));
-
-        broker.setConfiguration(configuration);
-    }
-
-    private void startBroker() throws Exception {
-        broker.start();
-        log.info("Started Embedded JMS Server");
     }
 
     @Override
@@ -109,11 +75,6 @@ public class Jms2TestSupport extends CamelTestSupport {
         if (connection != null) {
             connection.stop();
             connection = null;
-        }
-        log.info("Stopping the ActiveMQ Broker");
-        if (broker != null) {
-            broker.stop();
-            broker = null;
         }
     }
 
@@ -143,14 +104,10 @@ public class Jms2TestSupport extends CamelTestSupport {
         //of artemis we may be able test against them in an agnostic way.
         switch (protocol) {
             case "OPENWIRE":
-                return new ActiveMQConnectionFactory(brokerUri);
+                return new ActiveMQConnectionFactory(service.serviceAddress());
             default:
-                return ActiveMQJMSClient.createConnectionFactory(brokerUri, "test");
+                return ActiveMQJMSClient.createConnectionFactory(service.serviceAddress(), "test");
         }
-    }
-
-    public QueueQueryResult getQueueQueryResult(String queueQuery) throws Exception {
-        return broker.getActiveMQServer().queueQuery(new SimpleString(queueQuery));
     }
 
     public void setSession(Session session) {
