@@ -54,8 +54,14 @@
         </dependency>
         <!-- test infra -->
         <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-stomp-protocol</artifactId>
+            <version>${activemq-artemis-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-activemq</artifactId>
+            <artifactId>camel-test-infra-artemis</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
             <type>test-jar</type>
