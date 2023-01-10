@@ -134,7 +134,7 @@ public class CamelLogAction extends ActionBaseCommand {
 
             // dump existing log lines
             tailLogFiles(rows, tail, limit);
-            dumpLogFiles(rows);
+            dumpLogFiles(rows, tail);
         }
 
         if (follow) {
@@ -146,20 +146,20 @@ public class CamelLogAction extends ActionBaseCommand {
                         System.out.println("Waiting for logs ...");
                         waitMessage = false;
                     }
-                    Thread.sleep(250);
+                    Thread.sleep(500);
                     updatePids(rows);
                 } else {
                     waitMessage = true;
-                    if (watch.taken() > 1000) {
+                    if (watch.taken() > 500) {
                         // check for new logs
                         updatePids(rows);
                         watch.restart();
                     }
                     int lines = readLogFiles(rows);
                     if (lines > 0) {
-                        dumpLogFiles(rows);
+                        dumpLogFiles(rows, 0);
                     } else {
-                        Thread.sleep(50);
+                        Thread.sleep(100);
                     }
                 }
             } while (true);
@@ -195,7 +195,9 @@ public class CamelLogAction extends ActionBaseCommand {
                         if (len > nameMaxWidth) {
                             nameMaxWidth = len;
                         }
-                        rows.put(ph.pid(), row);
+                        if (!rows.containsKey(ph.pid())) {
+                            rows.put(ph.pid(), row);
+                        }
                     }
                 });
 
@@ -222,32 +224,36 @@ public class CamelLogAction extends ActionBaseCommand {
                 }
             }
             if (row.reader != null) {
-                try {
-                    String line = row.reader.readLine();
-                    if (line != null) {
-                        boolean valid = true;
-                        if (grep != null) {
-                            valid = isValidGrep(line);
-                        }
-                        if (valid) {
-                            lines++;
-                            // switch fifo to be unlimited as we use it for new log lines
-                            if (row.fifo == null || row.fifo instanceof ArrayBlockingQueue) {
-                                row.fifo = new ArrayDeque<>();
+                String line;
+                do {
+                    try {
+                        line = row.reader.readLine();
+                        if (line != null) {
+                            boolean valid = true;
+                            if (grep != null) {
+                                valid = isValidGrep(line);
                             }
-                            row.fifo.offer(line);
+                            if (valid) {
+                                lines++;
+                                // switch fifo to be unlimited as we use it for new log lines
+                                if (row.fifo == null || row.fifo instanceof ArrayBlockingQueue) {
+                                    row.fifo = new ArrayDeque<>();
+                                }
+                                row.fifo.offer(line);
+                            }
                         }
+                    } catch (IOException e) {
+                        // ignore
+                        line = null;
                     }
-                } catch (IOException e) {
-                    // ignore
-                }
+                } while (line != null);
             }
         }
 
         return lines;
     }
 
-    private void dumpLogFiles(Map<Long, Row> rows) {
+    private void dumpLogFiles(Map<Long, Row> rows, int tail) {
         List<String> lines = new ArrayList<>();
         for (Row row : rows.values()) {
             Queue<String> queue = row.fifo;
@@ -332,7 +338,11 @@ public class CamelLogAction extends ActionBaseCommand {
             }
             line = before + "---" + after;
         }
-        System.out.println(line);
+        if (loggingColor) {
+            AnsiConsole.out().println(line);
+        } else {
+            System.out.println(line);
+        }
     }
 
     private static File logFile(String pid) {
