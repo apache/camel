@@ -12164,6 +12164,7 @@ public class StaticEndpointBuilders {
      * @param path exchangeName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder rabbitmq(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.endpointBuilder("rabbitmq", path);
@@ -12188,6 +12189,7 @@ public class StaticEndpointBuilders {
      * @param path exchangeName
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder rabbitmq(
             String componentName,
             String path) {

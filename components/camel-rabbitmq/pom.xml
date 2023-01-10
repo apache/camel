@@ -28,7 +28,7 @@
 
     <artifactId>camel-rabbitmq</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: RabbitMQ</name>
+    <name>Camel :: RabbitMQ (deprecated)</name>
     <description>Camel RabbitMQ Component</description>
 
     <properties>
