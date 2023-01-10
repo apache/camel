@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.StringHelper;
 
 /**
  * A helper class allowing to reuse part of the code outside of Camel easily.
@@ -34,23 +33,6 @@ public final class Helper {
 
     private Helper() {
 
-    }
-
-    /**
-     * @return the name of the class according to its location.
-     */
-    public static String asClassName(Resource resource) {
-        String className = resource.getLocation();
-        if (className.contains(":")) {
-            // remove scheme such as classpath:foo.class
-            className = StringHelper.after(className, ":");
-        }
-        assert className != null;
-        className = className.replace('/', '.');
-        if (className.endsWith(".class")) {
-            className = className.substring(0, className.length() - 6);
-        }
-        return className;
     }
 
     /**
