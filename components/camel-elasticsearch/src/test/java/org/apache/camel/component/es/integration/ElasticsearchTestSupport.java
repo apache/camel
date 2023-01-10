@@ -126,7 +126,7 @@ public class ElasticsearchTestSupport extends CamelTestSupport {
         elasticsearchComponent.setHostAddresses(service.getHttpHostAddress());
         elasticsearchComponent.setUser(USER_NAME);
         elasticsearchComponent.setPassword(PASSWORD);
-        elasticsearchComponent.setCertificatePath(certPath.toString());
+        elasticsearchComponent.setCertificatePath("file:" + certPath.toString());
 
         CamelContext context = super.createCamelContext();
         context.addComponent("elasticsearch", elasticsearchComponent);
