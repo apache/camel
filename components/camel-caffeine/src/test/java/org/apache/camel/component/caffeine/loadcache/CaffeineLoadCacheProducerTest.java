@@ -32,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport {
@@ -94,7 +95,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
         final Map<String, String> elements = getTestCache().getAllPresent(keys);
         keys.forEach(k -> {
             assertTrue(elements.containsKey(k));
-            assertEquals(map.get(k), elements.get(k));
+            assertSame(map.get(k), elements.get(k));
         });
 
         MockEndpoint.assertIsSatisfied(context);
@@ -145,7 +146,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
         final Map<String, String> elements = mock.getExchanges().get(0).getIn().getBody(Map.class);
         keys.forEach(k -> {
             assertTrue(elements.containsKey(k));
-            assertEquals(map.get(k), elements.get(k));
+            assertSame(map.get(k), elements.get(k));
         });
     }
 
