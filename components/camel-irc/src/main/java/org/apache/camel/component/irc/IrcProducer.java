@@ -54,7 +54,7 @@ public class IrcProducer extends DefaultProducer {
             reconnect();
         }
         if (connection == null || !connection.isConnected()) {
-            throw new RuntimeCamelException("Lost connection to " + connection.getHost());
+            throw new RuntimeCamelException("Lost connection" + (connection == null ? "" : " to " + connection.getHost()));
         }
 
         if (msg != null) {
