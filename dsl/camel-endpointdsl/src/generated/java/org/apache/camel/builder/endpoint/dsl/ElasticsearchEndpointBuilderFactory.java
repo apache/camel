@@ -383,8 +383,9 @@ public interface ElasticsearchEndpointBuilderFactory {
             return this;
         }
         /**
-         * The path of the self-signed certificate to use to access to
-         * Elasticsearch.
+         * The certificate that can be used to access the ES Cluster. It can be
+         * loaded by default from classpath, but you can prefix with classpath:,
+         * file:, or http: to load the resource from different systems.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 

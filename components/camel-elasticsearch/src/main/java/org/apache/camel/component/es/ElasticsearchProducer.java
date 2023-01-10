@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.es;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
@@ -543,7 +540,8 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
         try {
             CertificateFactory factory = CertificateFactory.getInstance("X.509");
             InputStream resolveMandatoryResourceAsInputStream
-                    = ResourceHelper.resolveMandatoryResourceAsInputStream(getEndpoint().getCamelContext(), configuration.getCertificatePath());
+                    = ResourceHelper.resolveMandatoryResourceAsInputStream(getEndpoint().getCamelContext(),
+                            configuration.getCertificatePath());
             Certificate trustedCa = factory.generateCertificate(resolveMandatoryResourceAsInputStream);
             KeyStore trustStore = KeyStore.getInstance("pkcs12");
             trustStore.load(null, null);
