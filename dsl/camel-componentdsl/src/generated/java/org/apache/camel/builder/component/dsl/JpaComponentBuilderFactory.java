@@ -133,6 +133,7 @@ public interface JpaComponentBuilderFactory {
          * @param transactionManager the value to set
          * @return the dsl builder
          */
+        @Deprecated
         default JpaComponentBuilder transactionManager(
                 org.springframework.transaction.PlatformTransactionManager transactionManager) {
             doSetProperty("transactionManager", transactionManager);
