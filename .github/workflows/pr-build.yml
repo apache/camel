@@ -23,6 +23,7 @@ on:
       - main
       - camel-3.18.x
       - camel-3.14.x
+      - camel-3.x
     paths-ignore:
       - README.md
       - SECURITY.md
