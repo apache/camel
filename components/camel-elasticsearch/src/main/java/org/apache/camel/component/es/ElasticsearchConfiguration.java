@@ -213,7 +213,8 @@ public class ElasticsearchConfiguration {
     }
 
     /**
-     * The path of the self-signed certificate to use to access to Elasticsearch.
+     * The certificate that can be used to access the ES Cluster.
+     * It can be loaded by default from classpath, but you can prefix with classpath:, file:, or http: to load the resource from different systems.
      */
     public String getCertificatePath() {
         return certificatePath;
