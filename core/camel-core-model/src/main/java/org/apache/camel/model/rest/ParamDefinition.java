@@ -71,6 +71,7 @@ public class ParamDefinition {
     @XmlElement(name = "value") // name = value due to camel-spring-xml
     @DslProperty(name = "allowableValues") // yaml-dsl
     private List<ValueDefinition> allowableValues;
+    @XmlElement(name = "examples")
     private List<RestPropertyDefinition> examples;
 
     public ParamDefinition() {

@@ -7292,6 +7292,12 @@
           "description" : {
             "type" : "string"
           },
+          "examples" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/items/definitions/org.apache.camel.model.rest.RestPropertyDefinition"
+            }
+          },
           "name" : {
             "type" : "string"
           },
