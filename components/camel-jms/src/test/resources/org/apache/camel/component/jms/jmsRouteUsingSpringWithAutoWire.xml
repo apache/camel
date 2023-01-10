@@ -29,9 +29,9 @@
       <jmxAgent id="agent" disabled="true"/>
   </camelContext>
 
-  <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+  <bean id="connectionFactory" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
     <property name="brokerURL">
-      <bean class="org.apache.camel.test.infra.activemq.services.LegacyEmbeddedBroker" factory-method="createBrokerUrl"/>
+      <bean class="org.apache.camel.component.jms.AbstractSpringJMSTestSupport"  factory-method="getServiceAddress"/>
     </property>
   </bean>
   <!-- END SNIPPET: example -->

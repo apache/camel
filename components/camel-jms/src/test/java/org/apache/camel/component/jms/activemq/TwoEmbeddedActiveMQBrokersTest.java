@@ -17,15 +17,37 @@
 package org.apache.camel.component.jms.activemq;
 
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisVMService;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
 /**
  *
  */
 public class TwoEmbeddedActiveMQBrokersTest extends CamelSpringTestSupport {
+
+    @RegisterExtension
+    public static ArtemisService firstBroker = new ArtemisVMService();
+
+    @RegisterExtension
+    public static ArtemisService secondBroker = new ArtemisVMService();
+
+    /**
+     * Used by spring xml configurations
+     * 
+     * @return
+     */
+    public static String getFirstBrokerServiceAddress() {
+        return firstBroker.serviceAddress();
+    }
+
+    public static String getSecondBrokerServiceAddress() {
+        return secondBroker.serviceAddress();
+    }
 
     @Test
     public void sendToTwoEmbeddedBrokers() throws Exception {
@@ -40,7 +62,7 @@ public class TwoEmbeddedActiveMQBrokersTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("classpath:org/apache/camel/component/jms/activemq/twoActiveMQBrokers.xml");
+        return new ClassPathXmlApplicationContext("classpath:org/apache/camel/component/jms/artemis/twoActiveMQBrokers.xml");
     }
 
 }

@@ -17,14 +17,14 @@
 package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsInOutWithSpringRestartIssueTest extends CamelSpringTestSupport {
+public class JmsInOutWithSpringRestartIssueTest extends AbstractSpringJMSTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
