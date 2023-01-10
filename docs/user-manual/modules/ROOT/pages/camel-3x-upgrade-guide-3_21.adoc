@@ -95,6 +95,10 @@ The `camel-java-joor-dsl` cannot anymore load routes defined in class files as w
 
 The `certificatePath` parameter can now be specified as resource: for user pointing to a local certificate, the file should be now prefixed with `file:`. It's also possible to use the classic resource helper prefixes, like `classpath`, `https` etc.
 
+=== camel-rest
+
+The deprecated option `componentName` was removed. Please use either `producerComponentName` or `consumerComponentName`.
+
 === Deprecated Components
 
 The following components that had been marked as deprecated, were removed in this release:
