@@ -445,6 +445,7 @@
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
         <picocli-version>4.7.0</picocli-version>
         <plc4x-version>0.10.0</plc4x-version>
+        <pooled-jms-version>1.2.4</pooled-jms-version>
         <powermock-version>2.0.7</powermock-version>
         <properties-maven-plugin-version>1.0-alpha-2</properties-maven-plugin-version>
         <protobuf-version>3.19.6</protobuf-version>
