@@ -4411,6 +4411,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @param path exchangeName
          * @return the dsl builder
          */
+        @Deprecated
         default RabbitMQEndpointBuilder rabbitmq(String path) {
             return RabbitMQEndpointBuilderFactory.endpointBuilder("rabbitmq", path);
         }
@@ -4434,6 +4435,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * @param path exchangeName
          * @return the dsl builder
          */
+        @Deprecated
         default RabbitMQEndpointBuilder rabbitmq(
                 String componentName,
                 String path) {
@@ -4763,6 +4765,7 @@ public interface RabbitMQEndpointBuilderFactory {
             return "MessageTimestamp";
         }
     }
+    @Deprecated
     static RabbitMQEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

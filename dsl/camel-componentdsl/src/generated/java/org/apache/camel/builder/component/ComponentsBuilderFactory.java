@@ -3525,6 +3525,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.RabbitmqComponentBuilderFactory.RabbitmqComponentBuilder rabbitmq() {
         return org.apache.camel.builder.component.dsl.RabbitmqComponentBuilderFactory.rabbitmq();
     }

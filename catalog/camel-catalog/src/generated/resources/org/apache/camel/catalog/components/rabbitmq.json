@@ -4,7 +4,7 @@
     "name": "rabbitmq",
     "title": "RabbitMQ",
     "description": "Send and receive messages from RabbitMQ instances.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.12.0",
     "label": "messaging",
     "javaType": "org.apache.camel.component.rabbitmq.RabbitMQComponent",

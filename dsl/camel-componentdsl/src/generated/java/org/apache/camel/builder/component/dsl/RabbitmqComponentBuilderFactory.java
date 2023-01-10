@@ -40,6 +40,7 @@ public interface RabbitmqComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static RabbitmqComponentBuilder rabbitmq() {
         return new RabbitmqComponentBuilderImpl();
     }

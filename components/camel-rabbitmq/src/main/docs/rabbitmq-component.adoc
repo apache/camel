@@ -1,10 +1,11 @@
-= RabbitMQ Component
+= RabbitMQ Component (deprecated)
 :doctitle: RabbitMQ
 :shortname: rabbitmq
 :artifactid: camel-rabbitmq
 :description: Send and receive messages from RabbitMQ instances.
 :since: 2.12
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: rabbitmq
