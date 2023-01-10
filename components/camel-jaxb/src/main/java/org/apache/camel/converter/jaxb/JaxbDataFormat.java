@@ -473,7 +473,7 @@ public class JaxbDataFormat extends ServiceSupport
     }
 
     public String getNoNamespaceSchemaLocation() {
-        return schemaLocation;
+        return noNamespaceSchemaLocation;
     }
 
     public void setNoNamespaceSchemaLocation(String schemaLocation) {
