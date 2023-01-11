@@ -38,7 +38,7 @@ class rewrite implements Callable<Integer> {
         // Create/reset branch 'rewritten'
         exec("git", "checkout", "-B", "jakarta/rewritten", "jakarta/rewrite");
         // Merge jms
-        exec("git", "merge", "jakarta/jms", "-m", "Merge jakarta/jms");
+        exec("git", "merge", "jakarta/jms", "-m", "\"Merge jakarta/jms\"");
 
         // Switch version to 4.0.0-SNAPSHOT
         System.out.println("Switch version to 4.0.0-SNAPSHOT");
