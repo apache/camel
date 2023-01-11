@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.rest.swagger;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "Pet")
 public class Pet {

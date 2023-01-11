@@ -70,7 +70,7 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "concurrentConsumers": getOrCreateConfiguration(target).setConcurrentConsumers(property(camelContext, int.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.jms.JmsConfiguration.class, value)); return true;
         case "connectionfactory":
-        case "connectionFactory": getOrCreateConfiguration(target).setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
+        case "connectionFactory": getOrCreateConfiguration(target).setConnectionFactory(property(camelContext, jakarta.jms.ConnectionFactory.class, value)); return true;
         case "consumertype":
         case "consumerType": getOrCreateConfiguration(target).setConsumerType(property(camelContext, org.apache.camel.component.jms.ConsumerType.class, value)); return true;
         case "correlationproperty":
@@ -102,7 +102,7 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "errorhandlerlogginglevel":
         case "errorHandlerLoggingLevel": getOrCreateConfiguration(target).setErrorHandlerLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "exceptionlistener":
-        case "exceptionListener": getOrCreateConfiguration(target).setExceptionListener(property(camelContext, javax.jms.ExceptionListener.class, value)); return true;
+        case "exceptionListener": getOrCreateConfiguration(target).setExceptionListener(property(camelContext, jakarta.jms.ExceptionListener.class, value)); return true;
         case "explicitqosenabled":
         case "explicitQosEnabled": getOrCreateConfiguration(target).setExplicitQosEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "exposelistenersession":
@@ -268,7 +268,7 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "concurrentConsumers": return int.class;
         case "configuration": return org.apache.camel.component.jms.JmsConfiguration.class;
         case "connectionfactory":
-        case "connectionFactory": return javax.jms.ConnectionFactory.class;
+        case "connectionFactory": return jakarta.jms.ConnectionFactory.class;
         case "consumertype":
         case "consumerType": return org.apache.camel.component.jms.ConsumerType.class;
         case "correlationproperty":
@@ -300,7 +300,7 @@ public class JmsComponentConfigurer extends PropertyConfigurerSupport implements
         case "errorhandlerlogginglevel":
         case "errorHandlerLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "exceptionlistener":
-        case "exceptionListener": return javax.jms.ExceptionListener.class;
+        case "exceptionListener": return jakarta.jms.ExceptionListener.class;
         case "explicitqosenabled":
         case "explicitQosEnabled": return java.lang.Boolean.class;
         case "exposelistenersession":

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-asterisk</artifactId>
@@ -32,9 +32,6 @@
     <description>Camel Asterisk to interact with an Asterisk PBX Server</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            org.asteriskjava.*;version="[1.0,4)"
-        </camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>

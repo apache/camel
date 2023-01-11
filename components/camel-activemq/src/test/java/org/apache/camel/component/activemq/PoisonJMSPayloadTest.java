@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.activemq;
 
-import javax.jms.Connection;
-import javax.jms.JMSException;
-import javax.jms.MessageProducer;
-import javax.jms.ObjectMessage;
-import javax.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.ObjectMessage;
+import jakarta.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.component.activemq.support.ActiveMQSpringTestSupport;
@@ -41,7 +41,7 @@ public class PoisonJMSPayloadTest extends ActiveMQSpringTestSupport {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
         getMockEndpoint("mock:dead").message(0).body(String.class)
                 .startsWith(
-                        "Poison JMS message payload: Failed to extract body due to: javax.jms.JMSException: Failed to build body from content. Serializable class not available to broker.");
+                        "Poison JMS message payload: Failed to extract body due to: jakarta.jms.JMSException: Failed to build body from content. Serializable class not available to broker.");
 
         factory = new ActiveMQConnectionFactory(vmUri());
         Connection conn = factory.createConnection();

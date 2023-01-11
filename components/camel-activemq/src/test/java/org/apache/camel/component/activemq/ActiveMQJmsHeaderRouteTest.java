@@ -19,7 +19,7 @@ package org.apache.camel.component.activemq;
 import java.util.Date;
 import java.util.List;
 
-import javax.jms.Destination;
+import jakarta.jms.Destination;
 
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.camel.CamelContext;

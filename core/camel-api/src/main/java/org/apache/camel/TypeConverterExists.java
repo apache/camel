@@ -16,7 +16,7 @@
  */
 package org.apache.camel;
 
-import javax.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlEnum;
 
 /**
  * What to do if attempting to add a duplicate type converter

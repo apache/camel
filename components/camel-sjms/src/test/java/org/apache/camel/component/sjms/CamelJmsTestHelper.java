@@ -19,7 +19,7 @@ package org.apache.camel.component.sjms;
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.util.FileUtil;

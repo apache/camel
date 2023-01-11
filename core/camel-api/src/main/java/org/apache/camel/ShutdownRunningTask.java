@@ -16,8 +16,8 @@
  */
 package org.apache.camel;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * Represents the kind of options for what to do with the current task when shutting down.

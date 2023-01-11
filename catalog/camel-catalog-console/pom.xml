@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>catalog</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-catalog-console</artifactId>
@@ -85,10 +85,6 @@
     <build>
         <plugins>
 
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bundle-plugin</artifactId>
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.camel</groupId>

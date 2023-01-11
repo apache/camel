@@ -18,7 +18,7 @@ package org.apache.camel.component.jsonb;
 
 import java.math.BigDecimal;
 
-import javax.json.bind.config.PropertyOrderStrategy;
+import jakarta.json.bind.config.PropertyOrderStrategy;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

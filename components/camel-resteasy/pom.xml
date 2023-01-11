@@ -26,7 +26,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-resteasy</artifactId>
@@ -60,9 +60,9 @@
                 <version>${resteasy-version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>${javax-servlet-api-version}</version>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>${jakarta-servlet-api-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -159,11 +159,7 @@
             <version>${jakarta.el-version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.resteasy</groupId>
-            <artifactId>resteasy-spring</artifactId>
-            <scope>test</scope>
-        </dependency>
+
 
         <!-- arquillian and shrinkwrap test dependencies -->
         <dependency>

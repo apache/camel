@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.cloud.ServiceRegistrationRoutePolicy;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.SocketUtils;
+import org.apache.camel.test.AvailablePortFinder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -63,7 +63,7 @@ public class ConsulServiceCallWithRegistrationIT extends ConsulTestSupport {
 
     @Test
     public void testServiceCallSuccess() throws Exception {
-        final int port = SocketUtils.findAvailableTcpPort();
+        final int port = AvailablePortFinder.getNextAvailable();
         final String serviceId = UUID.randomUUID().toString();
         final String serviceName = UUID.randomUUID().toString();
 
@@ -91,7 +91,7 @@ public class ConsulServiceCallWithRegistrationIT extends ConsulTestSupport {
 
     @Test
     public void testServiceCallFailure() throws Exception {
-        final int port = SocketUtils.findAvailableTcpPort();
+        final int port = AvailablePortFinder.getNextAvailable();
         final String serviceId = UUID.randomUUID().toString();
         final String serviceName = UUID.randomUUID().toString();
 

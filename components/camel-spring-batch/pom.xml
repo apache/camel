@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-batch</artifactId>
@@ -31,8 +31,6 @@
     <description>Camel Spring Batch support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>org.springframework.batch.*;version="[4,6)"
-        </camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>

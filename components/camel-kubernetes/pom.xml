@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-kubernetes</artifactId>
@@ -32,10 +32,6 @@
     <name>Camel :: Kubernetes</name>
 
     <properties>
-        <camel.osgi.export.pkg>
-            org.apache.camel.component.kubernetes*,
-            org.apache.camel.component.openshift*
-        </camel.osgi.export.pkg>
     </properties>
 
     <dependencyManagement>

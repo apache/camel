@@ -18,8 +18,8 @@ package org.apache.camel.http.common;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -106,9 +106,9 @@ public interface HttpBinding {
     boolean isUseReaderForPayload();
 
     /**
-     * Should the {@link javax.servlet.http.HttpServletRequest#getReader()} be exposed as the payload of input messages
+     * Should the {@link jakarta.servlet.http.HttpServletRequest#getReader()} be exposed as the payload of input messages
      * in the Camel {@link org.apache.camel.Message#getBody()} or not. If false then the
-     * {@link javax.servlet.http.HttpServletRequest#getInputStream()} will be exposed.
+     * {@link jakarta.servlet.http.HttpServletRequest#getInputStream()} will be exposed.
      * <p/>
      * Is default <tt>false</tt>.
      *

@@ -20,7 +20,7 @@ package org.apache.camel.test.infra.activemq.services;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 

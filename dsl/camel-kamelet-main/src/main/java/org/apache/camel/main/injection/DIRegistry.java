@@ -36,15 +36,15 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.apache.camel.support.SupplierRegistry;
 import org.apache.camel.util.function.Suppliers;
 
 /**
  * <p>
- * {@link SupplierRegistry} extension that allows registration of bean <em>recipes</em> based on javax.inject
+ * {@link SupplierRegistry} extension that allows registration of bean <em>recipes</em> based on jakarta.inject
  * annotations.
  * </p>
  *
@@ -70,7 +70,7 @@ public class DIRegistry extends SupplierRegistry {
     /**
      * Main "registration" method, where {@code beanClass} is expected to be a pojo class with non-default constructor
      * annotated with {@link Inject}. The class may be annotated with {@link Named}. (Maybe supporting
-     * {@link javax.inject.Singleton} soon).
+     * {@link jakarta.inject.Singleton} soon).
      *
      * @param key  the lookup type
      * @param type the actual type (to use when instantiating a bean)

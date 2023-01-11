@@ -16,9 +16,9 @@
  */
 package org.apache.camel.cdi.test;
 
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
-import javax.inject.Inject;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cdi.CdiCamelExtension;

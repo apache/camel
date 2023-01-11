@@ -16,7 +16,7 @@
  */
 package org.apache.camel.cdi.bean;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;

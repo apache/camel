@@ -16,7 +16,7 @@
  */
 package org.apache.camel.cdi.test;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.camel.cdi.CdiCamelExtension;
 import org.apache.camel.cdi.bean.CamelContextAwareBean;

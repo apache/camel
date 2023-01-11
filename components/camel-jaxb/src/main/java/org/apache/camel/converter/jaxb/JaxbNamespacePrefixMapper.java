@@ -24,7 +24,7 @@ import java.util.Map;
 public interface JaxbNamespacePrefixMapper {
 
     /**
-     * JAXB requires the mapper to be registered as a property on the {@link javax.xml.bind.JAXBContext}.
+     * JAXB requires the mapper to be registered as a property on the {@link jakarta.xml.bind.JAXBContext}.
      */
     String getRegistrationKey();
 

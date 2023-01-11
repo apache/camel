@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.cxf.holder;
 
-import javax.jws.WebParam;
-import javax.jws.WebService;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.ws.Holder;
-import javax.xml.ws.RequestWrapper;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
+import jakarta.xml.bind.annotation.XmlSeeAlso;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.RequestWrapper;
 
 @WebService
 @XmlSeeAlso({ MyOrderType.class })

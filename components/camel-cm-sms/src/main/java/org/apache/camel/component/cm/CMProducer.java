@@ -18,8 +18,8 @@ package org.apache.camel.component.cm;
 
 import java.util.Set;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;

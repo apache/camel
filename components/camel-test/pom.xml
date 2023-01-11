@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-test-parent</artifactId>
@@ -34,9 +34,9 @@
 
     <modules>
         <module>camel-test</module>
-        <module>camel-test-cdi</module>
+        <!--module>camel-test-cdi</module-->
         <module>camel-test-cdi-junit5</module>
-        <module>camel-test-spring</module>
+        <!--module>camel-test-spring</module-->
         <module>camel-test-junit5</module>
         <module>camel-test-spring-junit5</module>
         <module>camel-test-main-junit5</module>

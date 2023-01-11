@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>catalog</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-allcomponents</artifactId>
@@ -33,11 +33,6 @@
     <description>Depends on all components to ensure correct build ordering</description>
 
 	<dependencies>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-activemq</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-amqp</artifactId>
@@ -1005,11 +1000,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-johnzon</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-jolt</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1690,11 +1680,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-stomp</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-stream</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1740,11 +1725,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-cdi</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-cdi-junit5</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -1756,11 +1736,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-main-junit5</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-spring</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -1876,11 +1851,6 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-webhook</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-websocket</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

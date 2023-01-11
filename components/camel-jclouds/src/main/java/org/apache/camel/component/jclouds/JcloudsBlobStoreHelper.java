@@ -20,8 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.ws.rs.core.MediaType;
-
 import com.google.common.base.Strings;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.domain.Blob;
@@ -33,6 +31,7 @@ import static org.jclouds.blobstore.options.PutOptions.Builder.multipart;
 
 public final class JcloudsBlobStoreHelper {
 
+    private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
     private JcloudsBlobStoreHelper() {
         //Utility Class
     }
@@ -80,7 +79,7 @@ public final class JcloudsBlobStoreHelper {
     public static void writeBlob(BlobStore blobStore, String container, String blobName, Payload payload) {
         if (blobName != null && payload != null) {
             mkDirs(blobStore, container, blobName);
-            Blob blob = blobStore.blobBuilder(blobName).payload(payload).contentType(MediaType.APPLICATION_OCTET_STREAM)
+            Blob blob = blobStore.blobBuilder(blobName).payload(payload).contentType(APPLICATION_OCTET_STREAM)
                     .contentDisposition(blobName).build();
             blobStore.putBlob(container, blob, multipart());
         }

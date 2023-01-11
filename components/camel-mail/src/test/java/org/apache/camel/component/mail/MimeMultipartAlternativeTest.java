@@ -19,9 +19,9 @@ package org.apache.camel.component.mail;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
-import javax.mail.internet.MimeMultipart;
+import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
+import jakarta.mail.internet.MimeMultipart;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.attachment.AttachmentMessage;

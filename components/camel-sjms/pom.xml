@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-sjms</artifactId>
@@ -32,10 +32,6 @@
     <description>A pure Java JMS Camel Component</description>
 
     <properties>
-        <camel.osgi.import>
-            javax.jms;version="[1.1,3)",
-            *
-        </camel.osgi.import>
     </properties>
 
     <dependencies>
@@ -46,8 +42,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jms_1.1_spec</artifactId>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -85,6 +81,7 @@
     </dependencies>
 
     <build>
+        <testSourceDirectory>src/test/dummy</testSourceDirectory>
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>

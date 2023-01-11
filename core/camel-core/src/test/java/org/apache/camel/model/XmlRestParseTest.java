@@ -16,7 +16,7 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.camel.model.rest.GetDefinition;
 import org.apache.camel.model.rest.RestContainer;

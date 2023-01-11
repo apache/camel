@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.cxf.wsdl;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

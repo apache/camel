@@ -19,8 +19,8 @@ package org.apache.camel.component.bean.validator;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ValidatorFactory;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ValidatorFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;

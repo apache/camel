@@ -21,10 +21,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.jms.DeliveryMode;
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExchangeHelper;
@@ -37,7 +37,7 @@ import static org.apache.camel.component.jms.JmsConfiguration.TOPIC_PREFIX;
 import static org.apache.camel.util.StringHelper.removeStartingCharacters;
 
 /**
- * Utility class for {@link javax.jms.Message}.
+ * Utility class for {@link jakarta.jms.Message}.
  */
 public final class JmsMessageHelper {
 
@@ -387,7 +387,7 @@ public final class JmsMessageHelper {
      * @param  exchange               the exchange
      * @param  message                the message
      * @param  deliveryMode           the delivery mode, either as a String or integer
-     * @throws javax.jms.JMSException is thrown if error setting the delivery mode
+     * @throws jakarta.jms.JMSException is thrown if error setting the delivery mode
      */
     public static void setJMSDeliveryMode(Exchange exchange, Message message, Object deliveryMode) throws JMSException {
         Integer mode = null;

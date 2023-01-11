@@ -16,9 +16,9 @@
  */
 package org.apache.camel.websocket.jsr356;
 
-import javax.websocket.DeploymentException;
-import javax.websocket.server.ServerContainer;
-import javax.websocket.server.ServerEndpointConfig.Builder;
+import jakarta.websocket.DeploymentException;
+import jakarta.websocket.server.ServerContainer;
+import jakarta.websocket.server.ServerEndpointConfig.Builder;
 
 /**
  * Default {@link ServerEndpointDeploymentStrategy} to deploy a Websocket endpoint using the given configuration

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 
 import org.eclipse.jetty.deploy.App;
 import org.jboss.arquillian.container.jetty.embedded_9.JettyEmbeddedConfiguration;

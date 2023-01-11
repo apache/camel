@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.cxf;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.WebServiceException;
-import javax.xml.ws.handler.MessageContext;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpSession;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.WebServiceException;
+import jakarta.xml.ws.handler.MessageContext;
 
 public class EchoServiceSessionImpl implements EchoService {
 
@@ -31,7 +31,7 @@ public class EchoServiceSessionImpl implements EchoService {
     public String echo(String text) {
         // Find the HttpSession
         MessageContext mc = context.getMessageContext();
-        HttpSession session = ((javax.servlet.http.HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST)).getSession();
+        HttpSession session = ((jakarta.servlet.http.HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST)).getSession();
         if (session == null) {
             throw new WebServiceException("No HTTP Session found");
         }

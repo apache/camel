@@ -19,8 +19,8 @@ package org.apache.camel.dsl.xml.jaxb.definition.cdi;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;

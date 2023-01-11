@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-twilio</artifactId>
@@ -38,7 +38,6 @@
         <componentPackage>org.apache.camel.component.twilio</componentPackage>
         <outPackage>org.apache.camel.component.twilio.internal</outPackage>
 
-        <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
     </properties>
 
     <dependencies>

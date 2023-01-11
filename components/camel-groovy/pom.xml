@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-groovy</artifactId>
@@ -33,17 +33,6 @@
     <description>Camel Groovy support</description>
 
     <properties>
-        <camel.osgi.import.pkg>
-            !org.apache.camel.component.groovy.*,
-            org.codehaus.groovy.runtime.callsite,
-            org.apache.camel.*;${camel.osgi.import.camel.version},
-            ${camel.osgi.import.defaults},
-            *
-        </camel.osgi.import.pkg>
-        <camel.osgi.dynamic>
-            groovy.*,
-            org.codehaus.groovy.*
-        </camel.osgi.dynamic>
     </properties>
 
     <dependencies>

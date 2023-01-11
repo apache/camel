@@ -119,7 +119,7 @@ public interface CxfBinding {
 
     /**
      * <p>
-     * Extract the message headers which key are start from javax.xml.ws* from the CXF exchange's inMessage, and put
+     * Extract the message headers which key are start from jakarta.xml.ws* from the CXF exchange's inMessage, and put
      * these headers into the context
      * </p>
      * 
@@ -131,7 +131,7 @@ public interface CxfBinding {
 
     /**
      * <p>
-     * Copy the javax.xml.ws* headers into cxfExchange's outMessage, if the cxfExchange has no outMessage, skip this
+     * Copy the jakarta.xml.ws* headers into cxfExchange's outMessage, if the cxfExchange has no outMessage, skip this
      * copy
      * </p>
      * 

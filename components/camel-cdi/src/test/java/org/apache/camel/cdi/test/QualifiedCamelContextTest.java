@@ -18,8 +18,8 @@ package org.apache.camel.cdi.test;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;

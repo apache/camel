@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf.jaxws;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService
 public interface EchoService {

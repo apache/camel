@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.spring.ws;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

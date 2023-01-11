@@ -18,8 +18,8 @@ package org.apache.camel.component.jpa;
 
 import java.io.IOException;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.test.junit5.CamelTestSupport;

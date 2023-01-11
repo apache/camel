@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.sjms.reply;
 
-import javax.jms.Message;
-import javax.jms.Session;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 
 /**
  * Handles a reply.

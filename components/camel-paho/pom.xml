@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-paho</artifactId>
@@ -59,7 +59,7 @@
         <!-- test infra -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-infra-activemq</artifactId>
+            <artifactId>camel-test-infra-artemis</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
             <type>test-jar</type>
@@ -72,5 +72,9 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+        <testSourceDirectory>src/test/dummy</testSourceDirectory>
+    </build>
 
 </project>

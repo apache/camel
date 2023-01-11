@@ -17,9 +17,9 @@
     limitations under the License.
 
 -->
-<web-app metadata-complete="false" version="3.0"  xmlns="http://java.sun.com/xml/ns/javaee"
+<web-app metadata-complete="false" version="6.0"  xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee  http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee  https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
 
     <display-name>Restful Web Application</display-name>
 

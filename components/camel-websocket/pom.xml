@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-websocket</artifactId>
@@ -33,13 +33,6 @@
     <description>Camel WebSocket using Jetty</description>
 
     <properties>
-        <camel.osgi.import.pkg>
-            !org.apache.camel.component.websocket.*,
-            org.eclipse.jetty.util.ssl;version="[9.3,10)";resolution:=optional,
-            org.eclipse.jetty.*;version="[9.3,10)",
-            ${camel.osgi.import.defaults},
-            *
-        </camel.osgi.import.pkg>
     </properties>
 
     <dependencies>
@@ -51,17 +44,17 @@
         <!-- Jetty -->
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
-            <artifactId>websocket-server</artifactId>
+            <artifactId>websocket-jakarta-server</artifactId>
             <version>${jetty-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
-            <artifactId>websocket-client</artifactId>
+            <artifactId>websocket-jakarta-client</artifactId>
             <version>${jetty-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
-            <artifactId>websocket-api</artifactId>
+            <artifactId>websocket-jakarta-api</artifactId>
             <version>${jetty-version}</version>
         </dependency>
         <dependency>
@@ -81,8 +74,8 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
 
         <!-- test dependencies -->

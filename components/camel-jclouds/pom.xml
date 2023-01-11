@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jclouds</artifactId>
@@ -32,9 +32,6 @@
     <description>Camel JClouds support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            com.google.common.*;version="${jclouds-google-guava-version-range}",
-        </camel.osgi.import.before.defaults>
 
 
         <!-- jclouds requires guice 3 -->

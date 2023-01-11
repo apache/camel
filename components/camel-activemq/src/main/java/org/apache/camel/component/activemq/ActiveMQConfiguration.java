@@ -18,7 +18,7 @@ package org.apache.camel.component.activemq;
 
 import java.lang.reflect.Constructor;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.Service;

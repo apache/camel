@@ -22,9 +22,9 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Holder;
-import javax.xml.ws.soap.SOAPBinding;
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.soap.SOAPBinding;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

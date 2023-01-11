@@ -22,8 +22,8 @@ import java.io.InputStream;
 import java.util.Collection;
 
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;

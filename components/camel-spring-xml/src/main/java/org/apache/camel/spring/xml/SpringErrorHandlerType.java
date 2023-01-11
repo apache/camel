@@ -16,8 +16,8 @@
  */
 package org.apache.camel.spring.xml;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlEnum;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.builder.LegacyDeadLetterChannelBuilder;
 import org.apache.camel.builder.LegacyDefaultErrorHandlerBuilder;

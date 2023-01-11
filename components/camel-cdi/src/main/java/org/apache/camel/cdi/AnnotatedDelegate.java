@@ -21,8 +21,8 @@ import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.enterprise.inject.Vetoed;
-import javax.enterprise.inject.spi.Annotated;
+import jakarta.enterprise.inject.Vetoed;
+import jakarta.enterprise.inject.spi.Annotated;
 
 import static java.util.stream.Collectors.toSet;
 import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;

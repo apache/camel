@@ -349,10 +349,10 @@ public final class MultiCompile {
     }
 
     /**
-     * Cleanup after compiling as for some weird reason a file named javax.inject.Named is created when using @Named
+     * Cleanup after compiling as for some weird reason a file named jakarta.inject.Named is created when using @Named
      */
     private static void cleanupWaste() {
-        FileUtil.deleteFile(new File("javax.inject.Named"));
+        FileUtil.deleteFile(new File("jakarta.inject.Named"));
     }
 
 }

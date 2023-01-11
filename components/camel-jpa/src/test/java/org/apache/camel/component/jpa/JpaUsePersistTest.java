@@ -18,7 +18,7 @@ package org.apache.camel.component.jpa;
 
 import java.security.SecureRandom;
 
-import javax.persistence.PersistenceException;
+import jakarta.persistence.PersistenceException;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.examples.Order;

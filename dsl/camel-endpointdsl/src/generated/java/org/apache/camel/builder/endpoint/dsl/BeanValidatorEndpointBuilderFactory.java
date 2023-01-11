@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -48,7 +48,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: javax.validation.groups.Default
+         * Default: jakarta.validation.groups.Default
          * Group: producer
          * 
          * @param group the value to set
@@ -155,7 +155,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom ConstraintValidatorFactory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.validation.ConstraintValidatorFactory&lt;/code&gt;
+         * &lt;code&gt;jakarta.validation.ConstraintValidatorFactory&lt;/code&gt;
          * type.
          * 
          * Group: advanced
@@ -164,7 +164,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder constraintValidatorFactory(
-                javax.validation.ConstraintValidatorFactory constraintValidatorFactory) {
+                jakarta.validation.ConstraintValidatorFactory constraintValidatorFactory) {
             doSetProperty("constraintValidatorFactory", constraintValidatorFactory);
             return this;
         }
@@ -172,7 +172,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom ConstraintValidatorFactory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.validation.ConstraintValidatorFactory&lt;/code&gt;
+         * &lt;code&gt;jakarta.validation.ConstraintValidatorFactory&lt;/code&gt;
          * type.
          * 
          * Group: advanced
@@ -189,7 +189,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom MessageInterpolator.
          * 
          * The option is a:
-         * &lt;code&gt;javax.validation.MessageInterpolator&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.validation.MessageInterpolator&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -197,7 +197,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder messageInterpolator(
-                javax.validation.MessageInterpolator messageInterpolator) {
+                jakarta.validation.MessageInterpolator messageInterpolator) {
             doSetProperty("messageInterpolator", messageInterpolator);
             return this;
         }
@@ -205,7 +205,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom MessageInterpolator.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.validation.MessageInterpolator&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.validation.MessageInterpolator&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -221,7 +221,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom TraversableResolver.
          * 
          * The option is a:
-         * &lt;code&gt;javax.validation.TraversableResolver&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.validation.TraversableResolver&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -229,7 +229,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder traversableResolver(
-                javax.validation.TraversableResolver traversableResolver) {
+                jakarta.validation.TraversableResolver traversableResolver) {
             doSetProperty("traversableResolver", traversableResolver);
             return this;
         }
@@ -237,7 +237,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom TraversableResolver.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.validation.TraversableResolver&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.validation.TraversableResolver&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -253,7 +253,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a a custom ValidationProviderResolver.
          * 
          * The option is a:
-         * &lt;code&gt;javax.validation.ValidationProviderResolver&lt;/code&gt;
+         * &lt;code&gt;jakarta.validation.ValidationProviderResolver&lt;/code&gt;
          * type.
          * 
          * Group: advanced
@@ -262,7 +262,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder validationProviderResolver(
-                javax.validation.ValidationProviderResolver validationProviderResolver) {
+                jakarta.validation.ValidationProviderResolver validationProviderResolver) {
             doSetProperty("validationProviderResolver", validationProviderResolver);
             return this;
         }
@@ -270,7 +270,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a a custom ValidationProviderResolver.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.validation.ValidationProviderResolver&lt;/code&gt;
+         * &lt;code&gt;jakarta.validation.ValidationProviderResolver&lt;/code&gt;
          * type.
          * 
          * Group: advanced
@@ -287,7 +287,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom ValidatorFactory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.validation.ValidatorFactory&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.validation.ValidatorFactory&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -295,7 +295,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedBeanValidatorEndpointBuilder validatorFactory(
-                javax.validation.ValidatorFactory validatorFactory) {
+                jakarta.validation.ValidatorFactory validatorFactory) {
             doSetProperty("validatorFactory", validatorFactory);
             return this;
         }
@@ -303,7 +303,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * To use a custom ValidatorFactory.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.validation.ValidatorFactory&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.validation.ValidatorFactory&lt;/code&gt; type.
          * 
          * Group: advanced
          * 

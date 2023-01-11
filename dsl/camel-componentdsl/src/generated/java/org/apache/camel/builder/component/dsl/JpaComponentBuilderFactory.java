@@ -16,7 +16,7 @@
  */
 package org.apache.camel.builder.component.dsl;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
@@ -73,7 +73,7 @@ public interface JpaComponentBuilderFactory {
          * configure.
          * 
          * The option is a:
-         * &lt;code&gt;javax.persistence.EntityManagerFactory&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.persistence.EntityManagerFactory&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -81,7 +81,7 @@ public interface JpaComponentBuilderFactory {
          * @return the dsl builder
          */
         default JpaComponentBuilder entityManagerFactory(
-                javax.persistence.EntityManagerFactory entityManagerFactory) {
+                jakarta.persistence.EntityManagerFactory entityManagerFactory) {
             doSetProperty("entityManagerFactory", entityManagerFactory);
             return this;
         }
@@ -239,7 +239,7 @@ public interface JpaComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "aliases": ((JpaComponent) component).setAliases((java.util.Map) value); return true;
-            case "entityManagerFactory": ((JpaComponent) component).setEntityManagerFactory((javax.persistence.EntityManagerFactory) value); return true;
+            case "entityManagerFactory": ((JpaComponent) component).setEntityManagerFactory((jakarta.persistence.EntityManagerFactory) value); return true;
             case "joinTransaction": ((JpaComponent) component).setJoinTransaction((boolean) value); return true;
             case "sharedEntityManager": ((JpaComponent) component).setSharedEntityManager((boolean) value); return true;
             case "transactionManager": ((JpaComponent) component).setTransactionManager((org.springframework.transaction.PlatformTransactionManager) value); return true;

@@ -18,8 +18,8 @@ package org.apache.camel.component.activemq.converter;
 
 import java.util.List;
 
-import javax.jms.Message;
-import javax.jms.TextMessage;
+import jakarta.jms.Message;
+import jakarta.jms.TextMessage;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;

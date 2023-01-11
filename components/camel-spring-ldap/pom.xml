@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-ldap</artifactId>
@@ -31,10 +31,6 @@
     <description>Camel support for Spring LDAP</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            org.springframework.ldap.*;version="[2,3)",
-            org.springframework.transaction.compensating.*;version="[2,3)"
-        </camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>

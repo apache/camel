@@ -16,8 +16,8 @@
  */
 package org.apache.camel.cdi.transaction;
 
-import javax.inject.Named;
-import javax.transaction.Transaction;
+import jakarta.inject.Named;
+import jakarta.transaction.Transaction;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

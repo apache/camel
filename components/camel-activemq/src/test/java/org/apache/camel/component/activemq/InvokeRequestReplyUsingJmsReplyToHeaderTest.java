@@ -19,7 +19,7 @@ package org.apache.camel.component.activemq;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.Destination;
+import jakarta.jms.Destination;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;

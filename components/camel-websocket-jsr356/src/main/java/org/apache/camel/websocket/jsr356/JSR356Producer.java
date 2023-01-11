@@ -22,9 +22,9 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.function.BiConsumer;
 
-import javax.websocket.ClientEndpointConfig;
-import javax.websocket.RemoteEndpoint;
-import javax.websocket.Session;
+import jakarta.websocket.ClientEndpointConfig;
+import jakarta.websocket.RemoteEndpoint;
+import jakarta.websocket.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;

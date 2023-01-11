@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-xstream</artifactId>
@@ -33,9 +33,6 @@
     <description>Camel XStream support</description>
 
     <properties>
-        <camel.osgi.import.additional>
-            com.thoughtworks.xstream.*;version="[1.4.7,2)",
-        </camel.osgi.import.additional>
     </properties>
 
     <dependencies>

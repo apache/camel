@@ -22,10 +22,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.Vetoed;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.InjectionPoint;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.inject.Vetoed;
+import jakarta.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.InjectionPoint;
 
 @Vetoed
 final class BeanDelegate<T> implements Bean<T> {
@@ -83,12 +83,7 @@ final class BeanDelegate<T> implements Bean<T> {
         return delegate.getInjectionPoints();
     }
 
-    @Override
-    public boolean isNullable() {
-        return delegate.isNullable();
-    }
-
-    @Override
+       @Override
     public T create(CreationalContext<T> creationalContext) {
         return delegate.create(creationalContext);
     }

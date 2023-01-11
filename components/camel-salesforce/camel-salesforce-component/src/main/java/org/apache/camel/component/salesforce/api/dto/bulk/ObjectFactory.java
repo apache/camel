@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.salesforce.api.dto.bulk;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlElementDecl;
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.annotation.XmlElementDecl;
+import jakarta.xml.bind.annotation.XmlRegistry;
 import javax.xml.namespace.QName;
 
 /**
@@ -120,7 +120,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link JobInfo }{@code >}}
+     * Create an instance of {@link jakarta.xml.bind.JAXBElement }{@code <}{@link JobInfo }{@code >}}
      */
     @XmlElementDecl(namespace = "http://www.force.com/2009/06/asyncapi/dataload", name = "jobInfo")
     public JAXBElement<JobInfo> createJobInfo(JobInfo value) {
@@ -128,7 +128,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link BatchInfo }{@code >}}
+     * Create an instance of {@link jakarta.xml.bind.JAXBElement }{@code <}{@link BatchInfo }{@code >}}
      */
     @XmlElementDecl(namespace = "http://www.force.com/2009/06/asyncapi/dataload", name = "batchInfo")
     public JAXBElement<BatchInfo> createBatchInfo(BatchInfo value) {
@@ -136,7 +136,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link Error }{@code >}}
+     * Create an instance of {@link jakarta.xml.bind.JAXBElement }{@code <}{@link Error }{@code >}}
      */
     @XmlElementDecl(namespace = "http://www.force.com/2009/06/asyncapi/dataload", name = "error")
     public JAXBElement<Error> createError(Error value) {
@@ -144,7 +144,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link BatchResult }{@code >}}
+     * Create an instance of {@link jakarta.xml.bind.JAXBElement }{@code <}{@link BatchResult }{@code >}}
      */
     @XmlElementDecl(namespace = "http://www.force.com/2009/06/asyncapi/dataload", name = "results")
     public JAXBElement<BatchResult> createResults(BatchResult value) {
@@ -152,7 +152,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link QueryResultList }{@code >}}
+     * Create an instance of {@link jakarta.xml.bind.JAXBElement }{@code <}{@link QueryResultList }{@code >}}
      */
     @XmlElementDecl(namespace = "http://www.force.com/2009/06/asyncapi/dataload", name = "result-list")
     public JAXBElement<QueryResultList> createResultList(QueryResultList value) {
@@ -160,7 +160,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link BatchInfoList }{@code >}}
+     * Create an instance of {@link jakarta.xml.bind.JAXBElement }{@code <}{@link BatchInfoList }{@code >}}
      */
     @XmlElementDecl(namespace = "http://www.force.com/2009/06/asyncapi/dataload", name = "batchInfoList")
     public JAXBElement<BatchInfoList> createBatchInfoList(BatchInfoList value) {
@@ -168,7 +168,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link javax.xml.bind.JAXBElement }{@code <}{@link QueryResult }{@code >}}
+     * Create an instance of {@link jakarta.xml.bind.JAXBElement }{@code <}{@link QueryResult }{@code >}}
      */
     @XmlElementDecl(namespace = "http://www.force.com/2009/06/asyncapi/dataload", name = "queryResult")
     public JAXBElement<QueryResult> createQueryResult(QueryResult value) {

@@ -41,7 +41,7 @@ import static org.hamcrest.Matchers.greaterThan;
 
 /*
  * TODO fix authentication problem (when implementing global authentication) 
- * javax.ws.rs.NotAuthorizedException: HTTP 401 Unauthorized
+ * jakarta.ws.rs.NotAuthorizedException: HTTP 401 Unauthorized
  */
 @Disabled("Not implemented yet")
 public class WordpressServicePostRevisionAdapterIT extends WordpressMockServerTestSupport {

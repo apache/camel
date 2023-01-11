@@ -18,7 +18,7 @@ package org.apache.camel.maven.packaging.dsl.component;
 
 import java.util.Objects;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.maven.packaging.ComponentDslMojo;
 import org.apache.camel.maven.packaging.dsl.DslHelper;

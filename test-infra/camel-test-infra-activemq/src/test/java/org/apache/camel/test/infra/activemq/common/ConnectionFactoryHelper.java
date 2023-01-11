@@ -17,7 +17,7 @@
 
 package org.apache.camel.test.infra.activemq.common;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.test.infra.activemq.services.AbstractActiveMQEmbeddedService;

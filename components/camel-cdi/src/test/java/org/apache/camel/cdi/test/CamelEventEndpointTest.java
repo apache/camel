@@ -18,7 +18,7 @@ package org.apache.camel.cdi.test;
 
 import java.util.EventObject;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.CdiCamelExtension;

@@ -18,12 +18,12 @@ package org.apache.camel.component.cxf;
 
 import java.awt.*;
 
-import javax.xml.ws.BindingType;
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.BindingType;
+import jakarta.xml.ws.Holder;
 
 import org.apache.camel.cxf.mtom_feature.Hello;
 
-@BindingType(value = javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_MTOM_BINDING)
+@BindingType(value = jakarta.xml.ws.soap.SOAPBinding.SOAP11HTTP_MTOM_BINDING)
 public class HelloImpl implements Hello {
     public void detail(Holder<byte[]> photo, Holder<Image> image) {
         // echo through Holder

@@ -28,7 +28,7 @@
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>3.21.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Camel</name>
@@ -69,7 +69,6 @@
 
     <modules>
         <module>parent</module>
-        <module>init</module>
         <module>etc</module>
         <module>bom</module>
         <module>buildingtools</module>
@@ -133,11 +132,12 @@
 
         <!-- eclipse plugin need the jaxb in this pom.xml file -->
         <!-- Make sure to keep JAXB version up to date in parent/pom.xml in the bottom of the file -->
-        <jaxb-api-version>2.3.1</jaxb-api-version>
-        <jaxb-core-version>2.3.0</jaxb-core-version>
-        <jaxb-impl-version>2.3.3</jaxb-impl-version>
-        <jaxb-osgi-version>2.3.3</jaxb-osgi-version>
-        <jaxb-xjc-version>2.3.3</jaxb-xjc-version>
+        <jakarta-xml-bind-api-version>4.0.0</jakarta-xml-bind-api-version>
+        <jaxb-core-version>4.0.1</jaxb-core-version>
+        <jaxb-impl-version>4.0.1</jaxb-impl-version>
+        <jaxb-osgi-version>4.0.1</jaxb-osgi-version>
+        <jaxb-xjc-version>4.0.1</jaxb-xjc-version>
+        <jaxb-jxc-version>4.0.1</jaxb-jxc-version>
         <errorprone-version>2.5</errorprone-version>
         <mycila-license-version>3.0</mycila-license-version>
         <gmavenplus-plugin-version>1.11.1</gmavenplus-plugin-version>
@@ -569,7 +569,7 @@
                                             <entry key="org.eclipse.jdt.ui.text.custom_templates" value="${eclipse.camel.java.code.templates}" />
 
                                             <!-- Add import order -->
-                                            <entry key="org.eclipse.jdt.ui.importorder" value="java;javax;org.w3c;org.xml;w3c;" />
+                                            <entry key="org.eclipse.jdt.ui.importorder" value="java;jakarta;javax;org.w3c;org.xml;w3c;" />
                                             <!-- Sort order -->
                                             <entry key="org.eclipse.jdt.ui.visibility.order" value="B,R,D,V," />
                                             <entry key="outlinesortoption" value="T,SF,F,SI,I,C,SM,M," />

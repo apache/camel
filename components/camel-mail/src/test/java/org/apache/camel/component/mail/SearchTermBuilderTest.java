@@ -18,9 +18,9 @@ package org.apache.camel.component.mail;
 
 import java.util.Date;
 
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.SearchTerm;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.search.SearchTerm;
 
 import org.junit.jupiter.api.Test;
 import org.jvnet.mock_javamail.Mailbox;

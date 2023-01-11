@@ -23,7 +23,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;

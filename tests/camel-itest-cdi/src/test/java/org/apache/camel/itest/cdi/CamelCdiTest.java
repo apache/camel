@@ -16,7 +16,7 @@
  */
 package org.apache.camel.itest.cdi;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;

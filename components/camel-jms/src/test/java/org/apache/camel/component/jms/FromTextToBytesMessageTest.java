@@ -37,9 +37,9 @@ public class FromTextToBytesMessageTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        javax.jms.Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
+        jakarta.jms.Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
         assertNotNull(msg);
-        assertIsInstanceOf(javax.jms.BytesMessage.class, msg);
+        assertIsInstanceOf(jakarta.jms.BytesMessage.class, msg);
     }
 
     @Test
@@ -51,9 +51,9 @@ public class FromTextToBytesMessageTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        javax.jms.Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
+        jakarta.jms.Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
         assertNotNull(msg);
-        assertIsInstanceOf(javax.jms.BytesMessage.class, msg);
+        assertIsInstanceOf(jakarta.jms.BytesMessage.class, msg);
     }
 
     @Test
@@ -65,9 +65,9 @@ public class FromTextToBytesMessageTest extends AbstractJMSTest {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        javax.jms.Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
+        jakarta.jms.Message msg = mock.getReceivedExchanges().get(0).getIn(JmsMessage.class).getJmsMessage();
         assertNotNull(msg);
-        assertIsInstanceOf(javax.jms.TextMessage.class, msg);
+        assertIsInstanceOf(jakarta.jms.TextMessage.class, msg);
     }
 
     @Override

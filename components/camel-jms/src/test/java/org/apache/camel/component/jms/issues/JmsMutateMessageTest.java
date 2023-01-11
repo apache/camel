@@ -56,7 +56,7 @@ public class JmsMutateMessageTest extends AbstractJMSTest {
                         .process(exchange -> {
                             // do not mutate it
                             JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
-                            assertNotNull(msg.getJmsMessage(), "javax.jms.Message should not be null");
+                            assertNotNull(msg.getJmsMessage(), "jakarta.jms.Message should not be null");
 
                             // get header should not mutate it
                             assertEquals("VALUE_1", exchange.getIn().getHeader("HEADER_1"));
@@ -66,7 +66,7 @@ public class JmsMutateMessageTest extends AbstractJMSTest {
                         .process(exchange -> {
                             // it should have been mutated
                             JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
-                            assertNotNull(msg.getJmsMessage(), "javax.jms.Message should not be null");
+                            assertNotNull(msg.getJmsMessage(), "jakarta.jms.Message should not be null");
 
                             // get header should not mutate it
                             assertEquals("VALUE_2", exchange.getIn().getHeader("HEADER_1"));

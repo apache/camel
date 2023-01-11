@@ -43,8 +43,8 @@ public final class ActiveMQMessageConverterLoader implements TypeConverterLoader
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, org.apache.activemq.command.ActiveMQMessage.class, org.apache.camel.Exchange.class, false,
             (type, exchange, value) -> getActiveMQMessageConverter().toMessage((org.apache.camel.Exchange) value));
-        addTypeConverter(registry, org.apache.camel.Processor.class, javax.jms.MessageListener.class, false,
-            (type, exchange, value) -> getActiveMQMessageConverter().toProcessor((javax.jms.MessageListener) value));
+        addTypeConverter(registry, org.apache.camel.Processor.class, jakarta.jms.MessageListener.class, false,
+            (type, exchange, value) -> getActiveMQMessageConverter().toProcessor((jakarta.jms.MessageListener) value));
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) { 

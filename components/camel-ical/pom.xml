@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-ical</artifactId>
@@ -33,11 +33,6 @@
     <description>Camel iCal component</description>
 
     <properties>
-        <camel.osgi.import>
-            !org.apache.camel.ical.*,
-            ${camel.osgi.import.defaults},
-            *
-        </camel.osgi.import>
     </properties>
 
     <dependencies>

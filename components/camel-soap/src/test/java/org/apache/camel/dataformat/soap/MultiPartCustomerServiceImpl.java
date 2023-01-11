@@ -16,7 +16,7 @@
  */
 package org.apache.camel.dataformat.soap;
 
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 
 import com.example.customerservice.multipart.Company;
 import com.example.customerservice.multipart.CompanyType;

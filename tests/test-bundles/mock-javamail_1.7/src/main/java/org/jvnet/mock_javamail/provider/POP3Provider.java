@@ -16,7 +16,7 @@
  */
 package org.jvnet.mock_javamail.provider;
 
-import javax.mail.Provider;
+import jakarta.mail.Provider;
 
 public class POP3Provider extends Provider {
 

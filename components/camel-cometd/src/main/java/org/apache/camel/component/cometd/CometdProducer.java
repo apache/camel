@@ -108,7 +108,7 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
                     logDelivery(exchange, channel);
                     ServerMessage.Mutable mutable = binding.createCometdMessage(channel, serverSession,
                             exchange.getIn());
-                    channel.publish(serverSession, mutable);
+                    channel.publish(serverSession, mutable, new org.cometd.bayeux.Promise<>() {});
                 }
             } finally {
                 if (disconnectLocalSession && serverSession.isLocalSession()) {

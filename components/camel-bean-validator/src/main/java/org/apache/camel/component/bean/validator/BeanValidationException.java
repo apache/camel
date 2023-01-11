@@ -18,7 +18,7 @@ package org.apache.camel.component.bean.validator;
 
 import java.util.Set;
 
-import javax.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolation;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;

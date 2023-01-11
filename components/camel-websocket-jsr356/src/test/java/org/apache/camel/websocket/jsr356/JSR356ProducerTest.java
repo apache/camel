@@ -19,9 +19,9 @@ package org.apache.camel.websocket.jsr356;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import javax.enterprise.context.Dependent;
-import javax.websocket.OnMessage;
-import javax.websocket.server.ServerEndpoint;
+import jakarta.enterprise.context.Dependent;
+import jakarta.websocket.OnMessage;
+import jakarta.websocket.server.ServerEndpoint;
 
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;

@@ -43,15 +43,15 @@ public final class HttpConverterLoader implements TypeConverterLoader, CamelCont
     private void registerConverters(TypeConverterRegistry registry) {
         addTypeConverter(registry, java.io.BufferedReader.class, org.apache.camel.http.common.HttpMessage.class, false,
             (type, exchange, value) -> org.apache.camel.http.common.HttpConverter.toReader((org.apache.camel.http.common.HttpMessage) value));
-        addTypeConverter(registry, java.io.InputStream.class, javax.servlet.http.HttpServletRequest.class, false,
-            (type, exchange, value) -> org.apache.camel.http.common.HttpConverter.toInputStream((javax.servlet.http.HttpServletRequest) value, exchange));
+        addTypeConverter(registry, java.io.InputStream.class, jakarta.servlet.http.HttpServletRequest.class, false,
+            (type, exchange, value) -> org.apache.camel.http.common.HttpConverter.toInputStream((jakarta.servlet.http.HttpServletRequest) value, exchange));
         addTypeConverter(registry, java.io.InputStream.class, org.apache.camel.http.common.HttpMessage.class, false,
             (type, exchange, value) -> org.apache.camel.http.common.HttpConverter.toInputStream((org.apache.camel.http.common.HttpMessage) value, exchange));
-        addTypeConverter(registry, javax.servlet.ServletInputStream.class, org.apache.camel.http.common.HttpMessage.class, false,
+        addTypeConverter(registry, jakarta.servlet.ServletInputStream.class, org.apache.camel.http.common.HttpMessage.class, false,
             (type, exchange, value) -> org.apache.camel.http.common.HttpConverter.toServletInputStream((org.apache.camel.http.common.HttpMessage) value));
-        addTypeConverter(registry, javax.servlet.http.HttpServletRequest.class, org.apache.camel.Message.class, false,
+        addTypeConverter(registry, jakarta.servlet.http.HttpServletRequest.class, org.apache.camel.Message.class, false,
             (type, exchange, value) -> org.apache.camel.http.common.HttpConverter.toServletRequest((org.apache.camel.Message) value));
-        addTypeConverter(registry, javax.servlet.http.HttpServletResponse.class, org.apache.camel.Message.class, false,
+        addTypeConverter(registry, jakarta.servlet.http.HttpServletResponse.class, org.apache.camel.Message.class, false,
             (type, exchange, value) -> org.apache.camel.http.common.HttpConverter.toServletResponse((org.apache.camel.Message) value));
     }
 

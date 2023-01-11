@@ -18,8 +18,8 @@ package org.apache.camel.component.jms;
 
 import java.util.Arrays;
 
-import javax.jms.BytesMessage;
-import javax.jms.ConnectionFactory;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;

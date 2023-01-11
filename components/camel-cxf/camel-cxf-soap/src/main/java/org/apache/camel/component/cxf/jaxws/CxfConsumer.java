@@ -20,7 +20,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.ws.WebFault;
+import jakarta.xml.ws.WebFault;
 
 import org.w3c.dom.Element;
 
@@ -297,7 +297,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
             }
             // bind the CXF request into a Camel exchange
             binding.populateExchangeFromCxfRequest(cxfExchange, camelExchange);
-            // extract the javax.xml.ws header
+            // extract the jakarta.xml.ws header
             Map<String, Object> context = new HashMap<>();
             binding.extractJaxWsContext(cxfExchange, context);
             // put the context into camelExchange
@@ -326,7 +326,7 @@ public class CxfConsumer extends DefaultConsumer implements Suspendable {
             // check failure again as fault could be discovered by converter
             checkFailure(camelExchange, cxfExchange);
 
-            // copy the headers javax.xml.ws header back
+            // copy the headers jakarta.xml.ws header back
             binding.copyJaxWsContext(cxfExchange, (Map<String, Object>) camelExchange.getProperty(CxfConstants.JAXWS_CONTEXT));
         }
 

@@ -18,8 +18,8 @@ package org.apache.camel.component.jms;
 
 import java.io.Serializable;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.ObjectMessage;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.ObjectMessage;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;

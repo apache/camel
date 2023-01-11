@@ -42,14 +42,14 @@ public final class MailConvertersLoader implements TypeConverterLoader, CamelCon
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, java.io.InputStream.class, javax.mail.Message.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mail.MailConverters.toInputStream((javax.mail.Message) value));
-        addTypeConverter(registry, java.io.InputStream.class, javax.mail.Multipart.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mail.MailConverters.toInputStream((javax.mail.Multipart) value, exchange));
-        addTypeConverter(registry, java.lang.String.class, javax.mail.Message.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mail.MailConverters.toString((javax.mail.Message) value));
-        addTypeConverter(registry, java.lang.String.class, javax.mail.Multipart.class, false,
-            (type, exchange, value) -> org.apache.camel.component.mail.MailConverters.toString((javax.mail.Multipart) value));
+        addTypeConverter(registry, java.io.InputStream.class, jakarta.mail.Message.class, false,
+            (type, exchange, value) -> org.apache.camel.component.mail.MailConverters.toInputStream((jakarta.mail.Message) value));
+        addTypeConverter(registry, java.io.InputStream.class, jakarta.mail.Multipart.class, false,
+            (type, exchange, value) -> org.apache.camel.component.mail.MailConverters.toInputStream((jakarta.mail.Multipart) value, exchange));
+        addTypeConverter(registry, java.lang.String.class, jakarta.mail.Message.class, false,
+            (type, exchange, value) -> org.apache.camel.component.mail.MailConverters.toString((jakarta.mail.Message) value));
+        addTypeConverter(registry, java.lang.String.class, jakarta.mail.Multipart.class, false,
+            (type, exchange, value) -> org.apache.camel.component.mail.MailConverters.toString((jakarta.mail.Multipart) value));
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) { 

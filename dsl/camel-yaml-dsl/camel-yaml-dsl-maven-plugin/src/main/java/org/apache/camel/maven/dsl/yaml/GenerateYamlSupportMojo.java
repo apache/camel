@@ -64,25 +64,25 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
             = DotName.createSimple("java.lang.Deprecated");
 
     public static final DotName XML_ROOT_ELEMENT_ANNOTATION_CLASS
-            = DotName.createSimple("javax.xml.bind.annotation.XmlRootElement");
+            = DotName.createSimple("jakarta.xml.bind.annotation.XmlRootElement");
     public static final DotName XML_TYPE_CLASS
-            = DotName.createSimple("javax.xml.bind.annotation.XmlType");
+            = DotName.createSimple("jakarta.xml.bind.annotation.XmlType");
     public static final DotName XML_ENUM_CLASS
-            = DotName.createSimple("javax.xml.bind.annotation.XmlEnum");
+            = DotName.createSimple("jakarta.xml.bind.annotation.XmlEnum");
     public static final DotName XML_VALUE_CLASS
-            = DotName.createSimple("javax.xml.bind.annotation.XmlValue");
+            = DotName.createSimple("jakarta.xml.bind.annotation.XmlValue");
     public static final DotName XML_ATTRIBUTE_ANNOTATION_CLASS
-            = DotName.createSimple("javax.xml.bind.annotation.XmlAttribute");
+            = DotName.createSimple("jakarta.xml.bind.annotation.XmlAttribute");
     public static final DotName XML_VALUE_ANNOTATION_CLASS
-            = DotName.createSimple("javax.xml.bind.annotation.XmlValue");
+            = DotName.createSimple("jakarta.xml.bind.annotation.XmlValue");
     public static final DotName XML_ELEMENT_ANNOTATION_CLASS
-            = DotName.createSimple("javax.xml.bind.annotation.XmlElement");
+            = DotName.createSimple("jakarta.xml.bind.annotation.XmlElement");
     public static final DotName XML_ELEMENT_REF_ANNOTATION_CLASS
-            = DotName.createSimple("javax.xml.bind.annotation.XmlElementRef");
+            = DotName.createSimple("jakarta.xml.bind.annotation.XmlElementRef");
     public static final DotName XML_ELEMENTS_ANNOTATION_CLASS
-            = DotName.createSimple("javax.xml.bind.annotation.XmlElements");
+            = DotName.createSimple("jakarta.xml.bind.annotation.XmlElements");
     public static final DotName XML_TRANSIENT_CLASS
-            = DotName.createSimple("javax.xml.bind.annotation.XmlTransient");
+            = DotName.createSimple("jakarta.xml.bind.annotation.XmlTransient");
 
     public static final DotName METADATA_ANNOTATION_CLASS
             = DotName.createSimple("org.apache.camel.spi.Metadata");

@@ -19,7 +19,7 @@ package org.apache.camel.attachment;
 import java.util.Collection;
 import java.util.List;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 
 import org.apache.camel.Message;
 

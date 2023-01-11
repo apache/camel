@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.sjms.jms;
 
-import javax.jms.Message;
-import javax.jms.Session;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 
 import org.apache.camel.Exchange;
 
 /**
  * A strategy that allows custom components to plugin and perform custom logic when Camel creates
- * {@link javax.jms.Message} instance.
+ * {@link jakarta.jms.Message} instance.
  * <p/>
  * For example to populate the message with custom information that are component specific and not part of the JMS
  * specification.

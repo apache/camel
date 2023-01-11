@@ -16,7 +16,7 @@
  */
 package org.apache.camel.converter.soap.name;
 
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name = "test", namespace = "http://mynamespace")
 public class AnnotatedClassWithNamespace {

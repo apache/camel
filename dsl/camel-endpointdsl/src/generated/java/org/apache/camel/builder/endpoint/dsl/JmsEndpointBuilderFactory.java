@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -65,7 +65,7 @@ public interface JmsEndpointBuilderFactory {
          * The connection factory to be use. A connection factory must be
          * configured either on the component or endpoint.
          * 
-         * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
+         * The option is a: &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt;
          * type.
          * 
          * Group: common
@@ -74,7 +74,7 @@ public interface JmsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JmsEndpointConsumerBuilder connectionFactory(
-                javax.jms.ConnectionFactory connectionFactory) {
+                jakarta.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -83,7 +83,7 @@ public interface JmsEndpointBuilderFactory {
          * configured either on the component or endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -157,7 +157,7 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to force the use of a specific javax.jms.Message
+         * Allows you to force the use of a specific jakarta.jms.Message
          * implementation for sending JMS messages. Possible values are: Bytes,
          * Map, Object, Stream, Text. By default, Camel would determine which
          * JMS message type to use from the In body type. This option allows you
@@ -177,7 +177,7 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to force the use of a specific javax.jms.Message
+         * Allows you to force the use of a specific jakarta.jms.Message
          * implementation for sending JMS messages. Possible values are: Bytes,
          * Map, Object, Stream, Text. By default, Camel would determine which
          * JMS message type to use from the In body type. This option allows you
@@ -1641,7 +1641,7 @@ public interface JmsEndpointBuilderFactory {
          * Specifies the JMS Exception Listener that is to be notified of any
          * underlying JMS exceptions.
          * 
-         * The option is a: &lt;code&gt;javax.jms.ExceptionListener&lt;/code&gt;
+         * The option is a: &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt;
          * type.
          * 
          * Group: advanced
@@ -1650,7 +1650,7 @@ public interface JmsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJmsEndpointConsumerBuilder exceptionListener(
-                javax.jms.ExceptionListener exceptionListener) {
+                jakarta.jms.ExceptionListener exceptionListener) {
             doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
@@ -1659,7 +1659,7 @@ public interface JmsEndpointBuilderFactory {
          * underlying JMS exceptions.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.jms.ExceptionListener&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1870,7 +1870,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * Specifies whether Camel should auto map the received JMS message to a
-         * suited payload type, such as javax.jms.TextMessage to a String etc.
+         * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1887,7 +1887,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * Specifies whether Camel should auto map the received JMS message to a
-         * suited payload type, such as javax.jms.TextMessage to a String etc.
+         * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1944,7 +1944,7 @@ public interface JmsEndpointBuilderFactory {
         /**
          * To use a custom Spring
          * org.springframework.jms.support.converter.MessageConverter so you can
-         * be in control how to map to/from a javax.jms.Message.
+         * be in control how to map to/from a jakarta.jms.Message.
          * 
          * The option is a:
          * &lt;code&gt;org.springframework.jms.support.converter.MessageConverter&lt;/code&gt; type.
@@ -1962,7 +1962,7 @@ public interface JmsEndpointBuilderFactory {
         /**
          * To use a custom Spring
          * org.springframework.jms.support.converter.MessageConverter so you can
-         * be in control how to map to/from a javax.jms.Message.
+         * be in control how to map to/from a jakarta.jms.Message.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.springframework.jms.support.converter.MessageConverter&lt;/code&gt; type.
@@ -1979,7 +1979,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of javax.jms.Message objects when Camel is
+         * creates new instances of jakarta.jms.Message objects when Camel is
          * sending a JMS message.
          * 
          * The option is a:
@@ -1997,7 +1997,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of javax.jms.Message objects when Camel is
+         * creates new instances of jakarta.jms.Message objects when Camel is
          * sending a JMS message.
          * 
          * The option will be converted to a
@@ -2314,7 +2314,7 @@ public interface JmsEndpointBuilderFactory {
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a javax.jms.ObjectMessage. If the client
+         * be send back in response as a jakarta.jms.ObjectMessage. If the client
          * is Camel, the returned Exception is rethrown. This allows you to use
          * Camel JMS as a bridge in your routing - for example, using persistent
          * queues to enable robust routing. Notice that if you also have
@@ -2343,7 +2343,7 @@ public interface JmsEndpointBuilderFactory {
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a javax.jms.ObjectMessage. If the client
+         * be send back in response as a jakarta.jms.ObjectMessage. If the client
          * is Camel, the returned Exception is rethrown. This allows you to use
          * Camel JMS as a bridge in your routing - for example, using persistent
          * queues to enable robust routing. Notice that if you also have
@@ -2681,7 +2681,7 @@ public interface JmsEndpointBuilderFactory {
          * The connection factory to be use. A connection factory must be
          * configured either on the component or endpoint.
          * 
-         * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
+         * The option is a: &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt;
          * type.
          * 
          * Group: common
@@ -2690,7 +2690,7 @@ public interface JmsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JmsEndpointProducerBuilder connectionFactory(
-                javax.jms.ConnectionFactory connectionFactory) {
+                jakarta.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -2699,7 +2699,7 @@ public interface JmsEndpointBuilderFactory {
          * configured either on the component or endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -2773,7 +2773,7 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to force the use of a specific javax.jms.Message
+         * Allows you to force the use of a specific jakarta.jms.Message
          * implementation for sending JMS messages. Possible values are: Bytes,
          * Map, Object, Stream, Text. By default, Camel would determine which
          * JMS message type to use from the In body type. This option allows you
@@ -2793,7 +2793,7 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to force the use of a specific javax.jms.Message
+         * Allows you to force the use of a specific jakarta.jms.Message
          * implementation for sending JMS messages. Possible values are: Bytes,
          * Map, Object, Stream, Text. By default, Camel would determine which
          * JMS message type to use from the In body type. This option allows you
@@ -2901,7 +2901,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * Specifies the delivery mode to be used. Possible values are those
-         * defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
+         * defined by jakarta.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
          * = 2.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -2917,7 +2917,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * Specifies the delivery mode to be used. Possible values are those
-         * defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
+         * defined by jakarta.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
          * = 2.
          * 
          * The option will be converted to a
@@ -4131,7 +4131,7 @@ public interface JmsEndpointBuilderFactory {
          * Specifies the JMS Exception Listener that is to be notified of any
          * underlying JMS exceptions.
          * 
-         * The option is a: &lt;code&gt;javax.jms.ExceptionListener&lt;/code&gt;
+         * The option is a: &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt;
          * type.
          * 
          * Group: advanced
@@ -4140,7 +4140,7 @@ public interface JmsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJmsEndpointProducerBuilder exceptionListener(
-                javax.jms.ExceptionListener exceptionListener) {
+                jakarta.jms.ExceptionListener exceptionListener) {
             doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
@@ -4149,7 +4149,7 @@ public interface JmsEndpointBuilderFactory {
          * underlying JMS exceptions.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.jms.ExceptionListener&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -4360,7 +4360,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * Specifies whether Camel should auto map the received JMS message to a
-         * suited payload type, such as javax.jms.TextMessage to a String etc.
+         * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -4377,7 +4377,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * Specifies whether Camel should auto map the received JMS message to a
-         * suited payload type, such as javax.jms.TextMessage to a String etc.
+         * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -4434,7 +4434,7 @@ public interface JmsEndpointBuilderFactory {
         /**
          * To use a custom Spring
          * org.springframework.jms.support.converter.MessageConverter so you can
-         * be in control how to map to/from a javax.jms.Message.
+         * be in control how to map to/from a jakarta.jms.Message.
          * 
          * The option is a:
          * &lt;code&gt;org.springframework.jms.support.converter.MessageConverter&lt;/code&gt; type.
@@ -4452,7 +4452,7 @@ public interface JmsEndpointBuilderFactory {
         /**
          * To use a custom Spring
          * org.springframework.jms.support.converter.MessageConverter so you can
-         * be in control how to map to/from a javax.jms.Message.
+         * be in control how to map to/from a jakarta.jms.Message.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.springframework.jms.support.converter.MessageConverter&lt;/code&gt; type.
@@ -4469,7 +4469,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of javax.jms.Message objects when Camel is
+         * creates new instances of jakarta.jms.Message objects when Camel is
          * sending a JMS message.
          * 
          * The option is a:
@@ -4487,7 +4487,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of javax.jms.Message objects when Camel is
+         * creates new instances of jakarta.jms.Message objects when Camel is
          * sending a JMS message.
          * 
          * The option will be converted to a
@@ -4804,7 +4804,7 @@ public interface JmsEndpointBuilderFactory {
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a javax.jms.ObjectMessage. If the client
+         * be send back in response as a jakarta.jms.ObjectMessage. If the client
          * is Camel, the returned Exception is rethrown. This allows you to use
          * Camel JMS as a bridge in your routing - for example, using persistent
          * queues to enable robust routing. Notice that if you also have
@@ -4833,7 +4833,7 @@ public interface JmsEndpointBuilderFactory {
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a javax.jms.ObjectMessage. If the client
+         * be send back in response as a jakarta.jms.ObjectMessage. If the client
          * is Camel, the returned Exception is rethrown. This allows you to use
          * Camel JMS as a bridge in your routing - for example, using persistent
          * queues to enable robust routing. Notice that if you also have
@@ -5172,7 +5172,7 @@ public interface JmsEndpointBuilderFactory {
          * The connection factory to be use. A connection factory must be
          * configured either on the component or endpoint.
          * 
-         * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
+         * The option is a: &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt;
          * type.
          * 
          * Group: common
@@ -5181,7 +5181,7 @@ public interface JmsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JmsEndpointBuilder connectionFactory(
-                javax.jms.ConnectionFactory connectionFactory) {
+                jakarta.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -5190,7 +5190,7 @@ public interface JmsEndpointBuilderFactory {
          * configured either on the component or endpoint.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -5263,7 +5263,7 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to force the use of a specific javax.jms.Message
+         * Allows you to force the use of a specific jakarta.jms.Message
          * implementation for sending JMS messages. Possible values are: Bytes,
          * Map, Object, Stream, Text. By default, Camel would determine which
          * JMS message type to use from the In body type. This option allows you
@@ -5283,7 +5283,7 @@ public interface JmsEndpointBuilderFactory {
             return this;
         }
         /**
-         * Allows you to force the use of a specific javax.jms.Message
+         * Allows you to force the use of a specific jakarta.jms.Message
          * implementation for sending JMS messages. Possible values are: Bytes,
          * Map, Object, Stream, Text. By default, Camel would determine which
          * JMS message type to use from the In body type. This option allows you
@@ -5740,7 +5740,7 @@ public interface JmsEndpointBuilderFactory {
          * Specifies the JMS Exception Listener that is to be notified of any
          * underlying JMS exceptions.
          * 
-         * The option is a: &lt;code&gt;javax.jms.ExceptionListener&lt;/code&gt;
+         * The option is a: &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt;
          * type.
          * 
          * Group: advanced
@@ -5749,7 +5749,7 @@ public interface JmsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJmsEndpointBuilder exceptionListener(
-                javax.jms.ExceptionListener exceptionListener) {
+                jakarta.jms.ExceptionListener exceptionListener) {
             doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
@@ -5758,7 +5758,7 @@ public interface JmsEndpointBuilderFactory {
          * underlying JMS exceptions.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.jms.ExceptionListener&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -5969,7 +5969,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * Specifies whether Camel should auto map the received JMS message to a
-         * suited payload type, such as javax.jms.TextMessage to a String etc.
+         * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -5985,7 +5985,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * Specifies whether Camel should auto map the received JMS message to a
-         * suited payload type, such as javax.jms.TextMessage to a String etc.
+         * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -6041,7 +6041,7 @@ public interface JmsEndpointBuilderFactory {
         /**
          * To use a custom Spring
          * org.springframework.jms.support.converter.MessageConverter so you can
-         * be in control how to map to/from a javax.jms.Message.
+         * be in control how to map to/from a jakarta.jms.Message.
          * 
          * The option is a:
          * &lt;code&gt;org.springframework.jms.support.converter.MessageConverter&lt;/code&gt; type.
@@ -6059,7 +6059,7 @@ public interface JmsEndpointBuilderFactory {
         /**
          * To use a custom Spring
          * org.springframework.jms.support.converter.MessageConverter so you can
-         * be in control how to map to/from a javax.jms.Message.
+         * be in control how to map to/from a jakarta.jms.Message.
          * 
          * The option will be converted to a
          * &lt;code&gt;org.springframework.jms.support.converter.MessageConverter&lt;/code&gt; type.
@@ -6076,7 +6076,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of javax.jms.Message objects when Camel is
+         * creates new instances of jakarta.jms.Message objects when Camel is
          * sending a JMS message.
          * 
          * The option is a:
@@ -6094,7 +6094,7 @@ public interface JmsEndpointBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of javax.jms.Message objects when Camel is
+         * creates new instances of jakarta.jms.Message objects when Camel is
          * sending a JMS message.
          * 
          * The option will be converted to a
@@ -6405,7 +6405,7 @@ public interface JmsEndpointBuilderFactory {
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a javax.jms.ObjectMessage. If the client
+         * be send back in response as a jakarta.jms.ObjectMessage. If the client
          * is Camel, the returned Exception is rethrown. This allows you to use
          * Camel JMS as a bridge in your routing - for example, using persistent
          * queues to enable robust routing. Notice that if you also have
@@ -6434,7 +6434,7 @@ public interface JmsEndpointBuilderFactory {
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a javax.jms.ObjectMessage. If the client
+         * be send back in response as a jakarta.jms.ObjectMessage. If the client
          * is Camel, the returned Exception is rethrown. This allows you to use
          * Camel JMS as a bridge in your routing - for example, using persistent
          * queues to enable robust routing. Notice that if you also have
@@ -6822,7 +6822,7 @@ public interface JmsEndpointBuilderFactory {
         /**
          * The destination.
          * 
-         * The option is a: {@code javax.jms.Destination} type.
+         * The option is a: {@code jakarta.jms.Destination} type.
          * 
          * Group: producer
          * 
@@ -6913,7 +6913,7 @@ public interface JmsEndpointBuilderFactory {
         /**
          * The JMS destination.
          * 
-         * The option is a: {@code javax.jms.Destination} type.
+         * The option is a: {@code jakarta.jms.Destination} type.
          * 
          * Group: common
          * 
@@ -6979,7 +6979,7 @@ public interface JmsEndpointBuilderFactory {
         /**
          * The JMS reply-to destination.
          * 
-         * The option is a: {@code javax.jms.Destination} type.
+         * The option is a: {@code jakarta.jms.Destination} type.
          * 
          * Group: common
          * 

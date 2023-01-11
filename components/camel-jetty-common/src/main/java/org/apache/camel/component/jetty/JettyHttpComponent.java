@@ -31,12 +31,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.management.MBeanServer;
-import javax.servlet.Filter;
-import javax.servlet.MultipartConfigElement;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.Filter;
+import jakarta.servlet.MultipartConfigElement;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -436,7 +436,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
                         "The temp file directory of camel-jetty is not exists, please recheck it with directory name :"
                                                 + camelContext.getGlobalOptions().get(TMP_DIR));
             }
-            context.setAttribute("javax.servlet.context.tempdir", file);
+            context.setAttribute("jakarta.servlet.context.tempdir", file);
         }
         // if a filter ref was provided, use it.
         Filter filter = ((JettyHttpEndpoint) endpoint).getMultipartFilter();

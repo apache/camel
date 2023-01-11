@@ -16,7 +16,7 @@
  */
 package org.apache.camel.builder.component.dsl;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
@@ -70,7 +70,7 @@ public interface JmsComponentBuilderFactory {
          * The connection factory to be use. A connection factory must be
          * configured either on the component or endpoint.
          * 
-         * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
+         * The option is a: &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt;
          * type.
          * 
          * Group: common
@@ -79,7 +79,7 @@ public interface JmsComponentBuilderFactory {
          * @return the dsl builder
          */
         default JmsComponentBuilder connectionFactory(
-                javax.jms.ConnectionFactory connectionFactory) {
+                jakarta.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -122,7 +122,7 @@ public interface JmsComponentBuilderFactory {
             return this;
         }
         /**
-         * Allows you to force the use of a specific javax.jms.Message
+         * Allows you to force the use of a specific jakarta.jms.Message
          * implementation for sending JMS messages. Possible values are: Bytes,
          * Map, Object, Stream, Text. By default, Camel would determine which
          * JMS message type to use from the In body type. This option allows you
@@ -667,7 +667,7 @@ public interface JmsComponentBuilderFactory {
         }
         /**
          * Specifies the delivery mode to be used. Possible values are those
-         * defined by javax.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
+         * defined by jakarta.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
          * = 2.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -1324,7 +1324,7 @@ public interface JmsComponentBuilderFactory {
          * Specifies the JMS Exception Listener that is to be notified of any
          * underlying JMS exceptions.
          * 
-         * The option is a: &lt;code&gt;javax.jms.ExceptionListener&lt;/code&gt;
+         * The option is a: &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt;
          * type.
          * 
          * Group: advanced
@@ -1333,7 +1333,7 @@ public interface JmsComponentBuilderFactory {
          * @return the dsl builder
          */
         default JmsComponentBuilder exceptionListener(
-                javax.jms.ExceptionListener exceptionListener) {
+                jakarta.jms.ExceptionListener exceptionListener) {
             doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
@@ -1418,7 +1418,7 @@ public interface JmsComponentBuilderFactory {
         }
         /**
          * Specifies whether Camel should auto map the received JMS message to a
-         * suited payload type, such as javax.jms.TextMessage to a String etc.
+         * suited payload type, such as jakarta.jms.TextMessage to a String etc.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1453,7 +1453,7 @@ public interface JmsComponentBuilderFactory {
         /**
          * To use a custom Spring
          * org.springframework.jms.support.converter.MessageConverter so you can
-         * be in control how to map to/from a javax.jms.Message.
+         * be in control how to map to/from a jakarta.jms.Message.
          * 
          * The option is a:
          * &lt;code&gt;org.springframework.jms.support.converter.MessageConverter&lt;/code&gt; type.
@@ -1470,7 +1470,7 @@ public interface JmsComponentBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of javax.jms.Message objects when Camel is
+         * creates new instances of jakarta.jms.Message objects when Camel is
          * sending a JMS message.
          * 
          * The option is a:
@@ -1647,7 +1647,7 @@ public interface JmsComponentBuilderFactory {
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a javax.jms.ObjectMessage. If the client
+         * be send back in response as a jakarta.jms.ObjectMessage. If the client
          * is Camel, the returned Exception is rethrown. This allows you to use
          * Camel JMS as a bridge in your routing - for example, using persistent
          * queues to enable robust routing. Notice that if you also have
@@ -1969,7 +1969,7 @@ public interface JmsComponentBuilderFactory {
                 Object value) {
             switch (name) {
             case "clientId": getOrCreateConfiguration((JmsComponent) component).setClientId((java.lang.String) value); return true;
-            case "connectionFactory": getOrCreateConfiguration((JmsComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
+            case "connectionFactory": getOrCreateConfiguration((JmsComponent) component).setConnectionFactory((jakarta.jms.ConnectionFactory) value); return true;
             case "disableReplyTo": getOrCreateConfiguration((JmsComponent) component).setDisableReplyTo((boolean) value); return true;
             case "durableSubscriptionName": getOrCreateConfiguration((JmsComponent) component).setDurableSubscriptionName((java.lang.String) value); return true;
             case "jmsMessageType": getOrCreateConfiguration((JmsComponent) component).setJmsMessageType((org.apache.camel.component.jms.JmsMessageType) value); return true;
@@ -2033,7 +2033,7 @@ public interface JmsComponentBuilderFactory {
             case "configuration": ((JmsComponent) component).setConfiguration((org.apache.camel.component.jms.JmsConfiguration) value); return true;
             case "destinationResolver": getOrCreateConfiguration((JmsComponent) component).setDestinationResolver((org.springframework.jms.support.destination.DestinationResolver) value); return true;
             case "errorHandler": getOrCreateConfiguration((JmsComponent) component).setErrorHandler((org.springframework.util.ErrorHandler) value); return true;
-            case "exceptionListener": getOrCreateConfiguration((JmsComponent) component).setExceptionListener((javax.jms.ExceptionListener) value); return true;
+            case "exceptionListener": getOrCreateConfiguration((JmsComponent) component).setExceptionListener((jakarta.jms.ExceptionListener) value); return true;
             case "idleConsumerLimit": getOrCreateConfiguration((JmsComponent) component).setIdleConsumerLimit((int) value); return true;
             case "idleTaskExecutionLimit": getOrCreateConfiguration((JmsComponent) component).setIdleTaskExecutionLimit((int) value); return true;
             case "includeAllJMSXProperties": getOrCreateConfiguration((JmsComponent) component).setIncludeAllJMSXProperties((boolean) value); return true;

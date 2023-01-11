@@ -16,7 +16,7 @@
 ## ------------------------------------------------------------------------
 package ${package};
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;

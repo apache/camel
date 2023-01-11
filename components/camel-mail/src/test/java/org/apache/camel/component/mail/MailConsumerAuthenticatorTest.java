@@ -18,9 +18,9 @@ package org.apache.camel.component.mail;
 
 import java.util.Properties;
 
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
 
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;

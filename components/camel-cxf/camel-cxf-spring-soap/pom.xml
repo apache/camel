@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-parent</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-cxf-spring-soap</artifactId>
@@ -34,41 +34,6 @@
 
     <properties>
         <firstVersion>3.18.0</firstVersion>
-        <camel.osgi.import.defaults />
-        <camel.osgi.import>
-            !org.springframework.boot.*,
-            !org.springframework.context.annotation.*;resolution:=optional,
-            !org.apache.camel.component.cxf,
-            !org.apache.camel.component.cxf.blueprint,
-            !org.apache.camel.component.cxf.converter,
-            !org.apache.camel.component.cxf.feature,
-            !org.apache.camel.component.cxf.interceptors,
-            !org.apache.camel.component.cxf.jaxrs,
-            !org.apache.camel.component.cxf.spring,
-            !org.apache.camel.component.cxf.util,
-            !org.apache.camel.blueprint,
-            javax.activation.*;version="${javax-activation-version-range}",
-            javax.jws*;version="[0.0,3)",
-            javax.ws.rs*;version="[0.0,3)",
-            javax.xml.soap*;version="[1.3,2)",
-            javax.xml.stream*;version="[0.0,2)",
-            javax.xml.ws*;version="[0.0,3.0)",
-            org.apache.camel.*;${camel.osgi.import.camel.version},
-            org.apache.camel.component.cxf.blueprint;${camel.osgi.import.camel.version};resolution:=optional,
-            org.apache.camel.component.cxf.jaxrs.blueprint;${camel.osgi.import.camel.version};resolution:=optional,
-            org.apache.cxf.*;version="${cxf-version-range}",
-            ${camel.osgi.import.defaults},
-            ${camel.osgi.import.additional},
-            org.osgi.service.blueprint;resolution:=optional,
-            org.osgi.service.blueprint.container;resolution:=optional,
-            org.osgi.service.blueprint.reflect;resolution:=optional,
-            org.apache.aries.blueprint;version="[1.0,2.0)";resolution:=optional,
-            org.apache.aries.blueprint.reflect;version="[1.0,2.0)";resolution:=optional,
-            org.apache.aries.blueprint.mutable;version="[1.0,2.0)";resolution:=optional,
-            org.apache.camel.blueprint;resolution:=optional,
-            *
-        </camel.osgi.import>
-        <camel.osgi.failok>true</camel.osgi.failok>
 
     </properties>
 
@@ -359,7 +324,7 @@
                             <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
                             <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
                             <defaultOptions>
-                                <frontEnd>jaxws21</frontEnd>
+                                <frontEnd>jaxws</frontEnd>
                             </defaultOptions>
                             <wsdlOptions>
                                 <wsdlOption>

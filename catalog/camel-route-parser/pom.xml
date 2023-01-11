@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>catalog</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-route-parser</artifactId>
@@ -92,20 +92,6 @@
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-test-cdi</artifactId>
-            <version>${project.version}</version>
-            <exclusions>
-                <!-- Make MyCdi*RouteBuilder compile while cutting the useless dependency to JUnit 4 -->
-                <exclusion>
-                    <groupId>org.apache.camel</groupId>
-                    <artifactId>camel-test</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>

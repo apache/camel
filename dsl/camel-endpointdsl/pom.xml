@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>dsl</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-endpointdsl</artifactId>
@@ -36,10 +36,6 @@
         <firstVersion>3.0.0</firstVersion>
         <title>Java Endpoint DSL</title>
         <label>dsl</label>
-        <camel.osgi.import>
-            javax.xml.bind*;version="[2.2,3.0)",
-            *
-        </camel.osgi.import>
     </properties>
 
     <dependencies>

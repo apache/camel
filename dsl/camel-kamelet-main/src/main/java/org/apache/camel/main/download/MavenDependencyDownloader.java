@@ -750,7 +750,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         // we could use org.apache.maven.settings.building.DefaultSettingsBuilder directly, but it's better
         // to be consistent and use DI for that - especially because after
         // https://issues.apache.org/jira/browse/MNG-6680, DefaultSettingsBuilder is no longer annotated
-        // with @org.codehaus.plexus.component.annotations.Component, but with @javax.inject.Named
+        // with @org.codehaus.plexus.component.annotations.Component, but with @jakarta.inject.Named
         registry.bind(SettingsReader.class, DefaultSettingsReader.class);
         registry.bind(SettingsWriter.class, DefaultSettingsWriter.class);
         registry.bind(SettingsValidator.class, DefaultSettingsValidator.class);

@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.Endpoint;
-import javax.xml.ws.Holder;
-import javax.xml.ws.WebServiceException;
+import jakarta.xml.ws.Endpoint;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.WebServiceException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchEndpointException;

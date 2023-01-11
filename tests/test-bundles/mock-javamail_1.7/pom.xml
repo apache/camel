@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel.tests.bundles</groupId>
         <artifactId>bundles-pom</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.camel.tests</groupId>
@@ -39,19 +39,6 @@
         <pkgArtifactId>mock-javamail</pkgArtifactId>
         <pkgVersion>1.7</pkgVersion>
         <servicemix.legal.version>1.0</servicemix.legal.version>
-        <camel.osgi.export.pkg>
-            org.jvnet.mock_javamail*
-        </camel.osgi.export.pkg>
-        <camel.osgi.import.pkg>
-            *
-        </camel.osgi.import.pkg>
-        <camel.osgi.private.pkg>
-            META-INF;-split-package:=merge-first,
-            META-INF.services;-split-package:=merge-first
-            META-INF.maven.org.apache.camel.tests*;-split-package:=merge-first
-        </camel.osgi.private.pkg>
-        <camel.osgi.export>${camel.osgi.export.pkg}*;version=${pkgVersion};-split-package:=merge-first
-        </camel.osgi.export>
     </properties>
 
     <dependencies>

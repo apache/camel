@@ -16,8 +16,8 @@
  */
 package org.apache.camel.cdi.bean;
 
-import javax.annotation.PostConstruct;
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.apache.camel.impl.DefaultCamelContext;
 

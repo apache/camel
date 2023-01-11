@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 
 import io.vertx.core.Handler;
 import io.vertx.core.MultiMap;

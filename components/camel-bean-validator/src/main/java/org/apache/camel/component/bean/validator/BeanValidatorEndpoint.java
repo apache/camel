@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.bean.validator;
 
-import javax.validation.ConstraintValidatorFactory;
-import javax.validation.MessageInterpolator;
-import javax.validation.TraversableResolver;
-import javax.validation.ValidationProviderResolver;
-import javax.validation.ValidatorFactory;
+import jakarta.validation.ConstraintValidatorFactory;
+import jakarta.validation.MessageInterpolator;
+import jakarta.validation.TraversableResolver;
+import jakarta.validation.ValidationProviderResolver;
+import jakarta.validation.ValidatorFactory;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -47,7 +47,7 @@ public class BeanValidatorEndpoint extends DefaultEndpoint {
     @UriPath(description = "Where label is an arbitrary text value describing the endpoint")
     @Metadata(required = true)
     private String label;
-    @UriParam(defaultValue = "javax.validation.groups.Default")
+    @UriParam(defaultValue = "jakarta.validation.groups.Default")
     private String group;
     @UriParam
     private boolean ignoreXmlConfiguration;

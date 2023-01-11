@@ -18,7 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;

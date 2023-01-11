@@ -19,7 +19,7 @@ package org.apache.camel.cdi.bean;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import org.apache.camel.Consume;
 import org.apache.camel.RecipientList;

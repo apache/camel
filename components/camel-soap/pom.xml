@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-soap</artifactId>
@@ -32,11 +32,6 @@
     <description>Camel SOAP support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            javax.xml.bind*;version="[2.2,3.0)",
-            javax.xml.ws*;version="[0.0,3)",
-            javax.xml.soap*;version="[1.3,2)"
-        </camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>
@@ -55,12 +50,12 @@
             <artifactId>jaxb-impl</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.xml.ws</groupId>
-            <artifactId>jaxws-api</artifactId>
+            <groupId>jakarta.xml.ws</groupId>
+            <artifactId>jakarta.xml.ws-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
+            <groupId>jakarta.jws</groupId>
+            <artifactId>jakarta.jws-api</artifactId>
         </dependency>
 
         <!-- test dependencies -->
@@ -198,7 +193,7 @@
                             <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
                             <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
                             <defaultOptions>
-                                <frontEnd>jaxws21</frontEnd>
+                                <frontEnd>jaxws</frontEnd>
                             </defaultOptions>
                             <wsdlOptions>
                                 <wsdlOption>

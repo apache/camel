@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jsonpath</artifactId>
@@ -33,11 +33,6 @@
     <description>Camel JSON Path Language</description>
 
     <properties>
-        <camel.osgi.import>
-            com.fasterxml.jackson.databind,
-            com.fasterxml.jackson.module.jaxb;resolution:=optional,
-            *
-        </camel.osgi.import>
     </properties>
 
     <dependencies>

@@ -19,8 +19,8 @@ package org.apache.camel.component.mail;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;

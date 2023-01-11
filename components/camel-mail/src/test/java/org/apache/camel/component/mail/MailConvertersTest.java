@@ -18,8 +18,8 @@ package org.apache.camel.component.mail;
 
 import java.io.InputStream;
 
-import javax.mail.Message;
-import javax.mail.Multipart;
+import jakarta.mail.Message;
+import jakarta.mail.Multipart;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

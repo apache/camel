@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-cxf-parent</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-cxf-transport</artifactId>
@@ -37,25 +37,7 @@
         <label>soap,webservice</label>
         <title>CXF Transport</title>
 
-        <camel.osgi.import>
-            !org.apache.camel.component.cxf.*,
-            !META-INF.cxf.camel,
-            javax.servlet.*;version="${servlet-version-range}",
-            org.apache.camel.*;${camel.osgi.import.camel.version},
-            org.apache.camel.component.cxf.transport.blueprint;${camel.osgi.import.camel.version};resolution:=optional,
-            org.apache.cxf.*;version="${cxf-version-range}",
-            ${camel.osgi.import.defaults},
-            ${camel.osgi.import.additional},
-            org.apache.aries.blueprint*;resolution:=optional,
-            org.osgi.service.blueprint*;resolution:=optional,
-            *
-        </camel.osgi.import>
 
-        <camel.osgi.export>
-            org.apache.camel.component.cxf.*;${camel.osgi.version};-split-package:=merge-first,
-            '=META-INF.cxf.camel'
-        </camel.osgi.export>
-        <camel.osgi.failok>true</camel.osgi.failok>
 
     </properties>
 
@@ -78,8 +60,8 @@
 
 
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
         </dependency>
 
         <!-- for testing -->
@@ -130,7 +112,7 @@
                             <additionalJvmArgs>${cxf.codegen.jvmArgs}</additionalJvmArgs>
                             <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
                             <defaultOptions>
-                                <frontEnd>jaxws21</frontEnd>
+                                <frontEnd>jaxws</frontEnd>
                             </defaultOptions>
                             <wsdlOptions>
                                 <wsdlOption>

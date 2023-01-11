@@ -74,7 +74,7 @@ public @interface Beans {
      * </code>
      * </pre>
      *
-     * @see javax.enterprise.inject.Alternative
+     * @see jakarta.enterprise.inject.Alternative
      */
     Class<?>[] alternatives() default {};
 

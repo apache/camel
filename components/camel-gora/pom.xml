@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-gora</artifactId>
@@ -33,10 +33,6 @@
     <description>Gora Component for Apache Camel</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            com.google.common.base;version="[11,14)",
-            org.apache.hadoop.conf;version="[1,2)"
-        </camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>

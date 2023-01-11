@@ -120,10 +120,10 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "schedulerproperties":
         case "schedulerProperties": target.setSchedulerProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "searchterm":
-        case "searchTerm": target.setSearchTerm(property(camelContext, javax.mail.search.SearchTerm.class, value)); return true;
+        case "searchTerm": target.setSearchTerm(property(camelContext, jakarta.mail.search.SearchTerm.class, value)); return true;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": target.setSendEmptyMessageWhenIdle(property(camelContext, boolean.class, value)); return true;
-        case "session": target.getConfiguration().setSession(property(camelContext, javax.mail.Session.class, value)); return true;
+        case "session": target.getConfiguration().setSession(property(camelContext, jakarta.mail.Session.class, value)); return true;
         case "skipfailedmessage":
         case "skipFailedMessage": target.getConfiguration().setSkipFailedMessage(property(camelContext, boolean.class, value)); return true;
         case "sortterm":
@@ -248,10 +248,10 @@ public class MailEndpointConfigurer extends PropertyConfigurerSupport implements
         case "schedulerproperties":
         case "schedulerProperties": return java.util.Map.class;
         case "searchterm":
-        case "searchTerm": return javax.mail.search.SearchTerm.class;
+        case "searchTerm": return jakarta.mail.search.SearchTerm.class;
         case "sendemptymessagewhenidle":
         case "sendEmptyMessageWhenIdle": return boolean.class;
-        case "session": return javax.mail.Session.class;
+        case "session": return jakarta.mail.Session.class;
         case "skipfailedmessage":
         case "skipFailedMessage": return boolean.class;
         case "sortterm":

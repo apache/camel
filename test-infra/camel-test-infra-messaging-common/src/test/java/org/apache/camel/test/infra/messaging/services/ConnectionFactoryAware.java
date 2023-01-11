@@ -17,7 +17,7 @@
 
 package org.apache.camel.test.infra.messaging.services;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 public interface ConnectionFactoryAware {
     ConnectionFactory createConnectionFactory();

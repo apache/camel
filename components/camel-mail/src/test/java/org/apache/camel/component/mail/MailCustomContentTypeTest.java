@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.mail;
 
-import javax.mail.Message;
+import jakarta.mail.Message;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;

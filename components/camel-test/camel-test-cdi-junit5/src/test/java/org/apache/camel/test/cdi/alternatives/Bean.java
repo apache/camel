@@ -16,7 +16,7 @@
  */
 package org.apache.camel.test.cdi.alternatives;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 import org.apache.camel.Body;
 

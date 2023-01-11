@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.activemq;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 import org.apache.activemq.command.ActiveMQDestination;
 import org.apache.activemq.command.ActiveMQMessage;

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-quickfix</artifactId>
@@ -32,10 +32,6 @@
     <description>Camel QuickFIX/J support</description>
 
     <properties>
-        <camel.osgi.import>
-            org.slf4j*;resolution:=optional,
-            *
-        </camel.osgi.import>
     </properties>
 
     <dependencies>

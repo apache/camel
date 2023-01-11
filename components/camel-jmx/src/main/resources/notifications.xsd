@@ -20,8 +20,8 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
     targetNamespace="urn:org.apache.camel.component:jmx"
     xmlns:tns="urn:org.apache.camel.component:jmx" elementFormDefault="qualified"
-    xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
-    jxb:version="1.0">
+    xmlns:jxb="https://jakarta.ee/xml/ns/jaxb"
+    jxb:version="3.0">
     <xs:annotation>
         <xs:appinfo>
             <jxb:schemaBindings>

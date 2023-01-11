@@ -41,7 +41,7 @@ public final class AttachmentConverterLoader implements TypeConverterLoader, Cam
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, javax.activation.DataHandler.class, org.apache.camel.attachment.Attachment.class, false,
+        addTypeConverter(registry, jakarta.activation.DataHandler.class, org.apache.camel.attachment.Attachment.class, false,
             (type, exchange, value) -> org.apache.camel.attachment.AttachmentConverter.toDataHandler((org.apache.camel.attachment.Attachment) value));
         addTypeConverter(registry, org.apache.camel.attachment.AttachmentMessage.class, org.apache.camel.Message.class, false,
             (type, exchange, value) -> org.apache.camel.attachment.AttachmentConverter.toAttachmentMessage((org.apache.camel.Message) value));

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.jaxb;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;

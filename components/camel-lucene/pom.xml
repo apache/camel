@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-lucene</artifactId>
@@ -32,9 +32,6 @@
     <description>Camel Lucene based search component</description>
 
     <properties>
-        <camel.osgi.import.additional>
-            org.apache.lucene.*;version="${lucene-version-range}"
-        </camel.osgi.import.additional>
     </properties>
 
     <dependencies>

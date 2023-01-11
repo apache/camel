@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -443,7 +443,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
         /**
          * The session.
          * 
-         * The option is a: {@code javax.websocket.Session} type.
+         * The option is a: {@code jakarta.websocket.Session} type.
          * 
          * Group: common
          * 

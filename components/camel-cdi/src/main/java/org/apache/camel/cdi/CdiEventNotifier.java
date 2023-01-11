@@ -22,8 +22,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.enterprise.inject.Vetoed;
-import javax.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.Vetoed;
+import jakarta.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.RouteEvent;
@@ -56,9 +56,9 @@ final class CdiEventNotifier extends EventNotifierSupport {
             List<Annotation> annotations = new ArrayList<>();
             Collections.addAll(annotations, qualifiers);
             annotations.add(NamedLiteral.of(id));
-            manager.fireEvent(event, annotations.toArray(new Annotation[0]));
+            manager.getEvent().select(annotations.toArray(new Annotation[0])).fire(event);
         } else {
-            manager.fireEvent(event, qualifiers);
+            manager.getEvent().select(qualifiers).fire(event);
         }
     }
 

@@ -26,13 +26,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.event.Event;
-import javax.enterprise.inject.Any;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.InjectionTarget;
-import javax.enterprise.util.TypeLiteral;
-import javax.inject.Inject;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.event.Event;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.InjectionTarget;
+import jakarta.enterprise.util.TypeLiteral;
+import jakarta.inject.Inject;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -89,7 +89,7 @@ import static java.util.stream.Collectors.joining;
  * </code>
  * </pre>
  */
-@javax.enterprise.inject.Vetoed
+@jakarta.enterprise.inject.Vetoed
 public final class CdiEventEndpoint<T> extends DefaultEndpoint {
 
     private final List<CdiEventConsumer<T>> consumers = new ArrayList<>();
@@ -156,7 +156,8 @@ public final class CdiEventEndpoint<T> extends DefaultEndpoint {
             }
         }
 
-        InjectionTarget<AnyEvent> target = manager.createInjectionTarget(manager.createAnnotatedType(AnyEvent.class));
+        InjectionTarget<AnyEvent> target = manager.getInjectionTargetFactory(
+                manager.createAnnotatedType(AnyEvent.class)).createInjectionTarget(null);
         CreationalContext<AnyEvent> ctx = manager.createCreationalContext(null);
         AnyEvent instance = target.produce(ctx);
         target.inject(instance, ctx);

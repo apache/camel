@@ -16,8 +16,8 @@
  */
 package org.apache.camel.cdi.transaction;
 
-import javax.inject.Named;
-import javax.transaction.Transaction;
+import jakarta.inject.Named;
+import jakarta.transaction.Transaction;
 
 @Named("PROPAGATION_NOT_SUPPORTED")
 public class NotSupportedJtaTransactionPolicy extends TransactionalJtaTransactionPolicy {

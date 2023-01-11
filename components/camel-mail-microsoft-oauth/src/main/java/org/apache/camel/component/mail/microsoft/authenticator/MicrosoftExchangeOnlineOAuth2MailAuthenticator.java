@@ -20,7 +20,7 @@ import java.net.MalformedURLException;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.mail.PasswordAuthentication;
+import jakarta.mail.PasswordAuthentication;
 
 import com.microsoft.aad.msal4j.ClientCredentialFactory;
 import com.microsoft.aad.msal4j.ClientCredentialParameters;

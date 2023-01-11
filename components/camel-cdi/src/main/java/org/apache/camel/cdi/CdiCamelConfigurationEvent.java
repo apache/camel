@@ -16,7 +16,7 @@
  */
 package org.apache.camel.cdi;
 
-import javax.enterprise.inject.Vetoed;
+import jakarta.enterprise.inject.Vetoed;
 
 @Vetoed
 /* package-private */ final class CdiCamelConfigurationEvent implements CdiCamelConfiguration {

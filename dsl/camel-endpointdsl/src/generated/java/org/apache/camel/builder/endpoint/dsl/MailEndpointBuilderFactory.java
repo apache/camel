@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -336,7 +336,7 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Will mark the javax.mail.Message as peeked before processing the mail
+         * Will mark the jakarta.mail.Message as peeked before processing the mail
          * message. This applies to IMAPMessage messages types only. By using
          * peek the mail will not be eager marked as SEEN on the mail server,
          * which allows us to rollback the mail message if there is an error
@@ -355,7 +355,7 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Will mark the javax.mail.Message as peeked before processing the mail
+         * Will mark the jakarta.mail.Message as peeked before processing the mail
          * message. This applies to IMAPMessage messages types only. By using
          * peek the mail will not be eager marked as SEEN on the mail server,
          * which allows us to rollback the mail message if there is an error
@@ -571,12 +571,12 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Refers to a javax.mail.search.SearchTerm which allows to filter mails
+         * Refers to a jakarta.mail.search.SearchTerm which allows to filter mails
          * based on search criteria such as subject, body, from, sent after a
          * certain date etc.
          * 
          * The option is a:
-         * &lt;code&gt;javax.mail.search.SearchTerm&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.mail.search.SearchTerm&lt;/code&gt; type.
          * The option is multivalued, and you can use the searchTerm(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -592,12 +592,12 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Refers to a javax.mail.search.SearchTerm which allows to filter mails
+         * Refers to a jakarta.mail.search.SearchTerm which allows to filter mails
          * based on search criteria such as subject, body, from, sent after a
          * certain date etc.
          * 
          * The option is a:
-         * &lt;code&gt;javax.mail.search.SearchTerm&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.mail.search.SearchTerm&lt;/code&gt; type.
          * The option is multivalued, and you can use the searchTerm(String,
          * Object) method to add a value (call the method multiple times to set
          * more values).
@@ -1478,9 +1478,9 @@ public interface MailEndpointBuilderFactory {
          * message is mapped to the body of the Camel IN message, the mail
          * headers are mapped to IN headers, and the attachments to Camel IN
          * attachment message. If this option is set to false then the IN
-         * message contains a raw javax.mail.Message. You can retrieve this raw
+         * message contains a raw jakarta.mail.Message. You can retrieve this raw
          * message by calling
-         * exchange.getIn().getBody(javax.mail.Message.class).
+         * exchange.getIn().getBody(jakarta.mail.Message.class).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1501,9 +1501,9 @@ public interface MailEndpointBuilderFactory {
          * message is mapped to the body of the Camel IN message, the mail
          * headers are mapped to IN headers, and the attachments to Camel IN
          * attachment message. If this option is set to false then the IN
-         * message contains a raw javax.mail.Message. You can retrieve this raw
+         * message contains a raw jakarta.mail.Message. You can retrieve this raw
          * message by calling
-         * exchange.getIn().getBody(javax.mail.Message.class).
+         * exchange.getIn().getBody(jakarta.mail.Message.class).
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -2027,7 +2027,7 @@ public interface MailEndpointBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option is a: &lt;code&gt;javax.mail.Session&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;jakarta.mail.Session&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -2035,7 +2035,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointConsumerBuilder session(
-                javax.mail.Session session) {
+                jakarta.mail.Session session) {
             doSetProperty("session", session);
             return this;
         }
@@ -2047,7 +2047,7 @@ public interface MailEndpointBuilderFactory {
          * session will be used (if configured on the session).
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.mail.Session&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.mail.Session&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -2782,7 +2782,7 @@ public interface MailEndpointBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option is a: &lt;code&gt;javax.mail.Session&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;jakarta.mail.Session&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -2790,7 +2790,7 @@ public interface MailEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedMailEndpointProducerBuilder session(
-                javax.mail.Session session) {
+                jakarta.mail.Session session) {
             doSetProperty("session", session);
             return this;
         }
@@ -2802,7 +2802,7 @@ public interface MailEndpointBuilderFactory {
          * session will be used (if configured on the session).
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.mail.Session&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.mail.Session&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -3364,14 +3364,14 @@ public interface MailEndpointBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option is a: &lt;code&gt;javax.mail.Session&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;jakarta.mail.Session&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
          * @param session the value to set
          * @return the dsl builder
          */
-        default AdvancedMailEndpointBuilder session(javax.mail.Session session) {
+        default AdvancedMailEndpointBuilder session(jakarta.mail.Session session) {
             doSetProperty("session", session);
             return this;
         }
@@ -3383,7 +3383,7 @@ public interface MailEndpointBuilderFactory {
          * session will be used (if configured on the session).
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.mail.Session&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.mail.Session&lt;/code&gt; type.
          * 
          * Group: advanced
          * 

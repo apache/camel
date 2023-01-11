@@ -16,8 +16,8 @@
  */
 package org.apache.camel.jaxb;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

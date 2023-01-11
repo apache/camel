@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jackson-avro</artifactId>
@@ -33,9 +33,6 @@
 
     <properties>
         <firstVersion>3.10.0</firstVersion>
-        <camel.osgi.import.before.defaults>
-            com.fasterxml.jackson.*;version="[2.13,3)"
-        </camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>

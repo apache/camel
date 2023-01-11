@@ -60,7 +60,7 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         case "matchonuriprefix":
         case "matchOnUriPrefix": target.setMatchOnUriPrefix(property(camelContext, boolean.class, value)); return true;
         case "multipartfilter":
-        case "multipartFilter": target.setMultipartFilter(property(camelContext, javax.servlet.Filter.class, value)); return true;
+        case "multipartFilter": target.setMultipartFilter(property(camelContext, jakarta.servlet.Filter.class, value)); return true;
         case "muteexception":
         case "muteException": target.setMuteException(property(camelContext, boolean.class, value)); return true;
         case "optionsenabled":
@@ -127,7 +127,7 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         case "matchonuriprefix":
         case "matchOnUriPrefix": return boolean.class;
         case "multipartfilter":
-        case "multipartFilter": return javax.servlet.Filter.class;
+        case "multipartFilter": return jakarta.servlet.Filter.class;
         case "muteexception":
         case "muteException": return boolean.class;
         case "optionsenabled":
@@ -225,7 +225,7 @@ public class JettyHttpEndpoint9Configurer extends PropertyConfigurerSupport impl
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "filterinitparameters":
         case "filterInitParameters": return java.lang.String.class;
-        case "filters": return javax.servlet.Filter.class;
+        case "filters": return jakarta.servlet.Filter.class;
         case "handlers": return org.eclipse.jetty.server.Handler.class;
         default: return null;
         }

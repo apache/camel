@@ -16,7 +16,7 @@
  */
 package org.apache.camel.itest.greeter;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 import org.apache.camel.itest.utils.extensions.GreeterImpl;
 import org.slf4j.Logger;

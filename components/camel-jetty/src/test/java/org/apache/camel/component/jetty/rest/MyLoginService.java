@@ -19,7 +19,7 @@ package org.apache.camel.component.jetty.rest;
 import java.security.Principal;
 
 import javax.security.auth.Subject;
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
 
 import org.eclipse.jetty.security.DefaultIdentityService;
 import org.eclipse.jetty.security.IdentityService;

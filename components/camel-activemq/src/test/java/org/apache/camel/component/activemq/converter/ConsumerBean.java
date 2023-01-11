@@ -19,8 +19,8 @@ package org.apache.camel.component.activemq.converter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

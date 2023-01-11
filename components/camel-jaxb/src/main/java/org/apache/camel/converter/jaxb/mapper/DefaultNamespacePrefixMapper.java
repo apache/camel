@@ -18,7 +18,7 @@ package org.apache.camel.converter.jaxb.mapper;
 
 import java.util.Map;
 
-import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
+import org.glassfish.jaxb.runtime.marshaller.NamespacePrefixMapper;
 import org.apache.camel.converter.jaxb.JaxbNamespacePrefixMapper;
 
 /**

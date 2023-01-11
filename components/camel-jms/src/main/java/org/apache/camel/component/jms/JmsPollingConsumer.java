@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.PollingConsumerSupport;

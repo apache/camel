@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo4-parent</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-olingo4</artifactId>
@@ -36,7 +36,6 @@
         <maven.exe.file.extension />
         <componentPackage>org.apache.camel.component.olingo4</componentPackage>
         <outPackage>org.apache.camel.component.olingo4.internal</outPackage>
-        <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
     </properties>
 
     <dependencies>

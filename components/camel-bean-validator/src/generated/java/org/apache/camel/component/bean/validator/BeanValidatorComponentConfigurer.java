@@ -24,19 +24,19 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "constraintvalidatorfactory":
-        case "constraintValidatorFactory": target.setConstraintValidatorFactory(property(camelContext, javax.validation.ConstraintValidatorFactory.class, value)); return true;
+        case "constraintValidatorFactory": target.setConstraintValidatorFactory(property(camelContext, jakarta.validation.ConstraintValidatorFactory.class, value)); return true;
         case "ignorexmlconfiguration":
         case "ignoreXmlConfiguration": target.setIgnoreXmlConfiguration(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "messageinterpolator":
-        case "messageInterpolator": target.setMessageInterpolator(property(camelContext, javax.validation.MessageInterpolator.class, value)); return true;
+        case "messageInterpolator": target.setMessageInterpolator(property(camelContext, jakarta.validation.MessageInterpolator.class, value)); return true;
         case "traversableresolver":
-        case "traversableResolver": target.setTraversableResolver(property(camelContext, javax.validation.TraversableResolver.class, value)); return true;
+        case "traversableResolver": target.setTraversableResolver(property(camelContext, jakarta.validation.TraversableResolver.class, value)); return true;
         case "validationproviderresolver":
-        case "validationProviderResolver": target.setValidationProviderResolver(property(camelContext, javax.validation.ValidationProviderResolver.class, value)); return true;
+        case "validationProviderResolver": target.setValidationProviderResolver(property(camelContext, jakarta.validation.ValidationProviderResolver.class, value)); return true;
         case "validatorfactory":
-        case "validatorFactory": target.setValidatorFactory(property(camelContext, javax.validation.ValidatorFactory.class, value)); return true;
+        case "validatorFactory": target.setValidatorFactory(property(camelContext, jakarta.validation.ValidatorFactory.class, value)); return true;
         default: return false;
         }
     }
@@ -52,19 +52,19 @@ public class BeanValidatorComponentConfigurer extends PropertyConfigurerSupport 
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "constraintvalidatorfactory":
-        case "constraintValidatorFactory": return javax.validation.ConstraintValidatorFactory.class;
+        case "constraintValidatorFactory": return jakarta.validation.ConstraintValidatorFactory.class;
         case "ignorexmlconfiguration":
         case "ignoreXmlConfiguration": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "messageinterpolator":
-        case "messageInterpolator": return javax.validation.MessageInterpolator.class;
+        case "messageInterpolator": return jakarta.validation.MessageInterpolator.class;
         case "traversableresolver":
-        case "traversableResolver": return javax.validation.TraversableResolver.class;
+        case "traversableResolver": return jakarta.validation.TraversableResolver.class;
         case "validationproviderresolver":
-        case "validationProviderResolver": return javax.validation.ValidationProviderResolver.class;
+        case "validationProviderResolver": return jakarta.validation.ValidationProviderResolver.class;
         case "validatorfactory":
-        case "validatorFactory": return javax.validation.ValidatorFactory.class;
+        case "validatorFactory": return jakarta.validation.ValidatorFactory.class;
         default: return null;
         }
     }

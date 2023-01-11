@@ -16,8 +16,8 @@
  */
 package org.apache.camel.test.cdi;
 
-import javax.annotation.Priority;
-import javax.enterprise.util.AnnotationLiteral;
+import jakarta.annotation.Priority;
+import jakarta.enterprise.util.AnnotationLiteral;
 
 final class PriorityLiteral extends AnnotationLiteral<Priority> implements Priority {
 

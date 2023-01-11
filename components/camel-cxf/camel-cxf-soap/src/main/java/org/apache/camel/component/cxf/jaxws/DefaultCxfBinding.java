@@ -34,13 +34,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
 import javax.security.auth.Subject;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1071,7 +1071,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     public void extractJaxWsContext(org.apache.cxf.message.Exchange cxfExchange, Map<String, Object> context) {
         org.apache.cxf.message.Message inMessage = cxfExchange.getInMessage();
         for (Map.Entry<String, Object> entry : inMessage.entrySet()) {
-            if (entry.getKey().startsWith("javax.xml.ws")) {
+            if (entry.getKey().startsWith("jakarta.xml.ws")) {
                 context.put(entry.getKey(), entry.getValue());
             }
         }

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.sjms;
 
-import javax.jms.Connection;
+import jakarta.jms.Connection;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.FailedToCreateConsumerException;

@@ -19,8 +19,8 @@ package org.apache.camel.component.jpa;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;
@@ -35,11 +35,11 @@ public final class JpaHelper {
     }
 
     /**
-     * Gets or creates an {@link javax.persistence.EntityManager} to use.
+     * Gets or creates an {@link jakarta.persistence.EntityManager} to use.
      *
      * @param  exchange                 the current exchange, or <tt>null</tt> if no exchange
      * @param  entityManagerFactory     the entity manager factory (mandatory)
-     * @param  usePassedInEntityManager whether to use an existing {@link javax.persistence.EntityManager} which has
+     * @param  usePassedInEntityManager whether to use an existing {@link jakarta.persistence.EntityManager} which has
      *                                  been stored on the exchange in the header with key
      *                                  {@link org.apache.camel.component.jpa.JpaConstants#ENTITY_MANAGER}
      * @param  useSharedEntityManager   whether to use SharedEntityManagerCreator if not already passed in

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.cdi;
 
-import javax.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.engine.DefaultCamelBeanPostProcessor;

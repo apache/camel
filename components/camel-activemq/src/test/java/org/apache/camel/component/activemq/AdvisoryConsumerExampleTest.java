@@ -59,7 +59,7 @@ public class AdvisoryConsumerExampleTest extends ActiveMQTestSupport {
                         Message in = exchange.getIn();
                         if (in instanceof JmsMessage) {
                             JmsMessage jmsMessage = (JmsMessage) in;
-                            javax.jms.Message value = jmsMessage.getJmsMessage();
+                            jakarta.jms.Message value = jmsMessage.getJmsMessage();
                             if (value instanceof ActiveMQMessage) {
                                 ActiveMQMessage activeMQMessage = (ActiveMQMessage) value;
                                 DataStructure structure = activeMQMessage.getDataStructure();

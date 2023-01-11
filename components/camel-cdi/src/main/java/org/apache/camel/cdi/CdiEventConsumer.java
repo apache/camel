@@ -16,7 +16,7 @@
  */
 package org.apache.camel.cdi;
 
-import javax.enterprise.inject.Vetoed;
+import jakarta.enterprise.inject.Vetoed;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedExchange;

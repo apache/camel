@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-fhir-parent</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-fhir</artifactId>
@@ -37,10 +37,6 @@
         <schemeName>fhir</schemeName>
         <componentPackage>org.apache.camel.component.fhir</componentPackage>
         <outPackage>org.apache.camel.component.fhir.internal</outPackage>
-        <camel.osgi.dynamic>
-            org.hl7.fhir.*
-        </camel.osgi.dynamic>
-        <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
     </properties>
 
     <dependencies>

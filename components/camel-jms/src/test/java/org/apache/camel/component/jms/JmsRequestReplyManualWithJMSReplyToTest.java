@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.JMSException;
-import javax.jms.Queue;
+import jakarta.jms.JMSException;
+import jakarta.jms.Queue;
 
 import org.apache.camel.Body;
 import org.apache.camel.Consume;

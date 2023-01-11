@@ -16,8 +16,8 @@
 ## ------------------------------------------------------------------------
 package ${package};
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 
 @Singleton
 @Named("counterBean")

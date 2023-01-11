@@ -19,8 +19,8 @@ package org.apache.camel.component.jms;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.MapMessage;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.MapMessage;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;

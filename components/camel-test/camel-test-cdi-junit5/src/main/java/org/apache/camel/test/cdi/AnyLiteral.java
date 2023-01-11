@@ -16,8 +16,8 @@
  */
 package org.apache.camel.test.cdi;
 
-import javax.enterprise.inject.Any;
-import javax.enterprise.util.AnnotationLiteral;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.util.AnnotationLiteral;
 
 final class AnyLiteral extends AnnotationLiteral<Any> implements Any {
 

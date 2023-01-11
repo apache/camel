@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-stub",
-    "version": "3.21.0-SNAPSHOT",
+    "version": "4.0.0-SNAPSHOT",
     "scheme": "stub",
     "extendsScheme": "",
     "syntax": "stub:name",

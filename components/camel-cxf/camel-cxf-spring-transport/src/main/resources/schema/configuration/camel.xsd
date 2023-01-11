@@ -20,7 +20,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" 
   xmlns:camel="http://cxf.apache.org/transports/camel" 
   xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
-  xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" 
+  xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb" 
   xmlns:beans="http://www.springframework.org/schema/beans"
   xmlns:cxf-beans="http://cxf.apache.org/configuration/beans"
   xmlns:camel-spring="http://camel.apache.org/schema/spring"

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.builder.component.dsl;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
@@ -54,7 +54,7 @@ public interface SjmsComponentBuilderFactory {
          * The connection factory to be use. A connection factory must be
          * configured either on the component or endpoint.
          * 
-         * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
+         * The option is a: &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt;
          * type.
          * 
          * Group: common
@@ -63,7 +63,7 @@ public interface SjmsComponentBuilderFactory {
          * @return the dsl builder
          */
         default SjmsComponentBuilder connectionFactory(
-                javax.jms.ConnectionFactory connectionFactory) {
+                jakarta.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -152,7 +152,7 @@ public interface SjmsComponentBuilderFactory {
          * Specifies the JMS Exception Listener that is to be notified of any
          * underlying JMS exceptions.
          * 
-         * The option is a: &lt;code&gt;javax.jms.ExceptionListener&lt;/code&gt;
+         * The option is a: &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt;
          * type.
          * 
          * Group: advanced
@@ -161,7 +161,7 @@ public interface SjmsComponentBuilderFactory {
          * @return the dsl builder
          */
         default SjmsComponentBuilder exceptionListener(
-                javax.jms.ExceptionListener exceptionListener) {
+                jakarta.jms.ExceptionListener exceptionListener) {
             doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
@@ -190,7 +190,7 @@ public interface SjmsComponentBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of javax.jms.Message objects when Camel is
+         * creates new instances of jakarta.jms.Message objects when Camel is
          * sending a JMS message.
          * 
          * The option is a:
@@ -295,12 +295,12 @@ public interface SjmsComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "connectionFactory": ((SjmsComponent) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
+            case "connectionFactory": ((SjmsComponent) component).setConnectionFactory((jakarta.jms.ConnectionFactory) value); return true;
             case "bridgeErrorHandler": ((SjmsComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((SjmsComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((SjmsComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "destinationCreationStrategy": ((SjmsComponent) component).setDestinationCreationStrategy((org.apache.camel.component.sjms.jms.DestinationCreationStrategy) value); return true;
-            case "exceptionListener": ((SjmsComponent) component).setExceptionListener((javax.jms.ExceptionListener) value); return true;
+            case "exceptionListener": ((SjmsComponent) component).setExceptionListener((jakarta.jms.ExceptionListener) value); return true;
             case "jmsKeyFormatStrategy": ((SjmsComponent) component).setJmsKeyFormatStrategy((org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy) value); return true;
             case "messageCreatedStrategy": ((SjmsComponent) component).setMessageCreatedStrategy((org.apache.camel.component.sjms.jms.MessageCreatedStrategy) value); return true;
             case "recoveryInterval": ((SjmsComponent) component).setRecoveryInterval((long) value); return true;

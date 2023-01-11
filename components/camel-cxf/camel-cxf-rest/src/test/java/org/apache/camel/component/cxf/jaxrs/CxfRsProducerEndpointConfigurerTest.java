@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
-import javax.ws.rs.HttpMethod;
+import jakarta.ws.rs.HttpMethod;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;

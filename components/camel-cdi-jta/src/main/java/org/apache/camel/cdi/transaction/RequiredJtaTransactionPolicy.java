@@ -16,7 +16,7 @@
  */
 package org.apache.camel.cdi.transaction;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 @Named("PROPAGATION_REQUIRED")
 public class RequiredJtaTransactionPolicy extends TransactionalJtaTransactionPolicy {

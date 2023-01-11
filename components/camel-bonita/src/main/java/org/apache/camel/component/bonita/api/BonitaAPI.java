@@ -20,9 +20,9 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.GenericType;
+import jakarta.ws.rs.core.MediaType;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bonita.api.model.CaseCreationResponse;
@@ -31,7 +31,7 @@ import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;
 import org.apache.camel.component.bonita.api.util.BonitaAPIUtil;
 import org.apache.camel.util.ObjectHelper;
 
-import static javax.ws.rs.client.Entity.entity;
+import static jakarta.ws.rs.client.Entity.entity;
 
 public class BonitaAPI {
 

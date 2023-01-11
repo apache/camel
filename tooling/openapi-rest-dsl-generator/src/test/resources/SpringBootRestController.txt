@@ -1,6 +1,6 @@
 package com.foo;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.RequestMapping;

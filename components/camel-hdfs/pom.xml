@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-hdfs</artifactId>
@@ -32,20 +32,6 @@
     <description>Camel HDFS support with Hadoop 3.x libraries</description>
 
     <properties>
-        <camel.osgi.import.additional>
-            org.apache.hadoop.hdfs,
-            org.apache.hadoop.hdfs.client,
-            org.apache.hadoop.hdfs.protocolPB,
-            org.apache.hadoop.hdfs.util,
-            org.apache.hadoop.hdfs.net,
-            org.apache.hadoop.hdfs.security.token.block,
-            org.apache.hadoop.hdfs.security.token.delegation,
-            org.apache.hadoop.hdfs.protocol,
-            org.apache.hadoop.hdfs.protocol.proto,
-            org.apache.hadoop.hdfs.protocol.datatransfer,
-            org.apache.hadoop.net,
-            org.apache.hadoop.ipc
-        </camel.osgi.import.additional>
     </properties>
 
     <dependencies>

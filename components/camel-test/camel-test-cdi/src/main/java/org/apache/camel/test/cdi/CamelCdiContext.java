@@ -18,7 +18,7 @@ package org.apache.camel.test.cdi;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.BeanManager;
 
 final class CamelCdiContext {
 

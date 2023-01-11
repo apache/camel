@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-parent</artifactId>
@@ -65,8 +65,8 @@
         <aries-spifly-version>1.3.5</aries-spifly-version>
         <aries-util-version>1.1.3</aries-util-version>
         <arquillian-jetty-embedded-9-version>1.0.0.CR3</arquillian-jetty-embedded-9-version>
-        <arquillian-version>1.6.0.Final</arquillian-version>
-        <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
+        <arquillian-version>1.7.0.Alpha13</arquillian-version>
+        <arquillian-weld-embedded-version>3.0.2.Final</arquillian-weld-embedded-version>
         <as2-lib-version>4.11.0</as2-lib-version>
         <ascii-table-version>1.8.0</ascii-table-version>
         <asm-version>8.0.1</asm-version>
@@ -76,8 +76,7 @@
         <atlasmap-version>2.5.2</atlasmap-version>
         <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
         <atmos-client-version>3.2.1</atmos-client-version>
-        <atmosphere-version>2.6.4</atmosphere-version>
-        <atmosphere-version-range>[2.6,3.0)</atmosphere-version-range>
+        <atmosphere-version>3.0.2</atmosphere-version>
         <avro-version>1.11.1</avro-version>
         <avro-ipc-jetty-version>1.11.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
@@ -98,13 +97,13 @@
         <californium-scandium-version>2.7.4</californium-scandium-version>
         <cassandra-driver-version>4.15.0</cassandra-driver-version>
         <cassandra-version>4.1.0</cassandra-version>
-        <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
+        <jakarta-enterprise-cdi-api-version>4.0.1</jakarta-enterprise-cdi-api-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.2.12</cglib-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
         <classgraph-version>4.8.151</classgraph-version>
-        <cometd-java-client-version>4.0.4</cometd-java-client-version>
-        <cometd-java-server>4.0.4</cometd-java-server>
+        <cometd-java-client-version>7.0.9</cometd-java-client-version>
+        <cometd-java-server-version>7.0.9</cometd-java-server-version>
         <commons-beanutils-version>1.9.4</commons-beanutils-version>
         <commons-codec-version>1.15</commons-codec-version>
         <commons-collections-version>3.2.2</commons-collections-version>
@@ -132,12 +131,11 @@
         <corda-version>4.9.3</corda-version>
         <couchbase-client-version>3.4.1</couchbase-client-version>
         <curator-version>4.3.0</curator-version>
-        <cxf-version>3.5.5</cxf-version>
-        <cxf-version-range>[3.5,3.6)</cxf-version-range>
-        <cxf-codegen-plugin-version>3.5.5</cxf-codegen-plugin-version>
+        <cxf-version>4.0.0</cxf-version>
+        <cxf-codegen-plugin-version>4.0.0</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
-        <cxf-xjc-plugin-version>3.3.2</cxf-xjc-plugin-version>
-        <cxf-xjc-utils-version>3.3.2</cxf-xjc-utils-version>
+        <cxf-xjc-plugin-version>4.0.0</cxf-xjc-plugin-version>
+        <cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
         <datasonnet-mapper-version>2.1.4</datasonnet-mapper-version>
         <deltaspike-version>1.9.5</deltaspike-version>
         <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
@@ -184,13 +182,12 @@
         <geronimo-j2ee-management-spec-version>1.1</geronimo-j2ee-management-spec-version>
         <geronimo-jcdi-1.0-spec-version>1.0</geronimo-jcdi-1.0-spec-version>
         <geronimo-jcdi-1.1-spec-version>1.0</geronimo-jcdi-1.1-spec-version>
-        <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
-        <geronimo-jms2-spec-version>1.0-alpha-2</geronimo-jms2-spec-version>
-        <geronimo-jpa-spec-version>1.0-alpha-1</geronimo-jpa-spec-version>
-        <geronimo-json-spec-version>1.5</geronimo-json-spec-version>
-        <geronimo-jsonb-spec-version>1.4</geronimo-jsonb-spec-version>
-        <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
-        <geronimo-ws-metadata-spec-version>1.1.3</geronimo-ws-metadata-spec-version>
+        <jakarta-jms-api-version>3.1.0</jakarta-jms-api-version>
+        <jakarta-persistence-api-version>3.1.0</jakarta-persistence-api-version>
+        <jakarta-json-api-version>2.1.1</jakarta-json-api-version>
+        <jakarta-json-bind-api-version>3.0.0</jakarta-json-bind-api-version>
+        <jakarta-transaction-api-version>2.0.1</jakarta-transaction-api-version>
+        <jakarta-jws-api-version>3.0.0</jakarta-jws-api-version>
         <gmavenplus-plugin-version>1.13.1</gmavenplus-plugin-version>
         <google-auth-library-oauth2-http-version>1.7.0</google-auth-library-oauth2-http-version>
         <google-guava-version>20.0</google-guava-version>
@@ -230,7 +227,7 @@
         <hazelcast-version>5.2.1</hazelcast-version>
         <hbase-version>2.5.2</hbase-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
-        <hibernate-validator-version>6.2.5.Final</hibernate-validator-version>
+        <hibernate-validator-version>8.0.0.Final</hibernate-validator-version>
         <hibernate-version>5.6.14.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.7.1</hsqldb-version>
@@ -271,20 +268,19 @@
         <javax-el3-version>3.0.0</javax-el3-version>
         <javax-el-api-hibernate-validator-version>3.0.1-b04</javax-el-api-hibernate-validator-version>
         <javax-el-hibernate-validator-version>3.0.1-b10</javax-el-hibernate-validator-version>
-        <javax-activation-version-range>[0,2)</javax-activation-version-range>
-        <javax-activation-version>1.2.0</javax-activation-version>
-        <javax-annotation-api-version>1.3.2</javax-annotation-api-version>
-        <jakarta-mail-version>1.6.7</jakarta-mail-version>
-        <javax-servlet-api-version>3.1.0</javax-servlet-api-version>
-        <jakarta-cdi-api-version>2.0.2</jakarta-cdi-api-version>
+        <jakarta-activation-version>2.0.1</jakarta-activation-version>
+        <jakarta-annotation-api-version>2.1.1</jakarta-annotation-api-version>
+        <jakarta-mail-version>2.0.1</jakarta-mail-version>
+        <jakarta-servlet-api-version>6.0.0</jakarta-servlet-api-version>
+        <jakarta-enterprise-cdi-api-version>4.0.1</jakarta-enterprise-cdi-api-version>
         <jakarta-api-version>2.1.5</jakarta-api-version>
         <jakarta.el-version>3.0.3</jakarta.el-version>
-        <jakarta-jaxb-version>2.3.3</jakarta-jaxb-version>
-        <javax-soap-api-version>1.4.0</javax-soap-api-version>
-        <jaxws-api-version>2.3.0</jaxws-api-version>
+        <jakarta-xml-bind-api-version>4.0.0</jakarta-xml-bind-api-version>
+        <jakarta-xml-soap-api-version>3.0.0</jakarta-xml-soap-api-version>
+        <jakarta-xml-ws-api-version>4.0.0</jakarta-xml-ws-api-version>
         <glassfish-javax-json>1.0.4</glassfish-javax-json>
-        <glassfish-jaxb-runtime-version>2.3.6</glassfish-jaxb-runtime-version>
-        <jaxb2-maven-plugin-version>2.5.0</jaxb2-maven-plugin-version>
+        <glassfish-jaxb-runtime-version>4.0.1</glassfish-jaxb-runtime-version>
+        <jaxb2-maven-plugin-version>3.1.0</jaxb2-maven-plugin-version>
         <jbpm-version>7.64.0.Final</jbpm-version>
         <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
         <jboss-logging-version>3.4.3.Final</jboss-logging-version>
@@ -295,15 +291,13 @@
         <jclouds-version>2.5.0</jclouds-version>
         <!-- jclouds must use this guava version -->
         <jclouds-google-guava-version>27.1-jre</jclouds-google-guava-version>
-        <jclouds-google-guava-version-range>[27.0,28.0)</jclouds-google-guava-version-range>
         <jcommander-version>1.72</jcommander-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>3.7.1</jedis-client-version>
         <jetcd-grpc-version>1.47.0</jetcd-grpc-version>
         <jetcd-guava-version>31.1-jre</jetcd-guava-version>
         <jetcd-version>0.7.3</jetcd-version>
-        <jetty9-version>9.4.50.v20221201</jetty9-version>
-        <jetty-version>${jetty9-version}</jetty-version>
+        <jetty-version>11.0.12</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.3</jettison-version>
@@ -361,7 +355,6 @@
         <log4j2-version>2.18.0</log4j2-version>
         <logback-version>1.2.11</logback-version>
         <lucene-version>8.11.2</lucene-version>
-        <lucene-version-range>[8,9)</lucene-version-range>
         <lightcouch-version>0.2.0</lightcouch-version>
         <mapstruct-version>1.5.2.Final</mapstruct-version>
         <!-- needed from tooling/archetypes -->
@@ -402,7 +395,7 @@
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
         <minio-version>8.4.6</minio-version>
-        <mock-javamail-version>1.9</mock-javamail-version>
+        <mock-javamail-version>2.0</mock-javamail-version>
         <mockwebserver-version>0.2.2</mockwebserver-version>
         <mockito-version>3.12.4</mockito-version>
         <mongo-java-driver-version>4.8.1</mongo-java-driver-version>
@@ -452,7 +445,7 @@
         <pulsar-version>2.10.3</pulsar-version>
         <qpid-broker-version>8.0.6</qpid-broker-version>
         <qpid-proton-j-version>0.34.0</qpid-proton-j-version>
-        <qpid-jms-client-version>1.7.0</qpid-jms-client-version>
+        <qpid-jms-client-version>2.1.0</qpid-jms-client-version>
         <quartz-version>2.3.2</quartz-version>
         <quickfixj-version>2.3.1</quickfixj-version>
         <rabbitmq-amqp-client-version>5.14.0</rabbitmq-amqp-client-version>
@@ -464,7 +457,7 @@
         <redisson-version>3.16.7</redisson-version>
         <resilience4j-version>1.7.1</resilience4j-version>
         <rest-assured-version>4.5.1</rest-assured-version>
-        <resteasy-version>4.5.6.Final</resteasy-version>
+        <resteasy-version>6.2.1.Final</resteasy-version>
         <roaster-version>2.26.0.Final</roaster-version>
         <robotframework-version>4.1.2</robotframework-version>
         <rocketmq-version>4.9.4</rocketmq-version>
@@ -474,7 +467,6 @@
         <scala-version>2.11.12</scala-version>
         <scala-datasonnet-version>2.13.9</scala-datasonnet-version>
         <servicemix-specs-version>2.9.0</servicemix-specs-version>
-        <servlet-version-range>[3,4)</servlet-version-range>
         <shiro-version>1.10.1</shiro-version>
         <shrinkwrap-descriptors-version>2.0.0</shrinkwrap-descriptors-version>
         <!-- Maven version required by Shrinkwrap -->
@@ -494,7 +486,6 @@
         <snmp4j-version>2.6.3_1</snmp4j-version>
         <!-- solr version aligned with lucene -->
         <solr-version>8.11.2</solr-version>
-        <solr-version-range>[8,9)</solr-version-range>
         <solr-zookeeper-version>3.6.2</solr-zookeeper-version>
         <spark-version>3.3.1</spark-version>
         <splunk-version>1.9.0_1</splunk-version>
@@ -504,12 +495,10 @@
         <spring-integration-version>5.5.16</spring-integration-version>
         <spring-ldap-version>2.4.1</spring-ldap-version>
         <spring-vault-core-version>2.3.2</spring-vault-core-version>
-        <spring-version-range>[5,6)</spring-version-range>
-        <spring-version>${spring5-version}</spring-version>
-        <spring5-version>5.3.24</spring5-version>
+        <spring-version>6.0.2</spring-version>
         <spring-rabbitmq-version>2.4.8</spring-rabbitmq-version>
         <spring-security-version>5.8.1</spring-security-version>
-        <spring-ws-version>3.1.4</spring-ws-version>
+        <spring-ws-version>4.0.0</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okio-version>1.17.2</squareup-okio-version>
@@ -526,7 +515,7 @@
         <tika-version>2.6.0</tika-version>
         <twilio-version>7.55.3</twilio-version>
         <twitter4j-version>4.0.7</twitter4j-version>
-        <undertow-version>2.2.22.Final</undertow-version>
+        <undertow-version>2.3.0.Final</undertow-version>
         <univocity-parsers-version>2.9.1</univocity-parsers-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
         <vavr-version>0.10.2</vavr-version>
@@ -536,7 +525,7 @@
         <vysper-version>0.7</vysper-version>
         <web3j-version>3.6.0</web3j-version>
         <web3j-quorum-version>0.8.0</web3j-quorum-version>
-        <weld3-version>3.1.8.Final</weld3-version>
+        <weld-version>5.1.0.Final</weld-version>
         <wildfly-elytron>1.15.4.Final</wildfly-elytron>
         <wiremock-version>2.32.0</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
@@ -562,38 +551,6 @@
         <zookeeper-version>3.5.9</zookeeper-version>
         <zxing-version>3.5.0</zxing-version>
 
-        <!-- OSGi bundles properties -->
-        <camel.osgi.import.camel.version>
-            version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"
-        </camel.osgi.import.camel.version>
-        <camel.osgi.import.strict.version>
-            version="[$(version;===;${camel.osgi.version.clean}),$(version;==+;${camel.osgi.version.clean}))"
-        </camel.osgi.import.strict.version>
-        <camel.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</camel.osgi.import.default.version>
-        <camel.osgi.import.defaults>
-        </camel.osgi.import.defaults>
-        <camel.osgi.import.before.defaults />
-        <camel.osgi.import.additional />
-        <camel.osgi.import.pkg>
-            org.apache.camel.*;${camel.osgi.import.camel.version},
-            ${camel.osgi.import.before.defaults},
-            ${camel.osgi.import.defaults},
-            ${camel.osgi.import.additional},
-            *
-        </camel.osgi.import.pkg>
-        <camel.osgi.activator />
-        <camel.osgi.failok>false</camel.osgi.failok>
-        <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
-        <camel.osgi.export.pkg>$${replace;{local-packages};;;\;}</camel.osgi.export.pkg>
-        <camel.osgi.export>${camel.osgi.export.pkg};-noimport:=true;${camel.osgi.version}</camel.osgi.export>
-        <camel.osgi.version>version=${project.version}</camel.osgi.version>
-        <camel.osgi.import>${camel.osgi.import.pkg}</camel.osgi.import>
-        <camel.osgi.dynamic />
-        <camel.osgi.symbolic.name>${project.groupId}.${project.artifactId}</camel.osgi.symbolic.name>
-        <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
-        <camel.osgi.require.capability />
-        <camel.osgi.provide.capability />
-        <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
     </properties>
 
     <dependencyManagement>
@@ -743,11 +700,6 @@
 
             <!-- NOTE: auto-generated list of components when building camel catalog -->
             <!-- camel components: START -->
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-activemq</artifactId>
-                <version>${project.version}</version>
-            </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-amqp</artifactId>
@@ -1715,11 +1667,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-johnzon</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-jolt</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2400,11 +2347,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-stomp</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-stream</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2450,11 +2392,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-test-cdi</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-test-cdi-junit5</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -2466,11 +2403,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-test-main-junit5</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-test-spring</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -2586,11 +2518,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-webhook</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-websocket</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -2950,8 +2877,8 @@
                 <version>${jackson2-version}</version>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
-                <artifactId>jackson-jaxrs-json-provider</artifactId>
+                <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+                <artifactId>jackson-jakarta-rs-json-provider</artifactId>
                 <version>${jackson2-version}</version>
             </dependency>
             <dependency>
@@ -3353,29 +3280,25 @@
                 <version>${geronimo-j2ee-management-spec-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jms_1.1_spec</artifactId>
-                <version>${geronimo-jms-spec-version}</version>
+                <groupId>jakarta.jms</groupId>
+                <artifactId>jakarta.jms-api</artifactId>
+                <version>${jakarta-jms-api-version}</version>
+            </dependency>
+            
+            <dependency>
+                <groupId>jakarta.persistence</groupId>
+                <artifactId>jakarta.persistence-api</artifactId>
+                <version>${jakarta-persistence-api-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jms_2.0_spec</artifactId>
-                <version>${geronimo-jms2-spec-version}</version>
+                <groupId>jakarta.transaction</groupId>
+                <artifactId>jakarta.transaction-api</artifactId>
+                <version>${jakarta-transaction-api-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jpa_2.1_spec</artifactId>
-                <version>${geronimo-jpa-spec-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jta_1.1_spec</artifactId>
-                <version>${geronimo-jta-spec-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>${javax-servlet-api-version}</version>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>${jakarta-servlet-api-version}</version>
             </dependency>
             <!-- Optional Spring Support -->
             <dependency>
@@ -4037,9 +3960,9 @@
 
             <!-- Former dependencies from the deprecated JDK9+ profile -->
             <dependency>
-                <groupId>javax.xml.ws</groupId>
-                <artifactId>jaxws-api</artifactId>
-                <version>${jaxws-api-version}</version>
+                <groupId>jakarta.xml.ws</groupId>
+                <artifactId>jakarta.xml.ws-api</artifactId>
+                <version>${jakarta-xml-ws-api-version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>javax.xml.bind</groupId>
@@ -4049,21 +3972,21 @@
             </dependency>
 
             <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>javax.annotation-api</artifactId>
-                <version>${javax-annotation-api-version}</version>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta-annotation-api-version}</version>
             </dependency>
 
             <dependency>
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>${jakarta-jaxb-version}</version>
+                <version>${jakarta-xml-bind-api-version}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-ws-metadata_2.0_spec</artifactId>
-                <version>${geronimo-ws-metadata-spec-version}</version>
+                <groupId>jakarta.jws</groupId>
+                <artifactId>jakarta.jws-api</artifactId>
+                <version>${jakarta-jws-api-version}</version>
             </dependency>
 
             <dependency>
@@ -4090,9 +4013,9 @@
             </dependency>
 
             <dependency>
-                <groupId>javax.xml.soap</groupId>
-                <artifactId>javax.xml.soap-api</artifactId>
-                <version>${javax-soap-api-version}</version>
+                <groupId>jakarta.xml.soap</groupId>
+                <artifactId>jakarta.xml.soap-api</artifactId>
+                <version>${jakarta-xml-soap-api-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -4124,9 +4047,19 @@
                         <dependency>
                             <groupId>jakarta.xml.bind</groupId>
                             <artifactId>jakarta.xml.bind-api</artifactId>
-                            <version>${jakarta-jaxb-version}</version>
+                            <version>${jakarta-xml-bind-api-version}</version>
                         </dependency>
-                    </dependencies>
+                        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+             <artifactId>jaxb-xjc</artifactId>
+            <version>${jaxb-xjc-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-jxc</artifactId>
+            <version>${jaxb-jxc-version}</version>
+        </dependency>
+    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

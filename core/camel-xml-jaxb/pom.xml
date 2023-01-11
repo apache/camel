@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-xml-jaxb</artifactId>
@@ -34,19 +34,6 @@
     <properties>
         <firstVersion>3.1.0</firstVersion>
         <label>dsl</label>
-        <camel.osgi.import>
-            org.apache.camel.model;${camel.osgi.import.camel.version},
-            org.apache.camel.model.cloud;${camel.osgi.import.camel.version},
-            org.apache.camel.model.config;${camel.osgi.import.camel.version},
-            org.apache.camel.model.dataformat;${camel.osgi.import.camel.version},
-            org.apache.camel.model.language;${camel.osgi.import.camel.version},
-            org.apache.camel.model.loadbalancer;${camel.osgi.import.camel.version},
-            org.apache.camel.model.rest;${camel.osgi.import.camel.version},
-            org.apache.camel.model.transformer;${camel.osgi.import.camel.version},
-            org.apache.camel.model.validator;${camel.osgi.import.camel.version},
-            javax.xml.bind.*;version="[2.2,3.0)",
-            *
-        </camel.osgi.import>
     </properties>
 
     <dependencies>
@@ -55,7 +42,7 @@
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>${jakarta-jaxb-version}</version>
+            <version>${jakarta-xml-bind-api-version}</version>
         </dependency>
 
         <!-- need JAXB implementation -->

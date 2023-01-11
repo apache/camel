@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -77,7 +77,7 @@
         <module>camel-service</module>
 
         <!-- regular modules in alphabetic order -->
-        <module>camel-activemq</module>
+        <!--module>camel-activemq</module-->
         <module>camel-amqp</module>
         <module>camel-any23</module>
         <module>camel-arangodb</module>
@@ -191,7 +191,7 @@
         <module>camel-jgroups</module>
         <module>camel-jira</module>
         <module>camel-jmx</module>
-        <module>camel-johnzon</module>
+        <!--module>camel-johnzon</module-->
         <module>camel-jolt</module>
         <module>camel-joor</module>
         <module>camel-jpa</module>
@@ -304,7 +304,7 @@
         <module>camel-sql</module>
         <module>camel-ssh</module>
         <module>camel-stax</module>
-        <module>camel-stomp</module>
+        <!--module>camel-stomp</module-->
         <module>camel-stream</module>
         <module>camel-stringtemplate</module>
         <module>camel-stitch</module>
@@ -328,7 +328,7 @@
         <module>camel-web3j</module>
         <module>camel-webhook</module>
         <module>camel-websocket-jsr356</module>
-        <module>camel-websocket</module>
+        <!--module>camel-websocket</module-->
         <module>camel-weka</module>
         <module>camel-whatsapp</module>
         <module>camel-wordpress</module>
@@ -353,7 +353,6 @@
     </modules>
 
     <properties>
-        <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
 
         <camel-prepare-component>true</camel-prepare-component>
     </properties>
@@ -451,63 +450,6 @@
                                 </resource>
                             </resources>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bundle-plugin</artifactId>
-                <version>${project.version}</version>
-                <extensions>false</extensions>
-                <configuration>
-                    <supportIncrementalBuild>true</supportIncrementalBuild>
-                    <noWarningProjectTypes>pom</noWarningProjectTypes>
-                    <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
-                    <instructions>
-                        <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
-                        <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
-                        <Import-Package>${camel.osgi.import}</Import-Package>
-                        <Export-Package>${camel.osgi.export}</Export-Package>
-                        <!-- do not include any resources as not needed-->
-                        <Include-Resource></Include-Resource>
-                        <DynamicImport-Package>${camel.osgi.dynamic}</DynamicImport-Package>
-                        <Private-Package>${camel.osgi.private.pkg}</Private-Package>
-                        <Require-Capability>${camel.osgi.require.capability}</Require-Capability>
-                        <Provide-Capability>${camel.osgi.provide.capability}</Provide-Capability>
-                        <Implementation-Title>Apache Camel</Implementation-Title>
-                        <Implementation-Version>${project.version}</Implementation-Version>
-                        <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
-                        <_versionpolicy>${camel.osgi.import.default.version}</_versionpolicy>
-                        <_failok>${camel.osgi.failok}</_failok>
-                        <_removeheaders>Bnd-LastModified</_removeheaders>
-                        <_plugin>
-                            org.apache.felix.bundleplugin.BlueprintPlugin,
-                            aQute.lib.spring.SpringXMLType,
-                            org.apache.felix.bundleplugin.JpaPlugin,
-                            org.apache.camel.maven.bundle.CamelPlugin
-                        </_plugin>
-                    </instructions>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>versions</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>cleanVersions</goal>
-                        </goals>
-                        <configuration>
-                            <versions>
-                                <camel.osgi.version.clean>${project.version}</camel.osgi.version.clean>
-                            </versions>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>bundle-manifest</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>manifest</goal>
-                        </goals>
                     </execution>
                 </executions>
             </plugin>

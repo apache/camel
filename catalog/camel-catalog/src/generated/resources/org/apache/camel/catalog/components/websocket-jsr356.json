@@ -11,7 +11,7 @@
     "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-websocket-jsr356",
-    "version": "3.21.0-SNAPSHOT",
+    "version": "4.0.0-SNAPSHOT",
     "scheme": "websocket-jsr356",
     "extendsScheme": "",
     "syntax": "websocket-jsr356:uri",
@@ -28,7 +28,7 @@
     "serverEndpointDeploymentStrategy": { "kind": "property", "displayName": "Server Endpoint Deployment Strategy", "group": "advanced", "label": "advanced", "required": false, "type": "object", "javaType": "org.apache.camel.websocket.jsr356.ServerEndpointDeploymentStrategy", "deprecated": false, "autowired": false, "secret": false, "description": "To enable customization of how a WebSocket ServerEndpoint is configured and deployed. By default DefaultServerEndpointDeploymentStrategy is used." }
   },
   "headers": {
-    "jsr356.session": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "javax.websocket.Session", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The session.", "constantName": "org.apache.camel.websocket.jsr356.JSR356Constants#SESSION" },
+    "jsr356.session": { "kind": "header", "displayName": "", "group": "common", "label": "", "required": false, "javaType": "jakarta.websocket.Session", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "The session.", "constantName": "org.apache.camel.websocket.jsr356.JSR356Constants#SESSION" },
     "jsr356.producer.session.incoming.use": { "kind": "header", "displayName": "", "group": "producer", "label": "producer", "required": false, "javaType": "Boolean", "deprecated": false, "deprecationNote": "", "autowired": false, "secret": false, "description": "Use incoming session", "constantName": "org.apache.camel.websocket.jsr356.JSR356Constants#USE_INCOMING_SESSION" }
   },
   "properties": {

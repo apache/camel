@@ -26,11 +26,11 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "connectionfactory":
-        case "connectionFactory": target.setConnectionFactory(property(camelContext, javax.jms.ConnectionFactory.class, value)); return true;
+        case "connectionFactory": target.setConnectionFactory(property(camelContext, jakarta.jms.ConnectionFactory.class, value)); return true;
         case "destinationcreationstrategy":
         case "destinationCreationStrategy": target.setDestinationCreationStrategy(property(camelContext, org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class, value)); return true;
         case "exceptionlistener":
-        case "exceptionListener": target.setExceptionListener(property(camelContext, javax.jms.ExceptionListener.class, value)); return true;
+        case "exceptionListener": target.setExceptionListener(property(camelContext, jakarta.jms.ExceptionListener.class, value)); return true;
         case "headerfilterstrategy":
         case "headerFilterStrategy": target.setHeaderFilterStrategy(property(camelContext, org.apache.camel.spi.HeaderFilterStrategy.class, value)); return true;
         case "jmskeyformatstrategy":
@@ -62,11 +62,11 @@ public class SjmsComponentConfigurer extends PropertyConfigurerSupport implement
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "connectionfactory":
-        case "connectionFactory": return javax.jms.ConnectionFactory.class;
+        case "connectionFactory": return jakarta.jms.ConnectionFactory.class;
         case "destinationcreationstrategy":
         case "destinationCreationStrategy": return org.apache.camel.component.sjms.jms.DestinationCreationStrategy.class;
         case "exceptionlistener":
-        case "exceptionListener": return javax.jms.ExceptionListener.class;
+        case "exceptionListener": return jakarta.jms.ExceptionListener.class;
         case "headerfilterstrategy":
         case "headerFilterStrategy": return org.apache.camel.spi.HeaderFilterStrategy.class;
         case "jmskeyformatstrategy":

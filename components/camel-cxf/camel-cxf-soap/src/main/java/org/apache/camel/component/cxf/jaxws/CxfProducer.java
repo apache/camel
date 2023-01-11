@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.Holder;
-import javax.xml.ws.handler.MessageContext.Scope;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.handler.MessageContext.Scope;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;

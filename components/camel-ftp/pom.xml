@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-ftp</artifactId>
@@ -32,9 +32,6 @@
     <description>Camel FTP support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            com.jcraft.jsch.*;version="[0.2,1)"
-        </camel.osgi.import.before.defaults>
 
         <camel.failsafe.parallel.factor>0.5</camel.failsafe.parallel.factor>
     </properties>

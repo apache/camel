@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-cdi</artifactId>
@@ -170,10 +170,9 @@
 
         <!-- provided dependencies -->
         <dependency>
-            <groupId>javax.enterprise</groupId>
-            <artifactId>cdi-api</artifactId>
-            <version>${cdi-api-2.0-version}</version>
-            <scope>provided</scope>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>${jakarta-enterprise-cdi-api-version}</version>
         </dependency>
 
         <!-- test dependencies -->
@@ -181,7 +180,7 @@
         <dependency>
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-core-impl</artifactId>
-            <version>${weld3-version}</version>
+            <version>${weld-version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -253,7 +252,7 @@
                                 <artifactItem>
                                     <groupId>jakarta.xml.bind</groupId>
                                     <artifactId>jakarta.xml.bind-api</artifactId>
-                                    <version>${jakarta-jaxb-version}</version>
+                                    <version>${jakarta-xml-bind-api-version}</version>
                                     <overWrite>false</overWrite>
                                     <outputDirectory>${project.basedir}/target/java9</outputDirectory>
                                 </artifactItem>
@@ -295,10 +294,9 @@
                 <!-- provided dependencies -->
 
                 <dependency>
-                    <groupId>javax.enterprise</groupId>
-                    <artifactId>cdi-api</artifactId>
-                    <version>${cdi-api-2.0-version}</version>
-                    <scope>provided</scope>
+                    <groupId>jakarta.enterprise</groupId>
+                    <artifactId>jakarta.enterprise.cdi-api</artifactId>
+                    <version>${jakarta-enterprise-cdi-api-version}</version>
                 </dependency>
 
                 <!-- test dependencies -->
@@ -306,7 +304,7 @@
                 <dependency>
                     <groupId>org.jboss.weld</groupId>
                     <artifactId>weld-core-impl</artifactId>
-                    <version>${weld3-version}</version>
+                    <version>${weld-version}</version>
                     <scope>test</scope>
                 </dependency>
 

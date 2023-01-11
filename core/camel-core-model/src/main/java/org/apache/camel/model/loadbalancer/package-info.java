@@ -19,6 +19,6 @@
  * The JAXB POJOs for the <a href="http://camel.apache.org/load-balancer.html">Load Balancer</a> EIP pattern for the
  * <a href="http://camel.apache.org/xml-configuration.html">XML Configuration</a>.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-                                     elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
+                                     elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.model.loadbalancer;

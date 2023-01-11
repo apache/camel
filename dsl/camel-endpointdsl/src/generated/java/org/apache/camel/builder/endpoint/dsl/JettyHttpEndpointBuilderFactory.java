@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -450,7 +450,7 @@ public interface JettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom buffer size on the javax.servlet.ServletResponse.
+         * To use a custom buffer size on the jakarta.servlet.ServletResponse.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -465,7 +465,7 @@ public interface JettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom buffer size on the javax.servlet.ServletResponse.
+         * To use a custom buffer size on the jakarta.servlet.ServletResponse.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -930,7 +930,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * find in the Registry. Multiple values can be separated by comma.
          * 
          * The option is a:
-         * &lt;code&gt;java.util.List&amp;lt;javax.servlet.Filter&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;jakarta.servlet.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -938,7 +938,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder filters(
-                List<javax.servlet.Filter> filters) {
+                List<jakarta.servlet.Filter> filters) {
             doSetProperty("filters", filters);
             return this;
         }
@@ -947,7 +947,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * find in the Registry. Multiple values can be separated by comma.
          * 
          * The option will be converted to a
-         * &lt;code&gt;java.util.List&amp;lt;javax.servlet.Filter&amp;gt;&lt;/code&gt; type.
+         * &lt;code&gt;java.util.List&amp;lt;jakarta.servlet.Filter&amp;gt;&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1114,7 +1114,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * Allows using a custom multipart filter. Note: setting
          * multipartFilterRef forces the value of enableMultipartFilter to true.
          * 
-         * The option is a: &lt;code&gt;javax.servlet.Filter&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;jakarta.servlet.Filter&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 
@@ -1122,7 +1122,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedJettyHttpEndpointBuilder multipartFilter(
-                javax.servlet.Filter multipartFilter) {
+                jakarta.servlet.Filter multipartFilter) {
             doSetProperty("multipartFilter", multipartFilter);
             return this;
         }
@@ -1131,7 +1131,7 @@ public interface JettyHttpEndpointBuilderFactory {
          * multipartFilterRef forces the value of enableMultipartFilter to true.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.servlet.Filter&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.servlet.Filter&lt;/code&gt; type.
          * 
          * Group: consumer (advanced)
          * 

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.sjms.reply;
 
-import javax.jms.Connection;
-import javax.jms.Destination;
-import javax.jms.MessageConsumer;
-import javax.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.Destination;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.Session;
 
 import org.apache.camel.component.sjms.MessageListenerContainer;
 import org.apache.camel.component.sjms.SjmsEndpoint;

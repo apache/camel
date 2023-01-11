@@ -16,7 +16,7 @@
  */
 package org.apache.camel.test.cdi;
 
-import javax.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.cdi.CdiCamelExtension;
 import org.jboss.weld.config.ConfigurationKey;

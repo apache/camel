@@ -17,6 +17,6 @@
 /**
  * The core Camel API.
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-                                     elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
+                                     elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel;

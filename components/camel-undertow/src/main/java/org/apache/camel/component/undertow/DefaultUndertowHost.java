@@ -18,7 +18,7 @@ package org.apache.camel.component.undertow;
 
 import java.net.URI;
 
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 
 import io.undertow.Undertow;
 import io.undertow.UndertowOptions;

@@ -19,7 +19,7 @@ package org.apache.camel.component.resteasy.test;
 import java.io.File;
 import java.net.URI;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.camel.component.resteasy.test.WebTest.Deployment;
 import org.apache.camel.component.resteasy.test.WebTest.Resource;

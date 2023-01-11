@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -320,7 +320,7 @@ public interface JpaEndpointBuilderFactory {
          * To configure the lock mode on the consumer.
          * 
          * The option is a:
-         * &lt;code&gt;javax.persistence.LockModeType&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.persistence.LockModeType&lt;/code&gt; type.
          * 
          * Default: PESSIMISTIC_WRITE
          * Group: consumer
@@ -329,7 +329,7 @@ public interface JpaEndpointBuilderFactory {
          * @return the dsl builder
          */
         default JpaEndpointConsumerBuilder lockModeType(
-                javax.persistence.LockModeType lockModeType) {
+                jakarta.persistence.LockModeType lockModeType) {
             doSetProperty("lockModeType", lockModeType);
             return this;
         }
@@ -337,7 +337,7 @@ public interface JpaEndpointBuilderFactory {
          * To configure the lock mode on the consumer.
          * 
          * The option will be converted to a
-         * &lt;code&gt;javax.persistence.LockModeType&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.persistence.LockModeType&lt;/code&gt; type.
          * 
          * Default: PESSIMISTIC_WRITE
          * Group: consumer
@@ -2160,7 +2160,7 @@ public interface JpaEndpointBuilderFactory {
         /**
          * The JPA EntityManager object.
          * 
-         * The option is a: {@code javax.persistence.EntityManager} type.
+         * The option is a: {@code jakarta.persistence.EntityManager} type.
          * 
          * Group: common
          * 

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.builder.component.dsl;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
@@ -115,7 +115,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * To use a custom ConstraintValidatorFactory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.validation.ConstraintValidatorFactory&lt;/code&gt;
+         * &lt;code&gt;jakarta.validation.ConstraintValidatorFactory&lt;/code&gt;
          * type.
          * 
          * Group: advanced
@@ -124,7 +124,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * @return the dsl builder
          */
         default BeanValidatorComponentBuilder constraintValidatorFactory(
-                javax.validation.ConstraintValidatorFactory constraintValidatorFactory) {
+                jakarta.validation.ConstraintValidatorFactory constraintValidatorFactory) {
             doSetProperty("constraintValidatorFactory", constraintValidatorFactory);
             return this;
         }
@@ -132,7 +132,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * To use a custom MessageInterpolator.
          * 
          * The option is a:
-         * &lt;code&gt;javax.validation.MessageInterpolator&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.validation.MessageInterpolator&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -140,7 +140,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * @return the dsl builder
          */
         default BeanValidatorComponentBuilder messageInterpolator(
-                javax.validation.MessageInterpolator messageInterpolator) {
+                jakarta.validation.MessageInterpolator messageInterpolator) {
             doSetProperty("messageInterpolator", messageInterpolator);
             return this;
         }
@@ -148,7 +148,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * To use a custom TraversableResolver.
          * 
          * The option is a:
-         * &lt;code&gt;javax.validation.TraversableResolver&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.validation.TraversableResolver&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -156,7 +156,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * @return the dsl builder
          */
         default BeanValidatorComponentBuilder traversableResolver(
-                javax.validation.TraversableResolver traversableResolver) {
+                jakarta.validation.TraversableResolver traversableResolver) {
             doSetProperty("traversableResolver", traversableResolver);
             return this;
         }
@@ -164,7 +164,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * To use a a custom ValidationProviderResolver.
          * 
          * The option is a:
-         * &lt;code&gt;javax.validation.ValidationProviderResolver&lt;/code&gt;
+         * &lt;code&gt;jakarta.validation.ValidationProviderResolver&lt;/code&gt;
          * type.
          * 
          * Group: advanced
@@ -173,7 +173,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * @return the dsl builder
          */
         default BeanValidatorComponentBuilder validationProviderResolver(
-                javax.validation.ValidationProviderResolver validationProviderResolver) {
+                jakarta.validation.ValidationProviderResolver validationProviderResolver) {
             doSetProperty("validationProviderResolver", validationProviderResolver);
             return this;
         }
@@ -181,7 +181,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * To use a custom ValidatorFactory.
          * 
          * The option is a:
-         * &lt;code&gt;javax.validation.ValidatorFactory&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.validation.ValidatorFactory&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -189,7 +189,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * @return the dsl builder
          */
         default BeanValidatorComponentBuilder validatorFactory(
-                javax.validation.ValidatorFactory validatorFactory) {
+                jakarta.validation.ValidatorFactory validatorFactory) {
             doSetProperty("validatorFactory", validatorFactory);
             return this;
         }
@@ -213,11 +213,11 @@ public interface BeanValidatorComponentBuilderFactory {
             case "ignoreXmlConfiguration": ((BeanValidatorComponent) component).setIgnoreXmlConfiguration((boolean) value); return true;
             case "lazyStartProducer": ((BeanValidatorComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((BeanValidatorComponent) component).setAutowiredEnabled((boolean) value); return true;
-            case "constraintValidatorFactory": ((BeanValidatorComponent) component).setConstraintValidatorFactory((javax.validation.ConstraintValidatorFactory) value); return true;
-            case "messageInterpolator": ((BeanValidatorComponent) component).setMessageInterpolator((javax.validation.MessageInterpolator) value); return true;
-            case "traversableResolver": ((BeanValidatorComponent) component).setTraversableResolver((javax.validation.TraversableResolver) value); return true;
-            case "validationProviderResolver": ((BeanValidatorComponent) component).setValidationProviderResolver((javax.validation.ValidationProviderResolver) value); return true;
-            case "validatorFactory": ((BeanValidatorComponent) component).setValidatorFactory((javax.validation.ValidatorFactory) value); return true;
+            case "constraintValidatorFactory": ((BeanValidatorComponent) component).setConstraintValidatorFactory((jakarta.validation.ConstraintValidatorFactory) value); return true;
+            case "messageInterpolator": ((BeanValidatorComponent) component).setMessageInterpolator((jakarta.validation.MessageInterpolator) value); return true;
+            case "traversableResolver": ((BeanValidatorComponent) component).setTraversableResolver((jakarta.validation.TraversableResolver) value); return true;
+            case "validationProviderResolver": ((BeanValidatorComponent) component).setValidationProviderResolver((jakarta.validation.ValidationProviderResolver) value); return true;
+            case "validatorFactory": ((BeanValidatorComponent) component).setValidatorFactory((jakarta.validation.ValidatorFactory) value); return true;
             default: return false;
             }
         }

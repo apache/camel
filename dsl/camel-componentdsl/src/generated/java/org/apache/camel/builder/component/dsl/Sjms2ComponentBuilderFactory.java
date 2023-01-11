@@ -16,7 +16,7 @@
  */
 package org.apache.camel.builder.component.dsl;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
@@ -54,7 +54,7 @@ public interface Sjms2ComponentBuilderFactory {
          * The connection factory to be use. A connection factory must be
          * configured either on the component or endpoint.
          * 
-         * The option is a: &lt;code&gt;javax.jms.ConnectionFactory&lt;/code&gt;
+         * The option is a: &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt;
          * type.
          * 
          * Group: common
@@ -63,7 +63,7 @@ public interface Sjms2ComponentBuilderFactory {
          * @return the dsl builder
          */
         default Sjms2ComponentBuilder connectionFactory(
-                javax.jms.ConnectionFactory connectionFactory) {
+                jakarta.jms.ConnectionFactory connectionFactory) {
             doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
@@ -153,7 +153,7 @@ public interface Sjms2ComponentBuilderFactory {
          * Specifies the JMS Exception Listener that is to be notified of any
          * underlying JMS exceptions.
          * 
-         * The option is a: &lt;code&gt;javax.jms.ExceptionListener&lt;/code&gt;
+         * The option is a: &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt;
          * type.
          * 
          * Group: advanced
@@ -162,7 +162,7 @@ public interface Sjms2ComponentBuilderFactory {
          * @return the dsl builder
          */
         default Sjms2ComponentBuilder exceptionListener(
-                javax.jms.ExceptionListener exceptionListener) {
+                jakarta.jms.ExceptionListener exceptionListener) {
             doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
@@ -191,7 +191,7 @@ public interface Sjms2ComponentBuilderFactory {
         }
         /**
          * To use the given MessageCreatedStrategy which are invoked when Camel
-         * creates new instances of javax.jms.Message objects when Camel is
+         * creates new instances of jakarta.jms.Message objects when Camel is
          * sending a JMS message.
          * 
          * The option is a:
@@ -296,12 +296,12 @@ public interface Sjms2ComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "connectionFactory": ((Sjms2Component) component).setConnectionFactory((javax.jms.ConnectionFactory) value); return true;
+            case "connectionFactory": ((Sjms2Component) component).setConnectionFactory((jakarta.jms.ConnectionFactory) value); return true;
             case "bridgeErrorHandler": ((Sjms2Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((Sjms2Component) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((Sjms2Component) component).setAutowiredEnabled((boolean) value); return true;
             case "destinationCreationStrategy": ((Sjms2Component) component).setDestinationCreationStrategy((org.apache.camel.component.sjms.jms.DestinationCreationStrategy) value); return true;
-            case "exceptionListener": ((Sjms2Component) component).setExceptionListener((javax.jms.ExceptionListener) value); return true;
+            case "exceptionListener": ((Sjms2Component) component).setExceptionListener((jakarta.jms.ExceptionListener) value); return true;
             case "jmsKeyFormatStrategy": ((Sjms2Component) component).setJmsKeyFormatStrategy((org.apache.camel.component.sjms.jms.JmsKeyFormatStrategy) value); return true;
             case "messageCreatedStrategy": ((Sjms2Component) component).setMessageCreatedStrategy((org.apache.camel.component.sjms.jms.MessageCreatedStrategy) value); return true;
             case "recoveryInterval": ((Sjms2Component) component).setRecoveryInterval((long) value); return true;

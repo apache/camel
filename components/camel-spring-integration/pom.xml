@@ -23,7 +23,7 @@
     <parent>
         <artifactId>components</artifactId>
         <groupId>org.apache.camel</groupId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-integration</artifactId>
@@ -32,10 +32,6 @@
     <packaging>jar</packaging>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            org.springframework.integration.*;version="[5,6)",
-            org.springframework.messaging.*;version="[5,6)"
-        </camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>

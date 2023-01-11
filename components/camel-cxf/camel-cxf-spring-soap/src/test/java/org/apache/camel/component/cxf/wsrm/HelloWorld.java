@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf.wsrm;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(targetNamespace = "http://camel.apache.org/cxf/wsrm")
 public interface HelloWorld {

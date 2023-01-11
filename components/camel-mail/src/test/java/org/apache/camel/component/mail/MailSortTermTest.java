@@ -18,11 +18,11 @@ package org.apache.camel.component.mail;
 
 import java.util.Date;
 
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Store;
-import javax.mail.internet.MimeMessage;
-import javax.mail.search.SearchTerm;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.Store;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.search.SearchTerm;
 
 import com.sun.mail.imap.SortTerm;
 import org.apache.camel.BindToRegistry;

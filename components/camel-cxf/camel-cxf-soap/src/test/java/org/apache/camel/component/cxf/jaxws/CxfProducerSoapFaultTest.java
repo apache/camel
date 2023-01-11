@@ -19,7 +19,7 @@ package org.apache.camel.component.cxf.jaxws;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;

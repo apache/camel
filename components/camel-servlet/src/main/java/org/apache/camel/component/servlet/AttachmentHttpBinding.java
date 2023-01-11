@@ -22,9 +22,9 @@ import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Locale;
 
-import javax.activation.DataSource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
+import jakarta.activation.DataSource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Part;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.attachment.Attachment;

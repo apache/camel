@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -220,7 +220,7 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom buffer size on the javax.servlet.ServletResponse.
+         * To use a custom buffer size on the jakarta.servlet.ServletResponse.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -235,7 +235,7 @@ public interface ResteasyEndpointBuilderFactory {
             return this;
         }
         /**
-         * To use a custom buffer size on the javax.servlet.ServletResponse.
+         * To use a custom buffer size on the jakarta.servlet.ServletResponse.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.Destination;
+import jakarta.jms.Destination;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;

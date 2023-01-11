@@ -18,7 +18,7 @@ package org.apache.camel.dataformat.soap;
 
 import java.util.List;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import com.example.customerservice.Customer;
 import com.example.customerservice.CustomerService;

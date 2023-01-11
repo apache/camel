@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo2-parent</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-olingo2-api</artifactId>
@@ -34,9 +34,6 @@
     <packaging>jar</packaging>
 
     <properties>
-        <camel.osgi.import.pkg>
-            *
-        </camel.osgi.import.pkg>
         <firstVersion>2.14.0</firstVersion>
     </properties>
 

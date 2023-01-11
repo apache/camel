@@ -18,10 +18,10 @@ package org.apache.camel.http.common;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * Strategy to resolve which consumer to service an incoming {@link javax.servlet.http.HttpServletRequest}.
+ * Strategy to resolve which consumer to service an incoming {@link jakarta.servlet.http.HttpServletRequest}.
  */
 public interface ServletResolveConsumerStrategy {
 
@@ -31,7 +31,7 @@ public interface ServletResolveConsumerStrategy {
      * @param  request   the http request
      * @param  consumers the map of registered consumers
      * @return           the consumer to service the request, or <tt>null</tt> if no match, which sends back a
-     *                   {@link javax.servlet.http.HttpServletResponse#SC_NOT_FOUND} to the client.
+     *                   {@link jakarta.servlet.http.HttpServletResponse#SC_NOT_FOUND} to the client.
      */
     HttpConsumer resolve(HttpServletRequest request, Map<String, HttpConsumer> consumers);
 
@@ -42,7 +42,7 @@ public interface ServletResolveConsumerStrategy {
      * @param  method    the http method
      * @param  consumers the map of registered consumers
      * @return           <tt>true</tt> if the method is allowed and can be serviced. Otherwise a
-     *                   {@link javax.servlet.http.HttpServletResponse#SC_METHOD_NOT_ALLOWED} is returned to the client.
+     *                   {@link jakarta.servlet.http.HttpServletResponse#SC_METHOD_NOT_ALLOWED} is returned to the client.
      */
     boolean isHttpMethodAllowed(HttpServletRequest request, String method, Map<String, HttpConsumer> consumers);
 

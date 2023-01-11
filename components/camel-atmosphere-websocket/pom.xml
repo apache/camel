@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-atmosphere-websocket</artifactId>
@@ -33,19 +33,6 @@
     <description>Camel Atmosphere WebSocket Servlet</description>
 
     <properties>
-        <camel.osgi.import.pkg>
-            !org.apache.camel.component.atmosphere.websocket.*,
-            javax.activation.*;version="${javax-activation-version-range}",
-            javax.servlet.*;version="${servlet-version-range}",
-            org.atmosphere.*;version="${atmosphere-version-range}",
-            org.apache.catalina;resolution:=optional,
-            org.apache.catalina.comet;resolution:=optional,
-            org.eclipse.jetty.continuation;version="[9,10)";resolution:=optional,
-            org.eclipse.jetty.server;version="[9,10)";resolution:=optional,
-            org.eclipse.jetty.util.ssl;version="[9,10)";resolution:=optional,
-            ${camel.osgi.import.defaults},
-            *
-        </camel.osgi.import.pkg>
     </properties>
 
     <dependencies>
@@ -59,9 +46,9 @@
             <artifactId>camel-servlet</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${javax-servlet-api-version}</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${jakarta-servlet-api-version}</version>
         </dependency>
 
         <!--  atmosphere -->
@@ -103,7 +90,7 @@
 
         <dependency>
             <groupId>org.eclipse.jetty.websocket</groupId>
-            <artifactId>websocket-server</artifactId>
+            <artifactId>websocket-jakarta-server</artifactId>
             <version>${jetty-version}</version>
             <scope>test</scope>
         </dependency>

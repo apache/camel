@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.bean.validator;
 
-import javax.validation.ValidationProviderResolver;
+import jakarta.validation.ValidationProviderResolver;
 
 import org.apache.camel.CamelContext;
 

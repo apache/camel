@@ -23,9 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.internet.MimeMessage;
 
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
@@ -141,7 +141,7 @@ public class GmailUsersMessagesIT extends AbstractGoogleMailTestSupport {
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
         MimeMessage mm = new MimeMessage(session);
-        mm.addRecipients(javax.mail.Message.RecipientType.TO, profile.getEmailAddress());
+        mm.addRecipients(jakarta.mail.Message.RecipientType.TO, profile.getEmailAddress());
         mm.setSubject("Hello from camel-google-mail");
         mm.setContent("Camel rocks!", "text/plain");
         Message createMessageWithEmail = createMessageWithEmail(mm);

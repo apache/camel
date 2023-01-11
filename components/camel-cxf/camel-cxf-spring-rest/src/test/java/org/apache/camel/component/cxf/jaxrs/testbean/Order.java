@@ -19,10 +19,10 @@ package org.apache.camel.component.cxf.jaxrs.testbean;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "Order")
 public class Order {

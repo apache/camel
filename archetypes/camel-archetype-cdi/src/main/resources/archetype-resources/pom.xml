@@ -31,7 +31,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <deltaspike-version>1.9.0</deltaspike-version>
-    <weld3-version>3.0.5.Final</weld3-version>
+    <weld-version>5.1.0.Final</weld-version>
     <log4j2-version>2.13.3</log4j2-version>
     <cdi-api-version>2.0</cdi-api-version>
   </properties>
@@ -53,8 +53,8 @@
 
     <!-- CDI API -->
     <dependency>
-      <groupId>javax.enterprise</groupId>
-      <artifactId>cdi-api</artifactId>
+      <groupId>jakarta.enterprise</groupId>
+      <artifactId>jakarta.enterprise.cdi-api</artifactId>
       <version>${cdi-api-version}</version>
       <scope>provided</scope>
     </dependency>
@@ -125,7 +125,7 @@
           <dependency>
             <groupId>org.jboss.weld.se</groupId>
             <artifactId>weld-se-shaded</artifactId>
-            <version>${weld3-version}</version>
+            <version>${weld-version}</version>
           </dependency>
         </dependencies>
       </plugin>

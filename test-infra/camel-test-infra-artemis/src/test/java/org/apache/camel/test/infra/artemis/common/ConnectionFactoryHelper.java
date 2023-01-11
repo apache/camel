@@ -16,7 +16,7 @@
  */
 package org.apache.camel.test.infra.artemis.common;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.test.infra.artemis.services.AbstractArtemisEmbeddedService;

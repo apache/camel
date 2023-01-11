@@ -16,9 +16,9 @@
  */
 package org.apache.camel.cdi;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.spi.InjectionTarget;
-import javax.enterprise.inject.spi.Producer;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.inject.spi.InjectionTarget;
+import jakarta.enterprise.inject.spi.Producer;
 
 abstract class DelegateInjectionTarget<T> extends DelegateProducer<T> implements InjectionTarget<T> {
 

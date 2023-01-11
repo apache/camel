@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-spring-xml</artifactId>
@@ -37,10 +37,6 @@
         <label>spring</label>
         <supportLevel>Stable</supportLevel>
         <title>Spring XML</title>
-        <camel.osgi.import>
-            javax.xml.bind*;version="[2.2,3.0)",
-            *
-        </camel.osgi.import>
 
         <camel.surefire.forkCount>4</camel.surefire.forkCount>
         <camel.surefire.parallel>false</camel.surefire.parallel>
@@ -144,8 +140,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
         </dependency>
 
         <!-- logging for testing -->
@@ -291,16 +287,6 @@
             </plugin>
 
             <!-- Push the execution order of the maven-bundle-plugin further to the end. That's why we add it here again. -->
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bundle-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>bundle-manifest</id>
-                        <phase>prepare-package</phase>
-                    </execution>
-                </executions>
-            </plugin>
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.activemq.pool.PooledConnectionFactory;
 import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;

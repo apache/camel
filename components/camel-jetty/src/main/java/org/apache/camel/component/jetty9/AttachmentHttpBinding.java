@@ -23,10 +23,10 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.Part;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Part;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;

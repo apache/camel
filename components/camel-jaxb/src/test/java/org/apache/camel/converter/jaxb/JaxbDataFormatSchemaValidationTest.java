@@ -84,7 +84,7 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
 
         Throwable cause = ex.getCause();
         assertIsInstanceOf(IOException.class, cause);
-        assertTrue(cause.getMessage().contains("javax.xml.bind.MarshalException"));
+        assertTrue(cause.getMessage().contains("jakarta.xml.bind.MarshalException"));
         assertTrue(cause.getMessage().contains("org.xml.sax.SAXParseException"));
         assertTrue(cause.getMessage().contains("cvc-complex-type.2.4.a"));
     }
@@ -125,7 +125,7 @@ public class JaxbDataFormatSchemaValidationTest extends CamelTestSupport {
 
         Throwable cause = ex.getCause();
         assertIsInstanceOf(IOException.class, cause);
-        assertTrue(cause.getMessage().contains("javax.xml.bind.UnmarshalException"));
+        assertTrue(cause.getMessage().contains("jakarta.xml.bind.UnmarshalException"));
         assertTrue(cause.getMessage().contains("org.xml.sax.SAXParseException"));
         assertTrue(cause.getMessage().contains("cvc-complex-type.2.4.b"));
     }

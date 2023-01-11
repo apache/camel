@@ -16,7 +16,7 @@
  */
 package org.apache.camel.builder.component.dsl;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
@@ -212,7 +212,7 @@ public interface ImapsComponentBuilderFactory {
             return this;
         }
         /**
-         * Will mark the javax.mail.Message as peeked before processing the mail
+         * Will mark the jakarta.mail.Message as peeked before processing the mail
          * message. This applies to IMAPMessage messages types only. By using
          * peek the mail will not be eager marked as SEEN on the mail server,
          * which allows us to rollback the mail message if there is an error
@@ -363,9 +363,9 @@ public interface ImapsComponentBuilderFactory {
          * message is mapped to the body of the Camel IN message, the mail
          * headers are mapped to IN headers, and the attachments to Camel IN
          * attachment message. If this option is set to false then the IN
-         * message contains a raw javax.mail.Message. You can retrieve this raw
+         * message contains a raw jakarta.mail.Message. You can retrieve this raw
          * message by calling
-         * exchange.getIn().getBody(javax.mail.Message.class).
+         * exchange.getIn().getBody(jakarta.mail.Message.class).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -741,14 +741,14 @@ public interface ImapsComponentBuilderFactory {
          * using a custom mail session, then the hostname and port from the mail
          * session will be used (if configured on the session).
          * 
-         * The option is a: &lt;code&gt;javax.mail.Session&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;jakarta.mail.Session&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
          * @param session the value to set
          * @return the dsl builder
          */
-        default ImapsComponentBuilder session(javax.mail.Session session) {
+        default ImapsComponentBuilder session(jakarta.mail.Session session) {
             doSetProperty("session", session);
             return this;
         }
@@ -909,7 +909,7 @@ public interface ImapsComponentBuilderFactory {
             case "ignoreUnsupportedCharset": getOrCreateConfiguration((MailComponent) component).setIgnoreUnsupportedCharset((boolean) value); return true;
             case "ignoreUriScheme": getOrCreateConfiguration((MailComponent) component).setIgnoreUriScheme((boolean) value); return true;
             case "javaMailProperties": getOrCreateConfiguration((MailComponent) component).setJavaMailProperties((java.util.Properties) value); return true;
-            case "session": getOrCreateConfiguration((MailComponent) component).setSession((javax.mail.Session) value); return true;
+            case "session": getOrCreateConfiguration((MailComponent) component).setSession((jakarta.mail.Session) value); return true;
             case "useInlineAttachments": getOrCreateConfiguration((MailComponent) component).setUseInlineAttachments((boolean) value); return true;
             case "headerFilterStrategy": ((MailComponent) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "password": getOrCreateConfiguration((MailComponent) component).setPassword((java.lang.String) value); return true;

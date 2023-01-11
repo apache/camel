@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-milo</artifactId>
@@ -32,10 +32,6 @@
     <description>Camel OPC UA support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            javax.xml.bind*;version="[2.2,3.0)",
-            com.google.common.*;version="19.0.0"
-        </camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>

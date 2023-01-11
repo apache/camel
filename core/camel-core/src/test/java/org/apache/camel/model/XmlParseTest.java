@@ -18,7 +18,7 @@ package org.apache.camel.model;
 
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;

@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.jpa;
 
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 
 /**
  * A Strategy to create a query to search for objects in a database

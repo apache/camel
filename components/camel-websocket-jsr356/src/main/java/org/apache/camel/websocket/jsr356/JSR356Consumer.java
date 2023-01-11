@@ -19,9 +19,9 @@ package org.apache.camel.websocket.jsr356;
 import java.net.URI;
 import java.util.function.BiConsumer;
 
-import javax.websocket.ClientEndpointConfig;
-import javax.websocket.Session;
-import javax.websocket.server.ServerEndpointConfig;
+import jakarta.websocket.ClientEndpointConfig;
+import jakarta.websocket.Session;
+import jakarta.websocket.server.ServerEndpointConfig;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-hl7</artifactId>
@@ -32,9 +32,6 @@
     <description>Camel HL7 support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            org.apache.mina.*;version="[2,3)"
-        </camel.osgi.import.before.defaults>
     </properties>
 
     <dependencies>

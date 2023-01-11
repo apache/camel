@@ -18,8 +18,8 @@ package org.apache.camel.cdi;
 
 import java.util.Map;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.inject.Named;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.support.DefaultComponent;

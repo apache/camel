@@ -16,8 +16,8 @@
  */
 package org.apache.camel.cdi;
 
-import javax.enterprise.util.AnnotationLiteral;
-import javax.inject.Named;
+import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.inject.Named;
 
 @Vetoed
 final class NamedLiteral extends AnnotationLiteral<Named> implements Named {

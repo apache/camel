@@ -16,7 +16,7 @@
  */
 package org.apache.camel.itest.tx;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;

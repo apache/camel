@@ -21,15 +21,15 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.function.Function;
 
-import javax.enterprise.context.spi.CreationalContext;
-import javax.enterprise.inject.CreationException;
-import javax.enterprise.inject.InjectionException;
-import javax.enterprise.inject.Vetoed;
-import javax.enterprise.inject.spi.Bean;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.enterprise.inject.spi.InjectionPoint;
-import javax.enterprise.inject.spi.InjectionTarget;
-import javax.enterprise.inject.spi.PassivationCapable;
+import jakarta.enterprise.context.spi.CreationalContext;
+import jakarta.enterprise.inject.CreationException;
+import jakarta.enterprise.inject.InjectionException;
+import jakarta.enterprise.inject.Vetoed;
+import jakarta.enterprise.inject.spi.Bean;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.InjectionPoint;
+import jakarta.enterprise.inject.spi.InjectionTarget;
+import jakarta.enterprise.inject.spi.PassivationCapable;
 
 import static org.apache.camel.cdi.CdiSpiHelper.createBeanId;
 
@@ -84,12 +84,7 @@ class SyntheticBean<T> extends SyntheticBeanAttributes<T> implements Bean<T>, Pa
         return Collections.emptySet();
     }
 
-    @Override
-    public boolean isNullable() {
-        return false;
-    }
-
-    @Override
+       @Override
     public String toString() {
         return toString.apply(this);
     }

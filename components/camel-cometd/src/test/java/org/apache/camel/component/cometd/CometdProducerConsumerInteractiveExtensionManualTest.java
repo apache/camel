@@ -73,12 +73,12 @@ public class CometdProducerConsumerInteractiveExtensionManualTest {
         };
     }
 
-    public static final class Censor implements BayeuxServer.Extension, ServerSession.RemoveListener {
+    public static final class Censor implements BayeuxServer.Extension, ServerSession.RemovedListener {
 
         private HashSet<String> forbidden = new HashSet<>(Arrays.asList("one", "two"));
 
         @Override
-        public void removed(ServerSession session, boolean timeout) {
+        public void removed(ServerSession session, ServerMessage message, boolean timeout) {
             // called on remove of client
         }
 

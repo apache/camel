@@ -11,7 +11,7 @@
     "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-influxdb2",
-    "version": "3.21.0-SNAPSHOT",
+    "version": "4.0.0-SNAPSHOT",
     "scheme": "influxdb2",
     "extendsScheme": "",
     "syntax": "influxdb2:connectionBean",

@@ -19,7 +19,7 @@ package org.apache.camel.processor.jpa;
 import java.io.File;
 import java.util.List;
 
-import javax.persistence.Query;
+import jakarta.persistence.Query;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;

@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jaxb</artifactId>
@@ -33,11 +33,6 @@
     <description>Camel JAXB support</description>
 
     <properties>
-        <camel.osgi.import>
-            com.sun.xml.bind.marshaller;resolution:=optional;version="[2.2,3)",
-            javax.xml.bind*;version="[2.2,3.0)",
-            *
-        </camel.osgi.import>
         <camel.surefire.parallel>true</camel.surefire.parallel>
     </properties>
 

@@ -24,7 +24,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:tns="http://camel.apache.org/non-wrapper"
 	xmlns:typens="http://camel.apache.org/non-wrapper/types"
-	xmlns:jaxws="http://java.sun.com/xml/ns/jaxws"
+	xmlns:jaxws="https://jakarta.ee/xml/ns/jaxws"
 	targetNamespace="http://camel.apache.org/non-wrapper">
 
 	<wsdl:types>

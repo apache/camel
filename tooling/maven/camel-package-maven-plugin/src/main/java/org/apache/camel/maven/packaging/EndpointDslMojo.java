@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 import org.apache.camel.maven.packaging.dsl.DslHelper;
 import org.apache.camel.maven.packaging.generics.JavadocUtil;

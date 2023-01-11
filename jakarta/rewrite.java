@@ -82,7 +82,7 @@ class rewrite implements Callable<Integer> {
                     return name.endsWith(".java") || name.endsWith(".txt") || name.endsWith(".vm");
                 })
                 .forEach(p -> regex(p, 
-                    "javax.annotation.Generated", "javax.annotation.processing.Generated"
+                    "javax.annotation.processing.Generated", "javax.annotation.processing.Generated"
                 ));
         }
 

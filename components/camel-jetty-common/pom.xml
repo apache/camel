@@ -23,20 +23,16 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jetty-common</artifactId>
     <packaging>jar</packaging>
 
     <name>Camel :: Jetty :: Common</name>
-    <description>Camel Jetty 9.x support</description>
+    <description>Camel Jetty 11.x support</description>
 
     <properties>
-        <camel.osgi.import.before.defaults>
-            org.eclipse.jetty.*;version="[9.4,10)",
-            javax.servlet.*;version="${servlet-version-range}"
-        </camel.osgi.import.before.defaults>
         <firstVersion>2.15.0</firstVersion>
     </properties>
 
@@ -51,9 +47,9 @@
             <artifactId>camel-http-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${javax-servlet-api-version}</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>${jakarta-servlet-api-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.cdi.bean;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 
 @Named("beanName")
 public class NamedCamelBean {

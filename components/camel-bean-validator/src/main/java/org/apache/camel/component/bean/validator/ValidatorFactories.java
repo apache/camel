@@ -16,20 +16,20 @@
  */
 package org.apache.camel.component.bean.validator;
 
-import javax.validation.Configuration;
-import javax.validation.ConstraintValidatorFactory;
-import javax.validation.MessageInterpolator;
-import javax.validation.TraversableResolver;
-import javax.validation.Validation;
-import javax.validation.ValidationProviderResolver;
-import javax.validation.ValidatorFactory;
-import javax.validation.bootstrap.GenericBootstrap;
+import jakarta.validation.Configuration;
+import jakarta.validation.ConstraintValidatorFactory;
+import jakarta.validation.MessageInterpolator;
+import jakarta.validation.TraversableResolver;
+import jakarta.validation.Validation;
+import jakarta.validation.ValidationProviderResolver;
+import jakarta.validation.ValidatorFactory;
+import jakarta.validation.bootstrap.GenericBootstrap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.CamelContextHelper;
 
 /**
- * Utility class dedicated to create new {@code javax.validation.ValidatorFactory} instances.
+ * Utility class dedicated to create new {@code jakarta.validation.ValidatorFactory} instances.
  */
 public final class ValidatorFactories {
 

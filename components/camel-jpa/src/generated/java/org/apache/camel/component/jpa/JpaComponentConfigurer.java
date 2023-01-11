@@ -27,7 +27,7 @@ public class JpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "entitymanagerfactory":
-        case "entityManagerFactory": target.setEntityManagerFactory(property(camelContext, javax.persistence.EntityManagerFactory.class, value)); return true;
+        case "entityManagerFactory": target.setEntityManagerFactory(property(camelContext, jakarta.persistence.EntityManagerFactory.class, value)); return true;
         case "jointransaction":
         case "joinTransaction": target.setJoinTransaction(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
@@ -51,7 +51,7 @@ public class JpaComponentConfigurer extends PropertyConfigurerSupport implements
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
         case "entitymanagerfactory":
-        case "entityManagerFactory": return javax.persistence.EntityManagerFactory.class;
+        case "entityManagerFactory": return jakarta.persistence.EntityManagerFactory.class;
         case "jointransaction":
         case "joinTransaction": return boolean.class;
         case "lazystartproducer":

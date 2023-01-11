@@ -19,8 +19,8 @@ package org.apache.camel.cdi;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
-import javax.enterprise.inject.Vetoed;
-import javax.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.Vetoed;
+import jakarta.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Injector;

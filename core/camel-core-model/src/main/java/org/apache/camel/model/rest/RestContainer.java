@@ -18,7 +18,7 @@ package org.apache.camel.model.rest;
 
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlElementRef;
 
 /**
  * Container to hold {@link RestDefinition Rest}.

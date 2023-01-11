@@ -21,9 +21,9 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
 
-import javax.enterprise.inject.Vetoed;
-import javax.enterprise.inject.spi.AnnotatedMethod;
-import javax.enterprise.inject.spi.AnnotatedParameter;
+import jakarta.enterprise.inject.Vetoed;
+import jakarta.enterprise.inject.spi.AnnotatedMethod;
+import jakarta.enterprise.inject.spi.AnnotatedParameter;
 
 @Vetoed
 final class AnnotatedMethodDelegate<T> extends AnnotatedMemberDelegate<T> implements AnnotatedMethod<T> {

@@ -22,10 +22,10 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBIntrospector;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBIntrospector;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.Exchange;
@@ -158,8 +158,8 @@ public class SoapDataFormat extends JaxbDataFormat {
         // In the case of a parameter, the class of the value of the holder class
         // is used for the mapping rather than the holder class itself.
 
-        if (fromObj instanceof javax.xml.ws.Holder) {
-            javax.xml.ws.Holder holder = (javax.xml.ws.Holder) fromObj;
+        if (fromObj instanceof jakarta.xml.ws.Holder) {
+            jakarta.xml.ws.Holder holder = (jakarta.xml.ws.Holder) fromObj;
             value = holder.value;
             if (null == value) {
                 return null;
