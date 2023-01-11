@@ -159,14 +159,14 @@ public interface CaffeineCacheComponentBuilderFactory {
          * To configure the default action key. If a key is set in the message
          * header, then the key from the header takes precedence.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
          * @param key the value to set
          * @return the dsl builder
          */
-        default CaffeineCacheComponentBuilder key(java.lang.Object key) {
+        default CaffeineCacheComponentBuilder key(java.lang.String key) {
             doSetProperty("key", key);
             return this;
         }
@@ -273,20 +273,6 @@ public interface CaffeineCacheComponentBuilderFactory {
             return this;
         }
         /**
-         * The cache key type, default java.lang.Object.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param keyType the value to set
-         * @return the dsl builder
-         */
-        default CaffeineCacheComponentBuilder keyType(java.lang.String keyType) {
-            doSetProperty("keyType", keyType);
-            return this;
-        }
-        /**
          * Set a specific removal Listener for the cache.
          * 
          * The option is a:
@@ -378,13 +364,12 @@ public interface CaffeineCacheComponentBuilderFactory {
             case "expireAfterAccessTime": getOrCreateConfiguration((CaffeineCacheComponent) component).setExpireAfterAccessTime((int) value); return true;
             case "expireAfterWriteTime": getOrCreateConfiguration((CaffeineCacheComponent) component).setExpireAfterWriteTime((int) value); return true;
             case "initialCapacity": getOrCreateConfiguration((CaffeineCacheComponent) component).setInitialCapacity((java.lang.Integer) value); return true;
-            case "key": getOrCreateConfiguration((CaffeineCacheComponent) component).setKey((java.lang.Object) value); return true;
+            case "key": getOrCreateConfiguration((CaffeineCacheComponent) component).setKey((java.lang.String) value); return true;
             case "lazyStartProducer": ((CaffeineCacheComponent) component).setLazyStartProducer((boolean) value); return true;
             case "maximumSize": getOrCreateConfiguration((CaffeineCacheComponent) component).setMaximumSize((java.lang.Integer) value); return true;
             case "autowiredEnabled": ((CaffeineCacheComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "cacheLoader": getOrCreateConfiguration((CaffeineCacheComponent) component).setCacheLoader((com.github.benmanes.caffeine.cache.CacheLoader) value); return true;
             case "configuration": ((CaffeineCacheComponent) component).setConfiguration((org.apache.camel.component.caffeine.CaffeineConfiguration) value); return true;
-            case "keyType": getOrCreateConfiguration((CaffeineCacheComponent) component).setKeyType((java.lang.String) value); return true;
             case "removalListener": getOrCreateConfiguration((CaffeineCacheComponent) component).setRemovalListener((com.github.benmanes.caffeine.cache.RemovalListener) value); return true;
             case "statsCounter": getOrCreateConfiguration((CaffeineCacheComponent) component).setStatsCounter((com.github.benmanes.caffeine.cache.stats.StatsCounter) value); return true;
             case "statsEnabled": getOrCreateConfiguration((CaffeineCacheComponent) component).setStatsEnabled((boolean) value); return true;
