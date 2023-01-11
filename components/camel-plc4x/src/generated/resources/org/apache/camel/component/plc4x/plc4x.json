@@ -8,7 +8,7 @@
     "firstVersion": "3.20.0",
     "label": "iot",
     "javaType": "org.apache.camel.component.plc4x.Plc4XComponent",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-plc4x",
     "version": "4.0.0-SNAPSHOT",

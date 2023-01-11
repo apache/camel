@@ -4,7 +4,7 @@
 :artifactid: camel-wal
 :description: Write Ahead Log Strategy for Resume API
 :since: 3.20
-:supportlevel: Preview
+:supportlevel: Stable
 
 *Since Camel {since}*
 

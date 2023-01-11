@@ -49,7 +49,7 @@ public interface JettyComponentBuilderFactory {
      */
     interface JettyComponentBuilder
             extends
-                ComponentBuilder<JettyHttpComponent9> {
+                ComponentBuilder<JettyHttpComponent11> {
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
          * which mean any exceptions occurred while the consumer is trying to
@@ -608,12 +608,12 @@ public interface JettyComponentBuilderFactory {
 
     class JettyComponentBuilderImpl
             extends
-                AbstractComponentBuilder<JettyHttpComponent9>
+                AbstractComponentBuilder<JettyHttpComponent11>
             implements
                 JettyComponentBuilder {
         @Override
-        protected JettyHttpComponent9 buildConcreteComponent() {
-            return new JettyHttpComponent9();
+        protected JettyHttpComponent11 buildConcreteComponent() {
+            return new JettyHttpComponent11();
         }
         @Override
         protected boolean setPropertyOnComponent(
@@ -621,39 +621,39 @@ public interface JettyComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "bridgeErrorHandler": ((JettyHttpComponent9) component).setBridgeErrorHandler((boolean) value); return true;
-            case "continuationTimeout": ((JettyHttpComponent9) component).setContinuationTimeout((java.lang.Long) value); return true;
-            case "enableJmx": ((JettyHttpComponent9) component).setEnableJmx((boolean) value); return true;
-            case "maxThreads": ((JettyHttpComponent9) component).setMaxThreads((java.lang.Integer) value); return true;
-            case "minThreads": ((JettyHttpComponent9) component).setMinThreads((java.lang.Integer) value); return true;
-            case "muteException": ((JettyHttpComponent9) component).setMuteException((boolean) value); return true;
-            case "requestBufferSize": ((JettyHttpComponent9) component).setRequestBufferSize((java.lang.Integer) value); return true;
-            case "requestHeaderSize": ((JettyHttpComponent9) component).setRequestHeaderSize((java.lang.Integer) value); return true;
-            case "responseBufferSize": ((JettyHttpComponent9) component).setResponseBufferSize((java.lang.Integer) value); return true;
-            case "responseHeaderSize": ((JettyHttpComponent9) component).setResponseHeaderSize((java.lang.Integer) value); return true;
-            case "sendServerVersion": ((JettyHttpComponent9) component).setSendServerVersion((boolean) value); return true;
-            case "useContinuation": ((JettyHttpComponent9) component).setUseContinuation((boolean) value); return true;
-            case "useXForwardedForHeader": ((JettyHttpComponent9) component).setUseXForwardedForHeader((boolean) value); return true;
-            case "threadPool": ((JettyHttpComponent9) component).setThreadPool((org.eclipse.jetty.util.thread.ThreadPool) value); return true;
-            case "allowJavaSerializedObject": ((JettyHttpComponent9) component).setAllowJavaSerializedObject((boolean) value); return true;
-            case "autowiredEnabled": ((JettyHttpComponent9) component).setAutowiredEnabled((boolean) value); return true;
-            case "errorHandler": ((JettyHttpComponent9) component).setErrorHandler((org.eclipse.jetty.server.handler.ErrorHandler) value); return true;
-            case "httpBinding": ((JettyHttpComponent9) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
-            case "httpConfiguration": ((JettyHttpComponent9) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
-            case "jettyHttpBinding": ((JettyHttpComponent9) component).setJettyHttpBinding((org.apache.camel.component.jetty.JettyHttpBinding) value); return true;
-            case "mbContainer": ((JettyHttpComponent9) component).setMbContainer((org.eclipse.jetty.jmx.MBeanContainer) value); return true;
-            case "headerFilterStrategy": ((JettyHttpComponent9) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
-            case "proxyHost": ((JettyHttpComponent9) component).setProxyHost((java.lang.String) value); return true;
-            case "proxyPort": ((JettyHttpComponent9) component).setProxyPort((java.lang.Integer) value); return true;
-            case "keystore": ((JettyHttpComponent9) component).setKeystore((java.lang.String) value); return true;
-            case "socketConnectorProperties": ((JettyHttpComponent9) component).setSocketConnectorProperties((java.util.Map) value); return true;
-            case "socketConnectors": ((JettyHttpComponent9) component).setSocketConnectors((java.util.Map) value); return true;
-            case "sslContextParameters": ((JettyHttpComponent9) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
-            case "sslKeyPassword": ((JettyHttpComponent9) component).setSslKeyPassword((java.lang.String) value); return true;
-            case "sslPassword": ((JettyHttpComponent9) component).setSslPassword((java.lang.String) value); return true;
-            case "sslSocketConnectorProperties": ((JettyHttpComponent9) component).setSslSocketConnectorProperties((java.util.Map) value); return true;
-            case "sslSocketConnectors": ((JettyHttpComponent9) component).setSslSocketConnectors((java.util.Map) value); return true;
-            case "useGlobalSslContextParameters": ((JettyHttpComponent9) component).setUseGlobalSslContextParameters((boolean) value); return true;
+            case "bridgeErrorHandler": ((JettyHttpComponent11) component).setBridgeErrorHandler((boolean) value); return true;
+            case "continuationTimeout": ((JettyHttpComponent11) component).setContinuationTimeout((java.lang.Long) value); return true;
+            case "enableJmx": ((JettyHttpComponent11) component).setEnableJmx((boolean) value); return true;
+            case "maxThreads": ((JettyHttpComponent11) component).setMaxThreads((java.lang.Integer) value); return true;
+            case "minThreads": ((JettyHttpComponent11) component).setMinThreads((java.lang.Integer) value); return true;
+            case "muteException": ((JettyHttpComponent11) component).setMuteException((boolean) value); return true;
+            case "requestBufferSize": ((JettyHttpComponent11) component).setRequestBufferSize((java.lang.Integer) value); return true;
+            case "requestHeaderSize": ((JettyHttpComponent11) component).setRequestHeaderSize((java.lang.Integer) value); return true;
+            case "responseBufferSize": ((JettyHttpComponent11) component).setResponseBufferSize((java.lang.Integer) value); return true;
+            case "responseHeaderSize": ((JettyHttpComponent11) component).setResponseHeaderSize((java.lang.Integer) value); return true;
+            case "sendServerVersion": ((JettyHttpComponent11) component).setSendServerVersion((boolean) value); return true;
+            case "useContinuation": ((JettyHttpComponent11) component).setUseContinuation((boolean) value); return true;
+            case "useXForwardedForHeader": ((JettyHttpComponent11) component).setUseXForwardedForHeader((boolean) value); return true;
+            case "threadPool": ((JettyHttpComponent11) component).setThreadPool((org.eclipse.jetty.util.thread.ThreadPool) value); return true;
+            case "allowJavaSerializedObject": ((JettyHttpComponent11) component).setAllowJavaSerializedObject((boolean) value); return true;
+            case "autowiredEnabled": ((JettyHttpComponent11) component).setAutowiredEnabled((boolean) value); return true;
+            case "errorHandler": ((JettyHttpComponent11) component).setErrorHandler((org.eclipse.jetty.server.handler.ErrorHandler) value); return true;
+            case "httpBinding": ((JettyHttpComponent11) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
+            case "httpConfiguration": ((JettyHttpComponent11) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
+            case "jettyHttpBinding": ((JettyHttpComponent11) component).setJettyHttpBinding((org.apache.camel.component.jetty.JettyHttpBinding) value); return true;
+            case "mbContainer": ((JettyHttpComponent11) component).setMbContainer((org.eclipse.jetty.jmx.MBeanContainer) value); return true;
+            case "headerFilterStrategy": ((JettyHttpComponent11) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
+            case "proxyHost": ((JettyHttpComponent11) component).setProxyHost((java.lang.String) value); return true;
+            case "proxyPort": ((JettyHttpComponent11) component).setProxyPort((java.lang.Integer) value); return true;
+            case "keystore": ((JettyHttpComponent11) component).setKeystore((java.lang.String) value); return true;
+            case "socketConnectorProperties": ((JettyHttpComponent11) component).setSocketConnectorProperties((java.util.Map) value); return true;
+            case "socketConnectors": ((JettyHttpComponent11) component).setSocketConnectors((java.util.Map) value); return true;
+            case "sslContextParameters": ((JettyHttpComponent11) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
+            case "sslKeyPassword": ((JettyHttpComponent11) component).setSslKeyPassword((java.lang.String) value); return true;
+            case "sslPassword": ((JettyHttpComponent11) component).setSslPassword((java.lang.String) value); return true;
+            case "sslSocketConnectorProperties": ((JettyHttpComponent11) component).setSslSocketConnectorProperties((java.util.Map) value); return true;
+            case "sslSocketConnectors": ((JettyHttpComponent11) component).setSslSocketConnectors((java.util.Map) value); return true;
+            case "useGlobalSslContextParameters": ((JettyHttpComponent11) component).setUseGlobalSslContextParameters((boolean) value); return true;
             default: return false;
             }
         }

@@ -54,8 +54,8 @@ public interface SjmsComponentBuilderFactory {
          * The connection factory to be use. A connection factory must be
          * configured either on the component or endpoint.
          * 
-         * The option is a: &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt;
-         * type.
+         * The option is a:
+         * &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -152,8 +152,8 @@ public interface SjmsComponentBuilderFactory {
          * Specifies the JMS Exception Listener that is to be notified of any
          * underlying JMS exceptions.
          * 
-         * The option is a: &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt;
-         * type.
+         * The option is a:
+         * &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt; type.
          * 
          * Group: advanced
          * 

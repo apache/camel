@@ -8,7 +8,7 @@
     "firstVersion": "3.20.0",
     "label": "container,cloud,paas",
     "javaType": "org.apache.camel.component.kubernetes.events.KubernetesEventsComponent",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-kubernetes",
     "version": "4.0.0-SNAPSHOT",

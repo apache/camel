@@ -115,8 +115,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * To use a custom ConstraintValidatorFactory.
          * 
          * The option is a:
-         * &lt;code&gt;jakarta.validation.ConstraintValidatorFactory&lt;/code&gt;
-         * type.
+         * &lt;code&gt;jakarta.validation.ConstraintValidatorFactory&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -164,8 +163,7 @@ public interface BeanValidatorComponentBuilderFactory {
          * To use a a custom ValidationProviderResolver.
          * 
          * The option is a:
-         * &lt;code&gt;jakarta.validation.ValidationProviderResolver&lt;/code&gt;
-         * type.
+         * &lt;code&gt;jakarta.validation.ValidationProviderResolver&lt;/code&gt; type.
          * 
          * Group: advanced
          * 

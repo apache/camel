@@ -73,7 +73,8 @@ public interface JpaComponentBuilderFactory {
          * configure.
          * 
          * The option is a:
-         * &lt;code&gt;jakarta.persistence.EntityManagerFactory&lt;/code&gt; type.
+         * &lt;code&gt;jakarta.persistence.EntityManagerFactory&lt;/code&gt;
+         * type.
          * 
          * Group: common
          * 

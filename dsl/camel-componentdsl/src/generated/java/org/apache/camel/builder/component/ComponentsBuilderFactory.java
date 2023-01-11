@@ -44,20 +44,6 @@ import javax.annotation.processing.Generated;
 public interface ComponentsBuilderFactory {
 
     /**
-     * ActiveMQ (camel-activemq)
-     * Send messages to (or consume from) Apache ActiveMQ. This component
-     * extends the Camel JMS component.
-     * 
-     * Category: messaging
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-activemq
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.ActivemqComponentBuilderFactory.ActivemqComponentBuilder activemq() {
-        return org.apache.camel.builder.component.dsl.ActivemqComponentBuilderFactory.activemq();
-    }
-    /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache QPid Client.
      * 
@@ -4172,20 +4158,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.StitchComponentBuilderFactory.stitch();
     }
     /**
-     * Stomp (camel-stomp)
-     * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging
-     * Protocol) compliant message brokers.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-stomp
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.StompComponentBuilderFactory.StompComponentBuilder stomp() {
-        return org.apache.camel.builder.component.dsl.StompComponentBuilderFactory.stomp();
-    }
-    /**
      * Stream (camel-stream)
      * Read from system-in and write to system-out and system-err streams.
      * 
@@ -4476,19 +4448,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.WebhookComponentBuilderFactory.WebhookComponentBuilder webhook() {
         return org.apache.camel.builder.component.dsl.WebhookComponentBuilderFactory.webhook();
-    }
-    /**
-     * Jetty Websocket (camel-websocket)
-     * Expose websocket endpoints using Jetty.
-     * 
-     * Category: websocket
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-websocket
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.WebsocketComponentBuilderFactory.WebsocketComponentBuilder websocket() {
-        return org.apache.camel.builder.component.dsl.WebsocketComponentBuilderFactory.websocket();
     }
     /**
      * Javax Websocket (camel-websocket-jsr356)

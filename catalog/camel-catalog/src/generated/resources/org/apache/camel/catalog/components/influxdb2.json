@@ -8,7 +8,7 @@
     "firstVersion": "3.20.0",
     "label": "database",
     "javaType": "org.apache.camel.component.influxdb2.InfluxDb2Component",
-    "supportLevel": "Preview",
+    "supportLevel": "Stable",
     "groupId": "org.apache.camel",
     "artifactId": "camel-influxdb2",
     "version": "4.0.0-SNAPSHOT",

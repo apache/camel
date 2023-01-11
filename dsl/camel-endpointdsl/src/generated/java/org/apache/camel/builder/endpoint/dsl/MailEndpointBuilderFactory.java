@@ -336,11 +336,11 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Will mark the jakarta.mail.Message as peeked before processing the mail
-         * message. This applies to IMAPMessage messages types only. By using
-         * peek the mail will not be eager marked as SEEN on the mail server,
-         * which allows us to rollback the mail message if there is an error
-         * processing in Camel.
+         * Will mark the jakarta.mail.Message as peeked before processing the
+         * mail message. This applies to IMAPMessage messages types only. By
+         * using peek the mail will not be eager marked as SEEN on the mail
+         * server, which allows us to rollback the mail message if there is an
+         * error processing in Camel.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -355,11 +355,11 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Will mark the jakarta.mail.Message as peeked before processing the mail
-         * message. This applies to IMAPMessage messages types only. By using
-         * peek the mail will not be eager marked as SEEN on the mail server,
-         * which allows us to rollback the mail message if there is an error
-         * processing in Camel.
+         * Will mark the jakarta.mail.Message as peeked before processing the
+         * mail message. This applies to IMAPMessage messages types only. By
+         * using peek the mail will not be eager marked as SEEN on the mail
+         * server, which allows us to rollback the mail message if there is an
+         * error processing in Camel.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -571,9 +571,9 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Refers to a jakarta.mail.search.SearchTerm which allows to filter mails
-         * based on search criteria such as subject, body, from, sent after a
-         * certain date etc.
+         * Refers to a jakarta.mail.search.SearchTerm which allows to filter
+         * mails based on search criteria such as subject, body, from, sent
+         * after a certain date etc.
          * 
          * The option is a:
          * &lt;code&gt;jakarta.mail.search.SearchTerm&lt;/code&gt; type.
@@ -592,9 +592,9 @@ public interface MailEndpointBuilderFactory {
             return this;
         }
         /**
-         * Refers to a jakarta.mail.search.SearchTerm which allows to filter mails
-         * based on search criteria such as subject, body, from, sent after a
-         * certain date etc.
+         * Refers to a jakarta.mail.search.SearchTerm which allows to filter
+         * mails based on search criteria such as subject, body, from, sent
+         * after a certain date etc.
          * 
          * The option is a:
          * &lt;code&gt;jakarta.mail.search.SearchTerm&lt;/code&gt; type.
@@ -1478,8 +1478,8 @@ public interface MailEndpointBuilderFactory {
          * message is mapped to the body of the Camel IN message, the mail
          * headers are mapped to IN headers, and the attachments to Camel IN
          * attachment message. If this option is set to false then the IN
-         * message contains a raw jakarta.mail.Message. You can retrieve this raw
-         * message by calling
+         * message contains a raw jakarta.mail.Message. You can retrieve this
+         * raw message by calling
          * exchange.getIn().getBody(jakarta.mail.Message.class).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
@@ -1501,8 +1501,8 @@ public interface MailEndpointBuilderFactory {
          * message is mapped to the body of the Camel IN message, the mail
          * headers are mapped to IN headers, and the attachments to Camel IN
          * attachment message. If this option is set to false then the IN
-         * message contains a raw jakarta.mail.Message. You can retrieve this raw
-         * message by calling
+         * message contains a raw jakarta.mail.Message. You can retrieve this
+         * raw message by calling
          * exchange.getIn().getBody(jakarta.mail.Message.class).
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;

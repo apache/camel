@@ -84,8 +84,8 @@ public interface Sjms2EndpointBuilderFactory {
          * The connection factory to be use. A connection factory must be
          * configured either on the component or endpoint.
          * 
-         * The option is a: &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt;
-         * type.
+         * The option is a:
+         * &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -879,8 +879,8 @@ public interface Sjms2EndpointBuilderFactory {
          * Specifies the JMS Exception Listener that is to be notified of any
          * underlying JMS exceptions.
          * 
-         * The option is a: &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt;
-         * type.
+         * The option is a:
+         * &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1177,18 +1177,18 @@ public interface Sjms2EndpointBuilderFactory {
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a jakarta.jms.ObjectMessage. If the client
-         * is Camel, the returned Exception is rethrown. This allows you to use
-         * Camel JMS as a bridge in your routing - for example, using persistent
-         * queues to enable robust routing. Notice that if you also have
-         * transferExchange enabled, this option takes precedence. The caught
-         * exception is required to be serializable. The original Exception on
-         * the consumer side can be wrapped in an outer exception such as
-         * org.apache.camel.RuntimeCamelException when returned to the producer.
-         * Use this with caution as the data is using Java Object serialization
-         * and requires the received to be able to deserialize the data at Class
-         * level, which forces a strong coupling between the producers and
-         * consumer!.
+         * be send back in response as a jakarta.jms.ObjectMessage. If the
+         * client is Camel, the returned Exception is rethrown. This allows you
+         * to use Camel JMS as a bridge in your routing - for example, using
+         * persistent queues to enable robust routing. Notice that if you also
+         * have transferExchange enabled, this option takes precedence. The
+         * caught exception is required to be serializable. The original
+         * Exception on the consumer side can be wrapped in an outer exception
+         * such as org.apache.camel.RuntimeCamelException when returned to the
+         * producer. Use this with caution as the data is using Java Object
+         * serialization and requires the received to be able to deserialize the
+         * data at Class level, which forces a strong coupling between the
+         * producers and consumer!.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1206,18 +1206,18 @@ public interface Sjms2EndpointBuilderFactory {
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a jakarta.jms.ObjectMessage. If the client
-         * is Camel, the returned Exception is rethrown. This allows you to use
-         * Camel JMS as a bridge in your routing - for example, using persistent
-         * queues to enable robust routing. Notice that if you also have
-         * transferExchange enabled, this option takes precedence. The caught
-         * exception is required to be serializable. The original Exception on
-         * the consumer side can be wrapped in an outer exception such as
-         * org.apache.camel.RuntimeCamelException when returned to the producer.
-         * Use this with caution as the data is using Java Object serialization
-         * and requires the received to be able to deserialize the data at Class
-         * level, which forces a strong coupling between the producers and
-         * consumer!.
+         * be send back in response as a jakarta.jms.ObjectMessage. If the
+         * client is Camel, the returned Exception is rethrown. This allows you
+         * to use Camel JMS as a bridge in your routing - for example, using
+         * persistent queues to enable robust routing. Notice that if you also
+         * have transferExchange enabled, this option takes precedence. The
+         * caught exception is required to be serializable. The original
+         * Exception on the consumer side can be wrapped in an outer exception
+         * such as org.apache.camel.RuntimeCamelException when returned to the
+         * producer. Use this with caution as the data is using Java Object
+         * serialization and requires the received to be able to deserialize the
+         * data at Class level, which forces a strong coupling between the
+         * producers and consumer!.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1284,8 +1284,8 @@ public interface Sjms2EndpointBuilderFactory {
          * The connection factory to be use. A connection factory must be
          * configured either on the component or endpoint.
          * 
-         * The option is a: &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt;
-         * type.
+         * The option is a:
+         * &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -1419,8 +1419,8 @@ public interface Sjms2EndpointBuilderFactory {
         }
         /**
          * Specifies the delivery mode to be used. Possible values are those
-         * defined by jakarta.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
-         * = 2.
+         * defined by jakarta.jms.DeliveryMode. NON_PERSISTENT = 1 and
+         * PERSISTENT = 2.
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
@@ -1435,8 +1435,8 @@ public interface Sjms2EndpointBuilderFactory {
         }
         /**
          * Specifies the delivery mode to be used. Possible values are those
-         * defined by jakarta.jms.DeliveryMode. NON_PERSISTENT = 1 and PERSISTENT
-         * = 2.
+         * defined by jakarta.jms.DeliveryMode. NON_PERSISTENT = 1 and
+         * PERSISTENT = 2.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
@@ -2074,8 +2074,8 @@ public interface Sjms2EndpointBuilderFactory {
          * Specifies the JMS Exception Listener that is to be notified of any
          * underlying JMS exceptions.
          * 
-         * The option is a: &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt;
-         * type.
+         * The option is a:
+         * &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -2372,18 +2372,18 @@ public interface Sjms2EndpointBuilderFactory {
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a jakarta.jms.ObjectMessage. If the client
-         * is Camel, the returned Exception is rethrown. This allows you to use
-         * Camel JMS as a bridge in your routing - for example, using persistent
-         * queues to enable robust routing. Notice that if you also have
-         * transferExchange enabled, this option takes precedence. The caught
-         * exception is required to be serializable. The original Exception on
-         * the consumer side can be wrapped in an outer exception such as
-         * org.apache.camel.RuntimeCamelException when returned to the producer.
-         * Use this with caution as the data is using Java Object serialization
-         * and requires the received to be able to deserialize the data at Class
-         * level, which forces a strong coupling between the producers and
-         * consumer!.
+         * be send back in response as a jakarta.jms.ObjectMessage. If the
+         * client is Camel, the returned Exception is rethrown. This allows you
+         * to use Camel JMS as a bridge in your routing - for example, using
+         * persistent queues to enable robust routing. Notice that if you also
+         * have transferExchange enabled, this option takes precedence. The
+         * caught exception is required to be serializable. The original
+         * Exception on the consumer side can be wrapped in an outer exception
+         * such as org.apache.camel.RuntimeCamelException when returned to the
+         * producer. Use this with caution as the data is using Java Object
+         * serialization and requires the received to be able to deserialize the
+         * data at Class level, which forces a strong coupling between the
+         * producers and consumer!.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -2401,18 +2401,18 @@ public interface Sjms2EndpointBuilderFactory {
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a jakarta.jms.ObjectMessage. If the client
-         * is Camel, the returned Exception is rethrown. This allows you to use
-         * Camel JMS as a bridge in your routing - for example, using persistent
-         * queues to enable robust routing. Notice that if you also have
-         * transferExchange enabled, this option takes precedence. The caught
-         * exception is required to be serializable. The original Exception on
-         * the consumer side can be wrapped in an outer exception such as
-         * org.apache.camel.RuntimeCamelException when returned to the producer.
-         * Use this with caution as the data is using Java Object serialization
-         * and requires the received to be able to deserialize the data at Class
-         * level, which forces a strong coupling between the producers and
-         * consumer!.
+         * be send back in response as a jakarta.jms.ObjectMessage. If the
+         * client is Camel, the returned Exception is rethrown. This allows you
+         * to use Camel JMS as a bridge in your routing - for example, using
+         * persistent queues to enable robust routing. Notice that if you also
+         * have transferExchange enabled, this option takes precedence. The
+         * caught exception is required to be serializable. The original
+         * Exception on the consumer side can be wrapped in an outer exception
+         * such as org.apache.camel.RuntimeCamelException when returned to the
+         * producer. Use this with caution as the data is using Java Object
+         * serialization and requires the received to be able to deserialize the
+         * data at Class level, which forces a strong coupling between the
+         * producers and consumer!.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -2480,8 +2480,8 @@ public interface Sjms2EndpointBuilderFactory {
          * The connection factory to be use. A connection factory must be
          * configured either on the component or endpoint.
          * 
-         * The option is a: &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt;
-         * type.
+         * The option is a:
+         * &lt;code&gt;jakarta.jms.ConnectionFactory&lt;/code&gt; type.
          * 
          * Group: common
          * 
@@ -2775,8 +2775,8 @@ public interface Sjms2EndpointBuilderFactory {
          * Specifies the JMS Exception Listener that is to be notified of any
          * underlying JMS exceptions.
          * 
-         * The option is a: &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt;
-         * type.
+         * The option is a:
+         * &lt;code&gt;jakarta.jms.ExceptionListener&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -3069,18 +3069,18 @@ public interface Sjms2EndpointBuilderFactory {
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a jakarta.jms.ObjectMessage. If the client
-         * is Camel, the returned Exception is rethrown. This allows you to use
-         * Camel JMS as a bridge in your routing - for example, using persistent
-         * queues to enable robust routing. Notice that if you also have
-         * transferExchange enabled, this option takes precedence. The caught
-         * exception is required to be serializable. The original Exception on
-         * the consumer side can be wrapped in an outer exception such as
-         * org.apache.camel.RuntimeCamelException when returned to the producer.
-         * Use this with caution as the data is using Java Object serialization
-         * and requires the received to be able to deserialize the data at Class
-         * level, which forces a strong coupling between the producers and
-         * consumer!.
+         * be send back in response as a jakarta.jms.ObjectMessage. If the
+         * client is Camel, the returned Exception is rethrown. This allows you
+         * to use Camel JMS as a bridge in your routing - for example, using
+         * persistent queues to enable robust routing. Notice that if you also
+         * have transferExchange enabled, this option takes precedence. The
+         * caught exception is required to be serializable. The original
+         * Exception on the consumer side can be wrapped in an outer exception
+         * such as org.apache.camel.RuntimeCamelException when returned to the
+         * producer. Use this with caution as the data is using Java Object
+         * serialization and requires the received to be able to deserialize the
+         * data at Class level, which forces a strong coupling between the
+         * producers and consumer!.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -3098,18 +3098,18 @@ public interface Sjms2EndpointBuilderFactory {
         /**
          * If enabled and you are using Request Reply messaging (InOut) and an
          * Exchange failed on the consumer side, then the caused Exception will
-         * be send back in response as a jakarta.jms.ObjectMessage. If the client
-         * is Camel, the returned Exception is rethrown. This allows you to use
-         * Camel JMS as a bridge in your routing - for example, using persistent
-         * queues to enable robust routing. Notice that if you also have
-         * transferExchange enabled, this option takes precedence. The caught
-         * exception is required to be serializable. The original Exception on
-         * the consumer side can be wrapped in an outer exception such as
-         * org.apache.camel.RuntimeCamelException when returned to the producer.
-         * Use this with caution as the data is using Java Object serialization
-         * and requires the received to be able to deserialize the data at Class
-         * level, which forces a strong coupling between the producers and
-         * consumer!.
+         * be send back in response as a jakarta.jms.ObjectMessage. If the
+         * client is Camel, the returned Exception is rethrown. This allows you
+         * to use Camel JMS as a bridge in your routing - for example, using
+         * persistent queues to enable robust routing. Notice that if you also
+         * have transferExchange enabled, this option takes precedence. The
+         * caught exception is required to be serializable. The original
+         * Exception on the consumer side can be wrapped in an outer exception
+         * such as org.apache.camel.RuntimeCamelException when returned to the
+         * producer. Use this with caution as the data is using Java Object
+         * serialization and requires the received to be able to deserialize the
+         * data at Class level, which forces a strong coupling between the
+         * producers and consumer!.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

@@ -211,11 +211,11 @@ public interface Pop3ComponentBuilderFactory {
             return this;
         }
         /**
-         * Will mark the jakarta.mail.Message as peeked before processing the mail
-         * message. This applies to IMAPMessage messages types only. By using
-         * peek the mail will not be eager marked as SEEN on the mail server,
-         * which allows us to rollback the mail message if there is an error
-         * processing in Camel.
+         * Will mark the jakarta.mail.Message as peeked before processing the
+         * mail message. This applies to IMAPMessage messages types only. By
+         * using peek the mail will not be eager marked as SEEN on the mail
+         * server, which allows us to rollback the mail message if there is an
+         * error processing in Camel.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -361,8 +361,8 @@ public interface Pop3ComponentBuilderFactory {
          * message is mapped to the body of the Camel IN message, the mail
          * headers are mapped to IN headers, and the attachments to Camel IN
          * attachment message. If this option is set to false then the IN
-         * message contains a raw jakarta.mail.Message. You can retrieve this raw
-         * message by calling
+         * message contains a raw jakarta.mail.Message. You can retrieve this
+         * raw message by calling
          * exchange.getIn().getBody(jakarta.mail.Message.class).
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.

@@ -26,63 +26,6 @@ import javax.annotation.processing.Generated;
 public class StaticEndpointBuilders {
 
     /**
-     * ActiveMQ (camel-activemq)
-     * Send messages to (or consume from) Apache ActiveMQ. This component
-     * extends the Camel JMS component.
-     * 
-     * Category: messaging
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-activemq
-     * 
-     * Syntax: <code>activemq:destinationType:destinationName</code>
-     * 
-     * Path parameter: destinationType
-     * The kind of destination to use
-     * Default value: queue
-     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
-     * temp-topic
-     * 
-     * Path parameter: destinationName (required)
-     * Name of the queue or topic to use as destination
-     * 
-     * @param path destinationType:destinationName
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.endpointBuilder("activemq", path);
-    }
-    /**
-     * ActiveMQ (camel-activemq)
-     * Send messages to (or consume from) Apache ActiveMQ. This component
-     * extends the Camel JMS component.
-     * 
-     * Category: messaging
-     * Since: 1.0
-     * Maven coordinates: org.apache.camel:camel-activemq
-     * 
-     * Syntax: <code>activemq:destinationType:destinationName</code>
-     * 
-     * Path parameter: destinationType
-     * The kind of destination to use
-     * Default value: queue
-     * There are 4 enums and the value can be one of: queue, topic, temp-queue,
-     * temp-topic
-     * 
-     * Path parameter: destinationName (required)
-     * Name of the queue or topic to use as destination
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path destinationType:destinationName
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.ActiveMQEndpointBuilder activemq(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ActiveMQEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * AMQP (camel-amqp)
      * Messaging with AMQP protocol using Apache QPid Client.
      * 
@@ -7913,9 +7856,9 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.JettyHttpEndpointBuilder jetty(
+    public static org.apache.camel.builder.endpoint.dsl.JettyHttp11EndpointBuilderFactory.JettyHttp11EndpointBuilder jetty(
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.endpointBuilder("jetty", path);
+        return org.apache.camel.builder.endpoint.dsl.JettyHttp11EndpointBuilderFactory.endpointBuilder("jetty", path);
     }
     /**
      * Jetty (camel-jetty)
@@ -7935,10 +7878,10 @@ public class StaticEndpointBuilders {
      * @param path httpUri
      * @return the dsl builder
      */
-    public static org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.JettyHttpEndpointBuilder jetty(
+    public static org.apache.camel.builder.endpoint.dsl.JettyHttp11EndpointBuilderFactory.JettyHttp11EndpointBuilder jetty(
             String componentName,
             String path) {
-        return org.apache.camel.builder.endpoint.dsl.JettyHttpEndpointBuilderFactory.endpointBuilder(componentName, path);
+        return org.apache.camel.builder.endpoint.dsl.JettyHttp11EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * JGroups (camel-jgroups)
@@ -14383,51 +14326,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Stomp (camel-stomp)
-     * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging
-     * Protocol) compliant message brokers.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-stomp
-     * 
-     * Syntax: <code>stomp:destination</code>
-     * 
-     * Path parameter: destination (required)
-     * Name of the queue
-     * 
-     * @param path destination
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory.StompEndpointBuilder stomp(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory.endpointBuilder("stomp", path);
-    }
-    /**
-     * Stomp (camel-stomp)
-     * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging
-     * Protocol) compliant message brokers.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-stomp
-     * 
-     * Syntax: <code>stomp:destination</code>
-     * 
-     * Path parameter: destination (required)
-     * Name of the queue
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path destination
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory.StompEndpointBuilder stomp(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Stream (camel-stream)
      * Read from system-in and write to system-out and system-err streams.
      * 
@@ -15516,69 +15414,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.WebhookEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Jetty Websocket (camel-websocket)
-     * Expose websocket endpoints using Jetty.
-     * 
-     * Category: websocket
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-websocket
-     * 
-     * Syntax: <code>websocket:host:port/resourceUri</code>
-     * 
-     * Path parameter: host
-     * The hostname. The default value is 0.0.0.0. Setting this option on the
-     * component will use the component configured value as default.
-     * Default value: 0.0.0.0
-     * 
-     * Path parameter: port
-     * The port number. The default value is 9292. Setting this option on the
-     * component will use the component configured value as default.
-     * Default value: 9292
-     * 
-     * Path parameter: resourceUri (required)
-     * Name of the websocket channel to use
-     * 
-     * @param path host:port/resourceUri
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.WebsocketEndpointBuilderFactory.WebsocketEndpointBuilder websocket(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.WebsocketEndpointBuilderFactory.endpointBuilder("websocket", path);
-    }
-    /**
-     * Jetty Websocket (camel-websocket)
-     * Expose websocket endpoints using Jetty.
-     * 
-     * Category: websocket
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-websocket
-     * 
-     * Syntax: <code>websocket:host:port/resourceUri</code>
-     * 
-     * Path parameter: host
-     * The hostname. The default value is 0.0.0.0. Setting this option on the
-     * component will use the component configured value as default.
-     * Default value: 0.0.0.0
-     * 
-     * Path parameter: port
-     * The port number. The default value is 9292. Setting this option on the
-     * component will use the component configured value as default.
-     * Default value: 9292
-     * 
-     * Path parameter: resourceUri (required)
-     * Name of the websocket channel to use
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path host:port/resourceUri
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.WebsocketEndpointBuilderFactory.WebsocketEndpointBuilder websocket(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.WebsocketEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Javax Websocket (camel-websocket-jsr356)
