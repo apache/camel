@@ -493,7 +493,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     protected void doInit() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
 
-        if (autowiredEnabled && getComponent() != null) {
+        if (autowiredEnabled && getComponent() != null && getComponent().isAutowiredEnabled()) {
             PropertyConfigurer configurer = getComponent().getEndpointPropertyConfigurer();
             if (configurer instanceof PropertyConfigurerGetter) {
                 PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;
