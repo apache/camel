@@ -1,10 +1,11 @@
-= CDI Component
+= CDI Component (deprecated)
 :doctitle: CDI
 :shortname: cdi
 :artifactid: camel-cdi
 :description: Using Camel with CDI
 :since: 2.10
-:supportlevel: Preview
+:supportlevel: Preview-deprecated
+:deprecated: *deprecated*
 
 *Since Camel {since}*
 

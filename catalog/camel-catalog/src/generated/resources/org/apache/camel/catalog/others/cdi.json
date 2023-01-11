@@ -4,7 +4,7 @@
     "name": "cdi",
     "title": "CDI",
     "description": "Using Camel with CDI",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.10.0",
     "label": "java",
     "supportLevel": "Preview",

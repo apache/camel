@@ -4,7 +4,7 @@
     "name": "cdi-main",
     "title": "CDI Main",
     "description": "Using Camel Main with CDI",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.15.0",
     "label": "java",
     "supportLevel": "Preview",

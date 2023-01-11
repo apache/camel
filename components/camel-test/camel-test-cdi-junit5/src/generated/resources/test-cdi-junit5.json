@@ -4,7 +4,7 @@
     "name": "test-cdi-junit5",
     "title": "Test CDI JUnit5",
     "description": "Camel unit testing with CDI and JUnit5",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "3.16.0",
     "label": "testing,java",
     "supportLevel": "Preview",
