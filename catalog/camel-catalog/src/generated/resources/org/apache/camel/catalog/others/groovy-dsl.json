@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "groovy-dsl",
+    "title": "Groovy Dsl",
+    "description": "Camel DSL with Groovy",
+    "deprecated": false,
+    "firstVersion": "3.9.0",
+    "label": "dsl",
+    "supportLevel": "Experimental",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-groovy-dsl",
+    "version": "4.0.0-SNAPSHOT"
+  }
+}

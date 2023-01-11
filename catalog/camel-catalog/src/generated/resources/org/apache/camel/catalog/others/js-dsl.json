@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "js-dsl",
+    "title": "JavaScript DSL",
+    "description": "Camel DSL with JavaScript",
+    "deprecated": false,
+    "firstVersion": "3.9.0",
+    "label": "dsl",
+    "supportLevel": "Experimental",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-js-dsl",
+    "version": "4.0.0-SNAPSHOT"
+  }
+}

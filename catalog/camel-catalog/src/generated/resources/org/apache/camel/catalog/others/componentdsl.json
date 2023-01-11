@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "componentdsl",
+    "title": "Java Component DSL",
+    "description": "The Camel Component DSL",
+    "deprecated": false,
+    "firstVersion": "3.1.0",
+    "label": "dsl",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-componentdsl",
+    "version": "4.0.0-SNAPSHOT"
+  }
+}

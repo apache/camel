@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "kamelet-main",
+    "title": "Kamelet Main",
+    "description": "Main to run Kamelet standalone",
+    "deprecated": false,
+    "firstVersion": "3.11.0",
+    "label": "jbang",
+    "supportLevel": "Preview",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-kamelet-main",
+    "version": "4.0.0-SNAPSHOT"
+  }
+}
