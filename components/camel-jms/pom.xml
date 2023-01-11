@@ -140,7 +140,7 @@
     </dependencies>
 
     <build>
-<!--        <testSourceDirectory>src/test/dummy</testSourceDirectory>-->
+        <testSourceDirectory>src/test/dummy</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
