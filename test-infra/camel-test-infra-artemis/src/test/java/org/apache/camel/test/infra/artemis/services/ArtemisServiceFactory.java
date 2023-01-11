@@ -26,10 +26,12 @@ public final class ArtemisServiceFactory {
     private static SimpleTestServiceBuilder<ArtemisService> nonPersistentInstanceBuilder;
     private static SimpleTestServiceBuilder<ArtemisService> persistentInstanceBuilder;
     private static SimpleTestServiceBuilder<ArtemisService> amqpInstanceBuilder;
+    private static SimpleTestServiceBuilder<ArtemisService> mqttInstanceBuilder;
 
     private static ArtemisService persistentService;
     private static ArtemisService nonPersistentService;
     private static ArtemisService amqpService;
+    private static ArtemisService mqttService;
 
     public static class SingletonArtemisService extends SingletonService<ArtemisService> implements ArtemisService {
 
@@ -157,6 +159,21 @@ public final class ArtemisServiceFactory {
         }
 
         return amqpService;
+    }
+
+    public static synchronized ArtemisService createSingletonMQTTService() {
+        if (mqttService == null) {
+            if (mqttInstanceBuilder == null) {
+                mqttInstanceBuilder = new SimpleTestServiceBuilder<>("artemis");
+
+                mqttInstanceBuilder
+                        .addLocalMapping(() -> new SingletonArtemisService(new ArtemisMQTTService(), "artemis-mqtt"));
+            }
+
+            mqttService = mqttInstanceBuilder.build();
+        }
+
+        return mqttService;
     }
 
     public static ArtemisService createTCPAllProtocolsService() {

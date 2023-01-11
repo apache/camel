@@ -17,25 +17,11 @@
 package org.apache.camel.component.paho;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PahoToDSendDynamicTest extends CamelTestSupport {
-
-    static int mqttPort = AvailablePortFinder.getNextAvailable();
-
-    @RegisterExtension
-    public ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
-            .bare()
-            .withPersistent(false)
-            .withMqttTransport(mqttPort)
-            .build();
+public class PahoToDSendDynamicTest extends PahoTestSupport {
 
     @Override
     protected boolean useJmx() {
@@ -71,7 +57,7 @@ public class PahoToDSendDynamicTest extends CamelTestSupport {
             @Override
             public void configure() {
                 PahoComponent paho = context.getComponent("paho", PahoComponent.class);
-                paho.getConfiguration().setBrokerUrl("tcp://localhost:" + mqttPort);
+                paho.getConfiguration().setBrokerUrl("tcp://localhost:" + service.brokerPort());
 
                 // route message dynamic using toD
                 from("direct:start").toD("paho:${header.where}?retained=true");

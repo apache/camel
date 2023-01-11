@@ -48,6 +48,18 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
     private Configuration artemisConfiguration;
 
     public AbstractArtemisEmbeddedService() {
+        defaultConfigturation();
+
+        embeddedBrokerService.setConfiguration(getConfiguration(artemisConfiguration, AvailablePortFinder.getNextAvailable()));
+    }
+
+    public AbstractArtemisEmbeddedService(int port) {
+        defaultConfigturation();
+
+        embeddedBrokerService.setConfiguration(getConfiguration(artemisConfiguration, port));
+    }
+
+    private void defaultConfigturation() {
         embeddedBrokerService = new EmbeddedActiveMQ();
 
         // Base configuration
@@ -56,8 +68,6 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
         BROKER_COUNT.increment();
         artemisConfiguration.setBrokerInstance(new File("target", "artemis-" + BROKER_COUNT.intValue()));
         artemisConfiguration.setJMXManagementEnabled(false);
-
-        embeddedBrokerService.setConfiguration(getConfiguration(artemisConfiguration, AvailablePortFinder.getNextAvailable()));
     }
 
     protected abstract Configuration getConfiguration(Configuration artemisConfiguration, int port);

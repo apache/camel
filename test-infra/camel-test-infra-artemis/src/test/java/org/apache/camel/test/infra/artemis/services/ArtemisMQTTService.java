@@ -16,41 +16,34 @@
  */
 package org.apache.camel.test.infra.artemis.services;
 
-import org.apache.activemq.artemis.api.core.SimpleString;
-import org.apache.activemq.artemis.api.core.TransportConfiguration;
 import org.apache.activemq.artemis.core.config.Configuration;
-import org.apache.activemq.artemis.core.remoting.impl.netty.NettyConnectorFactory;
-import org.apache.activemq.artemis.core.settings.impl.AddressSettings;
-import org.apache.camel.test.AvailablePortFinder;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class ArtemisTCPAllProtocolsService extends AbstractArtemisEmbeddedService {
+public class ArtemisMQTTService extends AbstractArtemisEmbeddedService {
 
     private String brokerURL;
     private int port;
 
+    public ArtemisMQTTService(int port) {
+        super(port);
+    }
+
+    public ArtemisMQTTService() {
+        super();
+    }
+
     @Override
     protected Configuration getConfiguration(Configuration configuration, int port) {
-        final int brokerId = super.BROKER_COUNT.intValue();
-        port = AvailablePortFinder.getNextAvailable();
+        this.port = port;
         brokerURL = "tcp://0.0.0.0:" + port;
 
-        configuration.setPersistenceEnabled(false);
         try {
-            configuration.addAcceptorConfiguration("in-vm", "vm://" + brokerId);
-            configuration.addAcceptorConfiguration("connector", brokerURL + "?protocols=CORE,AMQP,HORNETQ,OPENWIRE,MQTT");
-            configuration.addConnectorConfiguration("connector",
-                    new TransportConfiguration(NettyConnectorFactory.class.getName()));
-            configuration.setJournalDirectory("target/data/journal");
+            configuration.addAcceptorConfiguration("mqtt", brokerURL + "?protocols=MQTT");
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
-            fail("vm acceptor cannot be configured");
+            fail("mqtt acceptor cannot be configured");
         }
-        configuration.addAddressSetting("#",
-                new AddressSettings()
-                        .setDeadLetterAddress(SimpleString.toSimpleString("DLQ"))
-                        .setExpiryAddress(SimpleString.toSimpleString("ExpiryQueue")));
 
         return configuration;
     }
