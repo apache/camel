@@ -96,12 +96,16 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "noReplyLogLevel": getOrCreateConfiguration(target).setNoReplyLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "options": getOrCreateConfiguration(target).setOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "passphrase": getOrCreateConfiguration(target).setPassphrase(property(camelContext, java.lang.String.class, value)); return true;
+        case "producerpoolblockwhenexhausted":
+        case "producerPoolBlockWhenExhausted": getOrCreateConfiguration(target).setProducerPoolBlockWhenExhausted(property(camelContext, boolean.class, value)); return true;
         case "producerpoolenabled":
         case "producerPoolEnabled": getOrCreateConfiguration(target).setProducerPoolEnabled(property(camelContext, boolean.class, value)); return true;
         case "producerpoolmaxidle":
         case "producerPoolMaxIdle": getOrCreateConfiguration(target).setProducerPoolMaxIdle(property(camelContext, int.class, value)); return true;
         case "producerpoolmaxtotal":
         case "producerPoolMaxTotal": getOrCreateConfiguration(target).setProducerPoolMaxTotal(property(camelContext, int.class, value)); return true;
+        case "producerpoolmaxwait":
+        case "producerPoolMaxWait": getOrCreateConfiguration(target).setProducerPoolMaxWait(property(camelContext, long.class, value)); return true;
         case "producerpoolminevictableidle":
         case "producerPoolMinEvictableIdle": getOrCreateConfiguration(target).setProducerPoolMinEvictableIdle(property(camelContext, long.class, value)); return true;
         case "producerpoolminidle":
@@ -235,12 +239,16 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "noReplyLogLevel": return org.apache.camel.LoggingLevel.class;
         case "options": return java.util.Map.class;
         case "passphrase": return java.lang.String.class;
+        case "producerpoolblockwhenexhausted":
+        case "producerPoolBlockWhenExhausted": return boolean.class;
         case "producerpoolenabled":
         case "producerPoolEnabled": return boolean.class;
         case "producerpoolmaxidle":
         case "producerPoolMaxIdle": return int.class;
         case "producerpoolmaxtotal":
         case "producerPoolMaxTotal": return int.class;
+        case "producerpoolmaxwait":
+        case "producerPoolMaxWait": return long.class;
         case "producerpoolminevictableidle":
         case "producerPoolMinEvictableIdle": return long.class;
         case "producerpoolminidle":
@@ -375,12 +383,16 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "noReplyLogLevel": return getOrCreateConfiguration(target).getNoReplyLogLevel();
         case "options": return getOrCreateConfiguration(target).getOptions();
         case "passphrase": return getOrCreateConfiguration(target).getPassphrase();
+        case "producerpoolblockwhenexhausted":
+        case "producerPoolBlockWhenExhausted": return getOrCreateConfiguration(target).isProducerPoolBlockWhenExhausted();
         case "producerpoolenabled":
         case "producerPoolEnabled": return getOrCreateConfiguration(target).isProducerPoolEnabled();
         case "producerpoolmaxidle":
         case "producerPoolMaxIdle": return getOrCreateConfiguration(target).getProducerPoolMaxIdle();
         case "producerpoolmaxtotal":
         case "producerPoolMaxTotal": return getOrCreateConfiguration(target).getProducerPoolMaxTotal();
+        case "producerpoolmaxwait":
+        case "producerPoolMaxWait": return getOrCreateConfiguration(target).getProducerPoolMaxWait();
         case "producerpoolminevictableidle":
         case "producerPoolMinEvictableIdle": return getOrCreateConfiguration(target).getProducerPoolMinEvictableIdle();
         case "producerpoolminidle":
