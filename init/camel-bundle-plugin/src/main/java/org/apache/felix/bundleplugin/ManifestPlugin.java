@@ -106,9 +106,14 @@ public class ManifestPlugin extends BundlePlugin {
         PatchedLog plog = new PatchedLog(getLog());
         setLog(plog);
 
-        Analyzer analyzer;
-        try {
-            analyzer = getAnalyzer(project, instructions, classpath);
+        try (Analyzer analyzer= getAnalyzer(project, instructions, classpath)) {
+            File outputFile = new File(manifestLocation, "MANIFEST.MF");
+
+            writeManifest(analyzer, outputFile, niceManifest, exportScr, scrLocation, buildContext, getLog());
+
+            if (supportIncrementalBuild) {
+                writeIncrementalInfo(project);
+            }
         } catch (FileNotFoundException e) {
             throw new MojoExecutionException(
                     "Cannot find " + e.getMessage() + " (manifest goal must be run after compile phase)", e);
@@ -120,24 +125,6 @@ public class ManifestPlugin extends BundlePlugin {
         } catch (Exception e) {
             getLog().error("An internal error occurred", e);
             throw new MojoExecutionException("Internal error in maven-bundle-plugin", e);
-        }
-
-        File outputFile = new File(manifestLocation, "MANIFEST.MF");
-
-        try {
-            writeManifest(analyzer, outputFile, niceManifest, exportScr, scrLocation, buildContext, getLog());
-
-            if (supportIncrementalBuild) {
-                writeIncrementalInfo(project);
-            }
-        } catch (Exception e) {
-            throw new MojoExecutionException("Error trying to write Manifest to file " + outputFile, e);
-        } finally {
-            try {
-                analyzer.close();
-            } catch (IOException e) {
-                throw new MojoExecutionException("Error trying to write Manifest to file " + outputFile, e);
-            }
         }
     }
 

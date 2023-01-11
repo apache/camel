@@ -35,14 +35,11 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContextBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Splunk HEC producer.
  */
 public class SplunkHECProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(SplunkHECProducer.class);
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private SplunkHECEndpoint endpoint;
     private CloseableHttpClient httpClient;

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.infra.artemis.services;
 
+import org.apache.activemq.artemis.core.server.QueueQueryResult;
 import org.apache.camel.test.infra.artemis.common.ArtemisProperties;
 import org.apache.camel.test.infra.common.services.TestService;
 import org.junit.jupiter.api.extension.AfterAllCallback;
@@ -66,4 +67,6 @@ public interface ArtemisService
     void restart();
 
     long countMessages(String queue) throws Exception;
+
+    QueueQueryResult getQueueQueryResult(String queueQuery) throws Exception;
 }

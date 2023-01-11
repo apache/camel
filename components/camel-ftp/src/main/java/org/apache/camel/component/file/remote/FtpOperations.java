@@ -302,17 +302,21 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             log.trace("Client logout");
             client.logout();
+            client.disconnect();
         } catch (IOException e) {
-            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
-        } finally {
+            GenericFileOperationFailedException gfo = new GenericFileOperationFailedException(
+                    client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
             try {
                 log.trace("Client disconnect");
                 client.disconnect();
-            } catch (IOException e) {
-                throw new GenericFileOperationFailedException(
-                        client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            } catch (IOException ed) {
+                log.warn("Failed to disconnect: {}", e.getMessage(), e);
+                gfo.addSuppressed(ed);
             }
+
+            throw gfo;
         }
+
         clientActivityListener.onDisconnected(endpoint.getConfiguration().remoteServerInformation());
     }
 

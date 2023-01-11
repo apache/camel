@@ -71,8 +71,8 @@
         <ascii-table-version>1.8.0</ascii-table-version>
         <asm-version>8.0.1</asm-version>
         <asn1bean-version>1.13.0</asn1bean-version>
-        <assertj-version>3.23.1</assertj-version>
-        <asterisk-java-version>3.12.0</asterisk-java-version>
+        <assertj-version>3.24.1</assertj-version>
+        <asterisk-java-version>3.37.0</asterisk-java-version>
         <atlasmap-version>2.5.2</atlasmap-version>
         <atlassian-fugue-version>3.0.0</atlassian-fugue-version>
         <atmos-client-version>3.2.1</atmos-client-version>
@@ -82,7 +82,7 @@
         <avro-ipc-jetty-version>1.11.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.19.8</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.19.14</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-sdk-bom-version>1.2.8</azure-sdk-bom-version>
@@ -97,7 +97,7 @@
         <californium-version>2.7.2</californium-version>
         <californium-scandium-version>2.7.4</californium-scandium-version>
         <cassandra-driver-version>4.15.0</cassandra-driver-version>
-        <cassandra-version>4.0.6</cassandra-version>
+        <cassandra-version>4.1.0</cassandra-version>
         <cdi-api-2.0-version>2.0</cdi-api-2.0-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.2.12</cglib-version>
@@ -306,7 +306,7 @@
         <jetty-version>${jetty9-version}</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
-        <jettison-version>1.5.2</jettison-version>
+        <jettison-version>1.5.3</jettison-version>
         <jgit-version>6.3.0.202209071007-r</jgit-version>
         <jgroups-version>4.2.17.Final</jgroups-version>
         <jgroups-raft-version>0.5.3.Final</jgroups-raft-version>
@@ -317,7 +317,7 @@
         <jira-rest-client-api-version>5.2.4</jira-rest-client-api-version>
         <libthrift-version>0.14.1</libthrift-version>
         <jodatime2-version>2.11.1</jodatime2-version>
-        <jolokia-version>1.7.1</jolokia-version>
+        <jolokia-version>1.7.2</jolokia-version>
         <jota-version>1.0.0-beta9</jota-version>
         <jolt-version>0.1.7</jolt-version>
         <jool-version>0.9.14</jool-version>
@@ -347,7 +347,7 @@
         <jzlib-version>1.1.3</jzlib-version>
         <kafka-version>3.3.1</kafka-version>
         <kafka-vertx-version>2.8.2</kafka-vertx-version>
-        <kotlin-version>1.7.20</kotlin-version>
+        <kotlin-version>1.7.22</kotlin-version>
         <kubernetes-client-version>6.3.1</kubernetes-client-version>
         <kubernetes-model-version>6.3.1</kubernetes-model-version>
         <kudu-version>1.16.0</kudu-version>
@@ -373,7 +373,7 @@
         <maven-assembly-plugin-version>3.3.0</maven-assembly-plugin-version>
         <maven-checkstyle-plugin-version>3.1.2</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>8.45.1</maven-checkstyle-version>
-        <maven-owasp-plugin-version>7.4.0</maven-owasp-plugin-version>
+        <maven-owasp-plugin-version>7.4.4</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.2.2</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
         <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
@@ -440,6 +440,7 @@
         <pgjdbc-ng-driver-version>0.8.9</pgjdbc-ng-driver-version>
         <picocli-version>4.7.0</picocli-version>
         <plc4x-version>0.10.0</plc4x-version>
+        <pooled-jms-version>1.2.4</pooled-jms-version>
         <powermock-version>2.0.7</powermock-version>
         <properties-maven-plugin-version>1.0-alpha-2</properties-maven-plugin-version>
         <protobuf-version>3.19.6</protobuf-version>
@@ -448,7 +449,7 @@
         <protostream-version>4.5.0.Final</protostream-version>
         <prowide-version>SRU2022-9.3.2</prowide-version>
         <pubnub-version>4.25.0</pubnub-version>
-        <pulsar-version>2.10.2</pulsar-version>
+        <pulsar-version>2.10.3</pulsar-version>
         <qpid-broker-version>8.0.6</qpid-broker-version>
         <qpid-proton-j-version>0.34.0</qpid-proton-j-version>
         <qpid-jms-client-version>1.7.0</qpid-jms-client-version>

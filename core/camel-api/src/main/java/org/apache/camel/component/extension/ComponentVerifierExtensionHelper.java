@@ -140,4 +140,8 @@ final class ComponentVerifierExtensionHelper {
             super(name);
         }
     }
+
+    private ComponentVerifierExtensionHelper() {
+
+    }
 }

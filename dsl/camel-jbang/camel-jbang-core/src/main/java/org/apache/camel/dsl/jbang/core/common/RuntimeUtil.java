@@ -32,7 +32,8 @@ public final class RuntimeUtil {
     private RuntimeUtil() {
     }
 
-    public static void configureLog(String level, boolean color, boolean json, boolean pipe, boolean export) {
+    public static void configureLog(
+            String level, boolean color, boolean json, boolean pipe, boolean export) {
         if (INIT_DONE.compareAndSet(false, true)) {
             long pid = ProcessHandle.current().pid();
             System.setProperty("pid", "" + pid);

@@ -23,10 +23,12 @@ import java.util.function.Consumer;
 
 import javax.jms.ConnectionFactory;
 
+import org.apache.activemq.artemis.api.core.SimpleString;
 import org.apache.activemq.artemis.api.core.management.QueueControl;
 import org.apache.activemq.artemis.api.core.management.ResourceNames;
 import org.apache.activemq.artemis.core.config.Configuration;
 import org.apache.activemq.artemis.core.config.impl.ConfigurationImpl;
+import org.apache.activemq.artemis.core.server.QueueQueryResult;
 import org.apache.activemq.artemis.core.server.embedded.EmbeddedActiveMQ;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
@@ -120,5 +122,10 @@ public abstract class AbstractArtemisEmbeddedService implements ArtemisService, 
     @Override
     public ConnectionFactory createConnectionFactory(Integer maximumRedeliveries) {
         return ConnectionFactoryHelper.createConnectionFactory(this, maximumRedeliveries);
+    }
+
+    @Override
+    public QueueQueryResult getQueueQueryResult(String queueQuery) throws Exception {
+        return embeddedBrokerService.getActiveMQServer().queueQuery(new SimpleString(queueQuery));
     }
 }

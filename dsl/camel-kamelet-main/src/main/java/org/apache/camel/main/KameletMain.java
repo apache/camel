@@ -488,7 +488,7 @@ public class KameletMain extends MainCommandLineSupport {
         if (download) {
             // use resolvers that can auto downloaded
             camelContext.adapt(ExtendedCamelContext.class)
-                    .setRoutesLoader(new DependencyDownloaderRoutesLoader(camelContext, configure()));
+                    .setRoutesLoader(new DependencyDownloaderRoutesLoader(camelContext));
         } else {
             super.configureRoutesLoader(camelContext);
         }

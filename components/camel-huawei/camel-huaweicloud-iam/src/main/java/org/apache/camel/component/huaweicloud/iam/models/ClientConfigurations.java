@@ -16,15 +16,11 @@
  */
 package org.apache.camel.component.huaweicloud.iam.models;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Class to combine parameters which can be passed through exchange properties and endpoint parameters to avoid checking
  * both each time they are used
  */
 public class ClientConfigurations {
-    private static final Logger LOG = LoggerFactory.getLogger(ClientConfigurations.class.getName());
     private String operation;
     private String userId;
     private String groupId;

@@ -48,6 +48,7 @@ import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
+import org.apache.camel.impl.engine.DefaultRoutesLoader;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.CamelBeanPostProcessor;
@@ -468,18 +469,6 @@ public abstract class BaseMainSupport extends BaseService {
                         mainConfigurationProperties.setRoutesIncludePattern(value);
                         return null;
                     });
-            autoConfigurationSingleOption(camelContext, autoConfiguredProperties, "camel.main.routesCompileDirectory",
-                    value -> {
-                        mainConfigurationProperties.setRoutesCompileDirectory(value);
-                        return null;
-                    });
-            autoConfigurationSingleOption(camelContext, autoConfiguredProperties, "camel.main.routesCompileLoadFirst",
-                    value -> {
-                        boolean bool = CamelContextHelper.parseBoolean(camelContext, value);
-                        mainConfigurationProperties.setRoutesCompileLoadFirst(bool);
-                        return null;
-                    });
-
             // eager load properties from modeline by scanning DSL sources and gather properties for auto configuration
             if (camelContext.isModeline() || mainConfigurationProperties.isModeline()) {
                 modelineRoutes(camelContext);
@@ -607,7 +596,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected void configureRoutesLoader(CamelContext camelContext) {
         // use main based routes loader
-        camelContext.adapt(ExtendedCamelContext.class).setRoutesLoader(new MainRoutesLoader(mainConfigurationProperties));
+        camelContext.adapt(ExtendedCamelContext.class).setRoutesLoader(new DefaultRoutesLoader());
     }
 
     protected void modelineRoutes(CamelContext camelContext) throws Exception {
@@ -1445,7 +1434,15 @@ public abstract class BaseMainSupport extends BaseService {
                         "Cannot resolve bean with name " + name);
             }
             // configure all the properties on the bean at once (to ensure they are configured in right order)
-            OrderedLocationProperties config = MainHelper.extractProperties(properties, name + "[", "]");
+            OrderedLocationProperties config = MainHelper.extractProperties(properties, name + "[", "]", true, key -> {
+                // when configuring map/list we want the keys to include the square brackets
+                // (so we know it is a map/list style and not dot style syntax)
+                // and therefore only remove the option prefix name
+                if (key.startsWith(name + "[")) {
+                    return key.substring(name.length());
+                }
+                return key;
+            });
             setPropertiesOnTarget(camelContext, bean, config, optionPrefix + name + ".", failIfNotSet, ignoreCase,
                     autoConfiguredProperties);
         }

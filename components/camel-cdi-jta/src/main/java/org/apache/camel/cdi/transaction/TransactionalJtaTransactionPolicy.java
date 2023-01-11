@@ -52,6 +52,7 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
             "java:pm/TransactionManager",
             "java:/TransactionManager"
     };
+    public static final String PRETTY_JNDI_NAMES = String.join(",", TRANSACTION_MANAGER_JNDI_NAMES);
     private static final String[] METHODS = new String[] {
             "org.openejb.OpenEJB.getTransactionManager",
             "com.arjuna.ats.jta.TransactionManager.transactionManager",
@@ -121,8 +122,9 @@ public abstract class TransactionalJtaTransactionPolicy extends JtaTransactionPo
                 // no-op
             }
         }
+
         LOG.warn("Could not find the transaction manager through any of following locations: {}",
-                String.join(",", TRANSACTION_MANAGER_JNDI_NAMES));
+                PRETTY_JNDI_NAMES);
         return null;
     }
 

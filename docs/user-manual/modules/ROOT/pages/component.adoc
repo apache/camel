@@ -16,8 +16,10 @@ For the URI given in the above example, the `CamelContext` object would map the 
 The parameter to `getEndpoint()` is a URI. The URI _scheme_ (that is,
 the part before `:`) specifies the name of a component. Internally, the `CamelContext` object maintains a mapping from the names of components to `Component` objects.
 
-*Note*: our documentation contains an in-depth overview of the xref:manual::component.adoc[Component] if you want to learn more about it, including important details necessary to write your own.
-
+[NOTE]
+====
+Our documentation contains an in-depth overview of the xref:manual::component.adoc[Component] if you want to learn more about it, including important details necessary to write your own.
+====
 
 == Configuring Component Options
 
@@ -53,7 +55,10 @@ In other words, with placeholders you can externalize the configuration from you
 
 In the getting started guide, we explained that Camel maintains a map of names to components. This raises the question of how Camel populates this map with named `Component` objects.
 
-*Note*: normally application developers don't need to worry about this. However, this information is fundamental if you are writing a custom component.
+[NOTE]
+====
+Normally, application developers don't need to worry about this. However, this information is fundamental if you are writing a custom component.
+====
 
 There are two ways of populating the map.
 
@@ -100,7 +105,10 @@ myCamelContext.getEndpoint("pop3://john.smith@mailserv.example.com?password=myPa
 
 We originally referred to the parameter as a URI because the online Camel documentation and the Camel source code both claim the parameter is a URI. In reality, the parameter is restricted to being a URL. This is because when Camel extracts the component name from the parameter, it looks for the first ":", which is a simplistic algorithm.
 
-*Note*: to understand, why recall from the Getting Started that a URI can be a URL or a URN.
+[NOTE]
+====
+Remember that in the xref:camel-core:getting-started:index.adoc[Getting Started With Camel] we explained that a URI could be a URL or a URN.
+====
 
 Now consider the following calls to `getEndpoint`:
 

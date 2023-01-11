@@ -21,8 +21,6 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.component.workday.WorkdayConfiguration;
 import org.apache.camel.component.workday.WorkdayEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Workday Report producer.
@@ -30,8 +28,6 @@ import org.slf4j.LoggerFactory;
 public class WorkdayReportProducer extends WorkdayDefaultProducer {
 
     public static final String WORKDAY_RASS_URL_TEMPLATE = "https://%s/ccx/service/customreport2/%s%s";
-
-    private static final Logger LOG = LoggerFactory.getLogger(WorkdayReportProducer.class);
 
     public WorkdayReportProducer(WorkdayEndpoint endpoint) {
         super(endpoint);

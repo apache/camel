@@ -21,12 +21,8 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.cloud.ServiceRegistry;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ServiceRegistrationRoutePolicyFactory implements RoutePolicyFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistrationRoutePolicyFactory.class);
-
     private final ServiceRegistry.Selector serviceRegistrySelector;
     private final ServiceRegistry serviceRegistry;
 

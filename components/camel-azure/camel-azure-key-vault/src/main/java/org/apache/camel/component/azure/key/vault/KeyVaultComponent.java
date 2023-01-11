@@ -23,16 +23,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Azure Key Vault component
  */
 @Component("azure-key-vault")
 public class KeyVaultComponent extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(KeyVaultComponent.class);
 
     @Metadata
     private KeyVaultConfiguration configuration = new KeyVaultConfiguration();

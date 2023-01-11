@@ -99,8 +99,6 @@ public class QueueProducerQoSTest extends CamelTestSupport {
 
         MockEndpoint.assertIsSatisfied(context);
 
-        //TODO - I've exposed service.getMBeanServer(), do you think it  can be used here?
-        //        DestinationViewMBean queue = service.getQueueMBean(TEST_INOUT_DESTINATION_NAME);
         assertEquals(0, service.countMessages(TEST_INOUT_DESTINATION_NAME),
                 "There were unexpected messages left in the queue: " + TEST_INOUT_DESTINATION_NAME);
     }

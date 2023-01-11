@@ -10026,6 +10026,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "data-type", type = "string"),
                     @YamlProperty(name = "default-value", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "examples", type = "array:org.apache.camel.model.rest.RestPropertyDefinition"),
                     @YamlProperty(name = "name", type = "string", required = true),
                     @YamlProperty(name = "required", type = "boolean"),
                     @YamlProperty(name = "type", type = "enum:body,formData,header,path,query", required = true)
@@ -10077,6 +10078,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "description": {
                     String val = asText(node);
                     target.setDescription(val);
+                    break;
+                }
+                case "examples": {
+                    java.util.List<org.apache.camel.model.rest.RestPropertyDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestPropertyDefinition.class);
+                    target.setExamples(val);
                     break;
                 }
                 case "name": {

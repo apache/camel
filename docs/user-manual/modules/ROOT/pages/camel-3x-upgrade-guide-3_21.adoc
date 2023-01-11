@@ -87,6 +87,13 @@ For example as shown below for the context health check:
 }
 ----
 
+=== camel-java-joor-dsl
+
+The `camel-java-joor-dsl` cannot anymore load routes defined in class files as we consider it no more needed, consequently the ability to configure the compile directory and the compile load first flag using the corresponding `camel-main` properties is no longer possible.
+
+=== camel-elasticsearch
+
+The `certificatePath` parameter can now be specified as resource: for user pointing to a local certificate, the file should be now prefixed with `file:`. It's also possible to use the classic resource helper prefixes, like `classpath`, `https` etc.
 
 === Deprecated Components
 

@@ -11,16 +11,16 @@ We have prepared these two guides to explain in greater detail a few of the conc
 
 In Apache Camel, a _route_ is a set of processing steps that are applied to a message as it travels from a source to a destination. A route typically consists of a series of processing steps that are connected in a linear sequence.
 
-In other words, a Camel _route_ is where the integration flow is defined. For example, you can write a Camel route to specify how two systems can be integrated. The following 2 guides provide the fundamental knowledge of Camel routes:
+In other words, a Camel _route_ is where the integration flow is defined. For example, you can write a Camel route to specify how two systems can be integrated. The following guide provides the fundamental knowledge of Camel routes:
 
 * xref:manual::routes.adoc[Routes]: the basic guide about Camel Routes.
-* xref:manual::route-builder.adoc[Route Builder]: describes the base class from which you can create Routes.
 
 If you have basic knowledge about _routes_, you can use the following guides to learn how to write them in different languages, handle errors, and customize them.
 
 * Routes (Basic + DSL)
 ** xref:manual::java-dsl.adoc[Java DSL]: the default language to write _routes_.
 ** xref:manual::dsl.adoc[DSL overview]: writing routes in other languages (XML, YAML, etc).
+** xref:manual::uris.adoc[URIs]
 
 * Routes (Writing)
 ** xref:manual::expression.adoc[Expression]
@@ -42,58 +42,64 @@ If you have basic knowledge about _routes_, you can use the following guides to 
 
 Components are a fundamental building block of Apache Camel and are used to connect routes to a wide variety of external systems and services.
 
-* Components
-** xref:manual::component.adoc[Component]: the comprehensive guide about components.
+* xref:manual::component.adoc[Component]: the comprehensive guide about components.
 
+== Data Processing and Transformation
+
+As you progress with creating your routes, you will often need to manipulate the data in transit so that you can collect, transform, or store it for future use.
+Apache Camel comes with many features to help you transform data in transit.
+The following guides can help you discover ways to manipulate the data:
+
+* Data Processing
+** xref:manual::bean-integration.adoc[Bean Integration]
+** xref:manual::processor.adoc[Processor]
+
+* Data Transformation
+** xref:manual::data-format.adoc[Data Format]
 
 == Other Guides
 
 Learn about additional ways to customize your integrations. Explore alternatives to consume and produce data as well as writing and defining routes.
 
-* Data Processing
-** xref:manual::dataformat-dsl.adoc[Data Format DSL]
-* Other
-** xref:manual::language-dsl.adoc[Language DSL]
-** xref:manual::camel-maven-archetypes.adoc[Camel Maven Archetypes]
-** xref:manual::lifecycle.adoc[Camel Lifecycle]
-** xref:manual::stream-caching.adoc[Stream caching]
-** xref:manual::bean-binding.adoc[Bean Binding]
-** xref:manual::bean-injection.adoc[Bean Injection]
-** xref:manual::bean-integration.adoc[Bean Integration]
-** xref:manual::advice-with.adoc[Advice With]
-** xref:manual::camel-console.adoc[Camel Console]
+* Exchange
+** xref:manual::exchange.adoc[Exchange]
+** xref:manual::exchange-pattern.adoc[Exchange Pattern]
+** xref:manual::exchange-pooling.adoc[Exchange Pooling]
+** xref:manual::using-exchange-pattern-annotations.adoc[Using Exchange Pattern Annotations]
+* Context
 ** xref:manual::camelcontext.adoc[Camel Context]
 ** xref:manual::camelcontext-autoconfigure.adoc[Camel Context Auto Configuration]
 ** xref:manual::advanced-configuration-of-camelcontext-using-spring.adoc[Advanced Configuration of Camel Context]
+* Running Camel Applications and Other Runtime Guides
+** xref:manual::lifecycle.adoc[Camel Lifecycle]
+** xref:manual::camel-console.adoc[Camel Console]
 ** xref:manual::camel-maven-plugin.adoc[Camel Maven Plugin]
 ** xref:manual::camel-report-maven-plugin.adoc[Camel Report Maven Plugin]
-** xref:manual::consumertemplate.adoc[Consumer Template]
-** xref:manual::producertemplate.adoc[Producer Template]
+** xref:manual::security.adoc[Security]
+* Other
+** xref:manual::language-dsl.adoc[Language DSL]
+** xref:manual::camel-maven-archetypes.adoc[Camel Maven Archetypes]
+** xref:manual::stream-caching.adoc[Stream caching]
+** xref:manual::advice-with.adoc[Advice With]
 ** xref:manual::pojo-consuming.adoc[POJO Consuming]
 ** xref:manual::pojo-producing.adoc[POJO Producing]
 ** xref:manual::delay-interceptor.adoc[Delayer]
 ** xref:manual::configuring-route-startup-ordering-and-autostartup.adoc[Configuring Route Startup Ordering]
 ** xref:manual::endpoint.adoc[Endpoint]
 ** xref:manual::examples.adoc[Examples]
-** xref:manual::exchange.adoc[Exchange]
-** xref:manual::exchange-pattern.adoc[Exchange Pattern]
-** xref:manual::exchange-pooling.adoc[Exchange Pooling]
 ** xref:manual::json.adoc[JSON Data Format]
 ** xref:manual::languages.adoc[Languages]
 ** xref:manual::parameter-binding-annotations.adoc[Parameter-Binding Annotations]
-** xref:manual::processor.adoc[Processor]
 ** xref:manual::property-binding.adoc[Property Binding]
 ** xref:manual::registry.adoc[Registry]
 ** xref:manual::rest-dsl.adoc[Rest DSL]
 ** xref:manual::route-configuration.adoc[Route Configuration]
-** xref:manual::security.adoc[Security]
 ** xref:manual::service-registry.adoc[Service Registry]
 ** xref:manual::spring.adoc[Spring]
 ** xref:manual::spring-xml-extensions.adoc[Spring XML Extensions]
-** xref:manual::uris.adoc[URIs]
-** xref:manual::using-exchange-pattern-annotations.adoc[Using Exchange Pattern Annotations]
 ** xref:manual::validator.adoc[Validator]
 ** xref:manual::what-are-the-dependencies.adoc[Camel Requirements]
 ** xref:manual::testing.adoc[Testing]
+
 
 You can find additional documentation in the xref:manual::architecture.adoc[architecture documentation] in the old user manual.

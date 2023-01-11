@@ -59,7 +59,6 @@ public class ActiveMQOriginalDestinationTest extends AbstractJMSTest {
         ActiveMQDestination original = (ActiveMQDestination) amq.getJMSDestination();
         assertNotNull(original);
         assertEquals("ActiveMQOriginalDestinationTest.dest", original.getName());
-        //        assertEquals("Queue", original.getDestinationTypeAsString());
         assertEquals("QUEUE", original.getType().name());
     }
 

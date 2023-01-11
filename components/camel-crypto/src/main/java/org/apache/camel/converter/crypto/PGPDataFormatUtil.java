@@ -199,15 +199,14 @@ public final class PGPDataFormatUtil {
                 if (forEncryption) {
                     if (isEncryptionKey(key)) {
                         LOG.debug("Public encryption key with key user ID {} and key ID {} added to the encryption keys",
-                                foundKeyUserIdForUserIdPart[0], Long.toString(key.getKeyID()));
+                                foundKeyUserIdForUserIdPart[0], key.getKeyID());
                         result.add(key);
                     }
                 } else if (!forEncryption && isSignatureKey(key)) {
                     // not used!
                     result.add(key);
                     LOG.debug("Public key with key user ID {} and key ID {} added to the signing keys",
-                            foundKeyUserIdForUserIdPart[0],
-                            Long.toString(key.getKeyID()));
+                            foundKeyUserIdForUserIdPart[0], key.getKeyID());
                 }
             }
 
@@ -226,7 +225,7 @@ public final class PGPDataFormatUtil {
         if (hasEncryptionKeyFlags != null && !hasEncryptionKeyFlags) {
             LOG.debug(
                     "Public key with key key ID {} found for specified user ID. But this key will not be used for the encryption, because its key flags are not encryption key flags.",
-                    Long.toString(key.getKeyID()));
+                    key.getKeyID());
             return false;
         } else {
             // also without keyflags (hasEncryptionKeyFlags = null), true is returned!
@@ -315,7 +314,7 @@ public final class PGPDataFormatUtil {
                             result.add(
                                     new PGPSecretKeyAndPrivateKeyAndUserId(secKey, privateKey, foundKeyUserIdForUserIdPart[0]));
                             LOG.debug("Private key with user ID {} and key ID {} added to the signing keys",
-                                    foundKeyUserIdForUserIdPart[0], Long.toString(privateKey.getKeyID()));
+                                    foundKeyUserIdForUserIdPart[0], privateKey.getKeyID());
 
                         }
                     }
@@ -334,7 +333,7 @@ public final class PGPDataFormatUtil {
             // not a signing key --> ignore
             LOG.debug(
                     "Secret key with key ID {} found for specified user ID part. But this key will not be used for signing because of its key flags.",
-                    Long.toString(secKey.getKeyID()));
+                    secKey.getKeyID());
             return false;
         } else {
             // also if there are not any keyflags (hasSigningKeyFlag=null),  true is returned!
@@ -391,7 +390,7 @@ public final class PGPDataFormatUtil {
             throws PGPException {
         PGPPublicKeyRing publicKeyring = publicKeyringCollection.getPublicKeyRing(keyId);
         if (publicKeyring == null) {
-            LOG.debug("No public key found for key ID {}.", Long.toString(keyId));
+            LOG.debug("No public key found for key ID {}.", keyId);
             return null;
         }
         // publicKey can be a subkey the user IDs must therefore be provided by the primary/master key

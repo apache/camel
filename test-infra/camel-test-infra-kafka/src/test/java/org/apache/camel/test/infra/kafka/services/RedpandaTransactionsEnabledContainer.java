@@ -22,7 +22,7 @@ import org.testcontainers.redpanda.RedpandaContainer;
 
 public class RedpandaTransactionsEnabledContainer extends RedpandaContainer {
 
-    public static final String DEFAULT_REDPANDA_CONTAINER = "docker.redpanda.com/vectorized/redpanda:v22.3.9";
+    public static final String DEFAULT_REDPANDA_CONTAINER = "docker.redpanda.com/vectorized/redpanda:v22.3.10";
     public static final String REDPANDA_CONTAINER
             = System.getProperty("itest.redpanda.container.image", DEFAULT_REDPANDA_CONTAINER);
     public static final int REDPANDA_PORT = 9092;
@@ -33,10 +33,7 @@ public class RedpandaTransactionsEnabledContainer extends RedpandaContainer {
 
     protected void containerIsStarting(InspectContainerResponse containerInfo) {
         super.containerIsStarting(containerInfo);
-
         String command = "#!/bin/bash\n";
-        // enable transactions
-        command += "/usr/bin/rpk redpanda config set redpanda.enable_transactions true\n";
 
         command += "/usr/bin/rpk redpanda start --mode dev-container ";
         command += "--kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092 ";

@@ -401,8 +401,9 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         try {
             Endpoint endpoint = context.getEndpoint(endpointUri);
             if (endpoint != null) {
-                Producer producer = endpoint.createProducer();
-                return producer != null;
+                try (Producer producer = endpoint.createProducer()) {
+                    return producer != null;
+                }
             }
         } catch (Exception e) {
             // ignore
@@ -413,11 +414,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public void sendBody(String endpointUri, Object body) throws Exception {
-        ProducerTemplate template = context.createProducerTemplate();
-        try {
+        try (ProducerTemplate template = context.createProducerTemplate()) {
             template.sendBody(endpointUri, body);
-        } finally {
-            template.stop();
         }
     }
 
@@ -428,24 +426,16 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public void sendBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws Exception {
-        ProducerTemplate template = context.createProducerTemplate();
-        try {
+        try (ProducerTemplate template = context.createProducerTemplate()) {
             template.sendBodyAndHeaders(endpointUri, body, headers);
-        } finally {
-            template.stop();
         }
     }
 
     @Override
     public Object requestBody(String endpointUri, Object body) throws Exception {
-        ProducerTemplate template = context.createProducerTemplate();
-        Object answer = null;
-        try {
-            answer = template.requestBody(endpointUri, body);
-        } finally {
-            template.stop();
+        try (ProducerTemplate template = context.createProducerTemplate()) {
+            return template.requestBody(endpointUri, body);
         }
-        return answer;
     }
 
     @Override
@@ -455,14 +445,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public Object requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws Exception {
-        ProducerTemplate template = context.createProducerTemplate();
-        Object answer = null;
-        try {
-            answer = template.requestBodyAndHeaders(endpointUri, body, headers);
-        } finally {
-            template.stop();
+        try (ProducerTemplate template = context.createProducerTemplate()) {
+            return template.requestBodyAndHeaders(endpointUri, body, headers);
         }
-        return answer;
+
     }
 
     @Override

@@ -196,7 +196,7 @@ public class VertxKafkaProducerOperations {
         Object timeStamp = configurationOptionsProxy.getOverrideTimestamp(message);
         Long overrideTimestamp = null;
         if (ObjectHelper.isNotEmpty(timeStamp)) {
-            overrideTimestamp = ((Long) timeStamp).longValue();
+            overrideTimestamp = (Long) timeStamp;
         }
 
         return overrideTimestamp;

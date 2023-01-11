@@ -21454,7 +21454,15 @@ Sets the parameter list of allowable values (enum).
               
       </xs:element>
             
-      <xs:element maxOccurs="unbounded" minOccurs="0" name="examples" nillable="true" type="tns:restPropertyDefinition"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="examples" type="tns:restPropertyDefinition">
+        <xs:annotation>
+          <xs:documentation xml:lang="en">
+            <![CDATA[
+Sets the parameter examples.
+          ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
           
     </xs:sequence>
         

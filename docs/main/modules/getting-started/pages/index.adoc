@@ -234,6 +234,8 @@ In Camel, Uniform Resource Identifiers (URIs) represent the addresses of the end
 * A _resource identifier_.
 * The options for the component.
 
+Camel makes extensive use of xref:manual::uris.adoc[URIs] to allow you to refer to xref:manual::endpoint.adoc[Endpoints].
+
 [[BookGettingStarted-TheMeaningofURL-URI-URN]]
 ===== The Meaning of URL, URI and URN
 

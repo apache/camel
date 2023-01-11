@@ -754,16 +754,17 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
 
         try (InputStream is = resourceInputStream(resource)) {
             LoadSettings local = LoadSettings.builder().setLabel(resource.getLocation()).build();
-            final YamlDeserializationContext ctx = newYamlDeserializationContext(local, resource);
-            final StreamReader reader = new StreamReader(local, new YamlUnicodeReader(is));
-            final Parser parser = new ParserImpl(local, reader);
-            final Composer composer = new Composer(local, parser);
-
+            YamlDeserializationContext ctx = newYamlDeserializationContext(local, resource);
+            StreamReader reader = new StreamReader(local, new YamlUnicodeReader(is));
+            Parser parser = new ParserImpl(local, reader);
+            Composer composer = new Composer(local, parser);
             try {
                 composer.getSingleNode()
                         .map(node -> preParseNode(ctx, node));
             } catch (Exception e) {
                 throw new RuntimeCamelException("Error pre-parsing resource: " + ctx.getResource().getLocation(), e);
+            } finally {
+                ctx.close();
             }
         }
     }

@@ -19,6 +19,7 @@ package org.apache.camel.component.aries.handler;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import io.nessus.aries.util.AssertState;
 import org.apache.camel.Exchange;
@@ -83,17 +84,7 @@ public class CredentialDefinitionsServiceHandler extends AbstractServiceHandler 
                 }
                 AssertState.notNull(schemaVersion, "Cannot obtain schemaVersion");
 
-                Boolean autoSchema = null;
-                Object auxValue = spec.get("autoSchema");
-                if (auxValue instanceof Boolean) {
-                    autoSchema = Boolean.valueOf((Boolean) auxValue);
-                }
-                if (auxValue instanceof String) {
-                    autoSchema = Boolean.valueOf((String) auxValue);
-                }
-                if (autoSchema == null) {
-                    autoSchema = endpoint.getConfiguration().isAutoSchema();
-                }
+                boolean autoSchema = toBoolean(spec.get("autoSchema"), () -> endpoint.getConfiguration().isAutoSchema());
 
                 // Search existing schemas
                 DID publicDid = createClient().walletDidPublic().get();
@@ -119,14 +110,7 @@ public class CredentialDefinitionsServiceHandler extends AbstractServiceHandler 
                 AssertState.isFalse(schemaIds.isEmpty(), "Cannot obtain schema ids for: " + filter);
                 AssertState.isEqual(1, schemaIds.size(), "Unexpected number of schema ids for: " + filter);
 
-                boolean supportRevocation = false;
-                auxValue = spec.get("supportRevocation");
-                if (auxValue instanceof Boolean) {
-                    supportRevocation = Boolean.valueOf((Boolean) auxValue);
-                }
-                if (auxValue instanceof String) {
-                    supportRevocation = Boolean.valueOf((String) auxValue);
-                }
+                boolean supportRevocation = toBoolean(spec.get("supportRevocation"), () -> false);
 
                 credDefReq = CredentialDefinitionRequest.builder()
                         .supportRevocation(supportRevocation)
@@ -140,5 +124,16 @@ public class CredentialDefinitionsServiceHandler extends AbstractServiceHandler 
         } else {
             throw new UnsupportedServiceException(service);
         }
+    }
+
+    private static boolean toBoolean(Object object, Supplier<Boolean> provider) {
+        if (object instanceof Boolean) {
+            return (Boolean) object;
+        }
+        if (object instanceof String) {
+            return Boolean.valueOf((String) object);
+        }
+
+        return provider.get();
     }
 }

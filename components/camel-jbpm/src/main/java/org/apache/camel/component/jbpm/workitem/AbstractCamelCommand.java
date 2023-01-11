@@ -26,8 +26,6 @@ import org.kie.api.executor.CommandContext;
 import org.kie.api.executor.ExecutionResults;
 import org.kie.api.runtime.process.WorkItem;
 import org.kie.internal.runtime.Cacheable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Camel jBPM {@link Command} which allows to call Camel routes with a <code>direct</code> endpoint.
@@ -42,8 +40,6 @@ import org.slf4j.LoggerFactory;
  * more advanced fields like message headers and attachments.
  */
 public abstract class AbstractCamelCommand implements Command, Cacheable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCamelCommand.class);
-
     public AbstractCamelCommand() {
     }
 

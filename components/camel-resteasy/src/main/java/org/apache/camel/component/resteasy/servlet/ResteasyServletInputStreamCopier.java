@@ -39,7 +39,7 @@ public class ResteasyServletInputStreamCopier extends ServletInputStream {
         /* create a new input stream from the cached request body */
         byte[] inputBytes = IOUtils.toByteArray(inputStream);
         this.input = new InputStreamCache(inputBytes);
-        this.copy = new CachedByteArrayOutputStream(Long.valueOf(inputBytes.length).intValue());
+        this.copy = new CachedByteArrayOutputStream(inputBytes.length);
     }
 
     @Override

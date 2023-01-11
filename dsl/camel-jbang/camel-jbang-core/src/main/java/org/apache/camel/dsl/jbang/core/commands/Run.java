@@ -49,6 +49,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
+import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.impl.lw.LightweightCamelContext;
@@ -101,6 +102,12 @@ class Run extends CamelCommand {
     Path[] filePaths; // Defined only for file path completion; the field never used
 
     List<String> files = new ArrayList<>();
+
+    @Option(names = { "--background" }, defaultValue = "false", description = "Run in the background")
+    boolean background;
+
+    @Option(names = { "--camel-version" }, description = "To run using a different Camel version than the default version.")
+    String camelVersion;
 
     @Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
             description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
@@ -266,32 +273,12 @@ class Run extends CamelCommand {
         removeDir(work);
         work.mkdirs();
 
-        Properties profileProperties = null;
-        File profilePropertiesFile = new File(getProfile() + ".properties");
-        if (profilePropertiesFile.exists()) {
-            profileProperties = loadProfileProperties(profilePropertiesFile);
-            // logging level/color may be configured in the properties file
-            loggingLevel = profileProperties.getProperty("loggingLevel", loggingLevel);
-            loggingColor
-                    = "true".equals(profileProperties.getProperty("loggingColor", loggingColor ? "true" : "false"));
-            loggingJson
-                    = "true".equals(profileProperties.getProperty("loggingJson", loggingJson ? "true" : "false"));
-            if (propertiesFiles == null) {
-                propertiesFiles = "file:" + profilePropertiesFile.getName();
-            } else {
-                propertiesFiles = propertiesFiles + ",file:" + profilePropertiesFile.getName();
-            }
-            repos = profileProperties.getProperty("camel.jbang.repos", repos);
-            mavenSettings = profileProperties.getProperty("camel.jbang.maven-settings", mavenSettings);
-            mavenSettingsSecurity = profileProperties.getProperty("camel.jbang.maven-settings-security", mavenSettingsSecurity);
-            openapi = profileProperties.getProperty("camel.jbang.openApi", openapi);
-            download = "true".equals(profileProperties.getProperty("camel.jbang.download", download ? "true" : "false"));
-        }
-
-        // generate open-api early
+        Properties profileProperties = loadProfileProperties();
+        configureLogging();
         if (openapi != null) {
             generateOpenApi();
         }
+
         // route code as option
         if (code != null) {
             // store code in temporary file
@@ -305,7 +292,9 @@ class Run extends CamelCommand {
             String routes = profileProperties != null ? profileProperties.getProperty("camel.main.routesIncludePattern") : null;
             if (routes == null) {
                 if (!silentRun) {
-                    System.out.println("Cannot run because " + getProfile() + ".properties file does not exist");
+                    System.out
+                            .println("Cannot run because " + getProfile()
+                                     + ".properties file does not exist or camel.main.routesIncludePattern is not configured");
                     return 1;
                 } else {
                     // silent-run then auto-detect all files (except properties as they are loaded explicit or via profile)
@@ -321,11 +310,7 @@ class Run extends CamelCommand {
             files = files.stream().distinct().collect(Collectors.toList());
         }
 
-        // configure logging first
-        configureLogging();
-
         final KameletMain main = createMainInstance();
-
         main.setRepos(repos);
         main.setDownload(download);
         main.setFresh(fresh);
@@ -346,11 +331,12 @@ class Run extends CamelCommand {
         if (modeline) {
             writeSetting(main, profileProperties, "camel.main.modeline", "true");
         }
-        writeSetting(main, profileProperties, "camel.jbang.openApi", openapi);
+        writeSetting(main, profileProperties, "camel.jbang.open-api", openapi);
         writeSetting(main, profileProperties, "camel.jbang.repos", repos);
         writeSetting(main, profileProperties, "camel.jbang.health", health ? "true" : "false");
         writeSetting(main, profileProperties, "camel.jbang.console", console ? "true" : "false");
-        writeSetting(main, profileProperties, "camel.main.routesCompileDirectory", WORK_DIR);
+        // the runtime version of Camel is what is loaded via the catalog
+        writeSetting(main, profileProperties, "camel.jbang.camel-version", new DefaultCamelCatalog().getCatalogVersion());
         // merge existing dependencies with --deps
         String deps = RuntimeUtil.getDependencies(profileProperties);
         if (deps.isBlank()) {
@@ -393,7 +379,7 @@ class Run extends CamelCommand {
                 () -> maxIdleSeconds > 0 ? String.valueOf(maxIdleSeconds) : null);
         writeSetting(main, profileProperties, "camel.jbang.platform-http.port",
                 () -> port > 0 ? String.valueOf(port) : null);
-        writeSetting(main, profileProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null);
+        writeSetting(main, profileProperties, "camel.jbang.jfr", jfr || jfrProfile != null ? "jfr" : null); // TODO: "true" instead of "jfr" ?
         writeSetting(main, profileProperties, "camel.jbang.jfr-profile", jfrProfile != null ? jfrProfile : null);
 
         StringJoiner js = new StringJoiner(",");
@@ -483,7 +469,6 @@ class Run extends CamelCommand {
                 sjReload.add(file.substring(5));
             }
         }
-
         writeSetting(main, profileProperties, "camel.main.name", name);
 
         if (js.length() > 0) {
@@ -559,6 +544,108 @@ class Run extends CamelCommand {
             writeSettings("camel.component.properties.location", loc);
         }
 
+        // okay we have validated all input and are ready to run
+        if (camelVersion != null) {
+            // run in another JVM with different camel version (foreground or background)
+            return runCamelVersion(main);
+        } else if (background) {
+            // spawn new JVM to run in background
+            return runBackground(main);
+        } else {
+            // run default in current JVM with same camel version
+            return runKameletMain(main);
+        }
+    }
+
+    private Properties loadProfileProperties() throws Exception {
+        Properties answer = null;
+
+        File profilePropertiesFile = new File(getProfile() + ".properties");
+        if (profilePropertiesFile.exists()) {
+            answer = loadProfileProperties(profilePropertiesFile);
+            // logging level/color may be configured in the properties file
+            loggingLevel = answer.getProperty("loggingLevel", loggingLevel);
+            loggingColor
+                    = "true".equals(answer.getProperty("loggingColor", loggingColor ? "true" : "false"));
+            loggingJson
+                    = "true".equals(answer.getProperty("loggingJson", loggingJson ? "true" : "false"));
+            if (propertiesFiles == null) {
+                propertiesFiles = "file:" + getProfile() + ".properties";
+            } else {
+                propertiesFiles = propertiesFiles + ",file:" + profilePropertiesFile.getName();
+            }
+            repos = answer.getProperty("camel.jbang.repos", repos);
+            mavenSettings = answer.getProperty("camel.jbang.maven-settings", mavenSettings);
+            mavenSettingsSecurity = answer.getProperty("camel.jbang.maven-settings-security", mavenSettingsSecurity);
+            openapi = answer.getProperty("camel.jbang.open-api", openapi);
+            download = "true".equals(answer.getProperty("camel.jbang.download", download ? "true" : "false"));
+            background = "true".equals(answer.getProperty("camel.jbang.background", background ? "true" : "false"));
+            camelVersion = answer.getProperty("camel.jbang.camel-version", camelVersion);
+        }
+        return answer;
+    }
+
+    protected int runCamelVersion(KameletMain main) throws Exception {
+        String cmd = ProcessHandle.current().info().commandLine().orElse(null);
+        if (cmd != null) {
+            cmd = StringHelper.after(cmd, "main.CamelJBang ");
+        }
+        if (cmd == null) {
+            System.err.println("No Camel integration files to run");
+            return 1;
+        }
+        if (background) {
+            cmd = cmd.replaceFirst("--background=true", "");
+            cmd = cmd.replaceFirst("--background", "");
+        }
+        cmd = cmd.replaceFirst("--camel-version=" + camelVersion, "");
+        // need to use jbang command to specify camel version
+        String jbang = "jbang run -Dcamel.jbang.version=" + camelVersion;
+        if (repos != null) {
+            jbang += " --repos=" + repos;
+        }
+        cmd = jbang + " camel@apache/camel " + cmd;
+
+        ProcessBuilder pb = new ProcessBuilder();
+        String[] arr = cmd.split("\\s+"); // TODO: safe split
+        List<String> args = Arrays.asList(arr);
+        pb.command(args);
+        if (background) {
+            Process p = pb.start();
+            System.out.println("Running Camel integration: " + name + " (version: " + camelVersion
+                               + ") in background with PID: " + p.pid());
+            return 0;
+        } else {
+            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+            Process p = pb.start();
+            // wait for that process to exit as we run in foreground
+            return p.waitFor();
+        }
+    }
+
+    protected int runBackground(KameletMain main) throws Exception {
+        String cmd = ProcessHandle.current().info().commandLine().orElse(null);
+        if (cmd != null) {
+            cmd = StringHelper.after(cmd, "main.CamelJBang ");
+        }
+        if (cmd == null) {
+            System.err.println("No Camel integration files to run");
+            return 1;
+        }
+        cmd = cmd.replaceFirst("--background=true", "");
+        cmd = cmd.replaceFirst("--background", "");
+        cmd = "camel " + cmd;
+
+        ProcessBuilder pb = new ProcessBuilder();
+        String[] arr = cmd.split("\\s+"); // TODO: safe split
+        List<String> args = Arrays.asList(arr);
+        pb.command(args);
+        Process p = pb.start();
+        System.out.println("Running Camel integration: " + name + " in background with PID: " + p.pid());
+        return 0;
+    }
+
+    protected int runKameletMain(KameletMain main) throws Exception {
         main.start();
         main.run();
 

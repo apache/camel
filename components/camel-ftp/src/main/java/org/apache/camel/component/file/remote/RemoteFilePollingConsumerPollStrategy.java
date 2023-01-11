@@ -34,14 +34,18 @@ public class RemoteFilePollingConsumerPollStrategy extends DefaultPollingConsume
             if (rfc.isRunAllowed()) {
                 // disconnect from the server to force it to re login at next
                 // poll to recover
-                log.warn("Trying to recover by force disconnecting from remote server and re-connecting at next poll: {}",
-                        rfc.remoteServer());
+                if (log.isWarnEnabled()) {
+                    log.warn("Trying to recover by force disconnecting from remote server and re-connecting at next poll: {}",
+                            rfc.remoteServer());
+                }
                 try {
                     rfc.forceDisconnect();
                 } catch (Throwable t) {
                     // ignore the exception
-                    log.debug("Error occurred during force disconnecting from: {}. This exception will be ignored.",
-                            rfc.remoteServer(), t);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Error occurred during force disconnecting from: {}. This exception will be ignored.",
+                                rfc.remoteServer(), t);
+                    }
                 }
             }
         }

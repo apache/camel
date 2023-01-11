@@ -23,6 +23,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -67,6 +68,9 @@ public class ManagedJmsEndpointTopicTest extends AbstractJMSTest {
 
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
+        Awaitility.await().until(() -> context.getRoute("foo").getUptimeMillis() > 100 &&
+                context.getRoute("bar").getUptimeMillis() > 100);
+
         template.sendBody("activemq:topic:start", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
@@ -83,5 +87,4 @@ public class ManagedJmsEndpointTopicTest extends AbstractJMSTest {
             }
         };
     }
-
 }

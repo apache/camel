@@ -539,19 +539,29 @@ You can specify which Camel version to run as shown:
 
 [source,bash]
 ----
-jbang run -Dcamel.jbang.version=3.17.0 camel@apache/camel [command]
+jbang run -Dcamel.jbang.version=3.18.4 camel@apache/camel [command]
 ----
 
 NOTE: Older versions of Camel may not work as well with Camel JBang as the newest versions.
-Starting from Camel 3.18 onwards is the versions that are recommended to be used onwards.
+Starting from Camel 3.20 onwards is the versions that are recommended to be used onwards.
 
-And you can also try bleeding edge development by using SNAPSHOT such as:
+In *Camel 3.21* onwards the `run` command has built-in support, using `--camel-version`,
+for specifying Camel version to use for the running Camel integration.
+
+[source,bash]
+----
+camel run * --camel-version=3.18.4
+----
+
+TIP: This makes it easy to try different Camel versions, for example when you need to reproduce an issue,
+and find out how it works in different Camel version.
+
+You can also try bleeding edge development by using SNAPSHOT such as:
 
 [source,bash]
 ----
 jbang run --fresh -Dcamel.jbang.version=3.21.0-SNAPSHOT camel@apache/camel [command]
 ----
-
 
 === Running Camel K integrations or bindings
 
@@ -788,12 +798,78 @@ You can from another terminal access the logs from any Camel integration with th
 [source,bash]
 ----
 camel log chuck
-2023-01-04 17:59:19.288  INFO 44619 --- [           main] org.apache.camel.main.MainSupport        : Apache Camel (JBang) 3.21.0 is starting
-2023-01-04 17:59:19.395  INFO 44619 --- [           main] org.apache.camel.main.MainSupport        : Using Java 17.0.5 with PID 44619. Started by davsclaus in /Users/davsclaus/workspace/
+chuck     | 2023-01-04 17:59:19.288  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Apache Camel (JBang) 3.21.0 is starting
+chuck     | 2023-01-04 17:59:19.395  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Using Java 17.0.5 with PID 44619. Started by davsclaus in /Users/davsclaus/workspace/
 ...
 ----
 
 You can also watch logs for all Camel integrations by `camel log`, or you can specify by name/pids (separate by comma) `camel log bar,chuck`.
+
+It is also possible to find and highlight keywords from the log using `--find`, such as:
+
+[source,bash]
+----
+camel log chuck --find=invoice
+----
+
+You can find multiple items by repeating the option, i.e.:
+
+[source,bash]
+----
+camel log chuck --find=invoice --find=order
+----
+
+There is also a _grep_ option that will filter the logs to only show lines that matches text (ignore case).
+
+[source,bash]
+----
+camel log chuck --grep=error
+----
+
+The log command will by default tail the logs for new lines. If you want to exit the command immediately, you
+can turn off following as shown:
+
+[source,bash]
+----
+camel log chuck --grep=error --follow=false
+----
+
+This will grep the logs for log lines with matches text `error` and output only these logs, and exit.
+
+==== Running Camel integrations in background
+
+The `run` command allows to run Camel in the background with the `--background` option.
+Therefore, to see and understand what happens then the management commands
+cane be used, such as `camel ps`, `camel get`, and `camel log`.
+
+[source,bash]
+----
+$ camel run chuck.yaml --background
+Running Camel integration: chuck in background with PID: 80093
+
+$ camel ps
+  PID   NAME    READY  STATUS   AGE
+ 80093  chuck    1/1   Running  33s
+----
+
+To see the log use `camel log`
+[source,bash]
+----
+$ camel log
+chuck     | 2023-01-04 17:59:19.288  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Apache Camel (JBang) 3.21.0 is starting
+chuck     | 2023-01-04 17:59:19.395  INFO 44619 --- [           main] org.apache.camel.main.MainSupport   : Using Java 17.0.5 with PID 44619. Started by davsclaus in /Users/davsclaus/workspace/
+...
+----
+
+To stop the integration you can use `camel stop`
+
+[source,bash]
+----
+$ camel stop chuck
+Shutting down Camel integration (pid: 80093)
+----
+
+TIP: To stop all Camel integrations you can use `camel stop --all`.
 
 ==== Starting and Stopping routes
 

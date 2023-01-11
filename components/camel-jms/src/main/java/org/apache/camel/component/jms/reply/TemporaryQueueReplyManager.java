@@ -53,7 +53,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         try {
             destResolver.destinationReady();
         } catch (InterruptedException e) {
-            log.warn("Interrupted while waiting for JMSReplyTo destination refresh", e);
+            log.warn("Interrupted while waiting for JMSReplyTo destination refresh due to: " + e.getMessage()
+                     + ". This exception is ignored.");
         }
         return super.getReplyTo();
     }
@@ -88,7 +89,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         } else {
             // we could not correlate the received reply message to a matching request and therefore
             // we cannot continue routing the unknown message
-            // log a warn and then ignore the message
+            // log warn and then ignore the message
             log.warn("Reply received for unknown correlationID [{}]. The message will be ignored: {}", correlationID, message);
         }
     }
@@ -249,8 +250,13 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         @Override
         public void onException(JMSException exception) {
             // capture exceptions, and schedule a refresh of the ReplyTo destination
-            log.warn("Exception inside the DMLC for Temporary ReplyTo Queue for destination {}, refreshing ReplyTo destination",
-                    endpoint.getDestinationName(), exception);
+            String msg
+                    = "Exception inside the DMLC for Temporary ReplyTo Queue for destination " + endpoint.getDestinationName()
+                      + ", refreshing ReplyTo destination (stacktrace in DEBUG logging level).";
+            log.warn(msg);
+            if (log.isDebugEnabled()) {
+                log.debug(msg, exception);
+            }
             destResolver.scheduleRefresh();
             // serve as a proxy for any exception listener the user may have set explicitly
             if (delegate != null) {

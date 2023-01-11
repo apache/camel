@@ -32,13 +32,9 @@ import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.tracing.ActiveSpanManager;
 import org.apache.camel.tracing.SpanDecorator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Deprecated
 public class OpenTracingTracingStrategy implements InterceptStrategy {
-
-    private static final Logger LOG = LoggerFactory.getLogger(OpenTracingTracingStrategy.class);
     private static final String UNNAMED = "unnamed";
     private final OpenTracingTracer tracer;
 

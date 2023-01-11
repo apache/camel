@@ -45,6 +45,7 @@ public class JpaComponent extends DefaultComponent {
 
     @Metadata
     private EntityManagerFactory entityManagerFactory;
+    @Deprecated
     @Metadata
     private PlatformTransactionManager transactionManager;
     @Metadata
@@ -73,13 +74,17 @@ public class JpaComponent extends DefaultComponent {
         this.entityManagerFactory = entityManagerFactory;
     }
 
+    @Deprecated
     public PlatformTransactionManager getTransactionManager() {
         return transactionManager;
     }
 
     /**
      * To use the {@link PlatformTransactionManager} for managing transactions.
+     * 
+     * @deprecated - use {@link #setTransactionStrategy(TransactionStrategy)} instead
      */
+    @Deprecated
     public void setTransactionManager(PlatformTransactionManager transactionManager) {
         this.transactionManager = transactionManager;
     }
