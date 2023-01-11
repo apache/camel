@@ -60,7 +60,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
 
     @Test
     void testCachePut() {
-        final int key = 1;
+        final String key = "1";
         final int val = 3;
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -107,7 +107,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
 
     @Test
     void testCacheGet() throws Exception {
-        final Integer key = 1;
+        final String key = "1";
         final Integer val = 2;
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -157,7 +157,7 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
     @Test
     void testCacheInvalidate() throws Exception {
         final Cache<Object, Object> cache = getTestCache();
-        final Integer key = 1;
+        final String key = "1";
         final Integer val = 1;
 
         cache.put(key, val);
