@@ -243,23 +243,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * To configure the default action key. If a key is set in the message
          * header, then the key from the header takes precedence.
          * 
-         * The option is a: &lt;code&gt;java.lang.Object&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param key the value to set
-         * @return the dsl builder
-         */
-        default CaffeineCacheEndpointBuilder key(Object key) {
-            doSetProperty("key", key);
-            return this;
-        }
-        /**
-         * To configure the default action key. If a key is set in the message
-         * header, then the key from the header takes precedence.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Object&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
@@ -409,20 +393,6 @@ public interface CaffeineCacheEndpointBuilderFactory {
         default AdvancedCaffeineCacheEndpointBuilder cacheLoader(
                 String cacheLoader) {
             doSetProperty("cacheLoader", cacheLoader);
-            return this;
-        }
-        /**
-         * The cache key type, default java.lang.Object.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param keyType the value to set
-         * @return the dsl builder
-         */
-        default AdvancedCaffeineCacheEndpointBuilder keyType(String keyType) {
-            doSetProperty("keyType", keyType);
             return this;
         }
         /**
