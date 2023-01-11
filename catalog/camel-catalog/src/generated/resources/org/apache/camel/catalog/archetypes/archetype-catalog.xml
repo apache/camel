@@ -9,12 +9,6 @@
     </archetype>
     <archetype>
       <groupId>org.apache.camel.archetypes</groupId>
-      <artifactId>camel-archetype-cdi</artifactId>
-      <version>4.0.0-SNAPSHOT</version>
-      <description>Creates a new Camel project using CDI.</description>
-    </archetype>
-    <archetype>
-      <groupId>org.apache.camel.archetypes</groupId>
       <artifactId>camel-archetype-component</artifactId>
       <version>4.0.0-SNAPSHOT</version>
       <description>Creates a new Camel component.</description>

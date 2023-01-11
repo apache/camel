@@ -1,0 +1,15 @@
+= Apache Camel 3.x to 4.0 Migration Guide
+
+This document is intended to help you migrate your Apache Camel applications
+from version 3.x to 4.0.
+
+IMPORTANT: If you are upgrading Camel 4.x to 4.y then use the
+xref:camel-4x-upgrade-guide.adoc[Camel 4.x Upgrade Guide].
+
+== Java versions
+
+Camel 4 supports Java 17. Support for Java 11 is dropped.
+
+== camel-cdi
+
+The `camel-cdi` component has been removed, and is no longer supported.

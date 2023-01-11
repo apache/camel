@@ -1,1 +1,0 @@
-../../../../../components/camel-cdi-jta/src/main/docs/cdi-jta.adoc

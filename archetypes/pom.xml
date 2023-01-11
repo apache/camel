@@ -40,7 +40,6 @@
 
     <modules>
         <module>camel-archetype-api-component</module>
-        <module>camel-archetype-cdi</module>
         <module>camel-archetype-component</module>
         <module>camel-archetype-dataformat</module>
         <module>camel-archetype-java</module>

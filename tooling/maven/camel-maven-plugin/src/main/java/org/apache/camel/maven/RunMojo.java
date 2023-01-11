@@ -132,13 +132,6 @@ public class RunMojo extends AbstractExecMojo {
     protected String loggingLevel;
 
     /**
-     * Whether to use CDI when running, instead of Spring
-     */
-    @Deprecated
-    @Parameter(property = "camel.useCDI")
-    protected Boolean useCDI;
-
-    /**
      * Whether to use Kamelet (camel-main-kamelet) when running, instead of Spring
      */
     @Parameter(property = "camel.useKamelet")
@@ -310,14 +303,6 @@ public class RunMojo extends AbstractExecMojo {
             getLog().info("You can skip tests from the command line using: mvn " + goal() + " -Dmaven.test.skip=true");
         }
 
-        boolean useCdiMain;
-        if (useCDI != null) {
-            // use configured value
-            useCdiMain = useCDI;
-        } else {
-            // auto detect if we have cdi
-            useCdiMain = detectCDIOnClassPath();
-        }
         boolean usingKameletMain;
         if (useKamelet != null) {
             // use configured value
@@ -357,13 +342,7 @@ public class RunMojo extends AbstractExecMojo {
             args.addAll(Arrays.asList(arguments));
         }
 
-        if (useCdiMain) {
-            mainClass = "org.apache.camel.cdi.Main";
-            // must include plugin dependencies for cdi
-            extraPluginDependencyArtifactId = "camel-cdi";
-            getLog().info("Using " + mainClass + " to initiate a CamelContext");
-            getLog().warn("Running CDI in camel-maven-plugin is deprecated");
-        } else if (usingKameletMain) {
+        if (usingKameletMain) {
             mainClass = "org.apache.camel.main.KameletMain";
             // must include plugin dependencies for kamelet
             extraPluginDependencyArtifactId = "camel-kamelet-main";
@@ -626,19 +605,6 @@ public class RunMojo extends AbstractExecMojo {
                 System.setProperty(systemProperty.getKey(), value == null ? "" : value);
             }
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    private boolean detectCDIOnClassPath() {
-        List<Dependency> deps = project.getCompileDependencies();
-        for (Dependency dep : deps) {
-            if ("org.apache.camel".equals(dep.getGroupId()) && "camel-cdi-main".equals(dep.getArtifactId())) {
-                getLog().info("camel-cdi-main detected on classpath");
-                return true;
-            }
-        }
-        return false;
     }
 
     @SuppressWarnings("unchecked")

@@ -103,9 +103,6 @@
         <module>camel-caffeine-lrucache</module>
         <module>camel-cassandraql</module>
         <module>camel-cbor</module>
-        <module>camel-cdi</module>
-        <module>camel-cdi-main</module>
-        <module>camel-cdi-jta</module>
         <module>camel-chatscript</module>
         <module>camel-chunk</module>
         <module>camel-cloudevents</module>

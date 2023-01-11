@@ -34,8 +34,6 @@
 
     <modules>
         <module>camel-test</module>
-        <!--module>camel-test-cdi</module-->
-        <module>camel-test-cdi-junit5</module>
         <!--module>camel-test-spring</module-->
         <module>camel-test-junit5</module>
         <module>camel-test-spring-junit5</module>

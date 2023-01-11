@@ -216,12 +216,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cdi-jta</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <!-- some TX tests using iBatis -->
         <dependency>
             <groupId>org.apache.derby</groupId>

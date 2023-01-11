@@ -45,7 +45,6 @@ For a deeper and better understanding of Apache Camel, an xref:faq:what-is-camel
 
 * xref:getting-started.adoc[Getting Started]
 * xref:book-getting-started.adoc[Longer Getting Started Guide]
-* xref:components:others:cdi.adoc[Working with Camel and CDI]
 * xref:spring.adoc[Working with Camel and Spring]
 * xref:faq:how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
 * xref:camelcontext-autoconfigure.adoc[Auto Configuration]

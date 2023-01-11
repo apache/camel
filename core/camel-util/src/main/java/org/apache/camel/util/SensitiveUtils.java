@@ -55,6 +55,7 @@ public final class SensitiveUtils {
                     "keypassword",
                     "keystore",
                     "keystorepassword",
+                    "login",
                     "oauthaccesstoken",
                     "oauthappid",
                     "oauthappsecret",
@@ -63,6 +64,7 @@ public final class SensitiveUtils {
                     "oauthtoken",
                     "oauthtokenurl",
                     "p12filename",
+                    "passcode",
                     "passphrase",
                     "password",
                     "privatekey",
@@ -131,6 +133,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qkeypassword\\E"
                                                     + "|\\Qkeystore\\E"
                                                     + "|\\Qkeystorepassword\\E"
+                                                    + "|\\Qlogin\\E"
                                                     + "|\\Qoauthaccesstoken\\E"
                                                     + "|\\Qoauthappid\\E"
                                                     + "|\\Qoauthappsecret\\E"
@@ -139,6 +142,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qoauthtoken\\E"
                                                     + "|\\Qoauthtokenurl\\E"
                                                     + "|\\Qp12filename\\E"
+                                                    + "|\\Qpasscode\\E"
                                                     + "|\\Qpassphrase\\E"
                                                     + "|\\Qpassword\\E"
                                                     + "|\\Qprivatekey\\E"

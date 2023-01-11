@@ -1,9 +1,9 @@
 = Registry
 
 The `org.apache.camel.spi.Registry` API is a common API to lookup beans in any kind of runtime platform,
-whether you run Camel on Spring Boot, Quarkus, CDI, Standalone, Kafka or something else.
+whether you run Camel on Spring Boot, Quarkus, Standalone, Kafka or something else.
 
-Camel uses the `DefaultRegistry` that based on which runtime used (Spring Boot, Quarkus, CDI, etc) will
+Camel uses the `DefaultRegistry` that based on which runtime used (Spring Boot, Quarkus, etc.) will
 first lookup beans from the runtime platform, and fallback to Camel's own `SimpleRegistry`.
 
 == Registry API
@@ -183,7 +183,6 @@ for dependency injection.
 
 When using Quarkus you can use CDI annotations such as `@Inject` and `@Named`
 for dependency injection.
-
 
 == More Information
 
