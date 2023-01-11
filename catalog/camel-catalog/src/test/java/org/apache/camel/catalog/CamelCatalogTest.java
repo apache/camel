@@ -81,7 +81,7 @@ public class CamelCatalogTest {
         assertTrue(names.contains("log"));
         assertTrue(names.contains("docker"));
         assertTrue(names.contains("jms"));
-        assertTrue(names.contains("activemq"));
+        // TODO: camel4 assertTrue(names.contains("activemq"));
         assertTrue(names.contains("zookeeper-master"));
     }
 
