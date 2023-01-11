@@ -17,15 +17,15 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
+public class TransactedAsyncUsingThreadsTest extends AbstractSpringJMSTestSupport {
 
     private static int counter;
     private static String thread1;

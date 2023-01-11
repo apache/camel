@@ -51,15 +51,15 @@
         <property name="connectionFactory" ref="poolConnectionFactory"/>
     </bean>
 
-    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
+    <bean id="poolConnectionFactory" class="org.messaginghub.pooled.jms.JmsPoolConnectionFactory" init-method="start" destroy-method="stop">
         <property name="maxConnections" value="8"/>
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
     </bean>
 
-    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL">
-            <bean class="org.apache.camel.test.infra.activemq.services.LegacyEmbeddedBroker" factory-method="createBrokerUrl"/>
-        </property>
+    <bean id="jmsConnectionFactory" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+                <property name="brokerURL">
+                    <bean class="org.apache.camel.component.jms.AbstractSpringJMSTestSupport"  factory-method="getServiceAddress"/>
+                </property>
     </bean>
 
     <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">

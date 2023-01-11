@@ -18,7 +18,7 @@ package org.apache.camel.component.jms;
 
 import javax.jms.ConnectionFactory;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.builder.RouteBuilder;
@@ -70,7 +70,7 @@ public class JmsTestConnectionOnStartupTest extends CamelTestSupport {
             assertTrue(e.getMessage()
                     .startsWith(
                             "Failed to create Producer for endpoint: activemq://queue:JmsTestConnectionOnStartupTest?testConnectionOnStartup=true."));
-            assertTrue(e.getMessage().contains("java.net.ConnectException"));
+            assertTrue(e.getCause().toString().contains("javax.jms.JMSException: Failed to create session factory"));
         }
     }
 

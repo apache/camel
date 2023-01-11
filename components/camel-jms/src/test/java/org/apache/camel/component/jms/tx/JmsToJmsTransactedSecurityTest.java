@@ -16,10 +16,17 @@
  */
 package org.apache.camel.component.jms.tx;
 
+import org.apache.activemq.artemis.core.config.impl.SecurityConfiguration;
+import org.apache.activemq.artemis.core.server.ActiveMQServer;
+import org.apache.activemq.artemis.core.server.ActiveMQServers;
+import org.apache.activemq.artemis.spi.core.security.ActiveMQJAASSecurityManager;
+import org.apache.activemq.artemis.spi.core.security.jaas.InVMLoginModule;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +35,38 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JmsToJmsTransactedSecurityTest.class);
+
+    private static ActiveMQServer activeMQServer;
+
+    @BeforeAll
+    public static void before() throws Exception {
+        SecurityConfiguration securityConfig = new SecurityConfiguration();
+        securityConfig.addUser("admin", "secret");
+        securityConfig.addUser("scott", "tiger");
+        securityConfig.addRole("scott", "user");
+        securityConfig.addRole("admin", "admin");
+        securityConfig.addRole("admin", "user");
+        ActiveMQJAASSecurityManager securityManager
+                = new ActiveMQJAASSecurityManager(InVMLoginModule.class.getName(), securityConfig);
+
+        activeMQServer = ActiveMQServers.newActiveMQServer("org/apache/camel/component/jms/tx/artemis-security.xml", null,
+                securityManager);
+        activeMQServer.start();
+    }
+
+    @AfterAll
+    public static void after() throws Exception {
+        activeMQServer.stop();
+    }
+
+    /**
+     * Used by spring xml configurations
+     * 
+     * @return
+     */
+    public static String getServiceAddress() {
+        return "vm://999";
+    }
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {

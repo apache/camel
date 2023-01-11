@@ -19,11 +19,9 @@ package org.apache.camel.component.jms.issues;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.transaction.TransactionException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,21 +32,14 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @see <a href="https://issues.apache.org/jira/browse/CAMEL-4616">CAMEL-4616</a>
  * @see <a href="https://activemq.apache.org/producer-flow-control.html">ActiveMQ flow control</a>
  */
-class AsyncJmsProducerExceptionInTXTest extends CamelSpringTestSupport {
+@Disabled("Cannot reproduce with Artemis")
+class AsyncJmsProducerExceptionInTXTest extends CamelBrokerClientTestSupport {
 
     @BeforeAll
     static void setSystemProperties() {
         // configure classpath:org/apache/camel/component/jms/issues/broker.xml
         System.setProperty("producer-flow-control", "true");
         System.setProperty("send-fail-if-no-space", "true");
-    }
-
-    @Override
-    protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                new String[] {
-                        "classpath:org/apache/camel/component/jms/issues/broker.xml",
-                        "classpath:org/apache/camel/component/jms/issues/camelBrokerClient.xml" });
     }
 
     @Override

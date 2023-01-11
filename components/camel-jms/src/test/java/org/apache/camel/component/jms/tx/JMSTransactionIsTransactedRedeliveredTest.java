@@ -26,8 +26,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWith;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.awaitility.Awaitility;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  *
  */
-public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSupport {
+public class JMSTransactionIsTransactedRedeliveredTest extends AbstractSpringJMSTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -84,7 +84,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
 
         // check JMX stats
         // need a little sleep to ensure JMX is updated
-        final Set<ObjectName> objectNames = Awaitility.await().atMost(500, TimeUnit.MILLISECONDS)
+        final Set<ObjectName> objectNames = Awaitility.await().atMost(1000, TimeUnit.MILLISECONDS)
                 .until(() -> getMBeanServer()
                         .queryNames(new ObjectName("org.apache.camel:context=camel-*,type=routes,name=\"myRoute\""), null),
                         Matchers.hasSize(1));

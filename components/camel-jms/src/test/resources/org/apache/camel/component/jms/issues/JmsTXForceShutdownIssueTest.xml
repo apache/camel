@@ -49,12 +49,12 @@
         <property name="connectionFactory" ref="poolConnectionFactory"/>
     </bean>
 
-    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
+    <bean id="poolConnectionFactory" class="org.messaginghub.pooled.jms.JmsPoolConnectionFactory" init-method="start" destroy-method="stop">
         <property name="maxConnections" value="8"/>
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
     </bean>
 
-    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+    <bean id="jmsConnectionFactory" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
         <property name="brokerURL" value="tcp://localhost:61616"/>
     </bean>
 

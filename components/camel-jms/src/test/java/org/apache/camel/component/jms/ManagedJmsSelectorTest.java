@@ -27,10 +27,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.infra.activemq.common.ConnectionFactoryHelper;
-import org.apache.camel.test.infra.activemq.services.LegacyEmbeddedBroker;
+import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
@@ -39,6 +41,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Isolated
 public class ManagedJmsSelectorTest extends CamelTestSupport {
+
+    @RegisterExtension
+    public ArtemisService service = ArtemisServiceFactory.createVMService();
 
     @Override
     protected boolean useJmx() {
@@ -49,8 +54,8 @@ public class ManagedJmsSelectorTest extends CamelTestSupport {
     protected CamelContext createCamelContext() {
         CamelContext context = new DefaultCamelContext();
 
-        final String brokerUrl = LegacyEmbeddedBroker.createBrokerUrl();
-        final ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(brokerUrl, null);
+        final ConnectionFactory connectionFactory
+                = ConnectionFactoryHelper.createConnectionFactory(service.serviceAddress(), null);
 
         context.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
@@ -75,7 +80,8 @@ public class ManagedJmsSelectorTest extends CamelTestSupport {
         String selector = (String) mbeanServer.getAttribute(on, "MessageSelector");
         assertEquals("brand='beer'", selector);
 
-        getMockEndpoint("mock:result").expectedBodiesReceived("Carlsberg");
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Carlsberg");
 
         template.sendBodyAndHeader("activemq:queue:startManagedJmsSelectorTest", "Pepsi", "brand", "softdrink");
         template.sendBodyAndHeader("activemq:queue:startManagedJmsSelectorTest", "Carlsberg", "brand", "beer");
@@ -85,18 +91,20 @@ public class ManagedJmsSelectorTest extends CamelTestSupport {
         // change the selector at runtime
 
         MockEndpoint.resetMocks(context);
+        mock.reset();
 
         mbeanServer.setAttribute(on, new Attribute("MessageSelector", "brand='softdrink'"));
 
         // give it a little time to adjust
         Thread.sleep(100);
 
-        getMockEndpoint("mock:result").expectedBodiesReceived("Pepsi");
+        mock.expectedBodiesReceived("Pepsi");
+        mock.reset();
 
         template.sendBodyAndHeader("activemq:queue:startManagedJmsSelectorTest", "Pepsi", "brand", "softdrink");
         template.sendBodyAndHeader("activemq:queue:startManagedJmsSelectorTest", "Carlsberg", "brand", "beer");
 
-        MockEndpoint.assertIsSatisfied(context);
+        mock.assertIsSatisfied();
 
         selector = (String) mbeanServer.getAttribute(on, "MessageSelector");
         assertEquals("brand='softdrink'", selector);
@@ -113,5 +121,4 @@ public class ManagedJmsSelectorTest extends CamelTestSupport {
             }
         };
     }
-
 }

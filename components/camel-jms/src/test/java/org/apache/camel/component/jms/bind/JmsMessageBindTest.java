@@ -19,9 +19,9 @@ package org.apache.camel.component.jms.bind;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.jms.JmsBinding;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class JmsMessageBindTest extends CamelSpringTestSupport {
+public class JmsMessageBindTest extends AbstractSpringJMSTestSupport {
 
     @Test
     public void testSendAMessageToBean() throws Exception {

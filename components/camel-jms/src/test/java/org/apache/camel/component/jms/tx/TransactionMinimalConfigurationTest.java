@@ -18,15 +18,15 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * To demonstrate transacted with minimal configuration.
  */
-public class TransactionMinimalConfigurationTest extends CamelSpringTestSupport {
+public class TransactionMinimalConfigurationTest extends AbstractSpringJMSTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
