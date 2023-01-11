@@ -38,8 +38,6 @@ public class MSK2Component extends DefaultComponent {
 
     public MSK2Component(CamelContext context) {
         super(context);
-
-        registerExtension(new MSK2ComponentVerifierExtension());
     }
 
     @Override
