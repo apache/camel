@@ -25,8 +25,9 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeExtension;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.component.salesforce.api.dto.PlatformEvent;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
 import org.apache.camel.spi.ClassResolver;
@@ -84,7 +85,8 @@ public class SalesforceConsumerTest {
 
     SalesforceEndpointConfig configuration = new SalesforceEndpointConfig();
     SalesforceEndpoint endpoint = mock(SalesforceEndpoint.class);
-    ExtendedExchange exchange = mock(ExtendedExchange.class);
+    Exchange exchange = mock(Exchange.class);
+    ExchangeExtension exchangeExtension = mock(ExchangeExtension.class);
     org.apache.camel.Message in = mock(org.apache.camel.Message.class);
     AsyncProcessor processor = mock(AsyncProcessor.class);
     ExtendedCamelContext context = mock(ExtendedCamelContext.class);
@@ -108,7 +110,7 @@ public class SalesforceConsumerTest {
         when(context.getExchangeFactory()).thenReturn(exchangeFactory);
         when(exchangeFactory.newExchangeFactory(any())).thenReturn(exchangeFactory);
         when(exchangeFactory.create(endpoint, true)).thenReturn(exchange);
-        when(exchange.adapt(ExtendedExchange.class)).thenReturn(exchange);
+        when(exchange.getExchangeExtension()).thenReturn(exchangeExtension);
         when(exchange.getIn()).thenReturn(in);
         final SalesforceComponent component = mock(SalesforceComponent.class);
         when(endpoint.getComponent()).thenReturn(component);
