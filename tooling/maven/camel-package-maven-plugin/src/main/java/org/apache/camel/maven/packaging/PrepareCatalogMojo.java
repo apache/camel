@@ -227,6 +227,11 @@ public class PrepareCatalogMojo extends AbstractMojo {
                  Stream<Path> stream = Stream.concat(paths,
                          Stream.of(languagesDir.toPath(), springDir.toPath()))
                          .filter(dir -> !"target".equals(dir.getFileName().toString()))
+                         .filter(dir -> {
+                             String d = dir.getFileName().toString();
+                             // TODO: camel4 these are not yet working
+                             boolean bad = "camel-activemq".equals(d) || "camel-johnzon".equals(d) || "camel-stomp".equals(d) || "camel-websocket".equals(d);
+                             return !bad;})
                          .flatMap(p -> getComponentPath(p).stream())
                          .filter(dir -> Files.isDirectory(dir.resolve("src")))
                          .map(p -> p.resolve("target/classes"))
