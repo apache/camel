@@ -19,7 +19,6 @@ package org.apache.camel.component.paho;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Route;
@@ -30,7 +29,7 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
+import org.apache.camel.test.infra.artemis.services.ArtemisMQTTService;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -42,10 +41,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class PahoReconnectAfterFailureTest extends CamelTestSupport {
 
     public static final String TESTING_ROUTE_ID = "testingRoute";
-    BrokerService broker;
 
-    int mqttPort = AvailablePortFinder.getNextAvailable();
+    ArtemisMQTTService broker;
+
     CountDownLatch routeStartedLatch = new CountDownLatch(1);
+    int port = AvailablePortFinder.getNextAvailable();
 
     @EndpointInject("mock:test")
     MockEndpoint mock;
@@ -56,22 +56,9 @@ public class PahoReconnectAfterFailureTest extends CamelTestSupport {
     }
 
     @Override
-    public void doPreSetup() throws Exception {
-        super.doPreSetup();
-
-        broker = ActiveMQEmbeddedServiceBuilder
-                .bare()
-                .withPersistent(false)
-                .build().getBrokerService();
-
-        // Broker will be started later, after camel context is started,
-        // to ensure first consumer connection fails
-    }
-
-    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        // Setup supervisor to restart routes because paho consumer 
+        // Setup supervisor to restart routes because paho consumer
         // is not able to recover automatically on startup
         SupervisingRouteController supervising = context.getRouteController().supervising();
         supervising.setBackOffDelay(500);
@@ -83,7 +70,9 @@ public class PahoReconnectAfterFailureTest extends CamelTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
-        broker.stop();
+        if (broker != null) {
+            broker.shutdown();
+        }
     }
 
     @Override
@@ -92,8 +81,8 @@ public class PahoReconnectAfterFailureTest extends CamelTestSupport {
             @Override
             public void configure() {
 
-                from("direct:test").to("paho:queue?lazyStartProducer=true&brokerUrl=tcp://localhost:" + mqttPort);
-                from("paho:queue?brokerUrl=tcp://localhost:" + mqttPort)
+                from("direct:test").to("paho:queue?lazyStartProducer=true&brokerUrl=tcp://localhost:" + port);
+                from("paho:queue?brokerUrl=tcp://localhost:" + port)
                         .id(TESTING_ROUTE_ID)
                         .routePolicy(new RoutePolicySupport() {
                             @Override
@@ -125,11 +114,10 @@ public class PahoReconnectAfterFailureTest extends CamelTestSupport {
         mock.expectedBodiesReceived(msg);
 
         // When
-        template.sendBody("paho:queue?lazyStartProducer=true&brokerUrl=tcp://localhost:" + mqttPort, msg);
+        template.sendBody("paho:queue?lazyStartProducer=true&brokerUrl=tcp://localhost:" + port, msg);
 
         // Then
         mock.assertIsSatisfied();
-
     }
 
     @Test
@@ -153,7 +141,7 @@ public class PahoReconnectAfterFailureTest extends CamelTestSupport {
     }
 
     private void startBroker() throws Exception {
-        broker.addConnector("mqtt://localhost:" + mqttPort);
-        broker.start();
+        broker = new ArtemisMQTTService(port);
+        broker.initialize();
     }
 }

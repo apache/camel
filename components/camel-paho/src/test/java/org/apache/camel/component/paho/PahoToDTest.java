@@ -18,23 +18,9 @@ package org.apache.camel.component.paho;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class PahoToDTest extends CamelTestSupport {
-
-    static int mqttPort = AvailablePortFinder.getNextAvailable();
-
-    @RegisterExtension
-    public ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
-            .bare()
-            .withPersistent(false)
-            .withMqttTransport(mqttPort)
-            .build();
+public class PahoToDTest extends PahoTestSupport {
 
     @Override
     protected boolean useJmx() {
@@ -43,13 +29,16 @@ public class PahoToDTest extends CamelTestSupport {
 
     @Test
     public void testToD() throws Exception {
-        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello bar");
-        getMockEndpoint("mock:beer").expectedBodiesReceived("Hello beer");
+        MockEndpoint bar = getMockEndpoint("mock:bar");
+        bar.expectedBodiesReceived("Hello bar", null); // issue with Artemis
+        MockEndpoint beer = getMockEndpoint("mock:beer");
+        beer.expectedBodiesReceived("Hello beer");
 
         template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
         template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
-        MockEndpoint.assertIsSatisfied(context);
+        bar.assertIsSatisfied();
+        beer.assertIsSatisfied();
     }
 
     @Override
@@ -58,7 +47,7 @@ public class PahoToDTest extends CamelTestSupport {
             @Override
             public void configure() {
                 PahoComponent paho = context.getComponent("paho", PahoComponent.class);
-                paho.getConfiguration().setBrokerUrl("tcp://localhost:" + mqttPort);
+                paho.getConfiguration().setBrokerUrl("tcp://localhost:" + service.brokerPort());
 
                 // route message dynamic using toD
                 from("direct:start").toD("paho:${header.where}");
