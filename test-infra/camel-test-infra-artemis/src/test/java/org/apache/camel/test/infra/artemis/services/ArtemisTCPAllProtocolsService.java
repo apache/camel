@@ -39,7 +39,7 @@ public class ArtemisTCPAllProtocolsService extends AbstractArtemisEmbeddedServic
         configuration.setPersistenceEnabled(false);
         try {
             configuration.addAcceptorConfiguration("in-vm", "vm://" + brokerId);
-            configuration.addAcceptorConfiguration("connector", brokerURL + "?protocols=CORE,AMQP,HORNETQ,OPENWIRE");
+            configuration.addAcceptorConfiguration("connector", brokerURL + "?protocols=CORE,AMQP,HORNETQ,OPENWIRE,MQTT");
             configuration.addConnectorConfiguration("connector",
                     new TransportConfiguration(NettyConnectorFactory.class.getName()));
             configuration.setJournalDirectory("target/data/journal");
