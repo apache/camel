@@ -77,6 +77,8 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
         props.add("producerPoolMaxIdle");
         props.add("reconnect");
         props.add("producerPoolEnabled");
+        props.add("producerPoolBlockWhenExhausted");
+        props.add("producerPoolMaxWait");
         props.add("trustStoreFile");
         props.add("noReplyLogLevel");
         props.add("transferExchange");
