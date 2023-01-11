@@ -102,7 +102,7 @@ public class DIRegistry extends SupplierRegistry {
         for (Annotation a : type.getAnnotations()) {
             if (isNamedAnnotation(a)) {
                 String s = a.toString();
-                // @javax.inject.Named("file-lock")
+                // @javax.inject.Named("valueHere")
                 String name = StringHelper.between(s, "(\"", "\")");
                 return name;
             }
