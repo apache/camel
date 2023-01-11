@@ -43,7 +43,7 @@ public class StompConsumerUriTest extends StompBaseTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(numberOfMessages);
 
-        for (int i = 0; i < numberOfMessages; i++) {
+        for (int i = 0; i < numberOfMessages * 2; i++) {
             StompFrame frame = new StompFrame(SEND);
             frame.addHeader(DESTINATION, StompFrame.encodeHeader("test"));
             frame.addHeader(MESSAGE_ID, StompFrame.encodeHeader("msg:" + i));
@@ -59,7 +59,7 @@ public class StompConsumerUriTest extends StompBaseTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                fromF("stomp:test?brokerURL=tcp://localhost:%d", service.getPort())
+                fromF("stomp:test?brokerURL=tcp://localhost:%d", servicePort)
                         .transform(body().convertToString())
                         .to("mock:result");
             }

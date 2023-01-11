@@ -26,6 +26,7 @@ import org.fusesource.stomp.client.BlockingConnection;
 import org.fusesource.stomp.client.Stomp;
 import org.fusesource.stomp.codec.StompFrame;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import static org.fusesource.hawtbuf.UTF8Buffer.utf8;
 import static org.fusesource.stomp.client.Constants.DESTINATION;
@@ -41,6 +42,8 @@ public class StompConsumerHeaderFilterStrategyTest extends StompBaseTest {
     public void testConsume() throws Exception {
         context.addRoutes(createRouteBuilder());
         context.start();
+
+        Awaitility.await().until(() -> context.getRoute("headerFilterStrategyRoute").getUptimeMillis() > 100);
 
         Stomp stomp = createStompClient();
         final BlockingConnection producerConnection = stomp.connectBlocking();
@@ -64,7 +67,8 @@ public class StompConsumerHeaderFilterStrategyTest extends StompBaseTest {
         return new RouteBuilder() {
             public void configure() {
                 fromF("stomp:test?brokerURL=tcp://localhost:%s&headerFilterStrategy=#customHeaderFilterStrategy",
-                        service.getPort())
+                        servicePort)
+                                .id("headerFilterStrategyRoute")
                                 .transform(body().convertToString())
                                 .to("mock:result");
             }
