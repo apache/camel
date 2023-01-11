@@ -29,7 +29,7 @@
     <artifactId>camel-test-cdi-junit5</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Test :: CDI :: JUnit5</name>
+    <name>Camel :: Test :: CDI :: JUnit5 (deprecated)</name>
     <description>Camel unit testing with CDI and JUnit5</description>
 
     <properties>

@@ -29,7 +29,7 @@
     <artifactId>camel-cdi-jta</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: CDI JTA</name>
+    <name>Camel :: CDI JTA (deprecated)</name>
     <description>JTA Transaction support for Camel CDI</description>
 
     <properties>

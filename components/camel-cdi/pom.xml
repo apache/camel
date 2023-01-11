@@ -29,7 +29,7 @@
     <artifactId>camel-cdi</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: CDI</name>
+    <name>Camel :: CDI (deprecated)</name>
     <description>Using Camel with CDI</description>
 
     <properties>
