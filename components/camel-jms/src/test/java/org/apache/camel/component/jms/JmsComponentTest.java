@@ -20,12 +20,14 @@ import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.infra.activemq.services.LegacyEmbeddedBroker;
 import org.apache.camel.test.infra.artemis.common.ConnectionFactoryHelper;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,6 +35,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class JmsComponentTest extends CamelTestSupport {
+
+    @RegisterExtension
+    public ArtemisService service = ArtemisServiceFactory.createVMService();
 
     protected final String componentName = "activemq123";
     protected JmsEndpoint endpoint;
@@ -74,8 +79,7 @@ public class JmsComponentTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         // Note: this one seems to mess with the component configuration, so we use a disposable broker
-        final String brokerUrl = LegacyEmbeddedBroker.createBrokerUrl();
-        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(brokerUrl, 0);
+        ConnectionFactory connectionFactory = ConnectionFactoryHelper.createConnectionFactory(service.serviceAddress(), 0);
         JmsComponent comp = jmsComponentAutoAcknowledge(connectionFactory);
 
         comp.setAcceptMessagesWhileStopping(true);

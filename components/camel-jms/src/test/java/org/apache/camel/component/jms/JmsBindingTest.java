@@ -21,8 +21,9 @@ import java.math.BigInteger;
 import java.time.Instant;
 import java.util.Date;
 
-import org.apache.activemq.command.ActiveMQBlobMessage;
-import org.apache.activemq.command.ActiveMQTextMessage;
+import jakarta.jms.JMSException;
+
+import org.apache.activemq.artemis.jms.client.ActiveMQTextMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -61,7 +63,8 @@ public class JmsBindingTest {
     @Test
     public void noEndpointTest() throws Exception {
         JmsBinding testBindingWithoutEndpoint = new JmsBinding();
-        ActiveMQTextMessage message = new ActiveMQTextMessage();
+
+        ActiveMQTextMessage message = mock(ActiveMQTextMessage.class);
         message.setText("test");
         DefaultCamelContext camelContext = new DefaultCamelContext();
         Exchange exchange = camelContext.getEndpoint("jms:queue:foo").createExchange();
@@ -71,8 +74,10 @@ public class JmsBindingTest {
     }
 
     @Test
-    public void testExtractNullBodyFromJmsShouldReturnNull() {
-        assertNull(jmsBindingUnderTest.extractBodyFromJms(null, new ActiveMQBlobMessage()));
+    public void testExtractNullBodyFromJmsShouldReturnNull() throws JMSException {
+        ActiveMQTextMessage message = mock(ActiveMQTextMessage.class);
+
+        assertNull(jmsBindingUnderTest.extractBodyFromJms(null, message));
     }
 
     @Test

@@ -28,8 +28,10 @@ http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/came
         <template id="template"/>
     </camelContext>
 
-    <bean class="org.apache.activemq.ActiveMQConnectionFactory" id="activeMQConnectionFactory">
-        <property name="brokerURL" value="vm://myBroker2"/>
+    <bean class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory" id="activeMQConnectionFactory">
+        <property name="brokerURL">
+            <bean class="org.apache.camel.component.jms.issues.CamelBrokerClientTestSupport"  factory-method="getServiceAddress"/>
+        </property>
     </bean>
 
     <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">

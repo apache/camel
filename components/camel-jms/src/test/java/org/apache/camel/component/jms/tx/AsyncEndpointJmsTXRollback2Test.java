@@ -17,16 +17,16 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.jms.async.MyAsyncComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AsyncEndpointJmsTXRollback2Test extends CamelSpringTestSupport {
+public class AsyncEndpointJmsTXRollback2Test extends AbstractSpringJMSTestSupport {
 
     private static int invoked;
 

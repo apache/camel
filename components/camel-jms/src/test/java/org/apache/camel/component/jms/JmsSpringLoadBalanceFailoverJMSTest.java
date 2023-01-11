@@ -14,40 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.tx;
+package org.apache.camel.component.jms;
 
-import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JMSTransactionThrottlingRoutePolicyTest extends AbstractSpringJMSTestSupport {
-
-    @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                "/org/apache/camel/component/jms/tx/JMSTransactionThrottlingRoutePolicyTest.xml");
-    }
+/**
+ * Unit test for Camel loadbalancer failover with JMS
+ */
+public class JmsSpringLoadBalanceFailoverJMSTest extends AbstractSpringJMSTestSupport {
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        deleteDirectory("activemq-data");
-        super.setUp();
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/JmsSpringLoadBalanceFailoverTest.xml");
     }
 
     @Test
-    public void testJmsTransactedThrottlingRoutePolicy() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        int size = 200;
-        mock.expectedMinimumMessageCount(size);
+    public void testFailover() throws Exception {
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
-        for (int i = 0; i < size; i++) {
-            template.sendBody("activemq-sender:queue:JMSTransactionThrottlingRoutePolicyTest", "Message " + i);
-        }
+        String out = template.requestBody("direct:start", "Hello World", String.class);
+        assertEquals("Bye World", out);
 
         MockEndpoint.assertIsSatisfied(context);
     }
