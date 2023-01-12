@@ -95,7 +95,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.EKS2EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.EhcacheEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.ElasticsearchRestEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.Etcd3EndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.EventEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.EventHubsEndpointBuilderFactory,

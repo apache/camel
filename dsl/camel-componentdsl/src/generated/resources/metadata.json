@@ -1972,28 +1972,6 @@
     "producerOnly": true,
     "lenientProperties": false
   },
-  "ElasticsearchRestComponentBuilderFactory": {
-    "kind": "component",
-    "name": "elasticsearch-rest",
-    "title": "Elasticsearch Rest",
-    "description": "Send requests to ElasticSearch via REST API",
-    "deprecated": true,
-    "firstVersion": "2.21.0",
-    "label": "search,monitoring",
-    "javaType": "org.apache.camel.component.elasticsearch.ElasticsearchComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-elasticsearch-rest",
-    "version": "4.0.0-SNAPSHOT",
-    "scheme": "elasticsearch-rest",
-    "extendsScheme": "",
-    "syntax": "elasticsearch-rest:clusterName",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": true,
-    "lenientProperties": false
-  },
   "Etcd3ComponentBuilderFactory": {
     "kind": "component",
     "name": "etcd3",

@@ -4089,51 +4089,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.ElasticsearchEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Elasticsearch Rest (camel-elasticsearch-rest)
-     * Send requests to ElasticSearch via REST API
-     * 
-     * Category: search,monitoring
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-elasticsearch-rest
-     * 
-     * Syntax: <code>elasticsearch-rest:clusterName</code>
-     * 
-     * Path parameter: clusterName (required)
-     * Name of the cluster
-     * 
-     * @param path clusterName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.ElasticsearchRestEndpointBuilderFactory.ElasticsearchRestEndpointBuilder elasticsearchRest(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ElasticsearchRestEndpointBuilderFactory.endpointBuilder("elasticsearch-rest", path);
-    }
-    /**
-     * Elasticsearch Rest (camel-elasticsearch-rest)
-     * Send requests to ElasticSearch via REST API
-     * 
-     * Category: search,monitoring
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-elasticsearch-rest
-     * 
-     * Syntax: <code>elasticsearch-rest:clusterName</code>
-     * 
-     * Path parameter: clusterName (required)
-     * Name of the cluster
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path clusterName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.ElasticsearchRestEndpointBuilderFactory.ElasticsearchRestEndpointBuilder elasticsearchRest(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ElasticsearchRestEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Etcd v3 (camel-etcd3)
      * Get, set, delete or watch keys in etcd key-value store.
      * 

@@ -1227,20 +1227,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.ElasticsearchComponentBuilderFactory.elasticsearch();
     }
     /**
-     * Elasticsearch Rest (camel-elasticsearch-rest)
-     * Send requests to ElasticSearch via REST API
-     * 
-     * Category: search,monitoring
-     * Since: 2.21
-     * Maven coordinates: org.apache.camel:camel-elasticsearch-rest
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.ElasticsearchRestComponentBuilderFactory.ElasticsearchRestComponentBuilder elasticsearchRest() {
-        return org.apache.camel.builder.component.dsl.ElasticsearchRestComponentBuilderFactory.elasticsearchRest();
-    }
-    /**
      * Etcd v3 (camel-etcd3)
      * Get, set, delete or watch keys in etcd key-value store.
      * 
