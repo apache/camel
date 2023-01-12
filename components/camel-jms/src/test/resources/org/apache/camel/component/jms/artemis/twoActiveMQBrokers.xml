@@ -38,16 +38,20 @@
 
    <bean id="activemq1" class="org.apache.camel.component.jms.JmsComponent">
       <property name="connectionFactory">
-         <bean class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-            <property name="brokerURL" value="vm://firstBroker?broker.persistent=false&amp;broker.useJmx=false" />
+         <bean class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+            <property name="brokerURL">
+               <bean class="org.apache.camel.component.jms.activemq.TwoEmbeddedActiveMQBrokersTest"  factory-method="getFirstBrokerServiceAddress"/>
+            </property>
          </bean>
       </property>
    </bean>
 
    <bean id="activemq2" class="org.apache.camel.component.jms.JmsComponent">
       <property name="connectionFactory">
-         <bean class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-            <property name="brokerURL" value="vm://secondBroker?broker.persistent=false&amp;broker.useJmx=false" />
+         <bean class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+            <property name="brokerURL">
+               <bean class="org.apache.camel.component.jms.activemq.TwoEmbeddedActiveMQBrokersTest"  factory-method="getSecondBrokerServiceAddress"/>
+            </property>
          </bean>
       </property>
    </bean>

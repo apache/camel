@@ -99,8 +99,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <testSourceDirectory>src/test/dummy</testSourceDirectory>
-    </build>
 </project>

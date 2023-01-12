@@ -16,34 +16,29 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.context.support.AbstractApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+public class AbstractSpringJMSTestSupport extends CamelSpringTestSupport {
 
-/**
- * Unit test for Camel loadbalancer failover with JMS
- */
-public class JmsSpringLoadBalanceFailoverTest extends CamelSpringTestSupport {
+    @RegisterExtension
+    public static ArtemisService service = ArtemisServiceFactory.createVMService();
+
+    /**
+     * Used by spring xml configurations
+     * 
+     * @return
+     */
+    public static String getServiceAddress() {
+        return service.serviceAddress();
+    }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/JmsSpringLoadBalanceFailoverTest.xml");
+        // NO-OP, this method is overridden
+        return null;
     }
-
-    @Test
-    public void testFailover() throws Exception {
-        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
-
-        String out = template.requestBody("direct:start", "Hello World", String.class);
-        assertEquals("Bye World", out);
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
 }

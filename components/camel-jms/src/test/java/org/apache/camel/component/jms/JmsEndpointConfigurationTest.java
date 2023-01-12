@@ -26,7 +26,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
@@ -50,8 +53,11 @@ public class JmsEndpointConfigurationTest extends AbstractJMSTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConsumeJmsMapMessageTest.class);
 
+    @RegisterExtension
+    public ArtemisService service = ArtemisServiceFactory.createVMService();
+
     @BindToRegistry("myConnectionFactory")
-    private final ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory("vm:myBroker");
+    private final ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(service.serviceAddress());
     private final Processor failProcessor = exchange -> fail("Should not be reached");
 
     private final Processor dummyProcessor = exchange -> LOG.info("Received: {}", exchange);

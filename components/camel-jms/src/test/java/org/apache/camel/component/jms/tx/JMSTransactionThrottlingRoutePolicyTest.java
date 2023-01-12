@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.jms.tx;
 
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
-public class JMSTransactionThrottlingRoutePolicyTest extends CamelSpringTestSupport {
+public class JMSTransactionThrottlingRoutePolicyTest extends AbstractSpringJMSTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
