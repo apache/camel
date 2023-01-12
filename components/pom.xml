@@ -128,7 +128,6 @@
         <module>camel-dynamic-router</module>
         <module>camel-ehcache</module>
         <module>camel-elasticsearch</module>
-        <module>camel-elasticsearch-rest</module>
         <module>camel-elytron</module>
         <module>camel-etcd3</module>
         <module>camel-exec</module>
