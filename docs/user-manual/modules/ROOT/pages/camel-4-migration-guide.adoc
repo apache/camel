@@ -17,6 +17,7 @@ The following components has been removed:
 - camel-caffeine-lrucache
 - camel-cdi
 - camel-elasticsearch-rest
+- camel-rabbitmq
 - camel-restdsl-swagger-plugin
 - camel-swagger-java
 - camel-xstream
