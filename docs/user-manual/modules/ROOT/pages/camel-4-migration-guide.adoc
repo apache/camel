@@ -20,6 +20,7 @@ The following components has been removed:
 - camel-rabbitmq
 - camel-restdsl-swagger-plugin
 - camel-resteasy
+- camel-spark
 - camel-swagger-java
 - camel-xstream
 - camel-zikin
