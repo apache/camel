@@ -97,12 +97,16 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "Passphrase": target.setPassphrase(property(camelContext, java.lang.String.class, value)); return true;
         case "port":
         case "Port": target.setPort(property(camelContext, int.class, value)); return true;
+        case "producerpoolblockwhenexhausted":
+        case "ProducerPoolBlockWhenExhausted": target.setProducerPoolBlockWhenExhausted(property(camelContext, boolean.class, value)); return true;
         case "producerpoolenabled":
         case "ProducerPoolEnabled": target.setProducerPoolEnabled(property(camelContext, boolean.class, value)); return true;
         case "producerpoolmaxidle":
         case "ProducerPoolMaxIdle": target.setProducerPoolMaxIdle(property(camelContext, int.class, value)); return true;
         case "producerpoolmaxtotal":
         case "ProducerPoolMaxTotal": target.setProducerPoolMaxTotal(property(camelContext, int.class, value)); return true;
+        case "producerpoolmaxwait":
+        case "ProducerPoolMaxWait": target.setProducerPoolMaxWait(property(camelContext, long.class, value)); return true;
         case "producerpoolminevictableidle":
         case "ProducerPoolMinEvictableIdle": target.setProducerPoolMinEvictableIdle(property(camelContext, long.class, value)); return true;
         case "producerpoolminidle":
@@ -250,12 +254,16 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "Passphrase": return java.lang.String.class;
         case "port":
         case "Port": return int.class;
+        case "producerpoolblockwhenexhausted":
+        case "ProducerPoolBlockWhenExhausted": return boolean.class;
         case "producerpoolenabled":
         case "ProducerPoolEnabled": return boolean.class;
         case "producerpoolmaxidle":
         case "ProducerPoolMaxIdle": return int.class;
         case "producerpoolmaxtotal":
         case "ProducerPoolMaxTotal": return int.class;
+        case "producerpoolmaxwait":
+        case "ProducerPoolMaxWait": return long.class;
         case "producerpoolminevictableidle":
         case "ProducerPoolMinEvictableIdle": return long.class;
         case "producerpoolminidle":
@@ -404,12 +412,16 @@ public class NettyConfigurationConfigurer extends org.apache.camel.support.compo
         case "Passphrase": return target.getPassphrase();
         case "port":
         case "Port": return target.getPort();
+        case "producerpoolblockwhenexhausted":
+        case "ProducerPoolBlockWhenExhausted": return target.isProducerPoolBlockWhenExhausted();
         case "producerpoolenabled":
         case "ProducerPoolEnabled": return target.isProducerPoolEnabled();
         case "producerpoolmaxidle":
         case "ProducerPoolMaxIdle": return target.getProducerPoolMaxIdle();
         case "producerpoolmaxtotal":
         case "ProducerPoolMaxTotal": return target.getProducerPoolMaxTotal();
+        case "producerpoolmaxwait":
+        case "ProducerPoolMaxWait": return target.getProducerPoolMaxWait();
         case "producerpoolminevictableidle":
         case "ProducerPoolMinEvictableIdle": return target.getProducerPoolMinEvictableIdle();
         case "producerpoolminidle":
