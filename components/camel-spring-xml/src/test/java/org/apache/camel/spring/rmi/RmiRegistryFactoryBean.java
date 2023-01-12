@@ -1,10 +1,20 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.spring.rmi;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.DisposableBean;
-import org.springframework.beans.factory.FactoryBean;
-import org.springframework.beans.factory.InitializingBean;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -12,6 +22,12 @@ import java.rmi.registry.Registry;
 import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 
 public class RmiRegistryFactoryBean implements FactoryBean<Registry>, InitializingBean, DisposableBean {
 
@@ -27,9 +43,9 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
 
     private Registry registry;
 
-    private boolean alwaysCreate = false;
+    private boolean alwaysCreate;
 
-    private boolean created = false;
+    private boolean created;
 
     public String getHost() {
         return host;
@@ -84,8 +100,8 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
         if (this.clientSocketFactory instanceof RMIServerSocketFactory) {
             this.serverSocketFactory = (RMIServerSocketFactory) this.clientSocketFactory;
         }
-        if ((this.clientSocketFactory != null && this.serverSocketFactory == null) ||
-                (this.clientSocketFactory == null && this.serverSocketFactory != null)) {
+        if (this.clientSocketFactory != null && this.serverSocketFactory == null ||
+                this.clientSocketFactory == null && this.serverSocketFactory != null) {
             throw new IllegalArgumentException(
                     "Both RMIClientSocketFactory and RMIServerSocketFactory or none required");
         }
@@ -117,9 +133,7 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
             Registry reg = LocateRegistry.getRegistry(registryHost, registryPort, clientSocketFactory);
             testRegistry(reg);
             return reg;
-        }
-
-        else {
+        } else {
             return getRegistry(registryPort, clientSocketFactory, serverSocketFactory);
         }
     }
@@ -151,8 +165,7 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
                     Registry reg = LocateRegistry.getRegistry(null, registryPort, clientSocketFactory);
                     testRegistry(reg);
                     return reg;
-                }
-                catch (RemoteException ex) {
+                } catch (RemoteException ex) {
                     logger.debug("RMI registry access threw exception", ex);
                     logger.info("Could not detect RMI registry - creating new one");
                     // Assume no registry found -> create new one.
@@ -160,9 +173,7 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
                     return LocateRegistry.createRegistry(registryPort, clientSocketFactory, serverSocketFactory);
                 }
             }
-        }
-
-        else {
+        } else {
             return getRegistry(registryPort);
         }
     }
@@ -188,8 +199,7 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
                 Registry reg = LocateRegistry.getRegistry(registryPort);
                 testRegistry(reg);
                 return reg;
-            }
-            catch (RemoteException ex) {
+            } catch (RemoteException ex) {
                 logger.debug("RMI registry access threw exception", ex);
                 logger.info("Could not detect RMI registry - creating new one");
                 // Assume no registry found -> create new one.
@@ -217,13 +227,12 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
     }
 
     public Class<? extends Registry> getObjectType() {
-        return (this.registry != null ? this.registry.getClass() : Registry.class);
+        return this.registry != null ? this.registry.getClass() : Registry.class;
     }
 
     public boolean isSingleton() {
         return true;
     }
-
 
     /**
      * Unexport the RMI registry on bean factory shutdown,

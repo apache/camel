@@ -18,8 +18,8 @@ package org.apache.camel.converter.jaxb.mapper;
 
 import java.util.Map;
 
-import org.glassfish.jaxb.runtime.marshaller.NamespacePrefixMapper;
 import org.apache.camel.converter.jaxb.JaxbNamespacePrefixMapper;
+import org.glassfish.jaxb.runtime.marshaller.NamespacePrefixMapper;
 
 /**
  * A namespace prefix mapper which overrides SUN JAXB-RI to allow Camel to control the prefixes

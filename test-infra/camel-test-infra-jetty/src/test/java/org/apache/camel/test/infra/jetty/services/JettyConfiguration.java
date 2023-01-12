@@ -25,8 +25,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import javax.net.ssl.SSLContext;
 import jakarta.servlet.Servlet;
+
+import javax.net.ssl.SSLContext;
 
 import org.apache.camel.util.KeyValueHolder;
 import org.eclipse.jetty.security.ConstraintMapping;

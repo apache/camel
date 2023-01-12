@@ -22,9 +22,10 @@ import java.io.InputStream;
 import java.util.Collection;
 
 import jakarta.ws.rs.core.Response;
-import javax.xml.namespace.QName;
 import jakarta.xml.soap.SOAPException;
 import jakarta.xml.soap.SOAPMessage;
+
+import javax.xml.namespace.QName;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;

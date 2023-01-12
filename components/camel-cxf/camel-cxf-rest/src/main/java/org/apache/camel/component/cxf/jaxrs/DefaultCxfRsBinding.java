@@ -25,13 +25,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.security.auth.Subject;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.MultivaluedMap;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Variant;
+
+import javax.security.auth.Subject;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;

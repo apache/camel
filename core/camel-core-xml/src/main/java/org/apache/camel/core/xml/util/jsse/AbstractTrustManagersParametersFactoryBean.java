@@ -16,11 +16,12 @@
  */
 package org.apache.camel.core.xml.util.jsse;
 
-import javax.net.ssl.TrustManager;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlTransient;
+
+import javax.net.ssl.TrustManager;
 
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
