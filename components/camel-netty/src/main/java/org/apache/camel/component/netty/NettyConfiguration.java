@@ -103,6 +103,10 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private int producerPoolMaxIdle = 100;
     @UriParam(label = "producer,advanced", defaultValue = "" + 5 * 60 * 1000L)
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
+    @UriParam(label = "producer,advanced", defaultValue = "-1")
+    private long producerPoolMaxWait = -1;
+    @UriParam(label = "producer,advanced", defaultValue = "true")
+    private boolean producerPoolBlockWhenExhausted = true;
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean producerPoolEnabled = true;
     @UriParam(label = "producer,advanced")
@@ -659,6 +663,32 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
      */
     public void setProducerPoolMinEvictableIdle(long producerPoolMinEvictableIdle) {
         this.producerPoolMinEvictableIdle = producerPoolMinEvictableIdle;
+    }
+
+    public long getProducerPoolMaxWait() {
+        return producerPoolMaxWait;
+    }
+
+    /**
+     * Sets the maximum duration (value in millis) the borrowObject() method should block before throwing an exception
+     * when the pool is exhausted and producerPoolBlockWhenExhausted is true. When less than 0, the borrowObject()
+     * method may block indefinitely.
+     */
+    public void setProducerPoolMaxWait(long producerPoolMaxWait) {
+        this.producerPoolMaxWait = producerPoolMaxWait;
+    }
+
+    public boolean isProducerPoolBlockWhenExhausted() {
+        return producerPoolBlockWhenExhausted;
+    }
+
+    /**
+     * Sets the value for the blockWhenExhausted configuration attribute. It determines whether to block when the
+     * borrowObject() method is invoked when the pool is exhausted (the maximum number of "active" objects has been
+     * reached).
+     */
+    public void setProducerPoolBlockWhenExhausted(boolean producerPoolBlockWhenExhausted) {
+        this.producerPoolBlockWhenExhausted = producerPoolBlockWhenExhausted;
     }
 
     public boolean isProducerPoolEnabled() {

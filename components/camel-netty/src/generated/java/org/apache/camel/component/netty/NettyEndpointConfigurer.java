@@ -86,12 +86,16 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "noReplyLogLevel": target.getConfiguration().setNoReplyLogLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "options": target.getConfiguration().setOptions(property(camelContext, java.util.Map.class, value)); return true;
         case "passphrase": target.getConfiguration().setPassphrase(property(camelContext, java.lang.String.class, value)); return true;
+        case "producerpoolblockwhenexhausted":
+        case "producerPoolBlockWhenExhausted": target.getConfiguration().setProducerPoolBlockWhenExhausted(property(camelContext, boolean.class, value)); return true;
         case "producerpoolenabled":
         case "producerPoolEnabled": target.getConfiguration().setProducerPoolEnabled(property(camelContext, boolean.class, value)); return true;
         case "producerpoolmaxidle":
         case "producerPoolMaxIdle": target.getConfiguration().setProducerPoolMaxIdle(property(camelContext, int.class, value)); return true;
         case "producerpoolmaxtotal":
         case "producerPoolMaxTotal": target.getConfiguration().setProducerPoolMaxTotal(property(camelContext, int.class, value)); return true;
+        case "producerpoolmaxwait":
+        case "producerPoolMaxWait": target.getConfiguration().setProducerPoolMaxWait(property(camelContext, long.class, value)); return true;
         case "producerpoolminevictableidle":
         case "producerPoolMinEvictableIdle": target.getConfiguration().setProducerPoolMinEvictableIdle(property(camelContext, long.class, value)); return true;
         case "producerpoolminidle":
@@ -221,12 +225,16 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "noReplyLogLevel": return org.apache.camel.LoggingLevel.class;
         case "options": return java.util.Map.class;
         case "passphrase": return java.lang.String.class;
+        case "producerpoolblockwhenexhausted":
+        case "producerPoolBlockWhenExhausted": return boolean.class;
         case "producerpoolenabled":
         case "producerPoolEnabled": return boolean.class;
         case "producerpoolmaxidle":
         case "producerPoolMaxIdle": return int.class;
         case "producerpoolmaxtotal":
         case "producerPoolMaxTotal": return int.class;
+        case "producerpoolmaxwait":
+        case "producerPoolMaxWait": return long.class;
         case "producerpoolminevictableidle":
         case "producerPoolMinEvictableIdle": return long.class;
         case "producerpoolminidle":
@@ -357,12 +365,16 @@ public class NettyEndpointConfigurer extends PropertyConfigurerSupport implement
         case "noReplyLogLevel": return target.getConfiguration().getNoReplyLogLevel();
         case "options": return target.getConfiguration().getOptions();
         case "passphrase": return target.getConfiguration().getPassphrase();
+        case "producerpoolblockwhenexhausted":
+        case "producerPoolBlockWhenExhausted": return target.getConfiguration().isProducerPoolBlockWhenExhausted();
         case "producerpoolenabled":
         case "producerPoolEnabled": return target.getConfiguration().isProducerPoolEnabled();
         case "producerpoolmaxidle":
         case "producerPoolMaxIdle": return target.getConfiguration().getProducerPoolMaxIdle();
         case "producerpoolmaxtotal":
         case "producerPoolMaxTotal": return target.getConfiguration().getProducerPoolMaxTotal();
+        case "producerpoolmaxwait":
+        case "producerPoolMaxWait": return target.getConfiguration().getProducerPoolMaxWait();
         case "producerpoolminevictableidle":
         case "producerPoolMinEvictableIdle": return target.getConfiguration().getProducerPoolMinEvictableIdle();
         case "producerpoolminidle":
