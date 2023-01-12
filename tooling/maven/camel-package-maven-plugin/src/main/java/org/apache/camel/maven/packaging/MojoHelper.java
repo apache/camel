@@ -87,7 +87,6 @@ public final class MojoHelper {
             case "camel-vertx":
                 return Arrays.asList(dir.resolve("camel-vertx"),
                         dir.resolve("camel-vertx-http"),
-                        dir.resolve("camel-vertx-kafka").resolve("camel-vertx-kafka-component"),
                         dir.resolve("camel-vertx-websocket"));
             case "camel-huawei":
                 return Arrays.asList(dir.resolve("camel-huaweicloud-frs"),
