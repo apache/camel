@@ -60,4 +60,3 @@
 ** xref:tracing.adoc[Tracing]
 ** xref:undertow-spring-security.adoc[Undertow Spring Security]
 ** xref:wal.adoc[Write Ahead Log Strategy for Resume API]
-** xref:zipkin.adoc[Zipkin]

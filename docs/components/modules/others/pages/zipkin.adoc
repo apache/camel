@@ -1,1 +1,0 @@
-../../../../../components/camel-zipkin/src/main/docs/zipkin.adoc
