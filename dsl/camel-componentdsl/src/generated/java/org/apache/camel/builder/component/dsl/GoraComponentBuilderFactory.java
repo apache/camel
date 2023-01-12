@@ -40,6 +40,7 @@ public interface GoraComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static GoraComponentBuilder gora() {
         return new GoraComponentBuilderImpl();
     }

@@ -617,6 +617,25 @@ public interface NettyHttpComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets the value for the blockWhenExhausted configuration attribute. It
+         * determines whether to block when the borrowObject() method is invoked
+         * when the pool is exhausted (the maximum number of active objects has
+         * been reached).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolBlockWhenExhausted the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpComponentBuilder producerPoolBlockWhenExhausted(
+                boolean producerPoolBlockWhenExhausted) {
+            doSetProperty("producerPoolBlockWhenExhausted", producerPoolBlockWhenExhausted);
+            return this;
+        }
+        /**
          * Whether producer pool is enabled or not. Important: If you turn this
          * off then a single shared connection is used for the producer, also if
          * you are doing request/reply. That means there is a potential issue
@@ -674,6 +693,25 @@ public interface NettyHttpComponentBuilderFactory {
         default NettyHttpComponentBuilder producerPoolMaxTotal(
                 int producerPoolMaxTotal) {
             doSetProperty("producerPoolMaxTotal", producerPoolMaxTotal);
+            return this;
+        }
+        /**
+         * Sets the maximum duration (value in millis) the borrowObject() method
+         * should block before throwing an exception when the pool is exhausted
+         * and producerPoolBlockWhenExhausted is true. When less than 0, the
+         * borrowObject() method may block indefinitely.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxWait the value to set
+         * @return the dsl builder
+         */
+        default NettyHttpComponentBuilder producerPoolMaxWait(
+                long producerPoolMaxWait) {
+            doSetProperty("producerPoolMaxWait", producerPoolMaxWait);
             return this;
         }
         /**
@@ -1449,9 +1487,11 @@ public interface NettyHttpComponentBuilderFactory {
             case "clientInitializerFactory": getOrCreateConfiguration((NettyHttpComponent) component).setClientInitializerFactory((org.apache.camel.component.netty.ClientInitializerFactory) value); return true;
             case "correlationManager": getOrCreateConfiguration((NettyHttpComponent) component).setCorrelationManager((org.apache.camel.component.netty.NettyCamelStateCorrelationManager) value); return true;
             case "lazyChannelCreation": getOrCreateConfiguration((NettyHttpComponent) component).setLazyChannelCreation((boolean) value); return true;
+            case "producerPoolBlockWhenExhausted": getOrCreateConfiguration((NettyHttpComponent) component).setProducerPoolBlockWhenExhausted((boolean) value); return true;
             case "producerPoolEnabled": getOrCreateConfiguration((NettyHttpComponent) component).setProducerPoolEnabled((boolean) value); return true;
             case "producerPoolMaxIdle": getOrCreateConfiguration((NettyHttpComponent) component).setProducerPoolMaxIdle((int) value); return true;
             case "producerPoolMaxTotal": getOrCreateConfiguration((NettyHttpComponent) component).setProducerPoolMaxTotal((int) value); return true;
+            case "producerPoolMaxWait": getOrCreateConfiguration((NettyHttpComponent) component).setProducerPoolMaxWait((long) value); return true;
             case "producerPoolMinEvictableIdle": getOrCreateConfiguration((NettyHttpComponent) component).setProducerPoolMinEvictableIdle((long) value); return true;
             case "producerPoolMinIdle": getOrCreateConfiguration((NettyHttpComponent) component).setProducerPoolMinIdle((int) value); return true;
             case "udpConnectionlessSending": getOrCreateConfiguration((NettyHttpComponent) component).setUdpConnectionlessSending((boolean) value); return true;
