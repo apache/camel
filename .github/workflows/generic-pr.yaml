@@ -47,3 +47,17 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           configuration-path: .github/workflows/generic-pr/label-config.yml
           sync-labels: true
+      - name: Label changes scope (Camel 4)
+        if: github.ref == 'refs/heads/main'
+        uses: actions/labeler@v4.0.2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/workflows/generic-pr/label-config-main.yml
+          sync-labels: true
+      - name: Label changes scope (Camel 4)
+        if: github.ref == 'refs/heads/camel-3.x'
+        uses: actions/labeler@v4.0.2
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: .github/workflows/generic-pr/label-config-camel-3.yml
+          sync-labels: true
