@@ -2473,29 +2473,6 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
-    protected XStreamDataFormat doParseXStreamDataFormat() throws IOException, XmlPullParserException {
-        return doParse(new XStreamDataFormat(), (def, key, val) -> {
-            switch (key) {
-                case "contentTypeHeader": def.setContentTypeHeader(val); break;
-                case "driver": def.setDriver(val); break;
-                case "driverRef": def.setDriverRef(val); break;
-                case "encoding": def.setEncoding(val); break;
-                case "mode": def.setMode(val); break;
-                case "permissions": def.setPermissions(val); break;
-                default: return identifiedTypeAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        }, (def, key) -> {
-            switch (key) {
-                case "aliases": doAdd(doParsePropertyDefinition(), def.getAliases(), def::setAliases); break;
-                case "converters": doAdd(doParsePropertyDefinition(), def.getConverters(), def::setConverters); break;
-                case "implicitCollections": doAdd(doParsePropertyDefinition(), def.getImplicitCollections(), def::setImplicitCollections); break;
-                case "omitFields": doAdd(doParsePropertyDefinition(), def.getOmitFields(), def::setOmitFields); break;
-                default: return false;
-            }
-            return true;
-        }, noValueHandler());
-    }
     protected YAMLDataFormat doParseYAMLDataFormat() throws IOException, XmlPullParserException {
         return doParse(new YAMLDataFormat(), (def, key, val) -> {
             switch (key) {
@@ -3426,7 +3403,6 @@ public class ModelParser extends BaseParser {
             case "univocityFixed": return doParseUniVocityFixedDataFormat();
             case "univocityTsv": return doParseUniVocityTsvDataFormat();
             case "xmlSecurity": return doParseXMLSecurityDataFormat();
-            case "xstream": return doParseXStreamDataFormat();
             case "yaml": return doParseYAMLDataFormat();
             case "zipDeflater": return doParseZipDeflaterDataFormat();
             case "zipFile": return doParseZipFileDataFormat();

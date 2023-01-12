@@ -60,7 +60,6 @@ import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
-import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
@@ -113,7 +112,6 @@ public class DataFormatTransformerDefinition extends TransformerDefinition {
             @XmlElement(name = "univocityFixed", type = UniVocityFixedDataFormat.class),
             @XmlElement(name = "univocityTsv", type = UniVocityTsvDataFormat.class),
             @XmlElement(name = "xmlSecurity", type = XMLSecurityDataFormat.class),
-            @XmlElement(name = "xstream", type = XStreamDataFormat.class),
             @XmlElement(name = "pgp", type = PGPDataFormat.class),
             @XmlElement(name = "yaml", type = YAMLDataFormat.class),
             @XmlElement(name = "zipDeflater", type = ZipDeflaterDataFormat.class),

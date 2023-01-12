@@ -16,10 +16,8 @@
  */
 package org.apache.camel.builder;
 
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
-import java.util.StringJoiner;
 
 import org.w3c.dom.Node;
 
@@ -61,7 +59,6 @@ import org.apache.camel.model.dataformat.TarFileDataFormat;
 import org.apache.camel.model.dataformat.ThriftDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
-import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLLibrary;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
@@ -922,65 +919,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      */
     public T tidyMarkup() {
         return dataFormat(new TidyMarkupDataFormat(Node.class));
-    }
-
-    /**
-     * Uses the XStream data format.
-     * <p/>
-     * Favor using {@link #xstream(String)} to pass in a permission
-     */
-    @Deprecated
-    public T xstream() {
-        return dataFormat(new XStreamDataFormat());
-    }
-
-    /**
-     * Uses the xstream by setting the encoding or permission
-     *
-     * @param encodingOrPermission is either an encoding or permission syntax
-     */
-    public T xstream(String encodingOrPermission) {
-        // is it an encoding? if not we assume its a permission
-        if (Charset.isSupported(encodingOrPermission)) {
-            return xstream(encodingOrPermission, (String) null);
-        } else {
-            return xstream(null, encodingOrPermission);
-        }
-    }
-
-    /**
-     * Uses the xstream by setting the encoding
-     */
-    @Deprecated
-    public T xstream(String encoding, String permission) {
-        XStreamDataFormat xdf = new XStreamDataFormat();
-        xdf.setPermissions(permission);
-        xdf.setEncoding(encoding);
-        return dataFormat(xdf);
-    }
-
-    /**
-     * Uses the xstream by permitting the java type
-     *
-     * @param type the pojo xstream should use as allowed permission
-     */
-    public T xstream(Class<?> type) {
-        return xstream(null, type);
-    }
-
-    /**
-     * Uses the xstream by permitting the java type
-     *
-     * @param encoding encoding to use
-     * @param type     the pojo class(es) xstream should use as allowed permission
-     */
-    public T xstream(String encoding, Class<?>... type) {
-        StringJoiner stringBuilder = new StringJoiner(",");
-        for (Class<?> clazz : type) {
-            stringBuilder.add("+");
-            stringBuilder.add(clazz.getName());
-        }
-        return xstream(encoding, stringBuilder.toString());
     }
 
     /**

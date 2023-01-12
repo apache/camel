@@ -53,7 +53,6 @@ import org.apache.camel.model.dataformat.UniVocityCsvDataFormat;
 import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
-import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
 import org.apache.camel.model.dataformat.ZipFileDataFormat;
@@ -317,13 +316,6 @@ public final class DataFormatBuilderFactory {
      */
     public XMLSecurityDataFormat.Builder xmlSecurity() {
         return new XMLSecurityDataFormat.Builder();
-    }
-
-    /**
-     * Uses the XStream data format.
-     */
-    public XStreamDataFormat.Builder xstream() {
-        return new XStreamDataFormat.Builder();
     }
 
     /**
