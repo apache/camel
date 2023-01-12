@@ -1,1 +1,0 @@
-../../../../../components/camel-vertx/camel-vertx-kafka/camel-vertx-kafka-component/src/main/docs/vertx-kafka-component.adoc
