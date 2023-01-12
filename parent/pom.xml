@@ -134,7 +134,7 @@
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>4.0.0</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
-        <datasonnet-mapper-version>2.1.4</datasonnet-mapper-version>
+        <datasonnet-mapper-version>2.2.0</datasonnet-mapper-version>
         <deltaspike-version>1.9.5</deltaspike-version>
         <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
         <derby-version>10.14.2.0</derby-version>
@@ -455,7 +455,7 @@
         <rxjava2-version>2.2.21</rxjava2-version>
         <saxon-version>11.4</saxon-version>
         <scala-version>2.11.12</scala-version>
-        <scala-datasonnet-version>2.13.9</scala-datasonnet-version>
+        <scala-datasonnet-version>2.13.10</scala-datasonnet-version>
         <servicemix-specs-version>2.9.0</servicemix-specs-version>
         <shiro-version>1.10.1</shiro-version>
         <shrinkwrap-descriptors-version>2.0.0</shrinkwrap-descriptors-version>
