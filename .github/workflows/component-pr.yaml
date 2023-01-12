@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-name: component check
+name: Component Check
 
 on:
   pull_request_target:
@@ -26,7 +26,7 @@ on:
       - 'core/**'
       - 'components/**'
   workflow_run:
-    workflows: [ "main pr build" ]
+    workflows: [ "PR Build (Camel 3.x)", "PR Build (Camel 4)" ]
     types:
       - completed
 
