@@ -4658,7 +4658,7 @@
         <profile>
             <id>format</id>
             <activation>
-                <activeByDefault>false</activeByDefault>
+                <activeByDefault>true</activeByDefault>
             </activation>
             <build>
                 <plugins>
