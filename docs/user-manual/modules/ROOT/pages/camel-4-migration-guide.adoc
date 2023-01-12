@@ -22,6 +22,10 @@ The following components has been removed:
 - camel-xstream
 - camel-zikin
 
+== JUnit 4
+
+All the `camel-test` modules that were JUnit 4.x based has been removed. All test modules now use JUnit 5.
+
 == camel-caffeine
 
 The `keyType` parameter has been removed. The Key for the cache will now be only `String` type. More information in CAMEL-18877.
