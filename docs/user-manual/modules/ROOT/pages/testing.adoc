@@ -19,16 +19,12 @@ The following modules are supported:
 [width="100%",cols="1m,4",options="header",]
 |=======================================================================
 |Component |Description
-|xref:components:others:test.adoc[camel-test] |*JUnit 4 (deprecated)*: Is a standalone Java
-library letting you easily create Camel test cases using a single Java
-class for all your configuration and routing without.
 
 |xref:components:others:test-junit5.adoc[camel-test-junit5] |*JUnit 5*: Is a standalone Java
 library letting you easily create Camel test cases using a single Java
 class for all your configuration and routing without.
 |xref:components:others:test-main-junit5.adoc[camel-test-main-junit5] | *JUnit 5*: Used for testing Camel in Camel Main mode
 
-|xref:components:others:test-spring.adoc[camel-test-spring] | *JUnit 4 (deprecated)*: Used for testing Camel with Spring / Spring Boot
 |xref:components:others:test-spring-junit5.adoc[camel-test-spring-junit5] | *JUnit 5*: Used for testing Camel with Spring / Spring Boot
 
 |xref:test-infra.adoc[camel-test-infra] | *Camel Test Infra*: Camel Test Infra is a set of modules that leverage Test Containers and abstract the provisioning and execution of test infrastructure. It is the successor of the camel-testcontainers components.

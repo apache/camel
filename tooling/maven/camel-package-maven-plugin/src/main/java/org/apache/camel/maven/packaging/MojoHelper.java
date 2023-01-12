@@ -73,7 +73,7 @@ public final class MojoHelper {
                         dir.resolve("camel-test-cdi"),
                         dir.resolve("camel-testcontainers"), dir.resolve("camel-testcontainers-junit5"),
                         dir.resolve("camel-testcontainers-spring"), dir.resolve("camel-testcontainers-spring-junit5"),
-                        dir.resolve("camel-test-junit5"), dir.resolve("camel-test-spring"),
+                        dir.resolve("camel-test-junit5"),
                         dir.resolve("camel-test-spring-junit5"));
             case "camel-aws":
                 return Arrays.asList(dir.resolve("camel-aws2-athena"), dir.resolve("camel-aws2-cw"),
