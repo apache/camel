@@ -310,7 +310,6 @@
         <libthrift-version>0.14.1</libthrift-version>
         <jodatime2-version>2.11.1</jodatime2-version>
         <jolokia-version>1.7.2</jolokia-version>
-        <jota-version>1.0.0-beta9</jota-version>
         <jolt-version>0.1.7</jolt-version>
         <jool-version>0.9.14</jool-version>
         <jooq-version>3.16.11</jooq-version>
