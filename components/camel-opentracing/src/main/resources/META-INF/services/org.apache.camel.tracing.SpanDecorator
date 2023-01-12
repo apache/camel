@@ -39,7 +39,6 @@ org.apache.camel.tracing.decorators.NatsSpanDecorator
 org.apache.camel.tracing.decorators.NsqSpanDecorator
 org.apache.camel.tracing.decorators.PahoSpanDecorator
 org.apache.camel.tracing.decorators.PlatformHttpSpanDecorator
-org.apache.camel.tracing.decorators.RabbitmqSpanDecorator
 org.apache.camel.tracing.decorators.RestSpanDecorator
 org.apache.camel.tracing.decorators.SedaSpanDecorator
 org.apache.camel.tracing.decorators.ServletSpanDecorator
