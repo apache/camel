@@ -224,7 +224,6 @@
         <hawtbuf-version>1.11</hawtbuf-version>
         <hawtdispatch-version>1.22</hawtdispatch-version>
         <hazelcast-version>5.2.1</hazelcast-version>
-        <hbase-version>2.5.2</hbase-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
         <hibernate-validator-version>8.0.0.Final</hibernate-validator-version>
         <hibernate-version>5.6.14.Final</hibernate-version>
@@ -1388,11 +1387,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-hazelcast</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-hbase</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

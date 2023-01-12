@@ -2971,28 +2971,6 @@
     "producerOnly": false,
     "lenientProperties": false
   },
-  "HbaseComponentBuilderFactory": {
-    "kind": "component",
-    "name": "hbase",
-    "title": "HBase",
-    "description": "Reading and write from\/to an HBase store (Hadoop database).",
-    "deprecated": true,
-    "firstVersion": "2.10.0",
-    "label": "bigdata,database,hadoop",
-    "javaType": "org.apache.camel.component.hbase.HBaseComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-hbase",
-    "version": "4.0.0-SNAPSHOT",
-    "scheme": "hbase",
-    "extendsScheme": "",
-    "syntax": "hbase:tableName",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "HdfsComponentBuilderFactory": {
     "kind": "component",
     "name": "hdfs",

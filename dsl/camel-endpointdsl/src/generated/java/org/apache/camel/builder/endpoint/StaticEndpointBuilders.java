@@ -6232,51 +6232,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.HazelcastTopicEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * HBase (camel-hbase)
-     * Reading and write from/to an HBase store (Hadoop database).
-     * 
-     * Category: bigdata,database,hadoop
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-hbase
-     * 
-     * Syntax: <code>hbase:tableName</code>
-     * 
-     * Path parameter: tableName (required)
-     * The name of the table
-     * 
-     * @param path tableName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.HBaseEndpointBuilderFactory.HBaseEndpointBuilder hbase(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.HBaseEndpointBuilderFactory.endpointBuilder("hbase", path);
-    }
-    /**
-     * HBase (camel-hbase)
-     * Reading and write from/to an HBase store (Hadoop database).
-     * 
-     * Category: bigdata,database,hadoop
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-hbase
-     * 
-     * Syntax: <code>hbase:tableName</code>
-     * 
-     * Path parameter: tableName (required)
-     * The name of the table
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path tableName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.HBaseEndpointBuilderFactory.HBaseEndpointBuilder hbase(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.HBaseEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * HDFS (camel-hdfs)
      * Read and write from/to an HDFS filesystem using Hadoop 2.x.
      * 

@@ -1821,20 +1821,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.HazelcastTopicComponentBuilderFactory.hazelcastTopic();
     }
     /**
-     * HBase (camel-hbase)
-     * Reading and write from/to an HBase store (Hadoop database).
-     * 
-     * Category: bigdata,database,hadoop
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-hbase
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.HbaseComponentBuilderFactory.HbaseComponentBuilder hbase() {
-        return org.apache.camel.builder.component.dsl.HbaseComponentBuilderFactory.hbase();
-    }
-    /**
      * HDFS (camel-hdfs)
      * Read and write from/to an HDFS filesystem using Hadoop 2.x.
      * 

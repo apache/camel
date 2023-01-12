@@ -17,6 +17,7 @@ The following components has been removed:
 - camel-caffeine-lrucache
 - camel-cdi
 - camel-elasticsearch-rest
+- camel-hbase
 - camel-ipfs
 - camel-microprofile-metrics
 - camel-opentracing
