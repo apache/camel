@@ -4,7 +4,6 @@
 * xref:others:index.adoc[Miscellaneous Components]
 ** xref:attachments.adoc[Attachments]
 ** xref:aws-xray.adoc[AWS XRay]
-** xref:caffeine-lrucache.adoc[Caffeine Lrucache]
 ** xref:cli-connector.adoc[CLI Connector]
 ** xref:cloudevents.adoc[Cloudevents]
 ** xref:csimple-joor.adoc[CSimple jOOR]
