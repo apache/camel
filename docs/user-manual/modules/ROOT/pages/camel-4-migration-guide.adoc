@@ -18,6 +18,11 @@ The `camel-cdi` component has been removed, and is no longer supported.
 
 The `camel-zipkin` component has been removed, and is no longer supported.
 
+== camel-swagger-java
+
+The `camel-swagger-java` component has been removed (use `camel-openapi-java` instead).
+Removed `camel-restdsl-swagger-plugin` (use `camel-restdsl-openapi-plugin instead).
+
 == camel-caffeine
 
 The `keyType` parameter has been removed. The Key for the cache will now be only `String` type. More information in CAMEL-18877.
