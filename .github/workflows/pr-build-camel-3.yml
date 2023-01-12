@@ -15,12 +15,11 @@
 # limitations under the License.
 #
 
-name: main pr build
+name: PR Build (Camel 3.x)
 
 on:
   pull_request:
     branches:
-      - main
       - camel-3.18.x
       - camel-3.14.x
     paths-ignore:
