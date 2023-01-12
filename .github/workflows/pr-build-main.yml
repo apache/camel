@@ -15,15 +15,12 @@
 # limitations under the License.
 #
 
-name: main pr build
+name: PR Build (Camel 4)
 
 on:
   pull_request:
     branches:
       - main
-      - camel-3.18.x
-      - camel-3.14.x
-      - camel-3.x
     paths-ignore:
       - README.md
       - SECURITY.md
@@ -45,7 +42,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
-        java-version: 11
+        java-version: 17
         cache: 'maven'
     - name: mvn checkstyle
       run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l checkstyle.log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress  -Dcheckstyle.failOnViolation=true -e checkstyle:checkstyle
@@ -72,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ '11' ]
+        java: [ '17' ]
     steps:
       - uses: actions/checkout@v3
         with:
