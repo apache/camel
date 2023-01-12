@@ -1489,9 +1489,6 @@
           "xmlSecurity" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
-          "xstream" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XStreamDataFormat"
-          },
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
           },
@@ -3469,9 +3466,6 @@
           "xmlSecurity" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
-          "xstream" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XStreamDataFormat"
-          },
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
           },
@@ -4776,9 +4770,6 @@
           "xmlSecurity" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
           },
-          "xstream" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XStreamDataFormat"
-          },
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"
           },
@@ -5759,61 +5750,6 @@
             "enum" : [ "TRIPLEDES", "AES_128", "AES_128_GCM", "AES_192", "AES_192_GCM", "AES_256", "AES_256_GCM", "SEED_128", "CAMELLIA_128", "CAMELLIA_192", "CAMELLIA_256" ]
           }
         }
-      },
-      "org.apache.camel.model.dataformat.XStreamDataFormat" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "aliases" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-              }
-            },
-            "contentTypeHeader" : {
-              "type" : "boolean"
-            },
-            "converters" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-              }
-            },
-            "driver" : {
-              "type" : "string"
-            },
-            "driverRef" : {
-              "type" : "string"
-            },
-            "encoding" : {
-              "type" : "string"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "implicitCollections" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-              }
-            },
-            "mode" : {
-              "type" : "string",
-              "enum" : [ "NO_REFERENCES", "ID_REFERENCES", "XPATH_RELATIVE_REFERENCES", "XPATH_ABSOLUTE_REFERENCES", "SINGLE_NODE_XPATH_RELATIVE_REFERENCES", "SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES" ]
-            },
-            "omitFields" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-              }
-            },
-            "permissions" : {
-              "type" : "string"
-            }
-          }
-        } ]
       },
       "org.apache.camel.model.dataformat.YAMLDataFormat" : {
         "type" : "object",
@@ -8032,9 +7968,6 @@
           },
           "xmlSecurity" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XMLSecurityDataFormat"
-          },
-          "xstream" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.XStreamDataFormat"
           },
           "yaml" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.YAMLDataFormat"

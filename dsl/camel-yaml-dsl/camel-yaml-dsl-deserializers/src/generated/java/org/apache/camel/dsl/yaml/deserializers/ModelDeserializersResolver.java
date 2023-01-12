@@ -545,8 +545,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.language.XPathExpression": return new ModelDeserializers.XPathExpressionDeserializer();
             case "xquery": return new ModelDeserializers.XQueryExpressionDeserializer();
             case "org.apache.camel.model.language.XQueryExpression": return new ModelDeserializers.XQueryExpressionDeserializer();
-            case "xstream": return new ModelDeserializers.XStreamDataFormatDeserializer();
-            case "org.apache.camel.model.dataformat.XStreamDataFormat": return new ModelDeserializers.XStreamDataFormatDeserializer();
             case "yaml": return new ModelDeserializers.YAMLDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.YAMLDataFormat": return new ModelDeserializers.YAMLDataFormatDeserializer();
             case "type-filter": return new ModelDeserializers.YAMLTypeFilterDefinitionDeserializer();
