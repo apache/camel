@@ -47,11 +47,6 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.camel.maven</groupId>
-        <artifactId>camel-vertx-kafka-maven-plugin</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-amqp</artifactId>
         <version>${project.version}</version>
