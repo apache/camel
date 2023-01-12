@@ -171,7 +171,7 @@
                 <enabled>true</enabled>
             </releases>
         </repository>
-        <!-- camel-ipfs, camel-hyperledger-aries, camel-weka -->
+        <!-- camel-hyperledger-aries, camel-weka -->
         <repository>
             <id>jboss.thirdparty</id>
             <name>JBoss Thirdparty Repository</name>

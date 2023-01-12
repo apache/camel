@@ -2197,20 +2197,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.IotaComponentBuilderFactory.iota();
     }
     /**
-     * IPFS (camel-ipfs)
-     * Access the Interplanetary File System (IPFS).
-     * 
-     * Category: file,ipfs
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-ipfs
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.IpfsComponentBuilderFactory.IpfsComponentBuilder ipfs() {
-        return org.apache.camel.builder.component.dsl.IpfsComponentBuilderFactory.ipfs();
-    }
-    /**
      * IRC (camel-irc)
      * Send and receive messages to/from and IRC chat.
      * 

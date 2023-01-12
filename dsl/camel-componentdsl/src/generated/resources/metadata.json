@@ -3595,28 +3595,6 @@
     "producerOnly": true,
     "lenientProperties": false
   },
-  "IpfsComponentBuilderFactory": {
-    "kind": "component",
-    "name": "ipfs",
-    "title": "IPFS",
-    "description": "Access the Interplanetary File System (IPFS).",
-    "deprecated": true,
-    "firstVersion": "2.23.0",
-    "label": "file,ipfs",
-    "javaType": "org.apache.camel.component.ipfs.IPFSComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-ipfs",
-    "version": "4.0.0-SNAPSHOT",
-    "scheme": "ipfs",
-    "extendsScheme": "",
-    "syntax": "ipfs:ipfsCmd",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": true,
-    "lenientProperties": false
-  },
   "IrcComponentBuilderFactory": {
     "kind": "component",
     "name": "irc",
