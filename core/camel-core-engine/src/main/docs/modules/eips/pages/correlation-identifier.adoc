@@ -9,7 +9,7 @@ When working with the xref:ROOT:activemq-component.adoc[ActiveMQ] or xref:ROOT:j
 components the correlation identifier header is called
 *JMSCorrelationID*, and they handle the correlation automatically.
 
-Other messaging systems, such as xref:ROOT:rabbitmq-component.adoc[RabbitMQ] also handles this automatic,
+Other messaging systems, such as xref:ROOT:spring-rabbitmq-component.adoc[Spring RabbitMQ] also handles this automatic,
 and you should generally not have a need for using custom correlation IDs with these systems.
 
 image::eip/CorrelationIdentifierSolution.gif[image]
