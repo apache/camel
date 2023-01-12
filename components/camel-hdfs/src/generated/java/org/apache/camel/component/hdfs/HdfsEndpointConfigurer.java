@@ -41,7 +41,7 @@ public class HdfsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "compressioncodec":
         case "compressionCodec": target.getConfig().setCompressionCodec(property(camelContext, org.apache.camel.component.hdfs.HdfsCompressionCodec.class, value)); return true;
         case "compressiontype":
-        case "compressionType": target.getConfig().setCompressionType(property(camelContext, org.apache.hadoop.io.SequenceFile.CompressionType.class, value)); return true;
+        case "compressionType": target.getConfig().setCompressionType(property(camelContext, org.apache.camel.component.hdfs.HdfsCompressionType.class, value)); return true;
         case "connectonstartup":
         case "connectOnStartup": target.getConfig().setConnectOnStartup(property(camelContext, boolean.class, value)); return true;
         case "delay": target.setDelay(property(camelContext, long.class, value)); return true;
@@ -130,7 +130,7 @@ public class HdfsEndpointConfigurer extends PropertyConfigurerSupport implements
         case "compressioncodec":
         case "compressionCodec": return org.apache.camel.component.hdfs.HdfsCompressionCodec.class;
         case "compressiontype":
-        case "compressionType": return org.apache.hadoop.io.SequenceFile.CompressionType.class;
+        case "compressionType": return org.apache.camel.component.hdfs.HdfsCompressionType.class;
         case "connectonstartup":
         case "connectOnStartup": return boolean.class;
         case "delay": return long.class;

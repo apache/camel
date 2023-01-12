@@ -25,6 +25,8 @@ import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.util.ReflectionUtils;
 
+import static org.apache.camel.component.hdfs.HdfsHelper.asCompressionType;
+
 class HdfsSequenceFileHandler extends DefaultHdfsFile<SequenceFile.Writer, SequenceFile.Reader> {
 
     @Override
@@ -43,7 +45,7 @@ class HdfsSequenceFileHandler extends DefaultHdfsFile<SequenceFile.Writer, Seque
                     SequenceFile.Writer.bufferSize(endpointConfig.getBufferSize()),
                     SequenceFile.Writer.replication(endpointConfig.getReplication()),
                     SequenceFile.Writer.blockSize(endpointConfig.getBlockSize()),
-                    SequenceFile.Writer.compression(endpointConfig.getCompressionType(),
+                    SequenceFile.Writer.compression(asCompressionType(endpointConfig.getCompressionType()),
                             endpointConfig.getCompressionCodec().getCodec()),
                     SequenceFile.Writer.progressable(() -> {
                     }),

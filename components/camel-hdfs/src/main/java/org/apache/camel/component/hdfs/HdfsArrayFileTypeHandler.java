@@ -26,6 +26,8 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.util.ReflectionUtils;
 
+import static org.apache.camel.component.hdfs.HdfsHelper.asCompressionType;
+
 class HdfsArrayFileTypeHandler extends DefaultHdfsFile<ArrayFile.Writer, ArrayFile.Reader> {
 
     @SuppressWarnings("rawtypes")
@@ -41,7 +43,7 @@ class HdfsArrayFileTypeHandler extends DefaultHdfsFile<ArrayFile.Writer, ArrayFi
                     hdfsInfo.getFileSystem(),
                     hdfsPath,
                     valueWritableClass,
-                    endpointConfig.getCompressionType(),
+                    asCompressionType(endpointConfig.getCompressionType()),
                     () -> {
                     });
             return rout;

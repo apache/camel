@@ -30,7 +30,6 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.URISupport;
-import org.apache.hadoop.io.SequenceFile;
 
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
@@ -62,7 +61,7 @@ public class HdfsConfiguration {
     @UriParam(label = "advanced", defaultValue = "" + HdfsConstants.DEFAULT_BLOCKSIZE)
     private long blockSize = HdfsConstants.DEFAULT_BLOCKSIZE;
     @UriParam(label = "advanced", defaultValue = "NONE")
-    private SequenceFile.CompressionType compressionType = HdfsConstants.DEFAULT_COMPRESSIONTYPE;
+    private HdfsCompressionType compressionType = HdfsConstants.DEFAULT_COMPRESSIONTYPE;
     @UriParam(label = "advanced", defaultValue = "DEFAULT")
     private HdfsCompressionCodec compressionCodec = HdfsConstants.DEFAULT_CODEC;
     @UriParam(defaultValue = "NORMAL_FILE")
@@ -167,11 +166,11 @@ public class HdfsConfiguration {
         }
     }
 
-    private SequenceFile.CompressionType getCompressionType(
-            Map<String, Object> hdfsSettings, String param, SequenceFile.CompressionType ct) {
+    private HdfsCompressionType getCompressionType(
+            Map<String, Object> hdfsSettings, String param, HdfsCompressionType ct) {
         String eit = (String) hdfsSettings.get(param);
         if (eit != null) {
-            return SequenceFile.CompressionType.valueOf(eit);
+            return HdfsCompressionType.valueOf(eit);
         } else {
             return ct;
         }
@@ -387,14 +386,14 @@ public class HdfsConfiguration {
         this.fileType = fileType;
     }
 
-    public SequenceFile.CompressionType getCompressionType() {
+    public HdfsCompressionType getCompressionType() {
         return compressionType;
     }
 
     /**
      * The compression type to use (is default not in use)
      */
-    public void setCompressionType(SequenceFile.CompressionType compressionType) {
+    public void setCompressionType(HdfsCompressionType compressionType) {
         this.compressionType = compressionType;
     }
 
