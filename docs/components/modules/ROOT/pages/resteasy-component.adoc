@@ -1,1 +1,0 @@
-../../../../../components/camel-resteasy/src/main/docs/resteasy-component.adoc

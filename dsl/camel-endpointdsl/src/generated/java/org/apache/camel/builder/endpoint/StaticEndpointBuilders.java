@@ -12045,55 +12045,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.QuickfixjEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * RabbitMQ (camel-rabbitmq)
-     * Send and receive messages from RabbitMQ instances.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-rabbitmq
-     * 
-     * Syntax: <code>rabbitmq:exchangeName</code>
-     * 
-     * Path parameter: exchangeName (required)
-     * The exchange name determines the exchange to which the produced messages
-     * will be sent to. In the case of consumers, the exchange name determines
-     * the exchange the queue will be bound to.
-     * 
-     * @param path exchangeName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder rabbitmq(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.endpointBuilder("rabbitmq", path);
-    }
-    /**
-     * RabbitMQ (camel-rabbitmq)
-     * Send and receive messages from RabbitMQ instances.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-rabbitmq
-     * 
-     * Syntax: <code>rabbitmq:exchangeName</code>
-     * 
-     * Path parameter: exchangeName (required)
-     * The exchange name determines the exchange to which the produced messages
-     * will be sent to. In the case of consumers, the exchange name determines
-     * the exchange the queue will be bound to.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path exchangeName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.RabbitMQEndpointBuilder rabbitmq(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.RabbitMQEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Reactive Streams (camel-reactive-streams)
      * Exchange messages with reactive stream processing libraries compatible
      * with the reactive streams standard.
@@ -12227,51 +12178,6 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.RestApiEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
-     * Resteasy (camel-resteasy)
-     * Expose REST endpoints and access external REST servers.
-     * 
-     * Category: rest
-     * Since: 3.4
-     * Maven coordinates: org.apache.camel:camel-resteasy
-     * 
-     * Syntax: <code>resteasy:httpUri</code>
-     * 
-     * Path parameter: httpUri (required)
-     * The url of the HTTP endpoint to call.
-     * 
-     * @param path httpUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.ResteasyEndpointBuilder resteasy(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.endpointBuilder("resteasy", path);
-    }
-    /**
-     * Resteasy (camel-resteasy)
-     * Expose REST endpoints and access external REST servers.
-     * 
-     * Category: rest
-     * Since: 3.4
-     * Maven coordinates: org.apache.camel:camel-resteasy
-     * 
-     * Syntax: <code>resteasy:httpUri</code>
-     * 
-     * Path parameter: httpUri (required)
-     * The url of the HTTP endpoint to call.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path httpUri
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.ResteasyEndpointBuilder resteasy(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * REST (camel-rest)

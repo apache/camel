@@ -19,6 +19,7 @@ The following components has been removed:
 - camel-elasticsearch-rest
 - camel-rabbitmq
 - camel-restdsl-swagger-plugin
+- camel-resteasy
 - camel-swagger-java
 - camel-xstream
 - camel-zikin
