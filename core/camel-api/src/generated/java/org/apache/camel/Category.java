@@ -54,7 +54,6 @@ public enum Category {
     HTTP("http"),
     IDENTITY("identity"),
     IOT("iot"),
-    IPFS("ipfs"),
     JAVA("java"),
     LDAP("ldap"),
     LEDGER("ledger"),
