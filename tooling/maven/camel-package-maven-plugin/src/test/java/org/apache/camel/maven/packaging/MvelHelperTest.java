@@ -58,6 +58,6 @@ public class MvelHelperTest {
                 arguments("https://example.com", "\\https://example.com"),
                 arguments("ftp://example.com", "\\ftp://example.com"),
                 arguments("ftp", "ftp"),
-                arguments("http", "http");
+                arguments("http", "http"));
     }
 }
