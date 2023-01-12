@@ -237,7 +237,6 @@
         <module>camel-olingo2</module>
         <module>camel-olingo4</module>
         <module>camel-openstack</module>
-        <module>camel-opentracing</module>
         <module>camel-opentelemetry</module>
         <module>camel-optaplanner</module>
         <module>camel-paho</module>
