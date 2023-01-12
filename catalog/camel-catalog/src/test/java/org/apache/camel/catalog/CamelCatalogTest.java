@@ -1565,10 +1565,6 @@ public class CamelCatalogTest {
         Assertions.assertEquals("Marshal and unmarshal between POJOs and Comma separated values (CSV) format using Camel Bindy",
                 am.getDescription());
 
-        am = catalog.modelFromMavenGAV("org.apache.camel", "camel-zipkin", catalog.getCatalogVersion());
-        Assertions.assertInstanceOf(OtherModel.class, am);
-        Assertions.assertEquals("Distributed message tracing using Zipkin", am.getDescription());
-
         am = catalog.modelFromMavenGAV("org.apache.camel", "camel-unknown", catalog.getCatalogVersion());
         Assertions.assertNull(am);
 

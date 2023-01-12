@@ -339,7 +339,6 @@
         <module>camel-zendesk</module>
         <module>camel-zip-deflater</module>
         <module>camel-zipfile</module>
-        <module>camel-zipkin</module>
         <module>camel-zookeeper-master</module>
         <module>camel-zookeeper</module>
         <!-- build rest-openapi/rest-swagger at end as it uses all the http based components -->
