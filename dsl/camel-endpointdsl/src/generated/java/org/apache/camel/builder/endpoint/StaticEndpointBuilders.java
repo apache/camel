@@ -5479,49 +5479,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.GoogleCloudStorageEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Gora (camel-gora)
-     * Access NoSQL databases using the Apache Gora framework.
-     * 
-     * Category: database,nosql,bigdata
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-gora
-     * 
-     * Syntax: <code>gora:name</code>
-     * 
-     * Path parameter: name (required)
-     * Instance name
-     * 
-     * @param path name
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.GoraEndpointBuilderFactory.GoraEndpointBuilder gora(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.GoraEndpointBuilderFactory.endpointBuilder("gora", path);
-    }
-    /**
-     * Gora (camel-gora)
-     * Access NoSQL databases using the Apache Gora framework.
-     * 
-     * Category: database,nosql,bigdata
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-gora
-     * 
-     * Syntax: <code>gora:name</code>
-     * 
-     * Path parameter: name (required)
-     * Instance name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path name
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.GoraEndpointBuilderFactory.GoraEndpointBuilder gora(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.GoraEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Grape (camel-grape)
      * Fetch, load and manage additional jars dynamically after Camel Context
      * was started.

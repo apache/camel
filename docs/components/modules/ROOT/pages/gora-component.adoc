@@ -1,1 +1,0 @@
-../../../../../components/camel-gora/src/main/docs/gora-component.adoc

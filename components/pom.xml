@@ -143,7 +143,6 @@
         <module>camel-git</module>
         <module>camel-github</module>
         <module>camel-google</module>
-        <module>camel-gora</module>
         <module>camel-grape</module>
         <module>camel-graphql</module>
         <module>camel-grok</module>

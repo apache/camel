@@ -120,7 +120,6 @@
 *** xref:google-sheets-component.adoc[Google Sheets]
 *** xref:google-sheets-stream-component.adoc[Google Sheets Stream]
 *** xref:google-storage-component.adoc[Google Storage]
-** xref:gora-component.adoc[Gora]
 ** xref:grape-component.adoc[Grape]
 ** xref:graphql-component.adoc[GraphQL]
 ** xref:grpc-component.adoc[gRPC]

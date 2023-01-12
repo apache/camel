@@ -1597,19 +1597,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.GoogleStorageComponentBuilderFactory.googleStorage();
     }
     /**
-     * Gora (camel-gora)
-     * Access NoSQL databases using the Apache Gora framework.
-     * 
-     * Category: database,nosql,bigdata
-     * Since: 2.14
-     * Maven coordinates: org.apache.camel:camel-gora
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.GoraComponentBuilderFactory.GoraComponentBuilder gora() {
-        return org.apache.camel.builder.component.dsl.GoraComponentBuilderFactory.gora();
-    }
-    /**
      * Grape (camel-grape)
      * Fetch, load and manage additional jars dynamically after Camel Context
      * was started.

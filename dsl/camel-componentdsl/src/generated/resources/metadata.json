@@ -2597,28 +2597,6 @@
     "producerOnly": false,
     "lenientProperties": false
   },
-  "GoraComponentBuilderFactory": {
-    "kind": "component",
-    "name": "gora",
-    "title": "Gora",
-    "description": "Access NoSQL databases using the Apache Gora framework.",
-    "deprecated": false,
-    "firstVersion": "2.14.0",
-    "label": "database,nosql,bigdata",
-    "javaType": "org.apache.camel.component.gora.GoraComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-gora",
-    "version": "4.0.0-SNAPSHOT",
-    "scheme": "gora",
-    "extendsScheme": "",
-    "syntax": "gora:name",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "GrapeComponentBuilderFactory": {
     "kind": "component",
     "name": "grape",
