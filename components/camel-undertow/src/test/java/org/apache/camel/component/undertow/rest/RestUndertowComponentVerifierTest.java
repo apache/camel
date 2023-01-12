@@ -35,7 +35,7 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
         ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("componentName", "undertow");
+        parameters.put("producerComponentName", "undertow");
         parameters.put("host", "http://localhost:" + getPort());
         parameters.put("path", "verify");
         parameters.put("method", "GET");
@@ -51,7 +51,7 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
         ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("componentName", "undertow");
+        parameters.put("producerComponentName", "undertow");
         parameters.put("host", "http://localhost:" + getPort());
         parameters.put("path", "verify");
 
@@ -75,7 +75,7 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
         ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("componentName", "undertow");
+        parameters.put("producerComponentName", "undertow");
         parameters.put("host", "http://localhost:" + getPort());
         parameters.put("path", "verify");
         parameters.put("method", "GET");
@@ -100,7 +100,7 @@ public class RestUndertowComponentVerifierTest extends BaseUndertowTest {
         ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("componentName", "undertow");
+        parameters.put("producerComponentName", "undertow");
         parameters.put("host", "http://localhost:" + getPort());
         parameters.put("path", "verify");
         parameters.put("method", "GET");
