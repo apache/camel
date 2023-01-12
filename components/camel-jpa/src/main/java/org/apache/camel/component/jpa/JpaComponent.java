@@ -81,6 +81,7 @@ public class JpaComponent extends DefaultComponent {
 
     /**
      * To use the {@link PlatformTransactionManager} for managing transactions.
+     * 
      * @deprecated - use {@link #setTransactionStrategy(TransactionStrategy)} instead
      */
     @Deprecated
