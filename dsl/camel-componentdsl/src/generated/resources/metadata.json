@@ -4743,28 +4743,6 @@
     "producerOnly": true,
     "lenientProperties": false
   },
-  "MicroprofileMetricsComponentBuilderFactory": {
-    "kind": "component",
-    "name": "microprofile-metrics",
-    "title": "MicroProfile Metrics",
-    "description": "Expose metrics from Camel routes.",
-    "deprecated": true,
-    "firstVersion": "3.0.0",
-    "label": "monitoring",
-    "javaType": "org.apache.camel.component.microprofile.metrics.MicroProfileMetricsComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-microprofile-metrics",
-    "version": "4.0.0-SNAPSHOT",
-    "scheme": "microprofile-metrics",
-    "extendsScheme": "",
-    "syntax": "microprofile-metrics:metricType:metricName",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": true,
-    "lenientProperties": false
-  },
   "MiloBrowseComponentBuilderFactory": {
     "kind": "component",
     "name": "milo-browse",

@@ -67,7 +67,7 @@ public final class MojoHelper {
             case "camel-microprofile":
                 return Arrays.asList(dir.resolve("camel-microprofile-config"),
                         dir.resolve("camel-microprofile-fault-tolerance"),
-                        dir.resolve("camel-microprofile-health"), dir.resolve("camel-microprofile-metrics"));
+                        dir.resolve("camel-microprofile-health"));
             case "camel-test":
                 return Arrays.asList(dir.resolve("camel-test-junit5"),
                         dir.resolve("camel-test-spring-junit5"),

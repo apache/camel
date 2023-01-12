@@ -2891,20 +2891,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.MicrometerComponentBuilderFactory.micrometer();
     }
     /**
-     * MicroProfile Metrics (camel-microprofile-metrics)
-     * Expose metrics from Camel routes.
-     * 
-     * Category: monitoring
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-microprofile-metrics
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.MicroprofileMetricsComponentBuilderFactory.MicroprofileMetricsComponentBuilder microprofileMetrics() {
-        return org.apache.camel.builder.component.dsl.MicroprofileMetricsComponentBuilderFactory.microprofileMetrics();
-    }
-    /**
      * OPC UA Browser (camel-milo)
      * Connect to OPC UA servers using the binary protocol for browsing the node
      * tree.

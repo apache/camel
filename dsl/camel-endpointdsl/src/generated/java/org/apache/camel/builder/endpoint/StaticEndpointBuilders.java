@@ -9940,61 +9940,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.MicrometerEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * MicroProfile Metrics (camel-microprofile-metrics)
-     * Expose metrics from Camel routes.
-     * 
-     * Category: monitoring
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-microprofile-metrics
-     * 
-     * Syntax: <code>microprofile-metrics:metricType:metricName</code>
-     * 
-     * Path parameter: metricType (required)
-     * Metric type
-     * There are 8 enums and the value can be one of: concurrent gauge, counter,
-     * gauge, meter, histogram, timer, simple timer, invalid
-     * 
-     * Path parameter: metricName (required)
-     * Metric name
-     * 
-     * @param path metricType:metricName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.MicroProfileMetricsEndpointBuilderFactory.MicroProfileMetricsEndpointBuilder microprofileMetrics(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MicroProfileMetricsEndpointBuilderFactory.endpointBuilder("microprofile-metrics", path);
-    }
-    /**
-     * MicroProfile Metrics (camel-microprofile-metrics)
-     * Expose metrics from Camel routes.
-     * 
-     * Category: monitoring
-     * Since: 3.0
-     * Maven coordinates: org.apache.camel:camel-microprofile-metrics
-     * 
-     * Syntax: <code>microprofile-metrics:metricType:metricName</code>
-     * 
-     * Path parameter: metricType (required)
-     * Metric type
-     * There are 8 enums and the value can be one of: concurrent gauge, counter,
-     * gauge, meter, histogram, timer, simple timer, invalid
-     * 
-     * Path parameter: metricName (required)
-     * Metric name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path metricType:metricName
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.MicroProfileMetricsEndpointBuilderFactory.MicroProfileMetricsEndpointBuilder microprofileMetrics(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.MicroProfileMetricsEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * OPC UA Browser (camel-milo)
      * Connect to OPC UA servers using the binary protocol for browsing the node
      * tree.
