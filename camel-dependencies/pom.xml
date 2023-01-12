@@ -139,7 +139,7 @@
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>4.0.0</cxf-xjc-plugin-version>
         <cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
-        <datasonnet-mapper-version>2.2.0</datasonnet-mapper-version>
+        <datasonnet-mapper-version>2.1.4</datasonnet-mapper-version>
         <deltaspike-version>1.9.5</deltaspike-version>
         <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
         <derby-version>10.14.2.0</derby-version>
@@ -268,8 +268,8 @@
         <javapoet-version>1.11.1</javapoet-version>
         <javassist-version>3.28.0-GA</javassist-version>
         <javax-el3-version>3.0.0</javax-el3-version>
-        <javax-el-api-hibernate-validator-version>3.0.1-b04</javax-el-api-hibernate-validator-version>
-        <javax-el-hibernate-validator-version>3.0.1-b10</javax-el-hibernate-validator-version>
+        <jakarta-el-api-hibernate-validator-version>5.0.1</jakarta-el-api-hibernate-validator-version>
+        <jakarta-el-expressly-version>5.0.0</jakarta-el-expressly-version>
         <jakarta-activation-version>2.0.1</jakarta-activation-version>
         <jakarta-annotation-api-version>2.1.1</jakarta-annotation-api-version>
         <jakarta-mail-version>2.0.1</jakarta-mail-version>
@@ -460,7 +460,7 @@
         <rxjava2-version>2.2.21</rxjava2-version>
         <saxon-version>11.4</saxon-version>
         <scala-version>2.11.12</scala-version>
-        <scala-datasonnet-version>2.13.10</scala-datasonnet-version>
+        <scala-datasonnet-version>2.13.9</scala-datasonnet-version>
         <servicemix-specs-version>2.9.0</servicemix-specs-version>
         <shiro-version>1.10.1</shiro-version>
         <shrinkwrap-descriptors-version>2.0.0</shrinkwrap-descriptors-version>
