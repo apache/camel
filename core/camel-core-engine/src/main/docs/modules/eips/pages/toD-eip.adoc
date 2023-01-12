@@ -181,7 +181,6 @@ A number of non-HTTP components has been optimised as well:
 - camel-kafka
 - camel-paho-mqtt5
 - camel-paho
-- camel-rabbitmq
 - camel-sjms
 - camel-sjms2
 - camel-spring-rabbitmq
