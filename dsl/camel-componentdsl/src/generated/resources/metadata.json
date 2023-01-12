@@ -5740,28 +5740,6 @@
     "producerOnly": false,
     "lenientProperties": false
   },
-  "RabbitmqComponentBuilderFactory": {
-    "kind": "component",
-    "name": "rabbitmq",
-    "title": "RabbitMQ",
-    "description": "Send and receive messages from RabbitMQ instances.",
-    "deprecated": true,
-    "firstVersion": "2.12.0",
-    "label": "messaging",
-    "javaType": "org.apache.camel.component.rabbitmq.RabbitMQComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-rabbitmq",
-    "version": "4.0.0-SNAPSHOT",
-    "scheme": "rabbitmq",
-    "extendsScheme": "",
-    "syntax": "rabbitmq:exchangeName",
-    "async": true,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "ReactiveStreamsComponentBuilderFactory": {
     "kind": "component",
     "name": "reactive-streams",

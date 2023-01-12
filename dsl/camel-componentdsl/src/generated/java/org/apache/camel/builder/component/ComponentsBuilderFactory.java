@@ -3488,20 +3488,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.QuickfixComponentBuilderFactory.quickfix();
     }
     /**
-     * RabbitMQ (camel-rabbitmq)
-     * Send and receive messages from RabbitMQ instances.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-rabbitmq
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.RabbitmqComponentBuilderFactory.RabbitmqComponentBuilder rabbitmq() {
-        return org.apache.camel.builder.component.dsl.RabbitmqComponentBuilderFactory.rabbitmq();
-    }
-    /**
      * Reactive Streams (camel-reactive-streams)
      * Exchange messages with reactive stream processing libraries compatible
      * with the reactive streams standard.
