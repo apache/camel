@@ -100,7 +100,6 @@
         <module>camel-box</module>
         <module>camel-braintree</module>
         <module>camel-caffeine</module>
-        <module>camel-caffeine-lrucache</module>
         <module>camel-cassandraql</module>
         <module>camel-cbor</module>
         <module>camel-chatscript</module>
