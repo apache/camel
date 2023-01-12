@@ -29,7 +29,7 @@
 
     <artifactId>camel-gora</artifactId>
     <packaging>jar</packaging>
-    <name>Camel :: Gora</name>
+    <name>Camel :: Gora (deprecated)</name>
     <description>Gora Component for Apache Camel</description>
 
     <properties>
