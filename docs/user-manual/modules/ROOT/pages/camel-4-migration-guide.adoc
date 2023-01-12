@@ -17,3 +17,7 @@ The `camel-cdi` component has been removed, and is no longer supported.
 == camel-zipkin
 
 The `camel-zipkin` component has been removed, and is no longer supported.
+
+== camel-caffeine
+
+The `keyType` parameter has been removed. The Key for the cache will now be only `String` type. More information in CAMEL-18877.
