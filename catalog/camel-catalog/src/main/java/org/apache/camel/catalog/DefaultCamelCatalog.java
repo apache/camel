@@ -496,6 +496,9 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     }
 
     private static boolean matchArtifact(ArtifactModel<?> am, String groupId, String artifactId, String version) {
+        if (am == null) {
+            return false;
+        }
         return groupId.equals(am.getGroupId()) && artifactId.equals(am.getArtifactId())
                 && (version == null || version.isBlank() || version.equals(am.getVersion()));
     }

@@ -89,7 +89,6 @@ public class CamelCatalogTest {
         List<String> names = catalog.findOtherNames();
 
         assertTrue(names.contains("leveldb"));
-        assertTrue(names.contains("swagger-java"));
         assertTrue(names.contains("test-spring"));
 
         assertFalse(names.contains("http-common"));
@@ -151,9 +150,6 @@ public class CamelCatalogTest {
         assertNotNull(schema);
 
         schema = catalog.modelJSonSchema("aggregate");
-        assertNotNull(schema);
-
-        schema = catalog.otherJSonSchema("swagger-java");
         assertNotNull(schema);
 
         // lets make it possible to find bean/method using both names
