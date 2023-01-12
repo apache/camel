@@ -18,7 +18,7 @@
  */
 
 def AGENT_LABEL = 's390x'
-def JDK_NAME = env.JDK_NAME ?: 'jdk_11_latest'
+def JDK_NAME = env.JDK_NAME ?: 'jdk_17_latest'
 
 def MAVEN_PARAMS = "-B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
 def MAVEN_TEST_PARAMS = env.MAVEN_TEST_PARAMS ?: "-Dkafka.instance.type=local-strimzi-container -Dci.env.name=apache.org"
