@@ -94,7 +94,6 @@
         <bouncycastle-version>1.71</bouncycastle-version>
         <box-java-sdk-version>2.58.0</box-java-sdk-version>
         <braintree-gateway-version>3.19.0</braintree-gateway-version>
-        <brave-zipkin-version>5.13.3</brave-zipkin-version>
         <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
         <caffeine-version>3.1.2</caffeine-version>
@@ -551,8 +550,6 @@
         <xstream-version>1.4.20</xstream-version>
         <yetus-audience-annotations-version>0.13.0</yetus-audience-annotations-version>
         <zendesk-client-version>0.19.0</zendesk-client-version>
-        <zipkin-reporter-version>2.16.3</zipkin-reporter-version>
-        <zipkin-version>2.23.4</zipkin-version>
         <zookeeper-version>3.5.9</zookeeper-version>
         <zxing-version>3.5.0</zxing-version>
 
