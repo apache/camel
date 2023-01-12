@@ -44,7 +44,7 @@ Expression.
 
 [NOTE]
 ====
-There is also the xref:others:test.adoc[Test endpoint] which is a
+There is also the xref:others:test-junit5.adoc[Test endpoint] which is a
 Mock endpoint, but which uses a second endpoint to provide the list of
 expected message bodies and automatically sets up the Mock endpoint
 assertions. In other words, it's a Mock endpoint that automatically sets
