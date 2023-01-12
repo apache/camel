@@ -87,7 +87,6 @@
     </dependencies>
 
     <build>
-        <testSourceDirectory>src/test/dummy</testSourceDirectory>
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
