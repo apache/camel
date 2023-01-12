@@ -255,7 +255,6 @@
         <module>camel-python</module>
         <module>camel-quartz</module>
         <module>camel-quickfix</module>
-        <module>camel-rabbitmq</module>
         <module>camel-reactive-executor-tomcat</module>
         <module>camel-reactive-executor-vertx</module>
         <module>camel-reactive-streams</module>

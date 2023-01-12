@@ -1380,11 +1380,6 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-rabbitmq</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
             <artifactId>camel-reactive-executor-tomcat</artifactId>
             <version>${project.version}</version>
         </dependency>
