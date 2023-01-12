@@ -18,6 +18,7 @@ The following components has been removed:
 - camel-cdi
 - camel-elasticsearch-rest
 - camel-hbase
+- camel-iota
 - camel-ipfs
 - camel-microprofile-metrics
 - camel-opentracing

@@ -7318,51 +7318,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.InfluxDb2EndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * IOTA (camel-iota)
-     * Manage financial transactions using IOTA distributed ledger.
-     * 
-     * Category: ledger,api
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-iota
-     * 
-     * Syntax: <code>iota:name</code>
-     * 
-     * Path parameter: name (required)
-     * Component name
-     * 
-     * @param path name
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.IOTAEndpointBuilderFactory.IOTAEndpointBuilder iota(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.IOTAEndpointBuilderFactory.endpointBuilder("iota", path);
-    }
-    /**
-     * IOTA (camel-iota)
-     * Manage financial transactions using IOTA distributed ledger.
-     * 
-     * Category: ledger,api
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-iota
-     * 
-     * Syntax: <code>iota:name</code>
-     * 
-     * Path parameter: name (required)
-     * Component name
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path name
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.IOTAEndpointBuilderFactory.IOTAEndpointBuilder iota(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.IOTAEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * IRC (camel-irc)
      * Send and receive messages to/from and IRC chat.
      * 

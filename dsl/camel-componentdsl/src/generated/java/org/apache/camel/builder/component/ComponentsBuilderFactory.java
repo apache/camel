@@ -2169,20 +2169,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.Influxdb2ComponentBuilderFactory.influxdb2();
     }
     /**
-     * IOTA (camel-iota)
-     * Manage financial transactions using IOTA distributed ledger.
-     * 
-     * Category: ledger,api
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-iota
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.IotaComponentBuilderFactory.IotaComponentBuilder iota() {
-        return org.apache.camel.builder.component.dsl.IotaComponentBuilderFactory.iota();
-    }
-    /**
      * IRC (camel-irc)
      * Send and receive messages to/from and IRC chat.
      * 
