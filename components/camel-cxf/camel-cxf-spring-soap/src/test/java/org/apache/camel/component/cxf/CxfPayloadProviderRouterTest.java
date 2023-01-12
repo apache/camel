@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.cxf;
 
-import javax.xml.namespace.QName;
 import jakarta.xml.ws.Endpoint;
 import jakarta.xml.ws.Service;
+
+import javax.xml.namespace.QName;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.cxf.interceptor.Fault;

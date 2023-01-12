@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.cxf.multipart;
 
-import javax.xml.namespace.QName;
 import jakarta.xml.ws.Endpoint;
 import jakarta.xml.ws.Service;
+
+import javax.xml.namespace.QName;
 
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.cxf.multipart.MultiPartInvoke;

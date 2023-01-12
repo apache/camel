@@ -16,11 +16,12 @@
  */
 package org.apache.camel.component.cxf.jaxws;
 
-import javax.xml.transform.Source;
 import jakarta.xml.ws.Provider;
 import jakarta.xml.ws.Service.Mode;
 import jakarta.xml.ws.ServiceMode;
 import jakarta.xml.ws.WebServiceProvider;
+
+import javax.xml.transform.Source;
 
 @WebServiceProvider
 @ServiceMode(Mode.PAYLOAD)

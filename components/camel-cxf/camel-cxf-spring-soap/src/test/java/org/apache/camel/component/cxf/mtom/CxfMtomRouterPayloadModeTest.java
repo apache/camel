@@ -20,11 +20,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 
-import javax.imageio.ImageIO;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Endpoint;
 import jakarta.xml.ws.Holder;
 import jakarta.xml.ws.soap.SOAPBinding;
+
+import javax.imageio.ImageIO;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.common.CXFTestSupport;

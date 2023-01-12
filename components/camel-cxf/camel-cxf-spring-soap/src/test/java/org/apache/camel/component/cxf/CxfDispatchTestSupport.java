@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.cxf;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import jakarta.xml.ws.Endpoint;
+
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

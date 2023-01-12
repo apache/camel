@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.cxf;
 
-import javax.xml.namespace.QName;
 import jakarta.xml.ws.Service;
+
+import javax.xml.namespace.QName;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.common.CXFTestSupport;

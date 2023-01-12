@@ -18,10 +18,11 @@ package org.apache.camel.component.cxf;
 
 import java.net.URL;
 
-import javax.xml.namespace.QName;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Endpoint;
 import jakarta.xml.ws.Holder;
+
+import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
@@ -42,7 +43,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
+public class
+CXFWsdlOnlyTest extends CamelSpringTestSupport {
 
     private static Endpoint endpoint1;
     private static Endpoint endpoint2;

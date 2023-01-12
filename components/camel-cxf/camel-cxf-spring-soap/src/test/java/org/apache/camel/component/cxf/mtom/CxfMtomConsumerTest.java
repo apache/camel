@@ -20,11 +20,12 @@ import java.awt.*;
 import java.net.URL;
 import java.util.List;
 
-import javax.imageio.ImageIO;
-import javax.xml.namespace.QName;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Holder;
 import jakarta.xml.ws.soap.SOAPBinding;
+
+import javax.imageio.ImageIO;
+import javax.xml.namespace.QName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

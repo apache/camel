@@ -18,10 +18,11 @@ package org.apache.camel.component.cxf.jaxws;
 
 import java.util.Map;
 
+import jakarta.xml.ws.Provider;
+
 import javax.wsdl.Definition;
 import javax.wsdl.Service;
 import javax.xml.namespace.QName;
-import jakarta.xml.ws.Provider;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.cxf.endpoint.Endpoint;

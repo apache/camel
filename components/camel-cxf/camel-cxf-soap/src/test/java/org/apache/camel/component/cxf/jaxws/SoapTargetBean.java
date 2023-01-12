@@ -18,10 +18,11 @@ package org.apache.camel.component.cxf.jaxws;
 
 import java.io.InputStream;
 
-import javax.xml.namespace.QName;
 import jakarta.xml.soap.MessageFactory;
 import jakarta.xml.soap.SOAPBody;
 import jakarta.xml.soap.SOAPMessage;
+
+import javax.xml.namespace.QName;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

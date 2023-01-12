@@ -27,6 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import jakarta.xml.ws.Provider;
+import jakarta.xml.ws.WebServiceProvider;
+import jakarta.xml.ws.handler.Handler;
+
 import javax.net.ssl.HostnameVerifier;
 import javax.wsdl.Definition;
 import javax.wsdl.WSDLException;
@@ -39,9 +43,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
-import jakarta.xml.ws.Provider;
-import jakarta.xml.ws.WebServiceProvider;
-import jakarta.xml.ws.handler.Handler;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;

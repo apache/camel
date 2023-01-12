@@ -25,9 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.xml.namespace.QName;
 import jakarta.xml.ws.Holder;
 import jakarta.xml.ws.handler.MessageContext.Scope;
+
+import javax.xml.namespace.QName;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;

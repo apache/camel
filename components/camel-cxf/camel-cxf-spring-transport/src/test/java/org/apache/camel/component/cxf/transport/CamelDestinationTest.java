@@ -19,10 +19,11 @@ package org.apache.camel.component.cxf.transport;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.xml.namespace.QName;
 import jakarta.xml.ws.Endpoint;
 import jakarta.xml.ws.Holder;
 import jakarta.xml.ws.WebServiceException;
+
+import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchEndpointException;

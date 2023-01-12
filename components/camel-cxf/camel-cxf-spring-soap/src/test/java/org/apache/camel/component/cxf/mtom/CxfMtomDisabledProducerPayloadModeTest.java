@@ -28,13 +28,14 @@ import java.util.Map;
 import jakarta.activation.DataHandler;
 import jakarta.activation.DataSource;
 import jakarta.annotation.Resource;
-import javax.imageio.ImageIO;
 import jakarta.mail.util.ByteArrayDataSource;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
 import jakarta.xml.ws.Holder;
 import jakarta.xml.ws.WebServiceContext;
 import jakarta.xml.ws.handler.MessageContext;
+
+import javax.imageio.ImageIO;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;

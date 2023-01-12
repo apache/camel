@@ -18,10 +18,11 @@ package org.apache.camel.component.cxf.jaxws;
 
 import java.net.URL;
 
-import javax.xml.namespace.QName;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Endpoint;
 import jakarta.xml.ws.Holder;
+
+import javax.xml.namespace.QName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

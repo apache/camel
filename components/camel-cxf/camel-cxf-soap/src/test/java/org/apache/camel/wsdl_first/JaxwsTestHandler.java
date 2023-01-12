@@ -18,10 +18,11 @@ package org.apache.camel.wsdl_first;
 
 import java.util.Set;
 
-import javax.xml.namespace.QName;
 import jakarta.xml.ws.handler.MessageContext;
 import jakarta.xml.ws.handler.soap.SOAPHandler;
 import jakarta.xml.ws.handler.soap.SOAPMessageContext;
+
+import javax.xml.namespace.QName;
 
 public class JaxwsTestHandler implements SOAPHandler<SOAPMessageContext> {
 

@@ -19,9 +19,10 @@ package org.apache.camel.component.cxf.jaxws;
 import java.io.StringReader;
 import java.net.URL;
 
-import javax.xml.namespace.QName;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Holder;
+
+import javax.xml.namespace.QName;
 
 import org.w3c.dom.Element;
 
