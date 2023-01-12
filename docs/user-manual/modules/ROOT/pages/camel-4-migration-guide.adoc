@@ -26,3 +26,7 @@ Removed `camel-restdsl-swagger-plugin` (use `camel-restdsl-openapi-plugin instea
 == camel-caffeine
 
 The `keyType` parameter has been removed. The Key for the cache will now be only `String` type. More information in CAMEL-18877.
+
+== camel-xstream
+
+The `camel-xstream` component has been removed, and is no longer supported.
