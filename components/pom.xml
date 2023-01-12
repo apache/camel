@@ -334,7 +334,6 @@
         <module>camel-xmlsecurity</module>
         <module>camel-xmpp</module>
         <module>camel-xslt-saxon</module>
-        <module>camel-xstream</module>
         <module>camel-zendesk</module>
         <module>camel-zip-deflater</module>
         <module>camel-zipfile</module>

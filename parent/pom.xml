@@ -542,7 +542,6 @@
         <xmlsec-version>2.2.3</xmlsec-version>
         <xmlunit-version>2.9.0</xmlunit-version>
         <xpp3-version>1.1.4c</xpp3-version>
-        <xstream-version>1.4.20</xstream-version>
         <yetus-audience-annotations-version>0.13.0</yetus-audience-annotations-version>
         <zendesk-client-version>0.19.0</zendesk-client-version>
         <zookeeper-version>3.5.9</zookeeper-version>
@@ -2564,11 +2563,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-xstream</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-zendesk</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -3683,13 +3677,6 @@
                 <groupId>org.apache.servicemix.bundles</groupId>
                 <artifactId>org.apache.servicemix.bundles.snmp4j</artifactId>
                 <version>${snmp4j-version}</version>
-            </dependency>
-
-            <!-- optional XStream -->
-            <dependency>
-                <groupId>com.thoughtworks.xstream</groupId>
-                <artifactId>xstream</artifactId>
-                <version>${xstream-version}</version>
             </dependency>
 
             <!-- optional Jettison -->

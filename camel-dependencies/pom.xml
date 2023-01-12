@@ -547,7 +547,6 @@
         <xmlsec-version>2.2.3</xmlsec-version>
         <xmlunit-version>2.9.0</xmlunit-version>
         <xpp3-version>1.1.4c</xpp3-version>
-        <xstream-version>1.4.20</xstream-version>
         <yetus-audience-annotations-version>0.13.0</yetus-audience-annotations-version>
         <zendesk-client-version>0.19.0</zendesk-client-version>
         <zookeeper-version>3.5.9</zookeeper-version>
