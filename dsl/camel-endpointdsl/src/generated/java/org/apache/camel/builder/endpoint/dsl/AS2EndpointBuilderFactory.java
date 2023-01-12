@@ -599,6 +599,37 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Add sslContext.
+         * 
+         * The option is a: &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder sslContext(
+                javax.net.ssl.SSLContext sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * Add sslContext.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder sslContext(String sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
          * The value of Subject header of AS2 message.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1321,6 +1352,37 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Add sslContext.
+         * 
+         * The option is a: &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder sslContext(
+                javax.net.ssl.SSLContext sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * Add sslContext.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder sslContext(String sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
          * The value of Subject header of AS2 message.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -2014,6 +2076,37 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder signingPrivateKey(String signingPrivateKey) {
             doSetProperty("signingPrivateKey", signingPrivateKey);
+            return this;
+        }
+        /**
+         * Add sslContext.
+         * 
+         * The option is a: &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt;
+         * type.
+         * 
+         * Group: common
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder sslContext(
+                javax.net.ssl.SSLContext sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * Add sslContext.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder sslContext(String sslContext) {
+            doSetProperty("sslContext", sslContext);
             return this;
         }
         /**

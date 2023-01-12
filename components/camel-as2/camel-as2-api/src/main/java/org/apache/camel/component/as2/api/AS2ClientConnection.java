@@ -73,14 +73,12 @@ public class AS2ClientConnection {
                 .add(new RequestExpectContinue(true)).build();
 
         // Create Socket
-        //Socket socket = new Socket(targetHost.getHostName(), targetHost.getPort());
 	
 	if (sslContext==null) {
 		socket = new Socket(targetHost.getHostName(), targetHost.getPort());
 	} else {
 		SSLSocketFactory factory = sslContext.getSocketFactory();
 		socket = (SSLSocket) factory.createSocket(targetHost.getHostName(), targetHost.getPort());
-		//socket.setEnabledProtocols(new String[]{"TLSv1.3"});
 	}
 	
         // Create Connection

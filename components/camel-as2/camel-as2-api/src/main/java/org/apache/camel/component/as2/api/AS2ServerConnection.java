@@ -81,7 +81,6 @@ public class AS2ServerConnection {
             } else {
             	SSLServerSocketFactory factory = sslContext.getServerSocketFactory();
             	serversocket = (SSLServerSocket) factory.createServerSocket(port);
-            	//serversocket.setEnabledProtocols(new String[]{"TLSv1.3"});
             }
             
             // Set up HTTP protocol processor for incoming connections
