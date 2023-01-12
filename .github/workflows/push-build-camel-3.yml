@@ -15,12 +15,12 @@
 # limitations under the License.
 #
 
-name: reformat and build
+name: Reformat and Build (Camel 3.x)
 
 on:
   push:
     branches:
-      - main
+      - camel-3.x
     paths-ignore:
       - .github/**/*
       - README.md
@@ -64,17 +64,17 @@ jobs:
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
-          base: main
+          base: camel-3.x
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Regen for commit ${{ github.sha }}"
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: true
-          branch: regen_bot_3.x
-          title: "Generated sources regen for camel-3.x"
+          branch: regen_bot
+          title: "Generated sources regen"
           body: |
-            Regen bot :robot: found some uncommitted changes after running build on :camel: camel-3.x.
-            Please do not delete `regen_bot_3.x` branch after merge/rebase.
+            Regen bot :robot: found some uncommitted changes after running build on :camel: main.
+            Please do not delete `regen_bot` branch after merge/rebase.
           labels: |
             regen
             automated pr
