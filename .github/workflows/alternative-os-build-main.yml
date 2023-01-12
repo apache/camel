@@ -15,11 +15,11 @@
 # limitations under the License.
 #
 
-name: alternative os build
+name: Alternative OS Build (Camel 4)
 
 on:
   schedule:
-    # Every 45th minute every 3 hour during working days
+    # Every 45th minute every 3 hours during working days
     - cron: '45 */3 * * 1-5'
     # Every 6 hours during weekends ... we don't want to be flooded with emails
     - cron: '30 */6 * * 6,0'
@@ -43,7 +43,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: 11
+          java-version: 17
           cache: 'maven'
       - name: mvn sourcecheck ${{ matrix.os }}
         run: mvn -B -V -D'http.keepAlive=false' -l build.log -D'maven.wagon.http.pool=false' -D'maven.wagon.httpconnectionManager.ttlSeconds=120' --no-transfer-progress -P'format,fastinstall' -DskipTests verify
