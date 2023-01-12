@@ -20,7 +20,7 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> PROPERTY_NAMES;
     private static final Set<String> SECRET_PROPERTY_NAMES;
     static {
-        Set<String> props = new HashSet<>(74);
+        Set<String> props = new HashSet<>(76);
         props.add("usingExecutorService");
         props.add("disconnect");
         props.add("enabledProtocols");
@@ -38,6 +38,7 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
         props.add("connectTimeout");
         props.add("options");
         props.add("textline");
+        props.add("producerPoolBlockWhenExhausted");
         props.add("workerGroup");
         props.add("producerPoolMinEvictableIdle");
         props.add("tcpNoDelay");
@@ -71,6 +72,7 @@ public class NettyEndpointUriFactory extends org.apache.camel.support.component.
         props.add("useByteBuf");
         props.add("sslContextParameters");
         props.add("correlationManager");
+        props.add("producerPoolMaxWait");
         props.add("keyStoreResource");
         props.add("autoAppendDelimiter");
         props.add("reuseChannel");
