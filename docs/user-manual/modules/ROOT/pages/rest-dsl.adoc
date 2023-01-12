@@ -513,7 +513,7 @@ The Rest DSL supports the following options:
 | *inlineRoutes* | Inline routes in rest-dsl which are linked using direct endpoints. By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as a single route, however this requires to use direct endpoints, which must be unique per service. This option is default false. | false | boolean
 | *jsonDataFormat* | Sets a custom json data format to be used Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance. |  | String
 | *port* | Sets the port to use by the REST consumer |  | int
-| *producerApiDoc* | Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document. This requires adding camel-swagger-java to the classpath, and any miss configuration will let Camel fail on startup and report the error(s). The location of the api document is loaded from classpath by default, but you can use file: or http: to refer to resources to load from file or http url. |  | String
+| *producerApiDoc* | Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document. This requires adding camel-openapi-java to the classpath, and any miss configuration will let Camel fail on startup and report the error(s). The location of the api document is loaded from classpath by default, but you can use file: or http: to refer to resources to load from file or http url. |  | String
 | *producerComponent* | Sets the name of the Camel component to use as the REST producer |  | String
 | *scheme* | Sets the scheme to use by the REST consumer |  | String
 | *skipBindingOnErrorCode* | Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is. This option is default true. | true | boolean
@@ -740,7 +740,7 @@ restConfiguration().component("jetty").host("localhost")
 == OpenAPI / Swagger API
 
 The Rest DSL supports OpenAPI and Swagger by
-the `camel-openapi-java` and `camel-swagger-java` modules.
+the `camel-openapi-java` modules.
 
 You can define each parameter fine-grained
 with details such as name, description, data type, parameter type and so

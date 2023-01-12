@@ -1,1 +1,0 @@
-../../../../../components/camel-swagger-java/src/main/docs/swagger-java.adoc

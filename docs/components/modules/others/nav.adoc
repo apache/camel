@@ -50,7 +50,6 @@
 ** xref:spring-security.adoc[Spring Security]
 ** xref:spring-xml.adoc[Spring XML]
 ** xref:springdoc.adoc[Springdoc]
-** xref:swagger-java.adoc[Swagger Java]
 ** xref:test.adoc[Test]
 ** xref:test-junit5.adoc[Test JUnit5]
 ** xref:test-main-junit5.adoc[Test Main JUnit5]
