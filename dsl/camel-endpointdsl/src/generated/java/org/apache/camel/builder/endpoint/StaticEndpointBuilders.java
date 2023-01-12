@@ -13397,53 +13397,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Spark (camel-spark)
-     * Send RDD or DataFrame jobs to Apache Spark clusters.
-     * 
-     * Category: bigdata,iot
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-spark
-     * 
-     * Syntax: <code>spark:endpointType</code>
-     * 
-     * Path parameter: endpointType (required)
-     * Type of the endpoint (rdd, dataframe, hive).
-     * There are 3 enums and the value can be one of: rdd, dataframe, hive
-     * 
-     * @param path endpointType
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.SparkEndpointBuilder spark(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.endpointBuilder("spark", path);
-    }
-    /**
-     * Spark (camel-spark)
-     * Send RDD or DataFrame jobs to Apache Spark clusters.
-     * 
-     * Category: bigdata,iot
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-spark
-     * 
-     * Syntax: <code>spark:endpointType</code>
-     * 
-     * Path parameter: endpointType (required)
-     * Type of the endpoint (rdd, dataframe, hive).
-     * There are 3 enums and the value can be one of: rdd, dataframe, hive
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path endpointType
-     * @return the dsl builder
-     */
-    @Deprecated
-    public static org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.SparkEndpointBuilder spark(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SparkEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Splunk (camel-splunk)
      * Publish or search for events in Splunk.
      * 

@@ -3905,20 +3905,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SolrsComponentBuilderFactory.solrs();
     }
     /**
-     * Spark (camel-spark)
-     * Send RDD or DataFrame jobs to Apache Spark clusters.
-     * 
-     * Category: bigdata,iot
-     * Since: 2.17
-     * Maven coordinates: org.apache.camel:camel-spark
-     * 
-     * @return the dsl builder
-     */
-    @Deprecated
-    static org.apache.camel.builder.component.dsl.SparkComponentBuilderFactory.SparkComponentBuilder spark() {
-        return org.apache.camel.builder.component.dsl.SparkComponentBuilderFactory.spark();
-    }
-    /**
      * Splunk (camel-splunk)
      * Publish or search for events in Splunk.
      * 
