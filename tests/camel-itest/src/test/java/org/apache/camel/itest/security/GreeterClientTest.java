@@ -21,9 +21,10 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.namespace.QName;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.soap.SOAPFaultException;
+
+import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.AvailablePortFinder;

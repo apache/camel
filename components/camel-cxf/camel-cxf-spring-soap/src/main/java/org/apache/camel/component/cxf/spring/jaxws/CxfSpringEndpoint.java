@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.cxf.spring.jaxws;
 
-import javax.xml.namespace.QName;
 import jakarta.xml.ws.Provider;
+
+import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.common.DataFormat;

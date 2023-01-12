@@ -19,5 +19,5 @@
  * unmarshal objects to and from streams inside <a href="http://camel.apache.org/components.html">components</a>
  */
 @jakarta.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-                                     elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+                                       elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.model.dataformat;

@@ -19,11 +19,12 @@ package org.apache.camel.component.cxf;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import javax.xml.namespace.QName;
 import jakarta.xml.soap.SOAPFault;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Holder;
 import jakarta.xml.ws.soap.SOAPFaultException;
+
+import javax.xml.namespace.QName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

@@ -106,8 +106,8 @@ public interface HttpBinding {
     boolean isUseReaderForPayload();
 
     /**
-     * Should the {@link jakarta.servlet.http.HttpServletRequest#getReader()} be exposed as the payload of input messages
-     * in the Camel {@link org.apache.camel.Message#getBody()} or not. If false then the
+     * Should the {@link jakarta.servlet.http.HttpServletRequest#getReader()} be exposed as the payload of input
+     * messages in the Camel {@link org.apache.camel.Message#getBody()} or not. If false then the
      * {@link jakarta.servlet.http.HttpServletRequest#getInputStream()} will be exposed.
      * <p/>
      * Is default <tt>false</tt>.

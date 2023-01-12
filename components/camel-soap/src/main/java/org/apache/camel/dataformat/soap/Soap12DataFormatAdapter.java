@@ -26,11 +26,12 @@ import java.util.List;
 
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBIntrospector;
-import javax.xml.namespace.QName;
 import jakarta.xml.soap.SOAPException;
 import jakarta.xml.soap.SOAPFactory;
 import jakarta.xml.ws.WebFault;
 import jakarta.xml.ws.soap.SOAPFaultException;
+
+import javax.xml.namespace.QName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;

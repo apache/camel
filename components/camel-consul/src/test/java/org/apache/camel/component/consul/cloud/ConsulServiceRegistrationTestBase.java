@@ -28,8 +28,8 @@ import com.orbitz.consul.model.health.ServiceHealth;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.consul.ConsulTestSupport;
-import org.junit.jupiter.api.Test;
 import org.apache.camel.test.AvailablePortFinder;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

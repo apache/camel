@@ -43,8 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class
-CXFWsdlOnlyTest extends CamelSpringTestSupport {
+public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
 
     private static Endpoint endpoint1;
     private static Endpoint endpoint2;

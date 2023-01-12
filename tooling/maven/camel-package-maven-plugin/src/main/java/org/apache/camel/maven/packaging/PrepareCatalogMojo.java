@@ -230,8 +230,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
                          .filter(dir -> {
                              String d = dir.getFileName().toString();
                              // TODO: camel4 these are not yet working
-                             boolean bad = "camel-activemq".equals(d) || "camel-johnzon".equals(d) || "camel-stomp".equals(d) || "camel-websocket".equals(d);
-                             return !bad;})
+                             boolean bad = "camel-activemq".equals(d) || "camel-johnzon".equals(d) || "camel-stomp".equals(d)
+                                     || "camel-websocket".equals(d);
+                             return !bad;
+                         })
                          .flatMap(p -> getComponentPath(p).stream())
                          .filter(dir -> Files.isDirectory(dir.resolve("src")))
                          .map(p -> p.resolve("target/classes"))

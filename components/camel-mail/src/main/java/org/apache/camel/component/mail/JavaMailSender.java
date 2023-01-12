@@ -31,7 +31,7 @@ public interface JavaMailSender {
     /**
      * Send the mail
      *
-     * @param  mimeMessage                   the message to send
+     * @param  mimeMessage                     the message to send
      * @throws jakarta.mail.MessagingException is thrown if error sending the mail.
      */
     void send(MimeMessage mimeMessage) throws MessagingException;

@@ -32,6 +32,7 @@ import static org.jclouds.blobstore.options.PutOptions.Builder.multipart;
 public final class JcloudsBlobStoreHelper {
 
     private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
+
     private JcloudsBlobStoreHelper() {
         //Utility Class
     }

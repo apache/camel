@@ -15,5 +15,5 @@
  * limitations under the License.
  */
 @jakarta.xml.bind.annotation.XmlSchema(namespace = "http://www.stockquotes.edu/",
-                                     elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+                                       elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.component.spring.ws.jaxb;

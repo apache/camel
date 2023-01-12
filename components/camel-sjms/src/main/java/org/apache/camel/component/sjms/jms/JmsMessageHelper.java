@@ -42,9 +42,9 @@ public final class JmsMessageHelper {
     /**
      * Removes the property from the JMS message.
      *
-     * @param  jmsMessage             the JMS message
-     * @param  name                   name of the property to remove
-     * @return                        the old value of the property or <tt>null</tt> if not exists
+     * @param  jmsMessage               the JMS message
+     * @param  name                     name of the property to remove
+     * @return                          the old value of the property or <tt>null</tt> if not exists
      * @throws jakarta.jms.JMSException can be thrown
      */
     public static Object removeJmsProperty(Message jmsMessage, String name) throws JMSException {
@@ -347,9 +347,9 @@ public final class JmsMessageHelper {
     /**
      * Sets the JMSDeliveryMode on the message.
      *
-     * @param  exchange               the exchange
-     * @param  message                the message
-     * @param  deliveryMode           the delivery mode, either as a String or integer
+     * @param  exchange                 the exchange
+     * @param  message                  the message
+     * @param  deliveryMode             the delivery mode, either as a String or integer
      * @throws jakarta.jms.JMSException is thrown if error setting the delivery mode
      */
     public static void setJMSDeliveryMode(Exchange exchange, Message message, Object deliveryMode) throws JMSException {

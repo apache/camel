@@ -25,12 +25,13 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.activation.DataHandler;
-import javax.imageio.ImageIO;
 import jakarta.mail.util.ByteArrayDataSource;
-import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
 import jakarta.xml.ws.Endpoint;
 import jakarta.xml.ws.soap.SOAPBinding;
+
+import javax.imageio.ImageIO;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPathConstants;
 
 import org.w3c.dom.Element;

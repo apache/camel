@@ -15,5 +15,5 @@
  * limitations under the License.
  */
 @jakarta.xml.bind.annotation.XmlSchema(namespace = "person.jaxb.converter.camel.apache.org",
-                                     elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+                                       elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.converter.jaxb.person;

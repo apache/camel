@@ -384,9 +384,9 @@ public final class JmsMessageHelper {
     /**
      * Sets the JMSDeliveryMode on the message.
      *
-     * @param  exchange               the exchange
-     * @param  message                the message
-     * @param  deliveryMode           the delivery mode, either as a String or integer
+     * @param  exchange                 the exchange
+     * @param  message                  the message
+     * @param  deliveryMode             the delivery mode, either as a String or integer
      * @throws jakarta.jms.JMSException is thrown if error setting the delivery mode
      */
     public static void setJMSDeliveryMode(Exchange exchange, Message message, Object deliveryMode) throws JMSException {

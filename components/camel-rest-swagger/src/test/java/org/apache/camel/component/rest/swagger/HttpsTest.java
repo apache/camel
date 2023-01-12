@@ -27,10 +27,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Marshaller;
+
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.common.HttpsSettings;

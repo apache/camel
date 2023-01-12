@@ -39,8 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @jakarta.jws.WebService(serviceName = "HeaderService",
-                      targetNamespace = "http://apache.org/camel/cxf/soap/headers",
-                      endpointInterface = "org.apache.camel.component.cxf.soap.headers.HeaderTester")
+                        targetNamespace = "http://apache.org/camel/cxf/soap/headers",
+                        endpointInterface = "org.apache.camel.component.cxf.soap.headers.HeaderTester")
 
 public class HeaderTesterImpl implements HeaderTester {
     private static final Logger LOG = LoggerFactory.getLogger(HeaderTesterImpl.class);

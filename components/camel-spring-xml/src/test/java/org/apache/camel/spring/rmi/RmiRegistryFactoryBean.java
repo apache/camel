@@ -110,19 +110,20 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
         this.registry = getRegistry(this.host, this.port, this.clientSocketFactory, this.serverSocketFactory);
     }
 
-
     /**
      * Locate or create the RMI registry.
-     * @param registryHost the registry host to use (if this is specified,
-     * no implicit creation of a RMI registry will happen)
-     * @param registryPort the registry port to use
-     * @param clientSocketFactory the RMI client socket factory for the registry (if any)
-     * @param serverSocketFactory the RMI server socket factory for the registry (if any)
-     * @return the RMI registry
+     * 
+     * @param  registryHost             the registry host to use (if this is specified, no implicit creation of a RMI
+     *                                  registry will happen)
+     * @param  registryPort             the registry port to use
+     * @param  clientSocketFactory      the RMI client socket factory for the registry (if any)
+     * @param  serverSocketFactory      the RMI server socket factory for the registry (if any)
+     * @return                          the RMI registry
      * @throws java.rmi.RemoteException if the registry couldn't be located or created
      */
-    protected Registry getRegistry(String registryHost, int registryPort,
-                                   RMIClientSocketFactory clientSocketFactory, RMIServerSocketFactory serverSocketFactory)
+    protected Registry getRegistry(
+            String registryHost, int registryPort,
+            RMIClientSocketFactory clientSocketFactory, RMIServerSocketFactory serverSocketFactory)
             throws RemoteException {
 
         if (registryHost != null) {
@@ -140,11 +141,12 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
 
     /**
      * Locate or create the RMI registry.
-     * @param registryPort the registry port to use
-     * @param clientSocketFactory the RMI client socket factory for the registry (if any)
-     * @param serverSocketFactory the RMI server socket factory for the registry (if any)
-     * @return the RMI registry
-     * @throws RemoteException if the registry couldn't be located or created
+     * 
+     * @param  registryPort        the registry port to use
+     * @param  clientSocketFactory the RMI client socket factory for the registry (if any)
+     * @param  serverSocketFactory the RMI server socket factory for the registry (if any)
+     * @return                     the RMI registry
+     * @throws RemoteException     if the registry couldn't be located or created
      */
     protected Registry getRegistry(
             int registryPort, RMIClientSocketFactory clientSocketFactory, RMIServerSocketFactory serverSocketFactory)
@@ -180,8 +182,9 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
 
     /**
      * Locate or create the RMI registry.
-     * @param registryPort the registry port to use
-     * @return the RMI registry
+     * 
+     * @param  registryPort    the registry port to use
+     * @return                 the RMI registry
      * @throws RemoteException if the registry couldn't be located or created
      */
     protected Registry getRegistry(int registryPort) throws RemoteException {
@@ -210,17 +213,17 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
     }
 
     /**
-     * Test the given RMI registry, calling some operation on it to
-     * check whether it is still active.
-     * <p>Default implementation calls <code>Registry.list()</code>.
-     * @param registry the RMI registry to test
+     * Test the given RMI registry, calling some operation on it to check whether it is still active.
+     * <p>
+     * Default implementation calls <code>Registry.list()</code>.
+     * 
+     * @param  registry        the RMI registry to test
      * @throws RemoteException if thrown by registry methods
-     * @see java.rmi.registry.Registry#list()
+     * @see                    java.rmi.registry.Registry#list()
      */
     protected void testRegistry(Registry registry) throws RemoteException {
         registry.list();
     }
-
 
     public Registry getObject() throws Exception {
         return this.registry;
@@ -235,8 +238,7 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
     }
 
     /**
-     * Unexport the RMI registry on bean factory shutdown,
-     * provided that this bean actually created a registry.
+     * Unexport the RMI registry on bean factory shutdown, provided that this bean actually created a registry.
      */
     public void destroy() throws RemoteException {
         if (this.created) {

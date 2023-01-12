@@ -23,5 +23,5 @@
 //
 
 @jakarta.xml.bind.annotation.XmlSchema(namespace = "http://javacrumbs.net/calc",
-                                     elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+                                       elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package net.javacrumbs.calc.model;

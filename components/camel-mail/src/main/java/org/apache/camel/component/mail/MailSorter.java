@@ -107,10 +107,10 @@ public final class MailSorter {
     /**
      * Compare the value of the property of the two messages.
      *
-     * @param  msg1                          Message 1
-     * @param  msg2                          Message 2
-     * @param  property                      Property to compare
-     * @return                               msg1.property.compareTo(msg2.property)
+     * @param  msg1                            Message 1
+     * @param  msg2                            Message 2
+     * @param  property                        Property to compare
+     * @return                                 msg1.property.compareTo(msg2.property)
      * @throws jakarta.mail.MessagingException If message data could not be read.
      */
     private static int compareMessageProperty(Message msg1, Message msg2, SortTerm property) throws MessagingException {

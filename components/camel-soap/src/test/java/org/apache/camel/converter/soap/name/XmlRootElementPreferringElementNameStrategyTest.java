@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlType;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.converter.soap.name.testpackage.RequestWithDefaultNs;

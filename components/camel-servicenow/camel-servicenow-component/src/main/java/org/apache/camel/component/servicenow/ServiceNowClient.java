@@ -22,9 +22,10 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Function;
 
-import javax.net.ssl.SSLContext;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+
+import javax.net.ssl.SSLContext;
 
 import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import org.apache.camel.CamelContext;

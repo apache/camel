@@ -42,7 +42,8 @@ public interface ServletResolveConsumerStrategy {
      * @param  method    the http method
      * @param  consumers the map of registered consumers
      * @return           <tt>true</tt> if the method is allowed and can be serviced. Otherwise a
-     *                   {@link jakarta.servlet.http.HttpServletResponse#SC_METHOD_NOT_ALLOWED} is returned to the client.
+     *                   {@link jakarta.servlet.http.HttpServletResponse#SC_METHOD_NOT_ALLOWED} is returned to the
+     *                   client.
      */
     boolean isHttpMethodAllowed(HttpServletRequest request, String method, Map<String, HttpConsumer> consumers);
 

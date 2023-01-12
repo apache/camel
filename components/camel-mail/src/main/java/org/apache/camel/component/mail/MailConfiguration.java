@@ -24,6 +24,7 @@ import java.util.Properties;
 import jakarta.mail.Message;
 import jakarta.mail.PasswordAuthentication;
 import jakarta.mail.Session;
+
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.CamelContext;

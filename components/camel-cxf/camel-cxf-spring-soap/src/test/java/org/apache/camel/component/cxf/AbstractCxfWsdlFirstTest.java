@@ -20,10 +20,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.namespace.QName;
 import jakarta.xml.ws.BindingProvider;
 import jakarta.xml.ws.Holder;
 import jakarta.xml.ws.WebServiceException;
+
+import javax.xml.namespace.QName;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

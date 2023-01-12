@@ -19,11 +19,12 @@ package org.apache.camel.component.cxf;
 import java.net.URL;
 import java.util.List;
 
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Endpoint;
+
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
-import jakarta.xml.ws.BindingProvider;
-import jakarta.xml.ws.Endpoint;
 
 import org.w3c.dom.Element;
 

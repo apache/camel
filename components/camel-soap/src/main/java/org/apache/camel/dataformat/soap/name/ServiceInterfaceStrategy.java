@@ -27,10 +27,11 @@ import java.util.Map;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebResult;
-import javax.xml.namespace.QName;
 import jakarta.xml.ws.RequestWrapper;
 import jakarta.xml.ws.ResponseWrapper;
 import jakarta.xml.ws.WebFault;
+
+import javax.xml.namespace.QName;
 
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;

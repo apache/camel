@@ -24,10 +24,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @jakarta.jws.WebService(
-                      serviceName = "MultiPartInvokeService",
-                      portName = "MultiPartInvokePort",
-                      targetNamespace = "http://adapter.ti.tongtech.com/ws",
-                      endpointInterface = "org.apache.camel.cxf.multipart.MultiPartInvoke")
+                        serviceName = "MultiPartInvokeService",
+                        portName = "MultiPartInvokePort",
+                        targetNamespace = "http://adapter.ti.tongtech.com/ws",
+                        endpointInterface = "org.apache.camel.cxf.multipart.MultiPartInvoke")
 
 public class MultiPartInvokeImpl implements MultiPartInvoke {
 
