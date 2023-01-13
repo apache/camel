@@ -48,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-commons</artifactId>
+            <artifactId>infinispan-commons-jakarta</artifactId>
             <version>${infinispan-version}</version>
         </dependency>
         <dependency>

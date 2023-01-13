@@ -45,7 +45,7 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-core</artifactId>
+            <artifactId>infinispan-core-jakarta</artifactId>
             <version>${infinispan-version}</version>
             <exclusions>
                 <exclusion>
@@ -56,7 +56,7 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-query</artifactId>
+            <artifactId>infinispan-query-jakarta</artifactId>
             <version>${infinispan-version}</version>
         </dependency>
         <dependency>
@@ -95,12 +95,6 @@
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-commons-test</artifactId>
-            <version>${infinispan-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-spring5-embedded</artifactId>
             <version>${infinispan-version}</version>
             <scope>test</scope>
         </dependency>
