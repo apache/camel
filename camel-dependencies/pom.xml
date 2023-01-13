@@ -383,7 +383,7 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
         <metrics-version>4.2.14</metrics-version>
-        <micrometer-version>1.10.2</micrometer-version>
+        <micrometer-version>1.10.3</micrometer-version>
         <microprofile-config-version>3.0.2</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.0.2</microprofile-fault-tolerance-version>
         <milo-version>0.6.8</milo-version>
@@ -445,7 +445,7 @@
         <rdf4j-rio-version>3.7.4</rdf4j-rio-version>
         <rdf4j-model-version>3.7.4</rdf4j-model-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
-        <reactor-version>3.5.1</reactor-version>
+        <reactor-version>3.5.2</reactor-version>
         <reactor-netty-version>1.1.1</reactor-netty-version>
         <redisson-version>3.16.7</redisson-version>
         <resilience4j-version>2.0.2</resilience4j-version>
@@ -486,7 +486,7 @@
         <spring-integration-version>5.5.16</spring-integration-version>
         <spring-ldap-version>2.4.1</spring-ldap-version>
         <spring-vault-core-version>2.3.2</spring-vault-core-version>
-        <spring-version>6.0.2</spring-version>
+        <spring-version>6.0.4</spring-version>
         <spring-rabbitmq-version>3.0.0</spring-rabbitmq-version>
         <spring-security-version>5.8.1</spring-security-version>
         <spring-ws-version>4.0.0</spring-ws-version>
