@@ -18,7 +18,6 @@ package org.apache.camel.component.aws2.ses;
 
 import java.util.Map;
 
-import org.apache.camel.component.aws2.ses.client.Ses2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
@@ -28,12 +27,10 @@ import software.amazon.awssdk.services.ses.SesClient;
 public class Ses2HealthCheck extends AbstractHealthCheck {
 
     private final Ses2Endpoint ses2Endpoint;
-    private final String clientId;
 
     public Ses2HealthCheck(Ses2Endpoint ses2Endpoint, String clientId) {
         super("camel", "aws2-ses-client-" + clientId);
         this.ses2Endpoint = ses2Endpoint;
-        this.clientId = clientId;
     }
 
     @Override
@@ -52,10 +49,9 @@ public class Ses2HealthCheck extends AbstractHealthCheck {
                 builder.down();
                 return;
             }
+            SesClient client = ses2Endpoint.getSESClient();
 
-            SesClient client = Ses2ClientFactory.getSesClient(configuration).getSesClient();
             client.getSendStatistics();
-
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
