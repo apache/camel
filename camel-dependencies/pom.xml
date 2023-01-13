@@ -290,9 +290,6 @@
         <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
         <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
         <jcache-bundle-version>1.1.1_1</jcache-bundle-version>
-        <jclouds-version>2.5.0</jclouds-version>
-        <!-- jclouds must use this guava version -->
-        <jclouds-google-guava-version>27.1-jre</jclouds-google-guava-version>
         <jcommander-version>1.72</jcommander-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>3.7.1</jedis-client-version>

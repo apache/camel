@@ -21,6 +21,7 @@ The following components has been removed:
 - camel-hbase
 - camel-iota
 - camel-ipfs
+- camel-jclouds
 - camel-microprofile-metrics
 - camel-opentracing
 - camel-rabbitmq

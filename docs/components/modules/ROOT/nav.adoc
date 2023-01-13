@@ -167,7 +167,6 @@
 ** xref:websocket-jsr356-component.adoc[Javax Websocket]
 ** xref:jbpm-component.adoc[JBPM]
 ** xref:jcache-component.adoc[JCache]
-** xref:jclouds-component.adoc[JClouds]
 ** xref:jcr-component.adoc[JCR]
 ** xref:jdbc-component.adoc[JDBC]
 ** xref:jetty-component.adoc[Jetty]

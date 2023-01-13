@@ -1394,48 +1394,6 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateConfigurationPropertyComponentJClouds() {
-        String text = "camel.component.jclouds.autowiredEnabled=true";
-        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores=#myStores";
-        result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores=foo";
-        result = catalog.validateConfigurationProperty(text);
-        assertFalse(result.isSuccess());
-        assertTrue(result.getInvalidArray().containsKey("camel.component.jclouds.blobStores"));
-
-        text = "camel.component.jclouds.blobStores[0]=foo";
-        result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores[1]=bar";
-        result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores[foo]=123";
-        result = catalog.validateConfigurationProperty(text);
-        assertFalse(result.isSuccess());
-        assertEquals("foo", result.getInvalidInteger().get("camel.component.jclouds.blobStores[foo]"));
-
-        text = "camel.component.jclouds.blobStores[0].beer=yes";
-        result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores[1].drink=no";
-        result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores[foo].beer=yes";
-        result = catalog.validateConfigurationProperty(text);
-        assertFalse(result.isSuccess());
-        assertEquals("foo", result.getInvalidInteger().get("camel.component.jclouds.blobStores[foo].beer"));
-    }
-
-    @Test
     public void testValidateConfigurationPropertyMain() {
         String text = "camel.main.allow-use-original-message=true";
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);

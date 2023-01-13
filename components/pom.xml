@@ -173,7 +173,6 @@
         <module>camel-jaxb</module>
         <module>camel-jbpm</module>
         <module>camel-jcache</module>
-        <module>camel-jclouds</module>
         <module>camel-tracing</module>
         <module>camel-jcr</module>
         <module>camel-jdbc</module>

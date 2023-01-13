@@ -2209,19 +2209,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.JcacheComponentBuilderFactory.jcache();
     }
     /**
-     * JClouds (camel-jclouds)
-     * Interact with jclouds compute and blobstore service.
-     * 
-     * Category: api,cloud,compute
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-jclouds
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.JcloudsComponentBuilderFactory.JcloudsComponentBuilder jclouds() {
-        return org.apache.camel.builder.component.dsl.JcloudsComponentBuilderFactory.jclouds();
-    }
-    /**
      * JCR (camel-jcr)
      * Read and write nodes to/from a JCR compliant content repository.
      * 

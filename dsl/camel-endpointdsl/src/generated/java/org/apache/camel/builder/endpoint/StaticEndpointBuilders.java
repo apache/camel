@@ -7463,59 +7463,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.JCacheEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * JClouds (camel-jclouds)
-     * Interact with jclouds compute and blobstore service.
-     * 
-     * Category: api,cloud,compute
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-jclouds
-     * 
-     * Syntax: <code>jclouds:command:providerId</code>
-     * 
-     * Path parameter: command (required)
-     * What command to execute such as blobstore or compute.
-     * There are 2 enums and the value can be one of: blobstore, compute
-     * 
-     * Path parameter: providerId (required)
-     * The name of the cloud provider that provides the target service (e.g.
-     * aws-s3 or aws_ec2).
-     * 
-     * @param path command:providerId
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.JcloudsEndpointBuilderFactory.JcloudsEndpointBuilder jclouds(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.JcloudsEndpointBuilderFactory.endpointBuilder("jclouds", path);
-    }
-    /**
-     * JClouds (camel-jclouds)
-     * Interact with jclouds compute and blobstore service.
-     * 
-     * Category: api,cloud,compute
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-jclouds
-     * 
-     * Syntax: <code>jclouds:command:providerId</code>
-     * 
-     * Path parameter: command (required)
-     * What command to execute such as blobstore or compute.
-     * There are 2 enums and the value can be one of: blobstore, compute
-     * 
-     * Path parameter: providerId (required)
-     * The name of the cloud provider that provides the target service (e.g.
-     * aws-s3 or aws_ec2).
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path command:providerId
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.JcloudsEndpointBuilderFactory.JcloudsEndpointBuilder jclouds(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.JcloudsEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * JCR (camel-jcr)
      * Read and write nodes to/from a JCR compliant content repository.
      * 

@@ -3618,28 +3618,6 @@
     "producerOnly": false,
     "lenientProperties": false
   },
-  "JcloudsComponentBuilderFactory": {
-    "kind": "component",
-    "name": "jclouds",
-    "title": "JClouds",
-    "description": "Interact with jclouds compute and blobstore service.",
-    "deprecated": false,
-    "firstVersion": "2.9.0",
-    "label": "api,cloud,compute",
-    "javaType": "org.apache.camel.component.jclouds.JcloudsComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-jclouds",
-    "version": "4.0.0-SNAPSHOT",
-    "scheme": "jclouds",
-    "extendsScheme": "",
-    "syntax": "jclouds:command:providerId",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "JcrComponentBuilderFactory": {
     "kind": "component",
     "name": "jcr",
