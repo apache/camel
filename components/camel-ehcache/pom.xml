@@ -50,6 +50,7 @@
             <groupId>org.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <version>${ehcache3-version}</version>
+            <classifier>jakarta</classifier>
             <exclusions>
                 <exclusion>
                     <groupId>org.glassfish.jaxb</groupId>
