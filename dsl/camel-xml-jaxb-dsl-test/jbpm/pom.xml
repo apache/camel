@@ -153,6 +153,12 @@
             <version>${jbpm-version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
+            <version>${jakarta-activation-version}</version>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
