@@ -3858,12 +3858,8 @@
             <dependency>
                 <groupId>com.sun.xml.messaging.saaj</groupId>
                 <artifactId>saaj-impl</artifactId>
-                <version>1.5.3</version>
+                <version>3.0.0</version>
                 <exclusions>
-                    <exclusion>
-                        <groupId>javax.xml.soap</groupId>
-                        <artifactId>javax.xml.soap-api</artifactId>
-                    </exclusion>
                     <exclusion>
                         <!--Get dependency from jaxb-runtime-->
                         <groupId>org.jvnet.staxex</groupId>
