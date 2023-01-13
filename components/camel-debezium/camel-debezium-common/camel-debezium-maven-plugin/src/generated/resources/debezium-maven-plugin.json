@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "debezium-maven-plugin",
     "title": "Debezium Maven Plugin",
-    "description": "Camel Debezium Maven plugin",
+    "description": "Camel Debezium Maven Plugin",
     "deprecated": false,
     "firstVersion": "3.0.0",
     "supportLevel": "Stable",

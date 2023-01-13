@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "salesforce-maven-plugin",
     "title": "Salesforce Maven Plugin",
-    "description": "Camel Salesforce Maven plugin",
+    "description": "Camel Salesforce Maven Plugin",
     "deprecated": false,
     "firstVersion": "2.12.0",
     "supportLevel": "Stable",

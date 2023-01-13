@@ -3,7 +3,7 @@
     "kind": "other",
     "name": "servicenow-maven-plugin",
     "title": "Servicenow Maven Plugin",
-    "description": "Camel ServiceNow Maven plugin",
+    "description": "Camel ServiceNow Maven Plugin",
     "deprecated": false,
     "firstVersion": "2.18.0",
     "supportLevel": "Stable",

@@ -30,8 +30,8 @@
     <groupId>org.apache.camel.maven</groupId>
     <artifactId>camel-salesforce-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>Camel :: Salesforce :: Maven plugin</name>
-    <description>Camel Salesforce Maven plugin</description>
+    <name>Camel :: Salesforce :: Maven Plugin</name>
+    <description>Camel Salesforce Maven Plugin</description>
 
     <properties>
         <salesforce.component.root>..</salesforce.component.root>

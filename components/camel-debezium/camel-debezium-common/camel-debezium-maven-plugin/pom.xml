@@ -30,8 +30,8 @@
     <groupId>org.apache.camel.maven</groupId>
     <artifactId>camel-debezium-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>Camel :: Debezium :: Maven plugin</name>
-    <description>Camel Debezium Maven plugin</description>
+    <name>Camel :: Debezium :: Maven Plugin</name>
+    <description>Camel Debezium Maven Plugin</description>
 
     <properties>
         <firstVersion>3.0.0</firstVersion>

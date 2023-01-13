@@ -30,8 +30,8 @@
     <groupId>org.apache.camel.maven</groupId>
     <artifactId>camel-servicenow-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>Camel :: ServiceNow :: Maven plugin</name>
-    <description>Camel ServiceNow Maven plugin</description>
+    <name>Camel :: ServiceNow :: Maven Plugin</name>
+    <description>Camel ServiceNow Maven Plugin</description>
 
     <properties>
         <servicenow.component.root>..</servicenow.component.root>
