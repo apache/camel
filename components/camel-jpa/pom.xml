@@ -103,17 +103,10 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
-            <groupId>org.apache.openjpa</groupId>
-            <artifactId>openjpa-persistence-jdbc</artifactId>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.geronimo.specs</groupId>
-                    <artifactId>geronimo-jpa_2.0_spec</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 
@@ -135,6 +128,7 @@
                                     <groupId>org.apache.openjpa</groupId>
                                     <artifactId>openjpa</artifactId>
                                     <version>${openjpa-version}</version>
+                                    <classifier>jakarta</classifier>
                                     <outputDirectory>${project.build.directory}</outputDirectory>
                                 </artifactItem>
                             </artifactItems>
@@ -147,7 +141,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>-javaagent:${project.basedir}/target/openjpa-${openjpa-version}.jar
+                    <argLine>-javaagent:${project.basedir}/target/openjpa-${openjpa-version}-jakarta.jar
                         ${camel.surefire.fork.vmargs}
                     </argLine>
                 </configuration>
@@ -218,6 +212,17 @@
                                 <groupId>org.apache.openjpa</groupId>
                                 <artifactId>openjpa</artifactId>
                                 <version>${openjpa-version}</version>
+                                <classifier>jakarta</classifier>
+                            </dependency>
+                            <dependency>
+                                <groupId>jakarta.transaction</groupId>
+                                <artifactId>jakarta.transaction-api</artifactId>
+                                <version>${jakarta-transaction-api-version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>jakarta.persistence</groupId>
+                                <artifactId>jakarta.persistence-api</artifactId>
+                                <version>${jakarta-persistence-api-version}</version>
                             </dependency>
                         </dependencies>
                     </plugin>
@@ -226,14 +231,9 @@
             <dependencies>
                 <dependency>
                     <groupId>org.apache.openjpa</groupId>
-                    <artifactId>openjpa-persistence-jdbc</artifactId>
-                    <scope>test</scope>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.apache.geronimo.specs</groupId>
-                            <artifactId>geronimo-jpa_2.0_spec</artifactId>
-                        </exclusion>
-                    </exclusions>
+                    <artifactId>openjpa</artifactId>
+                    <version>${openjpa-version}</version>
+                    <classifier>jakarta</classifier>
                 </dependency>
             </dependencies>
         </profile>
@@ -268,7 +268,8 @@
             <dependencies>
                 <dependency>
                     <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-entitymanager</artifactId>
+                    <artifactId>hibernate-core-jakarta</artifactId>
+                    <version>${hibernate-version}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
