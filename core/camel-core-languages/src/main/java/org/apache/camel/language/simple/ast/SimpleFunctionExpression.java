@@ -32,6 +32,7 @@ import org.apache.camel.support.builder.ExpressionBuilder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OgnlHelper;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.StringQuoteHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -543,6 +544,33 @@ public class SimpleFunctionExpression extends LiteralExpression {
             String exp = "${body}";
             int num = Integer.parseInt(values.trim());
             return SimpleExpressionBuilder.collateExpression(exp, num);
+        }
+
+        // join function
+        remainder = ifStartsWithReturnRemainder("join(", function);
+        if (remainder != null) {
+            String values = StringHelper.before(remainder, ")");
+            String separator = ",";
+            String prefix = null;
+            String exp = "${body}";
+            if (ObjectHelper.isNotEmpty(values)) {
+                String[] tokens = StringQuoteHelper.splitSafeQuote(values, ',', false);
+                if (tokens.length > 3) {
+                    throw new SimpleParserException(
+                            "Valid syntax: ${join(separator,prefix,expression)} was: " + function, token.getIndex());
+                }
+                if (tokens.length == 3) {
+                    separator = tokens[0];
+                    prefix = tokens[1];
+                    exp = tokens[2];
+                } else if (tokens.length == 2) {
+                    separator = tokens[0];
+                    prefix = tokens[1];
+                } else {
+                    separator = tokens[0];
+                }
+            }
+            return SimpleExpressionBuilder.joinExpression(exp, separator, prefix);
         }
 
         // messageHistory function
