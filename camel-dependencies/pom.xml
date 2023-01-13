@@ -408,7 +408,7 @@
         <nessus-hyperledger-aries-version>0.2.0</nessus-hyperledger-aries-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.86.Final</netty-version>
+        <netty-version>4.1.87.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.73</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
