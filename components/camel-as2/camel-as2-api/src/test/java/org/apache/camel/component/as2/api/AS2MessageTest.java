@@ -19,6 +19,7 @@ package org.apache.camel.component.as2.api;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -195,7 +196,7 @@ public class AS2MessageTest {
         ks.load(null, "test".toCharArray());
         ks.setKeyEntry("openas2a_alias", issueKP.getPrivate(), "test".toCharArray(), new X509Certificate[] { issueCert });
         ks.setKeyEntry("openas2b_alias", signingKP.getPrivate(), "test".toCharArray(), new X509Certificate[] { signingCert });
-        keystoreFile = File.createTempFile("camel-as2", "keystore-p12");
+        keystoreFile = Files.createTempFile("camel-as2", "keystore-p12").toFile();
         keystoreFile.deleteOnExit();
         ks.store(new FileOutputStream(keystoreFile), "test".toCharArray());
 
