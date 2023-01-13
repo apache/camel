@@ -46,6 +46,12 @@
             <artifactId>jakarta.json.bind-api</artifactId>
             <version>${jakarta-json-bind-api-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse</groupId>
+            <artifactId>yasson</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+
 
         <!-- testing -->
         <dependency>
