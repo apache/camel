@@ -65,7 +65,7 @@ public class HttpSetHeaderIdsTest extends BaseHttpTest {
             @Override
             public void configure() throws Exception {
                 from("direct:myids")
-                        .setHeader(Exchange.HTTP_QUERY, simple("${join(&,id=,${header.ids})}"))
+                        .setHeader(Exchange.HTTP_QUERY, simple("ids=${join(&,id=,${header.ids})}"))
                         .removeHeader("ids")
                         .to("http://localhost:" + localServer.getLocalPort() + "/myids");
             }
@@ -75,7 +75,7 @@ public class HttpSetHeaderIdsTest extends BaseHttpTest {
     @Test
     public void testIds() throws Exception {
         String o = fluentTemplate.to("direct:myids").withHeader("ids", List.of(1, 2, 3)).request(String.class);
-        Assertions.assertEquals("/myids?id=1&id=2&id=3", o);
+        Assertions.assertEquals("/myids?ids=id=1&id=2&id=3", o);
     }
 
 }
