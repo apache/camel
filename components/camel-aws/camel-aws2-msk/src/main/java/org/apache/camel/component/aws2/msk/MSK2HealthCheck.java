@@ -18,7 +18,6 @@ package org.apache.camel.component.aws2.msk;
 
 import java.util.Map;
 
-import org.apache.camel.component.aws2.msk.client.MSK2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
@@ -29,12 +28,10 @@ import software.amazon.awssdk.services.kafka.model.ListClustersRequest;
 public class MSK2HealthCheck extends AbstractHealthCheck {
 
     private final MSK2Endpoint msk2Endpoint;
-    private final String clientId;
 
     public MSK2HealthCheck(MSK2Endpoint msk2Endpoint, String clientId) {
         super("camel", "aws2-msk-client-" + clientId);
         this.msk2Endpoint = msk2Endpoint;
-        this.clientId = clientId;
     }
 
     @Override
@@ -54,9 +51,9 @@ public class MSK2HealthCheck extends AbstractHealthCheck {
                 return;
             }
 
-            KafkaClient client = MSK2ClientFactory.getKafkaClient(configuration).getKafkaClient();
-            client.listClusters(ListClustersRequest.builder().build());
+            KafkaClient client = msk2Endpoint.getMskClient();
 
+            client.listClusters(ListClustersRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
