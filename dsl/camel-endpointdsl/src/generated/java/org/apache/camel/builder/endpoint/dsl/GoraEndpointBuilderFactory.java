@@ -898,6 +898,7 @@ public interface GoraEndpointBuilderFactory {
          * @param path name
          * @return the dsl builder
          */
+        @Deprecated
         default GoraEndpointBuilder gora(String path) {
             return GoraEndpointBuilderFactory.endpointBuilder("gora", path);
         }
@@ -919,6 +920,7 @@ public interface GoraEndpointBuilderFactory {
          * @param path name
          * @return the dsl builder
          */
+        @Deprecated
         default GoraEndpointBuilder gora(String componentName, String path) {
             return GoraEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
@@ -960,6 +962,7 @@ public interface GoraEndpointBuilderFactory {
             return "goraOperation";
         }
     }
+    @Deprecated
     static GoraEndpointBuilder endpointBuilder(String componentName, String path) {
         class GoraEndpointBuilderImpl extends AbstractEndpointBuilder implements GoraEndpointBuilder, AdvancedGoraEndpointBuilder {
             public GoraEndpointBuilderImpl(String path) {

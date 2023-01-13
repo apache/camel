@@ -3283,6 +3283,45 @@ public interface NettyHttpEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the value for the blockWhenExhausted configuration attribute. It
+         * determines whether to block when the borrowObject() method is invoked
+         * when the pool is exhausted (the maximum number of active objects has
+         * been reached).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolBlockWhenExhausted the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyHttpEndpointProducerBuilder producerPoolBlockWhenExhausted(
+                boolean producerPoolBlockWhenExhausted) {
+            doSetProperty("producerPoolBlockWhenExhausted", producerPoolBlockWhenExhausted);
+            return this;
+        }
+        /**
+         * Sets the value for the blockWhenExhausted configuration attribute. It
+         * determines whether to block when the borrowObject() method is invoked
+         * when the pool is exhausted (the maximum number of active objects has
+         * been reached).
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolBlockWhenExhausted the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyHttpEndpointProducerBuilder producerPoolBlockWhenExhausted(
+                String producerPoolBlockWhenExhausted) {
+            doSetProperty("producerPoolBlockWhenExhausted", producerPoolBlockWhenExhausted);
+            return this;
+        }
+        /**
          * Whether producer pool is enabled or not. Important: If you turn this
          * off then a single shared connection is used for the producer, also if
          * you are doing request/reply. That means there is a potential issue
@@ -3401,6 +3440,44 @@ public interface NettyHttpEndpointBuilderFactory {
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxTotal(
                 String producerPoolMaxTotal) {
             doSetProperty("producerPoolMaxTotal", producerPoolMaxTotal);
+            return this;
+        }
+        /**
+         * Sets the maximum duration (value in millis) the borrowObject() method
+         * should block before throwing an exception when the pool is exhausted
+         * and producerPoolBlockWhenExhausted is true. When less than 0, the
+         * borrowObject() method may block indefinitely.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxWait the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxWait(
+                long producerPoolMaxWait) {
+            doSetProperty("producerPoolMaxWait", producerPoolMaxWait);
+            return this;
+        }
+        /**
+         * Sets the maximum duration (value in millis) the borrowObject() method
+         * should block before throwing an exception when the pool is exhausted
+         * and producerPoolBlockWhenExhausted is true. When less than 0, the
+         * borrowObject() method may block indefinitely.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxWait the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxWait(
+                String producerPoolMaxWait) {
+            doSetProperty("producerPoolMaxWait", producerPoolMaxWait);
             return this;
         }
         /**
