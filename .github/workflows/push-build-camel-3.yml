@@ -70,12 +70,13 @@ jobs:
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: true
-          branch: regen_bot
-          title: "Generated sources regen"
+          branch: regen_bot_3x
+          title: "Generated sources regen (Camel 3)"
           body: |
-            Regen bot :robot: found some uncommitted changes after running build on :camel: main.
+            Regen bot :robot: found some uncommitted changes after running build on :camel: `camel-3` branch.
             Please do not delete `regen_bot` branch after merge/rebase.
           labels: |
             regen
             automated pr
+            camel-3
           assignees: oscerd
