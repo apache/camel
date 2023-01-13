@@ -5596,6 +5596,7 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.GoraEndpointBuilderFactory.GoraEndpointBuilder gora(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.GoraEndpointBuilderFactory.endpointBuilder("gora", path);
@@ -5618,6 +5619,7 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.GoraEndpointBuilderFactory.GoraEndpointBuilder gora(
             String componentName,
             String path) {
