@@ -47,8 +47,8 @@
 
         <!-- attachments api -->
         <dependency>
-            <groupId>com.sun.activation</groupId>
-            <artifactId>jakarta.activation</artifactId>
+            <groupId>jakarta.activation</groupId>
+            <artifactId>jakarta.activation-api</artifactId>
             <version>${jakarta-activation-version}</version>
         </dependency>
 
