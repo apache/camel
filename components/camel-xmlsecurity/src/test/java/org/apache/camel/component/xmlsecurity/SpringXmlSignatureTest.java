@@ -17,24 +17,17 @@
 package org.apache.camel.component.xmlsecurity;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.security.Key;
 import java.security.KeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.cert.Certificate;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.xml.crypto.AlgorithmMethod;
 import javax.xml.crypto.KeySelector;
@@ -43,73 +36,41 @@ import javax.xml.crypto.KeySelectorResult;
 import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.XMLCryptoContext;
 import javax.xml.crypto.XMLStructure;
-import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.SignatureMethod;
-import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import javax.xml.crypto.dsig.spec.XPathFilterParameterSpec;
-import javax.xml.crypto.dsig.spec.XPathType;
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
-import org.apache.camel.spring.SpringCamelContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-
-import org.xml.sax.SAXException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
 import org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler;
 import org.apache.camel.component.xmlsecurity.api.XmlSignature2Message;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker;
-import org.apache.camel.component.xmlsecurity.api.XmlSignatureConstants;
-import org.apache.camel.component.xmlsecurity.api.XmlSignatureException;
-import org.apache.camel.component.xmlsecurity.api.XmlSignatureFormatException;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper;
-import org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper.XPathAndFilter;
-import org.apache.camel.component.xmlsecurity.api.XmlSignatureInvalidContentHashException;
-import org.apache.camel.component.xmlsecurity.api.XmlSignatureInvalidException;
-import org.apache.camel.component.xmlsecurity.api.XmlSignatureInvalidKeyException;
-import org.apache.camel.component.xmlsecurity.api.XmlSignatureInvalidValueException;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
-import org.apache.camel.component.xmlsecurity.processor.XmlSignatureConfiguration;
 import org.apache.camel.component.xmlsecurity.util.EnvelopingXmlSignatureChecker;
 import org.apache.camel.component.xmlsecurity.util.SameDocumentUriDereferencer;
 import org.apache.camel.component.xmlsecurity.util.TestKeystore;
 import org.apache.camel.component.xmlsecurity.util.TimestampProperty;
 import org.apache.camel.component.xmlsecurity.util.ValidationFailedHandlerIgnoreManifestFailures;
 import org.apache.camel.component.xmlsecurity.util.XmlSignature2Message2MessageWithTimestampProperty;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.support.SimpleRegistry;
-import org.apache.camel.support.processor.validation.SchemaValidationException;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class SpringXmlSignatureTest extends CamelTestSupport {
 
@@ -121,8 +82,8 @@ public class SpringXmlSignatureTest extends CamelTestSupport {
 
     static {
         payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                + (includeNewLine ? "\n" : "")
-                + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
+                  + (includeNewLine ? "\n" : "")
+                  + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
     }
 
     @Override
@@ -330,7 +291,7 @@ public class SpringXmlSignatureTest extends CamelTestSupport {
         XmlSignerEndpoint endpoint = (XmlSignerEndpoint) context()
                 .getEndpoint(
                         "xmlsecurity-sign:detached?keyAccessor=#accessorRsa&xpathsToIdAttributes=#xpathsToIdAttributes&"//
-                                + "schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&signatureId=&clearHeaders=false");
+                             + "schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&signatureId=&clearHeaders=false");
         return endpoint;
     }
 
