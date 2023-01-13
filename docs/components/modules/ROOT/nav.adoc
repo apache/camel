@@ -8,7 +8,6 @@
 ** xref:as2-component.adoc[AS2]
 ** xref:asterisk-component.adoc[Asterisk]
 ** xref:atlasmap-component.adoc[AtlasMap]
-** xref:atmos-component.adoc[Atmos]
 ** xref:atmosphere-websocket-component.adoc[Atmosphere Websocket]
 ** xref:atom-component.adoc[Atom]
 ** xref:avro-component.adoc[Avro RPC]

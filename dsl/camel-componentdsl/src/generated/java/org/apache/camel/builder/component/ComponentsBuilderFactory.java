@@ -110,19 +110,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.AtlasmapComponentBuilderFactory.atlasmap();
     }
     /**
-     * Atmos (camel-atmos)
-     * Integrate with EMC's ViPR object data services using the Atmos Client.
-     * 
-     * Category: cloud,file
-     * Since: 2.15
-     * Maven coordinates: org.apache.camel:camel-atmos
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.AtmosComponentBuilderFactory.AtmosComponentBuilder atmos() {
-        return org.apache.camel.builder.component.dsl.AtmosComponentBuilderFactory.atmos();
-    }
-    /**
      * Atmosphere Websocket (camel-atmosphere-websocket)
      * Expose WebSocket endpoints using the Atmosphere framework.
      * 

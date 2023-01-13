@@ -50,7 +50,6 @@ public final class SensitiveUtils {
                     "consumerkey",
                     "consumersecret",
                     "emailaddress",
-                    "fulltokenid",
                     "httpproxypassword",
                     "keypassword",
                     "keystore",
@@ -126,7 +125,6 @@ public final class SensitiveUtils {
                                                     + "|\\Qconsumerkey\\E"
                                                     + "|\\Qconsumersecret\\E"
                                                     + "|\\Qemailaddress\\E"
-                                                    + "|\\Qfulltokenid\\E"
                                                     + "|\\Qhttpproxypassword\\E"
                                                     + "|\\Qkeypassword\\E"
                                                     + "|\\Qkeystore\\E"
@@ -174,7 +172,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qverificationcode\\E"
                                                     + "|\\Qwebhookverifytoken\\E"
                                                     + "|\\Qzookeeperpassword\\E"
-    // SENSITIVE-PATTERN: END
+                                                    // SENSITIVE-PATTERN: END
     ;
 
     private SensitiveUtils() {

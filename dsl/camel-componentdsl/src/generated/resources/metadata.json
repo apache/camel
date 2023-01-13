@@ -111,28 +111,6 @@
     "producerOnly": true,
     "lenientProperties": false
   },
-  "AtmosComponentBuilderFactory": {
-    "kind": "component",
-    "name": "atmos",
-    "title": "Atmos",
-    "description": "Integrate with EMC's ViPR object data services using the Atmos Client.",
-    "deprecated": false,
-    "firstVersion": "2.15.0",
-    "label": "cloud,file",
-    "javaType": "org.apache.camel.component.atmos.AtmosComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-atmos",
-    "version": "4.0.0-SNAPSHOT",
-    "scheme": "atmos",
-    "extendsScheme": "",
-    "syntax": "atmos:name\/operation",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "AtmosphereWebsocketComponentBuilderFactory": {
     "kind": "component",
     "name": "atmosphere-websocket",

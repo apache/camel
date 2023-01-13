@@ -1965,6 +1965,14 @@ Evaluates an XQuery expressions against an XML payload.
     </xs:annotation>
   </xs:element>
     
+  <xs:element name="xstream" type="tns:xStreamDataFormat">
+    <xs:annotation>
+      <xs:documentation xml:lang="en"><![CDATA[
+Deprecated: Marshal and unmarshal POJOs to/from XML using XStream library.
+      ]]></xs:documentation>
+    </xs:annotation>
+  </xs:element>
+    
   <xs:element name="xtokenize" type="tns:xmlTokenizerExpression">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -8195,6 +8203,8 @@ it reaches the end when Camel is shut down. Default value: false
                         
             <xs:element ref="tns:xmlSecurity"/>
                         
+            <xs:element ref="tns:xstream"/>
+                        
             <xs:element ref="tns:pgp"/>
                         
             <xs:element ref="tns:yaml"/>
@@ -11210,6 +11220,122 @@ EncryptionConstants.MGF1_SHA1. Default value: MGF1_SHA1
             <xs:documentation xml:lang="en"><![CDATA[
 Whether to add the public key used to encrypt the session key as a KeyValue in
 the EncryptedKey structure or not. Default value: true
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+              
+      </xs:extension>
+          
+    </xs:complexContent>
+      
+  </xs:complexType>
+    
+  <xs:complexType name="xStreamDataFormat">
+        
+    <xs:complexContent>
+            
+      <xs:extension base="tns:dataFormat">
+                
+        <xs:sequence>
+                    
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="converters" type="tns:propertyDefinition">
+            <xs:annotation>
+              <xs:documentation xml:lang="en"><![CDATA[
+List of class names for using custom XStream converters. The classes must be of
+type com.thoughtworks.xstream.converters.Converter.
+              ]]></xs:documentation>
+            </xs:annotation>
+          </xs:element>
+                    
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="aliases" type="tns:propertyDefinition">
+            <xs:annotation>
+              <xs:documentation xml:lang="en"><![CDATA[
+Alias a Class to a shorter name to be used in XML elements.
+              ]]></xs:documentation>
+            </xs:annotation>
+          </xs:element>
+                    
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="omitFields" type="tns:propertyDefinition">
+            <xs:annotation>
+              <xs:documentation xml:lang="en"><![CDATA[
+Prevents a field from being serialized. To omit a field you must always provide
+the declaring type and not necessarily the type that is converted. Multiple
+values can be separated by comma.
+              ]]></xs:documentation>
+            </xs:annotation>
+          </xs:element>
+                    
+          <xs:element maxOccurs="unbounded" minOccurs="0" name="implicitCollections" type="tns:propertyDefinition">
+            <xs:annotation>
+              <xs:documentation xml:lang="en"><![CDATA[
+Adds a default implicit collection which is used for any unmapped XML tag.
+Multiple values can be separated by comma.
+              ]]></xs:documentation>
+            </xs:annotation>
+          </xs:element>
+                  
+        </xs:sequence>
+                
+        <xs:attribute name="permissions" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Adds permissions that controls which Java packages and classes XStream is
+allowed to use during unmarshal from xml/json to Java beans. A permission must
+be configured either here or globally using a JVM system property. The
+permission can be specified in a syntax where a plus sign is allow, and minus
+sign is deny. Wildcards is supported by using . as prefix. For example to allow
+com.foo and all subpackages then specify com.foo.. Multiple permissions can be
+configured separated by comma, such as com.foo.,-com.foo.bar.MySecretBean. The
+following default permission is always included: -,java.lang.,java.util. unless
+its overridden by specifying a JVM system property with they key
+org.apache.camel.xstream.permissions.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="encoding" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Sets the encoding to use.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="driver" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To use a custom XStream driver. The instance must be of type
+com.thoughtworks.xstream.io.HierarchicalStreamDriver.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="driverRef" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To refer to a custom XStream driver to lookup in the registry. The instance must
+be of type com.thoughtworks.xstream.io.HierarchicalStreamDriver.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="mode" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Mode for dealing with duplicate references The possible values are:
+NO_REFERENCES ID_REFERENCES XPATH_RELATIVE_REFERENCES XPATH_ABSOLUTE_REFERENCES
+SINGLE_NODE_XPATH_RELATIVE_REFERENCES SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+                
+        <xs:attribute name="contentTypeHeader" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+Whether the data format should set the Content-Type header with the type from
+the data format. For example application/xml for data formats marshalling to
+XML, or application/json for data formats marshalling to JSON. Default value:
+true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -16776,6 +16902,8 @@ Sets a reference to use for lookup the policy in the registry.
                         
             <xs:element ref="tns:xmlSecurity"/>
                         
+            <xs:element ref="tns:xstream"/>
+                        
             <xs:element ref="tns:pgp"/>
                         
             <xs:element ref="tns:yaml"/>
@@ -18042,6 +18170,8 @@ Set a reference to a custom Expression to use.
         <xs:element ref="tns:univocityTsv"/>
                 
         <xs:element ref="tns:xmlSecurity"/>
+                
+        <xs:element ref="tns:xstream"/>
                 
         <xs:element ref="tns:pgp"/>
                 
@@ -20164,6 +20294,8 @@ To configure a special tag for the operations within this rest definition.
             <xs:element ref="tns:univocityTsv"/>
                         
             <xs:element ref="tns:xmlSecurity"/>
+                        
+            <xs:element ref="tns:xstream"/>
                         
             <xs:element ref="tns:pgp"/>
                         
