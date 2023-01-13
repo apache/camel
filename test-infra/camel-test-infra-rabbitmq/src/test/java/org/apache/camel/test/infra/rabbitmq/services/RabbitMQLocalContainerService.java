@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.RabbitMQContainer;
 
 public class RabbitMQLocalContainerService implements RabbitMQService, ContainerService<RabbitMQContainer> {
-    public static final String RABBITMQ_CONTAINER_IMAGE = "rabbitmq:3.8-management";
+    public static final String RABBITMQ_CONTAINER_IMAGE = "rabbitmq:3.11-management";
     private static final Logger LOG = LoggerFactory.getLogger(RabbitMQLocalContainerService.class);
 
     private final RabbitMQContainer container;
