@@ -18,6 +18,7 @@ package org.apache.camel.component.flink;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 import org.apache.camel.BindToRegistry;
@@ -121,7 +122,7 @@ public class FlinkProducerTest extends CamelTestSupport {
 
     @Test
     public void shouldExecuteVoidCallback() throws IOException {
-        final File output = File.createTempFile("camel", "flink");
+        final File output = Files.createTempFile("camel", "flink").toFile();
         output.delete();
 
         template.sendBodyAndHeader(flinkDataSetUri, null, FlinkConstants.FLINK_DATASET_CALLBACK_HEADER,
