@@ -905,12 +905,10 @@ response context with the following code:
 
 == Attachment Support
 
-*POJO Mode:* Both SOAP with Attachment and MTOM are supported (see
-example in Payload Mode for enabling MTOM).  However, SOAP with
-Attachment is not tested.  Since attachments are marshalled and
-unmarshalled into POJOs, users typically do not need to deal with the
-attachment themself.  Attachments are propagated to Camel message's
-attachments if the MTOM is not enabled.  So, it is
+*POJO Mode:* MTOM are supported if is enabled(see
+example in Payload Mode for enabling MTOM).  Since attachments are 
+marshalled and unmarshalled into POJOs, the attachments should be 
+retrieved from Camel Message Body(As parameter list), and it isn't
 possible to retrieve attachments by Camel Message API
 
 [source,java]
