@@ -913,17 +913,16 @@ possible to retrieve attachments by Camel Message API
 
 [source,java]
 --------------------------------------------
-DataHandler Message.getAttachment(String id)
+DataHandler Exchange.getIn(AttachmentMessage.class).getAttachment(String id)
 --------------------------------------------
 
-*Payload Mode:* MTOM is supported by the component. Attachments can be
+*Payload Mode:* MTOM is supported by this Mode. Attachments can be
 retrieved by Camel Message APIs mentioned above. SOAP with Attachment
 (SwA) is supported and attachments can be retrieved. SwA is
 the default (same as setting the CXF endpoint property "mtom-enabled" to
 false). 
 
 To enable MTOM, set the CXF endpoint property "mtom-enabled" to _true_.
-(I believe you can only do it with Spring.)
 
 [source,xml]
 ----
@@ -957,45 +956,45 @@ Exchange exchange = context.createProducerTemplate().send("direct:testEndpoint",
         CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
             elements, null);
         exchange.getIn().setBody(body);
-        exchange.getIn().addAttachment(MtomTestHelper.REQ_PHOTO_CID,
+        exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_PHOTO_CID,
             new DataHandler(new ByteArrayDataSource(MtomTestHelper.REQ_PHOTO_DATA, "application/octet-stream")));
 
-        exchange.getIn().addAttachment(MtomTestHelper.REQ_IMAGE_CID,
+        exchange.getIn(AttachmentMessage.class).addAttachment(MtomTestHelper.REQ_IMAGE_CID,
             new DataHandler(new ByteArrayDataSource(MtomTestHelper.requestJpeg, "image/jpeg")));
 
     }
 
 });
 
-// process response
+// process response 
 
-CxfPayload<SoapHeader> out = exchange.getOut().getBody(CxfPayload.class);
-Assert.assertEquals(1, out.getBody().size());
+CxfPayload<SoapHeader> out = exchange.getMessage().getBody(CxfPayload.class);
+assertEquals(1, out.getBody().size());
 
-Map<String, String> ns = new HashMap<String, String>();
+Map<String, String> ns = new HashMap<>();
 ns.put("ns", MtomTestHelper.SERVICE_TYPES_NS);
 ns.put("xop", MtomTestHelper.XOP_NS);
 
 XPathUtils xu = new XPathUtils(ns);
 Element oute = new XmlConverter().toDOMElement(out.getBody().get(0));
-Element ele = (Element)xu.getValue("//ns:DetailResponse/ns:photo/xop:Include", oute,
-                                   XPathConstants.NODE);
+Element ele = (Element) xu.getValue("//ns:DetailResponse/ns:photo/xop:Include", oute,
+                XPathConstants.NODE);
 String photoId = ele.getAttribute("href").substring(4); // skip "cid:"
 
-ele = (Element)xu.getValue("//ns:DetailResponse/ns:image/xop:Include", oute,
-                                   XPathConstants.NODE);
+ele = (Element) xu.getValue("//ns:DetailResponse/ns:image/xop:Include", oute,
+                XPathConstants.NODE);
 String imageId = ele.getAttribute("href").substring(4); // skip "cid:"
 
-DataHandler dr = exchange.getOut().getAttachment(photoId);
-Assert.assertEquals("application/octet-stream", dr.getContentType());
-MtomTestHelper.assertEquals(MtomTestHelper.RESP_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
+DataHandler dr = exchange.getMessage(AttachmentMessage.class).getAttachment(decodingReference(photoId));
+assertEquals("application/octet-stream", dr.getContentType());
+assertArrayEquals(MtomTestHelper.RESP_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
 
-dr = exchange.getOut().getAttachment(imageId);
-Assert.assertEquals("image/jpeg", dr.getContentType());
+dr = exchange.getMessage(AttachmentMessage.class).getAttachment(decodingReference(imageId));
+assertEquals("image/jpeg", dr.getContentType());
 
 BufferedImage image = ImageIO.read(dr.getInputStream());
-Assert.assertEquals(560, image.getWidth());
-Assert.assertEquals(300, image.getHeight());
+assertEquals(560, image.getWidth());
+assertEquals(300, image.getHeight());
 ----
 
 You can also consume a Camel message received from a CXF endpoint in
@@ -1006,49 +1005,52 @@ The https://github.com/apache/camel/blob/e818e0103490a106fa1538219f91a732ddebc56
 ----
 public static class MyProcessor implements Processor {
 
-    @SuppressWarnings("unchecked")
-    public void process(Exchange exchange) throws Exception {
-        CxfPayload<SoapHeader> in = exchange.getIn().getBody(CxfPayload.class);
+        @Override
+        @SuppressWarnings("unchecked")
+        public void process(Exchange exchange) throws Exception {
+            CxfPayload<SoapHeader> in = exchange.getIn().getBody(CxfPayload.class);
 
-        // verify request
-        Assert.assertEquals(1, in.getBody().size());
+            // verify request
+            assertEquals(1, in.getBody().size());
 
-        Map<String, String> ns = new HashMap<String, String>();
-        ns.put("ns", MtomTestHelper.SERVICE_TYPES_NS);
-        ns.put("xop", MtomTestHelper.XOP_NS);
+            Map<String, String> ns = new HashMap<>();
+            ns.put("ns", MtomTestHelper.SERVICE_TYPES_NS);
+            ns.put("xop", MtomTestHelper.XOP_NS);
 
-        XPathUtils xu = new XPathUtils(ns);
-        Element body = new XmlConverter().toDOMElement(in.getBody().get(0));
-        Element ele = (Element)xu.getValue("//ns:Detail/ns:photo/xop:Include", body,
-                                           XPathConstants.NODE);
-        String photoId = ele.getAttribute("href").substring(4); // skip "cid:"
-        Assert.assertEquals(MtomTestHelper.REQ_PHOTO_CID, photoId);
+            XPathUtils xu = new XPathUtils(ns);
+            Element body = new XmlConverter().toDOMElement(in.getBody().get(0));
+            Element ele = (Element) xu.getValue("//ns:Detail/ns:photo/xop:Include", body,
+                    XPathConstants.NODE);
+            String photoId = ele.getAttribute("href").substring(4); // skip "cid:"
+            assertEquals(MtomTestHelper.REQ_PHOTO_CID, photoId);
 
-        ele = (Element)xu.getValue("//ns:Detail/ns:image/xop:Include", body,
-                                           XPathConstants.NODE);
-        String imageId = ele.getAttribute("href").substring(4); // skip "cid:"
-        Assert.assertEquals(MtomTestHelper.REQ_IMAGE_CID, imageId);
+            ele = (Element) xu.getValue("//ns:Detail/ns:image/xop:Include", body,
+                    XPathConstants.NODE);
+            String imageId = ele.getAttribute("href").substring(4); // skip "cid:"
+            assertEquals(MtomTestHelper.REQ_IMAGE_CID, imageId);
 
-        DataHandler dr = exchange.getIn().getAttachment(photoId);
-        Assert.assertEquals("application/octet-stream", dr.getContentType());
-        MtomTestHelper.assertEquals(MtomTestHelper.REQ_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
+            DataHandler dr = exchange.getIn(AttachmentMessage.class).getAttachment(photoId);
+            assertEquals("application/octet-stream", dr.getContentType());
+            assertArrayEquals(MtomTestHelper.REQ_PHOTO_DATA, IOUtils.readBytesFromStream(dr.getInputStream()));
 
-        dr = exchange.getIn().getAttachment(imageId);
-        Assert.assertEquals("image/jpeg", dr.getContentType());
-        MtomTestHelper.assertEquals(MtomTestHelper.requestJpeg, IOUtils.readBytesFromStream(dr.getInputStream()));
+            dr = exchange.getIn(AttachmentMessage.class).getAttachment(imageId);
+            assertEquals("image/jpeg", dr.getContentType());
+            assertArrayEquals(MtomTestHelper.requestJpeg, IOUtils.readBytesFromStream(dr.getInputStream()));
 
-        // create response
-        List<Source> elements = new ArrayList<Source>();
-        elements.add(new DOMSource(DOMUtils.readXml(new StringReader(MtomTestHelper.RESP_MESSAGE)).getDocumentElement()));
-        CxfPayload<SoapHeader> sbody = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
-            elements, null);
-        exchange.getOut().setBody(sbody);
-        exchange.getOut().addAttachment(MtomTestHelper.RESP_PHOTO_CID,
-            new DataHandler(new ByteArrayDataSource(MtomTestHelper.RESP_PHOTO_DATA, "application/octet-stream")));
+            // create response
+            List<Source> elements = new ArrayList<>();
+            elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.RESP_MESSAGE)).getDocumentElement()));
+            CxfPayload<SoapHeader> sbody = new CxfPayload<>(
+                    new ArrayList<SoapHeader>(),
+                    elements, null);
+            exchange.getMessage().setBody(sbody);
+            exchange.getMessage(AttachmentMessage.class).addAttachment(MtomTestHelper.RESP_PHOTO_CID,
+                    new DataHandler(new ByteArrayDataSource(MtomTestHelper.RESP_PHOTO_DATA, "application/octet-stream")));
 
-        exchange.getOut().addAttachment(MtomTestHelper.RESP_IMAGE_CID,
-            new DataHandler(new ByteArrayDataSource(MtomTestHelper.responseJpeg, "image/jpeg")));
+            exchange.getMessage(AttachmentMessage.class).addAttachment(MtomTestHelper.RESP_IMAGE_CID,
+                    new DataHandler(new ByteArrayDataSource(MtomTestHelper.responseJpeg, "image/jpeg")));
 
+        }
     }
 }
 ----
