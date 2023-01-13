@@ -271,12 +271,6 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     @Test
-    public void testParseXStreamDataFormat() throws Exception {
-        RouteDefinition route = assertOneRoute("routeWithXStreamDataFormat.xml");
-        assertFrom(route, "seda:a");
-    }
-
-    @Test
     public void testParseXMLSecurityDataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithXMLSecurityDataFormat.xml");
         assertFrom(route, "seda:a");
