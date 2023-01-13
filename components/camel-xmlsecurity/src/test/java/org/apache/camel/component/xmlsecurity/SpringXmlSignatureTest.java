@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.xmlsecurity;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
 import java.security.Key;
 import java.security.KeyException;
 import java.security.KeyPair;
@@ -76,9 +76,8 @@ public class SpringXmlSignatureTest extends CamelTestSupport {
 
     protected static String payload;
     private static boolean includeNewLine;
-    private KeyPair keyPair;
-
     private static KeyPair rsaPair;
+    private KeyPair keyPair;
 
     static {
         payload = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
