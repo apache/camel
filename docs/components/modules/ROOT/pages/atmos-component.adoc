@@ -1,1 +1,0 @@
-../../../../../components/camel-atmos/src/main/docs/atmos-component.adoc
