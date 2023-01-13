@@ -54,7 +54,7 @@ public class RestComponentVerifierExtensionTest extends ContextTestSupport {
                 = component.getExtension(RestComponentVerifierExtension.class).orElseThrow(() -> new IllegalStateException());
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("componentName", "rest-component");
+        parameters.put("producerComponentName", "rest-component");
         parameters.put("host", "http://localhost:1234");
         parameters.put("path", "verify");
         parameters.put("method", "get");
@@ -76,7 +76,7 @@ public class RestComponentVerifierExtensionTest extends ContextTestSupport {
                 = component.getExtension(RestComponentVerifierExtension.class).orElseThrow(() -> new IllegalStateException());
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("componentName", "rest-component");
+        parameters.put("producerComponentName", "rest-component");
         parameters.put("host", "http://localhost:" + 1234);
         parameters.put("path", "verify");
 
