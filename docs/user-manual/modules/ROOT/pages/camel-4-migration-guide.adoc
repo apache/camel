@@ -26,6 +26,7 @@ The following components has been removed:
 - camel-microprofile-metrics
 - camel-opentracing
 - camel-rabbitmq
+- camel-rest-swagger
 - camel-restdsl-swagger-plugin
 - camel-resteasy
 - camel-spark

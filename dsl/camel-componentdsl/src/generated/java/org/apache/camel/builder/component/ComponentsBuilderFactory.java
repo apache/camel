@@ -3462,21 +3462,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.RestOpenapiComponentBuilderFactory.restOpenapi();
     }
     /**
-     * REST Swagger (camel-rest-swagger)
-     * Configure REST producers based on a Swagger (OpenAPI) specification
-     * document delegating to a component implementing the RestProducerFactory
-     * interface.
-     * 
-     * Category: rest,swagger,http
-     * Since: 2.19
-     * Maven coordinates: org.apache.camel:camel-rest-swagger
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.RestSwaggerComponentBuilderFactory.RestSwaggerComponentBuilder restSwagger() {
-        return org.apache.camel.builder.component.dsl.RestSwaggerComponentBuilderFactory.restSwagger();
-    }
-    /**
      * Robot Framework (camel-robotframework)
      * Pass camel exchanges to acceptence test written in Robot DSL.
      * 

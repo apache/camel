@@ -264,7 +264,6 @@
 ** xref:rest-component.adoc[REST]
 ** xref:rest-api-component.adoc[REST API]
 ** xref:rest-openapi-component.adoc[REST OpenApi]
-** xref:rest-swagger-component.adoc[REST Swagger]
 ** xref:robotframework-component.adoc[Robot Framework]
 ** xref:rocketmq-component.adoc[RocketMQ]
 ** xref:rss-component.adoc[RSS]
