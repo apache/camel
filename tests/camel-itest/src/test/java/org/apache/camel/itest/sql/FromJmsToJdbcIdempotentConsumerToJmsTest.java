@@ -27,10 +27,12 @@ import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.ITestSupport;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -45,6 +47,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * JMS with JDBC idempotent consumer test.
  */
 public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSupport {
+
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     // this logger is used both by this class as well as FromJmsToJdbcIdempotentConsumerToJmsXaTest, so why not static
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -121,7 +126,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertNull(consumer.receiveBody("activemq2:queue:outbox", 3000));
 
         // the message should have been moved to the AMQ DLQ queue
-        assertEquals("A", consumer.receiveBody("activemq2:queue:ActiveMQ.DLQ", 3000));
+        assertEquals("A", consumer.receiveBody("activemq2:queue:DLQ", 3000));
     }
 
     @Test
@@ -147,7 +152,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         assertNull(consumer.receiveBody("activemq2:queue:outbox", 3000));
 
         // the message should have been moved to the AMQ DLQ queue
-        assertEquals("B", consumer.receiveBody("activemq2:queue:ActiveMQ.DLQ", 3000));
+        assertEquals("B", consumer.receiveBody("activemq2:queue:DLQ", 3000));
     }
 
     @Test

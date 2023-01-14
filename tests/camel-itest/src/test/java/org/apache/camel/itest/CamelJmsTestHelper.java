@@ -20,6 +20,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import jakarta.jms.ConnectionFactory;
 
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
+import org.messaginghub.pooled.jms.JmsPoolConnectionFactory;
+
 /**
  * A helper for unit testing with Apache ActiveMQ as embedded JMS broker.
  */
@@ -30,12 +33,24 @@ public final class CamelJmsTestHelper {
     private CamelJmsTestHelper() {
     }
 
-    public static ConnectionFactory createConnectionFactory() {
-        return createConnectionFactory(null);
+    public static ConnectionFactory createConnectionFactory(String brokerUrl) {
+        return createConnectionFactory(brokerUrl, null);
     }
 
-    public static ConnectionFactory createConnectionFactory(String options) {
-        throw new UnsupportedOperationException();
+    public static ConnectionFactory createConnectionFactory(String brokerUrl, String options) {
+        // using a unique broker name improves testing when running the entire test suite in the same JVM
+        int id = counter.incrementAndGet();
+        String url = brokerUrl + "?broker.persistent=false&broker.useJmx=false";
+        if (options != null) {
+            url = url + "&" + options;
+        }
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
+
+        // use a pooled connection factory
+        JmsPoolConnectionFactory pooled = new JmsPoolConnectionFactory();
+        pooled.setConnectionFactory(connectionFactory);
+        pooled.setMaxConnections(8);
+        return pooled;
     }
 
     @Deprecated

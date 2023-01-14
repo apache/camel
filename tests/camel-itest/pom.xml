@@ -249,6 +249,23 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-jakarta-server</artifactId>
+            <version>${activemq-artemis-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>artemis-jakarta-client</artifactId>
+            <version>${activemq-artemis-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.messaginghub</groupId>
+            <artifactId>pooled-jms</artifactId>
+            <version>${pooled-jms-version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-spring</artifactId>
             <exclusions>
@@ -321,6 +338,12 @@
             <groupId>org.jboss.narayana.jta</groupId>
             <artifactId>jdbc</artifactId>
             <version>${narayana-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.narayana.jta</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.jta</groupId>
@@ -329,12 +352,12 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.narayana.jta</groupId>
-            <artifactId>jta</artifactId>
+            <artifactId>narayana-jta-jakarta</artifactId>
             <version>${narayana-version}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss</groupId>
-            <artifactId>jboss-transaction-spi</artifactId>
+            <artifactId>jboss-transaction-spi-jakarta</artifactId>
             <version>${jboss-transaction-spi.version}</version>
         </dependency>
         <dependency>

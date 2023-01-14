@@ -80,7 +80,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
         MockEndpoint jetty = getMockEndpoint("mock:jetty");
         jetty.expectedMessageCount(1);
 
-        template.sendBody("activemq:queue:okay", "Hello World");
+        template.sendBody("jms:queue:okay", "Hello World");
 
         mock.assertIsSatisfied();
         jetty.assertIsSatisfied();

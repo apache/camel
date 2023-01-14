@@ -24,8 +24,8 @@
                 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
                 http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;create=false"/>
+    <bean id="jmsConnectionFactory" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="vm://itest-jms?broker.persistent=false&amp;create=false"/>
     </bean>
 
     <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
@@ -34,7 +34,7 @@
         <property name="concurrentConsumers" value="1"/>
     </bean>
 
-    <bean id="activemq" class="org.apache.camel.component.activemq.ActiveMQComponent">
+    <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
         <property name="configuration" ref="jmsConfig"/>
     </bean>
 

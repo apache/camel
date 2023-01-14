@@ -38,13 +38,13 @@ public class JmsPollingConsumerTest {
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
-    @Produce("activemq:JmsPollingConsumerTestStartConsumer")
+    @Produce("jms:JmsPollingConsumerTestStartConsumer")
     protected ProducerTemplate startConsumer;
 
     @Produce("direct:JmsPollingConsumerTestStartConsumer")
     protected ProducerTemplate startDirectConsumer;
 
-    @Produce("activemq:JmsPollingConsumerTestQueue")
+    @Produce("jms:JmsPollingConsumerTestQueue")
     protected ProducerTemplate queue;
 
     @EndpointInject("mock:JmsPollingConsumerTestResult")
@@ -95,7 +95,7 @@ public class JmsPollingConsumerTest {
             StringBuilder result = new StringBuilder();
 
             Exchange exchange;
-            while ((exchange = consumer.receive("activemq:JmsPollingConsumerTestQueue", 2000)) != null) {
+            while ((exchange = consumer.receive("jms:JmsPollingConsumerTestQueue", 2000)) != null) {
                 result.append(exchange.getIn().getBody(String.class));
             }
 

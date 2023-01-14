@@ -23,13 +23,13 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <!-- camel stuff below to send and listen to broker with a spring JMS transaction manager -->
-    <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
+    <bean id="poolConnectionFactory" class="org.messaginghub.pooled.jms.JmsPoolConnectionFactory" init-method="start" destroy-method="stop">
         <property name="maxConnections" value="8"/>
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
     </bean>
 
-    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;create=false"/>
+    <bean id="jmsConnectionFactory" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="vm://itest-jms?broker.persistent=false&amp;create=false"/>
     </bean>
 
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
@@ -43,7 +43,7 @@
         <property name="concurrentConsumers" value="1"/>
     </bean>
 
-    <bean id="activemq" class="org.apache.camel.component.activemq.ActiveMQComponent">
+    <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
         <property name="configuration" ref="jmsConfig"/>
     </bean>
 
@@ -61,7 +61,7 @@
         <consumerTemplate id="consumerTemplate"/>
 
         <route>
-            <from uri="activemq:JmsPollingConsumerTestStartConsumer"/>
+            <from uri="jms:JmsPollingConsumerTestStartConsumer"/>
             <delay>
                 <constant>1000</constant>
             </delay>

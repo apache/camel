@@ -36,7 +36,7 @@ public class JmsConsumerShutdownTest {
     @RegisterExtension
     public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
-    @Produce("activemq:start")
+    @Produce("jms:start")
     protected ProducerTemplate activemq;
 
     @Produce("seda:start")
@@ -62,7 +62,7 @@ public class JmsConsumerShutdownTest {
             }
         });
 
-        activemq.sendBody("activemq:start", "Hello");
+        activemq.sendBody("jms:start", "Hello");
 
         end.assertIsSatisfied();
     }
@@ -90,7 +90,7 @@ public class JmsConsumerShutdownTest {
     public static class MyRouteBuilder extends RouteBuilder {
         @Override
         public void configure() {
-            from("activemq:start")
+            from("jms:start")
                     .to("direct:dir")
                     .to("mock:end");
 
