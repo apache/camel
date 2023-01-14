@@ -4,7 +4,7 @@
     "name": "rest-swagger",
     "title": "REST Swagger",
     "description": "Configure REST producers based on a Swagger (OpenAPI) specification document delegating to a component implementing the RestProducerFactory interface.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.19.0",
     "label": "rest,swagger,http",
     "javaType": "org.apache.camel.component.rest.swagger.RestSwaggerComponent",

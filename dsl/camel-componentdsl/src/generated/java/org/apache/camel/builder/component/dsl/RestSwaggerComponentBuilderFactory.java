@@ -43,6 +43,7 @@ public interface RestSwaggerComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static RestSwaggerComponentBuilder restSwagger() {
         return new RestSwaggerComponentBuilderImpl();
     }
