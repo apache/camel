@@ -23,9 +23,11 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.ITestSupport;
+import org.apache.camel.itest.utils.extensions.JmsServiceExtension;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -38,6 +40,9 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class Jms2RequiresNewTest {
+
+    @RegisterExtension
+    public static JmsServiceExtension jmsServiceExtension = JmsServiceExtension.createExtension();
 
     private static final int PORT3 = ITestSupport.getPort3();
 
@@ -67,7 +72,7 @@ public class Jms2RequiresNewTest {
                 from("direct:start").transacted("PROPAGATION_REQUIRES_NEW").to("activemq:queue:start");
                 from("activemq:queue:result1").transacted("PROPAGATION_REQUIRES_NEW").to("mock:result1");
                 from("activemq:queue:result2").transacted("PROPAGATION_REQUIRES_NEW").to("mock:result2");
-                from("activemq:queue:ActiveMQ.DLQ").transacted("PROPAGATION_REQUIRES_NEW").to("mock:dlq");
+                from("activemq:queue:DLQ").transacted("PROPAGATION_REQUIRES_NEW").to("mock:dlq");
 
                 from("activemq:queue:start")
                         .transacted("PROPAGATION_REQUIRES_NEW")

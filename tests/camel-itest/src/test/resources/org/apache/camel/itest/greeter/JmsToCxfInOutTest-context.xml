@@ -49,11 +49,10 @@
     </cxf:cxfEndpoint>
     
 
-    <bean id="jms" class="org.apache.camel.component.activemq.ActiveMQComponent">
+    <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
       <property name="connectionFactory">
-        <bean class="org.apache.activemq.spring.ActiveMQConnectionFactory">
-          <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;create=false"/>
-          <property name="trustAllPackages" value="true"/>
+        <bean class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+            <property name="brokerURL" value="vm://itest-jms"/>
         </bean>
       </property>
     </bean>

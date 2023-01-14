@@ -25,13 +25,13 @@
 
   <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent"/>
 
-  <bean id="poolConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
+  <bean id="poolConnectionFactory" class="org.messaginghub.pooled.jms.JmsPoolConnectionFactory" init-method="start" destroy-method="stop">
     <property name="maxConnections" value="8"/>
     <property name="connectionFactory" ref="jmsConnectionFactory"/>
   </bean>
 
-  <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-    <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;create=false"/>
+  <bean id="jmsConnectionFactory" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+    <property name="brokerURL" value="vm://itest-jms?broker.persistent=false&amp;create=false"/>
   </bean>
 
   <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
@@ -44,7 +44,7 @@
     <property name="propagationBehaviorName" value="PROPAGATION_REQUIRES_NEW"/>
   </bean>
 
-  <bean id="activemq" class="org.apache.camel.component.activemq.ActiveMQComponent">
+  <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
     <property name="connectionFactory" ref="poolConnectionFactory"/>
     <property name="transacted" value="true"/>
     <property name="transactionManager" ref="jmsTransactionManager"/>
@@ -64,14 +64,14 @@
     </route>
 
     <route errorHandlerRef="txEH">
-      <from uri="activemq:queue:okay"/>
+      <from uri="jms:queue:okay"/>
       <transacted ref="transactionPolicy"/>
-      <to uri="activemq:queue:not-okay"/>
+      <to uri="jms:queue:not-okay"/>
       <process ref="errorProducer"/>
     </route>
 
     <route errorHandlerRef="txEH">
-      <from uri="activemq:queue:not-okay"/>
+      <from uri="jms:queue:not-okay"/>
       <to uri="mock:not-okay"/>
     </route>
 
