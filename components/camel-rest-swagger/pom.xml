@@ -29,7 +29,7 @@
 
     <artifactId>camel-rest-swagger</artifactId>
 
-    <name>Camel :: REST Swagger</name>
+    <name>Camel :: REST Swagger (deprecated)</name>
     <description>Camel REST support using Swagger</description>
 
     <properties>
