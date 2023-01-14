@@ -21,12 +21,10 @@ import java.util.Map;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sqs.SqsClient;
-import software.amazon.awssdk.services.sqs.SqsClientBuilder;
+import software.amazon.awssdk.services.sqs.model.ListQueuesRequest;
 
 public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
 
@@ -55,20 +53,10 @@ public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
                     return;
                 }
             }
-            SqsClient client;
-            if (!configuration.isUseDefaultCredentialsProvider()) {
-                AwsBasicCredentials cred
-                        = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
-                SqsClientBuilder clientBuilder = SqsClient.builder();
-                client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
-                        .region(Region.of(configuration.getRegion())).build();
-            } else if (ObjectHelper.isNotEmpty(configuration.getAmazonSQSClient())) {
-                client = configuration.getAmazonSQSClient();
-            } else {
-                SqsClientBuilder clientBuilder = SqsClient.builder();
-                client = clientBuilder.region(Region.of(configuration.getRegion())).build();
-            }
-            client.listQueues();
+
+            SqsClient client = sqs2Consumer.getClient();
+
+            client.listQueues(ListQueuesRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
