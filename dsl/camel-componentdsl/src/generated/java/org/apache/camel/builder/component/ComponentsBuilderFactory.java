@@ -3611,6 +3611,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.RestSwaggerComponentBuilderFactory.RestSwaggerComponentBuilder restSwagger() {
         return org.apache.camel.builder.component.dsl.RestSwaggerComponentBuilderFactory.restSwagger();
     }
