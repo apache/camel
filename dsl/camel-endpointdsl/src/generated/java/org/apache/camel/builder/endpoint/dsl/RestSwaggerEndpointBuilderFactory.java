@@ -294,6 +294,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * @param path specificationUri#operationId
          * @return the dsl builder
          */
+        @Deprecated
         default RestSwaggerEndpointBuilder restSwagger(String path) {
             return RestSwaggerEndpointBuilderFactory.endpointBuilder("rest-swagger", path);
         }
@@ -334,12 +335,14 @@ public interface RestSwaggerEndpointBuilderFactory {
          * @param path specificationUri#operationId
          * @return the dsl builder
          */
+        @Deprecated
         default RestSwaggerEndpointBuilder restSwagger(
                 String componentName,
                 String path) {
             return RestSwaggerEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static RestSwaggerEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
