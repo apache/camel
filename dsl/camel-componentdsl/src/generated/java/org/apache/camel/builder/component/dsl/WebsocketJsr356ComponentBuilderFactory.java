@@ -40,6 +40,7 @@ public interface WebsocketJsr356ComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static WebsocketJsr356ComponentBuilder websocketJsr356() {
         return new WebsocketJsr356ComponentBuilderImpl();
     }

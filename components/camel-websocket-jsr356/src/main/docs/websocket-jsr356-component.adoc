@@ -1,10 +1,11 @@
-= Javax Websocket Component
+= Javax Websocket Component (deprecated)
 :doctitle: Javax Websocket
 :shortname: websocket-jsr356
 :artifactid: camel-websocket-jsr356
 :description: Expose websocket endpoints using JSR356.
 :since: 2.23
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :camel-spring-boot-name: websocket-jsr356
