@@ -57,6 +57,7 @@
         <!-- Note that activemq dependency is only used for testing! -->
         <activemq-version>5.17.3</activemq-version>
         <activemq-artemis-version>2.27.1</activemq-artemis-version>
+        <angus-mail-version>1.1.0</angus-mail-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
         <apache-any23-version>2.7</apache-any23-version>
         <apache-drill-version>1.19.0</apache-drill-version>
