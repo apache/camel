@@ -31,6 +31,7 @@ The following components has been removed:
 - camel-resteasy
 - camel-spark
 - camel-swagger-java
+- camel-websocket-jsr356
 - camel-xstream
 - camel-zikin
 

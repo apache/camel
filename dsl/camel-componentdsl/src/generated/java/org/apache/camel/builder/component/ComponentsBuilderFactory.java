@@ -4269,19 +4269,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.WebhookComponentBuilderFactory.webhook();
     }
     /**
-     * Javax Websocket (camel-websocket-jsr356)
-     * Expose websocket endpoints using JSR356.
-     * 
-     * Category: http
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-websocket-jsr356
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.WebsocketJsr356ComponentBuilderFactory.WebsocketJsr356ComponentBuilder websocketJsr356() {
-        return org.apache.camel.builder.component.dsl.WebsocketJsr356ComponentBuilderFactory.websocketJsr356();
-    }
-    /**
      * Weka (camel-weka)
      * Perform machine learning tasks using Weka.
      * 

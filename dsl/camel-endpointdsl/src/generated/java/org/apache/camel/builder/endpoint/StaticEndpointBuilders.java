@@ -14759,53 +14759,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.WebhookEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Javax Websocket (camel-websocket-jsr356)
-     * Expose websocket endpoints using JSR356.
-     * 
-     * Category: http
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-websocket-jsr356
-     * 
-     * Syntax: <code>websocket-jsr356:uri</code>
-     * 
-     * Path parameter: uri
-     * If a schemeless URI path is provided, a ServerEndpoint is deployed under
-     * that path. Else if the URI is prefixed with the 'ws://' scheme, then a
-     * connection is established to the corresponding server
-     * 
-     * @param path uri
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory.JSR356WebSocketEndpointBuilder websocketJsr356(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory.endpointBuilder("websocket-jsr356", path);
-    }
-    /**
-     * Javax Websocket (camel-websocket-jsr356)
-     * Expose websocket endpoints using JSR356.
-     * 
-     * Category: http
-     * Since: 2.23
-     * Maven coordinates: org.apache.camel:camel-websocket-jsr356
-     * 
-     * Syntax: <code>websocket-jsr356:uri</code>
-     * 
-     * Path parameter: uri
-     * If a schemeless URI path is provided, a ServerEndpoint is deployed under
-     * that path. Else if the URI is prefixed with the 'ws://' scheme, then a
-     * connection is established to the corresponding server
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path uri
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory.JSR356WebSocketEndpointBuilder websocketJsr356(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Weka (camel-weka)
      * Perform machine learning tasks using Weka.
      * 

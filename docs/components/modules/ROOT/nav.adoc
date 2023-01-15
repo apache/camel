@@ -163,7 +163,6 @@
 ** xref:influxdb2-component.adoc[InfluxDB2]
 ** xref:irc-component.adoc[IRC]
 ** xref:ironmq-component.adoc[IronMQ]
-** xref:websocket-jsr356-component.adoc[Javax Websocket]
 ** xref:jbpm-component.adoc[JBPM]
 ** xref:jcache-component.adoc[JCache]
 ** xref:jcr-component.adoc[JCR]

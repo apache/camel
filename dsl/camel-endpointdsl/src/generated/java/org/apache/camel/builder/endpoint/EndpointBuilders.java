@@ -169,7 +169,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.JGroupsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.JGroupsRaftEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.JMXEndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.JcrEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.JdbcEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.JettyHttp11EndpointBuilderFactory,
