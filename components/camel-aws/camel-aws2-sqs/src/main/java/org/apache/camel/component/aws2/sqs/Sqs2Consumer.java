@@ -39,6 +39,7 @@ import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.support.DefaultScheduledPollConsumerScheduler;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
@@ -209,10 +210,12 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
 
             // add on completion to handle after work when the exchange is done
             exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+                @Override
                 public void onComplete(Exchange exchange) {
                     processCommit(exchange);
                 }
 
+                @Override
                 public void onFailure(Exchange exchange) {
                     processRollback(exchange);
                 }
@@ -316,7 +319,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         // Need to apply the SqsHeaderFilterStrategy this time
         HeaderFilterStrategy headerFilterStrategy = getEndpoint().getHeaderFilterStrategy();
         // add all sqs message attributes as camel message headers so that
-        // knowledge of the Sqs class MessageAttributeValue will not leak to the client
+        // knowledge of the Sqs class MessageAttributeValue will not leak to the
+        // client
         for (Map.Entry<String, MessageAttributeValue> entry : msg.messageAttributes().entrySet()) {
             String header = entry.getKey();
             Object value = Sqs2MessageHelper.fromMessageAttributeValue(entry.getValue());
@@ -340,7 +344,8 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         if (newScheduler && scheduler instanceof DefaultScheduledPollConsumerScheduler) {
             DefaultScheduledPollConsumerScheduler ds = (DefaultScheduledPollConsumerScheduler) scheduler;
             ds.setConcurrentConsumers(getConfiguration().getConcurrentConsumers());
-            // if using concurrent consumers then resize pool to be at least same size
+            // if using concurrent consumers then resize pool to be at least
+            // same size
             int ps = Math.max(ds.getPoolSize(), getConfiguration().getConcurrentConsumers());
             ds.setPoolSize(ps);
         }
@@ -350,16 +355,26 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
     protected void doStart() throws Exception {
         // start scheduler first
         if (getConfiguration().isExtendMessageVisibility() && scheduledExecutor == null) {
-            this.scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager()
-                    .newSingleThreadScheduledExecutor(this, "SqsTimeoutExtender");
+            ThreadPoolProfile profile = new ThreadPoolProfile("SqsTimeoutExtender");
+            profile.setPoolSize(1);
+            profile.setAllowCoreThreadTimeOut(false);
+            // the max queue is set to be unbound as there is no way to register
+            // the required size. If using the Thread EIP, then the max queue
+            // size is equal to maxQueueSize of the consumer thread EIP+max
+            // thread count+consumer-thread.
+            // The consumer would block when this limit was reached. It is safe
+            // to set this queue to unbound as it will be limited by the
+            // consumer.
+            profile.setMaxQueueSize(-1);
+
+            this.scheduledExecutor = getEndpoint().getCamelContext().getExecutorServiceManager().newScheduledThreadPool(this,
+                    "SqsTimeoutExtender", profile);
         }
 
         super.doStart();
 
         // health-check is optional so discover and resolve
-        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
-                getEndpoint().getCamelContext(),
-                "components",
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getEndpoint().getCamelContext(), "components",
                 WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
@@ -415,8 +430,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
         private void logException(Exception e) {
             LOG.warn("Extending visibility window failed for exchange {}"
                      + ". Will not attempt to extend visibility further. This exception will be ignored.",
-                    exchange,
-                    e);
+                    exchange, e);
         }
     }
 
