@@ -400,6 +400,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * @param path uri
          * @return the dsl builder
          */
+        @Deprecated
         default JSR356WebSocketEndpointBuilder websocketJsr356(String path) {
             return JSR356WebSocketEndpointBuilderFactory.endpointBuilder("websocket-jsr356", path);
         }
@@ -423,6 +424,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * @param path uri
          * @return the dsl builder
          */
+        @Deprecated
         default JSR356WebSocketEndpointBuilder websocketJsr356(
                 String componentName,
                 String path) {
@@ -467,6 +469,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
             return "jsr356.producer.session.incoming.use";
         }
     }
+    @Deprecated
     static JSR356WebSocketEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
