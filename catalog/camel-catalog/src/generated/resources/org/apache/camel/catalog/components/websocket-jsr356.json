@@ -4,7 +4,7 @@
     "name": "websocket-jsr356",
     "title": "Javax Websocket",
     "description": "Expose websocket endpoints using JSR356.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "2.23.0",
     "label": "http",
     "javaType": "org.apache.camel.websocket.jsr356.JSR356WebSocketComponent",

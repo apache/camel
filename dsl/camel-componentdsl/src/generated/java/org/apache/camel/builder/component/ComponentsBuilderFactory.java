@@ -4502,6 +4502,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.WebsocketJsr356ComponentBuilderFactory.WebsocketJsr356ComponentBuilder websocketJsr356() {
         return org.apache.camel.builder.component.dsl.WebsocketJsr356ComponentBuilderFactory.websocketJsr356();
     }
