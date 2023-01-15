@@ -12550,6 +12550,7 @@ public class StaticEndpointBuilders {
      * @param path specificationUri#operationId
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.RestSwaggerEndpointBuilderFactory.RestSwaggerEndpointBuilder restSwagger(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.RestSwaggerEndpointBuilderFactory.endpointBuilder("rest-swagger", path);
@@ -12591,6 +12592,7 @@ public class StaticEndpointBuilders {
      * @param path specificationUri#operationId
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.RestSwaggerEndpointBuilderFactory.RestSwaggerEndpointBuilder restSwagger(
             String componentName,
             String path) {
