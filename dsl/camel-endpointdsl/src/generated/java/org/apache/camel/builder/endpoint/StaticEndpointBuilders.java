@@ -15602,6 +15602,7 @@ public class StaticEndpointBuilders {
      * @param path uri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory.JSR356WebSocketEndpointBuilder websocketJsr356(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory.endpointBuilder("websocket-jsr356", path);
@@ -15626,6 +15627,7 @@ public class StaticEndpointBuilders {
      * @param path uri
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory.JSR356WebSocketEndpointBuilder websocketJsr356(
             String componentName,
             String path) {
