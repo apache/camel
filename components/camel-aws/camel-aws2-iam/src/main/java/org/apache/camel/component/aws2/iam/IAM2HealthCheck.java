@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.aws2.iam.client;
+package org.apache.camel.component.aws2.iam;
 
 import java.util.Map;
 
-import org.apache.camel.component.aws2.iam.IAM2Configuration;
-import org.apache.camel.component.aws2.iam.IAM2Endpoint;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.iam.IamClient;
+import software.amazon.awssdk.services.iam.model.ListAccessKeysRequest;
 
 public class IAM2HealthCheck extends AbstractHealthCheck {
     private final IAM2Endpoint endpoint;
@@ -52,8 +51,9 @@ public class IAM2HealthCheck extends AbstractHealthCheck {
                 return;
             }
 
-            IamClient client = IAM2ClientFactory.getIamClient(configuration).getIamClient();
-            client.listAccessKeys();
+            IamClient client = endpoint.getIamClient();
+
+            client.listAccessKeys(ListAccessKeysRequest.builder().maxItems(1).build());
         } catch (SdkClientException e) {
             builder.message(e.getMessage());
             builder.error(e);

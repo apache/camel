@@ -22,7 +22,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.iam.client.IAM2ClientFactory;
-import org.apache.camel.component.aws2.iam.client.IAM2HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.spi.UriEndpoint;
