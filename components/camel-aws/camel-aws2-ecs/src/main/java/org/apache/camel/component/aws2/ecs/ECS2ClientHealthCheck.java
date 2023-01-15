@@ -19,8 +19,6 @@ package org.apache.camel.component.aws2.ecs;
 
 import java.util.Map;
 
-import org.apache.camel.component.aws2.ecs.client.ECS2ClientFactory;
-import org.apache.camel.component.aws2.ecs.client.ECS2InternalClient;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -55,8 +53,8 @@ public class ECS2ClientHealthCheck extends AbstractHealthCheck {
             }
         }
         try {
-            ECS2InternalClient ecs2Client = ECS2ClientFactory.getEcsClient(configuration);
-            ecs2Client.getEcsClient().listClusters(ListClustersRequest.builder().build());
+            EcsClient ecs2Client = ecs2Endpoint.getEcsClient();
+            ecs2Client.listClusters(ListClustersRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);
