@@ -82,6 +82,9 @@ public interface RoutesLoader extends CamelContextAware {
         for (RoutesBuilder builder : builders) {
             getCamelContext().addRoutes(builder);
         }
+        for (RoutesBuilder builder : builders) {
+            getCamelContext().addTemplatedRoutes(builder);
+        }
     }
 
     /**
