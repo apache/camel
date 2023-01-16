@@ -30,9 +30,10 @@ http://cxf.apache.org/transports/jms http://cxf.apache.org/schemas/configuration
 
 <bean id="logginOutInterceptor" class="org.apache.cxf.ext.logging.LoggingOutInterceptor"/>
 <bean id="logginInInterceptor" class="org.apache.cxf.ext.logging.LoggingInInterceptor"/>
+<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
 
 <cxf:cxfEndpoint id="jmsEndpoint"
-address="jms:jndi:dynamicQueues/test.cxf.jmstransport.queue?jndiInitialContextFactory=org.apache.activemq.jndi.ActiveMQInitialContextFactory&amp;jndiConnectionFactoryName=ConnectionFactory&amp;jndiURL=vm://localhost"
+address="jms:jndi:dynamicQueues/test.cxf.jmstransport.queue?jndiInitialContextFactory=org.apache.activemq.artemis.jndi.ActiveMQInitialContextFactory&amp;jndiConnectionFactoryName=ConnectionFactory&amp;jndiURL=${CxfEndpointJMSConsumerTest.serviceAddress}"
   serviceClass="org.apache.hello_world_soap_http.Greeter"
   endpointName="s:SoapPort"
   serviceName="s:SOAPService"
