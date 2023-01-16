@@ -3194,19 +3194,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.OpenstackSwiftComponentBuilderFactory.openstackSwift();
     }
     /**
-     * OptaPlanner (camel-optaplanner)
-     * Solve planning problems with OptaPlanner.
-     * 
-     * Category: engine,planning
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-optaplanner
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.OptaplannerComponentBuilderFactory.OptaplannerComponentBuilder optaplanner() {
-        return org.apache.camel.builder.component.dsl.OptaplannerComponentBuilderFactory.optaplanner();
-    }
-    /**
      * Paho (camel-paho)
      * Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
      * 

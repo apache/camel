@@ -11019,57 +11019,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SwiftEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * OptaPlanner (camel-optaplanner)
-     * Solve planning problems with OptaPlanner.
-     * 
-     * Category: engine,planning
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-optaplanner
-     * 
-     * Syntax: <code>optaplanner:configFile</code>
-     * 
-     * Path parameter: configFile (required)
-     * Specifies the location to the solver file. If useSolverManager=FALSE,
-     * Camel uses this file and create the Solver. If useSolverManager=TRUE and
-     * SolverManager is set in the header {OptaPlannerConstants.SOLVER_MANAGER}
-     * : this file is ignored by Camel usage of SolverManager. SolverManager can
-     * be injected by DI in Quarkus or Spring.
-     * 
-     * @param path configFile
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.OptaPlannerEndpointBuilder optaplanner(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.endpointBuilder("optaplanner", path);
-    }
-    /**
-     * OptaPlanner (camel-optaplanner)
-     * Solve planning problems with OptaPlanner.
-     * 
-     * Category: engine,planning
-     * Since: 2.13
-     * Maven coordinates: org.apache.camel:camel-optaplanner
-     * 
-     * Syntax: <code>optaplanner:configFile</code>
-     * 
-     * Path parameter: configFile (required)
-     * Specifies the location to the solver file. If useSolverManager=FALSE,
-     * Camel uses this file and create the Solver. If useSolverManager=TRUE and
-     * SolverManager is set in the header {OptaPlannerConstants.SOLVER_MANAGER}
-     * : this file is ignored by Camel usage of SolverManager. SolverManager can
-     * be injected by DI in Quarkus or Spring.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path configFile
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.OptaPlannerEndpointBuilder optaplanner(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.OptaPlannerEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Paho (camel-paho)
      * Communicate with MQTT message brokers using Eclipse Paho MQTT Client.
      * 
