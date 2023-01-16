@@ -26,8 +26,8 @@ xref:pojo-producing.adoc[POJO Producing].
 that method is selected.
 * if the bean can be converted to a xref:processor.adoc[Processor] using
 the xref:type-converter.adoc[Type Converter] mechanism, then this is
-used to process the message. The xref:components::activemq-component.adoc[ActiveMQ] component
-uses this mechanism to allow any JMS MessageListener to be invoked
+used to process the message. The ActiveMQ (not yet compatible with Camel 4) component
+used this mechanism (in Camel 3) to allow any JMS MessageListener to be invoked
 directly by Camel without having to write any integration glue code. You
 can use the same mechanism to integrate Camel into any other
 messaging/remoting frameworks.

@@ -64,12 +64,7 @@ ComponentsBuilderFactory.jms()
          .register(context, "test-jms");
 ----
 
-The above works with any JMS provider. If we know we are using
-xref:components::activemq-component.adoc[ActiveMQ] we can use an even simpler form using the
-http://activemq.apache.org/maven/5.5.0/activemq-camel/apidocs/org/apache/activemq/camel/component/ActiveMQComponent.html#activeMQComponent%28java.lang.String%29[`activeMQComponent()`
-method] while specifying the
-http://activemq.apache.org/configuring-transports.html[brokerURL] used
-to connect to ActiveMQ
+The above works with any JMS provider. 
 
 In normal use, an external system would be firing messages or events
 directly into Camel through one of its xref:components::index.adoc[Components]
