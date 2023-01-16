@@ -145,9 +145,9 @@ import org.eclipse.aether.internal.impl.filter.DefaultRemoteRepositoryFilterMana
 import org.eclipse.aether.internal.impl.slf4j.Slf4jLoggerFactory;
 import org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory;
 import org.eclipse.aether.internal.impl.synccontext.named.NameMapper;
+import org.eclipse.aether.internal.impl.synccontext.named.NameMappers;
 import org.eclipse.aether.internal.impl.synccontext.named.NamedLockFactoryAdapterFactory;
 import org.eclipse.aether.internal.impl.synccontext.named.NamedLockFactoryAdapterFactoryImpl;
-import org.eclipse.aether.internal.impl.synccontext.named.providers.GAVNameMapperProvider;
 import org.eclipse.aether.named.NamedLockFactory;
 import org.eclipse.aether.named.providers.FileLockNamedLockFactory;
 import org.eclipse.aether.named.providers.LocalReadWriteLockNamedLockFactory;
@@ -672,14 +672,11 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         registry.bind(NamedLockFactory.class, LocalReadWriteLockNamedLockFactory.class);
         registry.bind(NamedLockFactory.class, NoopNamedLockFactory.class);
         registry.bind(NamedLockFactory.class, LocalSemaphoreNamedLockFactory.class);
-        // 1.9.2
-        registry.bind(GAVNameMapperProvider.NAME, NameMapper.class, new GAVNameMapperProvider().get());
-        // 1.9.4 (soon)
-        //        registry.bind(NameMappers.GAV_NAME, NameMapper.class, NameMappers.gavNameMapper());
-        //        registry.bind(NameMappers.STATIC_NAME, NameMapper.class, NameMappers.staticNameMapper());
-        //        registry.bind(NameMappers.DISCRIMINATING_NAME, NameMapper.class, NameMappers.discriminatingNameMapper());
-        //        registry.bind(NameMappers.FILE_GAV_NAME, NameMapper.class, NameMappers.fileGavNameMapper());
-        //        registry.bind(NameMappers.FILE_HGAV_NAME, NameMapper.class, NameMappers.fileHashingGavNameMapper());
+        registry.bind(NameMappers.GAV_NAME, NameMapper.class, NameMappers.gavNameMapper());
+        registry.bind(NameMappers.STATIC_NAME, NameMapper.class, NameMappers.staticNameMapper());
+        registry.bind(NameMappers.DISCRIMINATING_NAME, NameMapper.class, NameMappers.discriminatingNameMapper());
+        registry.bind(NameMappers.FILE_GAV_NAME, NameMapper.class, NameMappers.fileGavNameMapper());
+        registry.bind(NameMappers.FILE_HGAV_NAME, NameMapper.class, NameMappers.fileHashingGavNameMapper());
 
         // requirements of org.apache.maven.repository.internal.DefaultVersionResolver (these are deprecated)
         registry.bind(org.eclipse.aether.impl.SyncContextFactory.class,
