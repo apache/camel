@@ -76,7 +76,7 @@
         <module>camel-service</module>
 
         <!-- regular modules in alphabetic order -->
-        <!--module>camel-activemq</module-->
+        
         <module>camel-amqp</module>
         <module>camel-any23</module>
         <module>camel-arangodb</module>

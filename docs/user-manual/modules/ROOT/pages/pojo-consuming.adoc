@@ -7,8 +7,13 @@ xref:endpoint.adoc[Endpoint] to consume from.
 
 IMPORTANT: The `@Consume` POJO annotations are not part of any Camel routes, and you cannot use errorHandler or onException with that.
 
+[NOTE]
+====
+The following steps use the ActiveMQ component which is not yet supported on Camel 4.
+====
+
 For example lets invoke the `onCheese()` method with the String body of the
-inbound JMS message from xref:components::activemq-component.adoc[ActiveMQ] on the cheese
+inbound JMS message from ActiveMQ on the cheese
 queue; this will use the xref:type-converter.adoc[Type Converter] to
 convert the JMS ObjectMessage or BytesMessage to a String - or just use
 a TextMessage from JMS
