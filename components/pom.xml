@@ -180,7 +180,7 @@
         <module>camel-jgroups</module>
         <module>camel-jira</module>
         <module>camel-jmx</module>
-        <!--module>camel-johnzon</module-->
+        
         <module>camel-jolt</module>
         <module>camel-joor</module>
         <module>camel-jpa</module>
