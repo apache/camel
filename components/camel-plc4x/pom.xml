@@ -155,11 +155,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <!-- avoids java.lang.NoClassDefFoundError: javax/activation/DataHandler in Plc4XProducerTest on Java 11-->
             <groupId>jakarta.activation</groupId>
             <artifactId>jakarta.activation-api</artifactId>

@@ -95,13 +95,6 @@
             <version>${wiremock-version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- logging -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
 </project>
