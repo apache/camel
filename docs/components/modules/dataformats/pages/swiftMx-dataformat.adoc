@@ -1,1 +1,0 @@
-../../../../../components/camel-swift/src/main/docs/swiftMx-dataformat.adoc
