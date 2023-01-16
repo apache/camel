@@ -71,6 +71,11 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
     @Override
     public boolean accept(Request request, Response response) {
 
+        // if using an HTTP proxy, this will be a TunnelRequest, which we're not interested in.
+        if (!(request instanceof SalesforceHttpRequest)) {
+            return false;
+        }
+
         HttpConversation conversation = ((SalesforceHttpRequest) request).getConversation();
         Integer retries = (Integer) conversation.getAttribute(AUTHENTICATION_RETRIES_ATTRIBUTE);
 

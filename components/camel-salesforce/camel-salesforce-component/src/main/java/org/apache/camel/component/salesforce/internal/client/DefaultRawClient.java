@@ -49,6 +49,8 @@ public class DefaultRawClient extends AbstractClientBase implements RawClient {
     @Override
     protected void setAccessToken(Request request) {
         // replace old token
+        request.header(BULK_TOKEN_HEADER, null);
+        request.header(REST_TOKEN_HEADER, null);
         request.header(BULK_TOKEN_HEADER, accessToken);
         request.header(REST_TOKEN_HEADER, TOKEN_PREFIX + accessToken);
     }
