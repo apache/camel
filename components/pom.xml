@@ -232,7 +232,7 @@
         <module>camel-olingo4</module>
         <module>camel-openstack</module>
         <module>camel-opentelemetry</module>
-        <module>camel-optaplanner</module>
+        
         <module>camel-paho</module>
         <module>camel-paho-mqtt5</module>
         <module>camel-pdf</module>
