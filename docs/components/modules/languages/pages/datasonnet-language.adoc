@@ -1,1 +1,0 @@
-../../../../../components/camel-datasonnet/src/main/docs/datasonnet-language.adoc
