@@ -24,7 +24,6 @@
 ** xref:fastjson-dataformat.adoc[JSON Fastjson]
 ** xref:gson-dataformat.adoc[JSON Gson]
 ** xref:jackson-dataformat.adoc[JSON Jackson]
-** xref:johnzon-dataformat.adoc[JSON Johnzon]
 ** xref:jsonb-dataformat.adoc[JSON JSON-B]
 ** xref:jsonApi-dataformat.adoc[JSonApi]
 ** xref:lzf-dataformat.adoc[LZF Deflate Compression]
