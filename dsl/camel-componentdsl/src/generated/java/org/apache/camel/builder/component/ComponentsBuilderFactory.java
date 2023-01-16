@@ -2170,19 +2170,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.IronmqComponentBuilderFactory.ironmq();
     }
     /**
-     * JBPM (camel-jbpm)
-     * Interact with jBPM workflow engine over REST.
-     * 
-     * Category: api,workflow
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-jbpm
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.JbpmComponentBuilderFactory.JbpmComponentBuilder jbpm() {
-        return org.apache.camel.builder.component.dsl.JbpmComponentBuilderFactory.jbpm();
-    }
-    /**
      * JCache (camel-jcache)
      * Perform caching operations against JSR107/JCache.
      * 

@@ -164,7 +164,6 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.InfluxDbEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.IrcEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.IronMQEndpointBuilderFactory,
-            org.apache.camel.builder.endpoint.dsl.JBPMEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.JCacheEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.JGroupsEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.JGroupsRaftEndpointBuilderFactory,

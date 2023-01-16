@@ -3552,28 +3552,6 @@
     "producerOnly": false,
     "lenientProperties": false
   },
-  "JbpmComponentBuilderFactory": {
-    "kind": "component",
-    "name": "jbpm",
-    "title": "JBPM",
-    "description": "Interact with jBPM workflow engine over REST.",
-    "deprecated": false,
-    "firstVersion": "2.6.0",
-    "label": "api,workflow",
-    "javaType": "org.apache.camel.component.jbpm.JBPMComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-jbpm",
-    "version": "4.0.0-SNAPSHOT",
-    "scheme": "jbpm",
-    "extendsScheme": "",
-    "syntax": "jbpm:connectionURL",
-    "async": false,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "JcacheComponentBuilderFactory": {
     "kind": "component",
     "name": "jcache",
