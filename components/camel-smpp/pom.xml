@@ -68,11 +68,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j2-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.jsmpp</groupId>
             <artifactId>jsmpp-examples</artifactId>
             <scope>test</scope>
