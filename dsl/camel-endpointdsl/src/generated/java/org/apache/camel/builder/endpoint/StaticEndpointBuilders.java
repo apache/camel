@@ -7318,55 +7318,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.IronMQEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * JBPM (camel-jbpm)
-     * Interact with jBPM workflow engine over REST.
-     * 
-     * Category: api,workflow
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-jbpm
-     * 
-     * Syntax: <code>jbpm:connectionURL</code>
-     * 
-     * Path parameter: connectionURL (required)
-     * The URL to the jBPM server.
-     * 
-     * Path parameter: eventListenerType
-     * Sets the event listener type to attach to
-     * 
-     * @param path connectionURL
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.JBPMEndpointBuilderFactory.JBPMEndpointBuilder jbpm(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.JBPMEndpointBuilderFactory.endpointBuilder("jbpm", path);
-    }
-    /**
-     * JBPM (camel-jbpm)
-     * Interact with jBPM workflow engine over REST.
-     * 
-     * Category: api,workflow
-     * Since: 2.6
-     * Maven coordinates: org.apache.camel:camel-jbpm
-     * 
-     * Syntax: <code>jbpm:connectionURL</code>
-     * 
-     * Path parameter: connectionURL (required)
-     * The URL to the jBPM server.
-     * 
-     * Path parameter: eventListenerType
-     * Sets the event listener type to attach to
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path connectionURL
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.JBPMEndpointBuilderFactory.JBPMEndpointBuilder jbpm(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.JBPMEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * JCache (camel-jcache)
      * Perform caching operations against JSR107/JCache.
      * 
