@@ -6852,7 +6852,7 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": false,
-    "lenientProperties": false
+    "lenientProperties": true
   },
   "VmComponentBuilderFactory": {
     "kind": "component",
