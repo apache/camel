@@ -1901,11 +1901,6 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-optaplanner</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
                 <artifactId>camel-paho</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -3692,15 +3687,6 @@
                 <groupId>org.apache.zookeeper</groupId>
                 <artifactId>zookeeper</artifactId>
                 <version>${zookeeper-version}</version>
-            </dependency>
-
-            <!-- optional OptaPlanner dependencies -->
-            <dependency>
-                <groupId>org.optaplanner</groupId>
-                <artifactId>optaplanner-bom</artifactId>
-                <version>${optaplanner-version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
 
             <!-- optional Nitrite dependencies -->
