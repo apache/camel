@@ -63,6 +63,14 @@ from("vertx-websocket:localhost:8080/echo")
     .to("vertx-websocket:localhost:8080/echo");
 ----
 
+It's also possible to configure the consumer to connect as a WebSocket client on a remote address with the `consumeAsClient` option:
+
+[source,java]
+----
+from("vertx-websocket:my.websocket.com:8080/chat?consumeAsClient=true")
+    .log("Got WebSocket message ${body}");
+----
+
 == SSL
 
 By default, the `ws://` protocol is used, but secure connections with `wss://` are supported by configuring the consumer or producer

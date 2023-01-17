@@ -267,6 +267,16 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         assertEquals("Hello Camel", results.get(0));
     }
 
+    @Test
+    void testWsSchemeUriPrefix() throws InterruptedException {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedBodiesReceived("Hello World 1", "Hello World 2", "Hello World 3");
+        template.sendBody("vertx-websocket:ws:localhost:" + port + "/test", "World 1");
+        template.sendBody("vertx-websocket:ws:/localhost:" + port + "/test", "World 2");
+        template.sendBody("vertx-websocket:ws://localhost:" + port + "/test", "World 3");
+        mockEndpoint.assertIsSatisfied(5000);
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -282,7 +292,7 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
                 fromF("vertx-websocket:localhost:%d/test-other", port)
                         .setBody(simple("Hello ${body}"));
 
-                from("vertx-websocket://greeting")
+                fromF("vertx-websocket:localhost:0/greeting")
                         .setBody(simple("Hello ${body}"))
                         .process(new Processor() {
                             @Override

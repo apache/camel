@@ -60,6 +60,149 @@ public interface VertxWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
+         * When set to true, the consumer acts as a WebSocket client, creating
+         * exchanges on each received WebSocket event.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param consumeAsClient the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointConsumerBuilder consumeAsClient(
+                boolean consumeAsClient) {
+            doSetProperty("consumeAsClient", consumeAsClient);
+            return this;
+        }
+        /**
+         * When set to true, the consumer acts as a WebSocket client, creating
+         * exchanges on each received WebSocket event.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param consumeAsClient the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointConsumerBuilder consumeAsClient(
+                String consumeAsClient) {
+            doSetProperty("consumeAsClient", consumeAsClient);
+            return this;
+        }
+        /**
+         * When consumeAsClient is set to true this sets the maximum number of
+         * allowed reconnection attempts to a previously closed WebSocket. A
+         * value of 0 (the default) will attempt to reconnect indefinitely.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param maxReconnectAttempts the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointConsumerBuilder maxReconnectAttempts(
+                int maxReconnectAttempts) {
+            doSetProperty("maxReconnectAttempts", maxReconnectAttempts);
+            return this;
+        }
+        /**
+         * When consumeAsClient is set to true this sets the maximum number of
+         * allowed reconnection attempts to a previously closed WebSocket. A
+         * value of 0 (the default) will attempt to reconnect indefinitely.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param maxReconnectAttempts the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointConsumerBuilder maxReconnectAttempts(
+                String maxReconnectAttempts) {
+            doSetProperty("maxReconnectAttempts", maxReconnectAttempts);
+            return this;
+        }
+        /**
+         * When consumeAsClient is set to true this sets the initial delay in
+         * milliseconds before attempting to reconnect to a previously closed
+         * WebSocket.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param reconnectInitialDelay the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointConsumerBuilder reconnectInitialDelay(
+                int reconnectInitialDelay) {
+            doSetProperty("reconnectInitialDelay", reconnectInitialDelay);
+            return this;
+        }
+        /**
+         * When consumeAsClient is set to true this sets the initial delay in
+         * milliseconds before attempting to reconnect to a previously closed
+         * WebSocket.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: consumer
+         * 
+         * @param reconnectInitialDelay the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointConsumerBuilder reconnectInitialDelay(
+                String reconnectInitialDelay) {
+            doSetProperty("reconnectInitialDelay", reconnectInitialDelay);
+            return this;
+        }
+        /**
+         * When consumeAsClient is set to true this sets the interval in
+         * milliseconds at which reconnecting to a previously closed WebSocket
+         * occurs.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: consumer
+         * 
+         * @param reconnectInterval the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointConsumerBuilder reconnectInterval(
+                int reconnectInterval) {
+            doSetProperty("reconnectInterval", reconnectInterval);
+            return this;
+        }
+        /**
+         * When consumeAsClient is set to true this sets the interval in
+         * milliseconds at which reconnecting to a previously closed WebSocket
+         * occurs.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 1000
+         * Group: consumer
+         * 
+         * @param reconnectInterval the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointConsumerBuilder reconnectInterval(
+                String reconnectInterval) {
+            doSetProperty("reconnectInterval", reconnectInterval);
+            return this;
+        }
+        /**
          * To use an existing vertx router for the HTTP server.
          * 
          * The option is a: &lt;code&gt;io.vertx.ext.web.Router&lt;/code&gt;
@@ -557,20 +700,8 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * 
          * Syntax: <code>vertx-websocket:host:port/path</code>
          * 
-         * Path parameter: host
-         * The host that the consumer should bind to or the host of the remote
-         * websocket destination that the producer should connect to
-         * Default value: 0.0.0.0
-         * 
-         * Path parameter: port
-         * The port that the consumer should bind to or port of the remote
-         * websocket destination that the producer should connect to
-         * Default value: 0
-         * 
-         * Path parameter: path (required)
-         * The path that the consumer should bind to or path of the remote
-         * websocket destination that the producer should connect to
-         * Default value: /
+         * Path parameter: websocketURI (required)
+         * The WebSocket URI address to use.
          * 
          * @param path host:port/path
          * @return the dsl builder
@@ -589,20 +720,8 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * 
          * Syntax: <code>vertx-websocket:host:port/path</code>
          * 
-         * Path parameter: host
-         * The host that the consumer should bind to or the host of the remote
-         * websocket destination that the producer should connect to
-         * Default value: 0.0.0.0
-         * 
-         * Path parameter: port
-         * The port that the consumer should bind to or port of the remote
-         * websocket destination that the producer should connect to
-         * Default value: 0
-         * 
-         * Path parameter: path (required)
-         * The path that the consumer should bind to or path of the remote
-         * websocket destination that the producer should connect to
-         * Default value: /
+         * Path parameter: websocketURI (required)
+         * The WebSocket URI address to use.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name
