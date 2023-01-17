@@ -29,7 +29,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <log4j2-version>2.13.3</log4j2-version>
+    <log4j2-version>2.19.0</log4j2-version>
   </properties>
 
   <dependencyManagement>
@@ -65,6 +65,12 @@
       <artifactId>log4j-slf4j2-impl</artifactId>
       <scope>runtime</scope>
       <version>${log4j2-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>${log4j2-version}</version>
+      <scope>runtime</scope>
     </dependency>
 
     <!-- testing -->
