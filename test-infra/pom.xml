@@ -69,7 +69,6 @@
         <module>camel-test-infra-ftp</module>
         <module>camel-test-infra-fhir</module>
         <module>camel-test-infra-mosquitto</module>
-        <!--module>camel-test-infra-activemq</module-->
         <module>camel-test-infra-chatscript</module>
         <module>camel-test-infra-openldap</module>
         <module>camel-test-infra-ignite</module>
