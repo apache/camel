@@ -15289,20 +15289,8 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>vertx-websocket:host:port/path</code>
      * 
-     * Path parameter: host
-     * The host that the consumer should bind to or the host of the remote
-     * websocket destination that the producer should connect to
-     * Default value: 0.0.0.0
-     * 
-     * Path parameter: port
-     * The port that the consumer should bind to or port of the remote websocket
-     * destination that the producer should connect to
-     * Default value: 0
-     * 
-     * Path parameter: path (required)
-     * The path that the consumer should bind to or path of the remote websocket
-     * destination that the producer should connect to
-     * Default value: /
+     * Path parameter: websocketURI (required)
+     * The WebSocket URI address to use.
      * 
      * @param path host:port/path
      * @return the dsl builder
@@ -15322,20 +15310,8 @@ public class StaticEndpointBuilders {
      * 
      * Syntax: <code>vertx-websocket:host:port/path</code>
      * 
-     * Path parameter: host
-     * The host that the consumer should bind to or the host of the remote
-     * websocket destination that the producer should connect to
-     * Default value: 0.0.0.0
-     * 
-     * Path parameter: port
-     * The port that the consumer should bind to or port of the remote websocket
-     * destination that the producer should connect to
-     * Default value: 0
-     * 
-     * Path parameter: path (required)
-     * The path that the consumer should bind to or path of the remote websocket
-     * destination that the producer should connect to
-     * Default value: /
+     * Path parameter: websocketURI (required)
+     * The WebSocket URI address to use.
      * 
      * @param componentName to use a custom component name for the endpoint
      * instead of the default name
