@@ -14,22 +14,29 @@ Camel 4 supports Java 17. Support for Java 11 is dropped.
 
 The following components has been removed:
 
+- camel-activemq
 - camel-atmos
 - camel-caffeine-lrucache
 - camel-cdi
+- camel-datasonnet
 - camel-elasticsearch-rest
 - camel-gora
 - camel-hbase
 - camel-iota
 - camel-ipfs
+- camel-jbpm
 - camel-jclouds
+- camel-johnzon
 - camel-microprofile-metrics
+- camel-milo
 - camel-opentracing
+- camel-optaplanner
 - camel-rabbitmq
 - camel-rest-swagger
 - camel-restdsl-swagger-plugin
 - camel-resteasy
 - camel-spark
+- camel-swift
 - camel-swagger-java
 - camel-websocket-jsr356
 - camel-xstream
