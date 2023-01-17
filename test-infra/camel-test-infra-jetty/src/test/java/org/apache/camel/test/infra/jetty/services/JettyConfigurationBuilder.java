@@ -103,7 +103,8 @@ public final class JettyConfigurationBuilder {
             return jettyConfigurationBuilder;
         }
 
-        public WebSocketConfigurationBuilder addServletConfiguration(JettyConfiguration.ServletHandlerConfiguration.ServletConfiguration<?> servletConfiguration) {
+        public WebSocketConfigurationBuilder addServletConfiguration(
+                JettyConfiguration.ServletHandlerConfiguration.ServletConfiguration<?> servletConfiguration) {
             wsHandlerConfiguration.addServletConfiguration(servletConfiguration);
 
             return this;
