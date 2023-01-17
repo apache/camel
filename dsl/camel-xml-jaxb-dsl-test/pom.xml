@@ -39,7 +39,6 @@
 
     <modules>
         <module>definition</module>
-        <module>jbpm</module>
         <module>spring</module>
     </modules>
 </project>
