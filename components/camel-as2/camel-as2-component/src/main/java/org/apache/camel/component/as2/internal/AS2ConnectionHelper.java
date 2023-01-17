@@ -53,7 +53,9 @@ public final class AS2ConnectionHelper {
     public static AS2ClientConnection createAS2ClientConnection(AS2Configuration configuration) throws IOException {
         return new AS2ClientConnection(
                 configuration.getAs2Version(), configuration.getUserAgent(), configuration.getClientFqdn(),
-                configuration.getTargetHostname(), configuration.getTargetPortNumber());
+                configuration.getTargetHostname(), configuration.getTargetPortNumber(), configuration.getHttpSocketTimeout(),
+                configuration.getHttpConnectionTimeout(), configuration.getHttpConnectionPoolSize(),
+                configuration.getHttpConnectionPoolTtl());
     }
 
     /**

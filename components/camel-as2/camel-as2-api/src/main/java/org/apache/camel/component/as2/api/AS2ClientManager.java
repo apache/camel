@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeCompressedDataEntity;
@@ -391,6 +392,8 @@ public class AS2ClientManager {
             EntityParser.parseAS2MessageEntity(response);
         } catch (IOException e) {
             throw new HttpException("Failed to send http request message", e);
+        } catch (ExecutionException | InterruptedException ex) {
+            throw new HttpException("Retrieving connection from Pool failed or timed out", ex);
         }
         httpContext.setAttribute(HTTP_RESPONSE, response);
         return httpContext;
