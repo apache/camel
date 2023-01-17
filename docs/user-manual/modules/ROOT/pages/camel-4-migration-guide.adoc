@@ -1,7 +1,9 @@
 = Apache Camel 3.x to 4.0 Migration Guide
 
 This document is intended to help you migrate your Apache Camel applications
-from version 3.x to 4.0.
+from version 3.20 or higher to 4.0. If you are upgrading from an older Camel 3.x release,
+such as 3.14, then make sure to read the individual xref:camel-3x-upgrade-guide.adoc[Camel 3.x Upgrade Guide]
+to upgrade to the 3.20 release, prior to upgrade to Camel 4.
 
 IMPORTANT: If you are upgrading Camel 4.x to 4.y then use the
 xref:camel-4x-upgrade-guide.adoc[Camel 4.x Upgrade Guide].
@@ -50,6 +52,8 @@ Camel 4 has upgraded logging facade API `slf4j-api` from 1.7 to 2.0.
 
 All the `camel-test` modules that were JUnit 4.x based has been removed. All test modules now use JUnit 5.
 
-== camel-caffeine
+== Component changes
+
+=== camel-caffeine
 
 The `keyType` parameter has been removed. The Key for the cache will now be only `String` type. More information in CAMEL-18877.
