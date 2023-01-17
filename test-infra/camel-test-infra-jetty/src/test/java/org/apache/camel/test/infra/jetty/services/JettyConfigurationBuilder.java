@@ -83,6 +83,33 @@ public final class JettyConfigurationBuilder {
         }
     }
 
+    public static class WebSocketConfigurationBuilder implements ConfigurationBuilderDelegate {
+        private final JettyConfiguration jettyConfiguration;
+        private final JettyConfigurationBuilder jettyConfigurationBuilder;
+
+        private JettyConfiguration.WebSocketContextHandlerConfiguration wsHandlerConfiguration;
+
+        public WebSocketConfigurationBuilder(JettyConfigurationBuilder builder, JettyConfiguration jettyConfiguration) {
+            this.jettyConfigurationBuilder = builder;
+            this.jettyConfiguration = jettyConfiguration;
+
+            wsHandlerConfiguration
+                    = new JettyConfiguration.WebSocketContextHandlerConfiguration(jettyConfiguration.getContextPath());
+        }
+
+        @Override
+        public JettyConfigurationBuilder build() {
+            jettyConfiguration.setContextHandlerConfiguration(wsHandlerConfiguration);
+            return jettyConfigurationBuilder;
+        }
+
+        public WebSocketConfigurationBuilder addServletConfiguration(JettyConfiguration.ServletHandlerConfiguration.ServletConfiguration<?> servletConfiguration) {
+            wsHandlerConfiguration.addServletConfiguration(servletConfiguration);
+
+            return this;
+        }
+    }
+
     public static class WebAppContextConfigurationBuilder implements ConfigurationBuilderDelegate {
         private final JettyConfiguration jettyConfiguration;
         private final JettyConfigurationBuilder jettyConfigurationBuilder;
@@ -208,6 +235,10 @@ public final class JettyConfigurationBuilder {
 
     public ServletConfigurationBuilder withServletConfiguration() {
         return new ServletConfigurationBuilder(this, jettyConfiguration);
+    }
+
+    public WebSocketConfigurationBuilder withWebSocketConfiguration() {
+        return new WebSocketConfigurationBuilder(this, jettyConfiguration);
     }
 
     public WebAppContextConfigurationBuilder withWebAppContextConfiguration() {

@@ -45,6 +45,12 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeRequest;
+import org.eclipse.jetty.websocket.server.JettyServerUpgradeResponse;
+import org.eclipse.jetty.websocket.server.JettyWebSocketCreator;
+import org.eclipse.jetty.websocket.server.JettyWebSocketServlet;
+import org.eclipse.jetty.websocket.server.JettyWebSocketServletFactory;
+import org.eclipse.jetty.websocket.server.config.JettyWebSocketServletContainerInitializer;
 
 /**
  * A configuration holder for embedded Jetty instances
@@ -304,6 +310,40 @@ public class JettyConfiguration {
         @Override
         HandlerCollection resolve() {
             return handlers;
+        }
+    }
+
+    public static class WebSocketContextHandlerConfiguration extends ServletHandlerConfiguration {
+
+        public WebSocketContextHandlerConfiguration(String contextPath) {
+            super(contextPath);
+        }
+
+        @Override
+        public List<ServletConfiguration<?>> getServletConfigurations() {
+            return super.getServletConfigurations();
+        }
+
+        @Override
+        ServletContextHandler resolve() {
+            ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
+
+            if (!super.userInfos.isEmpty()) {
+                contextHandler.setSecurityHandler(super.basicAuth(super.userInfos, super.realm));
+            }
+
+            contextHandler.setContextPath(super.getContextPath());
+
+            for (ServletConfiguration servletConfiguration : super.servletConfigurations) {
+                contextHandler.addServlet(servletConfiguration.buildServletHolder(), servletConfiguration.getPathSpec());
+            }
+
+            if (customizer != null) {
+                customizer.accept(contextHandler);
+            }
+
+            JettyWebSocketServletContainerInitializer.configure(contextHandler, null);
+            return contextHandler;
         }
     }
 
