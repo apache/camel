@@ -25,10 +25,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-import jakarta.servlet.Servlet;
-
 import javax.net.ssl.SSLContext;
 
+import jakarta.servlet.Servlet;
 import org.apache.camel.util.KeyValueHolder;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
@@ -45,12 +44,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.eclipse.jetty.websocket.server.JettyServerUpgradeRequest;
-import org.eclipse.jetty.websocket.server.JettyServerUpgradeResponse;
-import org.eclipse.jetty.websocket.server.JettyWebSocketCreator;
-import org.eclipse.jetty.websocket.server.JettyWebSocketServlet;
-import org.eclipse.jetty.websocket.server.JettyWebSocketServletFactory;
-import org.eclipse.jetty.websocket.server.config.JettyWebSocketServletContainerInitializer;
+import org.eclipse.jetty.websocket.jakarta.server.config.JakartaWebSocketServletContainerInitializer;
 
 /**
  * A configuration holder for embedded Jetty instances
@@ -333,6 +327,7 @@ public class JettyConfiguration {
             }
 
             contextHandler.setContextPath(super.getContextPath());
+            contextHandler.setAttribute(contextHandler.getClass().getName(), contextHandler);
 
             for (ServletConfiguration servletConfiguration : super.servletConfigurations) {
                 contextHandler.addServlet(servletConfiguration.buildServletHolder(), servletConfiguration.getPathSpec());
@@ -342,7 +337,7 @@ public class JettyConfiguration {
                 customizer.accept(contextHandler);
             }
 
-            JettyWebSocketServletContainerInitializer.configure(contextHandler, null);
+            JakartaWebSocketServletContainerInitializer.configure(contextHandler, null);
             return contextHandler;
         }
     }
