@@ -707,7 +707,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Path parameter: port (required)
          * WebSocket port number to use.
          * 
-         * Path parameter: path (required)
+         * Path parameter: path
          * WebSocket path to use.
          * 
          * @param path host:port/path
@@ -734,7 +734,7 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * Path parameter: port (required)
          * WebSocket port number to use.
          * 
-         * Path parameter: path (required)
+         * Path parameter: path
          * WebSocket path to use.
          * 
          * @param componentName to use a custom component name for the endpoint
