@@ -24,8 +24,8 @@ import java.util.Arrays;
 
 import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
 import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpException;
-import org.apache.http.util.Args;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.cms.AttributeTable;
 import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
@@ -47,11 +47,11 @@ public final class SigningUtils {
     public static AS2SignedDataGenerator createSigningGenerator(
             AS2SignatureAlgorithm signingAlgorithm, Certificate[] certificateChain, PrivateKey privateKey)
             throws HttpException {
-        Args.notNull(certificateChain, "certificateChain");
+        ObjectHelper.notNull(certificateChain, "certificateChain");
         if (certificateChain.length == 0 || !(certificateChain[0] instanceof X509Certificate)) {
             throw new IllegalArgumentException("Invalid certificate chain");
         }
-        Args.notNull(privateKey, "privateKey");
+        ObjectHelper.notNull(privateKey, "privateKey");
 
         AS2SignedDataGenerator gen = new AS2SignedDataGenerator();
 

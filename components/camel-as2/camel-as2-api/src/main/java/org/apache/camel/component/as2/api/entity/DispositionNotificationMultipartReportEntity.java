@@ -23,11 +23,11 @@ import java.util.Map;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.AS2TransferEncoding;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
-import org.apache.http.util.Args;
 
 public class DispositionNotificationMultipartReportEntity extends MultipartReportEntity {
 
@@ -56,9 +56,9 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
         super(charset, isMainBody, boundary);
         removeHeaders(AS2Header.CONTENT_TYPE);
         setContentType(getContentTypeValue(boundary));
-        Args.notNull(dispositionMode, "dispositionMode");
-        Args.notNull(dispositionType, "dispositionType");
-        Args.notNull(mdnMessage, "mdnMessageTemplate");
+        ObjectHelper.notNull(dispositionMode, "dispositionMode");
+        ObjectHelper.notNull(dispositionType, "dispositionType");
+        ObjectHelper.notNull(mdnMessage, "mdnMessageTemplate");
 
         addPart(buildPlainTextReport(mdnMessage));
         addPart(new AS2MessageDispositionNotificationEntity(

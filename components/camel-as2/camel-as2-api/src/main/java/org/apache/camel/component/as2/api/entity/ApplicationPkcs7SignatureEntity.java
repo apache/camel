@@ -25,11 +25,11 @@ import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.CanonicalOutputStream;
 import org.apache.camel.component.as2.api.util.EntityUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpException;
 import org.apache.http.entity.ContentType;
-import org.apache.http.util.Args;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.CMSProcessableByteArray;
 import org.bouncycastle.cms.CMSSignedData;
@@ -46,8 +46,8 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
 
     public ApplicationPkcs7SignatureEntity(MimeEntity data, CMSSignedDataGenerator signer, String charset,
                                            String contentTransferEncoding, boolean isMainBody) throws HttpException {
-        Args.notNull(data, "Data");
-        Args.notNull(signer, "Signer");
+        ObjectHelper.notNull(data, "Data");
+        ObjectHelper.notNull(signer, "Signer");
 
         ContentType contentType
                 = ContentType.parse(EntityUtils.appendParameter(AS2MediaType.APPLICATION_PKCS7_SIGNATURE, "charset", charset));
@@ -67,7 +67,7 @@ public class ApplicationPkcs7SignatureEntity extends MimeEntity {
                                            String charset,
                                            String contentTransferEncoding,
                                            boolean isMainBody) {
-        this.signature = Args.notNull(signature, "signature");
+        this.signature = ObjectHelper.notNull(signature, "signature");
 
         ContentType contentType = ContentType
                 .parse(EntityUtils.appendParameter(AS2MediaType.APPLICATION_PKCS7_SIGNATURE, "charset", charset));

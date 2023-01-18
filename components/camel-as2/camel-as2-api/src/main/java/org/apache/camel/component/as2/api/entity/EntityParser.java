@@ -38,6 +38,7 @@ import org.apache.camel.component.as2.api.util.ContentTypeUtils;
 import org.apache.camel.component.as2.api.util.DispositionNotificationContentUtils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.codec.DecoderException;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -72,8 +73,8 @@ public final class EntityParser {
     }
 
     public static boolean isBoundaryCloseDelimiter(final CharArrayBuffer buffer, ParserCursor cursor, String boundary) {
-        Args.notNull(buffer, "Buffer");
-        Args.notNull(boundary, "Boundary");
+        ObjectHelper.notNull(buffer, "Buffer");
+        ObjectHelper.notNull(boundary, "Boundary");
 
         String boundaryCloseDelimiter = "--" + boundary + "--"; // boundary
         // close-delimiter
@@ -101,8 +102,8 @@ public final class EntityParser {
     }
 
     public static boolean isBoundaryDelimiter(final CharArrayBuffer buffer, ParserCursor cursor, String boundary) {
-        Args.notNull(buffer, "Buffer");
-        Args.notNull(boundary, "Boundary");
+        ObjectHelper.notNull(buffer, "Buffer");
+        ObjectHelper.notNull(boundary, "Boundary");
 
         String boundaryDelimiter = "--" + boundary; // boundary delimiter -
         // RFC2046 5.1.1
@@ -269,10 +270,10 @@ public final class EntityParser {
             throws HttpException {
         ApplicationPkcs7MimeCompressedDataEntity applicationPkcs7MimeCompressedDataEntity = null;
 
-        Args.notNull(message, "message");
-        Args.notNull(inBuffer, "inBuffer");
+        ObjectHelper.notNull(message, "message");
+        ObjectHelper.notNull(inBuffer, "inBuffer");
 
-        HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
+        HttpEntity entity = ObjectHelper.notNull(EntityUtils.getMessageEntity(message), "message entity");
 
         if (entity instanceof ApplicationPkcs7MimeCompressedDataEntity) {
             // already parsed
@@ -299,10 +300,10 @@ public final class EntityParser {
             throws HttpException {
         ApplicationPkcs7MimeEnvelopedDataEntity applicationPkcs7MimeEnvelopedDataEntity = null;
 
-        Args.notNull(message, "message");
-        Args.notNull(inBuffer, "inBuffer");
+        ObjectHelper.notNull(message, "message");
+        ObjectHelper.notNull(inBuffer, "inBuffer");
 
-        HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
+        HttpEntity entity = ObjectHelper.notNull(EntityUtils.getMessageEntity(message), "message entity");
 
         if (entity instanceof ApplicationPkcs7MimeCompressedDataEntity) {
             // already parsed
@@ -330,12 +331,12 @@ public final class EntityParser {
             throws HttpException {
         MultipartSignedEntity multipartSignedEntity = null;
 
-        Args.notNull(message, "message");
-        Args.notNull(inBuffer, "inBuffer");
-        Args.notNull(boundary, "boundary");
-        Args.notNull(charsetName, "charsetName");
+        ObjectHelper.notNull(message, "message");
+        ObjectHelper.notNull(inBuffer, "inBuffer");
+        ObjectHelper.notNull(boundary, "boundary");
+        ObjectHelper.notNull(charsetName, "charsetName");
 
-        HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
+        HttpEntity entity = ObjectHelper.notNull(EntityUtils.getMessageEntity(message), "message entity");
 
         if (entity instanceof MultipartSignedEntity) {
             // already parsed
@@ -370,10 +371,10 @@ public final class EntityParser {
             throws HttpException {
         ApplicationEDIEntity applicationEDIEntity = null;
 
-        Args.notNull(message, "message");
-        Args.notNull(inBuffer, "inBuffer");
+        ObjectHelper.notNull(message, "message");
+        ObjectHelper.notNull(inBuffer, "inBuffer");
 
-        HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
+        HttpEntity entity = ObjectHelper.notNull(EntityUtils.getMessageEntity(message), "message entity");
 
         if (entity instanceof ApplicationEDIEntity) {
             // already parsed
@@ -400,11 +401,11 @@ public final class EntityParser {
             throws HttpException {
         DispositionNotificationMultipartReportEntity dispositionNotificationMultipartReportEntity = null;
 
-        Args.notNull(message, "message");
-        Args.notNull(inBuffer, "inBuffer");
-        Args.notNull(boundary, "boundary");
-        Args.notNull(charsetName, "charsetName");
-        HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
+        ObjectHelper.notNull(message, "message");
+        ObjectHelper.notNull(inBuffer, "inBuffer");
+        ObjectHelper.notNull(boundary, "boundary");
+        ObjectHelper.notNull(charsetName, "charsetName");
+        HttpEntity entity = ObjectHelper.notNull(EntityUtils.getMessageEntity(message), "message entity");
 
         if (entity instanceof DispositionNotificationMultipartReportEntity) {
             // already parsed
@@ -433,7 +434,7 @@ public final class EntityParser {
      */
     public static void parseAS2MessageEntity(HttpMessage message) throws HttpException {
         if (EntityUtils.hasEntity(message)) {
-            HttpEntity entity = Args.notNull(EntityUtils.getMessageEntity(message), "message entity");
+            HttpEntity entity = ObjectHelper.notNull(EntityUtils.getMessageEntity(message), "message entity");
 
             if (entity instanceof MimeEntity) {
                 // already parsed
@@ -1037,8 +1038,8 @@ public final class EntityParser {
             final LineParser parser,
             final List<CharArrayBuffer> fields)
             throws IOException {
-        Args.notNull(parser, "parser");
-        Args.notNull(fields, "fields");
+        ObjectHelper.notNull(parser, "parser");
+        ObjectHelper.notNull(fields, "fields");
         CharArrayBuffer current = null;
         CharArrayBuffer previous = null;
         while (true) {
