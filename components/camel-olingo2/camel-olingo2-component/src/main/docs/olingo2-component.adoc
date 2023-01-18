@@ -13,6 +13,12 @@
 
 *{component-header}*
 
+[NOTE]
+====
+Starting with Camel 4.0, our project has migrated to JakartaEE. Some parts of Apache Olingo2 may depend on J2EE, which may
+result in unexpected behavior and other runtime problems.
+====
+
 The Olingo2 component utilizes http://olingo.apache.org/[Apache Olingo]
 version 2.0 APIs to interact with OData 2.0 compliant services.
 A number of popular commercial and enterprise vendors and products

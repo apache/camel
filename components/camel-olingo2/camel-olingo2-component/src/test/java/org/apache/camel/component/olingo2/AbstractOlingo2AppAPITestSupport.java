@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class AbstractOlingo2AppAPITestSupport {
 
     protected static final String SERVICE_NAME = "MyFormula.svc";
-    protected static final Logger LOG = LoggerFactory.getLogger(Olingo2AppAPITest.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(AbstractOlingo2AppAPITestSupport.class);
     protected static final int PORT = AvailablePortFinder.getNextAvailable();
     protected static final long TIMEOUT = 100000;
     protected static final String MANUFACTURERS = "Manufacturers";
