@@ -449,7 +449,7 @@
         <reactor-netty-version>1.1.1</reactor-netty-version>
         <redisson-version>3.16.7</redisson-version>
         <resilience4j-version>2.0.2</resilience4j-version>
-        <rest-assured-version>4.5.1</rest-assured-version>
+        <rest-assured-version>5.3.0</rest-assured-version>
         <roaster-version>2.26.0.Final</roaster-version>
         <robotframework-version>4.1.2</robotframework-version>
         <rocketmq-version>4.9.4</rocketmq-version>
