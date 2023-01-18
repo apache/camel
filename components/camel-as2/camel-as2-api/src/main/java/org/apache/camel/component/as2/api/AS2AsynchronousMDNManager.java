@@ -26,6 +26,7 @@ import java.security.cert.Certificate;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.protocol.RequestAsynchronousMDN;
 import org.apache.camel.component.as2.api.util.EntityUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -43,7 +44,6 @@ import org.apache.http.protocol.RequestDate;
 import org.apache.http.protocol.RequestExpectContinue;
 import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
-import org.apache.http.util.Args;
 
 public class AS2AsynchronousMDNManager {
 
@@ -107,8 +107,8 @@ public class AS2AsynchronousMDNManager {
             DispositionNotificationMultipartReportEntity mdn,
             String recipientDeliveryAddress)
             throws HttpException {
-        Args.notNull(mdn, "mdn");
-        Args.notNull(recipientDeliveryAddress, "recipientDeliveryAddress");
+        ObjectHelper.notNull(mdn, "mdn");
+        ObjectHelper.notNull(recipientDeliveryAddress, "recipientDeliveryAddress");
 
         URI uri = null;
         try {

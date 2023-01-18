@@ -31,12 +31,12 @@ import org.apache.camel.component.as2.api.util.CompressionUtils;
 import org.apache.camel.component.as2.api.util.EncryptingUtils;
 import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.SigningUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpException;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHttpEntityEnclosingRequest;
 import org.apache.http.protocol.HttpCoreContext;
-import org.apache.http.util.Args;
 import org.bouncycastle.cms.CMSCompressedDataGenerator;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.operator.OutputCompressor;
@@ -217,14 +217,14 @@ public class AS2ClientManager {
             String attachedFileName)
             throws HttpException {
 
-        Args.notNull(ediMessage, "EDI Message");
-        Args.notNull(requestUri, "Request URI");
-        Args.notNull(subject, "Subject");
-        Args.notNull(from, "Subject");
-        Args.notNull(as2From, "Subject");
-        Args.notNull(as2To, "Subject");
-        Args.notNull(as2MessageStructure, "AS2 Message Structure");
-        Args.notNull(ediMessageContentType, "EDI Message Content Type");
+        ObjectHelper.notNull(ediMessage, "EDI Message");
+        ObjectHelper.notNull(requestUri, "Request URI");
+        ObjectHelper.notNull(subject, "Subject");
+        ObjectHelper.notNull(from, "Subject");
+        ObjectHelper.notNull(as2From, "Subject");
+        ObjectHelper.notNull(as2To, "Subject");
+        ObjectHelper.notNull(as2MessageStructure, "AS2 Message Structure");
+        ObjectHelper.notNull(ediMessageContentType, "EDI Message Content Type");
 
         // Add Context attributes
         HttpCoreContext httpContext = HttpCoreContext.create();

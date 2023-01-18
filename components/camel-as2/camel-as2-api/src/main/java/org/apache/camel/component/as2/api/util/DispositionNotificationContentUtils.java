@@ -29,10 +29,10 @@ import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificati
 import org.apache.camel.component.as2.api.entity.DispositionMode;
 import org.apache.camel.component.as2.api.util.DispositionNotificationContentUtils.Field.Element;
 import org.apache.camel.component.as2.api.util.MicUtils.ReceivedContentMic;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.ParseException;
 import org.apache.http.message.ParserCursor;
 import org.apache.http.message.TokenParser;
-import org.apache.http.util.Args;
 import org.apache.http.util.CharArrayBuffer;
 
 public final class DispositionNotificationContentUtils {
@@ -78,12 +78,12 @@ public final class DispositionNotificationContentUtils {
         private Element[] elements;
 
         public Field(String name, Element[] elements) {
-            this.name = Args.notNull(name, "name");
+            this.name = ObjectHelper.notNull(name, "name");
             this.elements = (elements == null) ? new Element[] {} : elements;
         }
 
         public Field(String name, String value) {
-            this.name = Args.notNull(name, "name");
+            this.name = ObjectHelper.notNull(name, "name");
             this.elements = new Element[] { new Element(value, null) };
         }
 

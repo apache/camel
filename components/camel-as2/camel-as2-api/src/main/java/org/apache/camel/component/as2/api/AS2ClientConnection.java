@@ -52,7 +52,6 @@ import org.apache.http.protocol.RequestDate;
 import org.apache.http.protocol.RequestExpectContinue;
 import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
-import org.apache.http.util.Args;
 
 public class AS2ClientConnection {
 
@@ -71,14 +70,15 @@ public class AS2ClientConnection {
                                Integer targetPortNumber, Duration socketTimeout, Duration connectionTimeout,
                                Integer connectionPoolMaxSize, Duration connectionPoolTtl) throws IOException {
 
-        this.as2Version = Args.notNull(as2Version, "as2Version");
-        this.userAgent = Args.notNull(userAgent, "userAgent");
-        this.clientFqdn = Args.notNull(clientFqdn, "clientFqdn");
+        this.as2Version = ObjectHelper.notNull(as2Version, "as2Version");
+        this.userAgent = ObjectHelper.notNull(userAgent, "userAgent");
+        this.clientFqdn = ObjectHelper.notNull(clientFqdn, "clientFqdn");
         this.targetHost = new HttpHost(
-                Args.notNull(targetHostName, "targetHostName"), Args.notNull(targetPortNumber, "targetPortNumber"));
-        Args.notNull(socketTimeout, "socketTimeout");
-        this.connectionTimeoutMilliseconds = (int) Args.notNull(connectionTimeout, "connectionTimeout").toMillis();
-        Args.notNull(connectionPoolMaxSize, "connectionPoolMaxSize");
+                ObjectHelper.notNull(targetHostName, "targetHostName"),
+                ObjectHelper.notNull(targetPortNumber, "targetPortNumber"));
+        ObjectHelper.notNull(socketTimeout, "socketTimeout");
+        this.connectionTimeoutMilliseconds = (int) ObjectHelper.notNull(connectionTimeout, "connectionTimeout").toMillis();
+        ObjectHelper.notNull(connectionPoolMaxSize, "connectionPoolMaxSize");
         ObjectHelper.notNull(connectionPoolTtl, "connectionPoolTtl");
 
         // Build Processor
