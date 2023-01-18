@@ -20,8 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.hello_world_soap_http.PingMeFault;
-import org.apache.hello_world_soap_http.types.FaultDetail;
 
 public class JmsPrepareResponse implements Processor {
 
@@ -31,12 +29,6 @@ public class JmsPrepareResponse implements Processor {
         if ("greetMe".equals(in.getHeader(CxfConstants.OPERATION_NAME))) {
             String request = in.getBody(String.class);
             exchange.getMessage().setBody("Hello" + request);
-        } else {
-            // throw the Exception
-            FaultDetail faultDetail = new FaultDetail();
-            faultDetail.setMajor((short) 2);
-            faultDetail.setMinor((short) 1);
-            exchange.getMessage().setBody(new PingMeFault("PingMeFault raised by server", faultDetail));
         }
     }
 }
