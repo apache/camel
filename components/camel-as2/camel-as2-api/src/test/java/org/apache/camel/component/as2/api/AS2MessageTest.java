@@ -223,7 +223,7 @@ public class AS2MessageTest {
                     org.apache.camel.component.as2.api.entity.EntityParser.parseAS2MessageEntity(request);
                     context.setAttribute(AS2ServerManager.SUBJECT, SUBJECT);
                     context.setAttribute(AS2ServerManager.FROM, AS2_NAME);
-                    LOG.debug(AS2Utils.printMessage(request));
+                    LOG.debug("{}", AS2Utils.printMessage(request));
                     ediEntity = HttpMessageUtils.extractEdiPayload(request, testServer.getDecryptingPrivateKey());
                 } catch (Exception e) {
                     throw new HttpException("Failed to parse AS2 Message Entity", e);
@@ -517,7 +517,7 @@ public class AS2MessageTest {
     public void envelopedMessageTest(AS2EncryptionAlgorithm encryptionAlgorithm) throws Exception {
         AS2ClientManager clientManager = createDefaultClientManager();
 
-        LOG.info("Key Algoritm: " + signingKP.getPrivate().getAlgorithm());
+        LOG.info("Key Algorithm: {}", signingKP.getPrivate().getAlgorithm());
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.ENCRYPTED,
@@ -572,7 +572,7 @@ public class AS2MessageTest {
     public void envelopedAndSignedMessageTest(AS2EncryptionAlgorithm encryptionAlgorithm) throws Exception {
         AS2ClientManager clientManager = createDefaultClientManager();
 
-        LOG.info("Key Algoritm: " + signingKP.getPrivate().getAlgorithm());
+        LOG.info("Key Algorithm: {}", signingKP.getPrivate().getAlgorithm());
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.SIGNED_ENCRYPTED,
@@ -770,14 +770,14 @@ public class AS2MessageTest {
         ReceivedContentMic mdnMic = mdnEntity.getReceivedContentMic();
         assertEquals(expectedMic.getEncodedMessageDigest(), mdnMic.getEncodedMessageDigest(),
                 "Unexpected value for Received Content Mic");
-        LOG.debug("\r\n" + AS2Utils.printMessage(mndRequest));
+        LOG.debug("\r\n{}", AS2Utils.printMessage(mndRequest));
     }
 
     @Test
     public void compressedMessageTest() throws Exception {
         AS2ClientManager clientManager = createDefaultClientManager();
 
-        LOG.info("Key Algoritm: " + signingKP.getPrivate().getAlgorithm());
+        LOG.info("Key Algorithm: {}", signingKP.getPrivate().getAlgorithm());
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.PLAIN_COMPRESSED,
@@ -827,7 +827,7 @@ public class AS2MessageTest {
     public void compressedAndSignedMessageTest() throws Exception {
         AS2ClientManager clientManager = createDefaultClientManager();
 
-        LOG.info("Key Algoritm: " + signingKP.getPrivate().getAlgorithm());
+        LOG.info("Key Algorithm: {}", signingKP.getPrivate().getAlgorithm());
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.SIGNED_COMPRESSED,
@@ -893,7 +893,7 @@ public class AS2MessageTest {
     public void envelopedAndCompressedMessageTest() throws Exception {
         AS2ClientManager clientManager = createDefaultClientManager();
 
-        LOG.info("Key Algoritm: " + signingKP.getPrivate().getAlgorithm());
+        LOG.info("Key Algorithm: {}", signingKP.getPrivate().getAlgorithm());
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.ENCRYPTED_COMPRESSED,
@@ -952,7 +952,7 @@ public class AS2MessageTest {
     public void envelopedCompressedAndSignedMessageTest() throws Exception {
         AS2ClientManager clientManager = createDefaultClientManager();
 
-        LOG.info("Key Algoritm: " + signingKP.getPrivate().getAlgorithm());
+        LOG.info("Key Algorithm: {}", signingKP.getPrivate().getAlgorithm());
 
         HttpCoreContext httpContext = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME,
                 AS2MessageStructure.ENCRYPTED_COMPRESSED_SIGNED,

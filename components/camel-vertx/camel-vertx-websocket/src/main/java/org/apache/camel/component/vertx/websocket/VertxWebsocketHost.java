@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -68,12 +69,13 @@ public class VertxWebsocketHost {
         VertxWebsocketEndpoint endpoint = consumer.getEndpoint();
         VertxWebsocketConfiguration configuration = endpoint.getConfiguration();
 
-        LOG.info("Connected consumer for path {}", configuration.getPath());
+        URI websocketURI = configuration.getWebsocketURI();
+        LOG.info("Connected consumer for path {}", websocketURI.getPath());
         Router router = hostConfiguration.getRouter();
-        Route route = router.route(configuration.getPath());
+        Route route = router.route(websocketURI.getPath());
 
         if (!ObjectHelper.isEmpty(configuration.getAllowedOriginPattern())) {
-            CorsHandler corsHandler = CorsHandler.create(configuration.getAllowedOriginPattern());
+            CorsHandler corsHandler = CorsHandler.create().addRelativeOrigin(configuration.getAllowedOriginPattern());
             route.handler(corsHandler);
         }
 
@@ -132,7 +134,7 @@ public class VertxWebsocketHost {
             }
         });
 
-        routeRegistry.put(configuration.getPath(), route);
+        routeRegistry.put(websocketURI.getPath(), route);
     }
 
     /**

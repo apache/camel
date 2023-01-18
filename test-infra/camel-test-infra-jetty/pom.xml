@@ -66,6 +66,18 @@
             <artifactId>jetty-server</artifactId>
             <version>${jetty-version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-jakarta-server</artifactId>
+            <version>${jetty-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-jetty-server</artifactId>
+            <version>${jetty-version}</version>
+        </dependency>
     </dependencies>
 
     <build>

@@ -137,6 +137,77 @@ public class VertxWebsocketSSLTest extends VertxWebSocketTestSupport {
         }
     }
 
+    @Test
+    void testWssSchemeUriPrefix() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                fromF("vertx-websocket:localhost:%d/test?sslContextParameters=#serverSSLParameters", port)
+                        .setBody(simple("Hello ${body}"))
+                        .to("mock:result");
+            }
+        });
+
+        context.getRegistry().bind("clientSSLParameters", clientSSLParameters);
+        context.getRegistry().bind("serverSSLParameters", serverSSLParameters);
+
+        context.start();
+        try {
+            MockEndpoint mockEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+            mockEndpoint.expectedBodiesReceived("Hello World 1", "Hello World 2", "Hello World 3");
+
+            ProducerTemplate template = context.createProducerTemplate();
+            template.sendBody("vertx-websocket:wss:localhost:" + port + "/test?sslContextParameters=#clientSSLParameters",
+                    "World 1");
+            template.sendBody("vertx-websocket:wss:/localhost:" + port + "/test?sslContextParameters=#clientSSLParameters",
+                    "World 2");
+            template.sendBody("vertx-websocket:wss://localhost:" + port + "/test?sslContextParameters=#clientSSLParameters",
+                    "World 3");
+
+            mockEndpoint.assertIsSatisfied();
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    void testConsumeAsSecureClient() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() {
+                fromF("vertx-websocket:localhost:%d/echo?sslContextParameters=#serverSSLParameters", port)
+                        .log("Server consumer received message: ${body}")
+                        .toF("vertx-websocket:localhost:%d/echo?sendToAll=true&sslContextParameters=#clientSSLParameters",
+                                port);
+
+                fromF("vertx-websocket:localhost:%d/echo?consumeAsClient=true&sslContextParameters=#clientSSLParameters", port)
+                        .log("Client consumer received message: ${body}")
+                        .to("mock:result");
+            }
+        });
+
+        context.getRegistry().bind("clientSSLParameters", clientSSLParameters);
+        context.getRegistry().bind("serverSSLParameters", serverSSLParameters);
+
+        context.start();
+        try {
+            MockEndpoint mockEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+            mockEndpoint.expectedMessageCount(5);
+
+            ProducerTemplate template = context.createProducerTemplate();
+            String uri = "vertx-websocket:wss:localhost:" + port + "/echo?sslContextParameters=#clientSSLParameters";
+            for (int i = 1; i <= 5; i++) {
+                template.sendBody(uri, "Hello World " + i);
+            }
+
+            mockEndpoint.assertIsSatisfied();
+        } finally {
+            context.stop();
+        }
+    }
+
     @Override
     protected void startCamelContext() {
     }
