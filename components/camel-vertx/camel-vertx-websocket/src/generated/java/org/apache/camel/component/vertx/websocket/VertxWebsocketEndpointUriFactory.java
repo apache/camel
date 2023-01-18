@@ -21,7 +21,7 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(16);
+        Set<String> props = new HashSet<>(18);
         props.add("allowedOriginPattern");
         props.add("bridgeErrorHandler");
         props.add("clientOptions");
@@ -29,15 +29,17 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
         props.add("consumeAsClient");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("host");
         props.add("lazyStartProducer");
         props.add("maxReconnectAttempts");
+        props.add("path");
+        props.add("port");
         props.add("reconnectInitialDelay");
         props.add("reconnectInterval");
         props.add("router");
         props.add("sendToAll");
         props.add("serverOptions");
         props.add("sslContextParameters");
-        props.add("websocketURI");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();
@@ -55,7 +57,9 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
 
         Map<String, Object> copy = new HashMap<>(properties);
 
-        uri = buildPathParameter(syntax, uri, "websocketURI", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "host", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "port", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "path", null, true, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }

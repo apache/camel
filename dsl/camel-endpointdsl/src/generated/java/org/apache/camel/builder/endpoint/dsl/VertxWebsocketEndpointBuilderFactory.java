@@ -700,8 +700,15 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * 
          * Syntax: <code>vertx-websocket:host:port/path</code>
          * 
-         * Path parameter: websocketURI (required)
-         * The WebSocket URI address to use.
+         * Path parameter: host (required)
+         * WebSocket hostname, such as localhost or a remote host when in client
+         * mode.
+         * 
+         * Path parameter: port (required)
+         * WebSocket port number to use.
+         * 
+         * Path parameter: path (required)
+         * WebSocket path to use.
          * 
          * @param path host:port/path
          * @return the dsl builder
@@ -720,8 +727,15 @@ public interface VertxWebsocketEndpointBuilderFactory {
          * 
          * Syntax: <code>vertx-websocket:host:port/path</code>
          * 
-         * Path parameter: websocketURI (required)
-         * The WebSocket URI address to use.
+         * Path parameter: host (required)
+         * WebSocket hostname, such as localhost or a remote host when in client
+         * mode.
+         * 
+         * Path parameter: port (required)
+         * WebSocket port number to use.
+         * 
+         * Path parameter: path (required)
+         * WebSocket path to use.
          * 
          * @param componentName to use a custom component name for the endpoint
          * instead of the default name

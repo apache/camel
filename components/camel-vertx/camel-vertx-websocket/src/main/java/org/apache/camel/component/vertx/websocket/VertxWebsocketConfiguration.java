@@ -30,9 +30,17 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 @UriParams
 public class VertxWebsocketConfiguration {
 
+    private URI websocketURI;
+
     @UriPath
     @Metadata(required = true)
-    private URI websocketURI;
+    private String host;
+    @UriPath
+    @Metadata(required = true)
+    private int port;
+    @UriPath
+    @Metadata(required = true)
+    private String path;
     @UriParam(label = "consumer")
     private String allowedOriginPattern;
     @UriParam(label = "consumer")
@@ -61,10 +69,46 @@ public class VertxWebsocketConfiguration {
      */
     public void setWebsocketURI(URI websocketURI) {
         this.websocketURI = websocketURI;
+        this.host = websocketURI.getHost();
+        this.port = websocketURI.getPort();
+        this.path = websocketURI.getPath();
     }
 
     public URI getWebsocketURI() {
         return websocketURI;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    /**
+     * WebSocket hostname, such as localhost or a remote host when in client mode.
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    /**
+     * WebSocket port number to use.
+     */
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    /**
+     * WebSocket path to use.
+     */
+    public void setPath(String path) {
+        this.path = path;
     }
 
     /**
