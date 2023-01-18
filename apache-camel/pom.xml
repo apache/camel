@@ -232,5 +232,29 @@
             </plugin>
         </plugins>
     </build>
-
+    <profiles>
+            <profile>
+            <id>sbom</id>
+            <build>
+            <plugins>
+                <plugin>
+                   <groupId>org.cyclonedx</groupId>
+                   <artifactId>cyclonedx-maven-plugin</artifactId>
+                   <version>${cyclonedx-maven-plugin-version}</version>
+                   <configuration>
+                        <outputName>camel-sbom</outputName>
+                   </configuration>
+                   <executions>
+                       <execution>
+                           <phase>package</phase>
+                           <goals>
+                               <goal>makeAggregateBom</goal>
+                           </goals>
+                      </execution>
+                   </executions>
+                </plugin>
+            </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
