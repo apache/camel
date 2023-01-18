@@ -40,7 +40,7 @@ public final class Olingo2TestUtil {
             Method m = clz.getMethod("generateData", String.class);
             m.invoke(null, serviceUrl);
         } catch (Throwable t) {
-            LOG.error("Unable to load the required sample class", t);
+            LOG.error("Unable to load the required sample class: {}", t.getMessage());
             throw new IOException("unable to load the required sample class", t);
         }
     }
