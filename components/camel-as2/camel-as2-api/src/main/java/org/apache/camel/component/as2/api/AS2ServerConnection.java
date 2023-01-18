@@ -27,6 +27,7 @@ import java.security.cert.Certificate;
 import org.apache.camel.component.as2.api.entity.DispositionNotificationMultipartReportEntity;
 import org.apache.camel.component.as2.api.io.AS2BHttpServerConnection;
 import org.apache.camel.component.as2.api.protocol.ResponseMDN;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.ConnectionClosedException;
 import org.apache.http.HttpException;
 import org.apache.http.HttpInetConnection;
@@ -43,7 +44,6 @@ import org.apache.http.protocol.ResponseContent;
 import org.apache.http.protocol.ResponseDate;
 import org.apache.http.protocol.ResponseServer;
 import org.apache.http.protocol.UriHttpRequestHandlerMapper;
-import org.apache.http.util.Args;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -205,10 +205,10 @@ public class AS2ServerConnection {
                                PrivateKey decryptingPrivateKey,
                                String mdnMessageTemplate)
                                                           throws IOException {
-        this.as2Version = Args.notNull(as2Version, "as2Version");
-        this.originServer = Args.notNull(originServer, "userAgent");
-        this.serverFqdn = Args.notNull(serverFqdn, "serverFqdn");
-        this.serverPortNumber = Args.notNull(serverPortNumber, "serverPortNumber");
+        this.as2Version = ObjectHelper.notNull(as2Version, "as2Version");
+        this.originServer = ObjectHelper.notNull(originServer, "userAgent");
+        this.serverFqdn = ObjectHelper.notNull(serverFqdn, "serverFqdn");
+        this.serverPortNumber = ObjectHelper.notNull(serverPortNumber, "serverPortNumber");
         this.signingAlgorithm = signingAlgorithm;
         this.signingCertificateChain = signingCertificateChain;
         this.signingPrivateKey = signingPrivateKey;

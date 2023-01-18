@@ -35,6 +35,10 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         map.put("EncryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
         map.put("EncryptingCertificateChain", java.security.cert.Certificate[].class);
         map.put("From", java.lang.String.class);
+        map.put("HttpConnectionPoolSize", java.lang.Integer.class);
+        map.put("HttpConnectionPoolTtl", java.time.Duration.class);
+        map.put("HttpConnectionTimeout", java.time.Duration.class);
+        map.put("HttpSocketTimeout", java.time.Duration.class);
         map.put("MdnMessageTemplate", java.lang.String.class);
         map.put("MethodName", java.lang.String.class);
         map.put("RequestUri", java.lang.String.class);
@@ -86,6 +90,14 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         case "EncryptingCertificateChain": target.setEncryptingCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
         case "from":
         case "From": target.setFrom(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpconnectionpoolsize":
+        case "HttpConnectionPoolSize": target.setHttpConnectionPoolSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "httpconnectionpoolttl":
+        case "HttpConnectionPoolTtl": target.setHttpConnectionPoolTtl(property(camelContext, java.time.Duration.class, value)); return true;
+        case "httpconnectiontimeout":
+        case "HttpConnectionTimeout": target.setHttpConnectionTimeout(property(camelContext, java.time.Duration.class, value)); return true;
+        case "httpsockettimeout":
+        case "HttpSocketTimeout": target.setHttpSocketTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "mdnmessagetemplate":
         case "MdnMessageTemplate": target.setMdnMessageTemplate(property(camelContext, java.lang.String.class, value)); return true;
         case "methodname":
@@ -156,6 +168,14 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         case "EncryptingCertificateChain": return java.security.cert.Certificate[].class;
         case "from":
         case "From": return java.lang.String.class;
+        case "httpconnectionpoolsize":
+        case "HttpConnectionPoolSize": return java.lang.Integer.class;
+        case "httpconnectionpoolttl":
+        case "HttpConnectionPoolTtl": return java.time.Duration.class;
+        case "httpconnectiontimeout":
+        case "HttpConnectionTimeout": return java.time.Duration.class;
+        case "httpsockettimeout":
+        case "HttpSocketTimeout": return java.time.Duration.class;
         case "mdnmessagetemplate":
         case "MdnMessageTemplate": return java.lang.String.class;
         case "methodname":
@@ -222,6 +242,14 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         case "EncryptingCertificateChain": return target.getEncryptingCertificateChain();
         case "from":
         case "From": return target.getFrom();
+        case "httpconnectionpoolsize":
+        case "HttpConnectionPoolSize": return target.getHttpConnectionPoolSize();
+        case "httpconnectionpoolttl":
+        case "HttpConnectionPoolTtl": return target.getHttpConnectionPoolTtl();
+        case "httpconnectiontimeout":
+        case "HttpConnectionTimeout": return target.getHttpConnectionTimeout();
+        case "httpsockettimeout":
+        case "HttpSocketTimeout": return target.getHttpSocketTimeout();
         case "mdnmessagetemplate":
         case "MdnMessageTemplate": return target.getMdnMessageTemplate();
         case "methodname":

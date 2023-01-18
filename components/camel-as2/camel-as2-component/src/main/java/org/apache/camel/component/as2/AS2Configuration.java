@@ -18,6 +18,7 @@ package org.apache.camel.component.as2;
 
 import java.security.PrivateKey;
 import java.security.cert.Certificate;
+import java.time.Duration;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.as2.api.AS2CompressionAlgorithm;
@@ -99,6 +100,14 @@ public class AS2Configuration {
     private String mdnMessageTemplate;
     @UriParam
     private String attachedFileName;
+    @UriParam(defaultValue = "5s")
+    private Duration httpSocketTimeout = Duration.ofSeconds(5);
+    @UriParam(defaultValue = "5s")
+    private Duration httpConnectionTimeout = Duration.ofSeconds(5);
+    @UriParam(defaultValue = "5")
+    private Integer httpConnectionPoolSize = 5;
+    @UriParam(defaultValue = "15m")
+    private Duration httpConnectionPoolTtl = Duration.ofMinutes(15);
 
     public AS2ApiName getApiName() {
         return apiName;
@@ -436,4 +445,49 @@ public class AS2Configuration {
     public void setAttachedFileName(String attachedFileName) {
         this.attachedFileName = attachedFileName;
     }
+
+    public Duration getHttpSocketTimeout() {
+        return httpSocketTimeout;
+    }
+
+    /**
+     * The timeout of the underlying http socket (client only)
+     */
+    public void setHttpSocketTimeout(Duration httpSocketTimeout) {
+        this.httpSocketTimeout = httpSocketTimeout;
+    }
+
+    public Duration getHttpConnectionTimeout() {
+        return httpConnectionTimeout;
+    }
+
+    /**
+     * The timeout of the http connection (client only)
+     */
+    public void setHttpConnectionTimeout(Duration httpConnectionTimeout) {
+        this.httpConnectionTimeout = httpConnectionTimeout;
+    }
+
+    public Integer getHttpConnectionPoolSize() {
+        return httpConnectionPoolSize;
+    }
+
+    /**
+     * The maximum size of the connection pool for http connections (client only)
+     */
+    public void setHttpConnectionPoolSize(Integer httpConnectionPoolSize) {
+        this.httpConnectionPoolSize = httpConnectionPoolSize;
+    }
+
+    public Duration getHttpConnectionPoolTtl() {
+        return httpConnectionPoolTtl;
+    }
+
+    /**
+     * The time to live for connections in the connection pool (client only)
+     */
+    public void setHttpConnectionPoolTtl(Duration httpConnectionPoolTtl) {
+        this.httpConnectionPoolTtl = httpConnectionPoolTtl;
+    }
+
 }

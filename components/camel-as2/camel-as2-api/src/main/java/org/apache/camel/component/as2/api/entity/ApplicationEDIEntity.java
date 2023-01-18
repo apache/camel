@@ -23,11 +23,11 @@ import java.nio.charset.StandardCharsets;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.CanonicalOutputStream;
 import org.apache.camel.component.as2.api.util.EntityUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.entity.ContentType;
-import org.apache.http.util.Args;
 import org.slf4j.helpers.MessageFormatter;
 
 public abstract class ApplicationEDIEntity extends MimeEntity {
@@ -38,8 +38,8 @@ public abstract class ApplicationEDIEntity extends MimeEntity {
 
     protected ApplicationEDIEntity(String ediMessage, ContentType contentType, String contentTransferEncoding,
                                    boolean isMainBody, String filename) {
-        this.ediMessage = Args.notNull(ediMessage, "EDI Message");
-        setContentType(Args.notNull(contentType, "Content Type").toString());
+        this.ediMessage = ObjectHelper.notNull(ediMessage, "EDI Message");
+        setContentType(ObjectHelper.notNull(contentType, "Content Type").toString());
         setContentTransferEncoding(contentTransferEncoding);
         setMainBody(isMainBody);
         if (StringUtils.isNotBlank(filename)) {

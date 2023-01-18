@@ -21,13 +21,13 @@ import java.util.BitSet;
 import java.util.List;
 
 import org.apache.camel.component.as2.api.entity.Importance;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.ParserCursor;
 import org.apache.http.message.TokenParser;
-import org.apache.http.util.Args;
 import org.apache.http.util.CharArrayBuffer;
 
 public final class AS2HeaderUtils {
@@ -38,7 +38,7 @@ public final class AS2HeaderUtils {
         private final String[] values;
 
         public Parameter(String attribute, String importance, String[] values) {
-            this.attribute = Args.notNull(attribute, "attribute");
+            this.attribute = ObjectHelper.notNull(attribute, "attribute");
             this.importance = Importance.get(importance);
             this.values = values;
         }
@@ -107,8 +107,8 @@ public final class AS2HeaderUtils {
     }
 
     public static Parameter parseParameter(final CharArrayBuffer buffer, final ParserCursor cursor) {
-        Args.notNull(buffer, "Char array buffer");
-        Args.notNull(cursor, "Parser cursor");
+        ObjectHelper.notNull(buffer, "Char array buffer");
+        ObjectHelper.notNull(cursor, "Parser cursor");
 
         final String name = TOKEN_PARSER.parseToken(buffer, cursor, TOKEN_DELIMS);
         if (cursor.atEnd()) {
@@ -146,8 +146,8 @@ public final class AS2HeaderUtils {
     }
 
     public static String getParameterValue(Header[] headers, String headerName, String parameterName) {
-        Args.notNull(headers, "headers");
-        Args.notNull(headerName, "headerName");
+        ObjectHelper.notNull(headers, "headers");
+        ObjectHelper.notNull(headerName, "headerName");
         for (Header header : headers) {
             if (header.getName().equalsIgnoreCase(headerName)) {
                 for (HeaderElement headerElement : header.getElements()) {

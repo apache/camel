@@ -27,6 +27,7 @@ import org.apache.camel.component.as2.api.entity.ApplicationPkcs7MimeEnvelopedDa
 import org.apache.camel.component.as2.api.entity.EntityParser;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
 import org.apache.camel.component.as2.api.entity.MultipartSignedEntity;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
@@ -37,7 +38,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.ContentType;
 import org.apache.http.io.SessionInputBuffer;
-import org.apache.http.util.Args;
 import org.apache.http.util.CharArrayBuffer;
 import org.bouncycastle.cms.jcajce.ZlibExpanderProvider;
 
@@ -52,8 +52,8 @@ public final class HttpMessageUtils {
     }
 
     public static void setHeaderValue(HttpMessage message, String headerName, String headerValue) {
-        Args.notNull(message, "message");
-        Args.notNull(headerName, "headerName");
+        ObjectHelper.notNull(message, "message");
+        ObjectHelper.notNull(headerName, "headerName");
         if (headerValue == null) {
             message.removeHeaders(headerName);
         } else {
@@ -62,8 +62,8 @@ public final class HttpMessageUtils {
     }
 
     public static <T> T getEntity(HttpMessage message, Class<T> type) {
-        Args.notNull(message, "message");
-        Args.notNull(type, "type");
+        ObjectHelper.notNull(message, "message");
+        ObjectHelper.notNull(type, "type");
         if (message instanceof HttpEntityEnclosingRequest) {
             HttpEntity entity = ((HttpEntityEnclosingRequest) message).getEntity();
             if (entity != null && type.isInstance(entity)) {
@@ -109,9 +109,9 @@ public final class HttpMessageUtils {
     }
 
     public static String getParameterValue(HttpMessage message, String headerName, String parameterName) {
-        Args.notNull(message, "message");
-        Args.notNull(headerName, "headerName");
-        Args.notNull(parameterName, "parameterName");
+        ObjectHelper.notNull(message, "message");
+        ObjectHelper.notNull(headerName, "headerName");
+        ObjectHelper.notNull(parameterName, "parameterName");
         Header header = message.getFirstHeader(headerName);
         if (header == null) {
             return null;
