@@ -56,8 +56,14 @@
             <version>${vertx-version}</version>
         </dependency>
 
-
         <!-- test dependencies -->
+        <!-- jakarta mime types for upload support -->
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-activation</artifactId>
+            <version>${angus-mail-version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
