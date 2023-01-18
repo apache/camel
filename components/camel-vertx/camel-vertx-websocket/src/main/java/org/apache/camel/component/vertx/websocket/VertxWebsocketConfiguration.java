@@ -39,7 +39,6 @@ public class VertxWebsocketConfiguration {
     @Metadata(required = true)
     private int port;
     @UriPath
-    @Metadata(required = true)
     private String path;
     @UriParam(label = "consumer")
     private String allowedOriginPattern;

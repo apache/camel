@@ -59,7 +59,7 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
 
         uri = buildPathParameter(syntax, uri, "host", null, true, copy);
         uri = buildPathParameter(syntax, uri, "port", null, true, copy);
-        uri = buildPathParameter(syntax, uri, "path", null, true, copy);
+        uri = buildPathParameter(syntax, uri, "path", null, false, copy);
         uri = buildQueryParameters(uri, copy, encode);
         return uri;
     }
