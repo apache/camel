@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import jakarta.servlet.AsyncContext;
@@ -50,6 +49,8 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  * Servlet which leverage <a href="http://wiki.eclipse.org/Jetty/Feature/Continuations">Jetty Continuations</a>.
  */
 public class CamelContinuationServlet extends CamelServlet {
+
+    static final String TIMEOUT_ERROR = "CamelTimeoutException";
 
     static final String EXCHANGE_ATTRIBUTE_NAME = "CamelExchange";
     static final String EXCHANGE_ATTRIBUTE_ID = "CamelExchangeId";
@@ -318,13 +319,11 @@ public class CamelContinuationServlet extends CamelServlet {
         @Override
         public void onTimeout(AsyncEvent event) throws IOException {
             HttpServletRequest request = (HttpServletRequest) event.getSuppliedRequest();
-            HttpServletResponse response = (HttpServletResponse) event.getSuppliedResponse();
             String id = (String) request.getAttribute(EXCHANGE_ATTRIBUTE_ID);
             // remember this id as expired
             expiredExchanges.put(id, id);
             log.warn("Continuation expired of exchangeId: {}", id);
-            consumer.getBinding().doWriteExceptionResponse(new TimeoutException(), response);
-            return;
+            request.setAttribute(TIMEOUT_ERROR, Boolean.TRUE);
         }
 
         @Override

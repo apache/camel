@@ -1268,6 +1268,11 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
                         HttpServletRequest request, HttpServletResponse response)
                         throws IOException, ServletException {
                     String msg = HttpStatus.getMessage(response.getStatus());
+                    Object timeout = request.getAttribute(CamelContinuationServlet.TIMEOUT_ERROR);
+                    if (Boolean.TRUE.equals(timeout)) {
+                        request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, 504);
+                        response.setStatus(504);
+                    }
                     request.setAttribute(RequestDispatcher.ERROR_MESSAGE, msg);
                     super.handle(target, baseRequest, request, response);
                 }
