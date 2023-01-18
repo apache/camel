@@ -117,7 +117,7 @@ public class CodeRestGenerator extends CamelCommand {
                 .setAdditionalProperties(
                         Map.of(
                                 SERIALIZABLE_MODEL, "false",
-                                "useJakartaEe", "true",
+                                "useJakartaEe", "false",
                                 "useSwaggerAnnotations", "false",
                                 GENERATE_MODELS, "true",
                                 "generatePom", "false",
