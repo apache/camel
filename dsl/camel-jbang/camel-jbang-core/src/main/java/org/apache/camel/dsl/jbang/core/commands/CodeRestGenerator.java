@@ -56,7 +56,8 @@ public class CodeRestGenerator extends CamelCommand {
     private boolean generateRoutes;
     @CommandLine.Option(names = { "-d", "--dto" }, description = "Data Objects")
     private boolean generateDataObjects;
-    @CommandLine.Option(names = { "-run", "--runtime" }, description = "Runtime (quarkus, spring-boot)", defaultValue = "quarkus")
+    @CommandLine.Option(names = { "-run", "--runtime" }, description = "Runtime (quarkus, spring-boot)",
+                        defaultValue = "quarkus")
     private String runtime;
     @CommandLine.Option(names = { "-p", "--package" }, description = "Package for generated models", defaultValue = "model")
     private String packageName;
@@ -122,9 +123,7 @@ public class CodeRestGenerator extends CamelCommand {
                                 GENERATE_MODELS, "true",
                                 "generatePom", "false",
                                 "generateApis", "false",
-                                "sourceFolder", CODE
-                        )
-                )
+                                "sourceFolder", CODE))
                 .setOutputDir(output.getAbsolutePath());
 
         final ClientOptInput clientOptInput = configurator.toClientOptInput();
