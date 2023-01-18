@@ -486,6 +486,15 @@ public class RestEndpoint extends DefaultEndpoint {
             }
         }
 
+        // favour using platform-http if available on classpath
+        if (factory == null) {
+            Object comp = getCamelContext().getComponent("platform-http", true);
+            if (comp instanceof RestConsumerFactory) {
+                factory = (RestConsumerFactory) comp;
+                LOG.debug("Auto discovered platform-http as RestConsumerFactory");
+            }
+        }
+
         // lookup in registry
         if (factory == null) {
             Set<RestConsumerFactory> factories = getCamelContext().getRegistry().findByType(RestConsumerFactory.class);
