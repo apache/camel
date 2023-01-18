@@ -361,6 +361,142 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum size of the connection pool for http connections (client
+         * only).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 5
+         * Group: common
+         * 
+         * @param httpConnectionPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder httpConnectionPoolSize(
+                Integer httpConnectionPoolSize) {
+            doSetProperty("httpConnectionPoolSize", httpConnectionPoolSize);
+            return this;
+        }
+        /**
+         * The maximum size of the connection pool for http connections (client
+         * only).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 5
+         * Group: common
+         * 
+         * @param httpConnectionPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder httpConnectionPoolSize(
+                String httpConnectionPoolSize) {
+            doSetProperty("httpConnectionPoolSize", httpConnectionPoolSize);
+            return this;
+        }
+        /**
+         * The time to live for connections in the connection pool (client
+         * only).
+         * 
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 15m
+         * Group: common
+         * 
+         * @param httpConnectionPoolTtl the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder httpConnectionPoolTtl(
+                java.time.Duration httpConnectionPoolTtl) {
+            doSetProperty("httpConnectionPoolTtl", httpConnectionPoolTtl);
+            return this;
+        }
+        /**
+         * The time to live for connections in the connection pool (client
+         * only).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 15m
+         * Group: common
+         * 
+         * @param httpConnectionPoolTtl the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder httpConnectionPoolTtl(
+                String httpConnectionPoolTtl) {
+            doSetProperty("httpConnectionPoolTtl", httpConnectionPoolTtl);
+            return this;
+        }
+        /**
+         * The timeout of the http connection (client only).
+         * 
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: common
+         * 
+         * @param httpConnectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder httpConnectionTimeout(
+                java.time.Duration httpConnectionTimeout) {
+            doSetProperty("httpConnectionTimeout", httpConnectionTimeout);
+            return this;
+        }
+        /**
+         * The timeout of the http connection (client only).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: common
+         * 
+         * @param httpConnectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder httpConnectionTimeout(
+                String httpConnectionTimeout) {
+            doSetProperty("httpConnectionTimeout", httpConnectionTimeout);
+            return this;
+        }
+        /**
+         * The timeout of the underlying http socket (client only).
+         * 
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: common
+         * 
+         * @param httpSocketTimeout the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder httpSocketTimeout(
+                java.time.Duration httpSocketTimeout) {
+            doSetProperty("httpSocketTimeout", httpSocketTimeout);
+            return this;
+        }
+        /**
+         * The timeout of the underlying http socket (client only).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: common
+         * 
+         * @param httpSocketTimeout the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder httpSocketTimeout(
+                String httpSocketTimeout) {
+            doSetProperty("httpSocketTimeout", httpSocketTimeout);
+            return this;
+        }
+        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1083,6 +1219,142 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * The maximum size of the connection pool for http connections (client
+         * only).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 5
+         * Group: common
+         * 
+         * @param httpConnectionPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder httpConnectionPoolSize(
+                Integer httpConnectionPoolSize) {
+            doSetProperty("httpConnectionPoolSize", httpConnectionPoolSize);
+            return this;
+        }
+        /**
+         * The maximum size of the connection pool for http connections (client
+         * only).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 5
+         * Group: common
+         * 
+         * @param httpConnectionPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder httpConnectionPoolSize(
+                String httpConnectionPoolSize) {
+            doSetProperty("httpConnectionPoolSize", httpConnectionPoolSize);
+            return this;
+        }
+        /**
+         * The time to live for connections in the connection pool (client
+         * only).
+         * 
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 15m
+         * Group: common
+         * 
+         * @param httpConnectionPoolTtl the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder httpConnectionPoolTtl(
+                java.time.Duration httpConnectionPoolTtl) {
+            doSetProperty("httpConnectionPoolTtl", httpConnectionPoolTtl);
+            return this;
+        }
+        /**
+         * The time to live for connections in the connection pool (client
+         * only).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 15m
+         * Group: common
+         * 
+         * @param httpConnectionPoolTtl the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder httpConnectionPoolTtl(
+                String httpConnectionPoolTtl) {
+            doSetProperty("httpConnectionPoolTtl", httpConnectionPoolTtl);
+            return this;
+        }
+        /**
+         * The timeout of the http connection (client only).
+         * 
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: common
+         * 
+         * @param httpConnectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder httpConnectionTimeout(
+                java.time.Duration httpConnectionTimeout) {
+            doSetProperty("httpConnectionTimeout", httpConnectionTimeout);
+            return this;
+        }
+        /**
+         * The timeout of the http connection (client only).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: common
+         * 
+         * @param httpConnectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder httpConnectionTimeout(
+                String httpConnectionTimeout) {
+            doSetProperty("httpConnectionTimeout", httpConnectionTimeout);
+            return this;
+        }
+        /**
+         * The timeout of the underlying http socket (client only).
+         * 
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: common
+         * 
+         * @param httpSocketTimeout the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder httpSocketTimeout(
+                java.time.Duration httpSocketTimeout) {
+            doSetProperty("httpSocketTimeout", httpSocketTimeout);
+            return this;
+        }
+        /**
+         * The timeout of the underlying http socket (client only).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: common
+         * 
+         * @param httpSocketTimeout the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder httpSocketTimeout(
+                String httpSocketTimeout) {
+            doSetProperty("httpSocketTimeout", httpSocketTimeout);
+            return this;
+        }
+        /**
          * Sets the name of a parameter to be passed in the exchange In Body.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1781,6 +2053,141 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder from(String from) {
             doSetProperty("from", from);
+            return this;
+        }
+        /**
+         * The maximum size of the connection pool for http connections (client
+         * only).
+         * 
+         * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 5
+         * Group: common
+         * 
+         * @param httpConnectionPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder httpConnectionPoolSize(
+                Integer httpConnectionPoolSize) {
+            doSetProperty("httpConnectionPoolSize", httpConnectionPoolSize);
+            return this;
+        }
+        /**
+         * The maximum size of the connection pool for http connections (client
+         * only).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
+         * 
+         * Default: 5
+         * Group: common
+         * 
+         * @param httpConnectionPoolSize the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder httpConnectionPoolSize(
+                String httpConnectionPoolSize) {
+            doSetProperty("httpConnectionPoolSize", httpConnectionPoolSize);
+            return this;
+        }
+        /**
+         * The time to live for connections in the connection pool (client
+         * only).
+         * 
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 15m
+         * Group: common
+         * 
+         * @param httpConnectionPoolTtl the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder httpConnectionPoolTtl(
+                java.time.Duration httpConnectionPoolTtl) {
+            doSetProperty("httpConnectionPoolTtl", httpConnectionPoolTtl);
+            return this;
+        }
+        /**
+         * The time to live for connections in the connection pool (client
+         * only).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 15m
+         * Group: common
+         * 
+         * @param httpConnectionPoolTtl the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder httpConnectionPoolTtl(
+                String httpConnectionPoolTtl) {
+            doSetProperty("httpConnectionPoolTtl", httpConnectionPoolTtl);
+            return this;
+        }
+        /**
+         * The timeout of the http connection (client only).
+         * 
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: common
+         * 
+         * @param httpConnectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder httpConnectionTimeout(
+                java.time.Duration httpConnectionTimeout) {
+            doSetProperty("httpConnectionTimeout", httpConnectionTimeout);
+            return this;
+        }
+        /**
+         * The timeout of the http connection (client only).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: common
+         * 
+         * @param httpConnectionTimeout the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder httpConnectionTimeout(
+                String httpConnectionTimeout) {
+            doSetProperty("httpConnectionTimeout", httpConnectionTimeout);
+            return this;
+        }
+        /**
+         * The timeout of the underlying http socket (client only).
+         * 
+         * The option is a: &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: common
+         * 
+         * @param httpSocketTimeout the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder httpSocketTimeout(
+                java.time.Duration httpSocketTimeout) {
+            doSetProperty("httpSocketTimeout", httpSocketTimeout);
+            return this;
+        }
+        /**
+         * The timeout of the underlying http socket (client only).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.time.Duration&lt;/code&gt; type.
+         * 
+         * Default: 5s
+         * Group: common
+         * 
+         * @param httpSocketTimeout the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder httpSocketTimeout(String httpSocketTimeout) {
+            doSetProperty("httpSocketTimeout", httpSocketTimeout);
             return this;
         }
         /**
