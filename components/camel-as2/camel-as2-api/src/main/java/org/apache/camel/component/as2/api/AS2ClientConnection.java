@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.component.as2.api.io.AS2BHttpClientConnection;
 import org.apache.camel.component.as2.api.protocol.RequestAS2;
 import org.apache.camel.component.as2.api.protocol.RequestMDN;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.Header;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpClientConnection;
@@ -78,7 +79,7 @@ public class AS2ClientConnection {
         Args.notNull(socketTimeout, "socketTimeout");
         this.connectionTimeoutMilliseconds = (int) Args.notNull(connectionTimeout, "connectionTimeout").toMillis();
         Args.notNull(connectionPoolMaxSize, "connectionPoolMaxSize");
-        Args.notNull(connectionPoolTtl, "connectionPoolTtl");
+        ObjectHelper.notNull(connectionPoolTtl, "connectionPoolTtl");
 
         // Build Processor
         httpProcessor = HttpProcessorBuilder.create()
