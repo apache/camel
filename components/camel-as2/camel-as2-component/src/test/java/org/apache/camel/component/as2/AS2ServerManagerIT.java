@@ -214,7 +214,7 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
         assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), rcvdMessageFromBody.replaceAll("[\n\r]", ""),
                 "EDI message does not match");
     }
-    
+
     @Test
     public void receiveMultipartSignedMessageTest() throws Exception {
 
@@ -391,7 +391,7 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
         String errorMessage = new String(Streams.readAll(responseEntity.getContent()));
         assertEquals(EXPECTED_EXCEPTION_MSG, errorMessage, "");
     }
-    
+
     @Test
     public void checkMDNTest() throws Exception {
         AS2ClientConnection clientConnection
@@ -399,24 +399,29 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
                         AS2_VERSION, USER_AGENT, CLIENT_FQDN, TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT,
                         HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE, HTTP_CONNECTION_POOL_TTL);
         AS2ClientManager clientManager = new AS2ClientManager(clientConnection);
-        
-        //Testing MDN parameter defaults
-        HttpCoreContext response=clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, null, null, null,
-                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null);
-        
-        assertEquals(new AS2Configuration().getServer(), response.getResponse().getFirstHeader(AS2Header.FROM).getValue(), "Default value for From header not set");
-        assertEquals("MDN Response To:" + SUBJECT, response.getResponse().getFirstHeader(AS2Header.SUBJECT).getValue(), "Default value for Subject header not set");
-        
-        //Testing MDN parameter overwrites
-         response=clientManager.send(EDI_MESSAGE, REQUEST_URI+"mdnTest", SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
-                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, null, null, null,
-                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null);
-        
-        assertEquals("MdnTestFrom", response.getResponse().getFirstHeader(AS2Header.FROM).getValue(), "Configured value for From header not set");
-        assertEquals("MdnTestSubjectPrefix" + SUBJECT, response.getResponse().getFirstHeader(AS2Header.SUBJECT).getValue(), "Configured value for Subject header not set");
-    }
 
+        //Testing MDN parameter defaults
+        HttpCoreContext response
+                = clientManager.send(EDI_MESSAGE, REQUEST_URI, SUBJECT, FROM, AS2_NAME, AS2_NAME, AS2MessageStructure.PLAIN,
+                        ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, null, null, null,
+                        null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null);
+
+        assertEquals(new AS2Configuration().getServer(), response.getResponse().getFirstHeader(AS2Header.FROM).getValue(),
+                "Default value for From header not set");
+        assertEquals("MDN Response To:" + SUBJECT, response.getResponse().getFirstHeader(AS2Header.SUBJECT).getValue(),
+                "Default value for Subject header not set");
+
+        //Testing MDN parameter overwrites
+        response = clientManager.send(EDI_MESSAGE, REQUEST_URI + "mdnTest", SUBJECT, FROM, AS2_NAME, AS2_NAME,
+                AS2MessageStructure.PLAIN,
+                ContentType.create(AS2MediaType.APPLICATION_EDIFACT, StandardCharsets.US_ASCII), null, null, null, null,
+                null, DISPOSITION_NOTIFICATION_TO, SIGNED_RECEIPT_MIC_ALGORITHMS, null, null, null);
+
+        assertEquals("MdnTestFrom", response.getResponse().getFirstHeader(AS2Header.FROM).getValue(),
+                "Configured value for From header not set");
+        assertEquals("MdnTestSubjectPrefix" + SUBJECT, response.getResponse().getFirstHeader(AS2Header.SUBJECT).getValue(),
+                "Configured value for Subject header not set");
+    }
 
     private static void setupSigningGenerator() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
@@ -502,8 +507,9 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
                         .to("mock:as2RcvMsgs");
 
                 // test route for listen with custom MDN parameters
-                from("as2://" + PATH_PREFIX + "/listen?requestUriPattern=/mdnTest&from=MdnTestFrom&subject=MdnTestSubjectPrefix")
-                        .to("mock:as2RcvMsgs");
+                from("as2://" + PATH_PREFIX
+                     + "/listen?requestUriPattern=/mdnTest&from=MdnTestFrom&subject=MdnTestSubjectPrefix")
+                             .to("mock:as2RcvMsgs");
             }
         };
     }
