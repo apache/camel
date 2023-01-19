@@ -38,6 +38,7 @@ The following components has been removed:
 - camel-restdsl-swagger-plugin
 - camel-resteasy
 - camel-spark
+- camel-spring-integration
 - camel-swift
 - camel-swagger-java
 - camel-websocket

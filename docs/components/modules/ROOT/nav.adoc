@@ -281,7 +281,6 @@
 ** xref:spring-summary.adoc[Spring]
 *** xref:spring-batch-component.adoc[Spring Batch]
 *** xref:spring-event-component.adoc[Spring Event]
-*** xref:spring-integration-component.adoc[Spring Integration]
 *** xref:spring-jdbc-component.adoc[Spring JDBC]
 *** xref:spring-ldap-component.adoc[Spring LDAP]
 *** xref:spring-rabbitmq-component.adoc[Spring RabbitMQ]

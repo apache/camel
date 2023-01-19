@@ -3781,19 +3781,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SpringEventComponentBuilderFactory.springEvent();
     }
     /**
-     * Spring Integration (camel-spring-integration)
-     * Bridge Camel with Spring Integration.
-     * 
-     * Category: spring,eventbus
-     * Since: 1.4
-     * Maven coordinates: org.apache.camel:camel-spring-integration
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.SpringIntegrationComponentBuilderFactory.SpringIntegrationComponentBuilder springIntegration() {
-        return org.apache.camel.builder.component.dsl.SpringIntegrationComponentBuilderFactory.springIntegration();
-    }
-    /**
      * Spring JDBC (camel-spring-jdbc)
      * Access databases through SQL and JDBC with Spring Transaction support.
      * 
@@ -3923,20 +3910,6 @@ public interface ComponentsBuilderFactory {
      */
     static org.apache.camel.builder.component.dsl.StitchComponentBuilderFactory.StitchComponentBuilder stitch() {
         return org.apache.camel.builder.component.dsl.StitchComponentBuilderFactory.stitch();
-    }
-    /**
-     * Stomp (camel-stomp)
-     * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging
-     * Protocol) compliant message brokers.
-     * 
-     * Category: messaging
-     * Since: 2.12
-     * Maven coordinates: org.apache.camel:camel-stomp
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.StompComponentBuilderFactory.StompComponentBuilder stomp() {
-        return org.apache.camel.builder.component.dsl.StompComponentBuilderFactory.stomp();
     }
     /**
      * Stream (camel-stream)
