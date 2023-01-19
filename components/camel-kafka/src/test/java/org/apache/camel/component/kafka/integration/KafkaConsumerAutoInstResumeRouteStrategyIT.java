@@ -20,10 +20,10 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.consumer.support.resume.KafkaResumable;
+import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.resume.TransientResumeStrategy;
 import org.apache.camel.processor.resume.kafka.KafkaResumeStrategyConfigurationBuilder;
@@ -33,15 +33,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class KafkaConsumerAutoInstResumeRouteStrategyIT extends BaseEmbeddedKafkaTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerAutoInstResumeRouteStrategyIT.class);
     private static final String TOPIC = "resumable-route-auto";
-
-    @EndpointInject("mock:result")
-    private MockEndpoint result;
 
     public static KafkaResumeStrategyConfigurationBuilder getDefaultKafkaResumeStrategyConfigurationBuilder() {
         return KafkaResumeStrategyConfigurationBuilder.newBuilder()
@@ -58,7 +52,7 @@ public class KafkaConsumerAutoInstResumeRouteStrategyIT extends BaseEmbeddedKafk
 
     @BeforeEach
     public void before() {
-        Properties props = getDefaultProperties();
+        Properties props = KafkaTestUtil.getDefaultProperties(service);
         KafkaProducer<Object, Object> producer = new KafkaProducer<>(props);
 
         for (int i = 0; i < 10; i++) {
@@ -66,16 +60,10 @@ public class KafkaConsumerAutoInstResumeRouteStrategyIT extends BaseEmbeddedKafk
         }
     }
 
-    @Override
-    protected void doPreSetup() throws Exception {
-        super.doPreSetup();
-
-    }
-
     @Test
     @Timeout(value = 30)
     public void testOffsetIsBeingChecked() throws InterruptedException {
-        MockEndpoint mock = getMockEndpoint("mock:result");
+        MockEndpoint mock = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
 
         mock.expectedMessageCount(10);
         mock.assertIsSatisfied();
@@ -86,7 +74,7 @@ public class KafkaConsumerAutoInstResumeRouteStrategyIT extends BaseEmbeddedKafk
         kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC));
     }
 
-    public void process(Exchange exchange) {
+    private void process(Exchange exchange) {
         exchange.getMessage().setHeader(Exchange.OFFSET, KafkaResumable.of(exchange));
     }
 
@@ -106,7 +94,7 @@ public class KafkaConsumerAutoInstResumeRouteStrategyIT extends BaseEmbeddedKafk
 
                 fromF("kafka:%s?groupId=%s_GROUP&autoCommitIntervalMs=1000", "resumable-route-auto-offsets",
                         "resumable-route-auto-offsets")
-                        .to("mock:result");
+                        .to(KafkaTestUtil.MOCK_RESULT);
             }
         };
     }

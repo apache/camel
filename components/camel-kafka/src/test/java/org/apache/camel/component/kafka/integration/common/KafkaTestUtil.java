@@ -15,15 +15,12 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.kafka.integration;
+package org.apache.camel.component.kafka.integration.common;
 
 import java.util.Properties;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.test.infra.kafka.services.KafkaService;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.KafkaAdminClient;
@@ -31,10 +28,18 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractKafkaTestSupport extends CamelTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractKafkaTestSupport.class);
+public final class KafkaTestUtil {
+    public static final String MOCK_RESULT = "mock:result";
+    public static final String MOCK_RESULT_BAR = "mock:resultBar";
+    public static final String MOCK_DLQ = "mock:dlq";
 
-    protected static void setServiceProperties(KafkaService service) {
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaTestUtil.class);
+
+    private KafkaTestUtil() {
+
+    }
+
+    public static void setServiceProperties(KafkaService service) {
         LOG.info("### Embedded Kafka cluster broker list: {}", service.getBootstrapServers());
         System.setProperty("bootstrapServers", service.getBootstrapServers());
     }
@@ -61,19 +66,4 @@ public abstract class AbstractKafkaTestSupport extends CamelTestSupport {
     public static Properties getDefaultProperties(KafkaService service) {
         return getDefaultProperties(service.getBootstrapServers());
     }
-
-    protected CamelContext createCamelContextFromService(KafkaService service) throws Exception {
-        CamelContext context = super.createCamelContext();
-        context.getPropertiesComponent().setLocation("ref:prop");
-
-        KafkaComponent kafka = new KafkaComponent(context);
-        kafka.init();
-        kafka.getConfiguration().setBrokers(service.getBootstrapServers());
-        context.addComponent("kafka", kafka);
-
-        return context;
-    }
-
-    protected abstract Properties getDefaultProperties();
-
 }

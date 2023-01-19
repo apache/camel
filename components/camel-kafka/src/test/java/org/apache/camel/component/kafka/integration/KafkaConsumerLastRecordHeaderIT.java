@@ -20,10 +20,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
@@ -38,9 +38,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class KafkaConsumerLastRecordHeaderIT extends BaseEmbeddedKafkaTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerLastRecordHeaderIT.class);
     private static final String TOPIC = "last-record";
-
-    @EndpointInject("mock:result")
-    private MockEndpoint result;
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
@@ -65,6 +62,7 @@ public class KafkaConsumerLastRecordHeaderIT extends BaseEmbeddedKafkaTestSuppor
      */
     @Test
     public void shouldStartFromBeginningWithEmptyOffsetRepository() throws InterruptedException {
+        MockEndpoint result = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
         result.expectedMessageCount(5);
         result.expectedBodiesReceived("message-0", "message-1", "message-2", "message-3", "message-4");
 

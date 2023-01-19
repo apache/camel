@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.kafka.integration.commit;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
-import org.apache.camel.component.kafka.integration.BaseManualCommitTestSupport;
+import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -31,11 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class KafkaConsumerNoopCommitIT extends BaseManualCommitTestSupport {
 
     public static final String TOPIC = "testManualNoopCommitTest";
-
-    @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=KafkaConsumerNoopCommitIT&pollTimeoutMs=1000&autoCommitEnable=false"
-                    + "&allowManualCommit=true&autoOffsetReset=earliest&metadataMaxAgeMs=1000")
-    private Endpoint from;
 
     @AfterEach
     public void after() {
@@ -48,12 +42,19 @@ public class KafkaConsumerNoopCommitIT extends BaseManualCommitTestSupport {
 
             @Override
             public void configure() {
-                from(from).routeId("foo").to(to).process(e -> {
-                    KafkaManualCommit manual = e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
-                    assertNotNull(manual);
-                    manual.commit();
-                });
-                from(from).routeId("bar").autoStartup(false).to(toBar);
+                from("kafka:" + TOPIC
+                     + "?groupId=KafkaConsumerNoopCommitIT&pollTimeoutMs=1000&autoCommitEnable=false"
+                     + "&allowManualCommit=true&autoOffsetReset=earliest&metadataMaxAgeMs=1000").routeId("foo")
+                        .to(KafkaTestUtil.MOCK_RESULT).process(e -> {
+                            KafkaManualCommit manual
+                                    = e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+                            assertNotNull(manual);
+                            manual.commit();
+                        });
+                from("kafka:" + TOPIC
+                     + "?groupId=KafkaConsumerNoopCommitIT&pollTimeoutMs=1000&autoCommitEnable=false"
+                     + "&allowManualCommit=true&autoOffsetReset=earliest&metadataMaxAgeMs=1000").routeId("bar")
+                        .autoStartup(false).to(KafkaTestUtil.MOCK_RESULT_BAR);
             }
         };
     }
@@ -71,6 +72,7 @@ public class KafkaConsumerNoopCommitIT extends BaseManualCommitTestSupport {
 
         to.reset();
 
+        CamelContext context = contextExtension.getContext();
         context.getRouteController().stopRoute("foo");
         to.expectedMessageCount(0);
 

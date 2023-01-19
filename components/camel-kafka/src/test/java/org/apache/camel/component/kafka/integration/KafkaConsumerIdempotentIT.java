@@ -19,9 +19,8 @@ package org.apache.camel.component.kafka.integration;
 import java.util.Arrays;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.kafka.KafkaIdempotentRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -33,26 +32,14 @@ import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import static org.apache.camel.component.kafka.serde.KafkaSerdeHelper.numericHeader;
 
 @DisabledIfSystemProperty(named = "enable.kafka.consumer.idempotency.tests", matches = "false")
-class KafkaConsumerIdempotentIT extends KafkaConsumerIdempotentTestSupport {
+public class KafkaConsumerIdempotentIT extends KafkaConsumerIdempotentTestSupport {
 
     public static final String TOPIC = "idempt";
 
-    @BindToRegistry("kafkaIdempotentRepository")
-    private KafkaIdempotentRepository kafkaIdempotentRepository
-            = new KafkaIdempotentRepository("TEST_IDEMPOTENT", getBootstrapServers());
-
-    @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=KafkaConsumerIdempotentIT&autoOffsetReset=earliest"
-                    + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                    + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                    + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true"
-                    + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
-    private Endpoint from;
-
-    @EndpointInject("mock:result")
-    private MockEndpoint to;
-
     private int size = 200;
+
+    @BindToRegistry("kafkaIdempotentRepository")
+    private KafkaIdempotentRepository testIdempotent = new KafkaIdempotentRepository("TEST_IDEMPOTENT", getBootstrapServers());
 
     @BeforeEach
     public void before() {
@@ -65,17 +52,20 @@ class KafkaConsumerIdempotentIT extends KafkaConsumerIdempotentTestSupport {
         kafkaAdminClient.deleteTopics(Arrays.asList(TOPIC, "TEST_IDEMPOTENT")).all();
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() {
-
         return new RouteBuilder() {
 
             @Override
             public void configure() {
-                from(from).routeId("foo")
+                from("kafka:" + TOPIC
+                     + "?groupId=KafkaConsumerIdempotentIT&autoOffsetReset=earliest"
+                     + "&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                     + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                     + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true"
+                     + "&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor").routeId("foo")
                         .idempotentConsumer(numericHeader("id"))
                         .idempotentRepository("kafkaIdempotentRepository")
-                        .to(to);
+                        .to(KafkaTestUtil.MOCK_RESULT);
             }
         };
     }
@@ -83,6 +73,8 @@ class KafkaConsumerIdempotentIT extends KafkaConsumerIdempotentTestSupport {
     @Test
     @DisplayName("Numeric headers is consumable when using idempotent (CAMEL-16914)")
     void kafkaIdempotentMessageIsConsumedByCamel() {
+        MockEndpoint to = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
+
         doRun(to, size);
     }
 }
