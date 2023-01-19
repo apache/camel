@@ -438,6 +438,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * @param path defaultChannel
          * @return the dsl builder
          */
+        @Deprecated
         default SpringIntegrationEndpointBuilder springIntegration(String path) {
             return SpringIntegrationEndpointBuilderFactory.endpointBuilder("spring-integration", path);
         }
@@ -462,6 +463,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * @param path defaultChannel
          * @return the dsl builder
          */
+        @Deprecated
         default SpringIntegrationEndpointBuilder springIntegration(
                 String componentName,
                 String path) {
@@ -519,6 +521,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
             return "timestamp";
         }
     }
+    @Deprecated
     static SpringIntegrationEndpointBuilder endpointBuilder(
             String componentName,
             String path) {
