@@ -22,12 +22,18 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.StreamSupport;
 
-import org.apache.camel.EndpointInject;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
+import org.apache.camel.component.kafka.integration.common.KafkaAdminUtil;
+import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.RouteFixture;
 import org.apache.camel.test.infra.kafka.services.ContainerLocalAuthKafkaService;
+import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -37,9 +43,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,20 +55,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class KafkaConsumerAuthIT extends BaseEmbeddedKafkaAuthTestSupport {
+public class KafkaConsumerAuthIT {
     public static final String TOPIC = "test-auth-full";
 
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerAuthIT.class);
+    @Order(1)
+    @RegisterExtension
+    public static ContainerLocalAuthKafkaService service = new ContainerLocalAuthKafkaService("/kafka-jaas.config");
 
-    @EndpointInject("mock:result")
-    private MockEndpoint to;
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+
+    protected static AdminClient kafkaAdminClient;
+
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerAuthIT.class);
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
     @BeforeEach
     public void before() {
-        Properties props = getDefaultProperties();
+        Properties props = KafkaTestUtil.getDefaultProperties(service);
+
         props.put(SaslConfigs.SASL_JAAS_CONFIG,
                 ContainerLocalAuthKafkaService.generateSimpleSaslJaasConfig("camel", "camel-secret"));
         props.put("security.protocol", "SASL_PLAINTEXT");
@@ -77,6 +90,13 @@ public class KafkaConsumerAuthIT extends BaseEmbeddedKafkaAuthTestSupport {
         MockConsumerInterceptor.recordsCaptured.clear();
     }
 
+    @BeforeEach
+    public void setKafkaAdminClient() {
+        if (kafkaAdminClient == null) {
+            kafkaAdminClient = KafkaAdminUtil.createAdminClient(service);
+        }
+    }
+
     @AfterEach
     public void after() {
         if (producer != null) {
@@ -86,7 +106,11 @@ public class KafkaConsumerAuthIT extends BaseEmbeddedKafkaAuthTestSupport {
         kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC)).all();
     }
 
-    @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(createRouteBuilder());
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 
@@ -96,14 +120,15 @@ public class KafkaConsumerAuthIT extends BaseEmbeddedKafkaAuthTestSupport {
                         = ContainerLocalAuthKafkaService.generateSimpleSaslJaasConfig("camel", "camel-secret");
 
                 fromF("kafka:%s"
-                      + "?groupId=%s&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                      + "?brokers=%s&groupId=%s&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
                       + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer&clientId=camel-kafka-auth-test"
                       + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=%s"
                       + "&saslMechanism=PLAIN&securityProtocol=SASL_PLAINTEXT&saslJaasConfig=%s", TOPIC,
+                        service.getBootstrapServers(),
                         "KafkaConsumerAuthIT", "org.apache.camel.component.kafka.MockConsumerInterceptor", simpleSaslJaasConfig)
                         .process(
                                 exchange -> LOG.trace("Captured on the processor: {}", exchange.getMessage().getBody()))
-                        .routeId("full-it").to(to);
+                        .routeId("full-it").to(KafkaTestUtil.MOCK_RESULT);
             }
         };
     }
@@ -113,6 +138,8 @@ public class KafkaConsumerAuthIT extends BaseEmbeddedKafkaAuthTestSupport {
     @Order(1)
     @Test
     public void kafkaMessageIsConsumedByCamel() throws InterruptedException, ExecutionException {
+        MockEndpoint to = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
+
         String propagatedHeaderKey = "PropagatedCustomHeader";
         byte[] propagatedHeaderValue = "propagated header value".getBytes();
         String skippedHeaderKey = "CamelSkippedHeader";

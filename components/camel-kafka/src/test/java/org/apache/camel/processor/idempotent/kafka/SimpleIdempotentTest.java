@@ -14,37 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.kafka;
 
-import org.apache.camel.BindToRegistry;
+package org.apache.camel.processor.idempotent.kafka;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
-import org.junit.jupiter.api.Test;
+import org.apache.camel.test.infra.core.DefaultContextLifeCycleManager;
+import org.apache.camel.test.infra.core.RouteFixture;
+import org.apache.camel.test.infra.kafka.services.KafkaService;
+import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-
-public class KafkaAutowireTest {
-
+public abstract class SimpleIdempotentTest {
+    @Order(1)
     @RegisterExtension
-    protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+    protected static KafkaService service = KafkaServiceFactory.createSingletonService();
 
-    private CamelContext context = contextExtension.getContext();
+    @Order(2)
+    @RegisterExtension
+    protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension(
+            new DefaultContextLifeCycleManager(DefaultContextLifeCycleManager.DEFAULT_SHUTDOWN_TIMEOUT, false));
 
-    @BindToRegistry
-    private KafkaClientFactory clientFactory = new TestKafkaClientFactory();
-
-    @Test
-    public void testKafkaComponentAutowiring() {
-        KafkaComponent component = context.getComponent("kafka", KafkaComponent.class);
-        assertSame(clientFactory, component.getKafkaClientFactory());
-
-        KafkaEndpoint endpoint = context.getEndpoint("kafka:foo", KafkaEndpoint.class);
-        assertSame(clientFactory, endpoint.getKafkaClientFactory());
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(createRouteBuilder());
     }
 
-    static final class TestKafkaClientFactory extends DefaultKafkaClientFactory {
-
-    }
+    protected abstract RouteBuilder createRouteBuilder();
 }

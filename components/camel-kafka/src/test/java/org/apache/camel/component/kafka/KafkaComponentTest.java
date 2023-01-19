@@ -20,20 +20,34 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.config.SaslConfigs;
 import org.apache.kafka.common.config.SslConfigs;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class KafkaComponentTest extends CamelTestSupport {
+public class KafkaComponentTest {
+
+    @RegisterExtension
+    protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+
+    private CamelContext context = contextExtension.getContext();
+
+    @AfterEach
+    void clear() {
+        context.removeComponent("kafka");
+    }
 
     @Test
     public void testPropertiesSet() {

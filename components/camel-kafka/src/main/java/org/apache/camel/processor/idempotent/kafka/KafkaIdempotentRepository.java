@@ -359,6 +359,8 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     private void broadcastAction(String key, CacheAction action) {
         try {
             log.debug("Broadcasting action:{} for key:{}", action, key);
+            assert producer != null;
+
             producer.send(new ProducerRecord<>(topic, key, action.toString())).get(); // sync
                                                                                      // send
         } catch (ExecutionException | InterruptedException e) {

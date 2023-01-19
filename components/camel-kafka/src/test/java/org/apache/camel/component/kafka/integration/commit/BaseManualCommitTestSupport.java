@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-package org.apache.camel.component.kafka.integration;
+package org.apache.camel.component.kafka.integration.commit;
 
 import java.util.Collections;
 import java.util.Properties;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.kafka.KafkaConstants;
+import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.StateRepository;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -31,7 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BaseManualCommitTestSupport extends BaseEmbeddedKafkaTestSupport {
+abstract class BaseManualCommitTestSupport extends BaseEmbeddedKafkaTestSupport {
 
     @EndpointInject("mock:result")
     protected MockEndpoint to;
@@ -65,7 +66,7 @@ public class BaseManualCommitTestSupport extends BaseEmbeddedKafkaTestSupport {
         to.reset();
 
         // Second step: We shut down our route, we expect nothing will be recovered by our route
-        context.getRouteController().stopRoute("foo");
+        contextExtension.getContext().getRouteController().stopRoute("foo");
         to.expectedMessageCount(0);
 
         // Third step: While our route is stopped, we send 3 records more to Kafka test topic
@@ -77,7 +78,7 @@ public class BaseManualCommitTestSupport extends BaseEmbeddedKafkaTestSupport {
 
         // Fourth step: We start again our route, since we have been committing the offsets from the first step,
         // we will expect to consume from the latest committed offset e.g from offset 5
-        context.getRouteController().startRoute("foo");
+        contextExtension.getContext().getRouteController().startRoute("foo");
         setupPostExecutionExpectations();
 
         to.assertIsSatisfied(3000);
@@ -99,7 +100,7 @@ public class BaseManualCommitTestSupport extends BaseEmbeddedKafkaTestSupport {
         assertEquals("5", state, "5 messages were sent in the first step, therefore the offset should be 5");
 
         // Second step: We shut down our route, we expect nothing will be recovered by our route
-        context.getRouteController().stopRoute("foo");
+        contextExtension.getContext().getRouteController().stopRoute("foo");
         to.expectedMessageCount(0);
 
         // Third step: While our route is stopped, we send 3 records more to Kafka test topic
@@ -111,7 +112,7 @@ public class BaseManualCommitTestSupport extends BaseEmbeddedKafkaTestSupport {
 
         // Fourth step: We start again our route, since we have been committing the offsets from the first step,
         // we will expect to consume from the latest committed offset e.g from offset 5
-        context.getRouteController().startRoute("foo");
+        contextExtension.getContext().getRouteController().startRoute("foo");
         setupPostExecutionExpectations();
 
         to.assertIsSatisfied(3000);
