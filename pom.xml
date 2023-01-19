@@ -854,9 +854,9 @@
                    <groupId>org.cyclonedx</groupId>
                    <artifactId>cyclonedx-maven-plugin</artifactId>
                    <version>${cyclonedx-maven-plugin-version}</version>
+                   <inherited>false</inherited>
                    <configuration>
                         <outputName>camel-sbom</outputName>
-                        <inherited>false</inherited>
                    </configuration>
                    <executions>
                        <execution>
