@@ -40,6 +40,7 @@ The following components has been removed:
 - camel-spark
 - camel-swift
 - camel-swagger-java
+- camel-websocket
 - camel-websocket-jsr356
 - camel-xstream
 - camel-zikin

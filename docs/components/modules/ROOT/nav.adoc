@@ -166,7 +166,6 @@
 ** xref:jcr-component.adoc[JCR]
 ** xref:jdbc-component.adoc[JDBC]
 ** xref:jetty-component.adoc[Jetty]
-** xref:websocket-component.adoc[Jetty Websocket]
 ** xref:jgroups-component.adoc[JGroups]
 ** xref:jgroups-raft-component.adoc[JGroups raft]
 ** xref:jira-component.adoc[Jira]
