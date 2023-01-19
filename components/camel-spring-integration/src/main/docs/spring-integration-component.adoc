@@ -1,10 +1,11 @@
-= Spring Integration Component
+= Spring Integration Component (deprecated)
 :doctitle: Spring Integration
 :shortname: spring-integration
 :artifactid: camel-spring-integration
 :description: Bridge Camel with Spring Integration.
 :since: 1.4
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 //Manually maintained attributes
 :group: Spring
