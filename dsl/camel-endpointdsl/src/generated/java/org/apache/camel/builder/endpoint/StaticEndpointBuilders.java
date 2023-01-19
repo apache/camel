@@ -13844,6 +13844,7 @@ public class StaticEndpointBuilders {
      * @param path defaultChannel
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.SpringIntegrationEndpointBuilderFactory.SpringIntegrationEndpointBuilder springIntegration(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.SpringIntegrationEndpointBuilderFactory.endpointBuilder("spring-integration", path);
@@ -13869,6 +13870,7 @@ public class StaticEndpointBuilders {
      * @param path defaultChannel
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.SpringIntegrationEndpointBuilderFactory.SpringIntegrationEndpointBuilder springIntegration(
             String componentName,
             String path) {
