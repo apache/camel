@@ -52,6 +52,7 @@ public final class SensitiveUtils {
                     "emailaddress",
                     "httpproxypassword",
                     "keystore",
+                    "login",
                     "oauthaccesstoken",
                     "oauthappid",
                     "oauthappsecret",
@@ -60,6 +61,7 @@ public final class SensitiveUtils {
                     "oauthtoken",
                     "oauthtokenurl",
                     "p12filename",
+                    "passcode",
                     "passphrase",
                     "password",
                     "privatekey",
@@ -124,6 +126,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qemailaddress\\E"
                                                     + "|\\Qhttpproxypassword\\E"
                                                     + "|\\Qkeystore\\E"
+                                                    + "|\\Qlogin\\E"
                                                     + "|\\Qoauthaccesstoken\\E"
                                                     + "|\\Qoauthappid\\E"
                                                     + "|\\Qoauthappsecret\\E"
@@ -132,6 +135,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qoauthtoken\\E"
                                                     + "|\\Qoauthtokenurl\\E"
                                                     + "|\\Qp12filename\\E"
+                                                    + "|\\Qpasscode\\E"
                                                     + "|\\Qpassphrase\\E"
                                                     + "|\\Qpassword\\E"
                                                     + "|\\Qprivatekey\\E"
@@ -166,7 +170,7 @@ public final class SensitiveUtils {
                                                     + "|\\Qverificationcode\\E"
                                                     + "|\\Qwebhookverifytoken\\E"
                                                     + "|\\Qzookeeperpassword\\E"
-    // SENSITIVE-PATTERN: END
+                                                    // SENSITIVE-PATTERN: END
     ;
 
     private SensitiveUtils() {

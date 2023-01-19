@@ -6457,6 +6457,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "StompComponentBuilderFactory": {
+    "kind": "component",
+    "name": "stomp",
+    "title": "Stomp",
+    "description": "Send and rececive messages to\/from STOMP (Simple Text Oriented Messaging Protocol) compliant message brokers.",
+    "deprecated": false,
+    "firstVersion": "2.12.0",
+    "label": "messaging",
+    "javaType": "org.apache.camel.component.stomp.StompComponent",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-stomp",
+    "version": "4.0.0-SNAPSHOT",
+    "scheme": "stomp",
+    "extendsScheme": "",
+    "syntax": "stomp:destination",
+    "async": true,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "StreamComponentBuilderFactory": {
     "kind": "component",
     "name": "stream",
