@@ -134,7 +134,6 @@
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>4.0.0</cxf-xjc-plugin-version>
 	<cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
-	<cyclonedx-maven-plugin-version>2.7.4</cyclonedx-maven-plugin-version>
         <datasonnet-mapper-version>2.2.0</datasonnet-mapper-version>
         <deltaspike-version>1.9.5</deltaspike-version>
         <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>

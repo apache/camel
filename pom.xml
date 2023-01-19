@@ -142,6 +142,7 @@
         <mycila-license-version>3.0</mycila-license-version>
         <gmavenplus-plugin-version>1.11.1</gmavenplus-plugin-version>
         <groovy-version>3.0.14</groovy-version>
+	<cyclonedx-maven-plugin-version>2.7.4</cyclonedx-maven-plugin-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
     </properties>
@@ -845,6 +846,28 @@
                 </plugins>
             </build>
         </profile>
-
+            <profile>
+            <id>sbom</id>
+            <build>
+            <plugins>
+                <plugin>
+                   <groupId>org.cyclonedx</groupId>
+                   <artifactId>cyclonedx-maven-plugin</artifactId>
+                   <version>${cyclonedx-maven-plugin-version}</version>
+                   <configuration>
+                        <outputName>camel-sbom</outputName>
+                   </configuration>
+                   <executions>
+                       <execution>
+                           <phase>package</phase>
+                           <goals>
+                               <goal>makeAggregateBom</goal>
+                           </goals>
+                      </execution>
+                   </executions>
+                </plugin>
+            </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>
