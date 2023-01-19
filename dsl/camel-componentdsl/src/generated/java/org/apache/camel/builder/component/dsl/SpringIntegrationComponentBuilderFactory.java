@@ -40,6 +40,7 @@ public interface SpringIntegrationComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static SpringIntegrationComponentBuilder springIntegration() {
         return new SpringIntegrationComponentBuilderImpl();
     }

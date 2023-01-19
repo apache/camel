@@ -4,7 +4,7 @@
     "name": "spring-integration",
     "title": "Spring Integration",
     "description": "Bridge Camel with Spring Integration.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "1.4.0",
     "label": "spring,eventbus",
     "javaType": "org.apache.camel.component.spring.integration.SpringIntegrationComponent",
