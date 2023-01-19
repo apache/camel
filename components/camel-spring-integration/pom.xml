@@ -27,7 +27,7 @@
     </parent>
 
     <artifactId>camel-spring-integration</artifactId>
-    <name>Camel :: Spring Integration</name>
+    <name>Camel :: Spring Integration (deprecated)</name>
     <description>Camel Spring Integration support</description>
     <packaging>jar</packaging>
 
