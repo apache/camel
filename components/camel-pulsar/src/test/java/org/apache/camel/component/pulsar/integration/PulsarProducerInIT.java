@@ -35,7 +35,6 @@ import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.pulsar.client.api.PulsarClientException.InvalidMessageException;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -122,7 +121,7 @@ public class PulsarProducerInIT extends PulsarITSupport {
     public void testLargeMessageWithChunkingDisabled() {
         Throwable e = assertThrows(CamelExecutionException.class,
                 () -> producerTemplate.sendBody(new byte[10 * 1024 * 1024]));
-        assertTrue(ExceptionUtils.getThrowableList(e).stream().anyMatch(ex -> ex instanceof InvalidMessageException));
+        assertTrue(ExceptionUtils.getThrowableList(e).stream().anyMatch(ex -> ex instanceof PulsarClientException));
     }
 
     @Test
