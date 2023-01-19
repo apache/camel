@@ -583,6 +583,7 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-core-all</artifactId>
+                <type>pom</type>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
