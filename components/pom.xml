@@ -76,7 +76,6 @@
         <module>camel-service</module>
 
         <!-- regular modules in alphabetic order -->
-        
         <module>camel-amqp</module>
         <module>camel-any23</module>
         <module>camel-arangodb</module>
@@ -113,7 +112,6 @@
         <module>camel-crypto</module>
         <module>camel-csimple-joor</module>
         <module>camel-csv</module>
-        
         <module>camel-debug</module>
         <module>camel-debezium</module>
         <module>camel-digitalocean</module>
@@ -170,7 +168,6 @@
         <module>camel-jasypt</module>
         <module>camel-javascript</module>
         <module>camel-jaxb</module>
-        
         <module>camel-jcache</module>
         <module>camel-tracing</module>
         <module>camel-jcr</module>
@@ -180,7 +177,6 @@
         <module>camel-jgroups</module>
         <module>camel-jira</module>
         <module>camel-jmx</module>
-        
         <module>camel-jolt</module>
         <module>camel-joor</module>
         <module>camel-jpa</module>
@@ -213,7 +209,6 @@
         <module>camel-metrics</module>
         <module>camel-micrometer</module>
         <module>camel-microprofile</module>
-        
         <module>camel-mina</module>
         <module>camel-minio</module>
         <module>camel-mllp</module>
@@ -232,7 +227,6 @@
         <module>camel-olingo4</module>
         <module>camel-openstack</module>
         <module>camel-opentelemetry</module>
-        
         <module>camel-paho</module>
         <module>camel-paho-mqtt5</module>
         <module>camel-pdf</module>
@@ -292,7 +286,6 @@
         <module>camel-stream</module>
         <module>camel-stringtemplate</module>
         <module>camel-stitch</module>
-        
         <module>camel-openapi-java</module>
         <module>camel-syslog</module>
         <module>camel-tarfile</module>
