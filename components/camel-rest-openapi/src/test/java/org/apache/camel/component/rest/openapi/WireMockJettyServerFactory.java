@@ -22,8 +22,8 @@ import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.http.AdminRequestHandler;
 import com.github.tomakehurst.wiremock.http.HttpServer;
 import com.github.tomakehurst.wiremock.http.StubRequestHandler;
-import com.github.tomakehurst.wiremock.jetty9.JettyHttpServer;
-import com.github.tomakehurst.wiremock.jetty9.JettyHttpServerFactory;
+import com.github.tomakehurst.wiremock.jetty.JettyHttpServer;
+import com.github.tomakehurst.wiremock.jetty.JettyHttpServerFactory;
 import org.eclipse.jetty.io.NetworkTrafficListener;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -34,10 +34,9 @@ import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
- * Wiremock 2.18.0 ships with Jetty 9.2, Camel (currently) uses 9.4 and the
- * {@link org.eclipse.jetty.util.ssl.SslContextFactory} removed {@code selectCipherSuites} method.
+ * Jetty 9.x {@link org.eclipse.jetty.util.ssl.SslContextFactory} removed {@code selectCipherSuites} method.
  */
-public final class Jetty94ServerFactory extends JettyHttpServerFactory {
+public final class WireMockJettyServerFactory extends JettyHttpServerFactory {
     @Override
     public HttpServer buildHttpServer(
             final Options options, final AdminRequestHandler adminRequestHandler,
