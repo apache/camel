@@ -373,8 +373,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     /**
      * Set a comma separated list of algorithms supported for the server host key. Some examples include:
-     * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not
-     * specified the default list from JSCH will be used.
+     * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list
+     * from JSCH will be used.
      */
     public void setServerHostKeys(String serverHostKeys) {
         this.serverHostKeys = serverHostKeys;
@@ -386,8 +386,8 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     /**
      * Set a comma separated list of public key accepted algorithms. Some examples include:
-     * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521.  If not
-     * specified the default list from JSCH will be used.
+     * ssh-dss,ssh-rsa,ecdsa-sha2-nistp256,ecdsa-sha2-nistp384,ecdsa-sha2-nistp521. If not specified the default list
+     * from JSCH will be used.
      */
     public void setPublicKeyAcceptedAlgorithms(String publicKeyAcceptedAlgorithms) {
         this.publicKeyAcceptedAlgorithms = publicKeyAcceptedAlgorithms;
