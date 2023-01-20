@@ -181,7 +181,7 @@
         <fop-version>2.7</fop-version>
         <formatter-maven-plugin-version>2.17.1</formatter-maven-plugin-version>
         <ftpserver-version>1.1.2</ftpserver-version>
-        <freemarker-version>2.3.31</freemarker-version>
+        <freemarker-version>2.3.32</freemarker-version>
         <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
         <geronimo-annotation-1.2-spec-version>1.0</geronimo-annotation-1.2-spec-version>
         <geronimo-atinject-1.0-spec-version>1.0</geronimo-atinject-1.0-spec-version>
@@ -252,7 +252,7 @@
         <icu4j-version>70.1</icu4j-version>
         <ignite-version>2.12.0</ignite-version>
         <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
-        <infinispan-version>13.0.10.Final</infinispan-version>
+        <infinispan-version>13.0.15.Final</infinispan-version>
         <influx-java-driver-version>2.22</influx-java-driver-version>
         <influx-guava-version>20.0</influx-guava-version>
         <irclib-version>1.10</irclib-version>
@@ -391,7 +391,7 @@
         <maven-shade-plugin-version>3.2.3</maven-shade-plugin-version>
         <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
-        <metrics-version>4.2.14</metrics-version>
+        <metrics-version>4.2.15</metrics-version>
         <micrometer-version>1.10.2</micrometer-version>
         <microprofile-config-version>2.0.1</microprofile-config-version>
         <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
@@ -415,7 +415,7 @@
         <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.86.Final</netty-version>
+        <netty-version>4.1.87.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.69</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
@@ -503,7 +503,7 @@
         <spring5-version>5.3.24</spring5-version>
         <spring-rabbitmq-version>2.4.7</spring-rabbitmq-version>
         <spring-security-version>5.7.6</spring-security-version>
-        <spring-ws-version>3.1.4</spring-ws-version>
+        <spring-ws-version>3.1.5</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okio-version>1.17.2</squareup-okio-version>
@@ -546,7 +546,7 @@
         <xml-resolver-version>1.2</xml-resolver-version>
         <xmlgraphics-batik-version>1.14</xmlgraphics-batik-version>
         <xmlsec-version>2.2.3</xmlsec-version>
-        <xmlunit-version>2.9.0</xmlunit-version>
+        <xmlunit-version>2.9.1</xmlunit-version>
         <xpp3-version>1.1.4c</xpp3-version>
         <xstream-version>1.4.20</xstream-version>
         <yetus-audience-annotations-version>0.13.0</yetus-audience-annotations-version>
