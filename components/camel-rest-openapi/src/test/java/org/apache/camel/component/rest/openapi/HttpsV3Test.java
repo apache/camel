@@ -65,7 +65,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public abstract class HttpsV3Test extends CamelTestSupport {
 
     public static WireMockServer petstore = new WireMockServer(
-            wireMockConfig().httpServerFactory(new Jetty94ServerFactory()).containerThreads(13).dynamicPort()
+            wireMockConfig().httpServerFactory(new WireMockJettyServerFactory()).containerThreads(13).dynamicPort()
                     .dynamicHttpsPort().keystorePath(Resources.getResource("localhost.p12").toString()).keystoreType("PKCS12")
                     .keystorePassword("changeit"));
 

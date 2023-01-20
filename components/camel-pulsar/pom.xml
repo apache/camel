@@ -72,8 +72,16 @@
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
-        </dependency>
+    	</dependency>
+
+    	<dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>${log4j2-version}</version>
+            <scope>test</scope>
+    	</dependency>
     </dependencies>
+
 
     <build>
         <plugins>
@@ -88,6 +96,7 @@
                     <systemProperties>
                         <pulsar.container>apachepulsar/pulsar:${pulsar-version}</pulsar.container>
                     </systemProperties>
+                    <argLine>--add-opens java.base/java.nio=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-exports=java.base/sun.net=ALL-UNNAMED</argLine>
                 </configuration>
             </plugin>
             <plugin>

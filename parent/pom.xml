@@ -80,7 +80,7 @@
         <avro-ipc-jetty-version>1.11.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.19.17</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.19.19</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-sdk-bom-version>1.2.8</azure-sdk-bom-version>
@@ -127,13 +127,13 @@
         <consul-client-version>1.5.3</consul-client-version>
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
         <corda-version>4.9.3</corda-version>
-        <couchbase-client-version>3.4.1</couchbase-client-version>
+        <couchbase-client-version>3.4.2</couchbase-client-version>
         <curator-version>4.3.0</curator-version>
         <cxf-version>4.0.0</cxf-version>
         <cxf-codegen-plugin-version>4.0.0</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>4.0.0</cxf-xjc-plugin-version>
-        <cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
+	<cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
         <datasonnet-mapper-version>2.2.0</datasonnet-mapper-version>
         <deltaspike-version>1.9.5</deltaspike-version>
         <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
@@ -165,7 +165,7 @@
         <google-maps-services-version>0.10.1</google-maps-services-version>
         <flatpack-version>4.0.5</flatpack-version>
         <flink-version>1.16.0</flink-version>
-        <fop-version>2.7</fop-version>
+        <fop-version>2.8</fop-version>
         <formatter-maven-plugin-version>2.17.1</formatter-maven-plugin-version>
         <ftpserver-version>1.1.2</ftpserver-version>
         <freemarker-version>2.3.32</freemarker-version>
@@ -238,7 +238,7 @@
         <icu4j-version>72.1</icu4j-version>
         <ignite-version>2.12.0</ignite-version>
         <impsort-maven-plugin-version>1.8.0</impsort-maven-plugin-version>
-        <infinispan-version>14.0.4.Final</infinispan-version>
+        <infinispan-version>14.0.6.Final</infinispan-version>
         <influx-java-driver-version>2.22</influx-java-driver-version>
         <influx-client-java-driver-version>6.7.0</influx-client-java-driver-version>
         <influx-guava-version>20.0</influx-guava-version>
@@ -308,7 +308,7 @@
         <jolokia-version>1.7.2</jolokia-version>
         <jolt-version>0.1.7</jolt-version>
         <jool-version>0.9.14</jool-version>
-        <jooq-version>3.16.11</jooq-version>
+        <jooq-version>3.17.7</jooq-version>
         <joor-version>0.9.14</joor-version>
         <johnzon-version>1.2.19</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
@@ -326,7 +326,7 @@
         <jt400-version>11.0</jt400-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
         <junit-version>4.13.2</junit-version>
-        <junit-jupiter-version>5.9.1</junit-jupiter-version>
+        <junit-jupiter-version>5.9.2</junit-jupiter-version>
         <junit-pioneer-version>1.7.1</junit-pioneer-version>
         <jxmpp-version>0.6.4</jxmpp-version>
         <jython-version>2.7.3</jython-version>
@@ -351,9 +351,8 @@
         <lightcouch-version>0.2.0</lightcouch-version>
         <mapstruct-version>1.5.2.Final</mapstruct-version>
         <!-- needed from tooling/archetypes -->
-        <maven-version>3.8.6</maven-version>
-        <!-- use antrun 1.6 as 1.7 fails with finding tools.jar on java on some platforms -->
-        <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
+        <maven-version>3.8.7</maven-version>
+        <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
         <maven-archetype-plugin-version>3.2.0</maven-archetype-plugin-version>
         <maven-archetype-packaging-version>2.3</maven-archetype-packaging-version>
         <maven-assembly-plugin-version>3.3.0</maven-assembly-plugin-version>
@@ -377,7 +376,7 @@
         <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
-        <metrics-version>4.2.14</metrics-version>
+        <metrics-version>4.2.15</metrics-version>
         <micrometer-version>1.10.3</micrometer-version>
         <microprofile-config-version>3.0.2</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.0.2</microprofile-fault-tolerance-version>
@@ -437,8 +436,8 @@
         <qpid-jms-client-version>2.1.0</qpid-jms-client-version>
         <quartz-version>2.3.2</quartz-version>
         <quickfixj-version>2.3.1</quickfixj-version>
-        <rdf4j-rio-version>3.7.4</rdf4j-rio-version>
-        <rdf4j-model-version>3.7.4</rdf4j-model-version>
+        <rdf4j-rio-version>4.2.2</rdf4j-rio-version>
+        <rdf4j-model-version>4.2.2</rdf4j-model-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.5.2</reactor-version>
         <reactor-netty-version>1.1.1</reactor-netty-version>
@@ -473,13 +472,12 @@
         <spock-version>2.1-groovy-3.0</spock-version>
         <spring-batch-version>4.3.7</spring-batch-version>
         <spring-data-redis-version>2.6.2</spring-data-redis-version>
-        <spring-integration-version>5.5.16</spring-integration-version>
         <spring-ldap-version>2.4.1</spring-ldap-version>
         <spring-vault-core-version>2.3.2</spring-vault-core-version>
         <spring-version>6.0.4</spring-version>
         <spring-rabbitmq-version>3.0.0</spring-rabbitmq-version>
         <spring-security-version>6.0.1</spring-security-version>
-        <spring-ws-version>4.0.0</spring-ws-version>
+        <spring-ws-version>4.0.1</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okio-version>1.17.2</squareup-okio-version>
@@ -496,7 +494,7 @@
         <tika-version>2.6.0</tika-version>
         <twilio-version>7.55.3</twilio-version>
         <twitter4j-version>4.0.7</twitter4j-version>
-        <undertow-version>2.3.0.Final</undertow-version>
+        <undertow-version>2.3.3.Final</undertow-version>
         <univocity-parsers-version>2.9.1</univocity-parsers-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
         <vavr-version>0.10.2</vavr-version>
@@ -508,7 +506,7 @@
         <web3j-quorum-version>0.8.0</web3j-quorum-version>
         <weld-version>5.1.0.Final</weld-version>
         <wildfly-elytron>1.15.4.Final</wildfly-elytron>
-        <wiremock-version>2.32.0</wiremock-version>
+        <wiremock-version>3.0.0-beta-2</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>6.4.0</woodstox-core-version>
         <xbean-spring-version>4.21</xbean-spring-version>
@@ -522,7 +520,7 @@
         <xml-resolver-version>1.2</xml-resolver-version>
         <xmlgraphics-batik-version>1.15</xmlgraphics-batik-version>
         <xmlsec-version>2.2.3</xmlsec-version>
-        <xmlunit-version>2.9.0</xmlunit-version>
+        <xmlunit-version>2.9.1</xmlunit-version>
         <xpp3-version>1.1.4c</xpp3-version>
         <yasson-version>3.0.2</yasson-version>
         <yetus-audience-annotations-version>0.13.0</yetus-audience-annotations-version>
@@ -584,6 +582,7 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-core-all</artifactId>
+                <type>pom</type>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -2157,11 +2156,6 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-spring-batch</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-spring-integration</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

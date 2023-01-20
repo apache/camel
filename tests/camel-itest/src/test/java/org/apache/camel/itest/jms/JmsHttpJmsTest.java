@@ -69,8 +69,7 @@ public class JmsHttpJmsTest extends CamelTestSupport {
         });
         assertEquals("Bye World", exchange.getMessage().getBody(String.class));
         assertTrue(exchange.getMessage().hasHeaders(), "Should have headers");
-        assertEquals("queue://bar", exchange.getMessage().getHeader("JMSReplyTo", String.class));
-
+        assertEquals("ActiveMQQueue[bar]", exchange.getMessage().getHeader("JMSDestination", String.class));
     }
 
     @Override

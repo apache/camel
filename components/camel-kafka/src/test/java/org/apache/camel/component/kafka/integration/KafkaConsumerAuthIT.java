@@ -108,15 +108,9 @@ public class KafkaConsumerAuthIT extends BaseEmbeddedKafkaAuthTestSupport {
         };
     }
 
-    @Order(1)
-    @Test
-    public void isConnected() {
-        assertGroupIsConnected("KafkaConsumerAuthIT");
-    }
-
     @DisplayName("Tests that Camel can adequately connect and consume from an authenticated Kafka instance")
     @Timeout(30)
-    @Order(2)
+    @Order(1)
     @Test
     public void kafkaMessageIsConsumedByCamel() throws InterruptedException, ExecutionException {
         String propagatedHeaderKey = "PropagatedCustomHeader";

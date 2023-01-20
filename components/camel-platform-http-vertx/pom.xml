@@ -56,8 +56,14 @@
             <version>${vertx-version}</version>
         </dependency>
 
-
         <!-- test dependencies -->
+        <!-- jakarta mime types for upload support -->
+        <dependency>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-activation</artifactId>
+            <version>${angus-mail-version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
@@ -95,9 +101,22 @@
             <version>${rest-assured-version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- Override the guava version prescribed by Camel with the one needed by wiremock for tests -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>31.1-jre</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
         <dependency>
             <groupId>com.github.tomakehurst</groupId>
-            <artifactId>wiremock-jre8</artifactId>
+            <artifactId>wiremock</artifactId>
             <version>${wiremock-version}</version>
             <scope>test</scope>
         </dependency>

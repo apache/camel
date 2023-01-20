@@ -12924,55 +12924,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.EventEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Spring Integration (camel-spring-integration)
-     * Bridge Camel with Spring Integration.
-     * 
-     * Category: spring,eventbus
-     * Since: 1.4
-     * Maven coordinates: org.apache.camel:camel-spring-integration
-     * 
-     * Syntax: <code>spring-integration:defaultChannel</code>
-     * 
-     * Path parameter: defaultChannel (required)
-     * The default channel name which is used by the Spring Integration Spring
-     * context. It will equal to the inputChannel name for the Spring
-     * Integration consumer and the outputChannel name for the Spring
-     * Integration provider.
-     * 
-     * @param path defaultChannel
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.SpringIntegrationEndpointBuilderFactory.SpringIntegrationEndpointBuilder springIntegration(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SpringIntegrationEndpointBuilderFactory.endpointBuilder("spring-integration", path);
-    }
-    /**
-     * Spring Integration (camel-spring-integration)
-     * Bridge Camel with Spring Integration.
-     * 
-     * Category: spring,eventbus
-     * Since: 1.4
-     * Maven coordinates: org.apache.camel:camel-spring-integration
-     * 
-     * Syntax: <code>spring-integration:defaultChannel</code>
-     * 
-     * Path parameter: defaultChannel (required)
-     * The default channel name which is used by the Spring Integration Spring
-     * context. It will equal to the inputChannel name for the Spring
-     * Integration consumer and the outputChannel name for the Spring
-     * Integration provider.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path defaultChannel
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.SpringIntegrationEndpointBuilderFactory.SpringIntegrationEndpointBuilder springIntegration(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SpringIntegrationEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Spring JDBC (camel-spring-jdbc)
      * Access databases through SQL and JDBC with Spring Transaction support.
      * 
@@ -13483,6 +13434,51 @@ public class StaticEndpointBuilders {
             String componentName,
             String path) {
         return org.apache.camel.builder.endpoint.dsl.StitchEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
+     * Stomp (camel-stomp)
+     * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging
+     * Protocol) compliant message brokers.
+     * 
+     * Category: messaging
+     * Since: 2.12
+     * Maven coordinates: org.apache.camel:camel-stomp
+     * 
+     * Syntax: <code>stomp:destination</code>
+     * 
+     * Path parameter: destination (required)
+     * Name of the queue
+     * 
+     * @param path destination
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory.StompEndpointBuilder stomp(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory.endpointBuilder("stomp", path);
+    }
+    /**
+     * Stomp (camel-stomp)
+     * Send and rececive messages to/from STOMP (Simple Text Oriented Messaging
+     * Protocol) compliant message brokers.
+     * 
+     * Category: messaging
+     * Since: 2.12
+     * Maven coordinates: org.apache.camel:camel-stomp
+     * 
+     * Syntax: <code>stomp:destination</code>
+     * 
+     * Path parameter: destination (required)
+     * Name of the queue
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path destination
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory.StompEndpointBuilder stomp(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.StompEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
      * Stream (camel-stream)
