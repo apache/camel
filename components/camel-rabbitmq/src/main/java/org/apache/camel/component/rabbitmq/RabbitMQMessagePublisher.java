@@ -162,11 +162,25 @@ public class RabbitMQMessagePublisher {
     private void waitForConfirmation() throws IOException {
         try {
             LOG.debug("Waiting for publisher acknowledgements for {}ms", endpoint.getPublisherAcknowledgementsTimeout());
-            channel.waitForConfirmsOrDie(endpoint.getPublisherAcknowledgementsTimeout());
-            if (basicReturnReceived) {
-                throw new RuntimeCamelException("Failed to deliver message; basic.return received");
+            // Instead of calling waitForConfirmsOrDie() which is itself using the internal waitForConfirms() method
+            // waitForConfirms() is directly used and errors are handled exactly like before
+            // with one exception: underlaying channel will not be closed anymore when a "nack" is received
+            // This will prevent high-channel-churn in a queue full scenario
+            if (!channel.waitForConfirms(endpoint.getPublisherAcknowledgementsTimeout())) {
+                throw new IOException("nacks received");
+            } else {
+                if (basicReturnReceived) {
+                    throw new RuntimeCamelException("Failed to deliver message; basic.return received");
+                }
             }
         } catch (InterruptedException | TimeoutException e) {
+            try {
+                // Only close the channel in case of timeout
+                // Because we don't know why timeout happend (Maybe a communication problem)
+                channel.close(AMQP.PRECONDITION_FAILED, "TIMEOUT WAITING FOR ACK");
+            } catch (Exception ce) {
+              LOG.warn("Caught exception during closing of channel", ce);
+            }            
             LOG.warn("Acknowledgement error for {}", camelExchange);
             throw new RuntimeCamelException(e);
         }
