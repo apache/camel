@@ -47,7 +47,7 @@ jobs:
           distribution: 'temurin'
           java-version: ${{ matrix.java }}
           cache: 'maven'
-      - name: mvn build and bom generation
+      - name: mvn build and sbom generation
         run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l build.log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -e -Psbom,fastinstall -DskipTests verify
       - name: archive logs
         uses: actions/upload-artifact@v3
