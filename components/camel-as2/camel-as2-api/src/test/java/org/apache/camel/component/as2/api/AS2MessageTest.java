@@ -58,6 +58,7 @@ import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.api.util.MicUtils;
 import org.apache.camel.component.as2.api.util.MicUtils.ReceivedContentMic;
+import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
@@ -658,7 +659,7 @@ public class AS2MessageTest {
         assertNotNull(signatureEntity, "Multipart signed entity does not contain signature entity");
 
         // Validate Signature
-        assertTrue(multipartSignedEntity.isValid(), "Signature is invalid");
+        assertTrue(SigningUtils.isValid(multipartSignedEntity, new Certificate[] { signingCert }), "Signature is invalid");
 
     }
 
@@ -699,7 +700,7 @@ public class AS2MessageTest {
         assertNotNull(signatureEntity, "Signature Entity");
 
         // Validate Signature
-        assertTrue(responseSignedEntity.isValid(), "Signature is invalid");
+        assertTrue(SigningUtils.isValid(responseSignedEntity, new Certificate[] { signingCert }), "Signature is invalid");
     }
 
     @Test

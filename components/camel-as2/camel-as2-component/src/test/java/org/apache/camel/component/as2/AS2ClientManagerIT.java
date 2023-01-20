@@ -60,6 +60,7 @@ import org.apache.camel.component.as2.api.util.EntityUtils;
 import org.apache.camel.component.as2.api.util.HttpMessageUtils;
 import org.apache.camel.component.as2.api.util.MicUtils;
 import org.apache.camel.component.as2.api.util.MicUtils.ReceivedContentMic;
+import org.apache.camel.component.as2.api.util.SigningUtils;
 import org.apache.camel.component.as2.internal.AS2ApiCollection;
 import org.apache.camel.component.as2.internal.AS2ClientManagerApiMethod;
 import org.apache.camel.http.common.HttpMessage;
@@ -546,7 +547,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(responseEntity, "Response entity");
         assertTrue(responseEntity instanceof MultipartSignedEntity, "Unexpected response entity type");
         MultipartSignedEntity responseSignedEntity = (MultipartSignedEntity) responseEntity;
-        assertTrue(responseSignedEntity.isValid(), "Signature for response entity is invalid");
+        assertTrue(SigningUtils.isValid(responseSignedEntity, new Certificate[] { signingCert }),
+                "Signature for response entity is invalid");
         MimeEntity responseSignedDataEntity = responseSignedEntity.getSignedDataEntity();
         assertTrue(responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,
                 "Signed entity wrong type");
@@ -651,7 +653,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(responseEntity, "Response entity");
         assertTrue(responseEntity instanceof MultipartSignedEntity, "Unexpected response entity type");
         MultipartSignedEntity responseSignedEntity = (MultipartSignedEntity) responseEntity;
-        assertTrue(responseSignedEntity.isValid(), "Signature for response entity is invalid");
+        assertTrue(SigningUtils.isValid(responseSignedEntity, new Certificate[] { signingCert }),
+                "Signature for response entity is invalid");
         MimeEntity responseSignedDataEntity = responseSignedEntity.getSignedDataEntity();
         assertTrue(responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,
                 "Signed entity wrong type");
