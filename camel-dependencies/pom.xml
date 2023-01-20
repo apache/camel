@@ -17,7 +17,8 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.apache</groupId>
@@ -26,7 +27,7 @@
   </parent>
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-dependencies</artifactId>
-  <version>3.18.5-SNAPSHOT</version>
+  <version>3.18.5</version>
   <packaging>pom</packaging>
   <name>Camel :: Dependencies</name>
   <description>Camel Dependencies POM</description>
@@ -87,18 +88,18 @@
     <californium-scandium-version>2.7.3</californium-scandium-version>
     <californium-version>2.7.2</californium-version>
     <camel.failsafe.forkTimeout>600</camel.failsafe.forkTimeout>
-    <camel.osgi.activator />
-    <camel.osgi.dynamic />
+    <camel.osgi.activator></camel.osgi.activator>
+    <camel.osgi.dynamic></camel.osgi.dynamic>
     <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
     <camel.osgi.export>${camel.osgi.export.pkg};-noimport:=true;${camel.osgi.version}</camel.osgi.export>
     <camel.osgi.export.pkg>$${replace;{local-packages};;;\;}</camel.osgi.export.pkg>
     <camel.osgi.failok>false</camel.osgi.failok>
     <camel.osgi.import>${camel.osgi.import.pkg}</camel.osgi.import>
-    <camel.osgi.import.additional />
-    <camel.osgi.import.before.defaults />
+    <camel.osgi.import.additional></camel.osgi.import.additional>
+    <camel.osgi.import.before.defaults></camel.osgi.import.before.defaults>
     <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
     <camel.osgi.import.default.version>[$(version;==;$(@)),$(version;+;$(@)))</camel.osgi.import.default.version>
-    <camel.osgi.import.defaults />
+    <camel.osgi.import.defaults></camel.osgi.import.defaults>
     <camel.osgi.import.pkg>org.apache.camel.*;${camel.osgi.import.camel.version},
             ${camel.osgi.import.before.defaults},
             ${camel.osgi.import.defaults},
@@ -107,8 +108,8 @@
     <camel.osgi.import.strict.version>version="[$(version;===;${camel.osgi.version.clean}),$(version;==+;${camel.osgi.version.clean}))"</camel.osgi.import.strict.version>
     <camel.osgi.manifest>${project.build.outputDirectory}/META-INF/MANIFEST.MF</camel.osgi.manifest>
     <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
-    <camel.osgi.provide.capability />
-    <camel.osgi.require.capability />
+    <camel.osgi.provide.capability></camel.osgi.provide.capability>
+    <camel.osgi.require.capability></camel.osgi.require.capability>
     <camel.osgi.symbolic.name>${project.groupId}.${project.artifactId}</camel.osgi.symbolic.name>
     <camel.osgi.version>version=${project.version}</camel.osgi.version>
     <camel.surefire.fork.vmargs>-XX:+ExitOnOutOfMemoryError</camel.surefire.fork.vmargs>
@@ -162,9 +163,9 @@
     <cxf-version-range>[3.5,3.6)</cxf-version-range>
     <cxf-xjc-plugin-version>3.3.2</cxf-xjc-plugin-version>
     <cxf-xjc-utils-version>3.3.2</cxf-xjc-utils-version>
-    <cxf.codegen.jvmArgs />
+    <cxf.codegen.jvmArgs></cxf.codegen.jvmArgs>
     <cxf.codegenplugin.forkmode>true</cxf.codegenplugin.forkmode>
-    <cxf.xjc.jvmArgs />
+    <cxf.xjc.jvmArgs></cxf.xjc.jvmArgs>
     <datasonnet-mapper-version>2.1.4</datasonnet-mapper-version>
     <debezium-mysql-connector-version>8.0.28</debezium-mysql-connector-version>
     <debezium-version>1.9.5.Final</debezium-version>
@@ -261,8 +262,8 @@
     <hk2-version>2.6.1</hk2-version>
     <hsqldb-version>2.7.1</hsqldb-version>
     <httpasyncclient-version>4.1.5</httpasyncclient-version>
-    <httpclient4-version>4.5.13</httpclient4-version>
-    <httpcore4-version>4.4.15</httpcore4-version>
+    <httpclient4-version>4.5.14</httpclient4-version>
+    <httpcore4-version>4.4.16</httpcore4-version>
     <httpunit-version>1.7</httpunit-version>
     <huaweicloud-obs-version>3.21.4.1</huaweicloud-obs-version>
     <huaweicloud-sdk-version>3.0.76</huaweicloud-sdk-version>
@@ -270,7 +271,7 @@
     <icu4j-version>70.1</icu4j-version>
     <ignite-version>2.12.0</ignite-version>
     <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
-    <infinispan-version>13.0.10.Final</infinispan-version>
+    <infinispan-version>13.0.15.Final</infinispan-version>
     <influx-guava-version>20.0</influx-guava-version>
     <influx-java-driver-version>2.22</influx-java-driver-version>
     <irclib-version>1.10</irclib-version>
@@ -325,7 +326,7 @@
     <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
     <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
     <jetty-version>${jetty9-version}</jetty-version>
-    <jetty9-version>9.4.49.v20220914</jetty9-version>
+    <jetty9-version>9.4.50.v20221201</jetty9-version>
     <jgit-version>6.1.0.202203080745-r</jgit-version>
     <jgroups-raft-leveldbjni-version>1.8</jgroups-raft-leveldbjni-version>
     <jgroups-raft-mapdb-version>1.0.8</jgroups-raft-mapdb-version>
@@ -506,14 +507,14 @@
     <spock-version>2.1-groovy-3.0</spock-version>
     <spring-batch-version>4.3.7</spring-batch-version>
     <spring-data-redis-version>2.6.2</spring-data-redis-version>
-    <spring-integration-version>5.5.15</spring-integration-version>
+    <spring-integration-version>5.5.16</spring-integration-version>
     <spring-ldap-version>2.4.1</spring-ldap-version>
     <spring-rabbitmq-version>2.4.7</spring-rabbitmq-version>
-    <spring-security-version>5.7.4</spring-security-version>
+    <spring-security-version>5.7.6</spring-security-version>
     <spring-vault-core-version>2.3.2</spring-vault-core-version>
     <spring-version>${spring5-version}</spring-version>
     <spring-version-range>[5,6)</spring-version-range>
-    <spring-ws-version>3.1.4</spring-ws-version>
+    <spring-ws-version>3.1.5</spring-ws-version>
     <spring5-version>5.3.24</spring5-version>
     <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
     <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
@@ -532,7 +533,7 @@
     <trimStackTrace>false</trimStackTrace>
     <twilio-version>7.55.3</twilio-version>
     <twitter4j-version>4.0.7</twitter4j-version>
-    <undertow-version>2.2.19.Final</undertow-version>
+    <undertow-version>2.2.22.Final</undertow-version>
     <univocity-parsers-version>2.9.1</univocity-parsers-version>
     <validation-api-version>2.0.1.Final</validation-api-version>
     <vavr-version>0.10.2</vavr-version>
