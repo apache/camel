@@ -67,7 +67,7 @@ public abstract class HttpsV3Test extends CamelTestSupport {
     public static WireMockServer petstore = new WireMockServer(
             wireMockConfig().httpServerFactory(new WireMockJettyServerFactory()).containerThreads(13).dynamicPort()
                     .dynamicHttpsPort().keystorePath(Resources.getResource("localhost.p12").toString()).keystoreType("PKCS12")
-                    .keystorePassword("changeit"));
+                    .keystorePassword("changeit").keyManagerPassword("changeit"));
 
     static final Object NO_BODY = null;
 
