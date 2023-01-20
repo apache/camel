@@ -26,7 +26,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,7 +38,6 @@ public class CxfRsEndpointWithPropertiesTest extends AbstractSpringBeanTestSuppo
     }
 
     @Test
-    @Disabled("Camel 3.0: investigate why this fail")
     public void testCxfRsBeanWithCamelPropertiesHolder() throws Exception {
         // get the camelContext from application context
         CamelContext camelContext = ctx.getBean("camel", CamelContext.class);
@@ -50,7 +48,7 @@ public class CxfRsEndpointWithPropertiesTest extends AbstractSpringBeanTestSuppo
         assertEquals(1, features.size(), "Single feature is expected");
 
         Map<String, Object> endpointProps = testEndpoint.getProperties();
-        assertEquals(1, endpointProps.size(), "Single endpoint property is expected");
+        assertEquals(2, endpointProps.size(), "two endpoint properties is expected, aKey and beanId");
         assertEquals("aValue", endpointProps.get("aKey"), "Wrong property value");
 
         HttpGet get = new HttpGet(testEndpoint.getAddress());
