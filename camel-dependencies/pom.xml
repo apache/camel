@@ -132,13 +132,13 @@
         <consul-client-version>1.5.3</consul-client-version>
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
         <corda-version>4.9.3</corda-version>
-        <couchbase-client-version>3.4.1</couchbase-client-version>
+        <couchbase-client-version>3.4.2</couchbase-client-version>
         <curator-version>4.3.0</curator-version>
         <cxf-version>4.0.0</cxf-version>
         <cxf-codegen-plugin-version>4.0.0</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>4.0.0</cxf-xjc-plugin-version>
-	<cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
+	    <cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
         <datasonnet-mapper-version>2.2.0</datasonnet-mapper-version>
         <deltaspike-version>1.9.5</deltaspike-version>
         <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
@@ -243,7 +243,7 @@
         <icu4j-version>72.1</icu4j-version>
         <ignite-version>2.12.0</ignite-version>
         <impsort-maven-plugin-version>1.8.0</impsort-maven-plugin-version>
-        <infinispan-version>14.0.4.Final</infinispan-version>
+        <infinispan-version>14.0.6.Final</infinispan-version>
         <influx-java-driver-version>2.22</influx-java-driver-version>
         <influx-client-java-driver-version>6.7.0</influx-client-java-driver-version>
         <influx-guava-version>20.0</influx-guava-version>
@@ -313,7 +313,7 @@
         <jolokia-version>1.7.2</jolokia-version>
         <jolt-version>0.1.7</jolt-version>
         <jool-version>0.9.14</jool-version>
-        <jooq-version>3.16.11</jooq-version>
+        <jooq-version>3.17.7</jooq-version>
         <joor-version>0.9.14</joor-version>
         <johnzon-version>1.2.19</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
@@ -331,7 +331,7 @@
         <jt400-version>11.0</jt400-version>
         <junit-toolbox-version>2.4</junit-toolbox-version>
         <junit-version>4.13.2</junit-version>
-        <junit-jupiter-version>5.9.1</junit-jupiter-version>
+        <junit-jupiter-version>5.9.2</junit-jupiter-version>
         <junit-pioneer-version>1.7.1</junit-pioneer-version>
         <jxmpp-version>0.6.4</jxmpp-version>
         <jython-version>2.7.3</jython-version>
@@ -382,7 +382,7 @@
         <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
-        <metrics-version>4.2.14</metrics-version>
+        <metrics-version>4.2.15</metrics-version>
         <micrometer-version>1.10.3</micrometer-version>
         <microprofile-config-version>3.0.2</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.0.2</microprofile-fault-tolerance-version>
@@ -500,7 +500,7 @@
         <tika-version>2.6.0</tika-version>
         <twilio-version>7.55.3</twilio-version>
         <twitter4j-version>4.0.7</twitter4j-version>
-        <undertow-version>2.3.0.Final</undertow-version>
+        <undertow-version>2.3.3.Final</undertow-version>
         <univocity-parsers-version>2.9.1</univocity-parsers-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
         <vavr-version>0.10.2</vavr-version>
@@ -526,7 +526,7 @@
         <xml-resolver-version>1.2</xml-resolver-version>
         <xmlgraphics-batik-version>1.15</xmlgraphics-batik-version>
         <xmlsec-version>2.2.3</xmlsec-version>
-        <xmlunit-version>2.9.0</xmlunit-version>
+        <xmlunit-version>2.9.1</xmlunit-version>
         <xpp3-version>1.1.4c</xpp3-version>
         <yasson-version>3.0.2</yasson-version>
         <yetus-audience-annotations-version>0.13.0</yetus-audience-annotations-version>
