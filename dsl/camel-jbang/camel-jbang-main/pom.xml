@@ -79,14 +79,14 @@
                     <execution>
                         <phase>prepare-package</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <copy todir="${dist.dir}">
                                     <fileset dir="${project.build.directory}">
                                         <include name="**/*.java"/>
                                     </fileset>
                                 </copy>
                                 <chmod file="${dist.dir}/*.java" perm="u+x" />
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
