@@ -179,7 +179,7 @@ public class RabbitMQMessagePublisher {
                 // Because we don't know why timeout happend (Maybe a communication problem)
                 channel.close(AMQP.PRECONDITION_FAILED, "TIMEOUT WAITING FOR ACK");
             } catch (Exception ce) {
-              LOG.warn("Caught exception during closing of channel", ce);
+                LOG.warn("Caught exception during closing of channel", ce);
             }
             LOG.warn("Acknowledgement error for {}", camelExchange);
             throw new RuntimeCamelException(e);
