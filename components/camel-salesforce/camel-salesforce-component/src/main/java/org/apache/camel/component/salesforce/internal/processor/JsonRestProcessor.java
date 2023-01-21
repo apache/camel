@@ -289,7 +289,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                                 objectMapper, responseClass, restClient, determineHeaders(exchange), response);
                 out.setBody(iterator);
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             String msg = "Error parsing JSON response: " + e.getMessage();
             exchange.setException(new SalesforceException(msg, e));
         } finally {
