@@ -1,21 +1,23 @@
 /*
- *  Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  See the NOTICE file distributed with
- *  this work for additional information regarding copyright ownership.
- *  The ASF licenses this file to You under the Apache License, Version 2.0
- *  (the "License"); you may not use this file except in compliance with
- *  the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.apache.camel.component.zeebe.internal;
+
+import java.time.Duration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,11 +34,17 @@ import io.camunda.zeebe.gateway.protocol.GatewayOuterClass;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
-import org.apache.camel.component.zeebe.model.*;
+import org.apache.camel.component.zeebe.model.DeploymentRequest;
+import org.apache.camel.component.zeebe.model.DeploymentResponse;
+import org.apache.camel.component.zeebe.model.JobRequest;
+import org.apache.camel.component.zeebe.model.JobResponse;
+import org.apache.camel.component.zeebe.model.MessageRequest;
+import org.apache.camel.component.zeebe.model.MessageResponse;
+import org.apache.camel.component.zeebe.model.ProcessDeploymentResponse;
+import org.apache.camel.component.zeebe.model.ProcessRequest;
+import org.apache.camel.component.zeebe.model.ProcessResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.time.Duration;
 
 public class ZeebeService {
     private static final Logger LOG = LoggerFactory.getLogger(ZeebeService.class);
@@ -48,9 +56,9 @@ public class ZeebeService {
 
     private String gatewayHost;
     private int gatewayPort;
-    private String clientId = null;
-    private String clientSecret = null;
-    private String oAuthAPI = null;
+    private String clientId;
+    private String clientSecret;
+    private String oAuthAPI;
 
     public ZeebeService(String gatewayHost, int gatewayPort) {
         this.gatewayHost = gatewayHost;
@@ -58,19 +66,18 @@ public class ZeebeService {
 
         objectMapper = new ObjectMapper();
     }
-    
+
     public void doStart() {
         String gatewayAddress = String.format("%s:%d", gatewayHost, gatewayPort);
 
         if (zeebeClient == null) {
             if (clientId != null) {
-                OAuthCredentialsProvider credentialsProvider =
-                        new OAuthCredentialsProviderBuilder()
-                                .authorizationServerUrl(oAuthAPI)
-                                .audience(gatewayAddress)
-                                .clientId(clientId)
-                                .clientSecret(clientSecret)
-                                .build();
+                OAuthCredentialsProvider credentialsProvider = new OAuthCredentialsProviderBuilder()
+                        .authorizationServerUrl(oAuthAPI)
+                        .audience(gatewayAddress)
+                        .clientId(clientId)
+                        .clientSecret(clientSecret)
+                        .build();
 
                 zeebeClient = ZeebeClient.newClientBuilder()
                         .gatewayAddress(gatewayAddress)
@@ -135,9 +142,10 @@ public class ZeebeService {
 
         try {
             GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(managedChannel);
-            GatewayOuterClass.CancelProcessInstanceResponse cancelProcessInstanceResponse = stub.cancelProcessInstance(GatewayOuterClass.CancelProcessInstanceRequest.newBuilder()
-                    .setProcessInstanceKey(processMessage.getProcessInstanceKey())
-                    .build());
+            GatewayOuterClass.CancelProcessInstanceResponse cancelProcessInstanceResponse
+                    = stub.cancelProcessInstance(GatewayOuterClass.CancelProcessInstanceRequest.newBuilder()
+                            .setProcessInstanceKey(processMessage.getProcessInstanceKey())
+                            .build());
 
             resultMessage.setSuccess(true);
         } catch (StatusRuntimeException exception) {
@@ -198,7 +206,7 @@ public class ZeebeService {
         try {
             GatewayGrpc.GatewayBlockingStub stub = GatewayGrpc.newBlockingStub(managedChannel);
             GatewayOuterClass.CompleteJobRequest.Builder builder = GatewayOuterClass.CompleteJobRequest.newBuilder()
-                            .setJobKey(message.getJobKey());
+                    .setJobKey(message.getJobKey());
             if (!message.getVariables().isEmpty()) {
                 builder = builder.setVariables(objectMapper.writeValueAsString(message.getVariables()));
             }
@@ -287,6 +295,7 @@ public class ZeebeService {
 
         return resultMessage;
     }
+
     public DeploymentResponse deployResource(DeploymentRequest message) {
         DeploymentResponse resultMessage = new DeploymentResponse();
 
@@ -303,8 +312,10 @@ public class ZeebeService {
 
             int deploymentsCount = deploymentResourceResponse.getDeploymentsCount();
             if (deploymentsCount != 1) {
-                LOG.error(String.format("Cannot deploy resource %s. Incorrect number of deployments returned.", message.getName()));
-                resultMessage.setErrorMessage(String.format("Cannot deploy resource %s. Incorrect number of deployments returned.", message.getName()));
+                LOG.error(String.format("Cannot deploy resource %s. Incorrect number of deployments returned.",
+                        message.getName()));
+                resultMessage.setErrorMessage(String
+                        .format("Cannot deploy resource %s. Incorrect number of deployments returned.", message.getName()));
                 resultMessage.setErrorCode("UNKNOWN ERROR");
                 resultMessage.setSuccess(false);
                 return resultMessage;
@@ -315,12 +326,14 @@ public class ZeebeService {
                     resultMessage = new ProcessDeploymentResponse();
                     ((ProcessDeploymentResponse) resultMessage).setBpmnProcessId(deployment.getProcess().getBpmnProcessId());
                     ((ProcessDeploymentResponse) resultMessage).setResourceName(deployment.getProcess().getResourceName());
-                    ((ProcessDeploymentResponse) resultMessage).setProcessDefinitionKey(deployment.getProcess().getProcessDefinitionKey());
+                    ((ProcessDeploymentResponse) resultMessage)
+                            .setProcessDefinitionKey(deployment.getProcess().getProcessDefinitionKey());
                     ((ProcessDeploymentResponse) resultMessage).setVersion(deployment.getProcess().getVersion());
                     break;
                 default:
                     LOG.error(String.format("Unknown Metadata Case %s.", message.getName()));
-                    resultMessage.setErrorMessage(String.format("Cannot deploy resource %s. Incorrect number of deployments returned.", message.getName()));
+                    resultMessage.setErrorMessage(String
+                            .format("Cannot deploy resource %s. Incorrect number of deployments returned.", message.getName()));
                     resultMessage.setErrorCode("UNKNOWN ERROR");
                     resultMessage.setSuccess(false);
                     return resultMessage;

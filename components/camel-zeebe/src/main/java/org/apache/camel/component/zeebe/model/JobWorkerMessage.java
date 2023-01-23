@@ -1,36 +1,36 @@
 /*
- *  Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  See the NOTICE file distributed with
- *  this work for additional information regarding copyright ownership.
- *  The ASF licenses this file to You under the Apache License, Version 2.0
- *  (the "License"); you may not use this file except in compliance with
- *  the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.apache.camel.component.zeebe.model;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIgnoreProperties(ignoreUnknown = true, value={"variables"}, allowGetters = true)
+@JsonIgnoreProperties(ignoreUnknown = true, value = { "variables" }, allowGetters = true)
 public class JobWorkerMessage implements ZeebeMessage {
     private long key;
     private String type;
-    private Map<String,String> customHeaders = Collections.emptyMap();
+    private Map<String, String> customHeaders = Collections.emptyMap();
     private long processInstanceKey;
     private String bpmnProcessId;
     private int processDefinitionVersion;
@@ -41,7 +41,7 @@ public class JobWorkerMessage implements ZeebeMessage {
     private int retries;
     private long deadline;
     @JsonProperty("variablesAsMap")
-    private Map<String,Object> variables = Collections.emptyMap();
+    private Map<String, Object> variables = Collections.emptyMap();
 
     public long getKey() {
         return key;
@@ -169,14 +169,25 @@ public class JobWorkerMessage implements ZeebeMessage {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         JobWorkerMessage that = (JobWorkerMessage) o;
-        return key == that.key && processInstanceKey == that.processInstanceKey && processDefinitionVersion == that.processDefinitionVersion && processDefinitionKey == that.processDefinitionKey && elementInstanceKey == that.elementInstanceKey && retries == that.retries && deadline == that.deadline && Objects.equals(type, that.type) && Objects.equals(customHeaders, that.customHeaders) && Objects.equals(bpmnProcessId, that.bpmnProcessId) && Objects.equals(elementId, that.elementId) && Objects.equals(worker, that.worker) && Objects.equals(variables, that.variables);
+        return key == that.key && processInstanceKey == that.processInstanceKey
+                && processDefinitionVersion == that.processDefinitionVersion
+                && processDefinitionKey == that.processDefinitionKey && elementInstanceKey == that.elementInstanceKey
+                && retries == that.retries && deadline == that.deadline && Objects.equals(type, that.type)
+                && Objects.equals(customHeaders, that.customHeaders) && Objects.equals(bpmnProcessId, that.bpmnProcessId)
+                && Objects.equals(elementId, that.elementId) && Objects.equals(worker, that.worker)
+                && Objects.equals(variables, that.variables);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(key, type, customHeaders, processInstanceKey, bpmnProcessId, processDefinitionVersion, processDefinitionKey, elementId, elementInstanceKey, worker, retries, deadline, variables);
+        return Objects.hash(key, type, customHeaders, processInstanceKey, bpmnProcessId, processDefinitionVersion,
+                processDefinitionKey, elementId, elementInstanceKey, worker, retries, deadline, variables);
     }
 }
