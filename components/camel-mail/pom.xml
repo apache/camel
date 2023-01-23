@@ -55,9 +55,9 @@
             <artifactId>camel-attachments</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>jakarta.mail</artifactId>
-            <version>${jakarta-mail-version}</version>
+            <groupId>org.eclipse.angus</groupId>
+            <artifactId>angus-mail</artifactId>
+            <version>${angus-mail-version}</version>
             <exclusions>
                 <!-- javax activation is part of the JDK now -->
                 <exclusion>
@@ -143,9 +143,9 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>com.sun.mail</groupId>
-                                    <artifactId>jakarta.mail</artifactId>
-                                    <version>${jakarta-mail-version}</version>
+                                    <groupId>org.eclipse.angus</groupId>
+                                    <artifactId>angus-mail</artifactId>
+                                    <version>${angus-mail-version}</version>
                                     <type>jar</type>
                                     <outputDirectory>${project.basedir}/src/generated/resources</outputDirectory>
                                     <includes>
