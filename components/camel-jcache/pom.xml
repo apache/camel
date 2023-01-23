@@ -44,7 +44,7 @@
         <dependency>
             <groupId>javax.cache</groupId>
             <artifactId>cache-api</artifactId>
-            <version>1.1.1</version>
+            <version>${jcache-version}</version>
         </dependency>
 
         <!-- testing -->
