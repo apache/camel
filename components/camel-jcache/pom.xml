@@ -42,9 +42,9 @@
             <artifactId>camel-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.javax-cache-api</artifactId>
-            <version>${jcache-bundle-version}</version>
+            <groupId>javax.cache</groupId>
+            <artifactId>cache-api</artifactId>
+            <version>${jcache-version}</version>
         </dependency>
 
         <!-- testing -->

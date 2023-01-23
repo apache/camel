@@ -32,12 +32,6 @@
     <name>Camel :: Spring Web Services</name>
     <description>Camel support for Spring Web Services</description>
 
-    <properties>
-        <!-- for some weird reason org.springframework.ws and org.springframework.xml
-              will have import-ranges of [2,3) by the bundle plugin, so we
-              need to override it here -->
-    </properties>
-
     <dependencies>
 
         <dependency>

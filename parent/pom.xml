@@ -80,7 +80,7 @@
         <avro-ipc-jetty-version>1.11.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.19.19</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.19.21</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-sdk-bom-version>1.2.8</azure-sdk-bom-version>
@@ -267,7 +267,6 @@
         <jakarta-el-expressly-version>5.0.0</jakarta-el-expressly-version>
         <jakarta-activation-version>2.1.1</jakarta-activation-version>
         <jakarta-annotation-api-version>2.1.1</jakarta-annotation-api-version>
-        <jakarta-mail-version>2.0.1</jakarta-mail-version>
         <jakarta-servlet-api-version>6.0.0</jakarta-servlet-api-version>
         <jakarta-enterprise-cdi-api-version>4.0.1</jakarta-enterprise-cdi-api-version>
         <jakarta-api-version>2.1.5</jakarta-api-version>
@@ -284,7 +283,7 @@
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
         <jboss-transaction-spi.version>7.6.1.Final</jboss-transaction-spi.version>
         <jboss-xnio-version>3.3.8.Final</jboss-xnio-version>
-        <jcache-bundle-version>1.1.1_1</jcache-bundle-version>
+        <jcache-version>1.1.1</jcache-version>
         <jcommander-version>1.72</jcommander-version>
         <jcr-version>2.0</jcr-version>
         <jedis-client-version>3.7.1</jedis-client-version>
@@ -303,7 +302,7 @@
         <jib-version>0.21.0</jib-version>
         <jira-guava-version>30.1.1-jre</jira-guava-version>
         <jira-rest-client-api-version>5.2.4</jira-rest-client-api-version>
-        <libthrift-version>0.14.1</libthrift-version>
+        <libthrift-version>0.17.0</libthrift-version>
         <jodatime2-version>2.11.1</jodatime2-version>
         <jolokia-version>1.7.2</jolokia-version>
         <jolt-version>0.1.7</jolt-version>

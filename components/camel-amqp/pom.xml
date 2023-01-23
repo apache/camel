@@ -32,11 +32,6 @@
     <name>Camel :: AMQP</name>
     <description>Camel AMQP component which is based on the Apache Qpid project</description>
 
-    <properties>
-        <!-- Wrapped qpid-jms-client requires invalid version of the package.
-        Remove this after migration to ServiceMix bundles. -->
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

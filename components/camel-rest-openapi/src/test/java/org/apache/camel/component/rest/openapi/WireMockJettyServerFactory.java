@@ -16,21 +16,12 @@
  */
 package org.apache.camel.component.rest.openapi;
 
-import com.github.tomakehurst.wiremock.common.HttpsSettings;
-import com.github.tomakehurst.wiremock.common.JettySettings;
 import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.http.AdminRequestHandler;
 import com.github.tomakehurst.wiremock.http.HttpServer;
 import com.github.tomakehurst.wiremock.http.StubRequestHandler;
 import com.github.tomakehurst.wiremock.jetty.JettyHttpServer;
 import com.github.tomakehurst.wiremock.jetty.JettyHttpServerFactory;
-import org.eclipse.jetty.io.NetworkTrafficListener;
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
-import org.eclipse.jetty.server.SecureRequestCustomizer;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
@@ -44,32 +35,11 @@ public final class WireMockJettyServerFactory extends JettyHttpServerFactory {
 
         return new JettyHttpServer(options, adminRequestHandler, stubRequestHandler) {
             @Override
-            protected ServerConnector createHttpsConnector(
-                    Server server,
-                    final String bindAddress, final HttpsSettings httpsSettings,
-                    final JettySettings jettySettings, final NetworkTrafficListener listener) {
-                final SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
-
-                sslContextFactory.setKeyStorePath(httpsSettings.keyStorePath());
-                sslContextFactory.setKeyManagerPassword(httpsSettings.keyStorePassword());
-                sslContextFactory.setKeyStorePassword(httpsSettings.keyStorePassword());
-                sslContextFactory.setKeyStoreType(httpsSettings.keyStoreType());
-                if (httpsSettings.hasTrustStore()) {
-                    sslContextFactory.setTrustStorePath(httpsSettings.trustStorePath());
-                    sslContextFactory.setTrustStorePassword(httpsSettings.trustStorePassword());
-                    sslContextFactory.setTrustStoreType(httpsSettings.trustStoreType());
-                }
-                sslContextFactory.setNeedClientAuth(httpsSettings.needClientAuth());
+            protected SslContextFactory.Server buildSslContextFactory() {
+                SslContextFactory.Server sslContextFactory = super.buildSslContextFactory();
                 sslContextFactory.setIncludeCipherSuites("TLS_DHE_RSA_WITH_AES_128_GCM_SHA256");
                 sslContextFactory.setProtocol("TLSv1.3");
-
-                final HttpConfiguration httpConfig = createHttpConfig(jettySettings);
-                httpConfig.addCustomizer(new SecureRequestCustomizer());
-
-                final int port = httpsSettings.port();
-
-                return createServerConnector(bindAddress, jettySettings, port, listener,
-                        new SslConnectionFactory(sslContextFactory, "http/1.1"), new HttpConnectionFactory(httpConfig));
+                return sslContextFactory;
             }
         };
     }

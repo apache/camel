@@ -60,7 +60,7 @@ jobs:
         with:
           base: main
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Regen for commit ${{ github.sha }}"
+          commit-message: "Regen SBOM from commit ${{ github.sha }}"
           committer: GitHub <noreply@github.com>
           author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           signoff: true
