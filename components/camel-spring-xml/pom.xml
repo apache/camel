@@ -279,8 +279,6 @@
                 </executions>
             </plugin>
 
-            <!-- Push the execution order of the maven-bundle-plugin further to the end. That's why we add it here again. -->
-
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
