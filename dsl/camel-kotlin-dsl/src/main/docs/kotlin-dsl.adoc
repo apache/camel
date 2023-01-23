@@ -49,7 +49,7 @@ camel run hello.kts
 
 REST endpoints can be configured using the top level _rest_ block:
 
-.my-rest.ktn
+.my-rest.kts
 [source,kotlin]
 ----
 rest {
