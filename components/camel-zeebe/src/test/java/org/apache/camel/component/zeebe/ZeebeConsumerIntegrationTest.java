@@ -1,35 +1,46 @@
 /*
- *  Licensed to the Apache Software Foundation (ASF) under one or more
- *  contributor license agreements.  See the NOTICE file distributed with
- *  this work for additional information regarding copyright ownership.
- *  The ASF licenses this file to You under the Apache License, Version 2.0
- *  (the "License"); you may not use this file except in compliance with
- *  the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.apache.camel.component.zeebe;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.zeebe.model.*;
+import org.apache.camel.component.zeebe.model.DeploymentRequest;
+import org.apache.camel.component.zeebe.model.DeploymentResponse;
+import org.apache.camel.component.zeebe.model.JobRequest;
+import org.apache.camel.component.zeebe.model.JobWorkerMessage;
+import org.apache.camel.component.zeebe.model.ProcessDeploymentResponse;
+import org.apache.camel.component.zeebe.model.ProcessRequest;
+import org.apache.camel.component.zeebe.model.ProcessResponse;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -51,7 +62,8 @@ class ZeebeConsumerIntegrationTest extends CamelTestSupport {
 
         DeploymentRequest deployProcessMessage = new DeploymentRequest();
         deployProcessMessage.setName(TEST_1_DEFINITION_BPMN);
-        deployProcessMessage.setContent(this.getClass().getClassLoader().getResourceAsStream("data/test1_definition.bpmn").readAllBytes());
+        deployProcessMessage
+                .setContent(this.getClass().getClassLoader().getResourceAsStream("data/test1_definition.bpmn").readAllBytes());
 
         DeploymentResponse deploymentResponse = component.getZeebeService().deployResource(deployProcessMessage);
 
@@ -70,7 +82,7 @@ class ZeebeConsumerIntegrationTest extends CamelTestSupport {
         MockEndpoint workerMock = getMockEndpoint("mock:jobWorker");
         workerMock.expectedMinimumMessageCount(1);
 
-        for (int i=0; i<10; i++) {
+        for (int i = 0; i < 10; i++) {
             if (!workerMock.getExchanges().isEmpty()) {
                 break;
             }
@@ -107,7 +119,7 @@ class ZeebeConsumerIntegrationTest extends CamelTestSupport {
         MockEndpoint workerMock = getMockEndpoint("mock:jobWorker_JSON");
         workerMock.expectedMinimumMessageCount(1);
 
-        for (int i=0; i<10; i++) {
+        for (int i = 0; i < 10; i++) {
             if (!workerMock.getExchanges().isEmpty()) {
                 break;
             }
