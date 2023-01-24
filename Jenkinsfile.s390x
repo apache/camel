@@ -71,13 +71,13 @@ pipeline {
             }
             steps {
                 // Skip modules camel-kudu and docs as these are not supported on s390x.
-                sh "./mvnw -U $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean install -pl '!docs,!components/camel-kudu'"
+                sh "./mvnw -U $MAVEN_PARAMS -Darchetype.test.skip -Dmaven.test.skip.exec=true clean install -pl '!docs,!components/camel-kudu'"
             }
         }
 
         stage('Checks') {
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
+                sh "./mvnw $MAVEN_PARAMS -Darchetype.test.skip -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
             }
         }
 
