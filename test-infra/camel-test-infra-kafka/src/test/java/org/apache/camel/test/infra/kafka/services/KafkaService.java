@@ -23,6 +23,8 @@ import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides an interface for any type of Kafka service: remote instances, local container, etc
@@ -39,7 +41,17 @@ public interface KafkaService
 
     @Override
     default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        initialize();
+        try {
+            initialize();
+        } catch (Exception e) {
+            Logger log = LoggerFactory.getLogger(KafkaService.class);
+
+            final Object o = extensionContext.getTestInstance().get();
+            log.error("Failed to initialize service {} for test {} on ({})", this.getClass().getSimpleName(),
+                    extensionContext.getDisplayName(), o.getClass().getName());
+
+            throw e;
+        }
     }
 
     @Override
