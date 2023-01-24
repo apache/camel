@@ -28,20 +28,15 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * Zeebe component which does bla bla.
- *
- * TODO: Update one line description above what the component does.
+ * Zeebe component which does integrage with Camunda Zeebe to interact with the API.
  */
 @UriEndpoint(firstVersion = "1.0-SNAPSHOT", scheme = "zeebe", title = "Zeebe", syntax = "zeebe:operationName",
              category = { Category.JAVA },
              headersClass = ZeebeConstants.class)
 public class ZeebeEndpoint extends DefaultEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ZeebeEndpoint.class);
 
     @UriPath(label = "common", description = "The operation to use", enums = "startProcess," +
                                                                              "cancelProcess,publishMessage,completeJob,failJob,updateJobRetries,worker,throwError,deployResource")
@@ -70,17 +65,13 @@ public class ZeebeEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        if (operationName == null) {
-            throw new IllegalArgumentException(String.format("Invalid Operation"));
-        }
+        ObjectHelper.notNull(operationName, "operationName");
 
         return new ZeebeProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        if (operationName == null) {
-            throw new IllegalArgumentException(String.format("Invalid Operation"));
-        }
+        ObjectHelper.notNull(operationName, "operationName");
 
         Consumer consumer = new ZeebeConsumer(this, processor);
         configureConsumer(consumer);

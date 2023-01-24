@@ -17,12 +17,11 @@
 
 package org.apache.camel.component.zeebe.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ProcessResponseTest {
 
@@ -42,48 +41,38 @@ public class ProcessResponseTest {
         message.setProcessVersion(2);
         message.setSuccess(true);
 
-        try {
-            String messageString = objectMapper.writeValueAsString(message);
-            assertEquals(MARSHAL_TEST_RESULT_1, messageString);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        String messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
+        assertEquals(MARSHAL_TEST_RESULT_1, messageString);
 
         message.setSuccess(false);
         message.setErrorMessage("Test Error");
         message.setErrorCode("TestCode");
 
-        try {
-            String messageString = objectMapper.writeValueAsString(message);
-            assertEquals(MARSHAL_TEST_RESULT_2, messageString);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
+        assertEquals(MARSHAL_TEST_RESULT_2, messageString);
     }
 
     @Test
     public void unmarshalTest() {
-        try {
-            ProcessResponse unmarshalledMessage1 = objectMapper.readValue(MARSHAL_TEST_RESULT_1, ProcessResponse.class);
+        ProcessResponse unmarshalledMessage1
+                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, ProcessResponse.class));
 
-            ProcessResponse message = new ProcessResponse();
-            message.setProcessId("testProcess");
-            message.setProcessKey(111);
-            message.setProcessInstanceKey(111);
-            message.setProcessVersion(2);
-            message.setSuccess(true);
+        ProcessResponse message = new ProcessResponse();
+        message.setProcessId("testProcess");
+        message.setProcessKey(111);
+        message.setProcessInstanceKey(111);
+        message.setProcessVersion(2);
+        message.setSuccess(true);
 
-            assertEquals(message, unmarshalledMessage1);
+        assertEquals(message, unmarshalledMessage1);
 
-            ProcessResponse unmarshalledMessage2 = objectMapper.readValue(MARSHAL_TEST_RESULT_2, ProcessResponse.class);
+        ProcessResponse unmarshalledMessage2
+                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, ProcessResponse.class));
 
-            message.setSuccess(false);
-            message.setErrorMessage("Test Error");
-            message.setErrorCode("TestCode");
+        message.setSuccess(false);
+        message.setErrorMessage("Test Error");
+        message.setErrorCode("TestCode");
 
-            assertEquals(message, unmarshalledMessage2);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        assertEquals(message, unmarshalledMessage2);
     }
 }

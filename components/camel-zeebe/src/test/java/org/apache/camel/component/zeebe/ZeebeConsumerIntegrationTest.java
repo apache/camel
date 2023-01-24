@@ -17,8 +17,8 @@
 
 package org.apache.camel.component.zeebe;
 
+import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
@@ -33,15 +33,15 @@ import org.apache.camel.component.zeebe.model.ProcessDeploymentResponse;
 import org.apache.camel.component.zeebe.model.ProcessRequest;
 import org.apache.camel.component.zeebe.model.ProcessResponse;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -72,45 +72,33 @@ class ZeebeConsumerIntegrationTest extends CamelTestSupport {
         ProcessResponse processResponse = component.getZeebeService().startProcess(processRequest);
     }
 
-    @BeforeEach
-    void init() throws Exception {
-
-    }
-
     @Test
     public void shouldProcessJobWorkerMessage() throws Exception {
         MockEndpoint workerMock = getMockEndpoint("mock:jobWorker");
         workerMock.expectedMinimumMessageCount(1);
 
-        for (int i = 0; i < 10; i++) {
-            if (!workerMock.getExchanges().isEmpty()) {
-                break;
-            }
-            TimeUnit.SECONDS.sleep(2);
-        }
-        MockEndpoint.assertIsSatisfied(context);
+        Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         List<Exchange> exchanges = workerMock.getExchanges();
         for (Exchange exchange : exchanges) {
             JobWorkerMessage jobWorkerMessage = exchange.getIn().getBody(JobWorkerMessage.class);
-            if (jobWorkerMessage != null) {
-                assertTrue(jobWorkerMessage.getKey() > 0);
-                assertTrue(jobWorkerMessage.getProcessInstanceKey() > 0);
-                assertNotNull(jobWorkerMessage.getBpmnProcessId());
-                assertTrue(jobWorkerMessage.getProcessDefinitionVersion() > 0);
-                assertTrue(jobWorkerMessage.getProcessDefinitionKey() > 0);
-                assertNotNull(jobWorkerMessage.getElementId());
-                assertTrue(jobWorkerMessage.getProcessInstanceKey() > 0);
-                assertNotNull(jobWorkerMessage.getWorker());
-                assertTrue(jobWorkerMessage.getRetries() > 0);
-                assertTrue(jobWorkerMessage.getDeadline() > 0);
 
-                JobRequest jobRequest = new JobRequest();
-                jobRequest.setJobKey(jobWorkerMessage.getKey());
-                component.getZeebeService().completeJob(jobRequest);
-            } else {
-                Assertions.fail();
-            }
+            assertNotNull(jobWorkerMessage);
+
+            assertTrue(jobWorkerMessage.getKey() > 0);
+            assertTrue(jobWorkerMessage.getProcessInstanceKey() > 0);
+            assertNotNull(jobWorkerMessage.getBpmnProcessId());
+            assertTrue(jobWorkerMessage.getProcessDefinitionVersion() > 0);
+            assertTrue(jobWorkerMessage.getProcessDefinitionKey() > 0);
+            assertNotNull(jobWorkerMessage.getElementId());
+            assertTrue(jobWorkerMessage.getProcessInstanceKey() > 0);
+            assertNotNull(jobWorkerMessage.getWorker());
+            assertTrue(jobWorkerMessage.getRetries() > 0);
+            assertTrue(jobWorkerMessage.getDeadline() > 0);
+
+            JobRequest jobRequest = new JobRequest();
+            jobRequest.setJobKey(jobWorkerMessage.getKey());
+            component.getZeebeService().completeJob(jobRequest);
         }
     }
 
@@ -119,37 +107,30 @@ class ZeebeConsumerIntegrationTest extends CamelTestSupport {
         MockEndpoint workerMock = getMockEndpoint("mock:jobWorker_JSON");
         workerMock.expectedMinimumMessageCount(1);
 
-        for (int i = 0; i < 10; i++) {
-            if (!workerMock.getExchanges().isEmpty()) {
-                break;
-            }
-            TimeUnit.SECONDS.sleep(2);
-        }
-        MockEndpoint.assertIsSatisfied(context);
+        Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         List<Exchange> exchanges = workerMock.getExchanges();
         for (Exchange exchange : exchanges) {
             String jobWorkerMessageString = exchange.getIn().getBody(String.class);
-            if (jobWorkerMessageString != null) {
-                JobWorkerMessage jobWorkerMessage = objectMapper.readValue(jobWorkerMessageString, JobWorkerMessage.class);
+            assertNotNull(jobWorkerMessageString);
 
-                assertTrue(jobWorkerMessage.getKey() > 0);
-                assertTrue(jobWorkerMessage.getProcessInstanceKey() > 0);
-                assertNotNull(jobWorkerMessage.getBpmnProcessId());
-                assertTrue(jobWorkerMessage.getProcessDefinitionVersion() > 0);
-                assertTrue(jobWorkerMessage.getProcessDefinitionKey() > 0);
-                assertNotNull(jobWorkerMessage.getElementId());
-                assertTrue(jobWorkerMessage.getProcessInstanceKey() > 0);
-                assertNotNull(jobWorkerMessage.getWorker());
-                assertTrue(jobWorkerMessage.getRetries() > 0);
-                assertTrue(jobWorkerMessage.getDeadline() > 0);
+            JobWorkerMessage jobWorkerMessage
+                    = assertDoesNotThrow(() -> objectMapper.readValue(jobWorkerMessageString, JobWorkerMessage.class));
 
-                JobRequest jobRequest = new JobRequest();
-                jobRequest.setJobKey(jobWorkerMessage.getKey());
-                component.getZeebeService().completeJob(jobRequest);
-            } else {
-                Assertions.fail();
-            }
+            assertTrue(jobWorkerMessage.getKey() > 0);
+            assertTrue(jobWorkerMessage.getProcessInstanceKey() > 0);
+            assertNotNull(jobWorkerMessage.getBpmnProcessId());
+            assertTrue(jobWorkerMessage.getProcessDefinitionVersion() > 0);
+            assertTrue(jobWorkerMessage.getProcessDefinitionKey() > 0);
+            assertNotNull(jobWorkerMessage.getElementId());
+            assertTrue(jobWorkerMessage.getProcessInstanceKey() > 0);
+            assertNotNull(jobWorkerMessage.getWorker());
+            assertTrue(jobWorkerMessage.getRetries() > 0);
+            assertTrue(jobWorkerMessage.getDeadline() > 0);
+
+            JobRequest jobRequest = new JobRequest();
+            jobRequest.setJobKey(jobWorkerMessage.getKey());
+            component.getZeebeService().completeJob(jobRequest);
         }
     }
 

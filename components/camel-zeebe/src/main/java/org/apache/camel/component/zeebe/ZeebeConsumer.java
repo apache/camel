@@ -31,6 +31,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.zeebe.internal.OperationName;
 import org.apache.camel.component.zeebe.model.JobWorkerMessage;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,15 +56,13 @@ public class ZeebeConsumer extends DefaultConsumer {
         final OperationName operationName = getEndpoint().getOperationName();
         switch (operationName) {
             case REGISTER_JOB_WORKER:
-                if (getEndpoint().getJobKey() == null) {
-                    LOG.error("Missing JobKey");
-                    throw new CamelException("Missing JobKey");
-                }
+                ObjectHelper.notNull(getEndpoint().getJobKey(), "jobKey");
+
                 jobWorker = getEndpoint().getZeebeService().registerJobHandler(new ConsumerJobHandler(),
                         getEndpoint().getJobKey(), getEndpoint().getTimeout());
                 break;
             default:
-                LOG.error("Invalid Operation %s", operationName.value());
+                LOG.error("Invalid Operation {}", operationName.value());
                 throw new CamelException(String.format("Invalid Operation for Consumer %s", operationName.value()));
         }
     }
@@ -98,7 +97,7 @@ public class ZeebeConsumer extends DefaultConsumer {
             message.setDeadline(job.getDeadline());
             message.setVariables(job.getVariablesAsMap());
 
-            LOG.info(job.toJson());
+            LOG.debug("New Job Message: {}", job.toJson());
 
             if (getEndpoint().isFormatJSON()) {
                 try {

@@ -2,7 +2,7 @@
 :doctitle: Zeebe
 :shortname: zeebe
 :artifactid: camel-zeebe
-:description: Zeebe component which does bla bla.
+:description: Zeebe component which does integrage with Camunda Zeebe to interact with the API.
 :since: 1.0-SNAPSHOT
 :supportlevel: Experimental
 :component-header: Both producer and consumer are supported
