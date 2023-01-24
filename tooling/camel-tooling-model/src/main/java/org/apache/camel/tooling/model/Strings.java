@@ -57,7 +57,7 @@ public final class Strings {
 
     /**
      * To wrap a big line by words.
-     * 
+     *
      * @param line          the big line
      * @param wordSep       the word separator
      * @param lineSep       the new line to use when breaking into a new line

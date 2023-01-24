@@ -178,7 +178,7 @@ public class CxfCustomizedExceptionTest extends CamelTestSupport {
         IOHelper.copy(is, out);
         out.flush();
         is.close();
-        // check the response code        
+        // check the response code
         try {
             urlConnection.getInputStream();
             fail("We except an IOException here");

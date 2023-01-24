@@ -26,14 +26,14 @@ public interface MongoDBService extends BeforeAllCallback, AfterAllCallback, Tes
 
     /**
      * The replica set URL in the format mongodb://host:port
-     * 
+     *
      * @return the replica set URL
      */
     String getReplicaSetUrl();
 
     /**
      * The connection address in the format host:port
-     * 
+     *
      * @return the connection address
      */
     String getConnectionAddress();

@@ -32,14 +32,14 @@ public interface CommitManager {
 
     /**
      * Commits the offsets of the given partition
-     * 
+     *
      * @param partition the partition to commit the offsets
      */
     void commit(TopicPartition partition);
 
     /**
      * Forcefully commits the offset of the given partition
-     * 
+     *
      * @param partition           the partition to commit the offsets
      * @param partitionLastOffset the last offset to commit
      */
@@ -47,7 +47,7 @@ public interface CommitManager {
 
     /**
      * Record the last processed offset for future commit
-     * 
+     *
      * @param partition           the partition to commit the offsets
      * @param partitionLastOffset the last offset to commit
      */

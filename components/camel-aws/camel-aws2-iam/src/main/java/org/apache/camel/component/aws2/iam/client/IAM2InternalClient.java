@@ -25,7 +25,7 @@ public interface IAM2InternalClient {
 
     /**
      * Returns an IAM client after a factory method determines which one to return.
-     * 
+     *
      * @return IamClient IamClient
      */
     IamClient getIamClient();

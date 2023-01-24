@@ -78,7 +78,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
      * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking with recoverable
      * behavior and a local Hazelcast instance. Recoverable repository name defaults to {@code repositoryName} +
      * "-compeleted".
-     * 
+     *
      * @param repositoryName {@link IMap} repository name;
      */
     public HazelcastAggregationRepository(final String repositoryName) {
@@ -91,7 +91,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
     /**
      * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking with recoverable
      * behavior and a local Hazelcast instance.
-     * 
+     *
      * @param repositoryName           {@link IMap} repository name;
      * @param persistentRepositoryName {@link IMap} recoverable repository name;
      */
@@ -105,7 +105,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
     /**
      * Creates new {@link HazelcastAggregationRepository} with recoverable behavior and a local Hazelcast instance.
      * Recoverable repository name defaults to {@code repositoryName} + "-compeleted".
-     * 
+     *
      * @param repositoryName {@link IMap} repository name;
      * @param optimistic     whether to use optimistic locking manner.
      */
@@ -117,7 +117,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
 
     /**
      * Creates new {@link HazelcastAggregationRepository} with recoverable behavior and a local Hazelcast instance.
-     * 
+     *
      * @param repositoryName           {@link IMap} repository name;
      * @param persistentRepositoryName {@link IMap} recoverable repository name;
      * @param optimistic               whether to use optimistic locking manner.
@@ -132,7 +132,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
     /**
      * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking with recoverable
      * behavior. Recoverable repository name defaults to {@code repositoryName} + "-compeleted".
-     * 
+     *
      * @param repositoryName {@link IMap} repository name;
      * @param hzInstanse     externally configured {@link HazelcastInstance}.
      */
@@ -145,7 +145,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
     /**
      * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking with recoverable
      * behavior.
-     * 
+     *
      * @param repositoryName           {@link IMap} repository name;
      * @param persistentRepositoryName {@link IMap} recoverable repository name;
      * @param hzInstanse               externally configured {@link HazelcastInstance}.
@@ -160,7 +160,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
     /**
      * Creates new {@link HazelcastAggregationRepository} with recoverable behavior. Recoverable repository name
      * defaults to {@code repositoryName} + "-compeleted".
-     * 
+     *
      * @param repositoryName {@link IMap} repository name;
      * @param optimistic     whether to use optimistic locking manner;
      * @param hzInstance     externally configured {@link HazelcastInstance}.
@@ -173,7 +173,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
 
     /**
      * Creates new {@link HazelcastAggregationRepository} with recoverable behavior.
-     * 
+     *
      * @param repositoryName           {@link IMap} repository name;
      * @param optimistic               whether to use optimistic locking manner;
      * @param persistentRepositoryName {@link IMap} recoverable repository name;
@@ -308,7 +308,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
 
     /**
      * Checks if the key in question is in the repository.
-     * 
+     *
      * @param key Object - key in question
      */
     public boolean containsKey(Object key) {
@@ -331,7 +331,7 @@ public class HazelcastAggregationRepository extends ServiceSupport
      * This method performs transactional operation on removing the {@code exchange} from the operational storage and
      * moving it into the persistent one if the {@link HazelcastAggregationRepository} runs in recoverable mode and
      * {@code optimistic} is false. It will act at <u>your own</u> risk otherwise.
-     * 
+     *
      * @param camelContext the current CamelContext
      * @param key          the correlation key
      * @param exchange     the exchange to remove

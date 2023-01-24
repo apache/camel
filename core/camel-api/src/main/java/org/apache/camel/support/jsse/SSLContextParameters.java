@@ -102,7 +102,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     /**
      * Sets the optional key manager configuration for creating the {@link KeyManager}s used in constructing an
      * {@link SSLContext}.
-     * 
+     *
      * @param keyManagers the options or {@code null} to provide no {@code KeyManager}s
      */
     public void setKeyManagers(KeyManagersParameters keyManagers) {
@@ -116,7 +116,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
     /**
      * Sets the optional trust manager configuration for creating the {@link TrustManager}s used in constructing an
      * {@link SSLContext}.
-     * 
+     *
      * @param trustManagers the options or {@code null} to provide no {@code TrustManager}s
      */
     public void setTrustManagers(TrustManagersParameters trustManagers) {
@@ -175,7 +175,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
 
     /**
      * Sets the optional provider identifier to use when constructing an {@link SSLContext}.
-     * 
+     *
      * @param provider the identifier (from the list of available providers returned by {@link Security#getProviders()})
      *                 or {@code null} to use the highest priority provider implementing the secure socket protocol
      *
@@ -198,7 +198,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      * instance's configuration. Defaults to TLS. See Appendix A in the
      * <a href= "http://download.oracle.com/javase/6/docs/technotes/guides//security/jsse/JSSERefGuide.html#AppA" >Java
      * Secure Socket Extension Reference Guide</a> for information about standard protocol names.
-     * 
+     *
      * @param secureSocketProtocol the name of the protocol or {@code null} to use the default (TLS)
      */
     public void setSecureSocketProtocol(String secureSocketProtocol) {
@@ -211,7 +211,7 @@ public class SSLContextParameters extends BaseSSLContextParameters {
 
     /**
      * An optional certificate alias to use. This is useful when the keystore has multiple certificates.
-     * 
+     *
      * @param certAlias an optional certificate alias to use
      */
     public void setCertAlias(String certAlias) {

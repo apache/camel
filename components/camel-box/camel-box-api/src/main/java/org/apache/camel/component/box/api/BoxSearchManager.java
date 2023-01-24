@@ -46,7 +46,7 @@ public class BoxSearchManager {
 
     /**
      * Create search manager to manage the searches of Box connection's authenticated user.
-     * 
+     *
      * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxSearchManager(BoxAPIConnection boxConnection) {
@@ -55,10 +55,10 @@ public class BoxSearchManager {
 
     /**
      * Search folder and all descendant folders using the given query.
-     * 
+     *
      * @param  folderId - the id of folder searched.
      * @param  query    - the search query.
-     * 
+     *
      * @return          A collection of matching items.
      */
     public Collection<BoxItem> searchFolder(String folderId, String query) {

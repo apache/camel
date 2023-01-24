@@ -66,7 +66,7 @@ public final class PackageHelper {
 
     /**
      * Parses the text as a map (eg key=value)
-     * 
+     *
      * @param  data the data
      * @return      the map
      */

@@ -35,7 +35,7 @@ public class JmsRouteTimeoutTest extends AbstractJMSTest {
     @Test
     public void testTimeout() {
         try {
-            // send a in-out with a timeout for 1 sec 
+            // send a in-out with a timeout for 1 sec
             template.requestBody("activemq:queue:JmsRouteTimeoutTest?requestTimeout=1000", "Hello World");
             fail("Should have timed out with an exception");
         } catch (RuntimeCamelException e) {

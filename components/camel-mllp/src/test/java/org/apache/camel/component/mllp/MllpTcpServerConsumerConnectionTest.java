@@ -156,9 +156,9 @@ public class MllpTcpServerConsumerConnectionTest extends CamelTestSupport {
             public void configure() {
                 fromF("mllp://%s:%d?receiveTimeout=%d&readTimeout=%d&idleTimeout=%d", mllpClient.getMllpHost(),
                         mllpClient.getMllpPort(), RECEIVE_TIMEOUT, READ_TIMEOUT, idleTimeout)
-                                .routeId(routeId)
-                                .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
-                                .to(result);
+                        .routeId(routeId)
+                        .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
+                        .to(result);
             }
         };
 

@@ -34,7 +34,7 @@ import org.apache.camel.component.wordpress.api.model.TagOrderBy;
 
 /**
  * Describes the Tags Wordpress API
- * 
+ *
  * @see   <a href= "https://developer.wordpress.org/rest-api/reference/tags/">Tags API Reference</a>
  * @since 0.0.1
  */

@@ -107,7 +107,7 @@ public class SmppMessage extends DefaultMessage {
 
     /**
      * Returns the underlying jSMPP command
-     * 
+     *
      * @return command
      */
     public Command getCommand() {

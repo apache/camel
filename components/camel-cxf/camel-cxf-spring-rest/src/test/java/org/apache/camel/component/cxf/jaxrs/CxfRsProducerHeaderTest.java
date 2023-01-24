@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test that verify header propagation functionality for CxfRsProducer that uses WebClient API.
- * 
+ *
  */
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration
@@ -95,7 +95,7 @@ public class CxfRsProducerHeaderTest {
 
         });
 
-        // get the response message 
+        // get the response message
         Response response = (Response) exchange.getMessage().getBody();
 
         // check the response code on the Response object as set by the "HttpProcess"

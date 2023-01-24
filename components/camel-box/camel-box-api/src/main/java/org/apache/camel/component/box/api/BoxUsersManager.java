@@ -44,7 +44,7 @@ public class BoxUsersManager {
 
     /**
      * Create users manager to manage the users of Box connection's authenticated user.
-     * 
+     *
      * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxUsersManager(BoxAPIConnection boxConnection) {
@@ -53,7 +53,7 @@ public class BoxUsersManager {
 
     /**
      * Get current user.
-     * 
+     *
      * @return The current user.
      */
     public BoxUser getCurrentUser() {
@@ -72,7 +72,7 @@ public class BoxUsersManager {
      * managed users it matches any users names or emails that start with the term. For external, it only does full
      * match on email. This method is ideal to use in the case where you have a full email for a user and you don't know
      * if they're managed or external.
-     * 
+     *
      * @param  filterTerm - The filter term to lookup users by (login for external, login or name for managed); if
      *                    <code>null</code> all managed users are returned.
      * @param  fields     - the fields to retrieve. Leave this out for the standard fields.
@@ -101,7 +101,7 @@ public class BoxUsersManager {
 
     /**
      * Provision a new user in an enterprise with additional user information.
-     * 
+     *
      * @param  login  - the email address the user will use to login.
      * @param  name   - the name of the user.
      * @param  params - additional user information.
@@ -130,7 +130,7 @@ public class BoxUsersManager {
 
     /**
      * Provision a new app user in an enterprise with additional user information using Box Developer Edition.
-     * 
+     *
      * @param  name   - the name of the user.
      * @param  params - additional user information.
      * @return        All the enterprise users or enterprise users that matches the filter.
@@ -155,7 +155,7 @@ public class BoxUsersManager {
 
     /**
      * Get user information.
-     * 
+     *
      * @param  userId - the id of user.
      * @return        The user information.
      */
@@ -177,7 +177,7 @@ public class BoxUsersManager {
 
     /**
      * Update user information.
-     * 
+     *
      * @param  userId - the id of user to update.
      * @param  info   - the updated information
      * @return        The updated user.
@@ -203,7 +203,7 @@ public class BoxUsersManager {
 
     /**
      * Delete user from an enterprise account.
-     * 
+     *
      * @param userId     - the id of user to delete.
      * @param notifyUser - whether or not to send an email notification to the user that their account has been deleted.
      * @param force      - whether or not this user should be deleted even if they still own files.
@@ -225,7 +225,7 @@ public class BoxUsersManager {
 
     /**
      * Add a new email alias to user's account.
-     * 
+     *
      * @param  userId - the id of user.
      * @param  email  - the email address to add as an alias.
      * @return        The newly created email alias.
@@ -251,7 +251,7 @@ public class BoxUsersManager {
 
     /**
      * Get a collection of all the email aliases for user.
-     * 
+     *
      * @param  userId - the id of user.
      * @return        A collection of all the email aliases for user.
      */
@@ -273,7 +273,7 @@ public class BoxUsersManager {
 
     /**
      * Delete an email alias from user's account.
-     * 
+     *
      * @param userId       - the id of user.
      * @param emailAliasId - the id of the email alias to delete.
      */

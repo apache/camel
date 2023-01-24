@@ -234,7 +234,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
      * exchange in parallel to the multiple consumers.
      * <p/>
      * If there is only a single consumer then its dispatched directly to it using same thread.
-     * 
+     *
      * @param  exchange  the exchange
      * @throws Exception can be thrown if processing of the exchange failed
      */

@@ -46,14 +46,14 @@ import org.apache.camel.RuntimeCamelException;
  * An XML parser that uses SAX to include line and column number for each XML element in the parsed Document.
  * <p/>
  * The line number and column number can be obtained from a Node/Element using
- * 
+ *
  * <pre>
  * String lineNumber = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER);
  * String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
  * String columnNumber = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER);
  * String columnNumberEnd = (String) node.getUserData(XmlLineNumberParser.COLUMN_NUMBER_END);
  * </pre>
- * 
+ *
  * Mind that start and end numbers are the same for single-level XML tags.
  */
 public final class XmlLineNumberParser {

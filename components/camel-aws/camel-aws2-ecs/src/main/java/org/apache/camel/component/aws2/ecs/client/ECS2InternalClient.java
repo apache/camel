@@ -25,7 +25,7 @@ public interface ECS2InternalClient {
 
     /**
      * Returns an ECS client after a factory method determines which one to return.
-     * 
+     *
      * @return EcSClient EcSClient
      */
     EcsClient getEcsClient();

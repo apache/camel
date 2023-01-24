@@ -43,7 +43,7 @@ public class JettyEmbeddedService implements JettyService, BeforeEachCallback, A
 
     /**
      * Builds an instance of the service using the provided configuration
-     * 
+     *
      * @param jettyConfiguration the configuration to use when building the service
      */
     public JettyEmbeddedService(JettyConfiguration jettyConfiguration) {

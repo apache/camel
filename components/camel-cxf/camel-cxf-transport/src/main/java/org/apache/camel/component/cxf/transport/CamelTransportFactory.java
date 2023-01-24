@@ -134,7 +134,7 @@ public class CamelTransportFactory extends AbstractTransportFactory
         return new CamelConduit(camelContext, b, localInfo, target, headerFilterStrategy);
     }
 
-    // CXF 2.x support methods    
+    // CXF 2.x support methods
     public void setBus(Bus b) {
         unregisterFactory();
         bus = b;

@@ -91,7 +91,7 @@ class TransactionLog {
 
     /**
      * Creates a new transaction log with the given capacity
-     * 
+     *
      * @param capacity the capacity of the circular buffer that backs this in-memory transaction log
      */
     public TransactionLog(int capacity) {
@@ -101,7 +101,7 @@ class TransactionLog {
 
     /**
      * Adds a new entry to the log
-     * 
+     *
      * @param  logEntry the entry to add
      * @return          The information about the layer in the buffer where the entry was added
      */
@@ -123,7 +123,7 @@ class TransactionLog {
 
     /**
      * Given the information about an entry, it determines whether it can be updated or not
-     * 
+     *
      * @param  transactionLogLayer the layer in the transaction log
      * @param  transactionLogIndex the index in the transaction log
      * @param  entryInfoLayer      the layer for the entry
@@ -150,7 +150,7 @@ class TransactionLog {
     /**
      * Given the layer information for an entry, it determines if it can be updated via
      * {@link TransactionLog#canUpdate(int, int, int, int)}
-     * 
+     *
      * @param  layerInfo the layer information
      * @return           true if it can be updated or false otherwise
      */
@@ -160,7 +160,7 @@ class TransactionLog {
 
     /**
      * Tries to update an entry in the in-memory transaction log
-     * 
+     *
      * @param  layerInfo the layer information for the entry
      * @param  state     the state to update the entry to
      * @return           the updated entry or null if the record was rolled-over and discarded
@@ -198,7 +198,7 @@ class TransactionLog {
 
     /**
      * Returns a sequential stream of the entries
-     * 
+     *
      * @return a sequential stream of the entries
      */
     public Stream<EntryContainer> stream() {
@@ -207,7 +207,7 @@ class TransactionLog {
 
     /**
      * Gets the current layer
-     * 
+     *
      * @return the current layer
      */
     public int currentLayer() {

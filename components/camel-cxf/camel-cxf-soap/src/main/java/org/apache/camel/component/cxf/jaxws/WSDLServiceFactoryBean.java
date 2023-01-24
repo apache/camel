@@ -127,7 +127,7 @@ public class WSDLServiceFactoryBean extends JaxWsServiceFactoryBean {
 
     @Override
     protected Invoker createInvoker() {
-        // Camel specific invoker will be set 
+        // Camel specific invoker will be set
         return null;
     }
 

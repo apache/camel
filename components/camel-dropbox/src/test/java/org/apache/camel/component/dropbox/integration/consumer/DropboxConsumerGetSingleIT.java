@@ -52,8 +52,8 @@ class DropboxConsumerGetSingleIT extends DropboxTestSupport {
                       "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
                       "&remotePath=%s/%s",
                         workdir, FILE_NAME)
-                                .autoStartup(false).id("consumer")
-                                .to("mock:result");
+                        .autoStartup(false).id("consumer")
+                        .to("mock:result");
             }
         };
     }

@@ -42,7 +42,7 @@ public class Web3jConsumerBlockHashTest extends Web3jIntegrationTestSupport {
 
                 from("web3j://" + getUrl()
                      + OPERATION.toLowerCase() + "=" + ETH_BLOCK_HASH_OBSERVABLE)
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

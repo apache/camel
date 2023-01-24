@@ -37,7 +37,7 @@ public class FhirTransaction {
 
     /**
      * Use a list of resources as the transaction input
-     * 
+     *
      * @param  resources       resources to use in the transaction
      * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      * @return                 the {@link IBaseResource}s
@@ -50,7 +50,7 @@ public class FhirTransaction {
 
     /**
      * Use the given Bundle resource as the transaction input
-     * 
+     *
      * @param  bundle          bundle to use in the transaction
      * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      * @return                 the {@link IBaseBundle}
@@ -63,7 +63,7 @@ public class FhirTransaction {
 
     /**
      * Use the given raw text (should be a Bundle resource) as the transaction input
-     * 
+     *
      * @param  stringBundle    bundle to use in the transaction
      * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      * @return                 the {@link IBaseBundle} as string

@@ -37,7 +37,7 @@ import org.apache.camel.component.wordpress.api.model.PublishableStatus;
 
 /**
  * Describes the Wordpress Pages API.
- * 
+ *
  * @see   <a href= "https://developer.wordpress.org/rest-api/reference/pages/">Pages API Reference</a>
  * @since 0.0.1
  */

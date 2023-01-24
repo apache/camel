@@ -252,7 +252,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     value = format.parse(data.replaceAll("\\\\" + quote, "\\" + quote));
                 } else if (quote != null && quote.equals(DOUBLE_QUOTES_SYMBOL)
                         && data.contains(DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL) && !quotingEscaped) {
-                    // If double-quotes are used to enclose fields, the two double 
+                    // If double-quotes are used to enclose fields, the two double
                     // quotes character must be replaced with one according to RFC 4180 section 2.7
                     value = format.parse(data.replaceAll(DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL, DOUBLE_QUOTES_SYMBOL));
                 } else {
@@ -287,8 +287,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             Method m = ReflectionHelper.findMethod(clazz, methodName, field.getType());
             if (m != null) {
                 // this method must be static and return type
-                // must be the same as the datafield and 
-                // must receive only the datafield value 
+                // must be the same as the datafield and
+                // must receive only the datafield value
                 // as the method argument
                 value = ObjectHelper.invokeMethod(m, null, value);
             } else {
@@ -380,8 +380,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                             buffer.append(res.replaceAll("\\" + quote, "\\\\" + quote));
                         } else if (quoting && quote != null && quote.equals(DOUBLE_QUOTES_SYMBOL) && res.contains(quote)
                                 && !quotingEscaped) {
-                            // If double-quotes are used to enclose fields, then a double-quote 
-                            // appearing inside a field must be escaped by preceding it with another 
+                            // If double-quotes are used to enclose fields, then a double-quote
+                            // appearing inside a field must be escaped by preceding it with another
                             // double quote according to RFC 4180 section 2.7
                             buffer.append(res.replaceAll(DOUBLE_QUOTES_SYMBOL, DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL));
                         } else {
@@ -694,7 +694,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     /**
      * Set the default values for the non defined fields.
-     * 
+     *
      * @param  model                  the model which has its default fields set.
      * @throws IllegalAccessException if the underlying fields are inaccessible
      * @throws Exception              In case the field cannot be parsed
@@ -742,7 +742,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     /**
      * Indicate if can skip fields
-     * 
+     *
      * @return boolean
      */
     public boolean isSkipField() {

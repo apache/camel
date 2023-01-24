@@ -46,7 +46,7 @@ public final class Offsets {
 
     /**
      * Creates a new offset with the given offset value
-     * 
+     *
      * @param  offsetValue the offset value
      * @param  <T>         The type of the offset
      * @return             A new Offset holder with the given offset value
@@ -57,7 +57,7 @@ public final class Offsets {
 
     /**
      * Creates a new offset with a default value in case of the offset value is null
-     * 
+     *
      * @param  offsetValue  the offset value
      * @param  defaultValue the default offset value to use if the provided offset value is null
      * @param  <T>          the type of the offset

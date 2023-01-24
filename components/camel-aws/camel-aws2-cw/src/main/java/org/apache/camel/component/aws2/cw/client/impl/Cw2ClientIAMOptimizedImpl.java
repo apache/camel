@@ -50,7 +50,7 @@ public class Cw2ClientIAMOptimizedImpl implements Cw2InternalClient {
 
     /**
      * Getting the Cloud watch aws client that is used.
-     * 
+     *
      * @return Cloud Watch Client.
      */
     @Override

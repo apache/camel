@@ -114,7 +114,7 @@ public class ICalDataFormatTest extends CamelTestSupport {
 
     /**
      * Creates test calendar instance.
-     * 
+     *
      * @return ICal calendar object.
      */
     protected Calendar createTestCalendar() throws ParseException {

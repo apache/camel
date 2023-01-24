@@ -372,7 +372,7 @@ public class AS2Configuration {
 
     /**
      * The value of the Disposition-Notification-To header.
-     * 
+     *
      * Assigning a value to this parameter requests a message disposition notification (MDN) for the AS2 message.
      */
     public void setDispositionNotificationTo(String dispositionNotificationTo) {

@@ -94,7 +94,7 @@ public final class StopWatch {
      * Utility method to provide the elapsed time using milliseconds since epoch. This serves as an alternative for the
      * former constructor based on a Date argument. This should be used only when converting old code that relies on
      * that constructor as it can provide incorrect measurements in rare circumstances
-     * 
+     *
      * @param  start the timestamp in milliseconds since epoch
      * @return       the elapsed time in milliseconds
      */

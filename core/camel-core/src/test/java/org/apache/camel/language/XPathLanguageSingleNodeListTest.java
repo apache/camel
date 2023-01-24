@@ -39,7 +39,7 @@ public class XPathLanguageSingleNodeListTest extends ContextTestSupport {
     /**
      * A single node XPath selection that internally returns a DTMNodeList of length 1 can now be automatically
      * converted to a Document/Node.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -56,7 +56,7 @@ public class XPathLanguageSingleNodeListTest extends ContextTestSupport {
 
     /**
      * Regression test to ensure that a NodeList of length > 1 is not processed by the new converters.
-     * 
+     *
      * @throws Exception
      */
     @Test

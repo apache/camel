@@ -96,7 +96,7 @@ public class SoapDataFormat extends JaxbDataFormat {
     /**
      * Marshal inputObjects to SOAP xml. If the exchange or message has an EXCEPTION_CAUGTH property or header then
      * instead of the object the exception is marshaled.
-     * 
+     *
      * To determine the name of the top level xml elements the elementNameStrategy is used.
      */
     @Override
@@ -110,11 +110,11 @@ public class SoapDataFormat extends JaxbDataFormat {
 
     /**
      * Create body content from a non Exception object. So the interface should be in doc lit bare style.
-     * 
+     *
      * @param  inputObject    object to be put into the SOAP body
      * @param  soapAction     for name resolution
      * @param  headerElements in/out parameter used to capture header content if present
-     * 
+     *
      * @return                JAXBElement for the body content
      */
     protected List<Object> createContentFromObject(

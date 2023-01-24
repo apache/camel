@@ -24,7 +24,7 @@ public interface Deserializable {
 
     /**
      * Deserializes an arbitrary resumable object within a byte buffer
-     * 
+     *
      * @param  buffer the buffer containing the object
      * @return        the deserialized object
      */
@@ -61,7 +61,7 @@ public interface Deserializable {
 
     /**
      * Deserializes the key data
-     * 
+     *
      * @param  keyBuffer the buffer containing the key data
      * @return           the deserialized object
      */
@@ -71,7 +71,7 @@ public interface Deserializable {
 
     /**
      * Deserializes the value of resumable data
-     * 
+     *
      * @param  valueBuffer the buffer containing the value data
      * @return             the deserialized object
      */
@@ -81,7 +81,7 @@ public interface Deserializable {
 
     /**
      * Deserializes resume data (invalid data may be ignored)
-     * 
+     *
      * @param  keyBuffer   the buffer containing the key data
      * @param  valueBuffer the buffer containing the value data
      * @return             true if successfully deserialized or false otherwise

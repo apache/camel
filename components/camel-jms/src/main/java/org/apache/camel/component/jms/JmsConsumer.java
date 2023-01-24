@@ -35,7 +35,7 @@ import org.springframework.jms.support.JmsUtils;
 /**
  * A {@link org.apache.camel.Consumer} which uses Spring's {@link AbstractMessageListenerContainer} implementations to
  * consume JMS messages.
- * 
+ *
  * @see DefaultJmsMessageListenerContainer
  * @see SimpleJmsMessageListenerContainer
  */

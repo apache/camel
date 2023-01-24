@@ -533,7 +533,7 @@ class ElasticsearchProducer extends DefaultAsyncProducer {
     /**
      * A SSL context based on the self-signed CA, so that using this SSL Context allows to connect to the Elasticsearch
      * service
-     * 
+     *
      * @return a customized SSL Context
      */
     private SSLContext createSslContextFromCa() {

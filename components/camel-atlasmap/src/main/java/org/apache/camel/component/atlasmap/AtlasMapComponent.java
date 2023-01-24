@@ -55,7 +55,7 @@ public class AtlasMapComponent extends DefaultComponent {
 
     /**
      * To use the {@link AtlasContextFactory} otherwise a new engine is created.
-     * 
+     *
      * @param atlasContextFactory {@link AtlasContextFactory}
      */
     public void setAtlasContextFactory(AtlasContextFactory atlasContextFactory) {
@@ -64,7 +64,7 @@ public class AtlasMapComponent extends DefaultComponent {
 
     /**
      * The URI of the properties file which is used for AtlasContextFactory initialization.
-     * 
+     *
      * @param file property file path
      */
     public void setPropertiesFile(String file) {

@@ -31,7 +31,7 @@ import org.apache.camel.component.wordpress.api.model.PostRevision;
 
 /**
  * Describes the Wordpress Posts Revision API.
- * 
+ *
  * @see   <a href= "https://developer.wordpress.org/rest-api/reference/post-revisions/">Post Revisions API Reference</a>
  * @since 0.0.1
  */

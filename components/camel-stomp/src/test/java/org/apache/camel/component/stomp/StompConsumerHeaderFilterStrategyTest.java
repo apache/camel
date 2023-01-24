@@ -68,9 +68,9 @@ public class StompConsumerHeaderFilterStrategyTest extends StompBaseTest {
             public void configure() {
                 fromF("stomp:test?brokerURL=tcp://localhost:%s&headerFilterStrategy=#customHeaderFilterStrategy",
                         servicePort)
-                                .id("headerFilterStrategyRoute")
-                                .transform(body().convertToString())
-                                .to("mock:result");
+                        .id("headerFilterStrategyRoute")
+                        .transform(body().convertToString())
+                        .to("mock:result");
             }
         };
     }

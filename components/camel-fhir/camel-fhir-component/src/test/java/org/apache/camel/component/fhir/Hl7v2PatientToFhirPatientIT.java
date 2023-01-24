@@ -43,7 +43,7 @@ public class Hl7v2PatientToFhirPatientIT extends AbstractFhirTestSupport {
     ORC     Common Order            Not used in this example
     OBR     Observation             Request Observation
     OBX     Observation             ObservationProvider
-    
+
     See https://fhirblog.com/2014/10/05/mapping-hl7-version-2-to-fhir-messages for more information
     */
     private static final String HL7_MESSAGE = "MSH|^~\\&|Amalga HIS|BUM|New Tester|MS|20111121103141||ORU^R01|2847970-2"

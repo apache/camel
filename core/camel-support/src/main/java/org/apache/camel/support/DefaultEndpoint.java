@@ -93,7 +93,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     /**
      * Constructs a fully-initialized DefaultEndpoint instance. This is the preferred method of constructing an object
      * from Java code (as opposed to Spring beans, etc.).
-     * 
+     *
      * @param endpointUri the full URI used to create this endpoint
      * @param component   the component that created this endpoint
      */

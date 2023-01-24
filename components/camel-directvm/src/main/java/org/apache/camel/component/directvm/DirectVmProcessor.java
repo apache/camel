@@ -90,10 +90,10 @@ public final class DirectVmProcessor extends DelegateAsyncProcessor {
         Exchange newExchange = ExchangeHelper.copyExchangeAndSetCamelContext(exchange, endpoint.getCamelContext(), false);
         // set the from endpoint
         newExchange.adapt(ExtendedExchange.class).setFromEndpoint(endpoint);
-        // The StreamCache created by the child routes must not be 
-        // closed by the unit of work of the child route, but by the unit of 
+        // The StreamCache created by the child routes must not be
+        // closed by the unit of work of the child route, but by the unit of
         // work of the parent route or grand parent route or grand grand parent route ...(in case of nesting).
-        // Set therefore the unit of work of the  parent route as stream cache unit of work, 
+        // Set therefore the unit of work of the  parent route as stream cache unit of work,
         // if it is not already set.
         if (newExchange.getProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK) == null) {
             newExchange.setProperty(ExchangePropertyKey.STREAM_CACHE_UNIT_OF_WORK, exchange.getUnitOfWork());

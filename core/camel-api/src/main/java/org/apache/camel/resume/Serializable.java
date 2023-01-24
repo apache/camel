@@ -36,7 +36,7 @@ public interface Serializable {
 
     /**
      * Serializes this offset into a buffer of bytes
-     * 
+     *
      * @param  obj the object to serialize
      * @return     a ByteBuffer instance with the serialized contents of this object
      */
@@ -76,7 +76,7 @@ public interface Serializable {
 
     /**
      * Serializes this offset into a buffer of bytes
-     * 
+     *
      * @return a ByteBuffer instance with the serialized contents of this object
      */
     ByteBuffer serialize();

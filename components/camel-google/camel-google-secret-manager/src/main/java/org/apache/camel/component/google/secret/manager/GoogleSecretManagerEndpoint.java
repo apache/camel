@@ -27,7 +27,7 @@ import org.apache.camel.support.DefaultEndpoint;
 
 /**
  * Manage Google Secret Manager Secrets
- * 
+ *
  * Google Secret Manager Endpoint.
  */
 @UriEndpoint(firstVersion = "3.16.0", scheme = "google-secret-manager", title = "Google Secret Manager",

@@ -53,7 +53,7 @@ public class SftpSimpleConsumeNoStartingDirIT extends SftpServerTestSupport {
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/"
                      + "?fileName=a.txt&username=admin&password=admin&delay=10000&disconnect=true").routeId("foo")
-                             .noAutoStartup().to("log:result", "mock:result");
+                        .noAutoStartup().to("log:result", "mock:result");
             }
         };
     }

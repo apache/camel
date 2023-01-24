@@ -139,7 +139,7 @@ public class LdapRouteManualIT extends AbstractLdapTestUnit {
         assertEquals("tcruise", theOneResultAtts.get("uid").get());
         assertEquals("Tom Cruise", theOneResultAtts.get("cn").get());
 
-        // make sure this att is NOT returned anymore 
+        // make sure this att is NOT returned anymore
         assertNull(theOneResultAtts.get("sn"));
     }
 

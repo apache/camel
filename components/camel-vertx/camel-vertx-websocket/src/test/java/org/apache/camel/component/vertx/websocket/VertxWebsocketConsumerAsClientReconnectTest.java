@@ -116,8 +116,8 @@ public class VertxWebsocketConsumerAsClientReconnectTest extends VertxWebSocketT
 
                 fromF("vertx-websocket:localhost:%d/echo?consumeAsClient=true&reconnectInterval=10&maxReconnectAttempts=1",
                         port)
-                                .log("Client consumer 2: Received message: ${body}")
-                                .to("mock:result2");
+                        .log("Client consumer 2: Received message: ${body}")
+                        .to("mock:result2");
             }
         };
     }

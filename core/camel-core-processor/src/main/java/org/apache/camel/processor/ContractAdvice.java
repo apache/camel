@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * type to the expected message type before routing. After routing, if the output type declared by
  * {@link org.apache.camel.model.OutputTypeDefinition} is different from current OUT message (or IN message if no OUT),
  * camel look for a Transformer and apply.
- * 
+ *
  * @see Transformer
  * @see Validator
  * @see org.apache.camel.model.InputTypeDefinition

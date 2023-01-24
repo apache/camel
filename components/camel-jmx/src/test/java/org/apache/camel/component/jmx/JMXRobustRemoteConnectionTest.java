@@ -37,10 +37,10 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test to verify:
- * 
+ *
  * 1. The JMX consumer can actively connect (via polling) to a JMX server that is not listening for connections when the
  * route is started
- * 
+ *
  * 2. The JMX consumer can detect a lost JMX connection, and will reconnect to the JMX server when the server is
  * listening for connections again on the configured port
  */

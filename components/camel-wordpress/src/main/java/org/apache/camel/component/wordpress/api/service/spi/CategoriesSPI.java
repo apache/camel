@@ -35,7 +35,7 @@ import org.apache.camel.component.wordpress.api.model.Order;
 
 /**
  * Describes the Categories Wordpress API
- * 
+ *
  * @see   <a href= "https://developer.wordpress.org/rest-api/reference/categories/">Categories API Reference</a>
  * @since 0.0.1
  */

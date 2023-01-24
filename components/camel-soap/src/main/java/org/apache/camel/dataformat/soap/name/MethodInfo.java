@@ -36,7 +36,7 @@ public final class MethodInfo {
 
     /**
      * Initialize
-     * 
+     *
      * @param name       method name
      * @param soapAction
      * @param in         input parameters

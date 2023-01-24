@@ -41,7 +41,7 @@ public class BoxCollaborationsManager {
 
     /**
      * Create collaborations manager to manage the comments of Box connection's authenticated user.
-     * 
+     *
      * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxCollaborationsManager(BoxAPIConnection boxConnection) {
@@ -50,9 +50,9 @@ public class BoxCollaborationsManager {
 
     /**
      * Get information about all of the collaborations for folder.
-     * 
+     *
      * @param  folderId - the id of folder to get collaborations information on.
-     * 
+     *
      * @return          The collection of collaboration information for folder.
      */
     public Collection<BoxCollaboration.Info> getFolderCollaborations(String folderId) {
@@ -71,11 +71,11 @@ public class BoxCollaborationsManager {
 
     /**
      * Add a collaboration to this folder.
-     * 
+     *
      * @param  folderId     - the id of folder to add collaboration to.
      * @param  collaborator - the collaborator to add.
      * @param  role         - the role of the collaborator.
-     * 
+     *
      * @return              The new collaboration.
      */
     public BoxCollaboration addFolderCollaboration(
@@ -104,11 +104,11 @@ public class BoxCollaborationsManager {
     /**
      * Add a collaboration to this folder. An email will be sent to the collaborator if they don't already have a Box
      * account.
-     * 
+     *
      * @param  folderId - the id of folder to add collaboration to.
      * @param  email    - the email address of the collaborator to add.
      * @param  role     - the role of the collaborator.
-     * 
+     *
      * @return          The new collaboration.
      */
     public BoxCollaboration addFolderCollaborationByEmail(String folderId, String email, BoxCollaboration.Role role) {
@@ -134,7 +134,7 @@ public class BoxCollaborationsManager {
 
     /**
      * Get collaboration information.
-     * 
+     *
      * @param  collaborationId - the id of collaboration.
      * @return                 The collaboration information.
      */
@@ -156,7 +156,7 @@ public class BoxCollaborationsManager {
 
     /**
      * Update collaboration information.
-     * 
+     *
      * @param  collaborationId - the id of collaboration.
      * @param  info            collaboration information to update.
      * @return                 The collaboration with updated information.
@@ -180,7 +180,7 @@ public class BoxCollaborationsManager {
 
     /**
      * Delete collaboration.
-     * 
+     *
      * @param collaborationId - the id of comment to change.
      */
     public void deleteCollaboration(String collaborationId) {
@@ -199,7 +199,7 @@ public class BoxCollaborationsManager {
 
     /**
      * Get all pending collaboration invites for the current user.
-     * 
+     *
      * @return A collection of pending collaboration information.
      */
     public Collection<BoxCollaboration.Info> getPendingCollaborations() {

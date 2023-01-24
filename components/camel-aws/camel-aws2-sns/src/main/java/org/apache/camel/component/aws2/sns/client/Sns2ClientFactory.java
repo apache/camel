@@ -30,7 +30,7 @@ public final class Sns2ClientFactory {
 
     /**
      * Return the correct aws SNS client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               SNSClient
      */

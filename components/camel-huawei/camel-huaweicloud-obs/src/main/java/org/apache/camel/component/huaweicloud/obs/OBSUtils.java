@@ -47,7 +47,7 @@ public final class OBSUtils {
 
     /**
      * maps the Obs object along with all its meta-data into exchange
-     * 
+     *
      * @param exchange
      * @param obsObject
      */

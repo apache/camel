@@ -60,7 +60,7 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
 
     /**
      * Define an aggregation strategy which targets Exchanges In Message. <blockquote>
-     * 
+     *
      * <pre>
      * {@code
      * from("direct:aggregate")
@@ -79,7 +79,7 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
      *         });
      * }
      * </pre>
-     * 
+     *
      * </blockquote>
      */
     public T message(final BiFunction<Message, Message, Message> function) {
@@ -104,7 +104,7 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
 
     /**
      * Define an aggregation strategy which targets Exchanges In Body. <blockquote>
-     * 
+     *
      * <pre>
      * {@code
      * from("direct:aggregate")
@@ -118,7 +118,7 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
      *         });
      * }
      * </pre>
-     * 
+     *
      * </blockquote>
      */
     public T body(final BiFunction<Object, Object, Object> function) {
@@ -127,7 +127,7 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
 
     /**
      * Define an aggregation strategy which targets Exchanges In Body. <blockquote>
-     * 
+     *
      * <pre>
      * {@code
      * from("direct:aggregate")
@@ -141,7 +141,7 @@ public class AggregationStrategyClause<T> implements AggregationStrategy {
      *         });
      * }
      * </pre>
-     * 
+     *
      * </blockquote>
      */
     public <B> T body(final Class<B> type, final BiFunction<B, B, Object> function) {

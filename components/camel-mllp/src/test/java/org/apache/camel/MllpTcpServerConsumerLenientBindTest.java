@@ -66,9 +66,9 @@ public class MllpTcpServerConsumerLenientBindTest extends CamelTestSupport {
             public void configure() {
                 fromF("mllp://%s:%d?bindTimeout=15000&bindRetryInterval=500&receiveTimeout=%d&readTimeout=%d&reuseAddress=false&lenientBind=true",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort(), RECEIVE_TIMEOUT, READ_TIMEOUT)
-                                .routeId(routeId)
-                                .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
-                                .to(result);
+                        .routeId(routeId)
+                        .log(LoggingLevel.INFO, routeId, "Receiving: ${body}")
+                        .to(result);
             }
         };
 

@@ -104,7 +104,7 @@ public class ContainerLocalAuthKafkaService implements KafkaService, ContainerSe
 
     /**
      * This method can be used by tests to get a sample 'sasl.jaas.config' configuration for the given user and password
-     * 
+     *
      * @param  username the user to create the config for
      * @param  password the password for the user
      * @return          A string with the configuration

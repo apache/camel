@@ -114,7 +114,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     /**
      * Perform the releases of the exclusive read lock granted by the <tt>acquireExclusiveReadLock</tt> method due a
      * commit operation.
-     * 
+     *
      * @param  file      the file
      * @param  exchange  the exchange
      * @throws Exception can be thrown in case of errors

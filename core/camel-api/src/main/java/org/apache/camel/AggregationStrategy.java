@@ -88,7 +88,7 @@ public interface AggregationStrategy {
 
     /**
      * Indicates if this aggregation strategy uses pre-completion mode.
-     * 
+     *
      * @return <tt>true</tt> if this strategy uses pre-completion mode, or <tt>false</tt> otherwise.
      */
     default boolean canPreComplete() {

@@ -347,7 +347,7 @@ public class PredicateBuilder {
             }
         };
     }
-    
+
     public static Predicate containsIgnoreCase(final Expression left, final Expression right) {
         return new BinaryPredicateSupport(left, right) {
 

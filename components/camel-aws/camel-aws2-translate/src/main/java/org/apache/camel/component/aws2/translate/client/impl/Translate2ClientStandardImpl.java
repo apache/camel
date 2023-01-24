@@ -52,7 +52,7 @@ public class Translate2ClientStandardImpl implements Translate2InternalClient {
 
     /**
      * Getting the Translate aws client that is used.
-     * 
+     *
      * @return Amazon Translate Client.
      */
     @Override

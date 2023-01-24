@@ -202,7 +202,9 @@ public final class SObjectBatch implements Serializable {
      * {@code CreatedBy}. To fetch fields from that related object ({@code User} SObject) use: <blockquote>
      *
      * <pre>
-     * {@code batch.addGetRelated("Account", identifier, "CreatedBy", "Name", "Id")}
+     * {@code
+     * batch.addGetRelated("Account", identifier, "CreatedBy", "Name", "Id")
+     * }
      * </pre>
      *
      * </blockquote>

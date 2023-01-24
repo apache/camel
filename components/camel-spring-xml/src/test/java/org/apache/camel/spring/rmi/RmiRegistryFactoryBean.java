@@ -112,7 +112,7 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
 
     /**
      * Locate or create the RMI registry.
-     * 
+     *
      * @param  registryHost             the registry host to use (if this is specified, no implicit creation of a RMI
      *                                  registry will happen)
      * @param  registryPort             the registry port to use
@@ -141,7 +141,7 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
 
     /**
      * Locate or create the RMI registry.
-     * 
+     *
      * @param  registryPort        the registry port to use
      * @param  clientSocketFactory the RMI client socket factory for the registry (if any)
      * @param  serverSocketFactory the RMI server socket factory for the registry (if any)
@@ -182,7 +182,7 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
 
     /**
      * Locate or create the RMI registry.
-     * 
+     *
      * @param  registryPort    the registry port to use
      * @return                 the RMI registry
      * @throws RemoteException if the registry couldn't be located or created
@@ -216,7 +216,7 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
      * Test the given RMI registry, calling some operation on it to check whether it is still active.
      * <p>
      * Default implementation calls <code>Registry.list()</code>.
-     * 
+     *
      * @param  registry        the RMI registry to test
      * @throws RemoteException if thrown by registry methods
      * @see                    java.rmi.registry.Registry#list()

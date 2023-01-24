@@ -25,7 +25,7 @@ public interface AWS2CamelS3InternalClient {
 
     /**
      * Returns an s3 client after a factory method determines which one to return.
-     * 
+     *
      * @return AmazonS3 AmazonS3
      */
     S3Client getS3Client();

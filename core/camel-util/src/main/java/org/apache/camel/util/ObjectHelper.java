@@ -947,7 +947,7 @@ public final class ObjectHelper {
 
     /**
      * Checks if the given class has a subclass (extends or implements)
-     * 
+     *
      * @param clazz    the class
      * @param subClass the subclass (class or interface)
      */
@@ -1308,7 +1308,7 @@ public final class ObjectHelper {
 
     /**
      * Turns the input array to a list of objects.
-     * 
+     *
      * @param  objects an array of objects or null
      * @return         an object list
      */

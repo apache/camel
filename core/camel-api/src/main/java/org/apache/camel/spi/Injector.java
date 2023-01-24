@@ -25,7 +25,7 @@ public interface Injector {
     /**
      * Instantiates a new instance of the given type; possibly injecting values into the object in the process (bean
      * post processing)
-     * 
+     *
      * @param  type the type of object to create
      * @return      a newly created instance
      */

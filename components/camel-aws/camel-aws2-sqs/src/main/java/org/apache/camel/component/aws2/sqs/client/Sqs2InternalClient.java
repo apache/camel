@@ -22,7 +22,7 @@ public interface Sqs2InternalClient {
 
     /**
      * Returns an sqs client after a factory method determines which one to return.
-     * 
+     *
      * @return SqsClient sqsClient
      */
     SqsClient getSQSClient();

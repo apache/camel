@@ -430,7 +430,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             throws Exception {
         PGPObjectFactory pgpFactory = new PGPObjectFactory(encryptedStream, new BcKeyFingerprintCalculator());
         Object firstObject = pgpFactory.nextObject();
-        // the first object might be a PGP marker packet 
+        // the first object might be a PGP marker packet
         PGPEncryptedDataList enc = getEcryptedDataList(pgpFactory, firstObject);
 
         if (enc == null) {
@@ -711,7 +711,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
      * values are {@link #SIGNATURE_VERIFICATION_OPTION_OPTIONAL}, {@link #SIGNATURE_VERIFICATION_OPTION_REQUIRED},
      * {@link #SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED}, and {@link #SIGNATURE_VERIFICATION_OPTION_IGNORE}.
      * The default value is {@link #SIGNATURE_VERIFICATION_OPTION_OPTIONAL}
-     * 
+     *
      * @param  signatureVerificationOption signature verification option
      * @throws IllegalArgumentException    if an invalid value is entered
      */
@@ -725,7 +725,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
     /**
      * Returns the file name for the literal packet. Cannot be <code>null</code> .
-     * 
+     *
      */
     public String getFileName() {
         return fileName;
@@ -738,7 +738,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
      * perhaps avoiding storing the received data to disk, for example.
      * <p>
      * Only used for marshaling.
-     * 
+     *
      * @param  fileName
      * @throws IllegalArgumentException if <tt>fileName</tt> is <code>null</code>
      */

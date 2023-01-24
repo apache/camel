@@ -108,8 +108,8 @@ public class KafkaConsumerAuthManualTest extends AbstractKafkaTestSupport {
                       + "&pollOnError=RECONNECT"
                       + "&saslMechanism=%s&securityProtocol=%s&saslJaasConfig=%s", TOPIC, BOOTSTRAP_SERVERS,
                         "KafkaConsumerAuthManualTest", SASL_MECHANISM, SECURITY_PROTOCOL, simpleSaslJaasConfig)
-                                .process(e -> receivedMessages++)
-                                .routeId("full-it").to(to);
+                        .process(e -> receivedMessages++)
+                        .routeId("full-it").to(to);
             }
         };
     }

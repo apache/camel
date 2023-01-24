@@ -62,10 +62,10 @@ public interface PollingConsumer extends Consumer {
      * <p/>
      * <b>Important: </b> See the class javadoc about the need for done the {@link org.apache.camel.spi.UnitOfWork} on
      * the returned {@link Exchange}
-     * 
+     *
      * @param  timeout the amount of time in milliseconds to wait for a message before timing out and returning
      *                 <tt>null</tt>
-     * 
+     *
      * @return         the message exchange if one was available within the timeout period, or <tt>null</tt> if the
      *                 timeout expired
      */

@@ -68,7 +68,7 @@ public class CxfClientCallback extends ClientCallback {
             }
             // bind the CXF response to Camel exchange and
             // call camel callback
-            // for one way messages callback is already called in 
+            // for one way messages callback is already called in
             // process method of org.apache.camel.component.cxf.CxfProducer
             if (!boi.getOperationInfo().isOneWay()) {
                 endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
@@ -109,9 +109,9 @@ public class CxfClientCallback extends ClientCallback {
                     LOG.error("Cannot store cookies", e);
                 }
             }
-            // copy the context information and 
+            // copy the context information and
             // call camel callback
-            // for one way messages callback is already called in 
+            // for one way messages callback is already called in
             // process method of org.apache.camel.component.cxf.CxfProducer
             if (!boi.getOperationInfo().isOneWay()) {
                 endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);

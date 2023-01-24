@@ -58,11 +58,11 @@ import org.apache.cxf.message.MessageContentsList;
 /**
  * A CXF RS Binding which maps method parameters as Camel IN headers and the payload as the IN message body. It replaces
  * the default behaviour of creating a MessageContentsList, which requires the route to process the contents low-level.
- * 
+ *
  * <p />
- * 
+ *
  * The mapping from CXF to Camel is performed as follows:
- * 
+ *
  * <ul>
  * <li>JAX-RS Parameter types (@QueryParam, @HeaderParam, @CookieParam, @FormParam, @PathParam, @MatrixParam) are all
  * transferred as IN message headers.</li>
@@ -73,35 +73,35 @@ import org.apache.cxf.message.MessageContentsList;
  * IN message headers for convenience. These classes are considered binary: Attachment, DataHandler, DataSource,
  * InputStream. Additionally, the original {@link MessageContentsList} is preserved as the message body.</li>
  * </ul>
- * 
+ *
  * For example, the following JAX-RS method signatures are supported, with the specified outcomes:
  * <p />
- * 
+ *
  * <b><tt>public Response doAction(BusinessObject request);</tt></b><br />
  * Request payload is placed in IN message body, replacing the original {@link MessageContentsList}.
  * <p />
- * 
+ *
  * <b><tt>public Response doAction(BusinessObject request, @HeaderParam("abcd") String abcd, @QueryParam("defg") String defg);</tt></b><br/>
  * Request payload placed in IN message body, replacing the original {@link MessageContentsList}. Both request params
  * mapped as IN message headers with names <tt>abcd</tt> and <tt>defg</tt>.
  * <p />
- * 
+ *
  * <b><tt>public Response doAction(@HeaderParam("abcd") String abcd, @QueryParam("defg") String defg);</tt></b><br/>
  * Both request params mapped as IN message headers with names <tt>abcd</tt> and <tt>defg</tt>. The original
  * {@link MessageContentsList} is preserved, even though it only contains the 2 parameters.
  * <p />
- * 
- * <b><tt>public Response doAction(@Multipart(value="body1", type="application/json") BusinessObject request, @Multipart(value="image", 
+ *
+ * <b><tt>public Response doAction(@Multipart(value="body1", type="application/json") BusinessObject request, @Multipart(value="image",
  *          type="image/jpeg") DataHandler image);</tt></b><br/>
  * The first parameter is transferred as a POJO in a header named <tt>body1</tt>, while the second parameter gets
  * injected as an attachment with name <tt>image</tt>. The MIME type is observed by the CXF stack. The IN message body
  * is the original {@link MessageContentsList} handed over from CXF.
  * <p />
- * 
+ *
  * <b><tt>public Response doAction(InputStream abcd);</tt></b><br/>
  * The InputStream is unwrapped from the {@link MessageContentsList} and preserved as the IN message body.
  * <p />
- * 
+ *
  * <b><tt>public Response doAction(DataHandler abcd);</tt></b><br/>
  * The DataHandler is unwrapped from the {@link MessageContentsList} and preserved as the IN message body.
  */
@@ -164,7 +164,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
      * Always returns a JAX-RS {@link Response} object, which gives the user a better control on the response behaviour.
      * If the message body is already an instance of {@link Response}, we reuse it and just inject the relevant HTTP
      * headers.
-     * 
+     *
      * @param  camelExchange
      * @param  base
      * @return
@@ -173,7 +173,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
         Message m = camelExchange.getMessage();
         ResponseBuilder response;
 
-        // if the body is different to Response, it's an entity; therefore, check 
+        // if the body is different to Response, it's an entity; therefore, check
         if (base instanceof Response) {
             response = Response.fromResponse((Response) base);
         } else {
@@ -244,7 +244,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
 
     /**
      * Binds JAX-RS parameter types (@HeaderParam, @QueryParam, @MatrixParam, etc.) to the exchange.
-     * 
+     *
      * @param in
      * @param paramArray
      * @param paramNames
@@ -263,7 +263,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
 
     /**
      * Binds the message body.
-     * 
+     *
      * @param in
      * @param paramArray
      * @param singleBodyIndex
@@ -327,7 +327,7 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
 
         /**
          * Processes this method definition and extracts metadata relevant for the binding process.
-         * 
+         *
          * @param  method The Method to process.
          * @return        A MethodSpec instance representing the method metadata relevant to the Camel binding process.
          */

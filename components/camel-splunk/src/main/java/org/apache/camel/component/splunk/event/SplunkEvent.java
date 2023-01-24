@@ -215,7 +215,7 @@ public class SplunkEvent implements Serializable {
 
     /**
      * A Constructor to load data from a Map
-     * 
+     *
      * @param data the map
      */
     public SplunkEvent(Map<String, String> data) {
@@ -233,7 +233,7 @@ public class SplunkEvent implements Serializable {
 
     /**
      * Constructor to create a generic event
-     * 
+     *
      * @param eventName       the event name
      * @param eventID         the event id
      * @param useInternalDate whether or not to add a date to the event string
@@ -253,7 +253,7 @@ public class SplunkEvent implements Serializable {
 
     /**
      * Constructor to create a generic event with the default format
-     * 
+     *
      * @param eventName the event name
      * @param eventID   the event ID
      */
@@ -317,7 +317,7 @@ public class SplunkEvent implements Serializable {
     /**
      * Utility method for formatting Throwable,Error,Exception objects in a more linear and Splunk friendly manner than
      * printStackTrace
-     * 
+     *
      * @param throwable the Throwable object to add to the event
      */
     public void addThrowable(Throwable throwable) {
@@ -327,7 +327,7 @@ public class SplunkEvent implements Serializable {
     /**
      * Utility method for formatting Throwable,Error,Exception objects in a more linear and Splunk friendly manner than
      * printStackTrace
-     * 
+     *
      * @param throwable       the Throwable object to add to the event
      * @param stackTraceDepth maximum number of stacktrace elements to log
      */
@@ -338,7 +338,7 @@ public class SplunkEvent implements Serializable {
     /**
      * Internal private method for formatting Throwable,Error,Exception objects in a more linear and Splunk friendly
      * manner than printStackTrace
-     * 
+     *
      * @param throwable       the Throwable object to add to the event
      * @param stackTraceDepth maximum number of stacktrace elements to log, -1 for all
      */

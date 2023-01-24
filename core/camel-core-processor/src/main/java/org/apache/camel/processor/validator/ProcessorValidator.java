@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Validator} implementation which leverages {@link Processor} to perform validation.
- * 
+ *
  * {@see Validator}
  */
 public class ProcessorValidator extends Validator {

@@ -42,7 +42,7 @@ public interface ValidatorRegistry<K> extends Map<K, Validator>, StaticService {
     /**
      * Lookup a {@link Validator} in the registry which supports the validation for the data type represented by the
      * key.
-     * 
+     *
      * @param  key a key represents the data type
      * @return     {@link Validator} if matched, otherwise null
      */

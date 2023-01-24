@@ -37,7 +37,7 @@ final class IOUtil {
 
     /**
      * Writes to the channel at a given position, clearing the source after completion
-     * 
+     *
      * @param  fileChannel the channel to write to
      * @param  byteBuffer  the buffer containing the bytes to write to the channel
      * @param  position    the position to write to
@@ -60,7 +60,7 @@ final class IOUtil {
 
     /**
      * Writes to the channel by appending the data at the end and clearing the source after completion
-     * 
+     *
      * @param  fileChannel the channel to write to
      * @param  byteBuffer  the buffer containing the bytes to write to the channel
      * @return             the number of bytes written
@@ -82,7 +82,7 @@ final class IOUtil {
 
     /**
      * Serializes a entry to the buffer
-     * 
+     *
      * @param  buffer         the buffer where the entry will be serialized too
      * @param  entry          the entry to serialize
      * @throws BufferOverflow if the buffer is too small for the entry
@@ -94,7 +94,7 @@ final class IOUtil {
 
     /**
      * Serializes a entry to the buffer
-     * 
+     *
      * @param  buffer         the buffer where the entry will be serialized too
      * @param  entryState     the entry state
      * @param  keyMetadata    the entry metadata

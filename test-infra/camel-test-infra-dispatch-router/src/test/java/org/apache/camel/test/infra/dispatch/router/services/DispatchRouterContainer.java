@@ -41,7 +41,7 @@ public class DispatchRouterContainer extends GenericContainer<DispatchRouterCont
 
     /**
      * Gets the port number used for exchanging messages using the AMQP protocol
-     * 
+     *
      * @return the port number
      */
     public int getAMQPPort() {
@@ -50,7 +50,7 @@ public class DispatchRouterContainer extends GenericContainer<DispatchRouterCont
 
     /**
      * Gets the end point URL used exchanging messages using the AMQP protocol (ie.: tcp://host:${amqp.port})
-     * 
+     *
      * @return the end point URL as a string
      */
     public String getAMQPEndpoint() {

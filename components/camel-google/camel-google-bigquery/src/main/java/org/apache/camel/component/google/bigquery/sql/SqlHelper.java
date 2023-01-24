@@ -58,7 +58,7 @@ public final class SqlHelper {
     /**
      * Replaces pattern in query in form of "${param}" with values from message header Raises an error if param value
      * not found in headers
-     * 
+     *
      * @param  exchange
      * @return          Translated query text
      */
@@ -87,7 +87,7 @@ public final class SqlHelper {
 
     /**
      * Extracts list of parameters in form "@name" from query text
-     * 
+     *
      * @param  query
      * @return       list of parameter names
      */
