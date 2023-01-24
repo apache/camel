@@ -59,7 +59,7 @@ public class FileConsumerExtendedAttributesTest extends ContextTestSupport {
                         .convertBodyTo(String.class).to("mock:basic-as-default");
                 fromF("file://%s/basic-as-default-with-filter?initialDelay=0&delay=10&extendedAttributes=size,lastModifiedTime,lastAccessTime",
                         root).convertBodyTo(String.class)
-                                .to("mock:basic-as-default-with-filter");
+                        .to("mock:basic-as-default-with-filter");
                 fromF("file://%s/posix?initialDelay=0&delay=10&extendedAttributes=posix:*", root).convertBodyTo(String.class)
                         .to("mock:posix");
             }

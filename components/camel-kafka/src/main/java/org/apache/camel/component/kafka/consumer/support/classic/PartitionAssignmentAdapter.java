@@ -31,7 +31,7 @@ public interface PartitionAssignmentAdapter {
     /**
      * Sets the Kafka consumer instance for the adapter. Please note that the Kafka consumer is not safe for concurrent
      * access
-     * 
+     *
      * @param consumer the consumer instance
      */
     void setConsumer(Consumer<?, ?> consumer);

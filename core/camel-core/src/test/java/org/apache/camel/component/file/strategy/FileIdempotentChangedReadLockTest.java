@@ -31,14 +31,14 @@ public class FileIdempotentChangedReadLockTest extends FileIdempotentReadLockTes
             public void configure() throws Exception {
                 from(fileUri(
                         "?initialDelay=0&delay=10&readLockCheckInterval=100&readLock=idempotent-changed&idempotentRepository=#myRepo"))
-                                .process(new Processor() {
-                                    @Override
-                                    public void process(Exchange exchange) throws Exception {
-                                        // we are in progress
-                                        int size = myRepo.getCacheSize();
-                                        assertTrue(size == 1 || size == 2);
-                                    }
-                                }).to("mock:result");
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                // we are in progress
+                                int size = myRepo.getCacheSize();
+                                assertTrue(size == 1 || size == 2);
+                            }
+                        }).to("mock:result");
             }
         };
     }

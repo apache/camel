@@ -115,7 +115,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
             public void configure() {
                 from("olingo4://read/" + PEOPLE
                      + "?delay=2&sendEmptyMessageWhenIdle=true&splitResult=false&filterAlreadySeen=true")
-                             .to("mock:consumer-alreadyseen");
+                        .to("mock:consumer-alreadyseen");
             }
         };
         addRouteAndStartContext(builder);
@@ -164,7 +164,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
             public void configure() {
                 from("olingo4://read/" + PEOPLE
                      + "?delay=2&sendEmptyMessageWhenIdle=false&splitResult=false&filterAlreadySeen=true")
-                             .to("mock:consumer-alreadyseen");
+                        .to("mock:consumer-alreadyseen");
             }
         };
         addRouteAndStartContext(builder);

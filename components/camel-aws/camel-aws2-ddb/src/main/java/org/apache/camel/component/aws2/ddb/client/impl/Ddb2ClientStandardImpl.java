@@ -52,7 +52,7 @@ public class Ddb2ClientStandardImpl implements Ddb2InternalClient {
 
     /**
      * Getting the DynamoDB AWS client that is used.
-     * 
+     *
      * @return Amazon DynamoDB Client.
      */
     @Override

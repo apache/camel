@@ -52,7 +52,7 @@ public class Ses2ClientStandardImpl implements Ses2InternalClient {
 
     /**
      * Getting the SES AWS client that is used.
-     * 
+     *
      * @return Amazon SES Client.
      */
     @Override

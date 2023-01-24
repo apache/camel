@@ -75,7 +75,7 @@ public class BatchGoogleSheetsClientFactory implements GoogleSheetsClientFactory
 
     /**
      * Subclasses may add customized configuration to client builder.
-     * 
+     *
      * @param clientBuilder
      */
     protected void configure(Sheets.Builder clientBuilder) {

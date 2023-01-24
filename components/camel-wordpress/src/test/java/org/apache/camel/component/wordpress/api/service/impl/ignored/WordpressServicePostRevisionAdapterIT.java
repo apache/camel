@@ -40,7 +40,7 @@ import static org.hamcrest.Matchers.emptyCollectionOf;
 import static org.hamcrest.Matchers.greaterThan;
 
 /*
- * TODO fix authentication problem (when implementing global authentication) 
+ * TODO fix authentication problem (when implementing global authentication)
  * jakarta.ws.rs.NotAuthorizedException: HTTP 401 Unauthorized
  */
 @Disabled("Not implemented yet")

@@ -45,7 +45,7 @@ public class BackgroundTask implements BlockingTask {
 
         /**
          * Sets a time budget for the task
-         * 
+         *
          * @param timeBudget the time budget
          */
         public BackgroundTaskBuilder withBudget(TimeBudget timeBudget) {

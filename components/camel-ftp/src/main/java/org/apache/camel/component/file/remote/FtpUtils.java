@@ -125,7 +125,7 @@ public final class FtpUtils {
     /**
      * Checks whether directory used in ftp/ftps/sftp endpoint URI is relative. Absolute path will be converted to
      * relative path and a WARN will be printed.
-     * 
+     *
      * @see                 <a href="http://camel.apache.org/ftp2.html">FTP/SFTP/FTPS Component</a>
      * @param ftpComponent
      * @param configuration

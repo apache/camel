@@ -130,7 +130,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * context in which they are applied.
      * <p/>
      * These values override any filters supplied in {@link #setCipherSuitesFilter(FilterParameters)}
-     * 
+     *
      * @param cipherSuites the suite configuration
      */
     public void setCipherSuites(CipherSuitesParameters cipherSuites) {
@@ -156,7 +156,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * <p/>
      * These values are ignored if {@link #setCipherSuites(CipherSuitesParameters)} is called with a non {@code null}
      * argument.
-     * 
+     *
      * @param cipherSuitesFilter the filter configuration
      */
     public void setCipherSuitesFilter(FilterParameters cipherSuitesFilter) {
@@ -204,7 +204,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * <p/>
      * These values are ignored if {@link #setSecureSocketProtocols(SecureSocketProtocolsParameters)} is called with a
      * non-{@code null} argument.
-     * 
+     *
      * @param secureSocketProtocolsFilter the filter configuration
      */
     public void setSecureSocketProtocolsFilter(FilterParameters secureSocketProtocolsFilter) {
@@ -244,7 +244,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * Configures the actual {@link SSLContext} itself with direct setter calls. This method differs from configuration
      * options that are handled by a configurer instance in that the options are part of the context itself and are not
      * part of some factory or instance object returned by the context.
-     * 
+     *
      * @param  context                  the context to configure
      *
      * @throws GeneralSecurityException if there is an error configuring the context
@@ -286,7 +286,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * the list.
      *
      * @param  context the context that serves as the factory for {@code SSLEngine} instances
-     * 
+     *
      * @return         the needed configurers
      */
     protected List<Configurer<SSLEngine>> getSSLEngineConfigurers(SSLContext context) {
@@ -386,9 +386,9 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * {@code SSLSocketFactory} does not contain any configuration options that are non-proprietary.
      *
      * @param  context the context that serves as the factory for {@code SSLSocketFactory} instances
-     * 
+     *
      * @return         the needed configurers
-     * 
+     *
      * @see            #getSSLSocketFactorySSLSocketConfigurers(SSLContext)
      */
     protected List<Configurer<SSLSocketFactory>> getSSLSocketFactoryConfigurers(SSLContext context) {
@@ -420,9 +420,9 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * method as {@code SSLServerSocketFactory} does not contain any configuration options that are non-proprietary.
      *
      * @param  context the context that serves as the factory for {@code SSLServerSocketFactory} instances
-     * 
+     *
      * @return         the needed configurers
-     * 
+     *
      * @see            #getSSLServerSocketFactorySSLServerSocketConfigurers(SSLContext)
      */
     protected List<Configurer<SSLServerSocketFactory>> getSSLServerSocketFactoryConfigurers(SSLContext context) {
@@ -452,7 +452,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * {@link SSLSocketFactory}, see {@link #getSSLServerSocketFactorySSLServerSocketConfigurers(SSLContext)} for
      * configurers related to sockets produced by a {@link SSLServerSocketFactory}. The configurers are to be applied in
      * the order in which they appear in the list.
-     * 
+     *
      * @param  context the context that serves as the factory for {@code SSLSocketFactory} instances
      *
      * @return         the needed configurers
@@ -554,7 +554,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * {@link SSLServerSocketFactory}, see {@link #getSSLSocketFactorySSLSocketConfigurers(SSLContext)} for configurers
      * related to sockets produced by a {@link SSLSocketFactory}. The configurers are to be applied in the order in
      * which they appear in the list.
-     * 
+     *
      * @param  context the context that serves as the factory for {@code SSLServerSocketFactory} instances
      * @return         the needed configurers
      */
@@ -678,7 +678,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * {@code defaultPatterns} if patterns is {@code null} and {@code applyDefaults} is true.</li>
      * <li>Are provided in currentValues if if patterns is {@code null} and {@code applyDefaults} is false.</li>
      * </ol>
-     * 
+     *
      * @param  explicitValues  the optional explicit values to use
      * @param  availableValues the available values to filter from
      * @param  patterns        the optional patterns to use when {@code explicitValues} is not used
@@ -686,7 +686,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      *                         used
      * @param  applyDefaults   flag indicating whether or not to apply defaults in the event that no explicit values and
      *                         no patterns apply
-     * 
+     *
      * @return                 the filtered values
      *
      * @see                    #filter(Collection, Collection, List, List)
@@ -722,7 +722,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
      * {@code explicitValues} (returns them regardless of if they appear in {@code availableValues} or not) if
      * {@code explicitValues} is not {@code null} or as match the patterns in {@code includePatterns} and do not match
      * the patterns in {@code excludePatterns} if {@code explicitValues} is {@code null}.
-     * 
+     *
      * @param  explicitValues  the optional explicit values to use
      * @param  availableValues the available values to filter from if {@code explicitValues} is {@code null}
      * @param  includePatterns the patterns to use for inclusion filtering, required if {@code explicitValues} is
@@ -895,7 +895,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
          * Configures an {@link SSLEngine} based on the configurers in instance. The return value from this method may
          * be {@code engine} or it may be a decorated instance there of. Consequently, any subsequent actions on
          * {@code engine} must be performed using the returned value.
-         * 
+         *
          * @param  engine the engine to configure
          * @return        {@code engine} or a decorated instance there of
          */
@@ -913,7 +913,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
          * Configures an {@link SSLSocketFactory} based on the configurers in this instance. The return value from this
          * method may be {@code factory} or it may be a decorated instance there of. Consequently, any subsequent
          * actions on {@code factory} must be performed using the returned value.
-         * 
+         *
          * @param  factory the factory to configure
          * @return         {@code factory} or a decorated instance there of
          */
@@ -931,7 +931,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
          * Configures an {@link SSLServerSocketFactory} based on the configurers in this instance. The return value from
          * this method may be {@code factory} or it may be a decorated instance there of. Consequently, any subsequent
          * actions on {@code factory} must be performed using the returned value.
-         * 
+         *
          * @param  factory the factory to configure
          * @return         {@code factory} or a decorated instance there of
          */

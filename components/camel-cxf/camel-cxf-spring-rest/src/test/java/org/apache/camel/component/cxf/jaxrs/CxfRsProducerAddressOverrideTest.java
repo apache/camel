@@ -60,18 +60,18 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 Message inMessage = exchange.getIn();
-                // set the operation name 
+                // set the operation name
                 inMessage.setHeader(CxfConstants.OPERATION_NAME, "getCustomer");
                 // using the proxy client API
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.FALSE);
-                // set the parameters , if you just have one parameter 
+                // set the parameters , if you just have one parameter
                 // camel will put this object into an Object[] itself
                 inMessage.setBody("123");
                 setupDestinationURL(inMessage);
             }
         });
 
-        // get the response message 
+        // get the response message
         Customer response = (Customer) exchange.getMessage().getBody();
 
         assertNotNull(response, "The response should not be null");
@@ -91,13 +91,13 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
                 inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
                 // set the relative path
                 inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");
-                // Specify the response class , cxfrs will use InputStream as the response object type 
+                // Specify the response class , cxfrs will use InputStream as the response object type
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
                 setupDestinationURL(inMessage);
             }
         });
 
-        // get the response message 
+        // get the response message
         Customer response = (Customer) exchange.getMessage().getBody();
 
         assertNotNull(response, "The response should not be null");
@@ -111,18 +111,18 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 Message inMessage = exchange.getIn();
-                // set the operation name 
+                // set the operation name
                 inMessage.setHeader(CxfConstants.OPERATION_NAME, "getCustomer");
                 // using the proxy client API
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.FALSE);
-                // set the parameters , if you just have one parameter 
+                // set the parameters , if you just have one parameter
                 // camel will put this object into an Object[] itself
                 inMessage.setBody("123");
                 setupDestinationURL(inMessage);
             }
         });
 
-        // get the response message 
+        // get the response message
         Customer response = (Customer) exchange.getMessage().getBody();
 
         assertNotNull(response, "The response should not be null");

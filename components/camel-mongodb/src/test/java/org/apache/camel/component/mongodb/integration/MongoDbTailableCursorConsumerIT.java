@@ -437,8 +437,8 @@ public class MongoDbTailableCursorConsumerIT extends AbstractMongoDbITSupport {
 
                 from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing&"
                      + "persistentTailTracking=true&persistentId=darwin&tailTrackDb=einstein&tailTrackCollection=curie&tailTrackField=newton")
-                             .id("tailableCursorConsumer3")
-                             .autoStartup(false).to("mock:test");
+                        .id("tailableCursorConsumer3")
+                        .autoStartup(false).to("mock:test");
 
                 from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing")// &readPreference=primary")
                         .id("tailableCursorConsumer1.readPreference").autoStartup(false).to("mock:test");

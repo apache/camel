@@ -125,7 +125,7 @@ public class CxfSchemaValidationTest extends CamelTestSupport {
 
         /*
             Generate a personId string that should cause a validation error:
-        
+
         <simpleType name="MyStringType">
             <restriction base="string">
                 <maxLength value="30" />
@@ -133,7 +133,7 @@ public class CxfSchemaValidationTest extends CamelTestSupport {
         </simpleType>
         ......
         <xsd:element name="personId" type="tns:MyStringType"/>
-        
+
         */
         try {
             invokeService(serviceAddressValidationEnabled, RandomStringUtils.random(40, true, true));

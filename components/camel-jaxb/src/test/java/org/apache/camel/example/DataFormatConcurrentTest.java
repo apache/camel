@@ -212,7 +212,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
 
     /**
      * the individual size of one record is: fooBarSize = 1 -> 104 bytes fooBarSize = 50 -> 2046 bytes
-     * 
+     *
      * @return the payloads used for this stress test
      */
     public Foo[] createFoo(int testCount) {
@@ -234,7 +234,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
 
     /**
      * the individual size of one record is: fooBarSize = 1 -> 104 bytes fooBarSize = 50 -> 2046 bytes
-     * 
+     *
      * @return           the payloads used for this stress test
      * @throws Exception
      */

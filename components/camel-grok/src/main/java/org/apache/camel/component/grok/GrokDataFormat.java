@@ -77,7 +77,7 @@ public class GrokDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     /**
      * Sets the flattened mode flag
-     * 
+     *
      * @param flattened If true, conversion throws exception for conficting named matches.
      */
     public GrokDataFormat setFlattened(boolean flattened) {

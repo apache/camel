@@ -47,7 +47,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
     public void testExchangePropertyPropagation() throws Exception {
         Exchange exchange = sendSimpleMessage();
 
-        // No direct access to native CXF Message but we can verify the 
+        // No direct access to native CXF Message but we can verify the
         // request context from the Camel exchange
         assertNotNull(exchange);
         String actualValue = (String) exchange.getProperties().get(TEST_KEY);

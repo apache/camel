@@ -44,7 +44,7 @@ public class CxfMessageStreamExceptionTest extends CxfMessageCustomizedException
 
                     public void process(Exchange exchange) throws Exception {
                         Message out = exchange.getMessage();
-                        // Set the message body with the 
+                        // Set the message body with the
                         out.setBody(this.getClass().getResourceAsStream("SoapFaultMessage.xml"));
                         // Set the response code here
                         out.setHeader(org.apache.cxf.message.Message.RESPONSE_CODE, Integer.valueOf(500));

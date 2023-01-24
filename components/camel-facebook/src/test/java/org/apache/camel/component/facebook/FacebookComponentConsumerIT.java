@@ -137,12 +137,12 @@ public class FacebookComponentConsumerIT extends CamelFacebookTestSupport {
                         from("facebook://" + name + "?reading.limit=10&reading.locale=en.US&reading.since="
                              + since + "&initialDelay=1000&sendEmptyMessageWhenIdle=true&"
                              + getOauthParams())
-                                     .to("mock:consumeResult" + name);
+                                .to("mock:consumeResult" + name);
                     }
 
                     from("facebook://" + name + "?query=cheese&reading.limit=10&reading.locale=en.US&reading.since="
                          + since + "&initialDelay=1000&" + getOauthParams())
-                                 .to("mock:consumeQueryResult" + name);
+                            .to("mock:consumeQueryResult" + name);
                 }
 
                 from("facebook://me?jsonStoreEnabled=true&" + getOauthParams())
@@ -153,7 +153,7 @@ public class FacebookComponentConsumerIT extends CamelFacebookTestSupport {
                                  - TimeUnit.SECONDS.convert(30, TimeUnit.DAYS);
                 from("facebook://page?pageId=" + APACHE_FOUNDATION_PAGE_ID + "&reading.limit=10&reading.since=" + unixSince
                      + "&" + getOauthParams())
-                             .to("mock:testPage");
+                        .to("mock:testPage");
 
                 // TODO add tests for the rest of the supported methods
             }

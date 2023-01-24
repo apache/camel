@@ -88,7 +88,7 @@ public class StaticServiceDiscovery extends DefaultServiceDiscovery {
 
     /**
      * Add a server to the known list of servers.
-     * 
+     *
      * @param serverString servers separated by comma in the format:
      *                     [service@]host:port,[service@]host2:port,[service@]host3:port and so on.
      */

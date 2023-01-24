@@ -55,7 +55,7 @@ public class MyBatisConsumerIdleMessageTest extends MyBatisTestSupport {
             public void configure() {
                 from("mybatis:selectAllAccounts?statementType=SelectList"
                      + "&sendEmptyMessageWhenIdle=true")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

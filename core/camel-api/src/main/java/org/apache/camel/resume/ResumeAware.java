@@ -31,7 +31,7 @@ public interface ResumeAware<T extends ResumeStrategy> {
 
     /**
      * Gets the {@link ResumeStrategy} instance
-     * 
+     *
      * @return the resume strategy
      */
     T getResumeStrategy();

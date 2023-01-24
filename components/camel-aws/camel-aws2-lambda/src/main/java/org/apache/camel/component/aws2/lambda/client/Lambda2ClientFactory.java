@@ -30,7 +30,7 @@ public final class Lambda2ClientFactory {
 
     /**
      * Return the correct AWS Lambda client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               LambdaClient
      */

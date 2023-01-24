@@ -57,7 +57,7 @@ public class CxfRsProducerClientFactoryCacheTest extends CamelSpringTestSupport 
             }
         });
 
-        // get the response message 
+        // get the response message
         Customer response = (Customer) exchange.getMessage().getBody();
 
         assertNotNull(response, "The response should not be null");

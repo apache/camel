@@ -52,7 +52,7 @@ public class Cw2ClientStandardImpl implements Cw2InternalClient {
 
     /**
      * Getting the Cloud Watch AWS client that is used.
-     * 
+     *
      * @return Amazon Cloud Watch Client.
      */
     @Override

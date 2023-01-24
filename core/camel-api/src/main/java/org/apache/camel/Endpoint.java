@@ -162,7 +162,7 @@ public interface Endpoint extends IsSingleton, Service {
 
     /**
      * Configure properties on this endpoint.
-     * 
+     *
      * @param options the options (properties)
      */
     void configureProperties(Map<String, Object> options);

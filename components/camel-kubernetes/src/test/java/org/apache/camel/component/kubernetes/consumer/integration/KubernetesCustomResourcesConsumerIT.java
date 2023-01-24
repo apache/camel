@@ -170,7 +170,7 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
                 fromF("kubernetes-custom-resources://%s/?oauthToken=%s&namespace=default" +
                       "&crdName=cameltests.camel.apache.org&crdGroup=camel.apache.org&crdScope=Namespaced&crdVersion=v1&crdPlural=cameltests",
                         host, authToken)
-                                .process(new KubernetesProcessor()).to(mockResultEndpoint);
+                        .process(new KubernetesProcessor()).to(mockResultEndpoint);
             }
         };
     }

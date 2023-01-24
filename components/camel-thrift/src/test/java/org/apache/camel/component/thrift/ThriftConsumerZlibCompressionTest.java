@@ -115,11 +115,11 @@ public class ThriftConsumerZlibCompressionTest extends CamelTestSupport {
 
                 from("thrift://localhost:" + THRIFT_TEST_PORT
                      + "/org.apache.camel.component.thrift.generated.Calculator?compressionType=ZLIB&synchronous=true")
-                             .to("mock:thrift-secure-service").choice()
-                             .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate"))
-                             .setBody(simple(Integer.valueOf(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2).toString()))
-                             .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("echo"))
-                             .setBody(simple("${body[0]}")).bean(new CalculatorMessageBuilder(), "echo");
+                        .to("mock:thrift-secure-service").choice()
+                        .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("calculate"))
+                        .setBody(simple(Integer.valueOf(THRIFT_TEST_NUM1 * THRIFT_TEST_NUM2).toString()))
+                        .when(header(ThriftConstants.THRIFT_METHOD_NAME_HEADER).isEqualTo("echo"))
+                        .setBody(simple("${body[0]}")).bean(new CalculatorMessageBuilder(), "echo");
             }
         };
     }

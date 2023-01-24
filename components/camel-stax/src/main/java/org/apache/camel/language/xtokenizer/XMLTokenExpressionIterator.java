@@ -237,7 +237,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             } else if (this.mode == 'i') {
                 this.namespaces = new ArrayList<>();
             }
-            // when grouping the tokens, allocate the storage to temporarily store tokens. 
+            // when grouping the tokens, allocate the storage to temporarily store tokens.
             if (this.group > 1) {
                 this.tokens = new ArrayList<>();
             }

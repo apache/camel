@@ -127,19 +127,19 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends BaseMinaTest {
 
                 fromF("mina:tcp://localhost:%1$s?textline=true&minaLogger=true&textlineDelimiter=MAC&sync=true",
                         getPort())
-                                .process(e -> {
-                                    String in = e.getIn().getBody(String.class);
-                                    if ("force-null-out-body".equals(in)) {
-                                        // forcing a null out body
-                                        e.getMessage().setBody(null);
-                                    } else if ("force-exception".equals(in)) {
-                                        // clear out before throwing exception
-                                        e.getMessage().setBody(null);
-                                        throw new IllegalArgumentException("Forced exception");
-                                    } else {
-                                        e.getMessage().setBody("Hello " + in);
-                                    }
-                                });
+                        .process(e -> {
+                            String in = e.getIn().getBody(String.class);
+                            if ("force-null-out-body".equals(in)) {
+                                // forcing a null out body
+                                e.getMessage().setBody(null);
+                            } else if ("force-exception".equals(in)) {
+                                // clear out before throwing exception
+                                e.getMessage().setBody(null);
+                                throw new IllegalArgumentException("Forced exception");
+                            } else {
+                                e.getMessage().setBody("Hello " + in);
+                            }
+                        });
             }
         };
     }

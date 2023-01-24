@@ -235,7 +235,7 @@ public class PrinterPrintTest extends CamelTestSupport {
 
         int numberOfPrintservicesBefore = PrintServiceLookup.lookupPrintServices(null, null).length;
 
-        // setup javax.print 
+        // setup javax.print
         PrintService ps1 = mock(PrintService.class);
         when(ps1.getName()).thenReturn("printer1");
         when(ps1.isDocFlavorSupported(any(DocFlavor.class))).thenReturn(Boolean.TRUE);
@@ -319,7 +319,7 @@ public class PrinterPrintTest extends CamelTestSupport {
      * */
     @Test
     public void testSendingFileToRemotePrinter() throws Exception {
-        // setup javax.print 
+        // setup javax.print
         PrintService ps1 = mock(PrintService.class);
         when(ps1.getName()).thenReturn("printer1");
         when(ps1.isDocFlavorSupported(any(DocFlavor.class))).thenReturn(Boolean.TRUE);

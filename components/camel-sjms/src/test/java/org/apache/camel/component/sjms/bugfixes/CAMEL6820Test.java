@@ -44,7 +44,7 @@ public class CAMEL6820Test extends JmsTestSupport {
     public void testCamelGenericFileConverterMessage() throws Exception {
         File f = new File(TEST_DATA_DIR);
 
-        // First make sure the directories are empty or purged so we don't get bad data on a 
+        // First make sure the directories are empty or purged so we don't get bad data on a
         // test that is run against an uncleaned target directory
         if (f.exists()) {
             FileUtils.deleteDirectory(new File(TEST_DATA_DIR));

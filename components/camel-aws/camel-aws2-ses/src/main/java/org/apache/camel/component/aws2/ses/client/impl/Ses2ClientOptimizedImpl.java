@@ -50,7 +50,7 @@ public class Ses2ClientOptimizedImpl implements Ses2InternalClient {
 
     /**
      * Getting the SES AWS client that is used.
-     * 
+     *
      * @return SES Client.
      */
     @Override

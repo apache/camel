@@ -48,12 +48,12 @@ public class AtomPollingConsumerWithBasicAuthTest extends AtomPollingConsumerTes
             public void configure() {
                 from("atom:http://localhost:" + PORT
                      + "/?splitEntries=false&username=camel&password=camelPass")
-                             .to("mock:result");
+                        .to("mock:result");
 
                 // this is a bit weird syntax that normally is not used using the feedUri parameter
                 from("atom:?feedUri=http://localhost:" + PORT
                      + "/&splitEntries=false&username=camel&password=camelPass")
-                             .to("mock:result2");
+                        .to("mock:result2");
             }
         };
     }

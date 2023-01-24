@@ -238,16 +238,16 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                 fromF(getProtocol()
                       + "://localhost:%d/TestResource?alias=selfsigned&sslContextParameters=#selfSignedServiceSSLContextParameters",
                         PORT2)
-                                .transform(body().prepend("Hello "));
+                        .transform(body().prepend("Hello "));
 
                 fromF(getProtocol()
                       + "://localhost:%d/TestResource?sslContextParameters=#clientAuthServiceSSLContextParameters", PORT3)
-                              .transform(body().prepend("Hello "));
+                        .transform(body().prepend("Hello "));
 
                 fromF(getProtocol()
                       + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8",
                         PORT4)
-                                .transform(body().prepend("Hello "));
+                        .transform(body().prepend("Hello "));
 
                 from("direct:start")
                         .toF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#clientSSLContextParameters",
@@ -315,7 +315,7 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                     fromF(getProtocol()
                           + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters&pskStore=#pskStore",
                             PORT8)
-                                    .transform(body().prepend("Hello "));
+                            .transform(body().prepend("Hello "));
 
                     from("direct:psk").toF(getProtocol() + "://localhost:%d/TestResource?pskStore=#pskStore", PORT7)
                             .to("mock:result");

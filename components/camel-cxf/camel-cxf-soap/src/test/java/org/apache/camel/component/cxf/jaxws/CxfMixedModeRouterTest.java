@@ -104,7 +104,7 @@ public class CxfMixedModeRouterTest extends CamelTestSupport {
                         exchange.getIn().setBody(params);
 
                         // if you need to change the operation name
-                        //exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, GREET_ME_OPERATION);      
+                        //exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, GREET_ME_OPERATION);
 
                     }
 

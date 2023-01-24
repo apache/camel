@@ -40,7 +40,7 @@ public class CxfCustomerStartStopTest {
     @Test
     public void startAndStopService() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        // start a server    
+        // start a server
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("cxf:http://localhost:" + PORT1 + "/test?serviceClass=org.apache.camel.component.cxf.HelloService")

@@ -303,7 +303,7 @@ public class DefaultHttpBinding implements HttpBinding {
         String uri = request.getRequestURI();
         /**
          * In async case, it seems that request.getContextPath() can return null
-         * 
+         *
          * @see https://dev.eclipse.org/mhonarc/lists/jetty-users/msg04669.html
          */
         String contextPath = request.getContextPath() == null ? "" : request.getContextPath();
@@ -448,7 +448,7 @@ public class DefaultHttpBinding implements HttpBinding {
     /*
      * set the HTTP status code
      * NOTE: this is similar to the Netty-Http and Undertow approach
-     * TODO: we may want to refactor this class so that 
+     * TODO: we may want to refactor this class so that
      * the status code is determined in one place
      */
     private int determineResponseCode(Exchange camelExchange, Object body) {
@@ -461,7 +461,7 @@ public class DefaultHttpBinding implements HttpBinding {
 
         if (codeToUse != 500) {
             if (body == null || body instanceof String && ((String) body).trim().isEmpty()) {
-                // no content 
+                // no content
                 codeToUse = currentCode == null ? 204 : currentCode;
             }
         }
@@ -774,7 +774,7 @@ public class DefaultHttpBinding implements HttpBinding {
         StringBuilder sb = new StringBuilder();
         sb.append(locale.getLanguage());
         if (locale.getCountry() != null) {
-            // Locale.toString() will use a "_" separator instead, 
+            // Locale.toString() will use a "_" separator instead,
             // while '-' is expected in headers such as Content-Language, etc:
             // http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.10
             sb.append('-').append(locale.getCountry());

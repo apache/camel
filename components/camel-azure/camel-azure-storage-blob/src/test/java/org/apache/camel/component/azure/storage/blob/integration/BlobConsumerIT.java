@@ -207,7 +207,7 @@ class BlobConsumerIT extends Base {
 
                 from("azure-storage-blob://cameldev/" + containerName + "?blobName=" + blobName2
                      + "&blobServiceClient=#serviceClient")
-                             .to("mock:resultOutputStream");
+                        .to("mock:resultOutputStream");
 
                 from("azure-storage-blob://cameldev/" + batchContainerName)
                         .to("mock:resultBatch");
@@ -218,8 +218,8 @@ class BlobConsumerIT extends Base {
                 // if regex is set then prefix should have no effect
                 from("azure-storage-blob://cameldev/" + batchContainerName
                      + "?prefix=aaaa&regex=" + regex)
-                             .idempotentConsumer(body(), new MemoryIdempotentRepository())
-                             .to("mock:resultRegex");
+                        .idempotentConsumer(body(), new MemoryIdempotentRepository())
+                        .to("mock:resultRegex");
             }
         };
     }

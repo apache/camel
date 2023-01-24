@@ -22,7 +22,7 @@ import org.apache.camel.ShutdownRunningTask;
  * Allows {@link org.apache.camel.Consumer} to fine grained control on shutdown which mostly have to cater for in-memory
  * based components. These components need to be able to have an extra chance to have their pending exchanges being
  * completed to support graceful shutdown. This helps ensure that no messages get lost.
- * 
+ *
  * @see org.apache.camel.spi.ShutdownStrategy
  */
 public interface ShutdownAware extends ShutdownPrepared {

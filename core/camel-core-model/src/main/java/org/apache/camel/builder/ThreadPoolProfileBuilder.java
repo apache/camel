@@ -99,7 +99,7 @@ public class ThreadPoolProfileBuilder {
 
     /**
      * Builds the thread pool profile
-     * 
+     *
      * @return the thread pool profile
      */
     public ThreadPoolProfile build() {

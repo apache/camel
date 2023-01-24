@@ -17,7 +17,7 @@
 package org.apache.camel.component.tika;
 
 /**
- * 
+ *
  * Tika Output Format. Supported output formats.
  * <ul>
  * <li>xml: Returns Parsed Content as XML.</li>

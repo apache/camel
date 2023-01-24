@@ -76,7 +76,7 @@ public class UndertowComponentMuteExceptionTest extends BaseUndertowTest {
 
                 from("undertow:http://localhost:" + getPort()
                      + "/test/muteWithTransfer?transferException=true").to("mock:input")
-                             .throwException(new IllegalArgumentException("Camel cannot do this"));
+                        .throwException(new IllegalArgumentException("Camel cannot do this"));
             }
         };
     }

@@ -60,7 +60,7 @@ public final class MessageHelper {
      * Extracts the given body and returns it as a String, that can be used for logging etc.
      * <p/>
      * Will handle stream based bodies wrapped in StreamCache.
-     * 
+     *
      * @param  message the message with the body
      * @return         the body as String, can return <tt>null</null> if no body
      */
@@ -99,7 +99,7 @@ public final class MessageHelper {
      * Gets the given body class type name as a String.
      * <p/>
      * Will skip java.lang. for the build in Java types.
-     * 
+     *
      * @param  message the message with the body
      * @return         the body type name as String, can return <tt>null</null> if no body
      */
@@ -116,7 +116,7 @@ public final class MessageHelper {
 
     /**
      * If the message body contains a {@link StreamCache} instance, reset the cache to enable reading from it again.
-     * 
+     *
      * @param message the message for which to reset the body
      */
     public static void resetStreamCache(Message message) {
@@ -152,7 +152,7 @@ public final class MessageHelper {
      * Extracts the body for logging purpose.
      * <p/>
      * Will clip the body if its too big for logging. Will prepend the message with <tt>Message: </tt>
-     * 
+     *
      * @see            org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
      * @see            org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      * @param  message the message
@@ -250,7 +250,7 @@ public final class MessageHelper {
      * Extracts the body for logging purpose.
      * <p/>
      * Will clip the body if its too big for logging.
-     * 
+     *
      * @see                 org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      * @param  message      the message
      * @param  prepend      a message to prepend (optional)
@@ -423,7 +423,7 @@ public final class MessageHelper {
 
     /**
      * Dumps the message as a generic XML structure.
-     * 
+     *
      * @param  message the message
      * @return         the XML
      */
@@ -433,7 +433,7 @@ public final class MessageHelper {
 
     /**
      * Dumps the message as a generic XML structure.
-     * 
+     *
      * @param  message     the message
      * @param  includeBody whether or not to include the message body
      * @return             the XML
@@ -561,7 +561,7 @@ public final class MessageHelper {
 
     /**
      * Copies the headers from the source to the target message.
-     * 
+     *
      * @param source   the source message
      * @param target   the target message
      * @param override whether to override existing headers
@@ -572,7 +572,7 @@ public final class MessageHelper {
 
     /**
      * Copies the headers from the source to the target message.
-     * 
+     *
      * @param source   the source message
      * @param target   the target message
      * @param strategy the header filter strategy which could help us to filter the protocol message headers

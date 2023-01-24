@@ -85,7 +85,7 @@ public interface PackageScanClassResolver extends StaticService {
 
     /**
      * Add a filter that will be applied to all scan operations
-     * 
+     *
      * @param filter filter to filter desired classes in all scan operations
      */
     void addFilter(PackageScanFilter filter);

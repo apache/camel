@@ -75,7 +75,7 @@ public class CxfConsumerTest extends CamelTestSupport {
                                 ServletRequest request = (ServletRequest) cxfMessage.get("HTTP.REQUEST");
                                 assertNotNull(request, "Should get the ServletRequest");
                                 assertNotNull(request.getRemoteAddr(), "Should get the RemoteAddress");
-                                // Could verify the HttpRequest 
+                                // Could verify the HttpRequest
                                 String contentType = in.getHeader(Exchange.CONTENT_TYPE, String.class);
                                 assertNotNull(contentType, "Should get the contentType.");
 

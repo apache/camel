@@ -95,7 +95,7 @@ public class CxfConsumerPayloadXPathClientServerTest extends CamelTestSupport {
                         receivedMessageStringApplyingXPath
                                 = XPathBuilder.xpath("//*[name()='arg0']/text()").evaluate(context, request, String.class);
 
-                        //build some dummy response 
+                        //build some dummy response
                         XmlConverter converter = new XmlConverter();
                         Document outDocument = converter.toDOMDocument(ECHO_RESPONSE, exchange);
                         List<Source> outElements = new ArrayList<>();

@@ -449,7 +449,7 @@ public class MailBinding {
 
     /**
      * Updates already existing filenames in the map and prefixes the current filename
-     * 
+     *
      * @param  map
      * @param  fileName
      * @return

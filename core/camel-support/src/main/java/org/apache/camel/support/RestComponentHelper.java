@@ -35,7 +35,7 @@ public final class RestComponentHelper {
     }
 
     /**
-     * 
+     *
      * @param  queryMap   the map of Endpoint options to apply the HTTP restrict settings to
      * @param  verb       the HTTP verb for the route
      * @param  addOptions should OPTIONS verb be added.
@@ -51,9 +51,9 @@ public final class RestComponentHelper {
     }
 
     /**
-     * 
+     *
      * Creates an endpoint properties based on properties set in the component's RestConfiguration.
-     * 
+     *
      * @param  componentName the Rest Component name
      * @param  config        the RestConfiguration
      * @return               the map of endpoint properties set in the RestConfiguration
@@ -71,9 +71,9 @@ public final class RestComponentHelper {
     }
 
     /**
-     * 
+     *
      * Sets the Rest consumer host based on RestConfiguration
-     * 
+     *
      * @param  host                 the existing host configuration
      * @param  config               the RestConfiguration
      * @return                      the host based on RestConfiguration
@@ -91,9 +91,9 @@ public final class RestComponentHelper {
     }
 
     /**
-     * 
+     *
      * Creates the Rest consumers url based on component and url options.
-     * 
+     *
      * @param  componentName      the name of the rest component
      * @param  verb               the HTTP verb
      * @param  path               the HTTP path of the route
@@ -108,9 +108,9 @@ public final class RestComponentHelper {
     }
 
     /**
-     * 
+     *
      * Creates the Rest consumers url based on component and url options.
-     * 
+     *
      * @param  componentName      the name of the rest component
      * @param  path               the HTTP path of the route
      * @param  queryMap           the endpoint query options
@@ -124,9 +124,9 @@ public final class RestComponentHelper {
     }
 
     /**
-     * 
+     *
      * Creates the Rest consumers url based on component and url options.
-     * 
+     *
      * @param  componentName      the name of the rest component
      * @param  scheme             the scheme of the HTTP route http/https
      * @param  host               the host of the HTTP route

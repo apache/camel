@@ -44,7 +44,7 @@ public interface XmlSignatureChecker {
     /**
      * Checks whether the signature document has the expected structure and contains the expected transformations and
      * references. See http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed
-     * 
+     *
      * @param  input     input parameters
      * @throws Exception when XML signature does not pass the check
      */
@@ -72,19 +72,19 @@ public interface XmlSignatureChecker {
 
         /**
          * Returns true if a XML schema validation was executed during the parsing of the XML document.
-         * 
+         *
          */
         boolean isXmlSchemaValidationExecuted();
 
         /**
          * Returns the total count of XML signatures contained in the document.
-         * 
+         *
          */
         int getTotalCountOfSignatures();
 
         /**
          * Returns the current count of XML signatures starting from 1.
-         * 
+         *
          */
         int getCurrentCountOfSignatures();
 

@@ -32,7 +32,7 @@ public interface KafkaService
 
     /**
      * Gets the addresses of the bootstrap servers in the format host1:port,host2:port,etc
-     * 
+     *
      * @return
      */
     String getBootstrapServers();

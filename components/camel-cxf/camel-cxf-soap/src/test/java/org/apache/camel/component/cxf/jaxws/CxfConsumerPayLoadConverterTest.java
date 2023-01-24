@@ -40,7 +40,7 @@ public class CxfConsumerPayLoadConverterTest extends CxfConsumerPayloadTest {
                     public void process(final Exchange exchange) throws Exception {
                         CxfPayload<SoapHeader> requestPayload = exchange.getIn().getBody(CxfPayload.class);
                         List<Source> inElements = requestPayload.getBodySources();
-                        // You can use a customer toStringConverter to turn a CxfPayLoad message into String as you want                        
+                        // You can use a customer toStringConverter to turn a CxfPayLoad message into String as you want
                         String request = exchange.getIn().getBody(String.class);
                         String documentString = ECHO_RESPONSE;
 

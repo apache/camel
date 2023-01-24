@@ -153,7 +153,7 @@ public class ValueBuilder implements Expression, Predicate {
 
     /**
      * Create a predicate that the left hand expression contains the value of the right hand expression
-     * 
+     *
      * @param  value the element which is compared to be contained within this expression
      * @return       a predicate which evaluates to true if the given value expression is contained within this
      *               expression value
@@ -165,7 +165,7 @@ public class ValueBuilder implements Expression, Predicate {
 
     /**
      * Creates a predicate which is true if this expression matches the given regular expression
-     * 
+     *
      * @param  regex the regular expression to match
      * @return       a predicate which evaluates to true if the expression matches the regex
      */
@@ -225,7 +225,7 @@ public class ValueBuilder implements Expression, Predicate {
 
     /**
      * Converts the current value to the given type using the registered type converters
-     * 
+     *
      * @param  type the type to convert the value to
      * @return      the current builder
      */
@@ -236,7 +236,7 @@ public class ValueBuilder implements Expression, Predicate {
 
     /**
      * Converts the current value to a String using the registered type converters
-     * 
+     *
      * @return the current builder
      */
     public ValueBuilder convertToString() {

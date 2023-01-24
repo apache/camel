@@ -80,7 +80,7 @@ public class CxfProducerOperationTest extends CxfProducerTest {
     public void testSendingComplexParameter() throws Exception {
         Exchange exchange = template.send(getSimpleEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
-                // we need to override the operation name first                
+                // we need to override the operation name first
                 final List<String> para1 = new ArrayList<>();
                 para1.add("para1");
                 final List<String> para2 = new ArrayList<>();

@@ -139,7 +139,7 @@ public class SmppConsumerTest {
         when(session.connectAndBind("localhost",
                 Integer.valueOf(2775),
                 expectedBindParameter))
-                        .thenReturn("1");
+                .thenReturn("1");
 
         consumer.doStart();
 

@@ -65,15 +65,15 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
             public void configure() throws Exception {
                 from(fileUri(
                         "reports?preMove=../inprogress/${file:name.noext}.bak&move=../done/${file:name}&initialDelay=0&delay=10"))
-                                .process(new Processor() {
-                                    @SuppressWarnings("unchecked")
-                                    public void process(Exchange exchange) throws Exception {
-                                        GenericFile<File> file
-                                                = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
-                                        assertNotNull(file);
-                                        assertTrue(file.getRelativeFilePath().contains("inprogress"));
-                                    }
-                                }).to("mock:report");
+                        .process(new Processor() {
+                            @SuppressWarnings("unchecked")
+                            public void process(Exchange exchange) throws Exception {
+                                GenericFile<File> file
+                                        = (GenericFile<File>) exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE);
+                                assertNotNull(file);
+                                assertTrue(file.getRelativeFilePath().contains("inprogress"));
+                            }
+                        }).to("mock:report");
             }
         };
     }

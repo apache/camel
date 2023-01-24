@@ -23,7 +23,7 @@ import org.apache.camel.spi.InterceptStrategy;
 
 public class DummyInterceptor implements InterceptStrategy {
 
-    // Just simply return the target processor 
+    // Just simply return the target processor
     @Override
     public Processor wrapProcessorInInterceptors(
             CamelContext context, NamedNode definition, Processor target, Processor nextTarget)

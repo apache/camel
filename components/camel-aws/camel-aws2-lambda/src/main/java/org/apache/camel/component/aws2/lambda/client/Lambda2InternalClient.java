@@ -25,7 +25,7 @@ public interface Lambda2InternalClient {
 
     /**
      * Returns an Lambda client after a factory method determines which one to return.
-     * 
+     *
      * @return LambdaClient LambdaClient
      */
     LambdaClient getLambdaClient();

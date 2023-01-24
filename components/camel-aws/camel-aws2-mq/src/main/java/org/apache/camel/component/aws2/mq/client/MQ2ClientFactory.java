@@ -30,7 +30,7 @@ public final class MQ2ClientFactory {
 
     /**
      * Return the correct AWS Mq client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               MqClient
      */

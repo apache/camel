@@ -32,7 +32,7 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
     /**
      * Create a parser using regular expressions to adapt parameter names.
-     * 
+     *
      * @param proxyType     Proxy class.
      * @param substitutions an array of <b>ordered</b> Argument adapters.
      */
@@ -162,7 +162,7 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
         /**
          * Creates a substitution for all argument types.
-         * 
+         *
          * @param method      regex to match method name
          * @param argName     regex to match argument name
          * @param replacement replacement text for argument name
@@ -175,7 +175,7 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
         /**
          * Creates a substitution for a specific argument type.
-         * 
+         *
          * @param method      regex to match method name
          * @param argName     regex to match argument name
          * @param argType     argument type as String

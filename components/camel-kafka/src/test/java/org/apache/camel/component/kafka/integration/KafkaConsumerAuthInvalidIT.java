@@ -107,9 +107,9 @@ public class KafkaConsumerAuthInvalidIT extends BaseEmbeddedKafkaAuthTestSupport
                       + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true"
                       + "&saslMechanism=PLAIN&securityProtocol=SASL_PLAINTEXT&saslJaasConfig=%s", TOPIC,
                         "KafkaConsumerAuthInvalidIT", simpleSaslJaasConfig)
-                                .process(
-                                        exchange -> LOG.trace("Captured on the processor: {}", exchange.getMessage().getBody()))
-                                .routeId("should-no-work").to(to);
+                        .process(
+                                exchange -> LOG.trace("Captured on the processor: {}", exchange.getMessage().getBody()))
+                        .routeId("should-no-work").to(to);
             }
         };
     }

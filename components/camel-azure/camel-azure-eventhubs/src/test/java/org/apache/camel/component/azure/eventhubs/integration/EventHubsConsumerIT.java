@@ -132,7 +132,7 @@ class EventHubsConsumerIT extends CamelTestSupport {
                      + "connectionString=RAW({{connectionString}})"
                      + "&blobContainerName=" + containerName + "&eventPosition=#eventPosition"
                      + "&blobAccountName={{blobAccountName}}&blobAccessKey=RAW({{blobAccessKey}})")
-                             .to(result);
+                        .to(result);
 
             }
         };

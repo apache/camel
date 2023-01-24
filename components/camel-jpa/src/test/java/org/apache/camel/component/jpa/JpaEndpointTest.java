@@ -46,7 +46,7 @@ public class JpaEndpointTest extends CamelTestSupport {
     }
 
     /**
-     * 
+     *
      * @throws     IOException
      * @deprecated
      */
@@ -65,7 +65,7 @@ public class JpaEndpointTest extends CamelTestSupport {
     }
 
     /**
-     * 
+     *
      * @throws     IOException
      * @deprecated
      */
@@ -87,7 +87,7 @@ public class JpaEndpointTest extends CamelTestSupport {
     }
 
     /**
-     * 
+     *
      * @throws     IOException
      * @deprecated
      */

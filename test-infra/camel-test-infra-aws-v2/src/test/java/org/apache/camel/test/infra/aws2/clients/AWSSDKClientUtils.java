@@ -71,7 +71,7 @@ public final class AWSSDKClientUtils {
 
     /**
      * Generic AWS v2 client builder
-     * 
+     *
      * @param  property              the system property used to figure out if it's local service or not
      * @param  name                  the service name
      * @param  clientBuilderSupplier A supplier type for creating the builder class
@@ -118,7 +118,7 @@ public final class AWSSDKClientUtils {
 
     /**
      * Generic AWS v2 client builder
-     * 
+     *
      * @param  name                  the service name
      * @param  clientBuilderSupplier A supplier type for creating the builder class
      * @param  yClass                The client type to be generated

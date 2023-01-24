@@ -48,7 +48,8 @@ public class XMLTokenExpressionIteratorGroupingTest {
                                              + "<c:C attr='7'>pear</c:C>"
                                              + "<c:C attr='8'/>"
                                              + "</c:B>"
-                                             + "</g:A>").getBytes();
+                                             + "</g:A>")
+            .getBytes();
 
     // one extracted C in its wrapped context per token
     private static final String[] RESULTS_WRAPPED_SIZE1 = {
@@ -399,7 +400,8 @@ public class XMLTokenExpressionIteratorGroupingTest {
                              + "<c:C attr='1'>peach</c:C>"
                              + "<c:C attr='2'/>"
                              + "<c:C attr='3'>orange</c:C>"
-                             + "</c:B></g:A>").getBytes();
+                             + "</c:B></g:A>")
+                .getBytes();
         final String[] results = {
                 "<?xml version='1.0' encoding='UTF-8'?><g:A xmlns:g='urn:g'><c:B attr='1' xmlns:c='urn:c'>"
                                    + "<c:C attr='1'>peach</c:C><c:C attr='2'/>"

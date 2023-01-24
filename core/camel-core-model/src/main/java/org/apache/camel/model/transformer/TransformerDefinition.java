@@ -70,7 +70,7 @@ public abstract class TransformerDefinition {
      * Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is
      * 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or
      * 'xml:DEF'.
-     * 
+     *
      * @param from 'from' data type name
      */
     public void setFromType(String from) {
