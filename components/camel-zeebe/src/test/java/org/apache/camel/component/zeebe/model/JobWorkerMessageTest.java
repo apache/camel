@@ -20,12 +20,11 @@ package org.apache.camel.component.zeebe.model;
 import java.util.Collections;
 import java.util.HashMap;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class JobWorkerMessageTest {
 
@@ -55,12 +54,8 @@ public class JobWorkerMessageTest {
         message.setDeadline(1);
         message.setType("type");
 
-        try {
-            String messageString = objectMapper.writeValueAsString(message);
-            assertEquals(MARSHAL_TEST_RESULT_1, messageString);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        String messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
+        assertEquals(MARSHAL_TEST_RESULT_1, messageString);
 
         HashMap<String, Object> variables = new HashMap<>();
         variables.put("varA", "test");
@@ -68,12 +63,8 @@ public class JobWorkerMessageTest {
         variables.put("varC", Collections.emptyMap());
         message.setVariables(variables);
 
-        try {
-            String messageString = objectMapper.writeValueAsString(message);
-            assertEquals(MARSHAL_TEST_RESULT_2, messageString);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
+        assertEquals(MARSHAL_TEST_RESULT_2, messageString);
 
         HashMap<String, String> headers = new HashMap<>();
         headers.put("h1", "test1");
@@ -81,54 +72,49 @@ public class JobWorkerMessageTest {
 
         message.setCustomHeaders(headers);
 
-        try {
-            String messageString = objectMapper.writeValueAsString(message);
-            assertEquals(MARSHAL_TEST_RESULT_3, messageString);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
+        assertEquals(MARSHAL_TEST_RESULT_3, messageString);
     }
 
     @Test
     public void unmarshalTest() {
-        try {
-            JobWorkerMessage unmarshalledMessage1 = objectMapper.readValue(MARSHAL_TEST_RESULT_1, JobWorkerMessage.class);
+        JobWorkerMessage unmarshalledMessage1
+                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, JobWorkerMessage.class));
 
-            JobWorkerMessage message = new JobWorkerMessage();
-            message.setWorker("worker");
-            message.setRetries(1);
-            message.setElementId("eid");
-            message.setElementInstanceKey(1);
-            message.setProcessInstanceKey(1);
-            message.setProcessDefinitionVersion(1);
-            message.setProcessDefinitionKey(1);
-            message.setBpmnProcessId("bpmn");
-            message.setDeadline(1);
-            message.setType("type");
+        JobWorkerMessage message = new JobWorkerMessage();
+        message.setWorker("worker");
+        message.setRetries(1);
+        message.setElementId("eid");
+        message.setElementInstanceKey(1);
+        message.setProcessInstanceKey(1);
+        message.setProcessDefinitionVersion(1);
+        message.setProcessDefinitionKey(1);
+        message.setBpmnProcessId("bpmn");
+        message.setDeadline(1);
+        message.setType("type");
 
-            assertEquals(message, unmarshalledMessage1);
+        assertEquals(message, unmarshalledMessage1);
 
-            JobWorkerMessage unmarshalledMessage2 = objectMapper.readValue(MARSHAL_TEST_RESULT_2, JobWorkerMessage.class);
+        JobWorkerMessage unmarshalledMessage2
+                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, JobWorkerMessage.class));
 
-            HashMap<String, Object> variables = new HashMap<>();
-            variables.put("varA", "test");
-            variables.put("varB", 10);
-            variables.put("varC", Collections.emptyMap());
-            message.setVariables(variables);
+        HashMap<String, Object> variables = new HashMap<>();
+        variables.put("varA", "test");
+        variables.put("varB", 10);
+        variables.put("varC", Collections.emptyMap());
+        message.setVariables(variables);
 
-            assertEquals(message, unmarshalledMessage2);
+        assertEquals(message, unmarshalledMessage2);
 
-            JobWorkerMessage unmarshalledMessage3 = objectMapper.readValue(MARSHAL_TEST_RESULT_3, JobWorkerMessage.class);
+        JobWorkerMessage unmarshalledMessage3
+                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_3, JobWorkerMessage.class));
 
-            HashMap<String, String> headers = new HashMap<>();
-            headers.put("h1", "test1");
-            headers.put("h2", "test2");
+        HashMap<String, String> headers = new HashMap<>();
+        headers.put("h1", "test1");
+        headers.put("h2", "test2");
 
-            message.setCustomHeaders(headers);
+        message.setCustomHeaders(headers);
 
-            assertEquals(message, unmarshalledMessage3);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        assertEquals(message, unmarshalledMessage3);
     }
 }

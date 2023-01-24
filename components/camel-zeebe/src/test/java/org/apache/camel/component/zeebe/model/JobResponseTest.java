@@ -17,12 +17,11 @@
 
 package org.apache.camel.component.zeebe.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class JobResponseTest {
 
@@ -37,44 +36,34 @@ public class JobResponseTest {
         JobResponse message = new JobResponse();
         message.setSuccess(true);
 
-        try {
-            String messageString = objectMapper.writeValueAsString(message);
-            assertEquals(MARSHAL_TEST_RESULT_1, messageString);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        String messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
+        assertEquals(MARSHAL_TEST_RESULT_1, messageString);
 
         message.setSuccess(false);
         message.setErrorMessage("Test Error");
         message.setErrorCode("TestCode");
 
-        try {
-            String messageString = objectMapper.writeValueAsString(message);
-            assertEquals(MARSHAL_TEST_RESULT_2, messageString);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
+        assertEquals(MARSHAL_TEST_RESULT_2, messageString);
     }
 
     @Test
     public void unmarshalTest() {
-        try {
-            JobResponse unmarshalledMessage1 = objectMapper.readValue(MARSHAL_TEST_RESULT_1, JobResponse.class);
+        JobResponse unmarshalledMessage1
+                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, JobResponse.class));
 
-            JobResponse message = new JobResponse();
-            message.setSuccess(true);
+        JobResponse message = new JobResponse();
+        message.setSuccess(true);
 
-            assertEquals(message, unmarshalledMessage1);
+        assertEquals(message, unmarshalledMessage1);
 
-            JobResponse unmarshalledMessage2 = objectMapper.readValue(MARSHAL_TEST_RESULT_2, JobResponse.class);
+        JobResponse unmarshalledMessage2
+                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, JobResponse.class));
 
-            message.setSuccess(false);
-            message.setErrorMessage("Test Error");
-            message.setErrorCode("TestCode");
+        message.setSuccess(false);
+        message.setErrorMessage("Test Error");
+        message.setErrorCode("TestCode");
 
-            assertEquals(message, unmarshalledMessage2);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        assertEquals(message, unmarshalledMessage2);
     }
 }

@@ -17,12 +17,11 @@
 
 package org.apache.camel.component.zeebe.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DeploymentRequestTest {
 
@@ -36,26 +35,20 @@ public class DeploymentRequestTest {
         message.setName("test.bpmn");
         message.setContent("test content".getBytes());
 
-        try {
-            String messageString = objectMapper.writeValueAsString(message);
-            assertEquals(MARSHAL_TEST_RESULT_1, messageString);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        String messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
+        assertEquals(MARSHAL_TEST_RESULT_1, messageString);
+
     }
 
     @Test
     public void unmarshalTest() {
-        try {
-            DeploymentRequest unmarshalledMessage1 = objectMapper.readValue(MARSHAL_TEST_RESULT_1, DeploymentRequest.class);
+        DeploymentRequest unmarshalledMessage1
+                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, DeploymentRequest.class));
 
-            DeploymentRequest message = new DeploymentRequest();
-            message.setName("test.bpmn");
-            message.setContent("test content".getBytes());
+        DeploymentRequest message = new DeploymentRequest();
+        message.setName("test.bpmn");
+        message.setContent("test content".getBytes());
 
-            assertEquals(message, unmarshalledMessage1);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        assertEquals(message, unmarshalledMessage1);
     }
 }

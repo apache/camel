@@ -20,12 +20,11 @@ package org.apache.camel.component.zeebe.model;
 import java.util.Collections;
 import java.util.HashMap;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class MessageRequestTest {
 
@@ -44,12 +43,8 @@ public class MessageRequestTest {
         message.setMessageId("message");
         message.setTimeToLive(100);
 
-        try {
-            String messageString = objectMapper.writeValueAsString(message);
-            assertEquals(MARSHAL_TEST_RESULT_1, messageString);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        String messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
+        assertEquals(MARSHAL_TEST_RESULT_1, messageString);
 
         HashMap<String, Object> variables = new HashMap<>();
         variables.put("varA", "test");
@@ -57,38 +52,32 @@ public class MessageRequestTest {
         variables.put("varC", Collections.emptyMap());
         message.setVariables(variables);
 
-        try {
-            String messageString = objectMapper.writeValueAsString(message);
-            assertEquals(MARSHAL_TEST_RESULT_2, messageString);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
+        assertEquals(MARSHAL_TEST_RESULT_2, messageString);
     }
 
     @Test
     public void unmarshalTest() {
-        try {
-            MessageRequest unmarshalledMessage1 = objectMapper.readValue(MARSHAL_TEST_RESULT_1, MessageRequest.class);
+        MessageRequest unmarshalledMessage1
+                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, MessageRequest.class));
 
-            MessageRequest message = new MessageRequest();
-            message.setName("test");
-            message.setCorrelationKey("correlation");
-            message.setMessageId("message");
-            message.setTimeToLive(100);
+        MessageRequest message = new MessageRequest();
+        message.setName("test");
+        message.setCorrelationKey("correlation");
+        message.setMessageId("message");
+        message.setTimeToLive(100);
 
-            assertEquals(message, unmarshalledMessage1);
+        assertEquals(message, unmarshalledMessage1);
 
-            MessageRequest unmarshalledMessage2 = objectMapper.readValue(MARSHAL_TEST_RESULT_2, MessageRequest.class);
+        MessageRequest unmarshalledMessage2
+                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, MessageRequest.class));
 
-            HashMap<String, Object> variables = new HashMap<>();
-            variables.put("varA", "test");
-            variables.put("varB", 10);
-            variables.put("varC", Collections.emptyMap());
-            message.setVariables(variables);
+        HashMap<String, Object> variables = new HashMap<>();
+        variables.put("varA", "test");
+        variables.put("varB", 10);
+        variables.put("varC", Collections.emptyMap());
+        message.setVariables(variables);
 
-            assertEquals(message, unmarshalledMessage2);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        assertEquals(message, unmarshalledMessage2);
     }
 }

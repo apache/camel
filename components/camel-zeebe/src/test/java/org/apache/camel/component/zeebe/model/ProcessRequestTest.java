@@ -24,8 +24,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ProcessRequestTest {
 
@@ -37,19 +37,15 @@ public class ProcessRequestTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    public void marshalTest() {
+    public void marshalTest() throws JsonProcessingException {
         ProcessRequest message = new ProcessRequest();
         message.setProcessInstanceKey(1);
         message.setProcessId("process_1");
         message.setProcessVersion(1);
         message.setProcessKey(1);
 
-        try {
-            String messageString = objectMapper.writeValueAsString(message);
-            assertEquals(MARSHAL_TEST_RESULT_1, messageString);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        String messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
+        assertEquals(MARSHAL_TEST_RESULT_1, messageString);
 
         HashMap<String, Object> variables = new HashMap<>();
         variables.put("varA", "test");
@@ -57,38 +53,32 @@ public class ProcessRequestTest {
         variables.put("varC", Collections.emptyMap());
         message.setVariables(variables);
 
-        try {
-            String messageString = objectMapper.writeValueAsString(message);
-            assertEquals(MARSHAL_TEST_RESULT_2, messageString);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        messageString = assertDoesNotThrow(() -> objectMapper.writeValueAsString(message));
+        assertEquals(MARSHAL_TEST_RESULT_2, messageString);
     }
 
     @Test
     public void unmarshalTest() {
-        try {
-            ProcessRequest unmarshalledMessage1 = objectMapper.readValue(MARSHAL_TEST_RESULT_1, ProcessRequest.class);
+        ProcessRequest unmarshalledMessage1
+                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_1, ProcessRequest.class));
 
-            ProcessRequest message = new ProcessRequest();
-            message.setProcessInstanceKey(1);
-            message.setProcessId("process_1");
-            message.setProcessVersion(1);
-            message.setProcessKey(1);
+        ProcessRequest message = new ProcessRequest();
+        message.setProcessInstanceKey(1);
+        message.setProcessId("process_1");
+        message.setProcessVersion(1);
+        message.setProcessKey(1);
 
-            assertEquals(message, unmarshalledMessage1);
+        assertEquals(message, unmarshalledMessage1);
 
-            ProcessRequest unmarshalledMessage2 = objectMapper.readValue(MARSHAL_TEST_RESULT_2, ProcessRequest.class);
+        ProcessRequest unmarshalledMessage2
+                = assertDoesNotThrow(() -> objectMapper.readValue(MARSHAL_TEST_RESULT_2, ProcessRequest.class));
 
-            HashMap<String, Object> variables = new HashMap<>();
-            variables.put("varA", "test");
-            variables.put("varB", 10);
-            variables.put("varC", Collections.emptyMap());
-            message.setVariables(variables);
+        HashMap<String, Object> variables = new HashMap<>();
+        variables.put("varA", "test");
+        variables.put("varB", 10);
+        variables.put("varC", Collections.emptyMap());
+        message.setVariables(variables);
 
-            assertEquals(message, unmarshalledMessage2);
-        } catch (JsonProcessingException e) {
-            fail("Error in JSON processing");
-        }
+        assertEquals(message, unmarshalledMessage2);
     }
 }
