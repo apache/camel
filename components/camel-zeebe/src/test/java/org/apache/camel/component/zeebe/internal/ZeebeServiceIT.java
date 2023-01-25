@@ -29,19 +29,20 @@ import org.apache.camel.component.zeebe.model.ProcessRequest;
 import org.apache.camel.component.zeebe.model.ProcessResponse;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Tag("standalone")
 @TestInstance(Lifecycle.PER_CLASS)
-public class ZeebeServiceIntegrationTest {
+@EnabledIfSystemProperty(named = "zeebe.test.integration.enable", matches = "true",
+                         disabledReason = "Requires locally installed test system")
+public class ZeebeServiceIT {
 
     public static final String TEST_1_DEFINITION_BPMN = "test1_definition.bpmn";
 

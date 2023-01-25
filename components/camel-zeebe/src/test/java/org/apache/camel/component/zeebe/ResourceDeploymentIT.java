@@ -25,14 +25,15 @@ import org.apache.camel.component.zeebe.model.DeploymentRequest;
 import org.apache.camel.component.zeebe.model.DeploymentResponse;
 import org.apache.camel.component.zeebe.model.ProcessDeploymentResponse;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Tag("standalone")
-public class ResourceDeploymentIntegrationTest extends CamelTestSupport {
+@EnabledIfSystemProperty(named = "zeebe.test.integration.enable", matches = "true",
+                         disabledReason = "Requires locally installed test system")
+public class ResourceDeploymentIT extends CamelTestSupport {
 
     public static final String RESOURCE_PATH = "data/";
     public static final String RESOURCE_NAME = "test1_definition.bpmn";

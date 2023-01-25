@@ -34,9 +34,9 @@ import org.apache.camel.component.zeebe.model.ProcessRequest;
 import org.apache.camel.component.zeebe.model.ProcessResponse;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
@@ -45,10 +45,11 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@Tag("standalone")
 @MockitoSettings(strictness = Strictness.LENIENT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class ZeebeConsumerIntegrationTest extends CamelTestSupport {
+@EnabledIfSystemProperty(named = "zeebe.test.integration.enable", matches = "true",
+                         disabledReason = "Requires locally installed test system")
+class ZeebeConsumerIT extends CamelTestSupport {
 
     public static final String TEST_1_DEFINITION_BPMN = "test1_definition.bpmn";
     private ZeebeComponent component;
