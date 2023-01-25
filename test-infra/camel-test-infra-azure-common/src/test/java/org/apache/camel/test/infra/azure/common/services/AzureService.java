@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.azure.common.services;
 
 import org.apache.camel.test.infra.azure.common.AzureCredentialsHolder;
 import org.apache.camel.test.infra.common.services.TestService;
+import org.apache.camel.test.infra.common.services.TestServiceUtil;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -34,7 +35,7 @@ public interface AzureService extends TestService, BeforeAllCallback, AfterAllCa
 
     @Override
     default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        initialize();
+        TestServiceUtil.tryInitialize(this, extensionContext);
     }
 
     @Override
