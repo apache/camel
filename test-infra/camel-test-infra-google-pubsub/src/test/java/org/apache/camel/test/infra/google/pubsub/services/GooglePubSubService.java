@@ -36,6 +36,6 @@ public interface GooglePubSubService extends BeforeAllCallback, AfterAllCallback
 
     @Override
     default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
+        TestServiceUtil.tryShutdown(this, extensionContext);
     }
 }

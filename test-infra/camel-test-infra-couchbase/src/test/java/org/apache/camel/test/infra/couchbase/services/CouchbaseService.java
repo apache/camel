@@ -37,7 +37,7 @@ public interface CouchbaseService extends BeforeAllCallback, AfterAllCallback, T
 
     @Override
     default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
+        TestServiceUtil.tryShutdown(this, extensionContext);
     }
 
     @Override

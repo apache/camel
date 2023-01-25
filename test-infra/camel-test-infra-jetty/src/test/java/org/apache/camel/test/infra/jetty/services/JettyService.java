@@ -33,7 +33,7 @@ public interface JettyService extends BeforeAllCallback, AfterAllCallback, TestS
 
     @Override
     default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
+        TestServiceUtil.tryShutdown(this, extensionContext);
     }
 
     /**

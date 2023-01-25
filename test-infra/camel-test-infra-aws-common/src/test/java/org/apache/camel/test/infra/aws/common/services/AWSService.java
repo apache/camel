@@ -36,6 +36,6 @@ public interface AWSService extends BeforeAllCallback, AfterAllCallback, TestSer
 
     @Override
     default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
+        TestServiceUtil.tryShutdown(this, extensionContext);
     }
 }

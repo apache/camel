@@ -47,6 +47,21 @@ public final class TestServiceUtil {
     }
 
     /**
+     * Try to shut down the service, logging failures if they happen
+     *
+     * @param  service          the service to initialize
+     * @param  extensionContext JUnit's extension context
+     * @throws Exception        exception thrown while initializing (if any)
+     */
+    public static void tryShutdown(TestService service, ExtensionContext extensionContext) throws Exception {
+        try {
+            service.shutdown();
+        } catch (Exception e) {
+            logAndRethrow(service, extensionContext, e);
+        }
+    }
+
+    /**
      * Log and exception, including the test information, and then rethrow the passed exception
      *
      * @param  extensionContext JUnit's extension context

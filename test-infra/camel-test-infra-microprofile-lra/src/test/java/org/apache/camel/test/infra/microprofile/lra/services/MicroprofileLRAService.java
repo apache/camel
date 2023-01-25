@@ -43,7 +43,7 @@ public interface MicroprofileLRAService extends BeforeAllCallback, AfterAllCallb
     }
 
     @Override
-    default void afterAll(ExtensionContext extensionContext) {
-        shutdown();
+    default void afterAll(ExtensionContext extensionContext) throws Exception {
+        TestServiceUtil.tryShutdown(this, extensionContext);
     }
 }
