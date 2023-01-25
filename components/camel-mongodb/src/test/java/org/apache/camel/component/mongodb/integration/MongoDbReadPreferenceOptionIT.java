@@ -77,7 +77,7 @@ public class MongoDbReadPreferenceOptionIT extends AbstractMongoDbITSupport {
     }
 
     private MongoDbEndpoint createMongoDbEndpoint(String uri) throws Exception {
-        Endpoint mongoEndpoint = context().getComponent("mongodb").createEndpoint(uri);
+        Endpoint mongoEndpoint = context.getComponent("mongodb").createEndpoint(uri);
         mongoEndpoint.start();
         return MongoDbEndpoint.class.cast(mongoEndpoint);
     }
