@@ -26,33 +26,20 @@ import java.util.TreeSet;
  * An HTTP method.
  */
 public enum Method {
-    GET(false),
-    HEAD(false),
-    POST(true),
-    PUT(true),
-    DELETE(false),
-    TRACE(false),
-    OPTIONS(false),
-    CONNECT(false),
-    PATCH(
-          true);
+    GET,
+    HEAD,
+    POST,
+    PUT,
+    DELETE,
+    TRACE,
+    OPTIONS,
+    CONNECT,
+    PATCH;
 
     private static final Set<Method> ALL = Collections.unmodifiableSet(new TreeSet<>(Arrays.asList(values())));
-    private final boolean canHaveBody;
-
-    private Method(boolean canHaveBody) {
-        this.canHaveBody = canHaveBody;
-    }
 
     public static Set<Method> getAll() {
         return ALL;
-    }
-
-    /**
-     * @return {@code true} if HTTP requests with this {@link Method} can have a body; {@code false} otherwise
-     */
-    public boolean canHaveBody() {
-        return canHaveBody;
     }
 
     /**
