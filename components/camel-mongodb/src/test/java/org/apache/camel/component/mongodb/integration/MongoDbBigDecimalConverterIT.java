@@ -19,7 +19,10 @@ package org.apache.camel.component.mongodb.integration;
 import java.math.BigDecimal;
 
 import com.mongodb.BasicDBObject;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.core.RouteFixture;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoDbBigDecimalConverterIT extends AbstractMongoDbITSupport {
+public class MongoDbBigDecimalConverterIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     private class NumberClass {
         // CHECKSTYLE:OFF
@@ -52,7 +55,12 @@ public class MongoDbBigDecimalConverterIT extends AbstractMongoDbITSupport {
         assertEquals(testClass.bNumber, new BigDecimal((double) b.get("bNumber")));
     }
 
+    @RouteFixture
     @Override
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(createRouteBuilder());
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
