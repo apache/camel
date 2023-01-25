@@ -87,7 +87,8 @@ public class DeploymentProcessor extends AbstractBaseProcessor {
                         ((ProcessDeploymentResponse) resultMessage).getBpmnProcessId());
                 exchange.getMessage().setHeader(ZeebeConstants.PROCESS_DEFINITION_KEY,
                         ((ProcessDeploymentResponse) resultMessage).getProcessDefinitionKey());
-                exchange.getMessage().setHeader(ZeebeConstants.VERSION, ((ProcessDeploymentResponse) resultMessage).getVersion());
+                exchange.getMessage().setHeader(ZeebeConstants.VERSION,
+                        ((ProcessDeploymentResponse) resultMessage).getVersion());
             }
         } else {
             exchange.getMessage().setHeader(ZeebeConstants.ERROR_MESSAGE, resultMessage.getErrorMessage());

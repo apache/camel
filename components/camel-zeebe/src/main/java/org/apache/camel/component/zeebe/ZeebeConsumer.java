@@ -26,7 +26,6 @@ import io.camunda.zeebe.client.api.worker.JobWorker;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.zeebe.internal.OperationName;
 import org.apache.camel.component.zeebe.model.JobWorkerMessage;
