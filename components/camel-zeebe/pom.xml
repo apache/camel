@@ -93,63 +93,27 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>**/*IntegrationTest.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-
     <profiles>
         <profile>
             <id>zeebe-integration</id>
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <executions>
                             <execution>
-                                <phase>integration-test</phase>
                                 <goals>
                                     <goal>integration-test</goal>
+                                    <goal>verify</goal>
                                 </goals>
-                                <configuration>
-                                    <childDelegation>false</childDelegation>
-                                    <useFile>true</useFile>
-                                    <forkCount>3</forkCount>
-                                    <runOrder>random</runOrder>
-                                    <reuseForks>true</reuseForks>
-                                    <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-                                    <includes>
-                                        <include>**/*IntegrationTest.java</include>
-                                    </includes>
-                                    <excludedGroups>standalone</excludedGroups>
-                                    <forkedProcessExitTimeoutInSeconds>240</forkedProcessExitTimeoutInSeconds>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>standalone-integration-tests</id>
-                                <phase>integration-test</phase>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                </goals>
-                                <configuration>
-                                    <childDelegation>false</childDelegation>
-                                    <useFile>true</useFile>
-                                    <includes>
-                                        <include>**/*IntegrationTest.java</include>
-                                    </includes>
-                                    <groups>standalone</groups>
-                                </configuration>
                             </execution>
                         </executions>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <zeebe.test.integration.enable>true</zeebe.test.integration.enable>
+                            </systemPropertyVariables>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
