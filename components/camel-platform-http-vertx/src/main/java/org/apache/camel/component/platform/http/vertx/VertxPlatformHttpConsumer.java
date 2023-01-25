@@ -276,15 +276,10 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                 populateAttachments(ctx.fileUploads(), result);
             }
         } else {
-            Method m = Method.valueOf(ctx.request().method().name());
-            if (m.canHaveBody()) {
-                final RequestBody requestBody = ctx.body();
-                final Buffer body = requestBody.buffer();
-                if (body != null) {
-                    result.setBody(body);
-                } else {
-                    result.setBody(null);
-                }
+            final RequestBody requestBody = ctx.body();
+            final Buffer body = requestBody.buffer();
+            if (body != null) {
+                result.setBody(body);
             } else {
                 result.setBody(null);
             }
