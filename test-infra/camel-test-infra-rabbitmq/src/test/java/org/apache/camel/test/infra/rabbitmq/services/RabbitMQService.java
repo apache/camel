@@ -61,7 +61,7 @@ public interface RabbitMQService extends TestService, BeforeAllCallback, AfterAl
 
     @Override
     default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
+        TestServiceUtil.tryShutdown(this, extensionContext);
     }
 
     @Override

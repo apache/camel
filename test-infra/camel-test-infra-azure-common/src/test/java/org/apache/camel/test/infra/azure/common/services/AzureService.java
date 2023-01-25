@@ -40,6 +40,6 @@ public interface AzureService extends TestService, BeforeAllCallback, AfterAllCa
 
     @Override
     default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
+        TestServiceUtil.tryShutdown(this, extensionContext);
     }
 }

@@ -46,6 +46,6 @@ public interface MongoDBService extends BeforeAllCallback, AfterAllCallback, Tes
 
     @Override
     default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
+        TestServiceUtil.tryShutdown(this, extensionContext);
     }
 }

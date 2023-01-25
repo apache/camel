@@ -41,7 +41,7 @@ public interface RedisService extends BeforeAllCallback, AfterAllCallback, TestS
     }
 
     @Override
-    default void afterAll(ExtensionContext extensionContext) {
-        shutdown();
+    default void afterAll(ExtensionContext extensionContext) throws Exception {
+        TestServiceUtil.tryShutdown(this, extensionContext);
     }
 }

@@ -42,6 +42,6 @@ public interface ArangoDBService extends BeforeAllCallback, AfterAllCallback, Te
 
     @Override
     default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
+        TestServiceUtil.tryShutdown(this, extensionContext);
     }
 }

@@ -40,6 +40,6 @@ public interface FhirService extends BeforeAllCallback, AfterAllCallback, TestSe
 
     @Override
     default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
+        TestServiceUtil.tryShutdown(this, extensionContext);
     }
 }
