@@ -20,6 +20,7 @@ package org.apache.camel.test.infra.aws.common.services;
 import java.util.Properties;
 
 import org.apache.camel.test.infra.common.services.TestService;
+import org.apache.camel.test.infra.common.services.TestServiceUtil;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -30,7 +31,7 @@ public interface AWSService extends BeforeAllCallback, AfterAllCallback, TestSer
 
     @Override
     default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        initialize();
+        TestServiceUtil.tryInitialize(this, extensionContext);
     }
 
     @Override

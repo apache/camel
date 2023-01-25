@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.microprofile.lra.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
+import org.apache.camel.test.infra.common.services.TestServiceUtil;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -37,8 +38,8 @@ public interface MicroprofileLRAService extends BeforeAllCallback, AfterAllCallb
     }
 
     @Override
-    default void beforeAll(ExtensionContext extensionContext) {
-        initialize();
+    default void beforeAll(ExtensionContext extensionContext) throws Exception {
+        TestServiceUtil.tryInitialize(this, extensionContext);
     }
 
     @Override

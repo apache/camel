@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.couchdb.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
+import org.apache.camel.test.infra.common.services.TestServiceUtil;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -36,7 +37,7 @@ public interface CouchDbService extends BeforeAllCallback, AfterAllCallback, Tes
 
     @Override
     default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        initialize();
+        TestServiceUtil.tryInitialize(this, extensionContext);
     }
 
     @Override

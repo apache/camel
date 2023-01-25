@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.messaging.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
+import org.apache.camel.test.infra.common.services.TestServiceUtil;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -33,7 +34,7 @@ public interface MessagingService extends TestService, BeforeAllCallback, AfterA
 
     @Override
     default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        initialize();
+        TestServiceUtil.tryInitialize(this, extensionContext);
     }
 
     @Override
