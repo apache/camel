@@ -46,9 +46,9 @@ public class WebsocketEndpointUriFactory extends org.apache.camel.support.compon
         props.add("sendToAll");
         props.add("servicePath");
         props.add("servletName");
+        props.add("streaming");
         props.add("traceEnabled");
         props.add("transferException");
-        props.add("useStreaming");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         MULTI_VALUE_PREFIXES = Collections.emptySet();

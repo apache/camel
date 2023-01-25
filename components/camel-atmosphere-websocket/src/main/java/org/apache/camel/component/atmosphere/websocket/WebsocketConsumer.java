@@ -62,7 +62,7 @@ public class WebsocketConsumer extends ServletConsumer {
         this.framework.addInitParameter(ApplicationConfig.ANALYTICS, "false");
         this.framework.addInitParameter(ApplicationConfig.WEBSOCKET_SUPPORT, "true");
         this.framework.addInitParameter(ApplicationConfig.WEBSOCKET_PROTOCOL,
-                getEndpoint().isUseStreaming() ? WebsocketStreamHandler.class.getName() : WebsocketHandler.class.getName());
+                getEndpoint().isStreaming() ? WebsocketStreamHandler.class.getName() : WebsocketHandler.class.getName());
         this.framework.init(config);
 
         WebSocketProtocol wsp = this.framework.getWebSocketProtocol();
