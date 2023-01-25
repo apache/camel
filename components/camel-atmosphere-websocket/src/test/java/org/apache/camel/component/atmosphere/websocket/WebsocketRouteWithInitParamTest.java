@@ -22,6 +22,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -35,11 +38,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.testcontainers.shaded.org.awaitility.Awaitility;
+
 public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithInitParamTestSupport {
 
     private static final String[] EXISTED_USERS = { "Kim", "Pavlo", "Peter" };
     private static String[] broadcastMessageTo = {};
     private static Map<String, String> connectionKeyUserMap = new HashMap<>();
+
+	private ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private void runtTest(String s) throws InterruptedException, ExecutionException, IOException {
         WebsocketTestClient wsclient = new WebsocketTestClient("ws://localhost:" + PORT + s);
@@ -63,46 +70,52 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         final int awaitTime = 5;
         connectionKeyUserMap.clear();
 
-        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
-        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
-        WebsocketTestClient wsclient3 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
+        executor.submit(()  -> {
+            try {
+                WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
+                WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
+                WebsocketTestClient wsclient3 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
 
-        wsclient1.connect();
-        wsclient1.await(awaitTime);
+                wsclient1.connect();
+                wsclient1.await(awaitTime);
 
-        wsclient2.connect();
-        wsclient2.await(awaitTime);
+                wsclient2.connect();
+                wsclient2.await(awaitTime);
 
-        wsclient3.connect();
-        wsclient3.await(awaitTime);
+                wsclient3.connect();
+                wsclient3.await(awaitTime);
 
-        //all connections were registered in external store
-        assertEquals(EXISTED_USERS.length, connectionKeyUserMap.size());
+                //all connections were registered in external store
+                assertEquals(EXISTED_USERS.length, connectionKeyUserMap.size());
 
-        broadcastMessageTo = new String[] { EXISTED_USERS[0], EXISTED_USERS[1] };
+                broadcastMessageTo = new String[] {EXISTED_USERS[0], EXISTED_USERS[1]};
 
-        wsclient1.sendTextMessage("Gambas");
-        wsclient1.await(awaitTime);
+                wsclient1.sendTextMessage("Gambas");
+                wsclient1.await(awaitTime);
 
-        List<String> received1 = wsclient1.getReceived(String.class);
-        assertEquals(1, received1.size());
+                List<String> received1 = wsclient1.getReceived(String.class);
+                assertEquals(1, received1.size());
 
-        for (String element : broadcastMessageTo) {
-            assertTrue(received1.get(0).contains(element));
-        }
+                for (String element : broadcastMessageTo) {
+                    assertTrue(received1.get(0).contains(element));
+                }
 
-        List<String> received2 = wsclient2.getReceived(String.class);
-        assertEquals(1, received2.size());
-        for (String element : broadcastMessageTo) {
-            assertTrue(received2.get(0).contains(element));
-        }
+                List<String> received2 = wsclient2.getReceived(String.class);
+                assertEquals(1, received2.size());
+                for (String element : broadcastMessageTo) {
+                    assertTrue(received2.get(0).contains(element));
+                }
 
-        List<String> received3 = wsclient3.getReceived(String.class);
-        assertEquals(0, received3.size());
+                List<String> received3 = wsclient3.getReceived(String.class);
+                assertEquals(0, received3.size());
 
-        wsclient1.close();
-        wsclient2.close();
-        wsclient3.close();
+                wsclient1.close();
+                wsclient2.close();
+                wsclient3.close();
+            } catch (InterruptedException e) {
+                throw new RuntimeException("Interrupted thread", e);
+            }
+        }).get();
     }
 
     @Test
@@ -110,45 +123,51 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         final int awaitTime = 5;
         connectionKeyUserMap.clear();
 
-        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola3", 2);
-        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola3", 2);
-        WebsocketTestClient wsclient3 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola3", 2);
+        executor.submit(()  -> {
+            try {
+				WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola3", 2);
+				WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola3", 2);
+				WebsocketTestClient wsclient3 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola3", 2);
 
-        wsclient1.connect();
-        wsclient1.await(awaitTime);
+				wsclient1.connect();
+                wsclient1.await(awaitTime);
 
-        wsclient2.connect();
-        wsclient2.await(awaitTime);
+				wsclient2.connect();
+				wsclient2.await(awaitTime);
 
-        wsclient3.connect();
-        wsclient3.await(awaitTime);
+				wsclient3.connect();
+				wsclient3.await(awaitTime);
 
-        //all connections were registered in external store
-        assertEquals(EXISTED_USERS.length, connectionKeyUserMap.size());
+				//all connections were registered in external store
+				assertEquals(EXISTED_USERS.length, connectionKeyUserMap.size());
 
-        wsclient2.close();
-        wsclient2.await(awaitTime);
+				wsclient2.close();
+				wsclient2.await(awaitTime);
 
-        broadcastMessageTo = new String[] { EXISTED_USERS[0], EXISTED_USERS[1] };
+				broadcastMessageTo = new String[] { EXISTED_USERS[0], EXISTED_USERS[1] };
 
-        wsclient1.sendTextMessage("Gambas");
-        wsclient1.await(awaitTime);
+				wsclient1.sendTextMessage("Gambas");
+				wsclient1.await(awaitTime);
 
-        List<String> received1 = wsclient1.getReceived(String.class);
-        assertEquals(1, received1.size());
+				List<String> received1 = wsclient1.getReceived(String.class);
+				assertEquals(1, received1.size());
 
-        for (String element : broadcastMessageTo) {
-            assertTrue(received1.get(0).contains(element));
-        }
+				for (String element : broadcastMessageTo) {
+					assertTrue(received1.get(0).contains(element));
+				}
 
-        List<String> received2 = wsclient2.getReceived(String.class);
-        assertEquals(0, received2.size());
+				List<String> received2 = wsclient2.getReceived(String.class);
+				assertEquals(0, received2.size());
 
-        List<String> received3 = wsclient3.getReceived(String.class);
-        assertEquals(0, received3.size());
+				List<String> received3 = wsclient3.getReceived(String.class);
+				assertEquals(0, received3.size());
 
-        wsclient1.close();
-        wsclient3.close();
+				wsclient1.close();
+				wsclient3.close();
+				} catch (InterruptedException e) {
+                throw new RuntimeException("Interrupted thread", e);
+				}
+		}).get();
     }
 
     // START SNIPPET: payload
