@@ -38,11 +38,11 @@ public class JobProcessor extends AbstractBaseProcessor {
     public void process(Exchange exchange) throws Exception {
         JobRequest message = null;
 
-        if (exchange.getIn().getBody() instanceof JobRequest) {
-            message = exchange.getIn().getBody(JobRequest.class);
-        } else if (exchange.getIn().getBody() instanceof String) {
+        if (exchange.getMessage().getBody() instanceof JobRequest) {
+            message = exchange.getMessage().getBody(JobRequest.class);
+        } else if (exchange.getMessage().getBody() instanceof String) {
             try {
-                String bodyString = exchange.getIn().getBody(String.class);
+                String bodyString = exchange.getMessage().getBody(String.class);
 
                 message = objectMapper.readValue(bodyString, JobRequest.class);
             } catch (JsonProcessingException jsonProcessingException) {

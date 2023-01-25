@@ -59,12 +59,12 @@ public class ResourceDeploymentIntegrationTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
         if (!mock.getExchanges().isEmpty()) {
             Exchange exchange = mock.getExchanges().get(0);
-            Object body = exchange.getIn().getBody();
+            Object body = exchange.getMessage().getBody();
             assertTrue(body instanceof ProcessDeploymentResponse);
             assertTrue(((ProcessDeploymentResponse) body).isSuccess());
-            assertTrue(exchange.getIn().getHeaders().containsKey(ZeebeConstants.PROCESS_DEFINITION_KEY));
-            assertTrue(exchange.getIn().getHeaders().containsKey(ZeebeConstants.BPMN_PROCESS_ID));
-            assertTrue(exchange.getIn().getHeaders().containsKey(ZeebeConstants.VERSION));
+            assertTrue(exchange.getMessage().getHeaders().containsKey(ZeebeConstants.PROCESS_DEFINITION_KEY));
+            assertTrue(exchange.getMessage().getHeaders().containsKey(ZeebeConstants.BPMN_PROCESS_ID));
+            assertTrue(exchange.getMessage().getHeaders().containsKey(ZeebeConstants.VERSION));
         }
 
         // Deploy with resource name in header and resource as byte[] in body
@@ -74,7 +74,7 @@ public class ResourceDeploymentIntegrationTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
         if (!mock.getExchanges().isEmpty()) {
             Exchange exchange = mock.getExchanges().get(0);
-            Object body = exchange.getIn().getBody();
+            Object body = exchange.getMessage().getBody();
             assertTrue(body instanceof ProcessDeploymentResponse);
             assertTrue(((ProcessDeploymentResponse) body).isSuccess());
         }
@@ -86,7 +86,7 @@ public class ResourceDeploymentIntegrationTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
         if (!mock.getExchanges().isEmpty()) {
             Exchange exchange = mock.getExchanges().get(0);
-            Object body = exchange.getIn().getBody();
+            Object body = exchange.getMessage().getBody();
             assertTrue(body instanceof ProcessDeploymentResponse);
             assertTrue(((ProcessDeploymentResponse) body).isSuccess());
         }
@@ -106,7 +106,7 @@ public class ResourceDeploymentIntegrationTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
         if (!mock.getExchanges().isEmpty()) {
             Exchange exchange = mock.getExchanges().get(0);
-            String body = exchange.getIn().getBody(String.class);
+            String body = exchange.getMessage().getBody(String.class);
             ProcessDeploymentResponse response = objectMapper.readValue(body, ProcessDeploymentResponse.class);
             assertTrue(response.isSuccess());
         }
@@ -127,7 +127,7 @@ public class ResourceDeploymentIntegrationTest extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
         if (!mock.getExchanges().isEmpty()) {
             Exchange exchange = mock.getExchanges().get(0);
-            Object body = exchange.getIn().getBody();
+            Object body = exchange.getMessage().getBody();
             assertTrue(body instanceof DeploymentResponse);
             assertFalse(((DeploymentResponse) body).isSuccess());
         }

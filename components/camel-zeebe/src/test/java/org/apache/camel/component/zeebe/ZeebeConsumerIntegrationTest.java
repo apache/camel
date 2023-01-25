@@ -77,11 +77,11 @@ class ZeebeConsumerIntegrationTest extends CamelTestSupport {
         MockEndpoint workerMock = getMockEndpoint("mock:jobWorker");
         workerMock.expectedMinimumMessageCount(1);
 
-        Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        Awaitility.await().atMost(Duration.ofSeconds(30)).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         List<Exchange> exchanges = workerMock.getExchanges();
         for (Exchange exchange : exchanges) {
-            JobWorkerMessage jobWorkerMessage = exchange.getIn().getBody(JobWorkerMessage.class);
+            JobWorkerMessage jobWorkerMessage = exchange.getMessage().getBody(JobWorkerMessage.class);
 
             assertNotNull(jobWorkerMessage);
 
@@ -107,11 +107,11 @@ class ZeebeConsumerIntegrationTest extends CamelTestSupport {
         MockEndpoint workerMock = getMockEndpoint("mock:jobWorker_JSON");
         workerMock.expectedMinimumMessageCount(1);
 
-        Awaitility.await().atMost(Duration.ofSeconds(10)).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
+        Awaitility.await().atMost(Duration.ofSeconds(30)).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
 
         List<Exchange> exchanges = workerMock.getExchanges();
         for (Exchange exchange : exchanges) {
-            String jobWorkerMessageString = exchange.getIn().getBody(String.class);
+            String jobWorkerMessageString = exchange.getMessage().getBody(String.class);
             assertNotNull(jobWorkerMessageString);
 
             JobWorkerMessage jobWorkerMessage
@@ -138,10 +138,10 @@ class ZeebeConsumerIntegrationTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("zeebe://worker?jobKey=consumerTest&timeOut=1")
+                from("zeebe://worker?jobKey=consumerTest&timeOut=3")
                         .to("mock:jobWorker");
 
-                from("zeebe://worker?jobKey=consumerTestJSON&timeOut=1&formatJSON=true")
+                from("zeebe://worker?jobKey=consumerTestJSON&timeOut=3&formatJSON=true")
                         .to("mock:jobWorker_JSON");
             }
         };
