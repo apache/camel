@@ -38,17 +38,17 @@ public abstract class AbstractBaseProcessor extends BaseService implements Zeebe
     protected void setBody(Exchange exchange, ZeebeMessage message, boolean formatJSON) {
         if (endpoint.isFormatJSON()) {
             try {
-                exchange.getIn().setBody(objectMapper.writeValueAsString(message));
+                exchange.getMessage().setBody(objectMapper.writeValueAsString(message));
             } catch (JsonProcessingException jsonProcessingException) {
                 throw new IllegalArgumentException("Cannot convert result", jsonProcessingException);
             }
         } else {
-            exchange.getIn().setBody(message);
+            exchange.getMessage().setBody(message);
         }
     }
 
     protected void removeHeaders(Exchange exchange) {
-        Map<String, Object> headers = exchange.getIn().getHeaders();
-        exchange.getIn().removeHeaders(ZeebeConstants.HEADER_PREFIX + ".*");
+        Map<String, Object> headers = exchange.getMessage().getHeaders();
+        exchange.getMessage().removeHeaders(ZeebeConstants.HEADER_PREFIX + ".*");
     }
 }

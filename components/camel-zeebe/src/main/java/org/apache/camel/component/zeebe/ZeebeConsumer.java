@@ -80,7 +80,6 @@ public class ZeebeConsumer extends DefaultConsumer {
         @Override
         public void handle(JobClient client, ActivatedJob job) throws Exception {
             final Exchange exchange = createExchange(true);
-            final Message in = exchange.getIn();
 
             JobWorkerMessage message = new JobWorkerMessage();
             message.setKey(job.getKey());
@@ -101,12 +100,12 @@ public class ZeebeConsumer extends DefaultConsumer {
 
             if (getEndpoint().isFormatJSON()) {
                 try {
-                    exchange.getIn().setBody(objectMapper.writeValueAsString(message));
+                    exchange.getMessage().setBody(objectMapper.writeValueAsString(message));
                 } catch (JsonProcessingException jsonProcessingException) {
                     throw new IllegalArgumentException("Cannot convert result", jsonProcessingException);
                 }
             } else {
-                exchange.getIn().setBody(message);
+                exchange.getMessage().setBody(message);
             }
 
             AsyncCallback cb = defaultConsumerCallback(exchange, true);

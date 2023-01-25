@@ -38,17 +38,17 @@ public class ProcessProcessor extends AbstractBaseProcessor {
     public void process(Exchange exchange) throws Exception {
         ProcessRequest message = null;
 
-        if (exchange.getIn().getBody() instanceof ProcessRequest) {
-            message = exchange.getIn().getBody(ProcessRequest.class);
-        } else if (exchange.getIn().getBody() instanceof ProcessResponse) {
+        if (exchange.getMessage().getBody() instanceof ProcessRequest) {
+            message = exchange.getMessage().getBody(ProcessRequest.class);
+        } else if (exchange.getMessage().getBody() instanceof ProcessResponse) {
             message = new ProcessRequest();
-            message.setProcessInstanceKey(((ProcessResponse) exchange.getIn().getBody()).getProcessInstanceKey());
-            message.setProcessId(((ProcessResponse) exchange.getIn().getBody()).getProcessId());
-            message.setProcessVersion(((ProcessResponse) exchange.getIn().getBody()).getProcessVersion());
-            message.setProcessKey(((ProcessResponse) exchange.getIn().getBody()).getProcessKey());
-        } else if (exchange.getIn().getBody() instanceof String) {
+            message.setProcessInstanceKey(((ProcessResponse) exchange.getMessage().getBody()).getProcessInstanceKey());
+            message.setProcessId(((ProcessResponse) exchange.getMessage().getBody()).getProcessId());
+            message.setProcessVersion(((ProcessResponse) exchange.getMessage().getBody()).getProcessVersion());
+            message.setProcessKey(((ProcessResponse) exchange.getMessage().getBody()).getProcessKey());
+        } else if (exchange.getMessage().getBody() instanceof String) {
             try {
-                String bodyString = exchange.getIn().getBody(String.class);
+                String bodyString = exchange.getMessage().getBody(String.class);
 
                 message = objectMapper.readValue(bodyString, ProcessRequest.class);
             } catch (JsonProcessingException jsonProcessingException) {
