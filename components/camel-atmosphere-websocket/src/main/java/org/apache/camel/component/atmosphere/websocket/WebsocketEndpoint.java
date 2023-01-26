@@ -51,7 +51,7 @@ public class WebsocketEndpoint extends ServletEndpoint {
     @UriParam
     private boolean sendToAll;
     @UriParam
-    private boolean streaming;
+    private boolean useStreaming;
 
     public WebsocketEndpoint(String endPointURI, WebsocketComponent component, URI httpUri) throws URISyntaxException {
         super(endPointURI, component, httpUri);
@@ -86,15 +86,15 @@ public class WebsocketEndpoint extends ServletEndpoint {
         this.sendToAll = sendToAll;
     }
 
-    public boolean isStreaming() {
-        return streaming;
+    public boolean isUseStreaming() {
+        return useStreaming;
     }
 
     /**
      * To enable streaming to send data as multiple text fragments.
      */
-    public void setStreaming(boolean streaming) {
-        this.streaming = streaming;
+    public void setUseStreaming(boolean useStreaming) {
+        this.useStreaming = useStreaming;
     }
 
     WebSocketStore getWebSocketStore() {

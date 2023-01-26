@@ -115,13 +115,13 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         WebsocketTestClient wsclient3 = new WebsocketTestClient("ws://localhost:" + PORT + "/guarantee", 2);
 
         wsclient1.connect();
-        wsclient1.await(1);
+        wsclient1.await(awaitTime);
 
         wsclient2.connect();
-        wsclient2.await(1);
+        wsclient2.await(awaitTime);
 
         wsclient3.connect();
-        wsclient3.await(1);
+        wsclient3.await(awaitTime);
 
         //all connections were registered in external store
         assertEquals(EXISTED_USERS.length, connectionKeyUserMap.size());
