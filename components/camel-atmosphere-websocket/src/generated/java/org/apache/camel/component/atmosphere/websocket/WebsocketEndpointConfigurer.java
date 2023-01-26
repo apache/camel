@@ -27,7 +27,8 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "sendtoall":
         case "sendToAll": target.setSendToAll(property(camelContext, boolean.class, value)); return true;
-        case "streaming": target.setStreaming(property(camelContext, boolean.class, value)); return true;
+        case "usestreaming":
+        case "useStreaming": target.setUseStreaming(property(camelContext, boolean.class, value)); return true;
         default: return super.configure(camelContext, obj, name, value, ignoreCase);
         }
     }
@@ -41,7 +42,8 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
         case "lazyStartProducer": return boolean.class;
         case "sendtoall":
         case "sendToAll": return boolean.class;
-        case "streaming": return boolean.class;
+        case "usestreaming":
+        case "useStreaming": return boolean.class;
         default: return super.getOptionType(name, ignoreCase);
         }
     }
@@ -56,7 +58,8 @@ public class WebsocketEndpointConfigurer extends ServletEndpointConfigurer imple
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "sendtoall":
         case "sendToAll": return target.isSendToAll();
-        case "streaming": return target.isStreaming();
+        case "usestreaming":
+        case "useStreaming": return target.isUseStreaming();
         default: return super.getOptionValue(obj, name, ignoreCase);
         }
     }

@@ -149,7 +149,7 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
                 }).to("atmosphere-websocket:///broadcast?sendToAll=true");
 
                 // route for a single stream line
-                from("atmosphere-websocket:///hola3?streaming=true").to("log:info").process(new Processor() {
+                from("atmosphere-websocket:///hola3?useStreaming=true").to("log:info").process(new Processor() {
                     public void process(final Exchange exchange) {
                         createResponse(exchange, true);
                     }
