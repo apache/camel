@@ -17,6 +17,9 @@
 package org.apache.camel.component.vertx.websocket;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public final class VertxWebsocketHelper {
 
@@ -29,5 +32,25 @@ public final class VertxWebsocketHelper {
      */
     public static VertxWebsocketHostKey createHostKey(URI websockerURI) {
         return new VertxWebsocketHostKey(websockerURI.getHost(), websockerURI.getPort());
+    }
+
+    /**
+     * Appends a header value to exchange headers, using a List if there are multiple items for the same key
+     */
+    @SuppressWarnings("unchecked")
+    public static void appendHeader(Map<String, Object> headers, String key, Object value) {
+        if (headers.containsKey(key)) {
+            Object existing = headers.get(key);
+            List<Object> list;
+            if (existing instanceof List) {
+                list = (List<Object>) existing;
+            } else {
+                list = new ArrayList<>();
+                list.add(existing);
+            }
+            list.add(value);
+            value = list;
+        }
+        headers.put(key, value);
     }
 }
