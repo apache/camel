@@ -22,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
@@ -77,6 +78,10 @@ public class DefaultCamelContextExtension implements CamelContextExtension {
         return endpoint;
     }
 
+    private static String commonProviderMessage(Class<? extends Annotation> annotationClass, Class<?> clazz) {
+        return "Unable to setup provider " + annotationClass.getSimpleName() + " on " + clazz;
+    }
+
     private static String commonFixtureMessage(Class<? extends Annotation> annotationClass, Object instance) {
         return "Unable to setup fixture " + annotationClass.getSimpleName() + " on " + instance.getClass().getName();
     }
@@ -100,7 +105,10 @@ public class DefaultCamelContextExtension implements CamelContextExtension {
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
-        context = createCamelContext();
+        context = setupContextProvider(extensionContext, ContextProvider.class, CamelContext.class);
+        if (context == null) {
+            context = createCamelContext();
+        }
 
         producerTemplate = context.createProducerTemplate();
         producerTemplate.start();
@@ -138,6 +146,25 @@ public class DefaultCamelContextExtension implements CamelContextExtension {
         LOG.info("********************************************************************************");
     }
 
+    private <T> T setupContextProvider(ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Class<T> target) {
+        final Class<?> testClass = extensionContext.getTestClass().get();
+
+        final Optional<Method> providerMethodOpt = Arrays.stream(testClass.getMethods())
+                .filter(m -> m.isAnnotationPresent(annotationClass))
+                .findFirst();
+
+        if (providerMethodOpt.isPresent()) {
+            Method providerMethod = providerMethodOpt.get();
+
+            final Object provided = doInvokeProvider(annotationClass, providerMethod);
+            if (target.isInstance(provided)) {
+                return target.cast(provided);
+            }
+        }
+
+        return null;
+    }
+
     private void setupFixture(ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Object instance) {
         final Class<?> testClass = extensionContext.getTestClass().get();
 
@@ -155,6 +182,21 @@ public class DefaultCamelContextExtension implements CamelContextExtension {
         }
 
         Arrays.stream(testClass.getDeclaredFields()).filter(f -> f.isAnnotationPresent(annotationClass)).forEach(f -> doInvokeFixture(f.getAnnotation(annotationClass), instance, f));
+    }
+
+    private static Object doInvokeProvider(Class<? extends Annotation> annotationClass, Method m) {
+        var methodName = m.getName();
+        LOG.trace("Checking instance method: {}", methodName);
+        if (m.getReturnType() == null) {
+            throw new RuntimeException(commonProviderMessage(annotationClass, m.getDeclaringClass())
+                    + " provider does not return any value");
+        }
+
+        try {
+            return m.invoke(null);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(commonProviderMessage(annotationClass, m.getDeclaringClass()), e);
+        }
     }
 
     private void doInvokeFixture(Class<? extends Annotation> annotationClass, Object instance, Method m) {
