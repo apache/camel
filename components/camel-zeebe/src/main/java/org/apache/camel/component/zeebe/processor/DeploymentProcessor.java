@@ -28,8 +28,6 @@ import org.apache.camel.component.zeebe.internal.ZeebeService;
 import org.apache.camel.component.zeebe.model.DeploymentRequest;
 import org.apache.camel.component.zeebe.model.DeploymentResponse;
 import org.apache.camel.component.zeebe.model.ProcessDeploymentResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DeploymentProcessor extends AbstractBaseProcessor {
     public DeploymentProcessor(ZeebeEndpoint endpoint) {
@@ -47,7 +45,7 @@ public class DeploymentProcessor extends AbstractBaseProcessor {
             message.setName(headerResourceName);
             if (body instanceof String) {
                 message.setContent(((String) body).getBytes());
-            } else if (body instanceof byte[]){
+            } else if (body instanceof byte[]) {
                 message.setContent((byte[]) body);
             } else {
                 message.setContent(((InputStream) body).readAllBytes());
