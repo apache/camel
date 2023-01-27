@@ -8,14 +8,6 @@ Aggregates many messages into a single message
     </xs:annotation>
   </xs:element>
     
-  <xs:element name="any23" type="tns:any23DataFormat">
-    <xs:annotation>
-      <xs:documentation xml:lang="en"><![CDATA[
-Extract RDF data from HTML documents.
-      ]]></xs:documentation>
-    </xs:annotation>
-  </xs:element>
-    
   <xs:element name="apiKey" type="tns:apiKeyDefinition">
     <xs:annotation>
       <xs:documentation xml:lang="en"><![CDATA[
@@ -8123,8 +8115,6 @@ it reaches the end when Camel is shut down. Default value: false
                     
           <xs:choice minOccurs="0">
                         
-            <xs:element ref="tns:any23"/>
-                        
             <xs:element ref="tns:asn1"/>
                         
             <xs:element ref="tns:avro"/>
@@ -8206,61 +8196,6 @@ it reaches the end when Camel is shut down. Default value: false
           </xs:choice>
                   
         </xs:sequence>
-              
-      </xs:extension>
-          
-    </xs:complexContent>
-      
-  </xs:complexType>
-    
-  <xs:complexType name="any23DataFormat">
-        
-    <xs:complexContent>
-            
-      <xs:extension base="tns:dataFormat">
-                
-        <xs:sequence>
-                    
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="configuration" type="tns:propertyDefinition">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-Configurations for Apache Any23 as key-value pairs in order to customize the
-extraction process. The list of supported parameters can be found here. If not
-provided, a default configuration is used.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-                    
-          <xs:element maxOccurs="unbounded" minOccurs="0" name="extractors" type="xs:string">
-            <xs:annotation>
-              <xs:documentation xml:lang="en"><![CDATA[
-List of Any23 extractors to be used in the unmarshal operation. A list of the
-available extractors can be found here here. If not provided, all the available
-extractors are used.
-              ]]></xs:documentation>
-            </xs:annotation>
-          </xs:element>
-                  
-        </xs:sequence>
-                
-        <xs:attribute name="outputFormat" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-What RDF syntax to unmarshal as, can be: NTRIPLES, TURTLE, NQUADS, RDFXML,
-JSONLD, RDFJSON, RDF4JMODEL. It is by default: RDF4JMODEL. Default value:
-RDF4JMODEL
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="baseUri" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-The URI to use as base for building RDF entities if only relative paths are
-provided.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
               
       </xs:extension>
           
@@ -16704,8 +16639,6 @@ Sets a reference to use for lookup the policy in the registry.
                     
           <xs:choice minOccurs="0">
                         
-            <xs:element ref="tns:any23"/>
-                        
             <xs:element ref="tns:asn1"/>
                         
             <xs:element ref="tns:avro"/>
@@ -17970,8 +17903,6 @@ Set a reference to a custom Expression to use.
     <xs:sequence>
             
       <xs:choice maxOccurs="unbounded" minOccurs="0">
-                
-        <xs:element ref="tns:any23"/>
                 
         <xs:element ref="tns:asn1"/>
                 
@@ -20093,8 +20024,6 @@ To configure a special tag for the operations within this rest definition.
                     
           <xs:choice minOccurs="0">
                         
-            <xs:element ref="tns:any23"/>
-                        
             <xs:element ref="tns:asn1"/>
                         
             <xs:element ref="tns:avro"/>
@@ -21498,28 +21427,6 @@ multiple certificates.
       <xs:enumeration value="NOT_SUPPORTED"/>
             
       <xs:enumeration value="NEVER"/>
-          
-    </xs:restriction>
-      
-  </xs:simpleType>
-    
-  <xs:simpleType name="any23Type">
-        
-    <xs:restriction base="xs:string">
-            
-      <xs:enumeration value="NTRIPLES"/>
-            
-      <xs:enumeration value="TURTLE"/>
-            
-      <xs:enumeration value="NQUADS"/>
-            
-      <xs:enumeration value="RDFXML"/>
-            
-      <xs:enumeration value="JSONLD"/>
-            
-      <xs:enumeration value="RDFJSON"/>
-            
-      <xs:enumeration value="RDF4JMODEL"/>
           
     </xs:restriction>
       
