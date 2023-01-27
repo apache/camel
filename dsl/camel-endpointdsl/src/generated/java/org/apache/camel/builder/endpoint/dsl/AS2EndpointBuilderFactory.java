@@ -585,6 +585,44 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Certifiates to validate the messages signature against. If not
+         * supplied, validation will not take place. Server: validates the
+         * received message. Client: not yet implemented, should validate the
+         * MDN.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param validateSigningCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder validateSigningCertificateChain(
+                java.security.cert.Certificate[] validateSigningCertificateChain) {
+            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
+            return this;
+        }
+        /**
+         * Certifiates to validate the messages signature against. If not
+         * supplied, validation will not take place. Server: validates the
+         * received message. Client: not yet implemented, should validate the
+         * MDN.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param validateSigningCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder validateSigningCertificateChain(
+                String validateSigningCertificateChain) {
+            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
+            return this;
+        }
+        /**
          * The key used to encrypt the EDI message.
          * 
          * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
@@ -809,44 +847,6 @@ public interface AS2EndpointBuilderFactory {
         default AS2EndpointConsumerBuilder signingPrivateKey(
                 String signingPrivateKey) {
             doSetProperty("signingPrivateKey", signingPrivateKey);
-            return this;
-        }
-        /**
-         * Certifiates to validate the messages signature against. If not
-         * supplied, validation will not take place. Server: validates the
-         * received message. Client: not yet implemented, should validate the
-         * MDN.
-         * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param validateSigningCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder validateSigningCertificateChain(
-                java.security.cert.Certificate[] validateSigningCertificateChain) {
-            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
-            return this;
-        }
-        /**
-         * Certifiates to validate the messages signature against. If not
-         * supplied, validation will not take place. Server: validates the
-         * received message. Client: not yet implemented, should validate the
-         * MDN.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param validateSigningCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder validateSigningCertificateChain(
-                String validateSigningCertificateChain) {
-            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
             return this;
         }
     }
@@ -1483,6 +1483,44 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Certifiates to validate the messages signature against. If not
+         * supplied, validation will not take place. Server: validates the
+         * received message. Client: not yet implemented, should validate the
+         * MDN.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param validateSigningCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder validateSigningCertificateChain(
+                java.security.cert.Certificate[] validateSigningCertificateChain) {
+            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
+            return this;
+        }
+        /**
+         * Certifiates to validate the messages signature against. If not
+         * supplied, validation will not take place. Server: validates the
+         * received message. Client: not yet implemented, should validate the
+         * MDN.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param validateSigningCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder validateSigningCertificateChain(
+                String validateSigningCertificateChain) {
+            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
+            return this;
+        }
+        /**
          * The key used to encrypt the EDI message.
          * 
          * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
@@ -1707,44 +1745,6 @@ public interface AS2EndpointBuilderFactory {
         default AS2EndpointProducerBuilder signingPrivateKey(
                 String signingPrivateKey) {
             doSetProperty("signingPrivateKey", signingPrivateKey);
-            return this;
-        }
-        /**
-         * Certifiates to validate the messages signature against. If not
-         * supplied, validation will not take place. Server: validates the
-         * received message. Client: not yet implemented, should validate the
-         * MDN.
-         * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param validateSigningCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder validateSigningCertificateChain(
-                java.security.cert.Certificate[] validateSigningCertificateChain) {
-            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
-            return this;
-        }
-        /**
-         * Certifiates to validate the messages signature against. If not
-         * supplied, validation will not take place. Server: validates the
-         * received message. Client: not yet implemented, should validate the
-         * MDN.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param validateSigningCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder validateSigningCertificateChain(
-                String validateSigningCertificateChain) {
-            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
             return this;
         }
     }
@@ -2354,6 +2354,44 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
+         * Certifiates to validate the messages signature against. If not
+         * supplied, validation will not take place. Server: validates the
+         * received message. Client: not yet implemented, should validate the
+         * MDN.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param validateSigningCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder validateSigningCertificateChain(
+                java.security.cert.Certificate[] validateSigningCertificateChain) {
+            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
+            return this;
+        }
+        /**
+         * Certifiates to validate the messages signature against. If not
+         * supplied, validation will not take place. Server: validates the
+         * received message. Client: not yet implemented, should validate the
+         * MDN.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param validateSigningCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder validateSigningCertificateChain(
+                String validateSigningCertificateChain) {
+            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
+            return this;
+        }
+        /**
          * The key used to encrypt the EDI message.
          * 
          * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
@@ -2576,44 +2614,6 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder signingPrivateKey(String signingPrivateKey) {
             doSetProperty("signingPrivateKey", signingPrivateKey);
-            return this;
-        }
-        /**
-         * Certifiates to validate the messages signature against. If not
-         * supplied, validation will not take place. Server: validates the
-         * received message. Client: not yet implemented, should validate the
-         * MDN.
-         * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param validateSigningCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder validateSigningCertificateChain(
-                java.security.cert.Certificate[] validateSigningCertificateChain) {
-            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
-            return this;
-        }
-        /**
-         * Certifiates to validate the messages signature against. If not
-         * supplied, validation will not take place. Server: validates the
-         * received message. Client: not yet implemented, should validate the
-         * MDN.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: security
-         * 
-         * @param validateSigningCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder validateSigningCertificateChain(
-                String validateSigningCertificateChain) {
-            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
             return this;
         }
     }
