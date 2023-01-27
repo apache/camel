@@ -227,7 +227,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
      * You get three keys with the UserId "keyflag", a primary key and its two sub-keys. The sub-key with KeyFlag
      * {@link KeyFlags#SIGN_DATA} should be used for signing and the sub-key with KeyFlag {@link KeyFlags#ENCRYPT_COMMS}
      * or {@link KeyFlags#ENCRYPT_COMMS} or {@link KeyFlags#ENCRYPT_STORAGE} should be used for decryption.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -253,7 +253,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
      * or {@link KeyFlags#ENCRYPT_COMMS} or {@link KeyFlags#ENCRYPT_STORAGE} should be used for decryption.
      * <p>
      * Tests also the decryption and verifying part with the subkeys.
-     * 
+     *
      * @throws Exception
      */
     @Test

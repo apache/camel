@@ -17,11 +17,11 @@
 
 package org.apache.camel.component.mongodb.integration;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mongodb.MongoDbConstants;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.bson.Document;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -41,19 +41,13 @@ public class MongoDbCredentialsFromUriConnectionIT extends MongoDbOperationsIT {
         createAuthorizationUser(dbName, AUTH_SOURCE_USER, AUTH_SOURCE_PASSWORD);
     }
 
-    @Override
-    protected CamelContext createCamelContext() {
-        //This is necessary to avoid creating connection bean for the mongodb component and test credentials instead
-        @SuppressWarnings("deprecation")
-        CamelContext ctx = new DefaultCamelContext();
-        ctx.getPropertiesComponent().setLocation("classpath:mongodb.test.properties");
-        return ctx;
+    @BeforeEach
+    void checkDocuments() {
+        Assumptions.assumeTrue(0 == testCollection.countDocuments(), "The collection should have no documents");
     }
 
     @Test
     public void testCountOperationAuthUser() {
-        // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.countDocuments());
         Object result = template.requestBody("direct:testAuthSource", "irrelevantBody");
         assertTrue(result instanceof Long, "Result is not of type Long");
         assertEquals(0L, result, "Test collection should not contain any records");

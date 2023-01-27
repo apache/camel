@@ -86,7 +86,7 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
 
     /**
      * Creates a new write-ahead resume strategy
-     * 
+     *
      * @param resumeStrategyConfiguration the configuration to use for this strategy instance
      */
     public WriteAheadResumeStrategy(WriteAheadResumeStrategyConfiguration resumeStrategyConfiguration) {
@@ -122,7 +122,7 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
 
     /**
      * Handles the result of an offset update for cached entries (i.e.: those kept on the in-memory transaction log)
-     * 
+     *
      * @param entryInfo the information about the entry that was updated
      * @param t         a instance of any throwable class that was thrown by the delegate resume strategy during update,
      *                  if none, then can be null
@@ -145,7 +145,7 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
 
     /**
      * Handles the result of an offset update for persisted entries (i.e.: those already saved to permanent storage)
-     * 
+     *
      * @param entry the information about the entry that was updated
      * @param t     a instance of any throwable class that was thrown by the delegate resume strategy during update, if
      *              none, then can be null
@@ -198,7 +198,7 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
     /**
      * Tries to update the offset in the delegate strategy, ensuring the entry on log reflects the success or failure of
      * the update request
-     * 
+     *
      * @param  offsetKey      the offset key to update
      * @param  offsetValue    the offset value to update
      * @param  entryInfo      the information about the entry being updated
@@ -227,7 +227,7 @@ public class WriteAheadResumeStrategy implements ResumeStrategy, CamelContextAwa
     /**
      * Tries to update the offset in the delegate strategy, ensuring the entry on log reflects the success or failure of
      * the update request
-     * 
+     *
      * @param  offsetKey      the offset key to update
      * @param  offsetValue    the offset value to update
      * @param  entry          the entry being updated

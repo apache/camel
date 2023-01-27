@@ -177,7 +177,7 @@ public class KameletMain extends MainCommandLineSupport {
     /**
      * Optionally set the location of Maven settings.xml if it's different than {@code ~/.m2/settings.xml}. If set to
      * {@code false}, no default settings file will be used at all.
-     * 
+     *
      * @param mavenSettings
      */
     public void setMavenSettings(String mavenSettings) {
@@ -191,7 +191,7 @@ public class KameletMain extends MainCommandLineSupport {
     /**
      * Optionally set the location of Maven settings-security.xml if it's different than
      * {@code ~/.m2/settings-security.xml}.
-     * 
+     *
      * @param mavenSettingsSecurity
      */
     public void setMavenSettingsSecurity(String mavenSettingsSecurity) {

@@ -36,7 +36,7 @@ public final class TestUtils {
 
     /**
      * Wait for a given condition to be true or the retry amount (30) to expire
-     * 
+     *
      * @param resourceCheck
      * @param payload
      * @param <T>
@@ -66,7 +66,7 @@ public final class TestUtils {
 
     /**
      * Wait for a given condition to be true or the retry amount (30) to expire
-     * 
+     *
      * @param resourceCheck
      */
     public static boolean waitFor(BooleanSupplier resourceCheck) {
@@ -93,7 +93,7 @@ public final class TestUtils {
 
     /**
      * Gets a random number within range
-     * 
+     *
      * @param  min
      * @param  max
      * @return

@@ -113,7 +113,7 @@ public class IAMProducer extends DefaultProducer {
 
     /**
      * Perform get user operation
-     * 
+     *
      * @param exchange
      * @param clientConfigurations
      */
@@ -135,7 +135,7 @@ public class IAMProducer extends DefaultProducer {
 
     /**
      * Perform update user operation
-     * 
+     *
      * @param exchange
      * @param clientConfigurations
      */
@@ -177,7 +177,7 @@ public class IAMProducer extends DefaultProducer {
 
     /**
      * Perform list groups operation
-     * 
+     *
      * @param exchange
      */
     private void listGroups(Exchange exchange) {
@@ -189,7 +189,7 @@ public class IAMProducer extends DefaultProducer {
 
     /**
      * Perform get group users operation
-     * 
+     *
      * @param exchange
      * @param clientConfigurations
      */
@@ -211,7 +211,7 @@ public class IAMProducer extends DefaultProducer {
 
     /**
      * Perform update group operation
-     * 
+     *
      * @param exchange
      * @param clientConfigurations
      */
@@ -255,7 +255,7 @@ public class IAMProducer extends DefaultProducer {
      * Update dynamic client configurations. Some endpoint parameters (operation, user ID, and group ID) can also be
      * passed via exchange properties, so they can be updated between each transaction. Since they can change, we must
      * clear the previous transaction and update these parameters with their new values
-     * 
+     *
      * @param exchange
      * @param clientConfigurations
      */

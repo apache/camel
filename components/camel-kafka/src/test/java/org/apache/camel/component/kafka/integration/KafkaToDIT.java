@@ -25,11 +25,12 @@ public class KafkaToDIT extends BaseEmbeddedKafkaTestSupport {
 
     @Test
     public void testToD() {
-        template.sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
-        template.sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
+        contextExtension.getProducerTemplate().sendBodyAndHeader("direct:start", "Hello bar", "where", "bar");
+        contextExtension.getProducerTemplate().sendBodyAndHeader("direct:start", "Hello beer", "where", "beer");
 
         // there should only be one kafka endpoint
-        long count = context.getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("kafka:")).count();
+        long count = contextExtension.getContext().getEndpoints().stream().filter(e -> e.getEndpointUri().startsWith("kafka:"))
+                .count();
         assertEquals(1, count, "There should only be 1 kafka endpoint");
     }
 

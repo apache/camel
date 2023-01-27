@@ -56,8 +56,8 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
         while (li.hasNext()) {
             Source source = li.next();
             XMLStreamReader reader = null;
-            // namespace definitions that are on the SOAP envelope can get lost, if this is 
-            // not a DOM (there is special coding on the CXFPayload.getBody().get() method for 
+            // namespace definitions that are on the SOAP envelope can get lost, if this is
+            // not a DOM (there is special coding on the CXFPayload.getBody().get() method for
             // this, that only works on DOM nodes.
             // We have to do some delegation on the XMLStreamReader for StAXSource and StaxSource
             // that re-injects the missing namespaces into the XMLStreamReader.

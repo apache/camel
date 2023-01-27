@@ -732,7 +732,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     /**
      * Filters the directory based on Simple language. For example to filter on current date, you can use a simple date
      * pattern such as ${date:now:yyyMMdd}
-     * 
+     *
      * @see #setFilterDirectory(Predicate)
      */
     public void setFilterDirectory(String expression) {
@@ -752,7 +752,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     /**
      * Filters the file based on Simple language. For example to filter on file size, you can use ${file:size} > 5000
-     * 
+     *
      * @see #setFilterFile(Predicate)
      */
     public void setFilterFile(String expression) {

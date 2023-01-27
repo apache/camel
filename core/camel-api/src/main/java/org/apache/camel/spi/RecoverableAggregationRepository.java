@@ -30,7 +30,7 @@ public interface RecoverableAggregationRepository extends AggregationRepository 
 
     /**
      * Scans the repository for {@link Exchange}s to be recovered
-     * 
+     *
      * @param  camelContext the current CamelContext
      * @return              the exchange ids for to be recovered
      */

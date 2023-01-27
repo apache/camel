@@ -30,7 +30,7 @@ public final class STS2ClientFactory {
 
     /**
      * Return the correct aws STS client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               StsClient
      */

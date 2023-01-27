@@ -25,7 +25,7 @@ public interface Ddb2StreamInternalClient {
 
     /**
      * Returns an DynamoDB Stream client after a factory method determines which one to return.
-     * 
+     *
      * @return DynamoDbClient DynamoDbClient
      */
     DynamoDbStreamsClient getDynamoDBStreamClient();

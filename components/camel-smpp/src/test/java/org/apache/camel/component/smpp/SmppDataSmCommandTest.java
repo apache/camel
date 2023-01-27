@@ -85,7 +85,7 @@ public class SmppDataSmCommandTest {
         when(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()),
                 eq(new RegisteredDelivery((byte) 1)), eq(DataCodings.newInstance((byte) 0))))
-                        .thenReturn(new DataSmResult(new MessageId("1"), null));
+                .thenReturn(new DataSmResult(new MessageId("1"), null));
 
         command.execute(exchange);
 
@@ -109,7 +109,7 @@ public class SmppDataSmCommandTest {
         when(session.dataShortMessage(eq("XXX"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"), eq(new ESMClass()),
                 eq(new RegisteredDelivery((byte) 2)), eq(DataCodings.newInstance((byte) 0))))
-                        .thenReturn(new DataSmResult(new MessageId("1"), null));
+                .thenReturn(new DataSmResult(new MessageId("1"), null));
 
         command.execute(exchange);
 
@@ -129,7 +129,7 @@ public class SmppDataSmCommandTest {
         optionalParameters.put("DEST_TELEMATICS_ID", "2");
         optionalParameters.put("QOS_TIME_TO_LIVE", "3600000");
         optionalParameters.put("ALERT_ON_MESSAGE_DELIVERY", null);
-        // fall back test for vendor specific optional parameter 
+        // fall back test for vendor specific optional parameter
         optionalParameters.put("0x2150", "0815");
         optionalParameters.put("0x2151", "0816");
         optionalParameters.put("0x2152", "6");
@@ -146,15 +146,15 @@ public class SmppDataSmCommandTest {
                 eq(new OptionalParameter.Dest_telematics_id((short) 2)),
                 eq(new OptionalParameter.Qos_time_to_live(3600000)),
                 eq(new OptionalParameter.Alert_on_message_delivery((byte) 0))))
-                        .thenReturn(new DataSmResult(
-                                new MessageId("1"),
-                                new OptionalParameter[] {
-                                        new OptionalParameter.Source_subaddress("1292".getBytes()),
-                                        new OptionalParameter.Additional_status_info_text("urgent"),
-                                        new OptionalParameter.Dest_addr_subunit((byte) 4),
-                                        new OptionalParameter.Dest_telematics_id((short) 2),
-                                        new OptionalParameter.Qos_time_to_live(3600000),
-                                        new OptionalParameter.Alert_on_message_delivery((byte) 0) }));
+                .thenReturn(new DataSmResult(
+                        new MessageId("1"),
+                        new OptionalParameter[] {
+                                new OptionalParameter.Source_subaddress("1292".getBytes()),
+                                new OptionalParameter.Additional_status_info_text("urgent"),
+                                new OptionalParameter.Dest_addr_subunit((byte) 4),
+                                new OptionalParameter.Dest_telematics_id((short) 2),
+                                new OptionalParameter.Qos_time_to_live(3600000),
+                                new OptionalParameter.Alert_on_message_delivery((byte) 0) }));
 
         command.execute(exchange);
 
@@ -217,14 +217,14 @@ public class SmppDataSmCommandTest {
                 eq(new OptionalParameter.Short((short) 0x2153, (short) 9)),
                 eq(new OptionalParameter.Int((short) 0x2154, 7400000)),
                 eq(new OptionalParameter.Null((short) 0x2155))))
-                        .thenReturn(new DataSmResult(
-                                new MessageId("1"), new OptionalParameter[] {
-                                        new OptionalParameter.Source_subaddress("1292".getBytes()),
-                                        new OptionalParameter.Additional_status_info_text("urgent"),
-                                        new OptionalParameter.Dest_addr_subunit((byte) 4),
-                                        new OptionalParameter.Dest_telematics_id((short) 2),
-                                        new OptionalParameter.Qos_time_to_live(3600000),
-                                        new OptionalParameter.Alert_on_message_delivery((byte) 0) }));
+                .thenReturn(new DataSmResult(
+                        new MessageId("1"), new OptionalParameter[] {
+                                new OptionalParameter.Source_subaddress("1292".getBytes()),
+                                new OptionalParameter.Additional_status_info_text("urgent"),
+                                new OptionalParameter.Dest_addr_subunit((byte) 4),
+                                new OptionalParameter.Dest_telematics_id((short) 2),
+                                new OptionalParameter.Qos_time_to_live(3600000),
+                                new OptionalParameter.Alert_on_message_delivery((byte) 0) }));
 
         command.execute(exchange);
 

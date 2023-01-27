@@ -75,7 +75,7 @@ public class XPathAnnotationExpressionFactory extends DefaultAnnotationExpressio
     /**
      * Extracts the value of the header method in the Annotation. For backwards compatibility this method will return
      * null if the annotation's method is not found.
-     * 
+     *
      * @return If the annotation has the method 'headerName' then the name of the header we want to apply the XPath
      *         expression to. Otherwise, null will be returned
      */

@@ -73,7 +73,7 @@ public class LogReader implements AutoCloseable {
 
     /**
      * Reads the header from the file
-     * 
+     *
      * @return             the header or null if the file is empty
      * @throws IOException in case of lower-level I/O errors
      */
@@ -104,7 +104,7 @@ public class LogReader implements AutoCloseable {
 
     /**
      * Read an entry from the file.
-     * 
+     *
      * @return             A log entry from the file or null when reaching the end-of-file or if the file is empty
      * @throws IOException if unable to read the entry
      */
@@ -132,7 +132,7 @@ public class LogReader implements AutoCloseable {
 
     /**
      * A lower-level routine to read a single entry from the transaction log
-     * 
+     *
      * @return             A log entry from the file or null when reaching the end-of-file or if the file is empty
      * @throws IOException if unable to read the entry
      */
@@ -157,7 +157,7 @@ public class LogReader implements AutoCloseable {
 
     /**
      * Reads a data slot (i.e.: containing a key or a value)
-     * 
+     *
      * @return             the data slot
      * @throws IOException if the record is invalid or the data too large for the buffer
      */
@@ -191,7 +191,7 @@ public class LogReader implements AutoCloseable {
 
     /**
      * Reloads data into the intermediate buffer, compacting it on the process
-     * 
+     *
      * @return             true if has read data into the buffer (reloaded) or false otherwise
      * @throws IOException in case of lower-level I/O errors
      */

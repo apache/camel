@@ -26,7 +26,7 @@ import java.util.function.Predicate;
 public interface BlockingTask extends Task {
     /**
      * Run the task
-     * 
+     *
      * @param  predicate the task as a predicate. The result of the predicate is used to check if the task has completed
      *                   or not. The predicate must return true if the execution has completed or false otherwise.
      *                   Failures on the task should be handled on the predicate using the payload as wrapper for In/Out
@@ -42,7 +42,7 @@ public interface BlockingTask extends Task {
 
     /**
      * Run the task
-     * 
+     *
      * @param  supplier the task as a boolean supplier. The result is used to check if the task has completed or not.
      *                  The supplier must return true if the execution has completed or false otherwise.
      * @return          true if the task has completed successfully or false if: 1) the budget is exhausted or 2) the

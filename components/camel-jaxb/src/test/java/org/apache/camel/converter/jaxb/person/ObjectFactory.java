@@ -33,14 +33,14 @@ public class ObjectFactory {
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package:
      * org.apache.camel.converter.jaxb.person
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link Person }
-     * 
+     *
      */
     public Person createPerson() {
         return new Person();

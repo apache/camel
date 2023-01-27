@@ -40,7 +40,7 @@ public class DropboxComponent extends DefaultComponent {
 
     /**
      * Create a camel endpoint after passing validation on the incoming url.
-     * 
+     *
      * @param  uri        the full URI of the endpoint
      * @param  remaining  the remaining part of the URI without the query parameters or component prefix
      * @param  parameters the optional parameters passed in

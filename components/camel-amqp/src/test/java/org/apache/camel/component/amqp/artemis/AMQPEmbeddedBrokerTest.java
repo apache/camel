@@ -19,15 +19,17 @@ package org.apache.camel.component.amqp.artemis;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.amqp.AMQPComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.BeforeAll;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.ContextFixture;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.RouteFixture;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -35,26 +37,26 @@ import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_PORT;
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_SET_TOPIC_PREFIX;
 import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
 
-public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
+public class AMQPEmbeddedBrokerTest {
 
+    @Order(1)
     @RegisterExtension
-    static ArtemisService service = ArtemisServiceFactory.createSingletonAMQPService();
+    public static ArtemisService service = ArtemisServiceFactory.createSingletonAMQPService();
 
-    @EndpointInject("mock:result")
-    MockEndpoint resultEndpoint;
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
-    String expectedBody = "Hello there!";
+    private MockEndpoint resultEndpoint;
 
-    @BeforeAll
-    public static void beforeClass() throws Exception {
-        System.setProperty(AMQP_PORT, service.brokerPort() + "");
-        System.setProperty(AMQP_SET_TOPIC_PREFIX, "false");
-    }
+    private String expectedBody = "Hello there!";
 
     @BeforeEach
     void prepareTest() {
+        resultEndpoint = contextExtension.getMockEndpoint("mock:result");
+
         resultEndpoint.expectedMessageCount(1);
-        template.sendBody("direct:send-topic", expectedBody);
+        contextExtension.getProducerTemplate().sendBody("direct:send-topic", expectedBody);
     }
 
     @Test
@@ -62,16 +64,21 @@ public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS);
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        camelContext.getRegistry().bind("amqpConnection", discoverAMQP(camelContext));
-        camelContext.addComponent("amqp-customized", new AMQPComponent());
-        return camelContext;
+    @ContextFixture
+    public static void setupRoutes(CamelContext context) throws Exception {
+        System.setProperty(AMQP_PORT, service.brokerPort() + "");
+        System.setProperty(AMQP_SET_TOPIC_PREFIX, "false");
+
+        context.getRegistry().bind("amqpConnection", discoverAMQP(context));
+        context.addComponent("amqp-customized", new AMQPComponent());
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
+    @RouteFixture
+    public static void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(createRouteBuilder());
+    }
+
+    private static RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:send-topic")

@@ -52,7 +52,7 @@ public class EventbridgeClientStandardImpl implements EventbridgeInternalClient 
 
     /**
      * Getting the Eventbridge AWS client that is used.
-     * 
+     *
      * @return Amazon Eventbridge Client.
      */
     @Override

@@ -24,13 +24,13 @@ import org.apache.camel.CamelContext;
  * Can be used to create custom URI resolver for the XSLT endpoint. This interface is useful, if the custom URI resolver
  * depends on the resource URI specified in the XSLT endpoint. The resource URI of the endpoint can be even dynamic,
  * like in the following example:
- * 
+ *
  * <pre>
- * {@code <camel:recipientList>} 
+ * {@code <camel:recipientList>}
  * {@code      <camel:simple>xslt:${header.XSLT_FILE}?uriResolverFactory=#uriResolverFactory</camel:simple>}
  * {@code </camel:recipientList>}
  * </pre>
- * 
+ *
  * The dynamic resource URI given in ${header.XSLT_FILE} will be past as resourceUri parameter in the method
  * {@link #createUriResolver(CamelContext, String)}
  */
@@ -38,7 +38,7 @@ public interface XsltUriResolverFactory {
 
     /**
      * Method is called during the creation of a xslt endpoint.
-     * 
+     *
      * @param  camelContext camel context
      * @param  resourceUri  resource URI specified in the endpoint URI
      * @return              URI resolver

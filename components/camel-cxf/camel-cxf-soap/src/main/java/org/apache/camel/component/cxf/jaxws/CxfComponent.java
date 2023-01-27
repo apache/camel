@@ -114,9 +114,9 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
                 if (entry.cxfEndpoint == result
                         && !entry.parameters.equals(parameters)) {
                     /*different URI refer to the same CxfEndpoint Bean instance
-                      but with different parameters. This can make stateful bean's 
-                      behavior uncertainty. This can be addressed by using proper 
-                      bean scope, such as "prototype" in Spring or "Session" in CDI  
+                      but with different parameters. This can make stateful bean's
+                      behavior uncertainty. This can be addressed by using proper
+                      bean scope, such as "prototype" in Spring or "Session" in CDI
                       */
                     throw new RuntimeException(
                             "Different URI refer to the same CxfEndpoint Bean instance"

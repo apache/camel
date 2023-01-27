@@ -46,7 +46,7 @@ public final class KafkaResumable implements Resumable {
 
     /**
      * Creates a new resumable for Kafka
-     * 
+     *
      * @param  exchange the exchange to create the resumable from
      * @return          a new KafkaResumable instance with the data from the exchange
      */

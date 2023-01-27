@@ -53,9 +53,9 @@ public class ConsumerLocalTest extends GoogleCloudStorageBaseTest {
                      + "&autoCreateBucket=true"
                      + "&deleteAfterRead=true"
                      + "&includeBody=true")
-                             .startupOrder(2)
-                             //.log("consuming: ${header.CamelGoogleCloudStorageBucketName}/${header.CamelGoogleCloudStorageObjectName}, body=${body}")
-                             .to("mock:consumedObjects");
+                        .startupOrder(2)
+                        //.log("consuming: ${header.CamelGoogleCloudStorageBucketName}/${header.CamelGoogleCloudStorageObjectName}, body=${body}")
+                        .to("mock:consumedObjects");
 
             }
         };

@@ -85,7 +85,7 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
      * <p />
      * In all cases, it uses the specified bean name and Camel's {@link org.apache.camel.spi.ExecutorServiceManager} to
      * resolve the thread name.
-     * 
+     *
      * @see JmsConfiguration#setDefaultTaskExecutorType(DefaultTaskExecutorType)
      * @see ThreadPoolTaskExecutor#setBeanName(String)
      */

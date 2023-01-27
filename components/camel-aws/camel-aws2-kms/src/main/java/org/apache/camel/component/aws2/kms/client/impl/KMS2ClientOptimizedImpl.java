@@ -50,7 +50,7 @@ public class KMS2ClientOptimizedImpl implements KMS2InternalClient {
 
     /**
      * Getting the KMS aws client that is used.
-     * 
+     *
      * @return KMS Client.
      */
     @Override

@@ -31,7 +31,7 @@ public @interface Link {
 
     /**
      * Type of link identifying the relation between the classes
-     * 
+     *
      * @return LinkType
      */
     LinkType linkType() default LinkType.OneToOne;

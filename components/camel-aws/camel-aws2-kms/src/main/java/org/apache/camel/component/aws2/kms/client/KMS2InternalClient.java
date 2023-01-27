@@ -25,7 +25,7 @@ public interface KMS2InternalClient {
 
     /**
      * Returns an KMS client after a factory method determines which one to return.
-     * 
+     *
      * @return KmsClient KmsClient
      */
     KmsClient getKmsClient();

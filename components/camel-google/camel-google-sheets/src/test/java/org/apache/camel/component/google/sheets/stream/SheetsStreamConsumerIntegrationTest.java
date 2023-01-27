@@ -99,7 +99,7 @@ public class SheetsStreamConsumerIntegrationTest {
                 public void configure() {
                     from(String.format("google-sheets-stream:%s?range=%s&delay=20000&maxResults=5&splitResults=%s",
                             testSheet.getSpreadsheetId(), TEST_RANGE, false))
-                                    .to("mock:result");
+                            .to("mock:result");
                 }
             };
         }
@@ -164,7 +164,7 @@ public class SheetsStreamConsumerIntegrationTest {
                 public void configure() {
                     from(String.format("google-sheets-stream:%s?range=%s&delay=20000&maxResults=5&splitResults=%s",
                             testSheet.getSpreadsheetId(), TEST_RANGE, true))
-                                    .to("mock:result");
+                            .to("mock:result");
                 }
             };
         }

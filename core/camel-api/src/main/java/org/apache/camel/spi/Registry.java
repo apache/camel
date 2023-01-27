@@ -28,7 +28,7 @@ public interface Registry extends BeanRepository {
 
     /**
      * Binds the bean to the repository (if possible).
-     * 
+     *
      * If the bean is {@link CamelContextAware} then the registry will automatic inject the context if possible.
      *
      * @param  id                    the id of the bean

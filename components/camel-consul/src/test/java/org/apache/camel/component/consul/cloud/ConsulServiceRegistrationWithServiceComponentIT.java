@@ -46,7 +46,7 @@ public class ConsulServiceRegistrationWithServiceComponentIT extends ConsulServi
             public void configure() {
                 fromF("service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=consul&service.zone=US", SERVICE_NAME,
                         SERVICE_PORT).routeId(SERVICE_ID)
-                                .routeGroup(SERVICE_NAME).noAutoStartup().to("log:service-registry?level=INFO");
+                        .routeGroup(SERVICE_NAME).noAutoStartup().to("log:service-registry?level=INFO");
             }
         };
     }

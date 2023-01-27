@@ -64,7 +64,7 @@ public class CxfProducer extends DefaultAsyncProducer {
 
     /**
      * Constructor to create a CxfProducer. It will create a CXF client object.
-     * 
+     *
      * @param  endpoint  a CxfEndpoint that creates this producer
      * @throws Exception any exception thrown during the creation of a CXF client
      */
@@ -96,7 +96,7 @@ public class CxfProducer extends DefaultAsyncProducer {
     }
 
     // As the cxf client async and sync api is implement different,
-    // so we don't delegate the sync process call to the async process 
+    // so we don't delegate the sync process call to the async process
     @Override
     public boolean process(Exchange camelExchange, AsyncCallback callback) {
         LOG.trace("Process exchange: {} in an async way.", camelExchange);
@@ -204,7 +204,7 @@ public class CxfProducer extends DefaultAsyncProducer {
         // set data format mode in the request context
         requestContext.put(DataFormat.class.getName(), dataFormat);
 
-        // don't let CXF ClientImpl close the input stream 
+        // don't let CXF ClientImpl close the input stream
         if (dataFormat.dealias() == DataFormat.RAW) {
             cxfExchange.put(Client.KEEP_CONDUIT_ALIVE, true);
             LOG.trace("Set CXF Exchange property: {}={}", Client.KEEP_CONDUIT_ALIVE, true);
@@ -290,7 +290,7 @@ public class CxfProducer extends DefaultAsyncProducer {
         }
 
         if (parameters.length > expectMessagePartsSize) {
-            // need to check the holder parameters        
+            // need to check the holder parameters
             int holdersSize = 0;
             for (Object parameter : parameters) {
                 if (parameter instanceof Holder) {

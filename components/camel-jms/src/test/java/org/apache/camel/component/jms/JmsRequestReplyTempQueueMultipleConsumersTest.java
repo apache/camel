@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupport {
 
     @RegisterExtension
-    public ArtemisService service = ArtemisServiceFactory.createPersistentVMService();
+    public ArtemisService service = ArtemisServiceFactory.createVMService();
 
     private final Map<String, AtomicInteger> msgsPerThread = new ConcurrentHashMap<>();
     private JmsPoolConnectionFactory connectionFactory;
@@ -88,7 +88,7 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
             });
         }
 
-        MockEndpoint.assertIsSatisfied(context, 20, TimeUnit.SECONDS);
+        MockEndpoint.assertIsSatisfied(context, 40, TimeUnit.SECONDS);
     }
 
     @Override

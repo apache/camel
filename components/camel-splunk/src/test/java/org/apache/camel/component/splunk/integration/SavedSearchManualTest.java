@@ -58,7 +58,7 @@ public class SavedSearchManualTest extends SplunkTest {
 
                 from("splunk://savedsearch?delay=5000&username=" + SPLUNK_USERNAME + "&password=" + SPLUNK_PASSWORD
                      + "&initEarliestTime=-10s&latestTime=now" + "&savedSearch=junit")
-                             .to("mock:search-saved");
+                        .to("mock:search-saved");
             }
         };
     }

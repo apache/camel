@@ -72,8 +72,8 @@ public class CombinedServiceFilterTest extends ContextTestSupport {
                 .custom((exchange, services) -> services.stream()
                         .filter(serviceDefinition -> ofNullable(serviceDefinition.getMetadata()
                                 .get("supports"))
-                                        .orElse("")
-                                        .contains(exchange.getProperty("needs", String.class)))
+                                .orElse("")
+                                .contains(exchange.getProperty("needs", String.class)))
                         .collect(Collectors.toList()));
 
         Map<String, String> metadata = Collections.singletonMap("supports", "foo,bar");

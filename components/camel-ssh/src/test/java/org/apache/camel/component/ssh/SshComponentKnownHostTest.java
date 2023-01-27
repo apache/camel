@@ -100,15 +100,15 @@ public class SshComponentKnownHostTest extends SshComponentTestSupport {
 
                 from("ssh://smx:smx@localhost:" + port
                      + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_valid&failOnUnknownHost=true")
-                             .to("mock:result");
+                        .to("mock:result");
 
                 from("ssh://smx:smx@localhost:" + port
                      + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_invalid&failOnUnknownHost=true")
-                             .to("mock:resultInvalid");
+                        .to("mock:resultInvalid");
 
                 from("ssh://smx:smx@localhost:" + port
                      + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_invalid")
-                             .to("mock:resultInvalidWarnOnly");
+                        .to("mock:resultInvalidWarnOnly");
 
                 from("direct:ssh")
                         .to("ssh://smx:smx@localhost:" + port

@@ -38,7 +38,7 @@ public class TwoEmbeddedActiveMQBrokersTest extends CamelSpringTestSupport {
 
     /**
      * Used by spring xml configurations
-     * 
+     *
      * @return
      */
     public static String getFirstBrokerServiceAddress() {

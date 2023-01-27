@@ -60,7 +60,7 @@ public class CxfConsumerMessageTest extends CamelTestSupport {
                 from(simpleEndpointURI + "&dataFormat=RAW").process(new Processor() {
                     public void process(final Exchange exchange) {
                         Message in = exchange.getIn();
-                        // check the content-length header is filtered 
+                        // check the content-length header is filtered
                         Object value = in.getHeader("Content-Length");
                         assertNull(value, "The Content-Length header should be removed");
                         // Get the request message

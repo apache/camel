@@ -17,124 +17,52 @@
 package org.apache.camel.component.kafka.integration.health;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaComponent;
-import org.apache.camel.component.kafka.MockConsumerInterceptor;
-import org.apache.camel.component.kafka.integration.AbstractKafkaTestSupport;
-import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.health.HealthCheckRegistry;
-import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
-import org.apache.camel.test.infra.kafka.services.KafkaService;
-import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.camel.test.infra.core.ContextFixture;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
-import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DisabledIfSystemProperty(named = "kafka.instance.type", matches = "local-strimzi-container",
                           disabledReason = "Test infra Kafka runs the Strimzi containers in a way that conflicts with multiple concurrent images")
-public class KafkaConsumerBadPortHealthCheckIT extends CamelTestSupport {
+public class KafkaConsumerBadPortHealthCheckIT extends KafkaHealthCheckTestSupport {
     public static final String TOPIC = "test-health";
-
-    @RegisterExtension
-    public static KafkaService service = KafkaServiceFactory.createService();
-
-    protected static AdminClient kafkaAdminClient;
 
     private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerBadPortHealthCheckIT.class);
 
-    @BindToRegistry("myHeaderDeserializer")
-    private MyKafkaHeaderDeserializer deserializer = new MyKafkaHeaderDeserializer();
-
-    @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=KafkaConsumerBadPortHealthCheckIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
-                    + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                    + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
-    private Endpoint from;
     @EndpointInject("mock:result")
     private MockEndpoint to;
 
-    private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
-
-    @BeforeEach
-    public void before() {
-        Properties props = AbstractKafkaTestSupport.getDefaultProperties(service);
-        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
-        MockConsumerInterceptor.recordsCaptured.clear();
-    }
-
-    @BeforeAll
-    public static void beforeClass() {
-        LOG.info("### Embedded Kafka cluster broker list: {}", service.getBootstrapServers());
-        System.setProperty("bootstrapServers", service.getBootstrapServers());
-        System.setProperty("brokers", service.getBootstrapServers());
-    }
-
-    @BeforeEach
-    public void setKafkaAdminClient() {
-        if (kafkaAdminClient == null) {
-            kafkaAdminClient = AbstractKafkaTestSupport.createAdminClient(service);
-        }
-    }
-
-    @AfterEach
-    public void after() {
-        if (producer != null) {
-            producer.close();
-        }
-        // clean all test topics
-        kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC)).all();
-    }
-
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
+    @ContextFixture
+    public void configureContext(CamelContext context) {
         context.getPropertiesComponent().setLocation("ref:prop");
 
         KafkaComponent kafka = new KafkaComponent(context);
         kafka.init();
         kafka.getConfiguration().setBrokers(service.getBootstrapServers() + 123);
         context.addComponent("kafka", kafka);
-
-        // install health check manually (yes a bit cumbersome)
-        HealthCheckRegistry registry = new DefaultHealthCheckRegistry();
-        registry.setCamelContext(context);
-        Object hc = registry.resolveById("context");
-        registry.register(hc);
-        hc = registry.resolveById("routes");
-        registry.register(hc);
-        hc = registry.resolveById("consumers");
-        registry.register(hc);
-        context.setExtension(HealthCheckRegistry.class, registry);
-
-        return context;
     }
 
     @Override
@@ -143,6 +71,10 @@ public class KafkaConsumerBadPortHealthCheckIT extends CamelTestSupport {
 
             @Override
             public void configure() {
+                String from = "kafka:" + TOPIC
+                              + "?groupId=KafkaConsumerBadPortHealthCheckIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
+                              + "valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                              + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor";
                 from(from)
                         .process(exchange -> LOG.trace("Captured on the processor: {}", exchange.getMessage().getBody()))
                         .routeId("test-health-it").to(to);
@@ -152,11 +84,20 @@ public class KafkaConsumerBadPortHealthCheckIT extends CamelTestSupport {
 
     @Order(1)
     @Test
-    public void kafkaConsumerHealthCheck() throws InterruptedException {
-        // health-check liveness should be UP
+    @DisplayName("Tests that liveness reports UP when it's actually up")
+    public void testReportUpWhenIsUp() {
+        CamelContext context = contextExtension.getContext();
+
         Collection<HealthCheck.Result> res = HealthCheckHelper.invokeLiveness(context);
         boolean up = res.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
         Assertions.assertTrue(up, "liveness check");
+    }
+
+    @Order(2)
+    @Test
+    @DisplayName("Tests that readiness reports down when it's actually down")
+    public void testReportCorrectlyWhenDown() {
+        CamelContext context = contextExtension.getContext();
 
         // health-check readiness should be down
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {
@@ -167,7 +108,11 @@ public class KafkaConsumerBadPortHealthCheckIT extends CamelTestSupport {
             });
             Assertions.assertTrue(up2, "readiness check");
         });
+    }
 
+    @Order(3)
+    @Test
+    public void kafkaConsumerHealthCheck() throws InterruptedException {
         String propagatedHeaderKey = "PropagatedCustomHeader";
         byte[] propagatedHeaderValue = "propagated header value".getBytes();
         to.expectedMessageCount(0);
@@ -183,8 +128,5 @@ public class KafkaConsumerBadPortHealthCheckIT extends CamelTestSupport {
         }
 
         to.assertIsSatisfied(3000);
-    }
-
-    private static class MyKafkaHeaderDeserializer extends DefaultKafkaHeaderDeserializer {
     }
 }

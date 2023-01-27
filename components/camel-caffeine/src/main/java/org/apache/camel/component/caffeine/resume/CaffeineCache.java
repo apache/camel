@@ -37,7 +37,7 @@ public class CaffeineCache<K> implements ResumeCache<K> {
 
     /**
      * Builds a new cache with the given cache size
-     * 
+     *
      * @param cacheSize the cache size
      */
     public CaffeineCache(long cacheSize) {
@@ -46,7 +46,7 @@ public class CaffeineCache<K> implements ResumeCache<K> {
 
     /**
      * Builds a new instance of this object
-     * 
+     *
      * @param cache     an instance of a pre-constructed cache object
      * @param cacheSize the size of the pre-constructed cache object
      */

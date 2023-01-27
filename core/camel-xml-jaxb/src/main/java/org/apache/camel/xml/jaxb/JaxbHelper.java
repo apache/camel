@@ -326,7 +326,7 @@ public final class JaxbHelper {
 
     /**
      * Un-marshals the content of the input stream to an instance of {@link TemplatedRoutesDefinition}.
-     * 
+     *
      * @param  context     the Camel context from which the JAXBContext is extracted
      * @param  inputStream the input stream to unmarshal
      * @return             the content unmarshalled as a {@link TemplatedRoutesDefinition}.

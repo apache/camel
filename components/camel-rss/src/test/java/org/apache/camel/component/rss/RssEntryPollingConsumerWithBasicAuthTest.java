@@ -56,7 +56,7 @@ public class RssEntryPollingConsumerWithBasicAuthTest extends CamelTestSupport {
             public void configure() {
                 fromF("rss:http://localhost:%d/?splitEntries=true&sortEntries=true&delay=100&username=camel&password=camelPass",
                         PORT)
-                                .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

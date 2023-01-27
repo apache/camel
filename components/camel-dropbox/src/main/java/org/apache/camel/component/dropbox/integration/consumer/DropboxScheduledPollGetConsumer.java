@@ -34,7 +34,7 @@ public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsume
 
     /**
      * Poll from a dropbox remote path and put the result in the message exchange
-     * 
+     *
      * @return number of messages polled
      */
     @Override

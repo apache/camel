@@ -378,7 +378,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
      * model.
      * <p/>
      * The header is only added if it is applicable for the given scheme.
-     * 
+     *
      * @param  componentModel      the component to which the header should be added.
      * @param  scheme              the scheme for which we want to add the header.
      * @param  field               the field corresponding to the constant from which the metadata should be extracted.

@@ -440,7 +440,7 @@ public class JmsBinding {
 
     /**
      * Is the given header a standard JMS header
-     * 
+     *
      * @param  headerName the header name
      * @return            <tt>true</tt> if its a standard JMS header
      */

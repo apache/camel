@@ -602,7 +602,7 @@ public class AS2ServerManagerIT extends AbstractAS2ITSupport {
                 // test route for listen with custom MDN parameters
                 from("as2://" + PATH_PREFIX
                      + "/listen?requestUriPattern=/mdnTest&from=MdnTestFrom&subject=MdnTestSubjectPrefix")
-                             .to("mock:as2RcvMsgs");
+                        .to("mock:as2RcvMsgs");
             }
         };
     }

@@ -32,7 +32,7 @@ public interface XmlSignature2Message {
 
     /**
      * Maps the references and objects of an XML signature to the camel message.
-     * 
+     *
      * @param  input     input
      * @param  output    output message
      * @throws Exception
@@ -43,7 +43,7 @@ public interface XmlSignature2Message {
 
         /**
          * Returns the references. If there were several signatures then all references of all signatures are returned.
-         * 
+         *
          * @return list of references, cannot be <code>null</code>
          */
         List<Reference> getReferences();
@@ -51,7 +51,7 @@ public interface XmlSignature2Message {
         /**
          * Returns the objects. If there were several signatures in the XML document then all objects of all signatures
          * are returned.
-         * 
+         *
          * @return objects, cannot be <code>null</code>
          */
         List<XMLObject> getObjects();
@@ -61,7 +61,7 @@ public interface XmlSignature2Message {
 
         /**
          * Indicator whether XML declaration should be omitted. Configured in the endpoint URI.
-         * 
+         *
          * @return {@link Boolean#TRUE} if the XML declaration shall be omitted in the output document.
          */
         Boolean omitXmlDeclaration();
@@ -85,7 +85,7 @@ public interface XmlSignature2Message {
         /**
          * The character encoding of the resulting XML document. Can be <code>null</code>. If <code>null</code> then the
          * encoding of the original XML document is used.
-         * 
+         *
          */
         String getOutputXmlEncoding();
 

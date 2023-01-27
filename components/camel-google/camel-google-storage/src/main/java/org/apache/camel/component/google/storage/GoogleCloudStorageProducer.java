@@ -148,7 +148,7 @@ public class GoogleCloudStorageProducer extends DefaultProducer {
 
     /**
      * If no content-length header was found, calculate length by reading the content.
-     * 
+     *
      * @param  objectMetadata Metadata set from Exchange headers
      * @param  is             InputStream to read the Exchange body content
      * @return                the original InputStream if Content-Length is set or a ByteArrayInputStream if the

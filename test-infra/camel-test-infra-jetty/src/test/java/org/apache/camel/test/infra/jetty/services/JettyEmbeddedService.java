@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 
+import org.apache.camel.test.infra.common.services.TestServiceUtil;
 import org.apache.camel.test.infra.jetty.common.JettyProperties;
 import org.awaitility.Awaitility;
 import org.eclipse.jetty.server.Handler;
@@ -43,7 +44,7 @@ public class JettyEmbeddedService implements JettyService, BeforeEachCallback, A
 
     /**
      * Builds an instance of the service using the provided configuration
-     * 
+     *
      * @param jettyConfiguration the configuration to use when building the service
      */
     public JettyEmbeddedService(JettyConfiguration jettyConfiguration) {
@@ -124,13 +125,13 @@ public class JettyEmbeddedService implements JettyService, BeforeEachCallback, A
     }
 
     @Override
-    public void afterEach(ExtensionContext extensionContext) {
-        shutdown();
+    public void afterEach(ExtensionContext extensionContext) throws Exception {
+        TestServiceUtil.tryShutdown(this, extensionContext);
     }
 
     @Override
-    public void beforeEach(ExtensionContext extensionContext) {
-        initialize();
+    public void beforeEach(ExtensionContext extensionContext) throws Exception {
+        TestServiceUtil.tryInitialize(this, extensionContext);
     }
 
     @Override

@@ -52,7 +52,7 @@ public class SplitterWithXqureyTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // split the message with namespaces defined 
+                // split the message with namespaces defined
                 Namespaces namespaces = new Namespaces("one", "http://camel.apache.org/schema/one");
                 from("direct:endpoint").split().xpath("//one:other", namespaces).to("mock:result");
 

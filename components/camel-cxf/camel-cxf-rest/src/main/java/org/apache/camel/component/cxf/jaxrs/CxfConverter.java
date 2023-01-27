@@ -127,7 +127,7 @@ public final class CxfConverter {
      * Use a fallback type converter so we can convert the embedded list element if the value is MessageContentsList.
      * The algorithm of this converter finds the first non-null list element from the list and applies conversion to the
      * list element.
-     * 
+     *
      * @param  type     the desired type to be converted to
      * @param  exchange optional exchange which can be null
      * @param  value    the object to be converted

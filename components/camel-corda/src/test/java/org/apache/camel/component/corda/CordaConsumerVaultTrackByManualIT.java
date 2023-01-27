@@ -45,7 +45,7 @@ public class CordaConsumerVaultTrackByManualIT extends CordaConsumerITSupport {
                      + "&queryCriteria=#queryCriteria"
                      + "&pageSpecification=#pageSpecification"
                      + "&sort=#sort")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

@@ -340,7 +340,7 @@ public class WeatherConfiguration {
 
     /**
      * A custum geolocation provider to determine the longitude and latitude to use when no location information is set.
-     * 
+     *
      * The default implementaion uses the ipstack API and requires geolocationAccessKey and geolocationRequestHostIP
      */
     public void setGeoLocationProvider(GeoLocationProvider geoLocationProvider) {

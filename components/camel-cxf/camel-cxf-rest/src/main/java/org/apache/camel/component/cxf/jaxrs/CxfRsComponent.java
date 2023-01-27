@@ -103,8 +103,8 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
 
             // Apply Spring bean properties (including # notation referenced bean).  Note that the
             // Spring bean properties values can be overridden by property defined in URI query.
-            // The super class (DefaultComponent) will invoke "setProperties" after this method 
-            // with to apply properties defined by URI query. 
+            // The super class (DefaultComponent) will invoke "setProperties" after this method
+            // with to apply properties defined by URI query.
             if (bean.getProperties() != null) {
                 Map<String, Object> copy = new HashMap<>();
                 copy.putAll(bean.getProperties());

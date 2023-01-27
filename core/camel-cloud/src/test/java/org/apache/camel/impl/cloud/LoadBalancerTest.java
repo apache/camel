@@ -75,8 +75,8 @@ public class LoadBalancerTest {
                 (exchange, services) -> services.stream()
                         .filter(serviceDefinition -> ofNullable(serviceDefinition.getMetadata()
                                 .get("supports"))
-                                        .orElse("")
-                                        .contains(exchange.getProperty("needs", String.class)))
+                                .orElse("")
+                                .contains(exchange.getProperty("needs", String.class)))
                         .collect(Collectors.toList()));
         loadBalancer.setServiceChooser(new RoundRobinServiceChooser());
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());

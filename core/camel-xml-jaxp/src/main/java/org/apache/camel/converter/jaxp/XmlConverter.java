@@ -574,7 +574,7 @@ public class XmlConverter {
 
     /**
      * Convert a NodeList consisting of just 1 node to a DOM Node.
-     * 
+     *
      * @param  nl the NodeList
      * @return    the DOM Node
      */

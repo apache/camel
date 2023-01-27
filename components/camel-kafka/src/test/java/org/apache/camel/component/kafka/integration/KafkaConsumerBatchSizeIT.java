@@ -19,9 +19,9 @@ package org.apache.camel.component.kafka.integration;
 import java.util.Collections;
 import java.util.Properties;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.jupiter.api.AfterEach;
@@ -31,12 +31,6 @@ import org.junit.jupiter.api.Test;
 public class KafkaConsumerBatchSizeIT extends BaseEmbeddedKafkaTestSupport {
 
     public static final String TOPIC = "test-batch";
-
-    @EndpointInject("kafka:" + TOPIC + "?autoOffsetReset=earliest&autoCommitEnable=false&consumersCount=1")
-    private Endpoint from;
-
-    @EndpointInject("mock:result")
-    private MockEndpoint to;
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
@@ -55,18 +49,20 @@ public class KafkaConsumerBatchSizeIT extends BaseEmbeddedKafkaTestSupport {
         kafkaAdminClient.deleteTopics(Collections.singletonList(TOPIC));
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from(from).routeId("foo").to(to).setId("First");
+                fromF("kafka:%s?brokers=%s&autoOffsetReset=earliest&autoCommitEnable=false&consumersCount=1",
+                        TOPIC, service.getBootstrapServers())
+                        .routeId("foo").to(KafkaTestUtil.MOCK_RESULT).setId("First");
             }
         };
     }
 
     @Test
     public void kafkaMessagesIsConsumedByCamel() throws Exception {
+        MockEndpoint to = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
 
         // First 2 must not be committed since batch size is 3
         to.expectedBodiesReceivedInAnyOrder("m1", "m2");
@@ -82,7 +78,9 @@ public class KafkaConsumerBatchSizeIT extends BaseEmbeddedKafkaTestSupport {
 
         to.expectedBodiesReceivedInAnyOrder("m3", "m4", "m5", "m6", "m7", "m8", "m9", "m10");
 
-        // Restart endpoint,
+        // Restart endpoint
+        CamelContext context = contextExtension.getContext();
+
         context.getRouteController().stopRoute("foo");
         context.getRouteController().startRoute("foo");
 

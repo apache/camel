@@ -45,7 +45,7 @@ public interface CamelContextNameStrategy {
 
     /**
      * Whether the name will be fixed, or allow re-calculation such as by using an unique counter.
-     * 
+     *
      * @return <tt>true</tt> for fixed names, <tt>false</tt> for names which can re-calculated
      */
     boolean isFixedName();

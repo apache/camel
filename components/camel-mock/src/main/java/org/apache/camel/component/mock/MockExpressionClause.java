@@ -294,7 +294,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
     /**
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
-     * 
+     *
      * @param  bean the name of the bean looked up the registry
      * @return      the builder to continue processing the DSL
      */
@@ -305,7 +305,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
     /**
      * Evaluates an expression using the <a href="http://camel.apache.org/bean-language.html">bean language</a> which
      * basically means the bean is invoked to determine the expression value.
-     * 
+     *
      * @param  bean   the name of the bean looked up the registry
      * @param  method the name of the method to invoke on the bean
      * @return        the builder to continue processing the DSL
@@ -316,7 +316,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
 
     /**
      * Evaluates a <a href="http://camel.apache.org/groovy.html">Groovy expression</a>
-     * 
+     *
      * @param  text the expression to be evaluated
      * @return      the builder to continue processing the DSL
      */
@@ -336,7 +336,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
 
     /**
      * Evaluates an <a href="http://camel.apache.org/ognl.html">OGNL expression</a>
-     * 
+     *
      * @param  text the expression to be evaluated
      * @return      the builder to continue processing the DSL
      */
@@ -356,7 +356,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
 
     /**
      * Evaluates a <a href="http://camel.apache.org/ref-language.html">Ref expression</a>
-     * 
+     *
      * @param  ref refers to the expression to be evaluated
      * @return     the builder to continue processing the DSL
      */
@@ -366,7 +366,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
 
     /**
      * Evaluates a <a href="http://camel.apache.org/spel.html">SpEL expression</a>
-     * 
+     *
      * @param  text the expression to be evaluated
      * @return      the builder to continue processing the DSL
      */
@@ -376,7 +376,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
 
     /**
      * Evaluates a <a href="http://camel.apache.org/simple.html">Simple expression</a>
-     * 
+     *
      * @param  text the expression to be evaluated
      * @return      the builder to continue processing the DSL
      */
@@ -386,7 +386,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
 
     /**
      * Evaluates an <a href="http://camel.apache.org/xpath.html">XPath expression</a>
-     * 
+     *
      * @param  text the expression to be evaluated
      * @return      the builder to continue processing the DSL
      */
@@ -396,7 +396,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
 
     /**
      * Evaluates an <a href="http://camel.apache.org/xquery.html">XQuery expression</a>
-     * 
+     *
      * @param  text the expression to be evaluated
      * @return      the builder to continue processing the DSL
      */
@@ -406,7 +406,7 @@ public class MockExpressionClause<T> implements Expression, Predicate {
 
     /**
      * Evaluates a given language name with the expression text
-     * 
+     *
      * @param  language   the name of the language
      * @param  expression the expression in the given language
      * @return            the builder to continue processing the DSL

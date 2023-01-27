@@ -124,7 +124,6 @@ import org.apache.camel.model.cloud.ZooKeeperServiceCallServiceDiscoveryConfigur
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
-import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
@@ -507,71 +506,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "steps": {
                     setSteps(target, node);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = "any23",
-            inline = true,
-            types = org.apache.camel.model.dataformat.Any23DataFormat.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            properties = {
-                    @YamlProperty(name = "base-uri", type = "string"),
-                    @YamlProperty(name = "configuration", type = "array:org.apache.camel.model.PropertyDefinition"),
-                    @YamlProperty(name = "extractors", type = "array:string"),
-                    @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "output-format", type = "enum:NTRIPLES,TURTLE,NQUADS,RDFXML,JSONLD,RDFJSON,RDF4JMODEL")
-            }
-    )
-    public static class Any23DataFormatDeserializer extends YamlDeserializerBase<Any23DataFormat> {
-        public Any23DataFormatDeserializer() {
-            super(Any23DataFormat.class);
-        }
-
-        @Override
-        protected Any23DataFormat newInstance() {
-            return new Any23DataFormat();
-        }
-
-        @Override
-        protected Any23DataFormat newInstance(String value) {
-            return new Any23DataFormat(value);
-        }
-
-        @Override
-        protected boolean setProperty(Any23DataFormat target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "base-uri": {
-                    String val = asText(node);
-                    target.setBaseUri(val);
-                    break;
-                }
-                case "configuration": {
-                    java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
-                    target.setConfiguration(val);
-                    break;
-                }
-                case "extractors": {
-                    java.util.List<String> val = asStringList(node);
-                    target.setExtractors(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "output-format": {
-                    String val = asText(node);
-                    target.setOutputFormat(val);
                     break;
                 }
                 default: {
@@ -2931,7 +2865,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.transformer.DataFormatTransformerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
-                    @YamlProperty(name = "any23", type = "object:org.apache.camel.model.dataformat.Any23DataFormat"),
                     @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat"),
                     @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat"),
                     @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat"),
@@ -2993,11 +2926,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "data-format-type": {
                     MappingNode val = asMappingNode(node);
                     setProperties(target, val);
-                    break;
-                }
-                case "any23": {
-                    org.apache.camel.model.dataformat.Any23DataFormat val = asType(node, org.apache.camel.model.dataformat.Any23DataFormat.class);
-                    target.setDataFormatType(val);
                     break;
                 }
                 case "asn1": {
@@ -3226,7 +3154,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.DataFormatsDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
-                    @YamlProperty(name = "any23", type = "object:org.apache.camel.model.dataformat.Any23DataFormat"),
                     @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat"),
                     @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat"),
                     @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat"),
@@ -3285,16 +3212,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "data-formats": {
                     MappingNode val = asMappingNode(node);
                     setProperties(target, val);
-                    break;
-                }
-                case "any23": {
-                    org.apache.camel.model.dataformat.Any23DataFormat val = asType(node, org.apache.camel.model.dataformat.Any23DataFormat.class);
-                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
-                    if (existing == null) {
-                        existing = new java.util.ArrayList<>();
-                    }
-                    existing.add(val);
-                    target.setDataFormats(existing);
                     break;
                 }
                 case "asn1": {
@@ -8382,7 +8299,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.MarshalDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
-                    @YamlProperty(name = "any23", type = "object:org.apache.camel.model.dataformat.Any23DataFormat"),
                     @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat"),
                     @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat"),
                     @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat"),
@@ -8445,11 +8361,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "data-format-type": {
                     MappingNode val = asMappingNode(node);
                     setProperties(target, val);
-                    break;
-                }
-                case "any23": {
-                    org.apache.camel.model.dataformat.Any23DataFormat val = asType(node, org.apache.camel.model.dataformat.Any23DataFormat.class);
-                    target.setDataFormatType(val);
                     break;
                 }
                 case "asn1": {
@@ -17587,7 +17498,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "allow-null-body", type = "boolean"),
-                    @YamlProperty(name = "any23", type = "object:org.apache.camel.model.dataformat.Any23DataFormat"),
                     @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat"),
                     @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat"),
                     @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat"),
@@ -17655,11 +17565,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "data-format-type": {
                     MappingNode val = asMappingNode(node);
                     setProperties(target, val);
-                    break;
-                }
-                case "any23": {
-                    org.apache.camel.model.dataformat.Any23DataFormat val = asType(node, org.apache.camel.model.dataformat.Any23DataFormat.class);
-                    target.setDataFormatType(val);
                     break;
                 }
                 case "asn1": {

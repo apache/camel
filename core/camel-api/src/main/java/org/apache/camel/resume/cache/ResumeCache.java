@@ -24,13 +24,13 @@ import org.apache.camel.resume.ResumeStrategy;
 
 /**
  * This cache stored the resumed data from a {@link ResumeStrategy}.
- * 
+ *
  * @param <K> the type of the key
  */
 public interface ResumeCache<K> {
     /**
      * If the specified key is not present, compute its value from the mapping function (like Java's standard Map one)
-     * 
+     *
      * @param  key     the key to get or associate with the value
      * @param  mapping the mapping function used to compute the value
      * @return         the value associated with the key (either the present or the one computed from the mapping
@@ -40,7 +40,7 @@ public interface ResumeCache<K> {
 
     /**
      * If the specified key is present, compute a new value from the mapping function (like Java's standard Map one)
-     * 
+     *
      * @param  key       the key to get or associate with the value
      * @param  remapping the remapping function used to compute the new value
      * @return           the value associated with the key (either the present or the one computed from the mapping
@@ -59,7 +59,7 @@ public interface ResumeCache<K> {
 
     /**
      * Adds a value to the cache
-     * 
+     *
      * @param key         the key to add
      * @param offsetValue the offset value
      */
@@ -67,7 +67,7 @@ public interface ResumeCache<K> {
 
     /**
      * Checks whether the cache is full
-     * 
+     *
      * @return true if full, or false otherwise
      */
     boolean isFull();
@@ -96,7 +96,7 @@ public interface ResumeCache<K> {
 
     /**
      * Performs the given action for each member of the cache
-     * 
+     *
      * @param action the action to execute
      */
     void forEach(BiFunction<? super K, ? super Object, Boolean> action);

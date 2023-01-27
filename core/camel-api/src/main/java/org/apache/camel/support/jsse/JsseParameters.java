@@ -62,7 +62,7 @@ public class JsseParameters implements CamelContextAware {
      *
      * @param  value                 the string to replace property tokens in
      * @return                       the value
-     * 
+     *
      * @throws RuntimeCamelException if property placeholders were used and there was an error resolving them
      *
      * @see                          #setCamelContext(CamelContext)
@@ -85,7 +85,7 @@ public class JsseParameters implements CamelContextAware {
      *
      * @param  values                the list of strings to replace property tokens in
      * @return                       the list of strings
-     * 
+     *
      * @throws RuntimeCamelException if property placeholders were used and there was an error resolving them
      *
      * @see                          #parsePropertyValue(String)
@@ -107,7 +107,7 @@ public class JsseParameters implements CamelContextAware {
      * treating the resource as a file path, a class path resource, a URL, and using the Camel Context's
      * {@link ResourceLoader} if a context is available in that order. An exception is thrown if the resource cannot be
      * resolved to readable input stream using any of the above methods.
-     * 
+     *
      * @param  resource    the resource location
      * @return             the input stream for the resource
      * @throws IOException if the resource cannot be resolved using any of the above methods

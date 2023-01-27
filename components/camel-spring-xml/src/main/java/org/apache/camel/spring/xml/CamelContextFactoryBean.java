@@ -456,7 +456,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     @Override
     public int getOrder() {
-        // CamelContextFactoryBean implements Ordered so that it's the 
+        // CamelContextFactoryBean implements Ordered so that it's the
         // second to last in ApplicationListener to receive events,
         // SpringCamelContext should be the last one, this is important
         // for startup as we want all resources to be ready and all

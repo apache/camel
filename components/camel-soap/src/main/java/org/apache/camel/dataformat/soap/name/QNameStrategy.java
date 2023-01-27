@@ -26,7 +26,7 @@ public class QNameStrategy implements ElementNameStrategy {
 
     /**
      * Initialize with one QName
-     * 
+     *
      * @param elmentName QName to be used for all finds
      */
     public QNameStrategy(QName elmentName) {

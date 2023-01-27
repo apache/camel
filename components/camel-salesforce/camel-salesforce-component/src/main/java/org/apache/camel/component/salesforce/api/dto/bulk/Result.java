@@ -30,7 +30,7 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>
  * The following schema fragment specifies the expected content contained within this class.
  * <p/>
- * 
+ *
  * <pre>
  * &lt;complexType name="Result">
  *   &lt;complexContent>
@@ -65,7 +65,7 @@ public class Result {
      * <p/>
      * <p/>
      * For example, to add a new item, do as follows:
-     * 
+     *
      * <pre>
      * getErrors().add(newItem);
      * </pre>

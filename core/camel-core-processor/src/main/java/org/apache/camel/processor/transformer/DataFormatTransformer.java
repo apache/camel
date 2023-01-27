@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Transformer} implementation which leverages {@link DataFormat} to perform transformation.
- * 
+ *
  * {@see Transformer}
  */
 public class DataFormatTransformer extends Transformer {
@@ -48,7 +48,7 @@ public class DataFormatTransformer extends Transformer {
 
     /**
      * Perform data transformation with specified from/to type using DataFormat.
-     * 
+     *
      * @param message message to apply transformation
      * @param from    'from' data type
      * @param to      'to' data type
@@ -93,7 +93,7 @@ public class DataFormatTransformer extends Transformer {
 
     /**
      * Set DataFormat.
-     * 
+     *
      * @return this DataFormatTransformer instance
      */
     public DataFormatTransformer setDataFormat(DataFormat dataFormat) {

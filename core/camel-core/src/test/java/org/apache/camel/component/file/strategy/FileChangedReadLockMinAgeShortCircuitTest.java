@@ -61,7 +61,7 @@ public class FileChangedReadLockMinAgeShortCircuitTest extends ContextTestSuppor
             public void configure() throws Exception {
                 from(fileUri(
                         "in?initialDelay=500&delay=10&readLock=changed&readLockMinAge=10&readLockCheckInterval=30000&readLockTimeout=90000"))
-                                .to(fileUri("out"), "mock:result");
+                        .to(fileUri("out"), "mock:result");
             }
         };
     }

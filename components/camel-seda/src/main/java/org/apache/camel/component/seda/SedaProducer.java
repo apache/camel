@@ -185,7 +185,7 @@ public class SedaProducer extends DefaultAsyncProducer {
      * <p>
      * Will perform a blocking "put" if blockWhenFull is true, otherwise it will simply add which will throw exception
      * if the queue is full
-     * 
+     *
      * @param exchange the exchange to add to the queue
      * @param copy     whether to create a copy of the exchange to use for adding to the queue
      */

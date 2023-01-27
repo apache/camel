@@ -19,46 +19,67 @@ package org.apache.camel.component.kafka.integration;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.kafka.KafkaComponent;
+import org.apache.camel.component.kafka.integration.common.KafkaAdminUtil;
+import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.ContextFixture;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.RouteFixture;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.apache.camel.test.infra.kafka.services.KafkaService;
 import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
 import org.apache.kafka.clients.admin.AdminClient;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public abstract class BaseEmbeddedKafkaTestSupport extends AbstractKafkaTestSupport {
+public abstract class BaseEmbeddedKafkaTestSupport implements ConfigurableRoute {
+    @Order(1)
     @RegisterExtension
-    public static KafkaService service = KafkaServiceFactory.createSingletonService();
+    protected static KafkaService service = KafkaServiceFactory.createSingletonService();
+
+    @Order(2)
+    @RegisterExtension
+    protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
     protected static AdminClient kafkaAdminClient;
 
-    @BeforeAll
-    public static void beforeClass() {
-        AbstractKafkaTestSupport.setServiceProperties(service);
+    @BeforeEach
+    public void beforeClass() {
+        KafkaTestUtil.setServiceProperties(service);
     }
 
     @BeforeEach
     public void setKafkaAdminClient() {
         if (kafkaAdminClient == null) {
-            kafkaAdminClient = createAdminClient();
+            kafkaAdminClient = KafkaAdminUtil.createAdminClient(service);
         }
     }
 
-    protected Properties getDefaultProperties() {
-        return getDefaultProperties(service);
+    @ContextFixture
+    public void configureKafka(CamelContext context) {
+        context.getPropertiesComponent().setLocation("ref:prop");
+
+        KafkaComponent kafka = new KafkaComponent(context);
+        kafka.init();
+        kafka.getConfiguration().setBrokers(service.getBootstrapServers());
+        context.addComponent("kafka", kafka);
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return createCamelContextFromService(service);
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(createRouteBuilder());
+    }
+
+    protected abstract RouteBuilder createRouteBuilder();
+
+    protected Properties getDefaultProperties() {
+        return KafkaTestUtil.getDefaultProperties(service);
     }
 
     protected static String getBootstrapServers() {
         return service.getBootstrapServers();
     }
-
-    private static AdminClient createAdminClient() {
-        return createAdminClient(service);
-    }
-
 }

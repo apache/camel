@@ -25,7 +25,7 @@ public interface Ses2InternalClient {
 
     /**
      * Returns an SES client after a factory method determines which one to return.
-     * 
+     *
      * @return SesClient SesClient
      */
     SesClient getSesClient();

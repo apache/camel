@@ -70,7 +70,7 @@ public class DriveCommentsIT extends AbstractGoogleDriveTestSupport {
 
         Comment comment2 = result1.getItems().get(0);
 
-        // 4. now try and get that comment 
+        // 4. now try and get that comment
         headers = new HashMap<>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", fileId);

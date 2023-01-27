@@ -25,7 +25,7 @@ public interface GooglePubsubSerializer {
 
     /**
      * Serializes an object payload to a byte array.
-     * 
+     *
      * @param  payload     The payload to serialize
      * @return             The serialized payload as a byte array
      * @throws IOException If the serialization process encountered errors

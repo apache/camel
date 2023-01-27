@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Store and retrieve objects from Google Cloud Storage Service using the google-cloud-storage library.
- * 
+ *
  * Google Storage Endpoint definition represents a bucket within the storage and contains configuration to customize the
  * behavior of Consumer and Producer.
  */

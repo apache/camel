@@ -38,7 +38,7 @@ public class JmsMessageBindTest extends AbstractSpringJMSTestSupport {
 
         Map<String, Object> headers = new HashMap<>();
         headers.put("foo", "bar");
-        // this header should not be sent as its value cannot be serialized 
+        // this header should not be sent as its value cannot be serialized
         headers.put("binding", new JmsBinding());
 
         template.sendBodyAndHeaders("activemq:Test.BindingQueue", "SomeBody", headers);

@@ -52,7 +52,7 @@ public class KinesisFirehoseClientStandardImpl implements KinesisFirehoseInterna
 
     /**
      * Getting the Kinesis Firehose client that is used.
-     * 
+     *
      * @return Amazon Kinesis Firehose Client.
      */
     @Override

@@ -45,7 +45,7 @@ public class Web3jConsumerReplayBlockTest extends Web3jIntegrationTestSupport {
                      + "fromBlock=0&"
                      + "toBlock=2&"
                      + "fullTransactionObjects=false")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

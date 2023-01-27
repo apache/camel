@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test re-creating operations
- * 
+ *
  * @see {org.apache.camel.component.file.remote.RemoteFileConsumer#recoverableConnectIfNecessary}
  */
 public class FromFtpClientSoTimeoutTest extends CamelTestSupport {

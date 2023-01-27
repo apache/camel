@@ -59,7 +59,7 @@ public class JsonStream extends FilterInputStream {
     /**
      * Constructor. Determines the encoding during the instantiation according to JSON specification RFC-4627 or newer.
      * In addition BOMs are taken into account.
-     * 
+     *
      * @param  in                       input stream must contain a JSON content
      * @throws IOException              if an error occurs during the determination of the encoding
      * @throws CharConversionException  if the UCS4 endianess 2143 or 3412 is used
@@ -115,7 +115,7 @@ public class JsonStream extends FilterInputStream {
     }
 
     private Charset getEncodingFromBOM() throws IOException {
-        // 32-bit encoding BOMs       
+        // 32-bit encoding BOMs
         if (Arrays.equals(fourByteBuffer, BOM_UTF_32BE)) {
             inputIndex = 4;
             return Charset.forName("UTF-32BE");
@@ -149,7 +149,7 @@ public class JsonStream extends FilterInputStream {
     }
 
     private Charset getUTF32EncodingFromNullPattern() throws IOException {
-        //content without BOM      
+        //content without BOM
         if (fourByteBuffer[0] == 0 && fourByteBuffer[1] == 0 && fourByteBuffer[2] == 0) {
             //  00 00 00 xx
             return Charset.forName("UTF-32BE");

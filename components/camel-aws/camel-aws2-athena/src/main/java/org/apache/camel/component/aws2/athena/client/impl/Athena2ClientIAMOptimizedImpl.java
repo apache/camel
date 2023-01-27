@@ -47,7 +47,7 @@ public class Athena2ClientIAMOptimizedImpl implements Athena2InternalClient {
 
     /**
      * Getting the s3 aws client that is used.
-     * 
+     *
      * @return Amazon S3 Client.
      */
     @Override

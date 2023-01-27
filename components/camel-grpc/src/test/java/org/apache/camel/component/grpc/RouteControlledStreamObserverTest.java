@@ -214,11 +214,11 @@ public class RouteControlledStreamObserverTest extends CamelTestSupport {
             public void configure() {
                 from("grpc://localhost:" + GRPC_SYNC_REQUEST_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=PROPAGATION&routeControlledStreamObserver=true")
-                             .process(this::process);
+                        .process(this::process);
 
                 from("grpc://localhost:" + GRPC_ASYNC_REQUEST_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
-                             .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
+                        .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
             }
         };
     }

@@ -116,14 +116,14 @@ public interface RuntimeConfiguration {
 
     /**
      * Sets whether security mask for Logging is enabled or not (default is disabled).
-     * 
+     *
      * @param logMask <tt>true</tt> if mask is enabled
      */
     void setLogMask(Boolean logMask);
 
     /**
      * Gets whether security mask for Logging is enabled or not.
-     * 
+     *
      * @return <tt>true</tt> if mask is enabled
      */
     Boolean isLogMask();
@@ -137,7 +137,7 @@ public interface RuntimeConfiguration {
 
     /**
      * Returns whether to log exhausted message body with message history.
-     * 
+     *
      * @return <tt>true</tt> if logging of message body is enabled
      */
     Boolean isLogExhaustedMessageBody();

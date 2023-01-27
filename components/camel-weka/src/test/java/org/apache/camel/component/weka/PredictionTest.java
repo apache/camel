@@ -51,13 +51,13 @@ public class PredictionTest extends AbstractWekaTest {
                             // Push these instances for later use
                             .to("weka:push?dsname=sfny-test")
 
-                            // Remove the class attribute 
+                            // Remove the class attribute
                             .to("weka:filter?apply=Remove -R last")
 
-                            // Add the 'prediction' placeholder attribute 
+                            // Add the 'prediction' placeholder attribute
                             .to("weka:filter?apply=Add -N predicted -T NOM -L 0,1")
 
-                            // Rename the relation 
+                            // Rename the relation
                             .to("weka:filter?apply=RenameRelation -modify sfny-predicted")
 
                             // Load an already existing model

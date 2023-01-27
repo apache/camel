@@ -130,7 +130,7 @@ public class JGroupsRaftEndpoint extends DefaultEndpoint {
 
     /**
      * Connect shared RaftHandle channel, called by producer and consumer.
-     * 
+     *
      * @throws Exception
      */
     public void connect() throws Exception {

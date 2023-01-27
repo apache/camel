@@ -50,7 +50,7 @@ public class SftpECKeyFileConsumeIT extends SftpServerTestSupport {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&knownHostsFile="
                      + service.getKnownHostsFile()
                      + "&privateKeyFile=./src/test/resources/ec.pem&delay=10000&disconnect=true").routeId("foo").noAutoStartup()
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

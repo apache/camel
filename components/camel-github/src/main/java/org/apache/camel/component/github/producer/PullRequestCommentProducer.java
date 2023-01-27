@@ -29,11 +29,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Producer endpoint that adds one of two types of comments on a GitHub pull request:
- * 
+ *
  * 1.) Response to an in-line comment made on a pull request commit review. To use, include the "GitHubInResponseTo"
  * header, identifying the comment ID (integer) that you're responding to. 2.) General comment on the pull request issue
  * itself.
- * 
+ *
  * Both endpoints require the "GitHubPullRequest" header, identifying the pull request number (integer).
  */
 public class PullRequestCommentProducer extends AbstractGitHubProducer {

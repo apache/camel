@@ -18,6 +18,7 @@
 package org.apache.camel.test.infra.hdfs.v2.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
+import org.apache.camel.test.infra.common.services.TestServiceUtil;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -26,25 +27,25 @@ public interface HDFSService extends TestService, BeforeAllCallback, AfterAllCal
 
     /**
      * Gets the hostname of the HDFS server
-     * 
+     *
      * @return
      */
     String getHDFSHost();
 
     /**
      * Gets the port used by the HDFS server
-     * 
+     *
      * @return
      */
     int getPort();
 
     @Override
     default void beforeAll(ExtensionContext extensionContext) throws Exception {
-        initialize();
+        TestServiceUtil.tryInitialize(this, extensionContext);
     }
 
     @Override
     default void afterAll(ExtensionContext extensionContext) throws Exception {
-        shutdown();
+        TestServiceUtil.tryShutdown(this, extensionContext);
     }
 }

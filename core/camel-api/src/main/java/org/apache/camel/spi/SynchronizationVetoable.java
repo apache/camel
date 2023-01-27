@@ -45,7 +45,7 @@ public interface SynchronizationVetoable extends Synchronization {
 
     /**
      * A method to perform optional housekeeping when a Synchronization is being handed over.
-     * 
+     *
      * @param target The Exchange to which the synchronizations are being transferred.
      */
     void beforeHandover(Exchange target);

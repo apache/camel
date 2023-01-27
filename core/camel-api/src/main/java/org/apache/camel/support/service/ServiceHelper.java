@@ -121,7 +121,7 @@ public final class ServiceHelper {
     /**
      * Starts each element of the given {@code services} if {@code services} itself is not {@code null}, otherwise this
      * method would return immediately.
-     * 
+     *
      * @see #startService(Object)
      */
     public static void startService(Object... services) {
@@ -138,7 +138,7 @@ public final class ServiceHelper {
      * <p/>
      * If there's any exception being thrown while stopping the elements one after the other this method would rethrow
      * the <b>first</b> such exception being thrown.
-     * 
+     *
      * @see #stopService(Collection)
      */
     public static void stopService(Object... services) {
@@ -153,7 +153,7 @@ public final class ServiceHelper {
      * Stops the given {@code value}, rethrowing the first exception caught.
      * <p/>
      * Calling this method has no effect if {@code value} is {@code null}.
-     * 
+     *
      * @see Service#stop()
      * @see #stopService(Collection)
      */
@@ -173,7 +173,7 @@ public final class ServiceHelper {
      * <p/>
      * If there's any exception being thrown while stopping the elements one after the other this method would rethrow
      * the <b>first</b> such exception being thrown.
-     * 
+     *
      * @see #stopService(Object)
      */
     public static void stopService(Collection<?> services) {
@@ -204,7 +204,7 @@ public final class ServiceHelper {
      * <p/>
      * If there's any exception being thrown while stopping/shutting down the elements one after the other this method
      * would rethrow the <b>first</b> such exception being thrown.
-     * 
+     *
      * @see #stopAndShutdownServices(Collection)
      */
     public static void stopAndShutdownServices(Object... services) {
@@ -219,7 +219,7 @@ public final class ServiceHelper {
      * Stops and shutdowns the given {@code service}, rethrowing the first exception caught.
      * <p/>
      * Calling this method has no effect if {@code value} is {@code null}.
-     * 
+     *
      * @see #stopService(Object)
      * @see ShutdownableService#shutdown()
      */
@@ -240,7 +240,7 @@ public final class ServiceHelper {
      * <p/>
      * If there's any exception being thrown while stopping/shutting down the elements one after the other this method
      * would rethrow the <b>first</b> such exception being thrown.
-     * 
+     *
      * @see #stopService(Object)
      * @see ShutdownableService#shutdown()
      */
@@ -282,7 +282,7 @@ public final class ServiceHelper {
      * <p/>
      * If there's any exception being thrown while resuming the elements one after the other this method would rethrow
      * the <b>first</b> such exception being thrown.
-     * 
+     *
      * @see #resumeService(Object)
      */
     public static void resumeServices(Collection<?> services) {
@@ -321,7 +321,7 @@ public final class ServiceHelper {
      * {@link org.apache.camel.SuspendableService} then its {@link org.apache.camel.Service#start()} is called.
      * <p/>
      * Calling this method has no effect if {@code service} is {@code null}.
-     * 
+     *
      * @param  service   the service
      * @return           <tt>true</tt> if either <tt>resume</tt> method or {@link #startService(Object)} was called,
      *                   <tt>false</tt> otherwise.
@@ -350,7 +350,7 @@ public final class ServiceHelper {
      * <p/>
      * If there's any exception being thrown while suspending the elements one after the other this method would rethrow
      * the <b>first</b> such exception being thrown.
-     * 
+     *
      * @see #suspendService(Object)
      */
     public static void suspendServices(Collection<?> services) {
@@ -389,7 +389,7 @@ public final class ServiceHelper {
      * {@link org.apache.camel.SuspendableService} then its {@link org.apache.camel.Service#stop()} is called.
      * <p/>
      * Calling this method has no effect if {@code service} is {@code null}.
-     * 
+     *
      * @param  service   the service
      * @return           <tt>true</tt> if either the <tt>suspend</tt> method or {@link #stopService(Object)} was called,
      *                   <tt>false</tt> otherwise.

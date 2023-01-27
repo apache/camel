@@ -30,7 +30,7 @@ public final class EventbridgeClientFactory {
 
     /**
      * Return the correct AWS Eventbridge client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               EventBridgeClient
      */

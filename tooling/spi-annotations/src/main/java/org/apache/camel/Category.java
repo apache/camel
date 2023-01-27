@@ -112,7 +112,7 @@ public enum Category {
 
     /**
      * Returns the string representation of this value
-     * 
+     *
      * @return Returns the string representation of this value
      */
     public String getValue() {

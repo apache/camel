@@ -1051,7 +1051,7 @@ public final class ExchangeHelper {
     /**
      * Sets the body in message in the exchange taking the exchange pattern into consideration. If the pattern is out
      * capable, then the body is set outbound message. Otherwise it is set on the inbound message.
-     * 
+     *
      * @param exchange the exchange containing the message to set the body
      * @param body     the body to set
      */
@@ -1067,7 +1067,7 @@ public final class ExchangeHelper {
     /**
      * Sets the body in message in the exchange taking the exchange pattern into consideration. If the pattern is out
      * capable, then the body is set outbound message. Otherwise nothing is done.
-     * 
+     *
      * @param exchange the exchange containing the message to set the body
      * @param body     the body to set
      */

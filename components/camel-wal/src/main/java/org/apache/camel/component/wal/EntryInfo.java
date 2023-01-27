@@ -50,7 +50,7 @@ public class EntryInfo {
 
     /**
      * Creates a new entry info instance for entries persisted at the given position
-     * 
+     *
      * @param  position the position of the entry
      * @return          a new entry info
      */
@@ -60,7 +60,7 @@ public class EntryInfo {
 
     /**
      * Creates a new entry info instance for entries cached at the given position and layer
-     * 
+     *
      * @param  position  the position of the entry
      * @param  layerInfo the layer on the transaction cache
      * @return           a new entry info

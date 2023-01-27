@@ -306,8 +306,8 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 Method m = ReflectionHelper.findMethod(clazz, methodName, field.getType());
                 if (m != null) {
                     // this method must be static and return type
-                    // must be the same as the datafield and 
-                    // must receive only the datafield value 
+                    // must be the same as the datafield and
+                    // must receive only the datafield value
                     // as the method argument
                     value = ObjectHelper.invokeMethod(m, null, value);
                 } else {

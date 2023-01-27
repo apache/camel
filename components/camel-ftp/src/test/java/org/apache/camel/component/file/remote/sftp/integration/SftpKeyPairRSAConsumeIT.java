@@ -65,8 +65,8 @@ public class SftpKeyPairRSAConsumeIT extends SftpServerTestSupport {
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&knownHosts=#knownHosts&keyPair=#keyPair&delay=10000&strictHostKeyChecking=yes&useUserKnownHostsFile=false&disconnect=true")
-                             .routeId("foo").noAutoStartup()
-                             .to("mock:result");
+                        .routeId("foo").noAutoStartup()
+                        .to("mock:result");
             }
         };
     }

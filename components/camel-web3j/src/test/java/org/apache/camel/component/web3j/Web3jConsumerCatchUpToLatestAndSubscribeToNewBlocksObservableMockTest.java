@@ -107,7 +107,7 @@ public class Web3jConsumerCatchUpToLatestAndSubscribeToNewBlocksObservableMockTe
                 errorHandler(deadLetterChannel("mock:error"));
                 from(getUrl() + OPERATION.toLowerCase() + "=" + CATCH_UP_TO_LATEST_AND_SUBSCRIBE_TO_NEW_BLOCKS_OBSERVABLE
                      + "&fromBlock=5499965&fullTransactionObjects=true")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

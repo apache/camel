@@ -30,7 +30,7 @@ public final class SecretsManagerClientFactory {
 
     /**
      * Return the correct aws Secrets Manager client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               SecretsManagerClient
      */
