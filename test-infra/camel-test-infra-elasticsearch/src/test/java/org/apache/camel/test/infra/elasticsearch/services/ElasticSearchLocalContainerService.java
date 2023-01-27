@@ -17,6 +17,7 @@
 
 package org.apache.camel.test.infra.elasticsearch.services;
 
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.elasticsearch.common.ElasticSearchProperties;
 import org.slf4j.Logger;
@@ -71,6 +72,9 @@ public class ElasticSearchLocalContainerService implements ElasticSearchService,
     @Override
     public void initialize() {
         LOG.info("Trying to start the ElasticSearch container");
+        ContainerEnvironmentUtil.configureContainerStartup(container, ElasticSearchProperties.ELASTIC_SEARCH_CONTAINER_STARTUP,
+                2);
+
         container.start();
 
         registerProperties();

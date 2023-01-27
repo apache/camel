@@ -20,8 +20,10 @@ package org.apache.camel.test.infra.common.services;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.DockerClientFactory;
+import org.testcontainers.containers.GenericContainer;
 
 public final class ContainerEnvironmentUtil {
+    public static final String STARTUP_ATTEMPTS_PROPERTY = ".startup.attempts";
     private static final Logger LOG = LoggerFactory.getLogger(ContainerEnvironmentUtil.class);
 
     private static boolean dockerAvailable;
@@ -48,5 +50,10 @@ public final class ContainerEnvironmentUtil {
         }
 
         return dockerAvailable;
+    }
+
+    public static void configureContainerStartup(GenericContainer<?> container, String property, int defaultValue) {
+        int startupAttempts = Integer.valueOf(System.getProperty(property, String.valueOf(defaultValue)));
+        container.setStartupAttempts(startupAttempts);
     }
 }
