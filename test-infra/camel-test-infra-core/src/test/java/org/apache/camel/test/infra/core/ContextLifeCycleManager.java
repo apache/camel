@@ -27,24 +27,28 @@ public interface ContextLifeCycleManager {
 
     /**
      * A hook to execute after all tests are executed
+     *
      * @param context the context instance
      */
     void afterAll(CamelContext context);
 
     /**
      * A hook to execute before all tests are executed
+     *
      * @param context the context instance
      */
     void beforeAll(CamelContext context);
 
     /**
      * A hook to execute after each test is executed
+     *
      * @param context the context instance
      */
     void afterEach(CamelContext context);
 
     /**
      * A hook to execute before each test is executed
+     *
      * @param context the context instance
      */
     void beforeEach(CamelContext context);

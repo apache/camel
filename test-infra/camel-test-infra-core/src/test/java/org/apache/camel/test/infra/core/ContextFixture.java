@@ -24,12 +24,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation indicates the need for configuring Camel contexts. Use it to annotate methods that configure the context.
+ * This annotation indicates the need for configuring Camel contexts. Use it to annotate methods that configure the
+ * context.
  * <p>
  * The signature for such methods should be: <code>public void configureContext(CamelContext context)</code>.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface ContextFixture {
 }

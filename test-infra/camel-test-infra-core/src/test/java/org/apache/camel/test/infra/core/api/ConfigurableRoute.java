@@ -20,14 +20,15 @@ package org.apache.camel.test.infra.core.api;
 import org.apache.camel.CamelContext;
 
 /**
- * A utility interface to indicate classes that configure the routes used by the context. Usage of this interface is optional, but
- * recommended for consistency.
+ * A utility interface to indicate classes that configure the routes used by the context. Usage of this interface is
+ * optional, but recommended for consistency.
  */
 public interface ConfigurableRoute {
 
     /**
      * Creates the route builder and add it to the context
-     * @param context the context to configure
+     *
+     * @param  context   the context to configure
      * @throws Exception if the context cannot be configured
      */
     void createRouteBuilder(CamelContext context) throws Exception;

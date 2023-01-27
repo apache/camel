@@ -34,34 +34,39 @@ public interface CamelContextExtension extends BeforeAllCallback, AfterAllCallba
 
     /**
      * Gets the {@link CamelContext} created by this extension
+     *
      * @return an instance of the Camel context to use in the test
      */
     CamelContext getContext();
 
     /**
      * Creates a {@link ProducerTemplate} from the context
+     *
      * @return an instance of a producer template to use with the test
      */
     ProducerTemplate getProducerTemplate();
 
     /**
      * Creates a {@link ConsumerTemplate} from the context
+     *
      * @return an instance of a consumer template to use with the test
      */
     ConsumerTemplate getConsumerTemplate();
 
     /**
      * Gets a {@link MockEndpoint} for the given URI. If the endpoint does not exist, it will be created
-     * @param uri the URI to create the mock to
-     * @return a Mock endpoint instance for the given URI
+     *
+     * @param  uri the URI to create the mock to
+     * @return     a Mock endpoint instance for the given URI
      */
     MockEndpoint getMockEndpoint(String uri);
 
     /**
      * Gets a {@link MockEndpoint} for the given URI.
-     * @param uri the URI to create the mock to
-     * @param create whether to create the endpoint if it does not exist
-     * @return a Mock endpoint instance for the given URI
+     *
+     * @param  uri                     the URI to create the mock to
+     * @param  create                  whether to create the endpoint if it does not exist
+     * @return                         a Mock endpoint instance for the given URI
      * @throws NoSuchEndpointException if the endpoint does not exist and a new one should not be created
      */
     MockEndpoint getMockEndpoint(String uri, boolean create) throws NoSuchEndpointException;
