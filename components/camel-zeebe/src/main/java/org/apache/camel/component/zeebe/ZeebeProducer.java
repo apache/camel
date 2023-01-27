@@ -50,11 +50,19 @@ public class ZeebeProducer extends DefaultProducer {
         }
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        if (processor == null) {
+            throw new CamelException("No processor set");
+        }
+    }
+
     public void process(Exchange exchange) throws Exception {
         if (processor != null) {
             processor.process(exchange);
         } else {
-            LOG.error("No processor found");
             throw new CamelException("No Processor Found");
         }
     }

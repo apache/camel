@@ -49,7 +49,6 @@ public class MessageProcessor extends AbstractBaseProcessor {
                 throw new IllegalArgumentException("Cannot convert body to MessageMessage", jsonProcessingException);
             }
         } else {
-            LOG.error("Message data issing");
             throw new CamelException("Message data missing");
         }
 
@@ -60,7 +59,6 @@ public class MessageProcessor extends AbstractBaseProcessor {
                 resultMessage = publishMessage(message);
                 break;
             default:
-                LOG.error("Unknown Operation!");
                 throw new IllegalArgumentException("Unknown Operation!");
         }
 

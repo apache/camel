@@ -55,7 +55,6 @@ public class ProcessProcessor extends AbstractBaseProcessor {
                 throw new IllegalArgumentException("Cannot convert body to ProcessMessage", jsonProcessingException);
             }
         } else {
-            LOG.error("Process data missing");
             throw new CamelException("Process data missing");
         }
 
@@ -69,7 +68,6 @@ public class ProcessProcessor extends AbstractBaseProcessor {
                 resultMessage = cancelProcess(message);
                 break;
             default:
-                LOG.error("Unknown Operation!");
                 throw new IllegalArgumentException("Unknown Operation!");
         }
 

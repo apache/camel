@@ -61,7 +61,6 @@ public class ZeebeConsumer extends DefaultConsumer {
                         getEndpoint().getJobKey(), getEndpoint().getTimeout());
                 break;
             default:
-                LOG.error("Invalid Operation {}", operationName.value());
                 throw new CamelException(String.format("Invalid Operation for Consumer %s", operationName.value()));
         }
     }
@@ -95,8 +94,10 @@ public class ZeebeConsumer extends DefaultConsumer {
             message.setDeadline(job.getDeadline());
             message.setVariables(job.getVariablesAsMap());
 
-            LOG.debug("New Job Message: {}", job.toJson());
-
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("New Job Message: {}", job.toJson());
+            }
+            
             if (getEndpoint().isFormatJSON()) {
                 try {
                     exchange.getMessage().setBody(objectMapper.writeValueAsString(message));
