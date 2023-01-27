@@ -53,6 +53,7 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         map.put("TargetHostname", java.lang.String.class);
         map.put("TargetPortNumber", java.lang.Integer.class);
         map.put("UserAgent", java.lang.String.class);
+        map.put("ValidateSigningCertificateChain", java.security.cert.Certificate[].class);
         ALL_OPTIONS = map;
     }
 
@@ -126,6 +127,8 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         case "TargetPortNumber": target.setTargetPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
         case "useragent":
         case "UserAgent": target.setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
+        case "validatesigningcertificatechain":
+        case "ValidateSigningCertificateChain": target.setValidateSigningCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
         default: return false;
         }
     }
@@ -204,6 +207,8 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         case "TargetPortNumber": return java.lang.Integer.class;
         case "useragent":
         case "UserAgent": return java.lang.String.class;
+        case "validatesigningcertificatechain":
+        case "ValidateSigningCertificateChain": return java.security.cert.Certificate[].class;
         default: return null;
         }
     }
@@ -278,6 +283,8 @@ public class AS2ConfigurationConfigurer extends org.apache.camel.support.compone
         case "TargetPortNumber": return target.getTargetPortNumber();
         case "useragent":
         case "UserAgent": return target.getUserAgent();
+        case "validatesigningcertificatechain":
+        case "ValidateSigningCertificateChain": return target.getValidateSigningCertificateChain();
         default: return null;
         }
     }

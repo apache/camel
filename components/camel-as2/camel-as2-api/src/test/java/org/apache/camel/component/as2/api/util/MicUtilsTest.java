@@ -101,7 +101,7 @@ public class MicUtilsTest {
         basicEntity.setContentType(CONTENT_TYPE_VALUE);
         request.setEntity(basicEntity);
 
-        ReceivedContentMic receivedContentMic = MicUtils.createReceivedContentMic(request, null);
+        ReceivedContentMic receivedContentMic = MicUtils.createReceivedContentMic(request, null, null);
         assertNotNull(receivedContentMic, "Failed to create Received Content MIC");
         LOG.debug("Digest Algorithm: " + receivedContentMic.getDigestAlgorithmId());
         assertEquals(EXPECTED_MESSAGE_DIGEST_ALGORITHM, receivedContentMic.getDigestAlgorithmId(),
