@@ -28,7 +28,7 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.mongodb.MongoDbTailTrackingConfig;
-import org.apache.camel.test.infra.core.RouteFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.awaitility.Awaitility;
 import org.bson.Document;

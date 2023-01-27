@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultContextLifeCycleManager;
-import org.apache.camel.test.infra.core.RouteFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.kafka.services.KafkaService;
 import org.apache.camel.test.infra.kafka.services.KafkaServiceFactory;
 import org.junit.jupiter.api.Order;

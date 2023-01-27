@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mongodb.MongoDbConstants;
-import org.apache.camel.test.infra.core.RouteFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
 import org.junit.jupiter.api.Assumptions;

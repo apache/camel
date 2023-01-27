@@ -26,7 +26,7 @@ import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
-import org.apache.camel.test.infra.core.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.junit.jupiter.api.Assertions;

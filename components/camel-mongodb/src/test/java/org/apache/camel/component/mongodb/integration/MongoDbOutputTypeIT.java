@@ -26,7 +26,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mongodb.MongoDbConstants;
-import org.apache.camel.test.infra.core.RouteFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.apache.commons.lang3.ObjectUtils;
 import org.bson.Document;
