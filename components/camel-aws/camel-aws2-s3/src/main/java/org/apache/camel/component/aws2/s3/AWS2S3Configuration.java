@@ -42,9 +42,9 @@ public class AWS2S3Configuration implements Cloneable {
     private String secretKey;
     @UriParam(label = "consumer")
     private String fileName;
-    @UriParam(label = "consumer")
+    @UriParam
     private String prefix;
-    @UriParam(label = "consumer")
+    @UriParam
     private String delimiter;
     @UriParam(label = "consumer")
     private String doneFileName;
