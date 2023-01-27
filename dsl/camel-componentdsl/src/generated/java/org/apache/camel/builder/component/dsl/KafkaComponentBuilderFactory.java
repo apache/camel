@@ -1813,8 +1813,8 @@ public interface KafkaComponentBuilderFactory {
             return this;
         }
         /**
-         * Protocol used to communicate with brokers. SASL_PLAINTEXT, PLAINTEXT
-         * and SSL are supported.
+         * Protocol used to communicate with brokers. SASL_PLAINTEXT, PLAINTEXT,
+         * SASL_SSL and SSL are supported.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
