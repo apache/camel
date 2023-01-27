@@ -56,7 +56,7 @@ public class AS2Configuration {
     private String serverFqdn = "camel.apache.org";
     @UriParam
     private String targetHostname;
-    @UriParam
+    @UriParam(defaultValue = "80")
     private Integer targetPortNumber = 80;
     @UriParam(defaultValue = "camel.apache.org")
     private String clientFqdn = "camel.apache.org";
@@ -78,23 +78,23 @@ public class AS2Configuration {
     private String as2From;
     @UriParam
     private String as2To;
-    @UriParam
+    @UriParam(label = "security")
     private AS2SignatureAlgorithm signingAlgorithm;
-    @UriParam
+    @UriParam(label = "security")
     private Certificate[] signingCertificateChain;
-    @UriParam
+    @UriParam(label = "security")
     private PrivateKey signingPrivateKey;
     @UriParam
     private AS2CompressionAlgorithm compressionAlgorithm;
     @UriParam
     private String dispositionNotificationTo;
-    @UriParam
+    @UriParam(label = "security")
     private String[] signedReceiptMicAlgorithms;
-    @UriParam
+    @UriParam(label = "security")
     private AS2EncryptionAlgorithm encryptingAlgorithm;
-    @UriParam
+    @UriParam(label = "security")
     private Certificate[] encryptingCertificateChain;
-    @UriParam
+    @UriParam(label = "security")
     private PrivateKey decryptingPrivateKey;
     @UriParam
     private String mdnMessageTemplate;
@@ -108,7 +108,7 @@ public class AS2Configuration {
     private Integer httpConnectionPoolSize = 5;
     @UriParam(defaultValue = "15m")
     private Duration httpConnectionPoolTtl = Duration.ofMinutes(15);
-    @UriParam
+    @UriParam(label = "security")
     private Certificate[] validateSigningCertificateChain;
 
     public AS2ApiName getApiName() {
