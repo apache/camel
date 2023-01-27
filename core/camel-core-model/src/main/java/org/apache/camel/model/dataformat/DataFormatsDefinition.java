@@ -39,7 +39,6 @@ public class DataFormatsDefinition {
 
     // cannot use @XmlElementRef as it doesn't allow optional properties
     @XmlElements({
-            @XmlElement(name = "any23", type = Any23DataFormat.class),
             @XmlElement(name = "asn1", type = ASN1DataFormat.class),
             @XmlElement(name = "avro", type = AvroDataFormat.class),
             @XmlElement(name = "barcode", type = BarcodeDataFormat.class),

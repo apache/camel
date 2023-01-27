@@ -23,7 +23,6 @@ import jakarta.xml.bind.annotation.XmlElements;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.dataformat.ASN1DataFormat;
-import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
@@ -73,7 +72,6 @@ import org.apache.camel.spi.Metadata;
 public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> implements DataFormatDefinitionAware {
 
     @XmlElements({
-            @XmlElement(name = "any23", type = Any23DataFormat.class),
             @XmlElement(name = "asn1", type = ASN1DataFormat.class),
             @XmlElement(name = "avro", type = AvroDataFormat.class),
             @XmlElement(name = "barcode", type = BarcodeDataFormat.class),

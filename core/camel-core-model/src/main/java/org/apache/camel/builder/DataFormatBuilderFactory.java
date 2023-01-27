@@ -17,7 +17,6 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.model.dataformat.ASN1DataFormat;
-import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
@@ -61,13 +60,6 @@ import org.apache.camel.model.dataformat.ZipFileDataFormat;
  * {@code DataFormatBuilderFactory} is a factory class of builder of all supported data formats.
  */
 public final class DataFormatBuilderFactory {
-
-    /**
-     * Uses the Any23 data format
-     */
-    public Any23DataFormat.Builder any23() {
-        return new Any23DataFormat.Builder();
-    }
 
     /**
      * Uses the ASN.1 file data format
