@@ -24,9 +24,7 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelException;
@@ -43,7 +41,6 @@ import org.apache.camel.component.as2.api.AS2MimeType;
 import org.apache.camel.component.as2.api.AS2ServerConnection;
 import org.apache.camel.component.as2.api.AS2ServerManager;
 import org.apache.camel.component.as2.api.AS2SignatureAlgorithm;
-import org.apache.camel.component.as2.api.AS2SignedDataGenerator;
 import org.apache.camel.component.as2.api.entity.AS2DispositionModifier;
 import org.apache.camel.component.as2.api.entity.AS2DispositionType;
 import org.apache.camel.component.as2.api.entity.AS2MessageDispositionNotificationEntity;
@@ -80,21 +77,10 @@ import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
 import org.apache.http.protocol.HttpDateGenerator;
 import org.apache.http.protocol.HttpRequestHandler;
-import org.bouncycastle.asn1.ASN1EncodableVector;
-import org.bouncycastle.asn1.cms.AttributeTable;
-import org.bouncycastle.asn1.cms.IssuerAndSerialNumber;
-import org.bouncycastle.asn1.smime.SMIMECapabilitiesAttribute;
-import org.bouncycastle.asn1.smime.SMIMECapability;
-import org.bouncycastle.asn1.smime.SMIMECapabilityVector;
-import org.bouncycastle.asn1.smime.SMIMEEncryptionKeyPreferenceAttribute;
-import org.bouncycastle.asn1.x500.X500Name;
-import org.bouncycastle.cert.jcajce.JcaCertStore;
-import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoGeneratorBuilder;
 import org.bouncycastle.cms.jcajce.ZlibExpanderProvider;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,63 +151,14 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     private static final String REPORTING_UA = "Server Responding with MDN";
 
     private static AS2ServerConnection serverConnection;
-    private static KeyPair serverSigningKP;
-    private static List<X509Certificate> serverCertList;
+    private static KeyPair serverKP;
+    private static X509Certificate serverCert;
     private static RequestHandler requestHandler;
 
     private static final HttpDateGenerator DATE_GENERATOR = new HttpDateGenerator();
 
-    private KeyPair issueKP;
-    private X509Certificate issueCert;
-
-    private KeyPair signingKP;
-    private KeyPair decryptingKP;
-    private X509Certificate signingCert;
-    private List<X509Certificate> certList;
-    private AS2SignedDataGenerator gen;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        super.setUp();
-        Security.addProvider(new BouncyCastleProvider());
-
-        setupKeysAndCertificates();
-
-        // Create and populate certificate store.
-        JcaCertStore certs = new JcaCertStore(certList);
-
-        // Create capabilities vector
-        SMIMECapabilityVector capabilities = new SMIMECapabilityVector();
-        capabilities.addCapability(SMIMECapability.dES_EDE3_CBC);
-        capabilities.addCapability(SMIMECapability.rC2_CBC, 128);
-        capabilities.addCapability(SMIMECapability.dES_CBC);
-
-        // Create signing attributes
-        ASN1EncodableVector attributes = new ASN1EncodableVector();
-        attributes.add(new SMIMEEncryptionKeyPreferenceAttribute(
-                new IssuerAndSerialNumber(new X500Name(signingCert.getIssuerDN().getName()), signingCert.getSerialNumber())));
-        attributes.add(new SMIMECapabilitiesAttribute(capabilities));
-
-        for (String signingAlgorithmName : AS2SignedDataGenerator
-                .getSupportedSignatureAlgorithmNamesForKey(signingKP.getPrivate())) {
-            try {
-                this.gen = new AS2SignedDataGenerator();
-                this.gen.addSignerInfoGenerator(new JcaSimpleSignerInfoGeneratorBuilder().setProvider("BC")
-                        .setSignedAttributeGenerator(new AttributeTable(attributes))
-                        .build(signingAlgorithmName, signingKP.getPrivate(), signingCert));
-                this.gen.addCertificates(certs);
-                break;
-            } catch (Exception e) {
-                this.gen = null;
-                continue;
-            }
-        }
-
-        if (this.gen == null) {
-            throw new Exception("failed to create signing generator");
-        }
-    }
+    private static KeyPair clientKeyPair;
+    private static X509Certificate clientCert;
 
     @Test
     public void plainMessageSendTest() throws Exception {
@@ -410,7 +347,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         // parameter type is org.apache.camel.component.as2.api.AS2EncryptionAlgorithm
         headers.put("CamelAS2.encryptingAlgorithm", AS2EncryptionAlgorithm.AES128_CBC);
         // parameter type is java.security.cert.Certificate[]
-        headers.put("CamelAS2.encryptingCertificateChain", certList);
+        headers.put("CamelAS2.encryptingCertificateChain", new Certificate[] { clientCert });
         // parameter type is String
         headers.put("CamelAS2.attachedFileName", "");
 
@@ -429,7 +366,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertTrue(entity instanceof ApplicationPkcs7MimeEnvelopedDataEntity,
                 "Request body does not contain ApplicationPkcs7Mime entity");
         MimeEntity envelopeEntity
-                = ((ApplicationPkcs7MimeEnvelopedDataEntity) entity).getEncryptedEntity(decryptingKP.getPrivate());
+                = ((ApplicationPkcs7MimeEnvelopedDataEntity) entity).getEncryptedEntity(clientKeyPair.getPrivate());
         assertTrue(envelopeEntity instanceof ApplicationEDIEntity, "Enveloped entity is not an EDI entity");
         String ediMessage = ((ApplicationEDIEntity) envelopeEntity).getEdiMessage();
         assertEquals(EDI_MESSAGE.replaceAll("[\n\r]", ""), ediMessage.replaceAll("[\n\r]", ""), "EDI message is different");
@@ -500,9 +437,9 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         // parameter type is org.apache.camel.component.as2.api.AS2SignatureAlgorithm
         headers.put("CamelAS2.signingAlgorithm", AS2SignatureAlgorithm.SHA512WITHRSA);
         // parameter type is java.security.cert.Certificate[]
-        headers.put("CamelAS2.signingCertificateChain", certList.toArray(new Certificate[0]));
+        headers.put("CamelAS2.signingCertificateChain", new Certificate[] { clientCert });
         // parameter type is java.security.PrivateKey
-        headers.put("CamelAS2.signingPrivateKey", signingKP.getPrivate());
+        headers.put("CamelAS2.signingPrivateKey", clientKeyPair.getPrivate());
         // parameter type is String
         headers.put("CamelAS2.dispositionNotificationTo", "mrAS2@example.com");
         // parameter type is String[]
@@ -547,7 +484,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(responseEntity, "Response entity");
         assertTrue(responseEntity instanceof MultipartSignedEntity, "Unexpected response entity type");
         MultipartSignedEntity responseSignedEntity = (MultipartSignedEntity) responseEntity;
-        assertTrue(SigningUtils.isValid(responseSignedEntity, new Certificate[] { signingCert }),
+        assertTrue(SigningUtils.isValid(responseSignedEntity, new Certificate[] { serverCert }),
                 "Signature for response entity is invalid");
         MimeEntity responseSignedDataEntity = responseSignedEntity.getSignedDataEntity();
         assertTrue(responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,
@@ -581,7 +518,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
         ReceivedContentMic computedContentMic
-                = MicUtils.createReceivedContentMic((HttpEntityEnclosingRequest) request, decryptingKP.getPrivate());
+                = MicUtils.createReceivedContentMic((HttpEntityEnclosingRequest) request, new Certificate[] { clientCert },
+                        clientKeyPair.getPrivate());
         assertEquals(computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest(),
                 "Received content MIC does not match computed");
     }
@@ -653,7 +591,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         assertNotNull(responseEntity, "Response entity");
         assertTrue(responseEntity instanceof MultipartSignedEntity, "Unexpected response entity type");
         MultipartSignedEntity responseSignedEntity = (MultipartSignedEntity) responseEntity;
-        assertTrue(SigningUtils.isValid(responseSignedEntity, new Certificate[] { signingCert }),
+        assertTrue(SigningUtils.isValid(responseSignedEntity, new Certificate[] { serverCert }),
                 "Signature for response entity is invalid");
         MimeEntity responseSignedDataEntity = responseSignedEntity.getSignedDataEntity();
         assertTrue(responseSignedDataEntity instanceof DispositionNotificationMultipartReportEntity,
@@ -687,7 +625,8 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
 
         ReceivedContentMic receivedContentMic = messageDispositionNotificationEntity.getReceivedContentMic();
         ReceivedContentMic computedContentMic
-                = MicUtils.createReceivedContentMic((HttpEntityEnclosingRequest) request, decryptingKP.getPrivate());
+                = MicUtils.createReceivedContentMic((HttpEntityEnclosingRequest) request, new Certificate[] { clientCert },
+                        clientKeyPair.getPrivate());
         assertEquals(computedContentMic.getEncodedMessageDigest(), receivedContentMic.getEncodedMessageDigest(),
                 "Received content MIC does not match computed");
     }
@@ -701,7 +640,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     private void runAsyncMDNTest() throws CamelException, HttpException {
         AS2AsynchronousMDNManager mdnManager = new AS2AsynchronousMDNManager(
                 AS2_VERSION, ORIGIN_SERVER_NAME, SERVER_FQDN,
-                certList.toArray(new X509Certificate[0]), signingKP.getPrivate());
+                new Certificate[] { clientCert }, clientKeyPair.getPrivate());
 
         // Create plain edi request message to acknowledge
         ApplicationEDIEntity ediEntity = EntityUtils.createEDIEntity(EDI_MESSAGE,
@@ -736,7 +675,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
                 request,
                 response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED,
                 dispositionModifier, failureFields, errorFields, warningFields, extensionFields, null, "boundary",
-                true, serverSigningKP.getPrivate(), "Got your message!");
+                true, serverKP.getPrivate(), "Got your message!", new Certificate[] { clientCert });
 
         // Send MDN
         @SuppressWarnings("unused")
@@ -746,6 +685,7 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
     @BeforeAll
     public static void setupTest() throws Exception {
         setupServerKeysAndCertificates();
+        setupClientKeysAndCertificates();
         receiveTestMessages();
     }
 
@@ -806,11 +746,15 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
                     }
                 };
                 // test route for send
-                from("direct://SEND").to("as2://" + PATH_PREFIX + "/send?inBody=ediMessage");
+                from("direct://SEND")
+                        .to("as2://" + PATH_PREFIX + "/send?inBody=ediMessage&httpSocketTimeout=5m&httpConnectionTimeout=5m");
 
                 // test route for send2
-                from("direct://SEND2").toF("as2://" + PATH_PREFIX + "/send?inBody=ediMessage&as2From=%s&as2To=%s", AS2_NAME,
-                        AS2_NAME);
+                from("direct://SEND2")
+                        .toF("as2://" + PATH_PREFIX
+                             + "/send?inBody=ediMessage&as2From=%s&as2To=%s&httpSocketTimeout=5m&httpConnectionTimeout=5m",
+                                AS2_NAME,
+                                AS2_NAME);
 
                 from("jetty:http://localhost:" + MDN_TARGET_PORT + "/handle-receipts").process(proc);
 
@@ -837,27 +781,21 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         // certificate we sign against
         //
         String signingDN = "CN=William J. Collins, E=punkhornsw@gmail.com, O=Punkhorn Software, C=US";
-        serverSigningKP = kpg.generateKeyPair();
-        X509Certificate signingCert = Utils.makeCertificate(
-                serverSigningKP, signingDN, issueKP, issueDN);
-
-        serverCertList = new ArrayList<>();
-
-        serverCertList.add(signingCert);
-        serverCertList.add(issueCert);
+        serverKP = kpg.generateKeyPair();
+        serverCert = Utils.makeCertificate(serverKP, signingDN, issueKP, issueDN);
     }
 
     private static void receiveTestMessages() throws IOException {
         serverConnection = new AS2ServerConnection(
                 AS2_VERSION, ORIGIN_SERVER_NAME,
                 SERVER_FQDN, PARTNER_TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
-                serverCertList.toArray(new Certificate[0]), serverSigningKP.getPrivate(), serverSigningKP.getPrivate(),
-                MDN_MESSAGE_TEMPLATE);
+                new Certificate[] { serverCert }, serverKP.getPrivate(), serverKP.getPrivate(),
+                MDN_MESSAGE_TEMPLATE, new Certificate[] { clientCert });
         requestHandler = new RequestHandler();
         serverConnection.listen("/", requestHandler);
     }
 
-    private void setupKeysAndCertificates() throws Exception {
+    private static void setupClientKeysAndCertificates() throws Exception {
         //
         // set up our certificates
         //
@@ -866,24 +804,15 @@ public class AS2ClientManagerIT extends AbstractAS2ITSupport {
         kpg.initialize(1024, new SecureRandom());
 
         String issueDN = "O=Punkhorn Software, C=US";
-        issueKP = kpg.generateKeyPair();
-        issueCert = Utils.makeCertificate(
+        KeyPair issueKP = kpg.generateKeyPair();
+        X509Certificate issueCert = Utils.makeCertificate(
                 issueKP, issueDN, issueKP, issueDN);
 
         //
         // certificate we sign against
         //
         String signingDN = "CN=William J. Collins, E=punkhornsw@gmail.com, O=Punkhorn Software, C=US";
-        signingKP = kpg.generateKeyPair();
-        signingCert = Utils.makeCertificate(
-                signingKP, signingDN, issueKP, issueDN);
-
-        certList = new ArrayList<>();
-
-        certList.add(signingCert);
-        certList.add(issueCert);
-
-        // keys used to encrypt/decrypt
-        decryptingKP = signingKP;
+        clientKeyPair = kpg.generateKeyPair();
+        clientCert = Utils.makeCertificate(clientKeyPair, signingDN, issueKP, issueDN);
     }
 }

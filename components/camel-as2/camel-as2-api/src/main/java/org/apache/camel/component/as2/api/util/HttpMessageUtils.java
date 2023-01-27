@@ -17,6 +17,7 @@
 package org.apache.camel.component.as2.api.util;
 
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.util.Objects;
 
 import org.apache.camel.component.as2.api.AS2Header;
@@ -126,7 +127,8 @@ public final class HttpMessageUtils {
         return null;
     }
 
-    public static ApplicationEDIEntity extractEdiPayload(HttpMessage message, PrivateKey privateKey) throws HttpException {
+    public static ApplicationEDIEntity extractEdiPayload(HttpMessage message, DecrpytingAndSigningInfo decrpytingAndSigningInfo)
+            throws HttpException {
 
         String contentTypeString = getHeaderValue(message, AS2Header.CONTENT_TYPE);
         if (contentTypeString == null) {
@@ -144,17 +146,17 @@ public final class HttpMessageUtils {
                 break;
             }
             case AS2MimeType.MULTIPART_SIGNED: {
-                ediEntity = extractMultipartSigned(message);
+                ediEntity = extractMultipartSigned(message, decrpytingAndSigningInfo);
                 break;
             }
             case AS2MimeType.APPLICATION_PKCS7_MIME: {
                 switch (contentType.getParameter("smime-type")) {
                     case "compressed-data": {
-                        ediEntity = extractCompressedData(message);
+                        ediEntity = extractCompressedData(message, decrpytingAndSigningInfo);
                         break;
                     }
                     case "enveloped-data": {
-                        ediEntity = extractEnvelopedData(message, privateKey);
+                        ediEntity = extractEnvelopedData(message, decrpytingAndSigningInfo);
                         break;
                     }
                     default:
@@ -174,9 +176,11 @@ public final class HttpMessageUtils {
 
     }
 
-    private static ApplicationEDIEntity extractEnvelopedData(HttpMessage message, PrivateKey privateKey) throws HttpException {
+    private static ApplicationEDIEntity extractEnvelopedData(
+            HttpMessage message, DecrpytingAndSigningInfo decrpytingAndSigningInfo)
+            throws HttpException {
         ApplicationEDIEntity ediEntity;
-        if (privateKey == null) {
+        if (decrpytingAndSigningInfo.getDecryptingPrivateKey() == null) {
             throw new HttpException(
                     "Failed to extract EDI payload: private key can not be null for AS2 enveloped message");
         }
@@ -185,11 +189,13 @@ public final class HttpMessageUtils {
 
         Objects.requireNonNull(envelopedDataEntity,
                 "Failed to extract EDI payload: the enveloped data entity is null");
-        ediEntity = extractEdiPayloadFromEnvelopedEntity(envelopedDataEntity, privateKey);
+        ediEntity = extractEdiPayloadFromEnvelopedEntity(envelopedDataEntity, decrpytingAndSigningInfo);
         return ediEntity;
     }
 
-    private static ApplicationEDIEntity extractCompressedData(HttpMessage message) throws HttpException {
+    private static ApplicationEDIEntity extractCompressedData(
+            HttpMessage message, DecrpytingAndSigningInfo decrpytingAndSigningInfo)
+            throws HttpException {
         ApplicationEDIEntity ediEntity;
         ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity
                 = getEntity(message, ApplicationPkcs7MimeCompressedDataEntity.class);
@@ -197,11 +203,13 @@ public final class HttpMessageUtils {
         Objects.requireNonNull(compressedDataEntity,
                 "Failed to extract the EDI payload: the compressed data entity is null");
 
-        ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity);
+        ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo);
         return ediEntity;
     }
 
-    private static ApplicationEDIEntity extractMultipartSigned(HttpMessage message) throws HttpException {
+    private static ApplicationEDIEntity extractMultipartSigned(
+            HttpMessage message, DecrpytingAndSigningInfo decrpytingAndSigningInfo)
+            throws HttpException {
         ApplicationEDIEntity ediEntity;
         MultipartSignedEntity multipartSignedEntity = getEntity(message,
                 MultipartSignedEntity.class);
@@ -209,13 +217,18 @@ public final class HttpMessageUtils {
         Objects.requireNonNull(multipartSignedEntity,
                 "Failed to extract EDI payload: the multipart signed entity is null");
 
+        if (decrpytingAndSigningInfo.getValidateSigningCertificateChain() != null && !SigningUtils
+                .isValid(multipartSignedEntity, decrpytingAndSigningInfo.getValidateSigningCertificateChain())) {
+            throw new HttpException("Failed to validate the signature");
+        }
+
         MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();
         if (mimeEntity instanceof ApplicationEDIEntity) {
             ediEntity = (ApplicationEDIEntity) mimeEntity;
         } else if (mimeEntity instanceof ApplicationPkcs7MimeCompressedDataEntity) {
             ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity
                     = (ApplicationPkcs7MimeCompressedDataEntity) mimeEntity;
-            ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity);
+            ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo);
         } else {
             throw new HttpException(
                     "Failed to extract EDI payload: invalid content type '" + mimeEntity.getContentTypeValue()
@@ -225,11 +238,11 @@ public final class HttpMessageUtils {
     }
 
     private static ApplicationEDIEntity extractEdiPayloadFromEnvelopedEntity(
-            ApplicationPkcs7MimeEnvelopedDataEntity envelopedDataEntity, PrivateKey privateKey)
+            ApplicationPkcs7MimeEnvelopedDataEntity envelopedDataEntity, DecrpytingAndSigningInfo decrpytingAndSigningInfo)
             throws HttpException {
         ApplicationEDIEntity ediEntity = null;
 
-        MimeEntity entity = envelopedDataEntity.getEncryptedEntity(privateKey);
+        MimeEntity entity = envelopedDataEntity.getEncryptedEntity(decrpytingAndSigningInfo.getDecryptingPrivateKey());
         String contentTypeString = entity.getContentTypeValue();
         if (contentTypeString == null) {
             throw new HttpException("Failed to extract EDI message: content type missing from encrypted entity");
@@ -245,13 +258,18 @@ public final class HttpMessageUtils {
             }
             case AS2MimeType.MULTIPART_SIGNED: {
                 MultipartSignedEntity multipartSignedEntity = (MultipartSignedEntity) entity;
+                if (decrpytingAndSigningInfo.getValidateSigningCertificateChain() != null && !SigningUtils
+                        .isValid(multipartSignedEntity, decrpytingAndSigningInfo.getValidateSigningCertificateChain())) {
+                    throw new HttpException("Failed to validate the signature");
+                }
+
                 MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();
                 if (mimeEntity instanceof ApplicationEDIEntity) {
                     ediEntity = (ApplicationEDIEntity) mimeEntity;
                 } else if (mimeEntity instanceof ApplicationPkcs7MimeCompressedDataEntity) {
                     ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity
                             = (ApplicationPkcs7MimeCompressedDataEntity) mimeEntity;
-                    ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity);
+                    ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo);
                 } else {
 
                     throw new HttpException(
@@ -268,7 +286,7 @@ public final class HttpMessageUtils {
                 }
                 ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity
                         = (ApplicationPkcs7MimeCompressedDataEntity) entity;
-                ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity);
+                ediEntity = extractEdiPayloadFromCompressedEntity(compressedDataEntity, decrpytingAndSigningInfo);
                 break;
             }
             default:
@@ -281,7 +299,7 @@ public final class HttpMessageUtils {
     }
 
     public static ApplicationEDIEntity extractEdiPayloadFromCompressedEntity(
-            ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity)
+            ApplicationPkcs7MimeCompressedDataEntity compressedDataEntity, DecrpytingAndSigningInfo decrpytingAndSigningInfo)
             throws HttpException {
         ApplicationEDIEntity ediEntity = null;
 
@@ -301,6 +319,11 @@ public final class HttpMessageUtils {
             }
             case AS2MimeType.MULTIPART_SIGNED: {
                 MultipartSignedEntity multipartSignedEntity = (MultipartSignedEntity) entity;
+                if (decrpytingAndSigningInfo.getValidateSigningCertificateChain() != null && !SigningUtils
+                        .isValid(multipartSignedEntity, decrpytingAndSigningInfo.getValidateSigningCertificateChain())) {
+                    throw new HttpException("Failed to validate the signature");
+                }
+
                 MimeEntity mimeEntity = multipartSignedEntity.getSignedDataEntity();
                 if (mimeEntity instanceof ApplicationEDIEntity) {
                     ediEntity = (ApplicationEDIEntity) mimeEntity;
@@ -321,4 +344,22 @@ public final class HttpMessageUtils {
         return ediEntity;
     }
 
+    public static class DecrpytingAndSigningInfo {
+        private Certificate[] validateSigningCertificateChain;
+        private PrivateKey decryptingPrivateKey;
+
+        public DecrpytingAndSigningInfo(Certificate[] validateSigningCertificateChain, PrivateKey decryptingPrivateKey) {
+            this.validateSigningCertificateChain = validateSigningCertificateChain;
+            this.decryptingPrivateKey = decryptingPrivateKey;
+        }
+
+        public Certificate[] getValidateSigningCertificateChain() {
+            return validateSigningCertificateChain;
+        }
+
+        public PrivateKey getDecryptingPrivateKey() {
+            return decryptingPrivateKey;
+        }
+
+    }
 }

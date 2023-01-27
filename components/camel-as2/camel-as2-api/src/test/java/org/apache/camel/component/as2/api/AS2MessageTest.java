@@ -141,6 +141,7 @@ public class AS2MessageTest {
     private static final Duration HTTP_CONNECTION_TIMEOUT = Duration.ofSeconds(5);
     private static final Integer HTTP_CONNECTION_POOL_SIZE = 5;
     private static final Duration HTTP_CONNECTION_POOL_TTL = Duration.ofMinutes(15);
+    private static final Certificate[] VALIDATE_SIGNING_CERTIFICATE_CHAIN = null;
     private static final String RECIPIENT_DELIVERY_ADDRESS = "http://localhost:" + TARGET_PORT + "/handle-receipts";
     private static final String AS2_VERSION = "1.1";
     private static final String USER_AGENT = "Camel AS2 Endpoint";
@@ -215,7 +216,8 @@ public class AS2MessageTest {
 
         testServer = new AS2ServerConnection(
                 AS2_VERSION, "MyServer-HTTP/1.1", SERVER_FQDN, TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
-                certList.toArray(new Certificate[0]), signingKP.getPrivate(), decryptingKP.getPrivate(), MDN_MESSAGE_TEMPLATE);
+                certList.toArray(new Certificate[0]), signingKP.getPrivate(), decryptingKP.getPrivate(), MDN_MESSAGE_TEMPLATE,
+                VALIDATE_SIGNING_CERTIFICATE_CHAIN);
         testServer.listen("*", new HttpRequestHandler() {
             @Override
             public void handle(HttpRequest request, HttpResponse response, HttpContext context)
@@ -225,7 +227,8 @@ public class AS2MessageTest {
                     context.setAttribute(AS2ServerManager.SUBJECT, SUBJECT);
                     context.setAttribute(AS2ServerManager.FROM, AS2_NAME);
                     LOG.debug("{}", AS2Utils.printMessage(request));
-                    ediEntity = HttpMessageUtils.extractEdiPayload(request, testServer.getDecryptingPrivateKey());
+                    ediEntity = HttpMessageUtils.extractEdiPayload(request, new HttpMessageUtils.DecrpytingAndSigningInfo(
+                            testServer.getValidateSigningCertificateChain(), testServer.getDecryptingPrivateKey()));
                 } catch (Exception e) {
                     throw new HttpException("Failed to parse AS2 Message Entity", e);
                 }
@@ -742,7 +745,7 @@ public class AS2MessageTest {
                 request,
                 response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, AS2DispositionType.PROCESSED,
                 dispositionModifier, failureFields, errorFields, warningFields, extensionFields, null, "boundary", true,
-                null, "Got ya message!");
+                null, "Got ya message!", null);
 
         // Send MDN
         HttpCoreContext httpContext = mdnManager.send(mdn, RECIPIENT_DELIVERY_ADDRESS);
@@ -767,7 +770,7 @@ public class AS2MessageTest {
         assertArrayEquals(errorFields, mdnEntity.getErrorFields(), "Unexpected value for Error Fields");
         assertArrayEquals(warningFields, mdnEntity.getWarningFields(), "Unexpected value for Warning Fields");
         assertEquals(extensionFields, mdnEntity.getExtensionFields(), "Unexpected value for Extension Fields");
-        ReceivedContentMic expectedMic = MicUtils.createReceivedContentMic(request, null);
+        ReceivedContentMic expectedMic = MicUtils.createReceivedContentMic(request, null, null);
         ReceivedContentMic mdnMic = mdnEntity.getReceivedContentMic();
         assertEquals(expectedMic.getEncodedMessageDigest(), mdnMic.getEncodedMessageDigest(),
                 "Unexpected value for Received Content Mic");

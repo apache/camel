@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -78,7 +79,8 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
                                                    Map<String, String> extensionFields,
                                                    String charset,
                                                    boolean isMainBody,
-                                                   PrivateKey decryptingPrivateKey) throws HttpException {
+                                                   PrivateKey decryptingPrivateKey,
+                                                   Certificate[] validateSigningCertificateChain) throws HttpException {
         setMainBody(isMainBody);
         setContentType(ContentType.create(AS2MimeType.MESSAGE_DISPOSITION_NOTIFICATION, charset));
 
@@ -89,7 +91,8 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
 
         this.originalMessageId = HttpMessageUtils.getHeaderValue(request, AS2Header.MESSAGE_ID);
 
-        this.receivedContentMic = MicUtils.createReceivedContentMic(request, decryptingPrivateKey);
+        this.receivedContentMic
+                = MicUtils.createReceivedContentMic(request, validateSigningCertificateChain, decryptingPrivateKey);
 
         this.reportingUA = HttpMessageUtils.getHeaderValue(response, AS2Header.SERVER);
 
