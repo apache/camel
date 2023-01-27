@@ -111,6 +111,7 @@
         <module>camel-crypto</module>
         <module>camel-csimple-joor</module>
         <module>camel-csv</module>
+        <module>camel-datasonnet</module>
         <module>camel-debug</module>
         <module>camel-debezium</module>
         <module>camel-digitalocean</module>

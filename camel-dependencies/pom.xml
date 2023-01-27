@@ -137,8 +137,8 @@
         <cxf-codegen-plugin-version>4.0.0</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>4.0.0</cxf-xjc-plugin-version>
-	<cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
-        <datasonnet-mapper-version>2.2.0</datasonnet-mapper-version>
+	    <cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
+        <datasonnet-mapper-version>2.5-jakarta4</datasonnet-mapper-version>
         <deltaspike-version>1.9.5</deltaspike-version>
         <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
         <derby-version>10.14.2.0</derby-version>
