@@ -27,20 +27,18 @@ import org.junit.jupiter.api.Test;
  */
 public class CassandraIdempotentIT extends BaseCassandra {
 
-    private CassandraIdempotentRepository idempotentRepository;
+    private CassandraIdempotentRepository idempotentRepository = createRepo();
 
-    @Override
-    protected void doPreSetup() throws Exception {
-        idempotentRepository = new NamedCassandraIdempotentRepository(getSession(), "ID");
+    protected CassandraIdempotentRepository createRepo() {
+        CassandraIdempotentRepository idempotentRepository = new NamedCassandraIdempotentRepository(getSession(), "ID");
         idempotentRepository.setTable("NAMED_CAMEL_IDEMPOTENT");
         idempotentRepository.start();
-        super.doPreSetup();
+
+        return idempotentRepository;
     }
 
-    @Override
     @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void tearDown() {
         idempotentRepository.stop();
     }
 
@@ -55,7 +53,8 @@ public class CassandraIdempotentIT extends BaseCassandra {
     }
 
     private void send(String idempotentId, String body) {
-        super.template.sendBodyAndHeader("direct:input", body, "idempotentId", idempotentId);
+        camelContextExtension.getProducerTemplate()
+                .sendBodyAndHeader("direct:input", body, "idempotentId", idempotentId);
     }
 
     @Test

@@ -23,19 +23,34 @@ import java.time.Duration;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
 import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
+import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.cassandra.services.CassandraLocalContainerService;
-import org.apache.camel.test.junit5.CamelTestSupport;
-import org.junit.jupiter.api.extension.ExtensionContext;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.testcontainers.shaded.org.apache.commons.io.IOUtils;
 
-public abstract class BaseCassandra extends CamelTestSupport {
+public abstract class BaseCassandra implements ConfigurableRoute, CamelTestSupportHelper {
 
+    @Order(1)
     @RegisterExtension
     public static CassandraLocalContainerService service;
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     public static final String KEYSPACE_NAME = "camel_ks";
     public static final String DATACENTER_NAME = "datacenter1";
+
+    protected CamelContext context = camelContextExtension.getContext();
 
     private CqlSession session;
 
@@ -47,10 +62,8 @@ public abstract class BaseCassandra extends CamelTestSupport {
                 .withNetworkAliases("cassandra");
     }
 
-    @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
-        super.beforeEach(context);
-
+    @BeforeEach
+    public void executeScript() throws Exception {
         executeScript("BasicDataSet.cql");
     }
 
@@ -68,10 +81,8 @@ public abstract class BaseCassandra extends CamelTestSupport {
         getSession().execute(cql);
     }
 
-    @Override
+    @AfterEach
     protected void doPostTearDown() throws Exception {
-        super.doPostTearDown();
-
         try {
             if (session != null) {
                 session.close();
@@ -99,5 +110,22 @@ public abstract class BaseCassandra extends CamelTestSupport {
 
     public String getUrl() {
         return service.getCQL3Endpoint();
+    }
+
+    protected abstract RouteBuilder createRouteBuilder();
+
+    @Override
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
     }
 }

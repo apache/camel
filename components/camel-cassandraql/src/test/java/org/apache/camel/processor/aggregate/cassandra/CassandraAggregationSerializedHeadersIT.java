@@ -23,6 +23,7 @@ import org.apache.camel.component.cassandra.integration.BaseCassandra;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.aggregate.util.HeaderDto;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -32,19 +33,16 @@ public class CassandraAggregationSerializedHeadersIT extends BaseCassandra {
 
     private CassandraAggregationRepository aggregationRepository;
 
-    @Override
-    protected void doPreSetup() throws Exception {
+    @BeforeEach
+    protected void doPreSetup() {
         aggregationRepository = new NamedCassandraAggregationRepository(getSession(), "ID");
         aggregationRepository.setTable("NAMED_CAMEL_AGGREGATION");
         aggregationRepository.setAllowSerializedHeaders(true);
         aggregationRepository.start();
-        super.doPreSetup();
     }
 
-    @Override
     @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void tearDown() {
         aggregationRepository.stop();
     }
 
@@ -73,7 +71,8 @@ public class CassandraAggregationSerializedHeadersIT extends BaseCassandra {
     }
 
     private void send(HeaderDto aggregationId, String body) {
-        super.template.sendBodyAndHeader("direct:input", body, "aggregationId", aggregationId);
+        camelContextExtension.getProducerTemplate()
+                .sendBodyAndHeader("direct:input", body, "aggregationId", aggregationId);
     }
 
     @Test

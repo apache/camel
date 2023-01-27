@@ -16,10 +16,13 @@
  */
 package org.apache.camel.processor.idempotent.cassandra;
 
+import java.io.IOException;
+
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cassandra.integration.BaseCassandra;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtensionContext;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,27 +34,18 @@ public class NamedCassandraIdempotentRepositoryIT extends BaseCassandra {
 
     private CassandraIdempotentRepository idempotentRepository;
 
-    @Override
-    protected void doPreSetup() throws Exception {
+    @BeforeEach
+    protected void doPreSetup() throws IOException {
         idempotentRepository = new NamedCassandraIdempotentRepository(getSession(), "ID");
         idempotentRepository.setTable("NAMED_CAMEL_IDEMPOTENT");
         idempotentRepository.start();
 
-        super.doPreSetup();
-    }
-
-    @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
-        super.beforeEach(context);
-
         executeScript("NamedIdempotentDataSet.cql");
     }
 
-    @Override
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         idempotentRepository.stop();
-        super.tearDown();
     }
 
     private boolean exists(String key) {
@@ -135,5 +129,10 @@ public class NamedCassandraIdempotentRepositoryIT extends BaseCassandra {
         idempotentRepository.clear();
         // Then
         assertFalse(idempotentRepository.contains(key));
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return null;
     }
 }

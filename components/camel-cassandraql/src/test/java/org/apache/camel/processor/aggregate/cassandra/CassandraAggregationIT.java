@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cassandra.integration.BaseCassandra;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -31,18 +32,15 @@ public class CassandraAggregationIT extends BaseCassandra {
 
     private CassandraAggregationRepository aggregationRepository;
 
-    @Override
-    protected void doPreSetup() throws Exception {
+    @BeforeEach
+    protected void doPreSetup() {
         aggregationRepository = new NamedCassandraAggregationRepository(getSession(), "ID");
         aggregationRepository.setTable("NAMED_CAMEL_AGGREGATION");
         aggregationRepository.start();
-        super.doPreSetup();
     }
 
-    @Override
     @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void tearDown() {
         aggregationRepository.stop();
     }
 
@@ -71,7 +69,7 @@ public class CassandraAggregationIT extends BaseCassandra {
     }
 
     private void send(String aggregationId, String body) {
-        super.template.sendBodyAndHeader("direct:input", body, "aggregationId", aggregationId);
+        camelContextExtension.getProducerTemplate().sendBodyAndHeader("direct:input", body, "aggregationId", aggregationId);
     }
 
     @Test
