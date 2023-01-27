@@ -26,25 +26,25 @@ public final class ZeebeConstants {
     public static final String DEFAULT_GATEWAY_HOST = "localhost";
     public static final int DEFAULT_GATEWAY_PORT = 26500;
 
-    @Metadata(label = "producer", description = "The name of the resource.", javaType = "String")
+    @Metadata(label = "producer", description = "The name of the resource.")
     public static final String RESOURCE_NAME = HEADER_PREFIX + "ResourceName";
 
-    @Metadata(label = "producer", description = "True if the operation was successful.", javaType = "bool")
+    @Metadata(label = "producer", description = "True if the operation was successful.")
     public static final String IS_SUCCESS = HEADER_PREFIX + "IsSuccess";
 
-    @Metadata(label = "producer", description = "In case of an error, the error message.", javaType = "String")
+    @Metadata(label = "producer", description = "In case of an error, the error message.")
     public static final String ERROR_MESSAGE = HEADER_PREFIX + "ErrorMessage";
 
-    @Metadata(label = "producer", description = "In case of an error, the error code if available.", javaType = "String")
+    @Metadata(label = "producer", description = "In case of an error, the error code if available.")
     public static final String ERROR_CODE = HEADER_PREFIX + "ErrorCode";
 
-    @Metadata(label = "producer", description = "The process ID of a deployed process.", javaType = "String")
+    @Metadata(label = "producer", description = "The process ID of a deployed process.")
     public static final String BPMN_PROCESS_ID = HEADER_PREFIX + "BPMNProcessId";
 
-    @Metadata(label = "producer", description = "The version of a deployed process.", javaType = "int")
+    @Metadata(label = "producer", description = "The version of a deployed process.")
     public static final String VERSION = HEADER_PREFIX + "Version";
 
-    @Metadata(label = "producer", description = "The process definition key of a deployed process.", javaType = "long")
+    @Metadata(label = "producer", description = "The process definition key of a deployed process.")
     public static final String PROCESS_DEFINITION_KEY = HEADER_PREFIX + "ProcessDefinitionKey";
 
     private ZeebeConstants() {

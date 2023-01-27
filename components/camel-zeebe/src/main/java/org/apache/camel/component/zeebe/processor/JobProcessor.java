@@ -49,7 +49,6 @@ public class JobProcessor extends AbstractBaseProcessor {
                 throw new IllegalArgumentException("Cannot convert body to JobMessage", jsonProcessingException);
             }
         } else {
-            LOG.error("Job data missing");
             throw new CamelException("Job data missing");
         }
 
@@ -69,7 +68,6 @@ public class JobProcessor extends AbstractBaseProcessor {
                 resultMessage = throwError(message);
                 break;
             default:
-                LOG.error("Unknown Operation!");
                 throw new IllegalArgumentException("Unknown Operation!");
         }
 

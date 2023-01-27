@@ -33,8 +33,8 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Zeebe component which does integrage with Camunda Zeebe to interact with the API.
  */
-@UriEndpoint(firstVersion = "1.0-SNAPSHOT", scheme = "zeebe", title = "Zeebe", syntax = "zeebe:operationName",
-             category = { Category.JAVA },
+@UriEndpoint(firstVersion = "3.21.0", scheme = "zeebe", title = "Zeebe", syntax = "zeebe:operationName",
+             category = { Category.PROCESS },
              headersClass = ZeebeConstants.class)
 public class ZeebeEndpoint extends DefaultEndpoint {
 
@@ -48,11 +48,11 @@ public class ZeebeEndpoint extends DefaultEndpoint {
     private boolean formatJSON;
 
     @UriParam
-    @Metadata(label = "consumer", description = "JobKey for the job worker.", javaType = "String")
+    @Metadata(label = "consumer", description = "JobKey for the job worker.")
     private String jobKey;
 
     @UriParam(defaultValue = "10")
-    @Metadata(label = "consumer", description = "Timeout for job worker.", javaType = "int")
+    @Metadata(label = "consumer", description = "Timeout for job worker.")
     private int timeout = 10;
 
     public ZeebeEndpoint() {

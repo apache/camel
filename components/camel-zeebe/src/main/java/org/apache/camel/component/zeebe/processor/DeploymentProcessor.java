@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.zeebe.processor;
 
+import java.io.InputStream;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
@@ -30,8 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DeploymentProcessor extends AbstractBaseProcessor {
-    private static final Logger LOG = LoggerFactory.getLogger(DeploymentProcessor.class);
-
     public DeploymentProcessor(ZeebeEndpoint endpoint) {
         super(endpoint);
     }
@@ -42,13 +42,15 @@ public class DeploymentProcessor extends AbstractBaseProcessor {
 
         Object body = exchange.getMessage().getBody();
         String headerResourceName = exchange.getMessage().getHeader(ZeebeConstants.RESOURCE_NAME, String.class);
-        if (headerResourceName != null && (body instanceof String || body instanceof byte[])) {
+        if (headerResourceName != null && (body instanceof String || body instanceof byte[] || body instanceof InputStream)) {
             message = new DeploymentRequest();
             message.setName(headerResourceName);
             if (body instanceof String) {
                 message.setContent(((String) body).getBytes());
-            } else {
+            } else if (body instanceof byte[]){
                 message.setContent((byte[]) body);
+            } else {
+                message.setContent(((InputStream) body).readAllBytes());
             }
         } else if (body instanceof DeploymentRequest) {
             message = (DeploymentRequest) body;
@@ -59,7 +61,6 @@ public class DeploymentProcessor extends AbstractBaseProcessor {
                 throw new IllegalArgumentException("Cannot convert body to DeploymentRequestMessage", jsonProcessingException);
             }
         } else {
-            LOG.error("Deployment Resource missing");
             throw new CamelException("Deployment Resource missing");
         }
 
@@ -70,7 +71,6 @@ public class DeploymentProcessor extends AbstractBaseProcessor {
                 resultMessage = deployResource(message);
                 break;
             default:
-                LOG.error("Unknown Operation!");
                 exchange.setException(new IllegalArgumentException("Unknown Operation!"));
                 throw new IllegalArgumentException("Unknown Operation!");
         }
