@@ -29,6 +29,8 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
@@ -158,6 +160,15 @@ public class DefaultAnnotationProcessor implements AnnotationProcessor {
                     assert endpoint != null;
                     field.set(instance, endpoint);
                 }
+
+                return;
+            }
+
+            if (annotation instanceof Produce p) {
+                final ProducerTemplate producerTemplate = context.createProducerTemplate();
+
+                producerTemplate.setDefaultEndpointUri(p.value());
+                field.set(instance, producerTemplate);
             }
         } catch (IllegalAccessException e) {
             throw new RuntimeException(illegalAccessMessage(annotation.getClass(), instance, fieldName), e);

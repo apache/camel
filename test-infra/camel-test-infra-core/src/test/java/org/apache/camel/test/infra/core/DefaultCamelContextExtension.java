@@ -21,6 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -92,6 +93,7 @@ public class DefaultCamelContextExtension implements CamelContextExtension {
         LOG.info("********************************************************************************");
         LOG.info("Testing: {} ({})", extensionContext.getDisplayName(), o.getClass().getName());
 
+        fixtureProcessor.evalField(extensionContext, Produce.class, o, context);
         fixtureProcessor.evalField(extensionContext, EndpointInject.class, o, context);
         fixtureProcessor.evalField(extensionContext, BindToRegistry.class, o, context);
 
