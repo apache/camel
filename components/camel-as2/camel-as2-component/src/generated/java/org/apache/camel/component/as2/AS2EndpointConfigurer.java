@@ -29,12 +29,9 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("attachedFileName", java.lang.String.class);
         map.put("clientFqdn", java.lang.String.class);
         map.put("compressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
-        map.put("decryptingPrivateKey", java.security.PrivateKey.class);
         map.put("dispositionNotificationTo", java.lang.String.class);
         map.put("ediMessageTransferEncoding", java.lang.String.class);
         map.put("ediMessageType", org.apache.http.entity.ContentType.class);
-        map.put("encryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
-        map.put("encryptingCertificateChain", java.security.cert.Certificate[].class);
         map.put("from", java.lang.String.class);
         map.put("httpConnectionPoolSize", java.lang.Integer.class);
         map.put("httpConnectionPoolTtl", java.time.Duration.class);
@@ -46,18 +43,21 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("server", java.lang.String.class);
         map.put("serverFqdn", java.lang.String.class);
         map.put("serverPortNumber", java.lang.Integer.class);
-        map.put("signedReceiptMicAlgorithms", java.lang.String[].class);
-        map.put("signingAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class);
-        map.put("signingCertificateChain", java.security.cert.Certificate[].class);
-        map.put("signingPrivateKey", java.security.PrivateKey.class);
         map.put("subject", java.lang.String.class);
         map.put("targetHostname", java.lang.String.class);
         map.put("targetPortNumber", java.lang.Integer.class);
         map.put("userAgent", java.lang.String.class);
-        map.put("validateSigningCertificateChain", java.security.cert.Certificate[].class);
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("lazyStartProducer", boolean.class);
+        map.put("decryptingPrivateKey", java.security.PrivateKey.class);
+        map.put("encryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
+        map.put("encryptingCertificateChain", java.security.cert.Certificate[].class);
+        map.put("signedReceiptMicAlgorithms", java.lang.String[].class);
+        map.put("signingAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class);
+        map.put("signingCertificateChain", java.security.cert.Certificate[].class);
+        map.put("signingPrivateKey", java.security.PrivateKey.class);
+        map.put("validateSigningCertificateChain", java.security.cert.Certificate[].class);
         ALL_OPTIONS = map;
     }
 

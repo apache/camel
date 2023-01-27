@@ -186,38 +186,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to encrypt the EDI message.
-         * 
-         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param decryptingPrivateKey the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder decryptingPrivateKey(
-                java.security.PrivateKey decryptingPrivateKey) {
-            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
-            return this;
-        }
-        /**
-         * The key used to encrypt the EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param decryptingPrivateKey the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder decryptingPrivateKey(
-                String decryptingPrivateKey) {
-            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
-            return this;
-        }
-        /**
          * The value of the Disposition-Notification-To header. Assigning a
          * value to this parameter requests a message disposition notification
          * (MDN) for the AS2 message.
@@ -280,70 +248,6 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder ediMessageType(String ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
-            return this;
-        }
-        /**
-         * The algorithm used to encrypt EDI message.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param encryptingAlgorithm the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder encryptingAlgorithm(
-                org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm) {
-            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
-            return this;
-        }
-        /**
-         * The algorithm used to encrypt EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param encryptingAlgorithm the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder encryptingAlgorithm(
-                String encryptingAlgorithm) {
-            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
-            return this;
-        }
-        /**
-         * The chain of certificates used to encrypt EDI message.
-         * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param encryptingCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder encryptingCertificateChain(
-                java.security.cert.Certificate[] encryptingCertificateChain) {
-            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
-            return this;
-        }
-        /**
-         * The chain of certificates used to encrypt EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param encryptingCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder encryptingCertificateChain(
-                String encryptingCertificateChain) {
-            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
         }
         /**
@@ -604,137 +508,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signedReceiptMicAlgorithms the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder signedReceiptMicAlgorithms(
-                String[] signedReceiptMicAlgorithms) {
-            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
-            return this;
-        }
-        /**
-         * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signedReceiptMicAlgorithms the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder signedReceiptMicAlgorithms(
-                String signedReceiptMicAlgorithms) {
-            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
-            return this;
-        }
-        /**
-         * The algorithm used to sign EDI message.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signingAlgorithm the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder signingAlgorithm(
-                org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm) {
-            doSetProperty("signingAlgorithm", signingAlgorithm);
-            return this;
-        }
-        /**
-         * The algorithm used to sign EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signingAlgorithm the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder signingAlgorithm(
-                String signingAlgorithm) {
-            doSetProperty("signingAlgorithm", signingAlgorithm);
-            return this;
-        }
-        /**
-         * The chain of certificates used to sign EDI message.
-         * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signingCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder signingCertificateChain(
-                java.security.cert.Certificate[] signingCertificateChain) {
-            doSetProperty("signingCertificateChain", signingCertificateChain);
-            return this;
-        }
-        /**
-         * The chain of certificates used to sign EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signingCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder signingCertificateChain(
-                String signingCertificateChain) {
-            doSetProperty("signingCertificateChain", signingCertificateChain);
-            return this;
-        }
-        /**
-         * The key used to sign the EDI message.
-         * 
-         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param signingPrivateKey the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder signingPrivateKey(
-                java.security.PrivateKey signingPrivateKey) {
-            doSetProperty("signingPrivateKey", signingPrivateKey);
-            return this;
-        }
-        /**
-         * The key used to sign the EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signingPrivateKey the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointConsumerBuilder signingPrivateKey(
-                String signingPrivateKey) {
-            doSetProperty("signingPrivateKey", signingPrivateKey);
-            return this;
-        }
-        /**
          * The value of Subject header of AS2 message.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -767,6 +540,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
+         * Default: 80
          * Group: common
          * 
          * @param targetPortNumber the value to set
@@ -783,6 +557,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
+         * Default: 80
          * Group: common
          * 
          * @param targetPortNumber the value to set
@@ -807,6 +582,271 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointConsumerBuilder userAgent(String userAgent) {
             doSetProperty("userAgent", userAgent);
+            return this;
+        }
+        /**
+         * The key used to encrypt the EDI message.
+         * 
+         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param decryptingPrivateKey the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder decryptingPrivateKey(
+                java.security.PrivateKey decryptingPrivateKey) {
+            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
+            return this;
+        }
+        /**
+         * The key used to encrypt the EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param decryptingPrivateKey the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder decryptingPrivateKey(
+                String decryptingPrivateKey) {
+            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
+            return this;
+        }
+        /**
+         * The algorithm used to encrypt EDI message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param encryptingAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder encryptingAlgorithm(
+                org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm) {
+            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
+            return this;
+        }
+        /**
+         * The algorithm used to encrypt EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param encryptingAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder encryptingAlgorithm(
+                String encryptingAlgorithm) {
+            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
+            return this;
+        }
+        /**
+         * The chain of certificates used to encrypt EDI message.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param encryptingCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder encryptingCertificateChain(
+                java.security.cert.Certificate[] encryptingCertificateChain) {
+            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
+            return this;
+        }
+        /**
+         * The chain of certificates used to encrypt EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param encryptingCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder encryptingCertificateChain(
+                String encryptingCertificateChain) {
+            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
+            return this;
+        }
+        /**
+         * The list of algorithms, in order of preference, requested to generate
+         * a message integrity check (MIC) returned in message dispostion
+         * notification (MDN).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signedReceiptMicAlgorithms the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder signedReceiptMicAlgorithms(
+                String[] signedReceiptMicAlgorithms) {
+            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
+            return this;
+        }
+        /**
+         * The list of algorithms, in order of preference, requested to generate
+         * a message integrity check (MIC) returned in message dispostion
+         * notification (MDN).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signedReceiptMicAlgorithms the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder signedReceiptMicAlgorithms(
+                String signedReceiptMicAlgorithms) {
+            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
+            return this;
+        }
+        /**
+         * The algorithm used to sign EDI message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signingAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder signingAlgorithm(
+                org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm) {
+            doSetProperty("signingAlgorithm", signingAlgorithm);
+            return this;
+        }
+        /**
+         * The algorithm used to sign EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signingAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder signingAlgorithm(
+                String signingAlgorithm) {
+            doSetProperty("signingAlgorithm", signingAlgorithm);
+            return this;
+        }
+        /**
+         * The chain of certificates used to sign EDI message.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signingCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder signingCertificateChain(
+                java.security.cert.Certificate[] signingCertificateChain) {
+            doSetProperty("signingCertificateChain", signingCertificateChain);
+            return this;
+        }
+        /**
+         * The chain of certificates used to sign EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signingCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder signingCertificateChain(
+                String signingCertificateChain) {
+            doSetProperty("signingCertificateChain", signingCertificateChain);
+            return this;
+        }
+        /**
+         * The key used to sign the EDI message.
+         * 
+         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param signingPrivateKey the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder signingPrivateKey(
+                java.security.PrivateKey signingPrivateKey) {
+            doSetProperty("signingPrivateKey", signingPrivateKey);
+            return this;
+        }
+        /**
+         * The key used to sign the EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signingPrivateKey the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder signingPrivateKey(
+                String signingPrivateKey) {
+            doSetProperty("signingPrivateKey", signingPrivateKey);
+            return this;
+        }
+        /**
+         * Certifiates to validate the messages signature against. If not
+         * supplied, validation will not take place. Server: validates the
+         * received message. Client: not yet implemented, should validate the
+         * MDN.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param validateSigningCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder validateSigningCertificateChain(
+                java.security.cert.Certificate[] validateSigningCertificateChain) {
+            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
+            return this;
+        }
+        /**
+         * Certifiates to validate the messages signature against. If not
+         * supplied, validation will not take place. Server: validates the
+         * received message. Client: not yet implemented, should validate the
+         * MDN.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param validateSigningCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder validateSigningCertificateChain(
+                String validateSigningCertificateChain) {
+            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
             return this;
         }
     }
@@ -1044,38 +1084,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to encrypt the EDI message.
-         * 
-         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param decryptingPrivateKey the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder decryptingPrivateKey(
-                java.security.PrivateKey decryptingPrivateKey) {
-            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
-            return this;
-        }
-        /**
-         * The key used to encrypt the EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param decryptingPrivateKey the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder decryptingPrivateKey(
-                String decryptingPrivateKey) {
-            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
-            return this;
-        }
-        /**
          * The value of the Disposition-Notification-To header. Assigning a
          * value to this parameter requests a message disposition notification
          * (MDN) for the AS2 message.
@@ -1138,70 +1146,6 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder ediMessageType(String ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
-            return this;
-        }
-        /**
-         * The algorithm used to encrypt EDI message.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param encryptingAlgorithm the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder encryptingAlgorithm(
-                org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm) {
-            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
-            return this;
-        }
-        /**
-         * The algorithm used to encrypt EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param encryptingAlgorithm the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder encryptingAlgorithm(
-                String encryptingAlgorithm) {
-            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
-            return this;
-        }
-        /**
-         * The chain of certificates used to encrypt EDI message.
-         * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param encryptingCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder encryptingCertificateChain(
-                java.security.cert.Certificate[] encryptingCertificateChain) {
-            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
-            return this;
-        }
-        /**
-         * The chain of certificates used to encrypt EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param encryptingCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder encryptingCertificateChain(
-                String encryptingCertificateChain) {
-            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
         }
         /**
@@ -1462,137 +1406,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signedReceiptMicAlgorithms the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder signedReceiptMicAlgorithms(
-                String[] signedReceiptMicAlgorithms) {
-            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
-            return this;
-        }
-        /**
-         * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signedReceiptMicAlgorithms the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder signedReceiptMicAlgorithms(
-                String signedReceiptMicAlgorithms) {
-            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
-            return this;
-        }
-        /**
-         * The algorithm used to sign EDI message.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signingAlgorithm the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder signingAlgorithm(
-                org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm) {
-            doSetProperty("signingAlgorithm", signingAlgorithm);
-            return this;
-        }
-        /**
-         * The algorithm used to sign EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signingAlgorithm the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder signingAlgorithm(
-                String signingAlgorithm) {
-            doSetProperty("signingAlgorithm", signingAlgorithm);
-            return this;
-        }
-        /**
-         * The chain of certificates used to sign EDI message.
-         * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signingCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder signingCertificateChain(
-                java.security.cert.Certificate[] signingCertificateChain) {
-            doSetProperty("signingCertificateChain", signingCertificateChain);
-            return this;
-        }
-        /**
-         * The chain of certificates used to sign EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signingCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder signingCertificateChain(
-                String signingCertificateChain) {
-            doSetProperty("signingCertificateChain", signingCertificateChain);
-            return this;
-        }
-        /**
-         * The key used to sign the EDI message.
-         * 
-         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param signingPrivateKey the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder signingPrivateKey(
-                java.security.PrivateKey signingPrivateKey) {
-            doSetProperty("signingPrivateKey", signingPrivateKey);
-            return this;
-        }
-        /**
-         * The key used to sign the EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signingPrivateKey the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointProducerBuilder signingPrivateKey(
-                String signingPrivateKey) {
-            doSetProperty("signingPrivateKey", signingPrivateKey);
-            return this;
-        }
-        /**
          * The value of Subject header of AS2 message.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1625,6 +1438,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
+         * Default: 80
          * Group: common
          * 
          * @param targetPortNumber the value to set
@@ -1641,6 +1455,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
+         * Default: 80
          * Group: common
          * 
          * @param targetPortNumber the value to set
@@ -1665,6 +1480,271 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointProducerBuilder userAgent(String userAgent) {
             doSetProperty("userAgent", userAgent);
+            return this;
+        }
+        /**
+         * The key used to encrypt the EDI message.
+         * 
+         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param decryptingPrivateKey the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder decryptingPrivateKey(
+                java.security.PrivateKey decryptingPrivateKey) {
+            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
+            return this;
+        }
+        /**
+         * The key used to encrypt the EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param decryptingPrivateKey the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder decryptingPrivateKey(
+                String decryptingPrivateKey) {
+            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
+            return this;
+        }
+        /**
+         * The algorithm used to encrypt EDI message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param encryptingAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder encryptingAlgorithm(
+                org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm) {
+            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
+            return this;
+        }
+        /**
+         * The algorithm used to encrypt EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param encryptingAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder encryptingAlgorithm(
+                String encryptingAlgorithm) {
+            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
+            return this;
+        }
+        /**
+         * The chain of certificates used to encrypt EDI message.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param encryptingCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder encryptingCertificateChain(
+                java.security.cert.Certificate[] encryptingCertificateChain) {
+            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
+            return this;
+        }
+        /**
+         * The chain of certificates used to encrypt EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param encryptingCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder encryptingCertificateChain(
+                String encryptingCertificateChain) {
+            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
+            return this;
+        }
+        /**
+         * The list of algorithms, in order of preference, requested to generate
+         * a message integrity check (MIC) returned in message dispostion
+         * notification (MDN).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signedReceiptMicAlgorithms the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder signedReceiptMicAlgorithms(
+                String[] signedReceiptMicAlgorithms) {
+            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
+            return this;
+        }
+        /**
+         * The list of algorithms, in order of preference, requested to generate
+         * a message integrity check (MIC) returned in message dispostion
+         * notification (MDN).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signedReceiptMicAlgorithms the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder signedReceiptMicAlgorithms(
+                String signedReceiptMicAlgorithms) {
+            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
+            return this;
+        }
+        /**
+         * The algorithm used to sign EDI message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signingAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder signingAlgorithm(
+                org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm) {
+            doSetProperty("signingAlgorithm", signingAlgorithm);
+            return this;
+        }
+        /**
+         * The algorithm used to sign EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signingAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder signingAlgorithm(
+                String signingAlgorithm) {
+            doSetProperty("signingAlgorithm", signingAlgorithm);
+            return this;
+        }
+        /**
+         * The chain of certificates used to sign EDI message.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signingCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder signingCertificateChain(
+                java.security.cert.Certificate[] signingCertificateChain) {
+            doSetProperty("signingCertificateChain", signingCertificateChain);
+            return this;
+        }
+        /**
+         * The chain of certificates used to sign EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signingCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder signingCertificateChain(
+                String signingCertificateChain) {
+            doSetProperty("signingCertificateChain", signingCertificateChain);
+            return this;
+        }
+        /**
+         * The key used to sign the EDI message.
+         * 
+         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param signingPrivateKey the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder signingPrivateKey(
+                java.security.PrivateKey signingPrivateKey) {
+            doSetProperty("signingPrivateKey", signingPrivateKey);
+            return this;
+        }
+        /**
+         * The key used to sign the EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signingPrivateKey the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder signingPrivateKey(
+                String signingPrivateKey) {
+            doSetProperty("signingPrivateKey", signingPrivateKey);
+            return this;
+        }
+        /**
+         * Certifiates to validate the messages signature against. If not
+         * supplied, validation will not take place. Server: validates the
+         * received message. Client: not yet implemented, should validate the
+         * MDN.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param validateSigningCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder validateSigningCertificateChain(
+                java.security.cert.Certificate[] validateSigningCertificateChain) {
+            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
+            return this;
+        }
+        /**
+         * Certifiates to validate the messages signature against. If not
+         * supplied, validation will not take place. Server: validates the
+         * received message. Client: not yet implemented, should validate the
+         * MDN.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param validateSigningCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder validateSigningCertificateChain(
+                String validateSigningCertificateChain) {
+            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
             return this;
         }
     }
@@ -1881,38 +1961,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The key used to encrypt the EDI message.
-         * 
-         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param decryptingPrivateKey the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder decryptingPrivateKey(
-                java.security.PrivateKey decryptingPrivateKey) {
-            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
-            return this;
-        }
-        /**
-         * The key used to encrypt the EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param decryptingPrivateKey the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder decryptingPrivateKey(
-                String decryptingPrivateKey) {
-            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
-            return this;
-        }
-        /**
          * The value of the Disposition-Notification-To header. Assigning a
          * value to this parameter requests a message disposition notification
          * (MDN) for the AS2 message.
@@ -1975,70 +2023,6 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder ediMessageType(String ediMessageType) {
             doSetProperty("ediMessageType", ediMessageType);
-            return this;
-        }
-        /**
-         * The algorithm used to encrypt EDI message.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param encryptingAlgorithm the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder encryptingAlgorithm(
-                org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm) {
-            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
-            return this;
-        }
-        /**
-         * The algorithm used to encrypt EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param encryptingAlgorithm the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder encryptingAlgorithm(
-                String encryptingAlgorithm) {
-            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
-            return this;
-        }
-        /**
-         * The chain of certificates used to encrypt EDI message.
-         * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param encryptingCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder encryptingCertificateChain(
-                java.security.cert.Certificate[] encryptingCertificateChain) {
-            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
-            return this;
-        }
-        /**
-         * The chain of certificates used to encrypt EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param encryptingCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder encryptingCertificateChain(
-                String encryptingCertificateChain) {
-            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
             return this;
         }
         /**
@@ -2295,135 +2279,6 @@ public interface AS2EndpointBuilderFactory {
             return this;
         }
         /**
-         * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signedReceiptMicAlgorithms the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder signedReceiptMicAlgorithms(
-                String[] signedReceiptMicAlgorithms) {
-            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
-            return this;
-        }
-        /**
-         * The list of algorithms, in order of preference, requested to generate
-         * a message integrity check (MIC) returned in message dispostion
-         * notification (MDN).
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signedReceiptMicAlgorithms the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder signedReceiptMicAlgorithms(
-                String signedReceiptMicAlgorithms) {
-            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
-            return this;
-        }
-        /**
-         * The algorithm used to sign EDI message.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signingAlgorithm the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder signingAlgorithm(
-                org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm) {
-            doSetProperty("signingAlgorithm", signingAlgorithm);
-            return this;
-        }
-        /**
-         * The algorithm used to sign EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signingAlgorithm the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder signingAlgorithm(String signingAlgorithm) {
-            doSetProperty("signingAlgorithm", signingAlgorithm);
-            return this;
-        }
-        /**
-         * The chain of certificates used to sign EDI message.
-         * 
-         * The option is a:
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signingCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder signingCertificateChain(
-                java.security.cert.Certificate[] signingCertificateChain) {
-            doSetProperty("signingCertificateChain", signingCertificateChain);
-            return this;
-        }
-        /**
-         * The chain of certificates used to sign EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signingCertificateChain the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder signingCertificateChain(
-                String signingCertificateChain) {
-            doSetProperty("signingCertificateChain", signingCertificateChain);
-            return this;
-        }
-        /**
-         * The key used to sign the EDI message.
-         * 
-         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param signingPrivateKey the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder signingPrivateKey(
-                java.security.PrivateKey signingPrivateKey) {
-            doSetProperty("signingPrivateKey", signingPrivateKey);
-            return this;
-        }
-        /**
-         * The key used to sign the EDI message.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param signingPrivateKey the value to set
-         * @return the dsl builder
-         */
-        default AS2EndpointBuilder signingPrivateKey(String signingPrivateKey) {
-            doSetProperty("signingPrivateKey", signingPrivateKey);
-            return this;
-        }
-        /**
          * The value of Subject header of AS2 message.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -2456,6 +2311,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
+         * Default: 80
          * Group: common
          * 
          * @param targetPortNumber the value to set
@@ -2471,6 +2327,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * &lt;code&gt;java.lang.Integer&lt;/code&gt; type.
          * 
+         * Default: 80
          * Group: common
          * 
          * @param targetPortNumber the value to set
@@ -2494,6 +2351,269 @@ public interface AS2EndpointBuilderFactory {
          */
         default AS2EndpointBuilder userAgent(String userAgent) {
             doSetProperty("userAgent", userAgent);
+            return this;
+        }
+        /**
+         * The key used to encrypt the EDI message.
+         * 
+         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param decryptingPrivateKey the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder decryptingPrivateKey(
+                java.security.PrivateKey decryptingPrivateKey) {
+            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
+            return this;
+        }
+        /**
+         * The key used to encrypt the EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param decryptingPrivateKey the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder decryptingPrivateKey(
+                String decryptingPrivateKey) {
+            doSetProperty("decryptingPrivateKey", decryptingPrivateKey);
+            return this;
+        }
+        /**
+         * The algorithm used to encrypt EDI message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param encryptingAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder encryptingAlgorithm(
+                org.apache.camel.component.as2.api.AS2EncryptionAlgorithm encryptingAlgorithm) {
+            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
+            return this;
+        }
+        /**
+         * The algorithm used to encrypt EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.as2.api.AS2EncryptionAlgorithm&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param encryptingAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder encryptingAlgorithm(
+                String encryptingAlgorithm) {
+            doSetProperty("encryptingAlgorithm", encryptingAlgorithm);
+            return this;
+        }
+        /**
+         * The chain of certificates used to encrypt EDI message.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param encryptingCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder encryptingCertificateChain(
+                java.security.cert.Certificate[] encryptingCertificateChain) {
+            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
+            return this;
+        }
+        /**
+         * The chain of certificates used to encrypt EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param encryptingCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder encryptingCertificateChain(
+                String encryptingCertificateChain) {
+            doSetProperty("encryptingCertificateChain", encryptingCertificateChain);
+            return this;
+        }
+        /**
+         * The list of algorithms, in order of preference, requested to generate
+         * a message integrity check (MIC) returned in message dispostion
+         * notification (MDN).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signedReceiptMicAlgorithms the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder signedReceiptMicAlgorithms(
+                String[] signedReceiptMicAlgorithms) {
+            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
+            return this;
+        }
+        /**
+         * The list of algorithms, in order of preference, requested to generate
+         * a message integrity check (MIC) returned in message dispostion
+         * notification (MDN).
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.lang.String[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signedReceiptMicAlgorithms the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder signedReceiptMicAlgorithms(
+                String signedReceiptMicAlgorithms) {
+            doSetProperty("signedReceiptMicAlgorithms", signedReceiptMicAlgorithms);
+            return this;
+        }
+        /**
+         * The algorithm used to sign EDI message.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signingAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder signingAlgorithm(
+                org.apache.camel.component.as2.api.AS2SignatureAlgorithm signingAlgorithm) {
+            doSetProperty("signingAlgorithm", signingAlgorithm);
+            return this;
+        }
+        /**
+         * The algorithm used to sign EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.as2.api.AS2SignatureAlgorithm&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signingAlgorithm the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder signingAlgorithm(String signingAlgorithm) {
+            doSetProperty("signingAlgorithm", signingAlgorithm);
+            return this;
+        }
+        /**
+         * The chain of certificates used to sign EDI message.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signingCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder signingCertificateChain(
+                java.security.cert.Certificate[] signingCertificateChain) {
+            doSetProperty("signingCertificateChain", signingCertificateChain);
+            return this;
+        }
+        /**
+         * The chain of certificates used to sign EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signingCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder signingCertificateChain(
+                String signingCertificateChain) {
+            doSetProperty("signingCertificateChain", signingCertificateChain);
+            return this;
+        }
+        /**
+         * The key used to sign the EDI message.
+         * 
+         * The option is a: &lt;code&gt;java.security.PrivateKey&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param signingPrivateKey the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder signingPrivateKey(
+                java.security.PrivateKey signingPrivateKey) {
+            doSetProperty("signingPrivateKey", signingPrivateKey);
+            return this;
+        }
+        /**
+         * The key used to sign the EDI message.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.PrivateKey&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param signingPrivateKey the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder signingPrivateKey(String signingPrivateKey) {
+            doSetProperty("signingPrivateKey", signingPrivateKey);
+            return this;
+        }
+        /**
+         * Certifiates to validate the messages signature against. If not
+         * supplied, validation will not take place. Server: validates the
+         * received message. Client: not yet implemented, should validate the
+         * MDN.
+         * 
+         * The option is a:
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param validateSigningCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder validateSigningCertificateChain(
+                java.security.cert.Certificate[] validateSigningCertificateChain) {
+            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
+            return this;
+        }
+        /**
+         * Certifiates to validate the messages signature against. If not
+         * supplied, validation will not take place. Server: validates the
+         * received message. Client: not yet implemented, should validate the
+         * MDN.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;java.security.cert.Certificate[]&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param validateSigningCertificateChain the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder validateSigningCertificateChain(
+                String validateSigningCertificateChain) {
+            doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
             return this;
         }
     }
