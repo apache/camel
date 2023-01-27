@@ -1878,23 +1878,6 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
-    protected Any23DataFormat doParseAny23DataFormat() throws IOException, XmlPullParserException {
-        return doParse(new Any23DataFormat(), (def, key, val) -> {
-            switch (key) {
-                case "baseUri": def.setBaseUri(val); break;
-                case "outputFormat": def.setOutputFormat(val); break;
-                default: return identifiedTypeAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        }, (def, key) -> {
-            switch (key) {
-                case "configuration": doAdd(doParsePropertyDefinition(), def.getConfiguration(), def::setConfiguration); break;
-                case "extractors": doAdd(doParseText(), def.getExtractors(), def::setExtractors); break;
-                default: return false;
-            }
-            return true;
-        }, noValueHandler());
-    }
     protected AvroDataFormat doParseAvroDataFormat() throws IOException, XmlPullParserException {
         return doParse(new AvroDataFormat(), (def, key, val) -> {
             switch (key) {
@@ -3367,7 +3350,6 @@ public class ModelParser extends BaseParser {
     protected DataFormatDefinition doParseDataFormatDefinitionRef(String key) throws IOException, XmlPullParserException {
         switch (key) {
             case "asn1": return doParseASN1DataFormat();
-            case "any23": return doParseAny23DataFormat();
             case "avro": return doParseAvroDataFormat();
             case "barcode": return doParseBarcodeDataFormat();
             case "base64": return doParseBase64DataFormat();
