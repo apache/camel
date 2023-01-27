@@ -29,7 +29,7 @@ import com.mongodb.client.MongoCursor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mongodb.MongoDbConstants;
-import org.apache.camel.test.infra.core.RouteFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.junit.jupiter.api.Assumptions;

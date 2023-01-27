@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.test.infra.core;
+package org.apache.camel.test.infra.core.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

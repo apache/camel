@@ -18,7 +18,7 @@ package org.apache.camel.component.mongodb.integration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.infra.core.RouteFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
 import org.junit.jupiter.api.Assumptions;

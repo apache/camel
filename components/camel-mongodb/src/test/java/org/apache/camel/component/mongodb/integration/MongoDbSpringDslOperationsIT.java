@@ -18,7 +18,7 @@ package org.apache.camel.component.mongodb.integration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.test.infra.core.ContextProvider;
+import org.apache.camel.test.infra.core.annotations.ContextProvider;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
