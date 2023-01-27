@@ -54,6 +54,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("targetHostname", java.lang.String.class);
         map.put("targetPortNumber", java.lang.Integer.class);
         map.put("userAgent", java.lang.String.class);
+        map.put("validateSigningCertificateChain", java.security.cert.Certificate[].class);
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("lazyStartProducer", boolean.class);
@@ -131,6 +132,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "targetPortNumber": target.getConfiguration().setTargetPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
         case "useragent":
         case "userAgent": target.getConfiguration().setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
+        case "validatesigningcertificatechain":
+        case "validateSigningCertificateChain": target.getConfiguration().setValidateSigningCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
         default: return false;
         }
     }
@@ -210,6 +213,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "targetPortNumber": return java.lang.Integer.class;
         case "useragent":
         case "userAgent": return java.lang.String.class;
+        case "validatesigningcertificatechain":
+        case "validateSigningCertificateChain": return java.security.cert.Certificate[].class;
         default: return null;
         }
     }
@@ -285,6 +290,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "targetPortNumber": return target.getConfiguration().getTargetPortNumber();
         case "useragent":
         case "userAgent": return target.getConfiguration().getUserAgent();
+        case "validatesigningcertificatechain":
+        case "validateSigningCertificateChain": return target.getConfiguration().getValidateSigningCertificateChain();
         default: return null;
         }
     }

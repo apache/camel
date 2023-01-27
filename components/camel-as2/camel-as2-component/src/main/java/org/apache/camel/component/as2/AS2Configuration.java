@@ -108,6 +108,8 @@ public class AS2Configuration {
     private Integer httpConnectionPoolSize = 5;
     @UriParam(defaultValue = "15m")
     private Duration httpConnectionPoolTtl = Duration.ofMinutes(15);
+    @UriParam
+    private Certificate[] validateSigningCertificateChain;
 
     public AS2ApiName getApiName() {
         return apiName;
@@ -488,6 +490,18 @@ public class AS2Configuration {
      */
     public void setHttpConnectionPoolTtl(Duration httpConnectionPoolTtl) {
         this.httpConnectionPoolTtl = httpConnectionPoolTtl;
+    }
+
+    public Certificate[] getValidateSigningCertificateChain() {
+        return validateSigningCertificateChain;
+    }
+
+    /**
+     * Certifiates to validate the messages signature against. If not supplied, validation will not take place. Server:
+     * validates the received message. Client: not yet implemented, should validate the MDN
+     */
+    public void setValidateSigningCertificateChain(Certificate[] validateSigningCertificateChain) {
+        this.validateSigningCertificateChain = validateSigningCertificateChain;
     }
 
 }
