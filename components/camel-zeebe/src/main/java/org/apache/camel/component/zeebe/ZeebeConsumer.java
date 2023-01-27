@@ -97,7 +97,7 @@ public class ZeebeConsumer extends DefaultConsumer {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("New Job Message: {}", job.toJson());
             }
-            
+
             if (getEndpoint().isFormatJSON()) {
                 try {
                     exchange.getMessage().setBody(objectMapper.writeValueAsString(message));
