@@ -41,14 +41,31 @@ public class JoorLanguage extends TypedLanguageSupport implements ScriptingLangu
     private static final Logger LOG = LoggerFactory.getLogger(JoorLanguage.class);
 
     private static Boolean java8;
-    private final JoorCompiler compiler = new JoorCompiler();
-    private final JoorScriptingCompiler scriptingCompiler = new JoorScriptingCompiler();
+    private final JoorCompiler compiler;
+    private final JoorScriptingCompiler scriptingCompiler;
     private final Set<String> imports = new TreeSet<>();
     private final Map<String, String> aliases = new HashMap<>();
 
     private String configResource = "classpath:camel-joor.properties?optional=true";
     private boolean preCompile = true;
     private boolean singleQuotes = true;
+
+    public JoorLanguage() {
+        this(new JoorCompiler(), new JoorScriptingCompiler());
+    }
+
+    public JoorLanguage(JoorCompiler compiler, JoorScriptingCompiler scriptingCompiler) {
+        this.compiler = compiler;
+        this.scriptingCompiler = scriptingCompiler;
+    }
+
+    public JoorCompiler getCompiler() {
+        return compiler;
+    }
+
+    public JoorScriptingCompiler getScriptingCompiler() {
+        return scriptingCompiler;
+    }
 
     public String getConfigResource() {
         return configResource;

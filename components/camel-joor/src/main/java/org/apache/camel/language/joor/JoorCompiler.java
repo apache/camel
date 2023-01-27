@@ -116,7 +116,7 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         return answer;
     }
 
-    private String evalCode(CamelContext camelContext, String fqn, String script, boolean singleQuotes) {
+    public String evalCode(CamelContext camelContext, String fqn, String script, boolean singleQuotes) {
         String qn = fqn.substring(0, fqn.lastIndexOf('.'));
         String name = fqn.substring(fqn.lastIndexOf('.') + 1);
 
