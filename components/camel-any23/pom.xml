@@ -28,7 +28,7 @@
 
   <artifactId>camel-any23</artifactId>
   <packaging>jar</packaging>
-  <name>Camel :: Any23</name>
+  <name>Camel :: Any23 (deprecated)</name>
   <description>Camel Any23 support</description>
 
   <properties>
