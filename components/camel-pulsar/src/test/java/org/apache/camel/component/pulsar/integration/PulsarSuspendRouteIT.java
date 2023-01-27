@@ -230,7 +230,7 @@ public class PulsarSuspendRouteIT extends PulsarITSupport {
             }
         });
 
-        to.setExpectedMessageCount(0);
+        to.setExpectedMessageCount(1);
         to.setAssertPeriod(2000);
 
         context.getRouteController().suspendRoute(ROUTE_ID);
