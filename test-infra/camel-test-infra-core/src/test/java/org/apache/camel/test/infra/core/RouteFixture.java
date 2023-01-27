@@ -24,12 +24,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation indicates the need for configuring Camel routes to a context. Use it to annotate methods that configure the routes.
+ * This annotation indicates the need for configuring Camel routes to a context. Use it to annotate methods that
+ * configure the routes.
  *
  * The signature for such methods should be: <code>public void configureRoute(CamelContext context)</code>.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target({ ElementType.TYPE, ElementType.METHOD })
 public @interface RouteFixture {
 }

@@ -27,7 +27,8 @@ public interface ConfigurableContext {
 
     /**
      * Configures the context
-     * @param context the context to configure
+     *
+     * @param  context   the context to configure
      * @throws Exception if the context cannot be configured
      */
     void configureContext(CamelContext context) throws Exception;

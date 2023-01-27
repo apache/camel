@@ -36,8 +36,9 @@ public class DefaultContextLifeCycleManager implements ContextLifeCycleManager {
 
     /**
      * Creates a new instance of this class
+     *
      * @param shutdownTimeout the shutdown timeout
-     * @param reset whether to reset any {@link MockEndpoint} after each test execution
+     * @param reset           whether to reset any {@link MockEndpoint} after each test execution
      */
     public DefaultContextLifeCycleManager(int shutdownTimeout, boolean reset) {
         this.shutdownTimeout = shutdownTimeout;

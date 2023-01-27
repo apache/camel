@@ -70,7 +70,8 @@ public class DefaultCamelContextExtension implements CamelContextExtension {
     /**
      * Resolves an endpoint and asserts that it is found.
      */
-    public static <T extends Endpoint> T resolveMandatoryEndpoint(CamelContext context, String endpointUri, Class<T> endpointType) {
+    public static <
+            T extends Endpoint> T resolveMandatoryEndpoint(CamelContext context, String endpointUri, Class<T> endpointType) {
         T endpoint = context.getEndpoint(endpointUri, endpointType);
 
         assertNotNull(endpoint, "No endpoint found for URI: " + endpointUri);
@@ -86,11 +87,13 @@ public class DefaultCamelContextExtension implements CamelContextExtension {
         return "Unable to setup fixture " + annotationClass.getSimpleName() + " on " + instance.getClass().getName();
     }
 
-    private static String invocationTargetMessage(Class<? extends Annotation> annotationClass, Object instance, String methodName) {
+    private static String invocationTargetMessage(
+            Class<? extends Annotation> annotationClass, Object instance, String methodName) {
         return commonFixtureMessage(annotationClass, instance) + " due to invocation target exception to method: " + methodName;
     }
 
-    private static String illegalAccessMessage(Class<? extends Annotation> annotationClass, Object instance, String methodName) {
+    private static String illegalAccessMessage(
+            Class<? extends Annotation> annotationClass, Object instance, String methodName) {
         return commonFixtureMessage(annotationClass, instance) + " due to illegal access to method: " + methodName;
     }
 
@@ -146,7 +149,8 @@ public class DefaultCamelContextExtension implements CamelContextExtension {
         LOG.info("********************************************************************************");
     }
 
-    private <T> T setupContextProvider(ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Class<T> target) {
+    private <T> T setupContextProvider(
+            ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Class<T> target) {
         final Class<?> testClass = extensionContext.getTestClass().get();
 
         final Optional<Method> providerMethodOpt = Arrays.stream(testClass.getMethods())
@@ -168,28 +172,33 @@ public class DefaultCamelContextExtension implements CamelContextExtension {
     private void setupFixture(ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Object instance) {
         final Class<?> testClass = extensionContext.getTestClass().get();
 
-        Arrays.stream(testClass.getMethods()).filter(m -> m.isAnnotationPresent(annotationClass)).forEach(m -> doInvokeFixture(annotationClass, instance, m));
+        Arrays.stream(testClass.getMethods()).filter(m -> m.isAnnotationPresent(annotationClass))
+                .forEach(m -> doInvokeFixture(annotationClass, instance, m));
     }
 
-    private void setupFixtureFields(ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Object instance) {
+    private void setupFixtureFields(
+            ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Object instance) {
         final Class<?> testClass = extensionContext.getTestClass().get();
 
         var superClass = testClass.getSuperclass();
         while (superClass != null) {
-            Arrays.stream(superClass.getDeclaredFields()).filter(m -> m.isAnnotationPresent(annotationClass)).forEach(f -> doInvokeFixture(f.getAnnotation(annotationClass), instance, f));
+            Arrays.stream(superClass.getDeclaredFields()).filter(m -> m.isAnnotationPresent(annotationClass))
+                    .forEach(f -> doInvokeFixture(f.getAnnotation(annotationClass), instance, f));
 
             superClass = superClass.getSuperclass();
         }
 
-        Arrays.stream(testClass.getDeclaredFields()).filter(f -> f.isAnnotationPresent(annotationClass)).forEach(f -> doInvokeFixture(f.getAnnotation(annotationClass), instance, f));
+        Arrays.stream(testClass.getDeclaredFields()).filter(f -> f.isAnnotationPresent(annotationClass))
+                .forEach(f -> doInvokeFixture(f.getAnnotation(annotationClass), instance, f));
     }
 
     private static Object doInvokeProvider(Class<? extends Annotation> annotationClass, Method m) {
         var methodName = m.getName();
         LOG.trace("Checking instance method: {}", methodName);
         if (m.getReturnType() == null) {
-            throw new RuntimeException(commonProviderMessage(annotationClass, m.getDeclaringClass())
-                    + " provider does not return any value");
+            throw new RuntimeException(
+                    commonProviderMessage(annotationClass, m.getDeclaringClass())
+                                       + " provider does not return any value");
         }
 
         try {
@@ -266,9 +275,9 @@ public class DefaultCamelContextExtension implements CamelContextExtension {
     /**
      * Resolves a mandatory endpoint for the given URI and expected type or an exception is thrown
      *
-     * @param uri          the Camel <a href="">URI</a> to use to create or resolve an endpoint
-     * @param endpointType the endpoint type (i.e., its class) to resolve
-     * @return the endpoint
+     * @param  uri          the Camel <a href="">URI</a> to use to create or resolve an endpoint
+     * @param  endpointType the endpoint type (i.e., its class) to resolve
+     * @return              the endpoint
      */
     protected <T extends Endpoint> T resolveMandatoryEndpoint(String uri, Class<T> endpointType) {
         return resolveMandatoryEndpoint(context, uri, endpointType);
@@ -301,15 +310,16 @@ public class DefaultCamelContextExtension implements CamelContextExtension {
         final String target = n;
 
         // lookup endpoints in registry and try to find it
-        MockEndpoint found = (MockEndpoint) context.getEndpointRegistry().values().stream().filter(e -> e instanceof MockEndpoint).filter(e -> {
-            String t = e.getEndpointUri();
-            // strip query
-            int idx2 = t.indexOf('?');
-            if (idx2 != -1) {
-                t = t.substring(0, idx2);
-            }
-            return t.equals(target);
-        }).findFirst().orElse(null);
+        MockEndpoint found = (MockEndpoint) context.getEndpointRegistry().values().stream()
+                .filter(e -> e instanceof MockEndpoint).filter(e -> {
+                    String t = e.getEndpointUri();
+                    // strip query
+                    int idx2 = t.indexOf('?');
+                    if (idx2 != -1) {
+                        t = t.substring(0, idx2);
+                    }
+                    return t.equals(target);
+                }).findFirst().orElse(null);
 
         if (found != null) {
             return found;
