@@ -72,7 +72,9 @@ public class DefaultAnnotationProcessor implements AnnotationProcessor {
     }
 
     @Override
-    public void evalMethod(ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Object instance, CamelContext context) {
+    public void evalMethod(
+            ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Object instance,
+            CamelContext context) {
         final Class<?> testClass = extensionContext.getTestClass().get();
 
         Arrays.stream(testClass.getMethods()).filter(m -> m.isAnnotationPresent(annotationClass))
@@ -81,7 +83,8 @@ public class DefaultAnnotationProcessor implements AnnotationProcessor {
 
     @Override
     public void evalField(
-            ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Object instance, CamelContext context) {
+            ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Object instance,
+            CamelContext context) {
         final Class<?> testClass = extensionContext.getTestClass().get();
 
         var superClass = testClass.getSuperclass();
@@ -111,7 +114,8 @@ public class DefaultAnnotationProcessor implements AnnotationProcessor {
         }
     }
 
-    private void doInvokeFixture(Class<? extends Annotation> annotationClass, Method method, Object instance, CamelContext context) {
+    private void doInvokeFixture(
+            Class<? extends Annotation> annotationClass, Method method, Object instance, CamelContext context) {
         var methodName = method.getName();
         LOG.trace("Checking instance method: {}", methodName);
         try {

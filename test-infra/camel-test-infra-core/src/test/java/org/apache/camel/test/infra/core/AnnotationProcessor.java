@@ -49,7 +49,9 @@ public interface AnnotationProcessor {
      * @param instance         the test instance
      * @param context          the CamelContext that will be passed to th
      */
-    void evalMethod(ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Object instance, CamelContext context);
+    void evalMethod(
+            ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Object instance,
+            CamelContext context);
 
     /**
      * Evaluates the fields in the test instance, handling them in accordance with the given annotation (i.e., binding
@@ -61,5 +63,6 @@ public interface AnnotationProcessor {
      * @param context
      */
     void evalField(
-            ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Object instance, CamelContext context);
+            ExtensionContext extensionContext, Class<? extends Annotation> annotationClass, Object instance,
+            CamelContext context);
 }
