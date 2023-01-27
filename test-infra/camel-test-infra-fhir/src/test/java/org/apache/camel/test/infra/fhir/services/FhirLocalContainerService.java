@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.fhir.services;
 
 import java.time.Duration;
+
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.fhir.common.FhirProperties;
 import org.slf4j.Logger;
