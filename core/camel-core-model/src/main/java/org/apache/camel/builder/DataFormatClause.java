@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import java.util.List;
 import java.util.Map;
 
 import org.w3c.dom.Node;
