@@ -21,7 +21,6 @@ The following components has been removed:
 - camel-atmos
 - camel-caffeine-lrucache
 - camel-cdi
-- camel-datasonnet
 - camel-elasticsearch-rest
 - camel-gora
 - camel-hbase
