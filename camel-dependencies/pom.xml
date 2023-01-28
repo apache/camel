@@ -562,6 +562,7 @@
         <xpp3-version>1.1.4c</xpp3-version>
         <xstream-version>1.4.20</xstream-version>
         <yetus-audience-annotations-version>0.13.0</yetus-audience-annotations-version>
+        <zeebe-version>8.1.6</zeebe-version>
         <zendesk-client-version>0.19.0</zendesk-client-version>
         <zipkin-reporter-version>2.16.3</zipkin-reporter-version>
         <zipkin-version>2.23.4</zipkin-version>

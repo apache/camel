@@ -16,6 +16,7 @@
   "blobstoragesharedkeycredential",
   "certresourcepassword",
   "cipherkey",
+  "clientid",
   "clientsecret",
   "connectionstring",
   "consumerkey",
