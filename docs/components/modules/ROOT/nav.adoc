@@ -347,6 +347,7 @@
 ** xref:xquery-component.adoc[XQuery]
 ** xref:xslt-component.adoc[XSLT]
 ** xref:xslt-saxon-component.adoc[XSLT Saxon]
+** xref:zeebe-component.adoc[Zeebe]
 ** xref:zendesk-component.adoc[Zendesk]
 ** xref:zookeeper-component.adoc[ZooKeeper]
 ** xref:zookeeper-master-component.adoc[ZooKeeper Master]
