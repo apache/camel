@@ -15,7 +15,6 @@
 # limitations under the License.
 #
 
-<<<<<<<< HEAD:.github/workflows/alternative-os-build-main.yml
 name: Alternative OS Build (Camel 4)
 
 on:
@@ -27,35 +26,11 @@ on:
 
 permissions:
   contents: read
-========
-name: Reformat and Build (Camel 3.x)
 
-on:
-  push:
-    branches:
-      - camel-3.x
-    paths-ignore:
-      - .github/**/*
-      - README.md
-      - SECURITY.md
-      - Jenkinsfile
-      - Jenkinsfile.*
-      - NOTICE.txt
->>>>>>>> 6402cdf24c1 ((chores) ci: adjust the Push GH actions for Camel 3 and Camel 4):.github/workflows/push-build-camel-3.yml
-
-permissions: {}
 jobs:
   build:
     if: github.repository == 'apache/camel'
-<<<<<<<< HEAD:.github/workflows/alternative-os-build-main.yml
     runs-on: ${{ matrix.os }}
-========
-    permissions:
-      contents: write # to create branch (peter-evans/create-pull-request)
-      pull-requests: write # to create a PR (peter-evans/create-pull-request)
-
-    runs-on: ubuntu-latest
->>>>>>>> 6402cdf24c1 ((chores) ci: adjust the Push GH actions for Camel 3 and Camel 4):.github/workflows/push-build-camel-3.yml
     strategy:
       matrix:
         os: [windows-latest, macos-latest, windows-2019]
@@ -70,7 +45,6 @@ jobs:
           distribution: 'temurin'
           java-version: 17
           cache: 'maven'
-<<<<<<<< HEAD:.github/workflows/alternative-os-build-main.yml
       - name: mvn sourcecheck ${{ matrix.os }}
         run: mvn -B -V -D'http.keepAlive=false' -l build.log -D'maven.wagon.http.pool=false' -D'maven.wagon.httpconnectionManager.ttlSeconds=120' --no-transfer-progress -P'format,fastinstall' -DskipTests verify
       - name: Archive logs ${{ matrix.os }}
@@ -80,31 +54,3 @@ jobs:
           name: build-${{ matrix.os }}
           path: build.log
           retention-days: 2
-========
-      - name: mvn formatter and build
-        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l build.log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -e -Pformat,fastinstall -DskipTests verify
-      - name: archive logs
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: build.log
-          path: build.log
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v4
-        with:
-          base: camel-3.x
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Regen for commit ${{ github.sha }}"
-          committer: GitHub <noreply@github.com>
-          author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          signoff: true
-          branch: regen_bot
-          title: "Generated sources regen"
-          body: |
-            Regen bot :robot: found some uncommitted changes after running build on :camel: main.
-            Please do not delete `regen_bot` branch after merge/rebase.
-          labels: |
-            regen
-            automated pr
-          assignees: oscerd
->>>>>>>> 6402cdf24c1 ((chores) ci: adjust the Push GH actions for Camel 3 and Camel 4):.github/workflows/push-build-camel-3.yml
