@@ -562,7 +562,18 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setBody(objectList.contents());
             }
         } else {
-            ListObjectsResponse objectList = s3Client.listObjects(ListObjectsRequest.builder().bucket(bucketName).build());
+            final String delimiter
+                    = exchange.getIn().getHeader(AWS2S3Constants.DELIMITER, getConfiguration().getDelimiter(), String.class);
+            final String prefix
+                    = exchange.getIn().getHeader(AWS2S3Constants.PREFIX, getConfiguration().getPrefix(), String.class);
+
+            final ListObjectsRequest listObjectsRequest = ListObjectsRequest
+                    .builder()
+                    .bucket(bucketName)
+                    .delimiter(delimiter)
+                    .prefix(prefix)
+                    .build();
+            ListObjectsResponse objectList = s3Client.listObjects(listObjectsRequest);
 
             Message message = getMessageForResponse(exchange);
             message.setBody(objectList.contents());
