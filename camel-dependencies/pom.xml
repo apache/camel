@@ -370,7 +370,7 @@
         <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
         <maven-remote-resources-plugin-version>1.7.0</maven-remote-resources-plugin-version>
         <!-- resources plugin needed by Camel maven archetypes -->
-        <maven-resources-plugin-version>3.3.0</maven-resources-plugin-version>
+        <maven-resources-plugin-version>3.2.0</maven-resources-plugin-version>
         <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
         <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
         <maven-resolver-version>1.9.4</maven-resolver-version>
