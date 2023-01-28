@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.zeebe;
 
 import java.util.Map;
@@ -24,6 +23,7 @@ import org.apache.camel.component.zeebe.internal.OperationName;
 import org.apache.camel.component.zeebe.internal.ZeebeService;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.service.ServiceHelper;
 
 @org.apache.camel.spi.annotations.Component("zeebe")
 public class ZeebeComponent extends DefaultComponent {
@@ -36,17 +36,13 @@ public class ZeebeComponent extends DefaultComponent {
     String clientId;
     @Metadata(label = "security", secret = true)
     String clientSecret;
-    @Metadata
+    @Metadata(label = "security")
     String oAuthAPI;
 
     private ZeebeService zeebeService;
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
-        OperationName operationName = null;
-
-        operationName = OperationName.fromValue(remaining);
-
+        OperationName operationName = OperationName.fromValue(remaining);
         Endpoint endpoint = new ZeebeEndpoint(uri, this, operationName);
         setProperties(endpoint, parameters);
         return endpoint;
@@ -114,20 +110,15 @@ public class ZeebeComponent extends DefaultComponent {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
         if (zeebeService == null) {
             zeebeService = new ZeebeService(gatewayHost, gatewayPort);
-            zeebeService.doStart();
         }
+        ServiceHelper.startService(zeebeService);
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-
-        if (zeebeService != null) {
-            zeebeService.doStop();
-            zeebeService = null;
-        }
+        ServiceHelper.stopService(zeebeService);
     }
 }

@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.zeebe;
 
 import org.apache.camel.CamelException;
@@ -31,12 +30,10 @@ import org.slf4j.LoggerFactory;
 
 public class ZeebeProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(ZeebeProducer.class);
-    private ZeebeEndpoint endpoint;
     private ZeebeProcessor processor;
 
     public ZeebeProducer(ZeebeEndpoint endpoint) {
         super(endpoint);
-        this.endpoint = endpoint;
 
         final OperationName operationName = endpoint.getOperationName();
         if (isProcessOperation(operationName)) {

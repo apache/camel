@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.zeebe.internal;
 
 import java.time.Duration;
@@ -43,10 +42,11 @@ import org.apache.camel.component.zeebe.model.MessageResponse;
 import org.apache.camel.component.zeebe.model.ProcessDeploymentResponse;
 import org.apache.camel.component.zeebe.model.ProcessRequest;
 import org.apache.camel.component.zeebe.model.ProcessResponse;
+import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ZeebeService {
+public class ZeebeService extends ServiceSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ZeebeService.class);
 
     private ZeebeClient zeebeClient;
@@ -63,10 +63,10 @@ public class ZeebeService {
     public ZeebeService(String gatewayHost, int gatewayPort) {
         this.gatewayHost = gatewayHost;
         this.gatewayPort = gatewayPort;
-
-        objectMapper = new ObjectMapper();
+        this.objectMapper = new ObjectMapper();
     }
 
+    @Override
     public void doStart() {
         String gatewayAddress = String.format("%s:%d", gatewayHost, gatewayPort);
 
@@ -97,6 +97,7 @@ public class ZeebeService {
         }
     }
 
+    @Override
     public void doStop() {
         if (zeebeClient != null) {
             zeebeClient.close();

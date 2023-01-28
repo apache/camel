@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.zeebe;
 
 import org.apache.camel.Category;
@@ -31,7 +30,7 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Zeebe component which does integrage with Camunda Zeebe to interact with the API.
+ * Workflow processes with Camunda Zeebe
  */
 @UriEndpoint(firstVersion = "3.21.0", scheme = "zeebe", title = "Zeebe", syntax = "zeebe:operationName",
              category = { Category.PROCESS },

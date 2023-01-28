@@ -2,7 +2,7 @@
 :doctitle: Zeebe
 :shortname: zeebe
 :artifactid: camel-zeebe
-:description: Zeebe component which does integrage with Camunda Zeebe to interact with the API.
+:description: Workflow processes with Camunda Zeebe
 :since: 3.21
 :supportlevel: Experimental
 :component-header: Both producer and consumer are supported
