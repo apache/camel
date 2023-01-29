@@ -1,0 +1,1 @@
+../../../../../components/camel-zeebe/src/main/docs/zeebe-component.adoc
