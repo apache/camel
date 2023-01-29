@@ -4359,6 +4359,20 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.XsltSaxonComponentBuilderFactory.xsltSaxon();
     }
     /**
+     * Zeebe (camel-zeebe)
+     * Zeebe component which does integrage with Camunda Zeebe to interact with
+     * the API.
+     * 
+     * Category: process
+     * Since: 3.21
+     * Maven coordinates: org.apache.camel:camel-zeebe
+     * 
+     * @return the dsl builder
+     */
+    static org.apache.camel.builder.component.dsl.ZeebeComponentBuilderFactory.ZeebeComponentBuilder zeebe() {
+        return org.apache.camel.builder.component.dsl.ZeebeComponentBuilderFactory.zeebe();
+    }
+    /**
      * Zendesk (camel-zendesk)
      * Manage Zendesk tickets, users, organizations, etc.
      * 
