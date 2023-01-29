@@ -4366,6 +4366,7 @@
                     <childDelegation>false</childDelegation>
                     <useFile>true</useFile>
                     <failIfNoTests>false</failIfNoTests>
+                    <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
                     <runOrder>alphabetical</runOrder>
                     <!-- lets re-run the failed test one more time, just to be sure -->
                     <rerunFailingTestsCount>2</rerunFailingTestsCount>
