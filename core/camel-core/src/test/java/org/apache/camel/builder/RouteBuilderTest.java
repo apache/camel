@@ -111,7 +111,7 @@ public class RouteBuilderTest extends TestSupport {
     public void testSimpleRouteWithHeaderPredicate() throws Exception {
         List<Route> routes = buildSimpleRouteWithHeaderPredicate();
 
-        log.debug("Created routes: " + routes);
+        log.debug("Created routes: {}", routes);
 
         assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
@@ -146,7 +146,7 @@ public class RouteBuilderTest extends TestSupport {
     public void testSimpleRouteWithChoice() throws Exception {
         List<Route> routes = buildSimpleRouteWithChoice();
 
-        log.debug("Created routes: " + routes);
+        log.debug("Created routes: {}", routes);
 
         assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
@@ -174,7 +174,7 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e4
         myProcessor = new Processor() {
             public void process(Exchange exchange) {
-                log.debug("Called with exchange: " + exchange);
+                log.debug("Called with exchange: {}", exchange);
             }
         };
 
@@ -217,7 +217,7 @@ public class RouteBuilderTest extends TestSupport {
     public void testCustomProcessorWithFilter() throws Exception {
         List<Route> routes = buildCustomProcessorWithFilter();
 
-        log.debug("Created routes: " + routes);
+        log.debug("Created routes: {}", routes);
 
         assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
@@ -243,7 +243,7 @@ public class RouteBuilderTest extends TestSupport {
     public void testWireTap() throws Exception {
         List<Route> routes = buildWireTap();
 
-        log.debug("Created routes: " + routes);
+        log.debug("Created routes: {}", routes);
 
         assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
@@ -283,7 +283,7 @@ public class RouteBuilderTest extends TestSupport {
 
         List<Route> routes = buildRouteWithInterceptor();
 
-        log.debug("Created routes: " + routes);
+        log.debug("Created routes: {}", routes);
 
         assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
@@ -315,7 +315,7 @@ public class RouteBuilderTest extends TestSupport {
         // END SNIPPET: e7
 
         List<Route> routes = getRouteList(builder);
-        log.debug("Created routes: " + routes);
+        log.debug("Created routes: {}", routes);
 
         assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
@@ -355,7 +355,7 @@ public class RouteBuilderTest extends TestSupport {
 
         List<Route> routes = buildDynamicRecipientList();
 
-        log.debug("Created routes: " + routes);
+        log.debug("Created routes: {}", routes);
 
         assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
@@ -397,7 +397,7 @@ public class RouteBuilderTest extends TestSupport {
 
         List<Route> routes = buildSplitter();
 
-        log.debug("Created routes: " + routes);
+        log.debug("Created routes: {}", routes);
 
         assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
@@ -430,7 +430,7 @@ public class RouteBuilderTest extends TestSupport {
 
         List<Route> routes = buildIdempotentConsumer();
 
-        log.debug("Created routes: " + routes);
+        log.debug("Created routes: {}", routes);
 
         assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {
@@ -468,7 +468,7 @@ public class RouteBuilderTest extends TestSupport {
 
         List<Route> routes = buildThreads();
 
-        log.debug("Created routes: " + routes);
+        log.debug("Created routes: {}", routes);
 
         assertEquals(1, routes.size(), "Number routes created");
         for (Route route : routes) {

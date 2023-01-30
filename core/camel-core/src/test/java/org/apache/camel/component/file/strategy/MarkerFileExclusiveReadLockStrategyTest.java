@@ -84,7 +84,7 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
             for (int i = 0; i < 20; i++) {
                 fos.write(("Line " + i + LS).getBytes());
                 fos2.write(("Line " + i + LS).getBytes());
-                LOG.debug("Writing line " + i);
+                LOG.debug("Writing line {}", i);
             }
             fos.flush();
             fos2.flush();

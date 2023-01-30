@@ -321,7 +321,7 @@ public abstract class TestSupport {
         try {
             PredicateAssertHelper.assertMatches(predicate, "Predicate should match: ", exchange);
         } catch (AssertionError e) {
-            LOG.debug("Caught expected assertion error: " + e);
+            LOG.debug("Caught expected assertion error: {}", e.getMessage(), e);
         }
         assertPredicate(predicate, exchange, false);
     }

@@ -45,7 +45,7 @@ public class XPathRouteConcurrentBigTest extends ContextTestSupport {
     }
 
     private void doSendMessages(int messageCount) throws Exception {
-        LOG.info("Sending " + messageCount + " messages");
+        LOG.info("Sending {} messages", messageCount);
 
         int forResult = (messageCount * 2 / 3) + messageCount % 3;
         int forOther = messageCount - forResult;

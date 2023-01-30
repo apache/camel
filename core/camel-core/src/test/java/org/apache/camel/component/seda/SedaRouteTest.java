@@ -48,7 +48,7 @@ public class SedaRouteTest extends TestSupport {
                 from("seda:test.a").to("seda:test.b");
                 from("seda:test.b").process(new Processor() {
                     public void process(Exchange e) {
-                        log.debug("Received exchange: " + e.getIn());
+                        log.debug("Received exchange: {}", e.getIn());
                         latch.countDown();
                     }
                 });
@@ -86,7 +86,7 @@ public class SedaRouteTest extends TestSupport {
                 from("seda:test.a").to("seda:test.b");
                 from("seda:test.b").process(new Processor() {
                     public void process(Exchange e) {
-                        log.debug("Received exchange: " + e.getIn());
+                        log.debug("Received exchange: {}", e.getIn());
                         latch.countDown();
                     }
                 });

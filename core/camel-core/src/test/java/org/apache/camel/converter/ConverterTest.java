@@ -72,7 +72,7 @@ public class ConverterTest extends TestSupport {
         byte[] array = converter.convertTo(byte[].class, "foo");
         assertNotNull(array);
 
-        LOG.debug("Found array of size: " + array.length);
+        LOG.debug("Found array of size: {}", array.length);
 
         String text = converter.convertTo(String.class, array);
         assertEquals("foo", text, "Converted to String");
@@ -83,7 +83,7 @@ public class ConverterTest extends TestSupport {
         char[] array = converter.convertTo(char[].class, "foo");
         assertNotNull(array);
 
-        LOG.debug("Found array of size: " + array.length);
+        LOG.debug("Found array of size: {}", array.length);
 
         String text = converter.convertTo(String.class, array);
         assertEquals("foo", text, "Converted to String");
@@ -146,7 +146,7 @@ public class ConverterTest extends TestSupport {
         // now lets go back to a List again
         List<?> resultList = converter.convertTo(List.class, intArray);
         assertEquals(2, resultList.size(), "List size");
-        LOG.debug("From primitive type array we've created the list: " + resultList);
+        LOG.debug("From primitive type array we've created the list: {}", resultList);
     }
 
     @Test

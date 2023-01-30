@@ -63,14 +63,14 @@ public class RomeksExceptionTest extends ContextTestSupport {
 
         List<Exchange> list = exceptionEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
-        LOG.debug("Received: " + exchange.getIn());
+        LOG.debug("Received: {}", exchange.getIn());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         final Processor exceptionThrower = new Processor() {
             public void process(Exchange exchange) throws Exception {
-                LOG.debug("About to throw exception on " + exchange);
+                LOG.debug("About to throw exception on {}", exchange);
 
                 exchange.getIn().setBody("<exception/>");
                 throw new IllegalArgumentException("Exception thrown intentionally.");

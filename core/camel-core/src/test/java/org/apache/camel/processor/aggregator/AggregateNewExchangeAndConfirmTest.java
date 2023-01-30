@@ -86,7 +86,7 @@ public class AggregateNewExchangeAndConfirmTest extends ContextTestSupport {
 
         @Override
         public void confirm(CamelContext camelContext, String exchangeId) {
-            log.info("Confirmed id: " + exchangeId);
+            log.info("Confirmed id: {}", exchangeId);
             this.id = exchangeId;
         }
 

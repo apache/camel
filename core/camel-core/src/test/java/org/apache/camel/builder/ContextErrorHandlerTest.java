@@ -89,7 +89,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
             Channel channel = unwrapChannel(processor);
             assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, channel.getNextProcessor());
-            log.debug("Found sendProcessor: " + sendProcessor);
+            log.debug("Found sendProcessor: {}", sendProcessor);
         }
     }
 

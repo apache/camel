@@ -48,7 +48,7 @@ public class DavidSiefertTest extends ContextTestSupport {
             result.assertIsSatisfied();
             fail("Should have failed this test!");
         } catch (AssertionError e) {
-            log.info("Caught expected assertion failure: " + e, e);
+            log.info("Caught expected assertion failure: {}", e, e);
         }
     }
 
