@@ -88,7 +88,9 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
             plc4XEndpoint.reconnectIfNeeded();
 
             PlcReadRequest request = plc4XEndpoint.buildPlcReadRequest();
-            CompletableFuture<? extends PlcReadResponse> future = request.execute().whenComplete((plcReadResponse, throwable) -> {});
+            CompletableFuture<? extends PlcReadResponse> future
+                    = request.execute().whenComplete((plcReadResponse, throwable) -> {
+                    });
             PlcReadResponse response;
             if (timeout >= 0) {
                 response = future.get(timeout, TimeUnit.MILLISECONDS);

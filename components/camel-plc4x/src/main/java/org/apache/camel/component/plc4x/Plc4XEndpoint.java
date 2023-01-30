@@ -47,6 +47,10 @@ import org.slf4j.LoggerFactory;
              syntax = "plc4x:driver", category = Category.IOT)
 public class Plc4XEndpoint extends DefaultEndpoint {
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XEndpoint.class);
+
+    protected PlcDriverManager plcDriverManager;
+    protected PlcConnection connection;
+
     @UriPath
     @Metadata(required = true, description = "PLC4X connection string for the connection to the target")
     private String driver;
@@ -64,8 +68,6 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     @Metadata(description = "Whether to reconnect when no connection is present upon doing a request")
     private boolean autoReconnect;
 
-    protected PlcDriverManager plcDriverManager;
-    protected PlcConnection connection;
     private String uri;
 
     public Plc4XEndpoint(String endpointUri, Component component) {
@@ -106,6 +108,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     /**
      * Set up the connection.
      * <p>
+     * 
      * @throws PlcConnectionException if no connection could be established and auto-reconnect is turned off
      */
     public void setupConnection() throws PlcConnectionException {
@@ -123,7 +126,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
                 }
             } else {
                 LOGGER.warn("Could not connect during setup and auto reconnect is turned off");
-                throw(e);
+                throw e;
             }
         }
     }
@@ -131,6 +134,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     /**
      * Reconnects if needed. If connection is lost and auto-reconnect is turned off, endpoint will be shutdown.
      * <p>
+     * 
      * @throws PlcConnectionException If reconnect failed and auto-reconnect is turned on
      */
     public void reconnectIfNeeded() throws PlcConnectionException {
@@ -176,6 +180,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     /**
      * Build a {@link PlcReadRequest} using the tags specified in the endpoint.
      * <p>
+     * 
      * @return {@link PlcReadRequest}
      */
     public PlcReadRequest buildPlcReadRequest() {
@@ -184,7 +189,8 @@ public class Plc4XEndpoint extends DefaultEndpoint {
             try {
                 builder.addItem(tag.getKey(), (String) tag.getValue());
             } catch (PlcIncompatibleDatatypeException e) {
-                LOGGER.error("For consumer, please use Map<String,String>, currently using {}", tags.getClass().getSimpleName());
+                LOGGER.error("For consumer, please use Map<String,String>, currently using {}",
+                        tags.getClass().getSimpleName());
             }
         }
         return builder.build();
@@ -193,8 +199,9 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     /**
      * Build a {@link PlcWriteRequest}.
      * <p>
-     * @param tags tags to add to write request
-     * @return {@link PlcWriteRequest}
+     * 
+     * @param  tags tags to add to write request
+     * @return      {@link PlcWriteRequest}
      */
     public PlcWriteRequest buildPlcWriteRequest(Map<String, Map<String, Object>> tags) {
         PlcWriteRequest.Builder builder = connection.writeRequestBuilder();
@@ -204,7 +211,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
             String name = entry.getKey();
             String query = entry.getValue().keySet().iterator().next();
             Object value = entry.getValue().get(query);
-            builder.addItem(name,query,value);
+            builder.addItem(name, query, value);
         }
         return builder.build();
     }

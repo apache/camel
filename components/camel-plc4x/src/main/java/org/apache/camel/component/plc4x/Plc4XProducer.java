@@ -34,8 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Plc4XProducer extends DefaultAsyncProducer {
-    private final Logger log = LoggerFactory.getLogger(Plc4XProducer.class);
     protected AtomicInteger openRequests;
+    private final Logger log = LoggerFactory.getLogger(Plc4XProducer.class);
     private final Plc4XEndpoint plc4XEndpoint;
 
     public Plc4XProducer(Plc4XEndpoint endpoint) {
