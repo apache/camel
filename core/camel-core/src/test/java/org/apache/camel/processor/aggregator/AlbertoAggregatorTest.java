@@ -119,16 +119,16 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
 
             private void debugIn(String stringId, Exchange oldExchange, Exchange newExchange) {
                 if (oldExchange != null) {
-                    log.debug(stringId + " old headers in: " + oldExchange.getIn().getHeaders());
-                    log.debug(stringId + " old body in: " + oldExchange.getIn().getBody());
+                    log.debug("{} old headers in: {}", stringId, oldExchange.getIn().getHeaders());
+                    log.debug("{} old body in: {}", stringId, oldExchange.getIn().getBody());
                 }
-                log.debug(stringId + " new headers in: " + newExchange.getIn().getHeaders());
-                log.debug(stringId + " new body in: " + newExchange.getIn().getBody());
+                log.debug("{} new headers in: {}", stringId, newExchange.getIn().getHeaders());
+                log.debug("{} new body in: {}", stringId, newExchange.getIn().getBody());
             }
 
             private void debugOut(String stringId, Exchange exchange) {
-                log.debug(stringId + " old headers out: " + exchange.getIn().getHeaders());
-                log.debug(stringId + " old body out: " + exchange.getIn().getBody());
+                log.debug("{} old headers out: {}", stringId, exchange.getIn().getHeaders());
+                log.debug("{} old body out: {}", stringId, exchange.getIn().getBody());
             }
 
             @Override

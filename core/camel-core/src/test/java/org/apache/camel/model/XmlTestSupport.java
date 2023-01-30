@@ -38,14 +38,14 @@ public abstract class XmlTestSupport extends TestSupport {
     protected RouteContainer assertParseAsJaxb(String uri) throws JAXBException {
         Object value = parseUri(uri);
         RouteContainer context = assertIsInstanceOf(RouteContainer.class, value);
-        log.info("Found: " + context);
+        log.info("Found: {}", context);
         return context;
     }
 
     protected RestContainer assertParseRestAsJaxb(String uri) throws JAXBException {
         Object value = parseUri(uri);
         RestContainer context = assertIsInstanceOf(RestContainer.class, value);
-        log.info("Found: " + context);
+        log.info("Found: {}", context);
         return context;
     }
 

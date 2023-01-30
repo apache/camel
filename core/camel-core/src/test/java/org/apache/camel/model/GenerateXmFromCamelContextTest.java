@@ -36,7 +36,7 @@ public class GenerateXmFromCamelContextTest extends ContextTestSupport {
         assertEquals(1, list.size(), "Size of list " + list);
         RouteDefinition routeType = list.get(0);
 
-        log.info("Found route: " + routeType);
+        log.info("Found route: {}", routeType);
 
         // now lets marshall it!
         dump(routeType);
@@ -48,7 +48,7 @@ public class GenerateXmFromCamelContextTest extends ContextTestSupport {
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
         StringWriter buffer = new StringWriter();
         marshaller.marshal(object, buffer);
-        log.info("Created: " + buffer);
+        log.info("Created: {}", buffer);
         assertNotNull(buffer);
         String out = buffer.toString();
         assertTrue(out.indexOf("<from uri=\"direct:start\"/>") > 0, "Should contain the description");

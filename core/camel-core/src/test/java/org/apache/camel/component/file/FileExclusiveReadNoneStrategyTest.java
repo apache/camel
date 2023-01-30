@@ -61,7 +61,7 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         String body = mock.getReceivedExchanges().get(0).getIn().getBody(String.class);
-        LOG.debug("Body is: " + body);
+        LOG.debug("Body is: {}", body);
         assertFalse(body.endsWith("Bye World"), "Should not wait and read the entire file");
     }
 

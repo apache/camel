@@ -57,7 +57,7 @@ public class SplitterStreamingUoWIssueTest extends ContextTestSupport {
                         .autoStartup(false)
                         .log("Start of file ${file:name}")
                         .split(body().tokenize(",")).streaming().process(e -> {
-                            log.info("Stackframe size: " + Thread.currentThread().getStackTrace().length);
+                            log.info("Stackframe size: {}", Thread.currentThread().getStackTrace().length);
                         }).to("seda:queue").end()
                         .log("End of file ${file:name}").to("mock:result");
 

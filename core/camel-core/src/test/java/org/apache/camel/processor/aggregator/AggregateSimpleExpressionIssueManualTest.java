@@ -49,7 +49,7 @@ public class AggregateSimpleExpressionIssueManualTest extends ContextTestSupport
         int rows = 100000;
         int batches = rows / 1000;
         int total = files + (files * rows) + (files * batches);
-        LOG.info("There are " + total + " exchanges");
+        LOG.info("There are {} exchanges", total);
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(total).create();
 
         LOG.info("Writing 10 files with 100000 rows in each file");
@@ -68,9 +68,9 @@ public class AggregateSimpleExpressionIssueManualTest extends ContextTestSupport
 
         LOG.info("Waiting to process all the files");
         boolean matches = notify.matches(3, TimeUnit.MINUTES);
-        LOG.info("Should process all files " + matches);
+        LOG.info("Should process all files {}", matches);
 
-        LOG.info("Time taken " + watch.taken() + " ms");
+        LOG.info("Time taken {} ms", watch.taken());
     }
 
     @Override
@@ -90,7 +90,7 @@ public class AggregateSimpleExpressionIssueManualTest extends ContextTestSupport
         private volatile int cnt;
 
         public void invoke(final List<String> strList) {
-            LOG.info("Batch " + (++cnt));
+            LOG.info("Batch {}", ++cnt);
         }
     }
 

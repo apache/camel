@@ -60,7 +60,7 @@ public class FileChangedReadLockMinAgeTest extends ContextTestSupport {
         try (OutputStream fos = Files.newOutputStream(testFile("in/slowfile.dat"))) {
             for (int i = 0; i < 20; i++) {
                 fos.write(("Line " + i + LS).getBytes());
-                LOG.debug("Writing line " + i);
+                LOG.debug("Writing line {}", i);
                 Thread.sleep(50);
             }
             fos.flush();

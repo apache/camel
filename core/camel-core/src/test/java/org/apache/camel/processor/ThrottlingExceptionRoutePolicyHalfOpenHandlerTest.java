@@ -130,7 +130,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTe
         try {
             template.sendBody(url, bodyText);
         } catch (Exception e) {
-            log.debug("Error sending:" + e.getCause().getMessage());
+            log.debug("Error sending: {}", e.getCause().getMessage());
         }
     }
 }

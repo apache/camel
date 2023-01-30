@@ -70,7 +70,7 @@ public class BeanWithExpressionInjectionTest extends ContextTestSupport {
         public void read(String body, @Simple("${header.foo}") String foo) {
             this.foo = foo;
             this.body = body;
-            LOG.info("read() method called on " + this);
+            LOG.info("read() method called on {}", this);
         }
     }
 }
