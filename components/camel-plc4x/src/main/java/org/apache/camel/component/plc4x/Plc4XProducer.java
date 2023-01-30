@@ -50,7 +50,11 @@ public class Plc4XProducer extends DefaultAsyncProducer {
         try {
             plc4XEndpoint.setupConnection();
         } catch (PlcConnectionException e) {
-            log.error("Connection setup failed, stopping producer");
+            if (log.isTraceEnabled()) {
+                log.error("Connection setup failed, stopping producer", e);
+            } else {
+                log.error("Connection setup failed, stopping producer");
+            }
             doStop();
         }
         if (!plc4XEndpoint.canWrite()) {
@@ -63,7 +67,11 @@ public class Plc4XProducer extends DefaultAsyncProducer {
         try {
             plc4XEndpoint.reconnectIfNeeded();
         } catch (PlcConnectionException e) {
-            log.warn("Unable to reconnect, skipping request", e);
+            if (log.isTraceEnabled()) {
+                log.warn("Unable to reconnect, skipping request", e);
+            } else {
+                log.warn("Unable to reconnect, skipping request");
+            }
             return;
         }
 

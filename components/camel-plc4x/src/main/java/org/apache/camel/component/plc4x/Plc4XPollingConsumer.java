@@ -58,7 +58,11 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
         try {
             plc4XEndpoint.setupConnection();
         } catch (PlcConnectionException e) {
-            LOGGER.error("Connection setup failed, stopping PollingConsumer");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.error("Connection setup failed, stopping PollingConsumer", e);
+            } else {
+                LOGGER.error("Connection setup failed, stopping PollingConsumer");
+            }
             doStop();
         }
     }
@@ -104,7 +108,11 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
             getExceptionHandler().handleException(e);
             Thread.currentThread().interrupt();
         } catch (PlcConnectionException e) {
-            LOGGER.warn("Unable to reconnect, skipping request", e);
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.warn("Unable to reconnect, skipping request", e);
+            } else {
+                LOGGER.warn("Unable to reconnect, skipping request");
+            }
             exchange.getIn().setBody(new HashMap<>());
         }
         return exchange;

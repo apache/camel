@@ -116,7 +116,11 @@ public class Plc4XEndpoint extends DefaultEndpoint {
             }
         } catch (PlcConnectionException e) {
             if (isAutoReconnect()) {
-                LOGGER.warn("Could not connect during setup, retrying on next request");
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.warn("Could not connect during setup, retrying on next request", e);
+                } else {
+                    LOGGER.warn("Could not connect during setup, retrying on next request");
+                }
             } else {
                 LOGGER.warn("Could not connect during setup and auto reconnect is turned off");
                 throw(e);

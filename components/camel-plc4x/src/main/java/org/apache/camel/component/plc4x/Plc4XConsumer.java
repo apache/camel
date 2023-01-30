@@ -76,7 +76,11 @@ public class Plc4XConsumer extends DefaultConsumer {
         try {
             plc4XEndpoint.setupConnection();
         } catch (PlcConnectionException e) {
-            LOGGER.error("Connection setup failed, stopping Consumer");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.error("Connection setup failed, stopping Consumer", e);
+            } else {
+                LOGGER.error("Connection setup failed, stopping Consumer");
+            }
             doStop();
         }
         if (trigger == null) {
@@ -90,7 +94,11 @@ public class Plc4XConsumer extends DefaultConsumer {
         try {
             plc4XEndpoint.reconnectIfNeeded();
         } catch (PlcConnectionException e) {
-            LOGGER.warn("Unable to reconnect, skipping request", e);
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.warn("Unable to reconnect, skipping request", e);
+            } else {
+                LOGGER.warn("Unable to reconnect, skipping request");
+            }
             return;
         }
 
@@ -123,7 +131,11 @@ public class Plc4XConsumer extends DefaultConsumer {
                 exchange.getIn().setBody(response);
                 getProcessor().process(exchange);
             } catch (PlcConnectionException e) {
-                LOGGER.warn("Unable to reconnect, skipping request", e);
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.warn("Unable to reconnect, skipping request", e);
+                } else {
+                    LOGGER.warn("Unable to reconnect, skipping request");
+                }
             } catch (Exception e) {
                 getExceptionHandler().handleException(e);
             }
