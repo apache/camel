@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 public class Plc4XConsumer extends DefaultConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XConsumer.class);
 
-    private PlcConnection plcConnection;
     private final Map<String, Object> tags;
     private final String trigger;
     private final Plc4XEndpoint plc4XEndpoint;
@@ -74,9 +73,11 @@ public class Plc4XConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.plcConnection = plc4XEndpoint.getConnection();
-        if (!plcConnection.isConnected()) {
-            plc4XEndpoint.reconnect();
+        try {
+            plc4XEndpoint.setupConnection();
+        } catch (PlcConnectionException e) {
+            LOGGER.error("Connection setup failed, stopping Consumer");
+            doStop();
         }
         if (trigger == null) {
             startUnTriggered();
@@ -86,17 +87,14 @@ public class Plc4XConsumer extends DefaultConsumer {
     }
 
     private void startUnTriggered() {
-        if (plc4XEndpoint.isAutoReconnect() && !plcConnection.isConnected()) {
-            try {
-                plc4XEndpoint.reconnect();
-                LOGGER.debug("Successfully reconnected");
-            } catch (PlcConnectionException e) {
-                LOGGER.warn("Unable to reconnect, skipping request", e);
-                return;
-            }
+        try {
+            plc4XEndpoint.reconnectIfNeeded();
+        } catch (PlcConnectionException e) {
+            LOGGER.warn("Unable to reconnect, skipping request", e);
+            return;
         }
 
-        PlcReadRequest request = plc4XEndpoint.buildPlcReadRequest(plcConnection);
+        PlcReadRequest request = plc4XEndpoint.buildPlcReadRequest();
 
         future = executorService.schedule(() -> request.execute().thenAccept(response -> {
             try {
@@ -119,10 +117,8 @@ public class Plc4XConsumer extends DefaultConsumer {
 
         TriggeredScraperImpl scraper = new TriggeredScraperImpl(configuration, (job, alias, response) -> {
             try {
-                if (plc4XEndpoint.isAutoReconnect() && !plcConnection.isConnected()) {
-                    plc4XEndpoint.reconnect();
-                    LOGGER.debug("Successfully reconnected");
-                }
+                plc4XEndpoint.reconnectIfNeeded();
+
                 Exchange exchange = plc4XEndpoint.createExchange();
                 exchange.getIn().setBody(response);
                 getProcessor().process(exchange);

@@ -27,6 +27,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.plc4x.java.api.PlcConnection;
+import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.slf4j.Logger;
@@ -35,7 +36,6 @@ import org.slf4j.LoggerFactory;
 public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XPollingConsumer.class);
 
-    private PlcConnection plcConnection;
     private final Plc4XEndpoint plc4XEndpoint;
 
     public Plc4XPollingConsumer(Plc4XEndpoint endpoint) {
@@ -56,12 +56,13 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.plcConnection = plc4XEndpoint.getConnection();
-        if (!plcConnection.isConnected()) {
-            plc4XEndpoint.reconnect();
+        try {
+            plc4XEndpoint.setupConnection();
+        } catch (PlcConnectionException e) {
+            LOGGER.error("Connection setup failed, stopping PollingConsumer");
+            doStop();
         }
     }
-
 
     @Override
     public Exchange receive() {
@@ -79,9 +80,11 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
     }
 
     protected Exchange doReceive(long timeout) {
-        PlcReadRequest request = plc4XEndpoint.buildPlcReadRequest(plcConnection);
         Exchange exchange = plc4XEndpoint.createExchange();
         try {
+            plc4XEndpoint.reconnectIfNeeded();
+
+            PlcReadRequest request = plc4XEndpoint.buildPlcReadRequest();
             CompletableFuture<? extends PlcReadResponse> future = request.execute().whenComplete((plcReadResponse, throwable) -> {});
             PlcReadResponse response;
             if (timeout >= 0) {
@@ -101,6 +104,9 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
         } catch (InterruptedException e) {
             getExceptionHandler().handleException(e);
             Thread.currentThread().interrupt();
+        } catch (PlcConnectionException e) {
+            LOGGER.warn("Unable to reconnect, skipping request", e);
+            exchange.getIn().setBody(new HashMap<>());
         }
         return exchange;
     }
