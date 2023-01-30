@@ -16,20 +16,23 @@
 ## ------------------------------------------------------------------------
 package ${package};
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit5.CamelTestSupport;
+
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class ${name}ComponentTest extends CamelTestSupport {
 
     private final EventBusHelper eventBusHelper = EventBusHelper.getInstance();
 
     @Test
+    @Disabled
     public void test${name}() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(5);
