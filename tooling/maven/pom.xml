@@ -40,8 +40,6 @@
         <module>camel-api-component-maven-plugin</module>
         <module>bom-generator-maven-plugin</module>
         <module>camel-restdsl-openapi-plugin</module>
-        <module>camel-javadoc-plugin</module>
-        <module>camel-resources-plugin</module>
         <module>sync-properties-maven-plugin</module>
         <module>camel-component-maven-plugin</module>
     </modules>

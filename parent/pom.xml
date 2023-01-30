@@ -3840,11 +3840,6 @@
                 </plugin>
                 <plugin>
                     <groupId>org.apache.camel</groupId>
-                    <artifactId>camel-javadoc-plugin</artifactId>
-                    <version>${project.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.camel</groupId>
                     <artifactId>camel-yaml-dsl-maven-plugin</artifactId>
                     <version>${project.version}</version>
                 </plugin>
