@@ -172,7 +172,7 @@
         <fop-version>2.7</fop-version>
         <formatter-maven-plugin-version>2.17.1</formatter-maven-plugin-version>
         <ftpserver-version>1.1.2</ftpserver-version>
-        <freemarker-version>2.3.31</freemarker-version>
+        <freemarker-version>2.3.32</freemarker-version>
         <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
         <geronimo-annotation-1.2-spec-version>1.0</geronimo-annotation-1.2-spec-version>
         <geronimo-atinject-1.0-spec-version>1.0</geronimo-atinject-1.0-spec-version>
@@ -391,7 +391,7 @@
         <maven-surefire-report-plugin-version>3.0.0-M4</maven-surefire-report-plugin-version>
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
-        <metrics-version>4.2.14</metrics-version>
+        <metrics-version>4.2.15</metrics-version>
         <micrometer-version>1.10.2</micrometer-version>
         <microprofile-config-version>2.0.1</microprofile-config-version>
         <microprofile-metrics-version>3.0.1</microprofile-metrics-version>
@@ -416,7 +416,7 @@
         <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.86.Final</netty-version>
+        <netty-version>4.1.87.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.73</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
@@ -553,7 +553,7 @@
         <xml-resolver-version>1.2</xml-resolver-version>
         <xmlgraphics-batik-version>1.15</xmlgraphics-batik-version>
         <xmlsec-version>2.2.3</xmlsec-version>
-        <xmlunit-version>2.9.0</xmlunit-version>
+        <xmlunit-version>2.9.1</xmlunit-version>
         <xpp3-version>1.1.4c</xpp3-version>
         <xstream-version>1.4.20</xstream-version>
         <yetus-audience-annotations-version>0.13.0</yetus-audience-annotations-version>
