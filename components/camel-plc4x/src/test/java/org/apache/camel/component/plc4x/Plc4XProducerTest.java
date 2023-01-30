@@ -95,15 +95,4 @@ public class Plc4XProducerTest {
         atomicInteger.incrementAndGet();
         sut.doStop();
     }
-
-    @Test
-    public void doStopBadConnection() throws Exception {
-        Field openRequests = sut.getClass().getDeclaredField("plcConnection");
-        openRequests.setAccessible(true);
-        PlcConnection plcConnectionMock = mock(PlcConnection.class);
-        doThrow(new RuntimeException("oh noes")).when(plcConnectionMock).close();
-        openRequests.set(sut, plcConnectionMock);
-        sut.doStop();
-    }
-
 }

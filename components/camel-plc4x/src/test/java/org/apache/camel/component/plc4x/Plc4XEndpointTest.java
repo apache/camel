@@ -19,6 +19,7 @@ package org.apache.camel.component.plc4x;
 import org.apache.camel.Component;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.plc4x.java.api.PlcConnection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,6 +27,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.Mockito.*;
+
+import java.lang.reflect.Field;
 
 public class Plc4XEndpointTest {
 
@@ -52,6 +55,16 @@ public class Plc4XEndpointTest {
     @Test
     public void isSingleton() {
         assertThat(sut.isSingleton(), is(true));
+    }
+
+    @Test
+    public void doStopBadConnection() throws Exception {
+        Field openRequests = sut.getClass().getDeclaredField("connection");
+        openRequests.setAccessible(true);
+        PlcConnection plcConnectionMock = mock(PlcConnection.class);
+        doThrow(new RuntimeException("oh noes")).when(plcConnectionMock).close();
+        openRequests.set(sut, plcConnectionMock);
+        sut.doStop();
     }
 
 }
