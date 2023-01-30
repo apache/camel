@@ -716,7 +716,7 @@ public abstract class BaseMainSupport extends BaseService {
                 public void notify(CamelEvent event) throws Exception {
                     // log summary of configurations
                     if (!propertyPlaceholders.isEmpty()) {
-                        LOG.info("Property-placeholders summary");
+                        boolean header = true;
                         for (var entry : propertyPlaceholders.entrySet()) {
                             String k = entry.getKey().toString();
                             Object v = entry.getValue();
@@ -726,6 +726,10 @@ public abstract class BaseMainSupport extends BaseService {
                             boolean same = ObjectHelper.equal(v, dv);
                             boolean skip = "templateId".equals(k);
                             if (!same && !skip) {
+                                if (header) {
+                                    LOG.info("Property-placeholders summary");
+                                    header = false;
+                                }
                                 String loc = locationSummary(propertyPlaceholders, k);
                                 if (SensitiveUtils.containsSensitive(k)) {
                                     LOG.info("    {} {}=xxxxxx", loc, k);
