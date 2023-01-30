@@ -53,8 +53,7 @@ public abstract class XmlTestSupport extends TestSupport {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         URL resource = getClass().getResource(uri);
         assertNotNull(resource, "Cannot find resource on the classpath: " + uri);
-        Object value = unmarshaller.unmarshal(resource);
-        return value;
+        return unmarshaller.unmarshal(resource);
     }
 
     @Override

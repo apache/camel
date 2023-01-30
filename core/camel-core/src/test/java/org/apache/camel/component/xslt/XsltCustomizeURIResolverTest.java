@@ -74,8 +74,7 @@ public class XsltCustomizeURIResolverTest extends ContextTestSupport {
                     }
                 }
 
-                Source constantResult = new StreamSource(new ByteArrayInputStream(EXPECTED_XML_CONSTANT.getBytes()));
-                return constantResult;
+                return new StreamSource(new ByteArrayInputStream(EXPECTED_XML_CONSTANT.getBytes()));
             }
         };
     }

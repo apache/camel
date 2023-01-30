@@ -28,7 +28,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     protected String body = "<person name='James' city='London'/>";
     protected MockEndpoint expected;
 
-    public final class MyValueClass {
+    public static final class MyValueClass {
 
         private String value1;
         private String value2;

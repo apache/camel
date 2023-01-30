@@ -72,7 +72,7 @@ public class RecipientListReturnValueTest extends ContextTestSupport {
         };
     }
 
-    public class MyBean {
+    public static class MyBean {
 
         @org.apache.camel.RecipientList
         public String[] route() {

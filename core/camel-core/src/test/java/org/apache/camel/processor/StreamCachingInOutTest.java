@@ -72,7 +72,7 @@ public class StreamCachingInOutTest extends ContextTestSupport {
     }
 
     // have a test processor that reads the stream and makes sure it is reset
-    private class TestProcessor implements Processor {
+    private static class TestProcessor implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);

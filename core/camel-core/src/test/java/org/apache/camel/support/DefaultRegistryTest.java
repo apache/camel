@@ -276,7 +276,7 @@ public class DefaultRegistryTest {
         assertSame(context, lookup.getCamelContext());
     }
 
-    private class MyBean implements CamelContextAware {
+    private static class MyBean implements CamelContextAware {
 
         private CamelContext camelContext;
 

@@ -38,11 +38,11 @@ public class FileSplitInSplitTest extends ContextTestSupport {
         // create file with many lines
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < size; i++) {
-            sb.append("Block1 Line " + i + LS);
+            sb.append("Block1 Line ").append(i).append(LS);
         }
         sb.append(comma);
         for (int i = 10; i < size + 10; i++) {
-            sb.append("Block2 Line " + i + LS);
+            sb.append("Block2 Line ").append(i).append(LS);
         }
 
         template.sendBodyAndHeader(fileUri(), sb.toString(), Exchange.FILE_NAME, "input.txt");

@@ -71,7 +71,7 @@ public class AdviceWithRoutePolicyTest extends ContextTestSupport {
         };
     }
 
-    private class MyRoutePolicy extends RoutePolicySupport {
+    private static class MyRoutePolicy extends RoutePolicySupport {
 
         @Override
         public void onExchangeBegin(Route route, Exchange exchange) {

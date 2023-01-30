@@ -77,7 +77,7 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
         assertEquals("Forced", e.getMessage());
     }
 
-    public class MyGuidGenerator {
+    public static class MyGuidGenerator {
         public String next() {
             throw new IllegalArgumentException("Forced");
         }

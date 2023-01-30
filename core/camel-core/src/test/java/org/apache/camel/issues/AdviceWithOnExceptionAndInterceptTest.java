@@ -38,7 +38,7 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
         return false;
     }
 
-    class MyAdviceWithRouteBuilder extends AdviceWithRouteBuilder {
+    static class MyAdviceWithRouteBuilder extends AdviceWithRouteBuilder {
         @Override
         public void configure() {
             onException(SQLException.class).handled(true).transform(constant("Intercepted SQL!")).log("sending ${body}")

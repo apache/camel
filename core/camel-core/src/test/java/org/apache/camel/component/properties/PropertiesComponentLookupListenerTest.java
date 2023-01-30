@@ -65,7 +65,7 @@ public class PropertiesComponentLookupListenerTest extends ContextTestSupport {
         return context;
     }
 
-    private class MyListener implements PropertiesLookupListener {
+    private static class MyListener implements PropertiesLookupListener {
 
         private Map<String, String[]> map = new HashMap<>();
 

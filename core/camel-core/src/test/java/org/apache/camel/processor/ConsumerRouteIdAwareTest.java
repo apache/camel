@@ -82,7 +82,7 @@ public class ConsumerRouteIdAwareTest extends ContextTestSupport {
         }
     }
 
-    private class MyConsumer extends DefaultConsumer {
+    private static class MyConsumer extends DefaultConsumer {
 
         public MyConsumer(Endpoint endpoint, Processor processor) {
             super(endpoint, processor);

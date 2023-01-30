@@ -113,7 +113,7 @@ public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport 
         }
     }
 
-    private final class MyQueueEndpoint extends DefaultEndpoint {
+    private static final class MyQueueEndpoint extends DefaultEndpoint {
 
         private EventDrivenPollingConsumer consumer;
 

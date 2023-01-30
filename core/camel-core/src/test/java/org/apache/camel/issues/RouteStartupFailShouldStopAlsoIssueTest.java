@@ -109,7 +109,7 @@ public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport 
         }
     }
 
-    private class MyFailConsumer extends DefaultConsumer {
+    private static class MyFailConsumer extends DefaultConsumer {
 
         public MyFailConsumer(Endpoint endpoint, Processor processor) {
             super(endpoint, processor);

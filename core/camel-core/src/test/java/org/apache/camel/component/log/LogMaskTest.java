@@ -33,8 +33,7 @@ public class LogMaskTest {
 
     protected CamelContext createCamelContext() throws Exception {
         registry = new DefaultRegistry();
-        CamelContext context = new DefaultCamelContext(registry);
-        return context;
+        return new DefaultCamelContext(registry);
     }
 
     @Test

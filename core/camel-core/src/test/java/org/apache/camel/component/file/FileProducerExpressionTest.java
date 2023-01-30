@@ -100,7 +100,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         assertFileExists(testFile("mybirthday-19740420.txt"));
     }
 
-    public class MyGuidGenerator {
+    public static class MyGuidGenerator {
         public String guid() {
             return "123";
         }

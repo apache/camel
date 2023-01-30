@@ -89,7 +89,7 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
         }
     }
 
-    class BaseRequest {
+    static class BaseRequest {
         public long id;
     }
 

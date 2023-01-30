@@ -112,7 +112,7 @@ public class FileIdempotentStoreOrderingTest extends TestSupport {
 
         // then
         try (Stream<String> fileContent = Files.lines(fileStore.toPath())) {
-            List<String> fileEntries = fileContent.collect(Collectors.toList());
+            List<String> fileEntries = fileContent.toList();
 
             // all old entries is removed
             assertEquals(0, fileEntries.size());

@@ -27,12 +27,12 @@ import org.junit.jupiter.api.Test;
  */
 public class RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest extends ContextTestSupport {
 
-    private class FirstException extends Exception {
+    private static class FirstException extends Exception {
 
         private static final long serialVersionUID = 1L;
     }
 
-    private class SecondException extends Exception {
+    private static class SecondException extends Exception {
 
         private static final long serialVersionUID = 1L;
     }

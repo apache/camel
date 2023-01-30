@@ -40,13 +40,13 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         SSLContextParameters parameters = new SSLContextParameters();
 
         Collection<String> result;
-        result = parameters.filter(null, Arrays.asList("SSLv3", "TLSv1", "TLSv1.1"), Arrays.asList(Pattern.compile("TLS.*")),
-                Arrays.asList(new Pattern[0]));
+        result = parameters.filter(null, Arrays.asList("SSLv3", "TLSv1", "TLSv1.1"), List.of(Pattern.compile("TLS.*")),
+                List.of());
         assertEquals(2, result.size());
         assertStartsWith(result, "TLS");
 
-        result = parameters.filter(null, Arrays.asList("SSLv3", "TLSv1", "TLSv1.1"), Arrays.asList(Pattern.compile(".*")),
-                Arrays.asList(Pattern.compile("SSL.*")));
+        result = parameters.filter(null, Arrays.asList("SSLv3", "TLSv1", "TLSv1.1"), List.of(Pattern.compile(".*")),
+                List.of(Pattern.compile("SSL.*")));
         assertEquals(2, result.size());
         assertStartsWith(result, "TLS");
         try {

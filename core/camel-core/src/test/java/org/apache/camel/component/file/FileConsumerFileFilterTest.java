@@ -75,7 +75,7 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e1
-    public class MyFileFilter<T> implements GenericFileFilter<T> {
+    public static class MyFileFilter<T> implements GenericFileFilter<T> {
         @Override
         public boolean accept(GenericFile<T> file) {
             // we want all directories

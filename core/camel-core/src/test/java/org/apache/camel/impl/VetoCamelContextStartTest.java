@@ -58,7 +58,7 @@ public class VetoCamelContextStartTest extends ContextTestSupport {
         return context;
     }
 
-    private class MyVeto extends LifecycleStrategySupport {
+    private static class MyVeto extends LifecycleStrategySupport {
 
         @Override
         public void onContextStart(CamelContext context) throws VetoCamelContextStartException {

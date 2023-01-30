@@ -65,7 +65,7 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
     }
 
     @BindToRegistry
-    public class FooService {
+    public static class FooService {
 
         private String fooEndpoint;
         private String barEndpoint;

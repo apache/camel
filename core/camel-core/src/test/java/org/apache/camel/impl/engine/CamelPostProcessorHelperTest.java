@@ -544,7 +544,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     }
 
-    public class NoBeanInjectionTestClass {
+    public static class NoBeanInjectionTestClass {
         @EndpointInject
         public FluentProducerTemplate fluentProducerTemplate;
 
@@ -605,7 +605,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyEndpointInjectBeanProducerTemplate {
+    public static class MyEndpointInjectBeanProducerTemplate {
 
         private ProducerTemplate producer;
 
@@ -623,7 +623,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyEndpointBeanProducer {
+    public static class MyEndpointBeanProducer {
 
         private Producer producer;
 
@@ -642,7 +642,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     }
 
-    public class MyEndpointBeanPollingConsumer {
+    public static class MyEndpointBeanPollingConsumer {
 
         private PollingConsumer consumer;
 
@@ -661,7 +661,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     }
 
-    public class MyEndpointInjectProducerTemplate {
+    public static class MyEndpointInjectProducerTemplate {
 
         @EndpointInject("mock:result")
         public ProducerTemplate producer;
@@ -672,7 +672,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     }
 
-    public class MyEndpointInjectFluentProducerTemplate {
+    public static class MyEndpointInjectFluentProducerTemplate {
 
         @EndpointInject("mock:result")
         public FluentProducerTemplate producer;
@@ -683,7 +683,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     }
 
-    public class MyEndpointInjectProducerTemplateNoDefaultEndpoint {
+    public static class MyEndpointInjectProducerTemplateNoDefaultEndpoint {
 
         @EndpointInject()
         public ProducerTemplate producer;
@@ -694,7 +694,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     }
 
-    public class MyEndpointInjectProducerTemplateNameUnknown {
+    public static class MyEndpointInjectProducerTemplateNameUnknown {
 
         @EndpointInject("ref:unknown")
         public ProducerTemplate producer;
@@ -705,7 +705,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     }
 
-    public class MyEndpointInjectProducerTemplateUrlUnknown {
+    public static class MyEndpointInjectProducerTemplateUrlUnknown {
 
         @EndpointInject("xxx:foo")
         public ProducerTemplate producer;
@@ -725,7 +725,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyPropertyFieldBean {
+    public static class MyPropertyFieldBean {
 
         @PropertyInject("myTimeout")
         public int timeout;
@@ -738,7 +738,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyPropertyFieldDefaultValueBean {
+    public static class MyPropertyFieldDefaultValueBean {
 
         @PropertyInject(value = "myTimeout", defaultValue = "5000")
         public int timeout;
@@ -751,7 +751,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyPropertyMethodBean {
+    public static class MyPropertyMethodBean {
 
         private int timeout;
         private String greeting;
@@ -779,7 +779,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyBeanInjectBean {
+    public static class MyBeanInjectBean {
 
         @BeanInject("foo")
         public FooBar foo;
@@ -789,7 +789,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyBeanInjectByTypeBean {
+    public static class MyBeanInjectByTypeBean {
 
         @BeanInject
         public FooBar foo;
@@ -799,7 +799,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyBeanConfigInjectByTypeBean {
+    public static class MyBeanConfigInjectByTypeBean {
 
         @BeanConfigInject("foobar")
         public FooBarConfig config;
@@ -811,7 +811,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
-    public class MyBeanConfigInjectByMethod {
+    public static class MyBeanConfigInjectByMethod {
 
         public FooBar fooBar;
 

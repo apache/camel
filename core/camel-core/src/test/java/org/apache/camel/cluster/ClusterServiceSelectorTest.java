@@ -346,7 +346,7 @@ public class ClusterServiceSelectorTest {
         }
     }
 
-    private final class DummyClusterServiceView extends AbstractCamelClusterView {
+    private static final class DummyClusterServiceView extends AbstractCamelClusterView {
 
         public DummyClusterServiceView(CamelClusterService cluster, String namespace) {
             super(cluster, namespace);

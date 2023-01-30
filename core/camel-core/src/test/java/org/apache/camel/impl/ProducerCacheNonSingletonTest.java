@@ -94,7 +94,7 @@ public class ProducerCacheNonSingletonTest extends ContextTestSupport {
         }
     }
 
-    private class MyDummyProducer extends DefaultAsyncProducer {
+    private static class MyDummyProducer extends DefaultAsyncProducer {
 
         public MyDummyProducer(Endpoint endpoint) {
             super(endpoint);

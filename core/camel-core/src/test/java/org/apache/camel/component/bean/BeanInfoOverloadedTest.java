@@ -54,11 +54,11 @@ public class BeanInfoOverloadedTest extends ContextTestSupport {
         }
     }
 
-    class RequestA {
+    static class RequestA {
         public int i;
     }
 
-    class RequestB {
+    static class RequestB {
         public String s;
     }
 

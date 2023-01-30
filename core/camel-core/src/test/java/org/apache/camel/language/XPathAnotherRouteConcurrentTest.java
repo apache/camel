@@ -62,7 +62,7 @@ public class XPathAnotherRouteConcurrentTest extends ContextTestSupport {
         sb.append("<persons>\n");
         for (int i = 0; i < 100; i++) {
             sb.append("<person>");
-            sb.append("<id>" + index + "-" + i + "</id>");
+            sb.append("<id>").append(index).append("-").append(i).append("</id>");
             sb.append("<name>");
             if (i == 95) {
                 sb.append(name);

@@ -68,7 +68,7 @@ public class StepEventNotifierTest extends ContextTestSupport {
         };
     }
 
-    private class MyEventNotifier extends EventNotifierSupport {
+    private static class MyEventNotifier extends EventNotifierSupport {
 
         private final List<CamelEvent> events = new ArrayList<>();
 

@@ -46,7 +46,7 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
         }
     }
 
-    public final class MyEndpoint extends DefaultEndpoint {
+    public static final class MyEndpoint extends DefaultEndpoint {
 
         private String username;
         private String password;

@@ -18,7 +18,6 @@ package org.apache.camel.util;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -347,7 +346,7 @@ public class StringHelperTest {
 
     @Test
     public void testSplitAsStream() {
-        List<String> items = StringHelper.splitAsStream("a,b,c", ",").collect(Collectors.toList());
+        List<String> items = StringHelper.splitAsStream("a,b,c", ",").toList();
         assertTrue(items.contains("a"));
         assertTrue(items.contains("b"));
         assertTrue(items.contains("c"));

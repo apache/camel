@@ -60,7 +60,7 @@ public class CustomBulkTypeConvertersTest extends ContextTestSupport {
         }
     }
 
-    private class CustomBulkTypeConverters implements BulkTypeConverters {
+    private static class CustomBulkTypeConverters implements BulkTypeConverters {
 
         @Override
         public TypeConverter lookup(Class<?> toType, Class<?> fromType) {
