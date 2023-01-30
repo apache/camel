@@ -138,6 +138,14 @@
       </plugin>
 
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire-plugin-version}</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
 
 </project>
