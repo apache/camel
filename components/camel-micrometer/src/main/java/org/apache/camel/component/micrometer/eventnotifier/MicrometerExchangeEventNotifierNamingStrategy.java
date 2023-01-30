@@ -46,11 +46,15 @@ public interface MicrometerExchangeEventNotifierNamingStrategy {
     }
 
     default Tags getTags(ExchangeEvent event, Endpoint endpoint) {
+        String uri = "";
+        if (endpoint != null) {
+            uri = endpoint.getEndpointUri();
+        }
         return Tags.of(
                 CAMEL_CONTEXT_TAG, event.getExchange().getContext().getName(),
                 SERVICE_NAME, MicrometerEventNotifierService.class.getSimpleName(),
                 EVENT_TYPE_TAG, event.getClass().getSimpleName(),
-                ENDPOINT_NAME, endpoint.getEndpointUri(),
+                ENDPOINT_NAME, uri,
                 FAILED_TAG, Boolean.toString(event.getExchange().isFailed()));
     }
 
