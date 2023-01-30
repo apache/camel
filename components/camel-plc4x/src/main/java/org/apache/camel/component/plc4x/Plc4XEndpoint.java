@@ -22,6 +22,7 @@ import java.util.Objects;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
@@ -33,6 +34,8 @@ import org.apache.plc4x.java.PlcDriverManager;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.utils.connectionpool.PooledPlcDriverManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Read and write to PLC devices
@@ -40,7 +43,7 @@ import org.apache.plc4x.java.utils.connectionpool.PooledPlcDriverManager;
 @UriEndpoint(scheme = "plc4x", firstVersion = "3.20.0", title = "PLC4X",
              syntax = "plc4x:driver", category = Category.IOT)
 public class Plc4XEndpoint extends DefaultEndpoint {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XEndpoint.class);
     @UriPath
     @Metadata(required = true, description = "PLC4X connection string for the connection to the target")
     private String driver;
@@ -125,6 +128,12 @@ public class Plc4XEndpoint extends DefaultEndpoint {
         Plc4XConsumer consumer = new Plc4XConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
+    }
+
+    @Override
+    public PollingConsumer createPollingConsumer() {
+        LOGGER.debug("Creating Plc4XPollingConsumer");
+        return new Plc4XPollingConsumer(this);
     }
 
     public PlcDriverManager getPlcDriverManager() {
