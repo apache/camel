@@ -64,7 +64,7 @@ public class PollEnrichFileCustomAggregationStrategyTest extends ContextTestSupp
         };
     }
 
-    class ReplaceAggregationStrategy implements AggregationStrategy {
+    static class ReplaceAggregationStrategy implements AggregationStrategy {
 
         @Override
         public Exchange aggregate(Exchange original, Exchange resource) {

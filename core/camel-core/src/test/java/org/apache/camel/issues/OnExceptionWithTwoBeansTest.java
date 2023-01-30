@@ -62,7 +62,7 @@ public class OnExceptionWithTwoBeansTest extends ContextTestSupport {
         };
     }
 
-    public class MyBean1 {
+    public static class MyBean1 {
 
         public String checkin(String message) {
             if ("illegal".equals(message)) {
@@ -72,7 +72,7 @@ public class OnExceptionWithTwoBeansTest extends ContextTestSupport {
         }
     }
 
-    public class MyBean2 {
+    public static class MyBean2 {
         public String handle(String message) {
             if ("handle".equals(message)) {
                 throw new IllegalArgumentException();

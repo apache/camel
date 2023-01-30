@@ -84,8 +84,7 @@ public class SimpleInheritanceIssueTest extends LanguageTestSupport {
         }
 
         public String parse(InputStream input) throws Exception {
-            String data = IOConverter.toString(input, null);
-            return data;
+            return IOConverter.toString(input, null);
         }
     }
 

@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class DefaultComponentReferencePropertiesTest extends ContextTestSupport {
 
-    public final class MyEndpoint extends DefaultEndpoint {
+    public static final class MyEndpoint extends DefaultEndpoint {
 
         private Expression expression;
         private String stringExpression;

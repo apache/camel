@@ -48,8 +48,7 @@ public class RetryWhilePredicateExpressionIssueTest extends ContextTestSupport {
                     @Override
                     public boolean matches(Exchange exchange) {
                         Predicate predicate = and(simple("${body.areWeCool} == 'no'"), isNotNull(header("foo")));
-                        boolean answer = predicate.matches(exchange);
-                        return answer;
+                        return predicate.matches(exchange);
                     }
                 });
 

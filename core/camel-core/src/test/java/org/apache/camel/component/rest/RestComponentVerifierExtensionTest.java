@@ -99,7 +99,7 @@ public class RestComponentVerifierExtensionTest extends ContextTestSupport {
     //
     // ***************************************************
 
-    private final class MyComponent extends DefaultComponent implements RestProducerFactory, RestConsumerFactory {
+    private static final class MyComponent extends DefaultComponent implements RestProducerFactory, RestConsumerFactory {
 
         public MyComponent() {
             registerExtension(new ComponentVerifierExtension() {

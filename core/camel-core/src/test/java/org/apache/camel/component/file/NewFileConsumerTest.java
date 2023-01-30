@@ -62,7 +62,7 @@ public class NewFileConsumerTest extends ContextTestSupport {
         };
     }
 
-    private class MyFileEndpoint extends FileEndpoint {
+    private static class MyFileEndpoint extends FileEndpoint {
 
         private volatile boolean post;
 

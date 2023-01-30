@@ -69,7 +69,7 @@ public class FilterBeanNonRegistryTest extends ContextTestSupport {
         return false;
     }
 
-    public class MyBean {
+    public static class MyBean {
 
         public boolean isGoldCustomer(String name) {
             return "Camel".equals(name);

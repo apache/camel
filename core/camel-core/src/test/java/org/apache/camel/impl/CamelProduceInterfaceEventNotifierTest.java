@@ -90,7 +90,7 @@ public class CamelProduceInterfaceEventNotifierTest extends ContextTestSupport {
         void sayHello(String hello);
     }
 
-    class MySender {
+    static class MySender {
 
         @Produce("mock:result")
         FooService hello;

@@ -254,7 +254,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("hello.txt", "hello.txt");
     }
 
-    public class MyFileNameGenerator {
+    public static class MyFileNameGenerator {
         public String generateFilename(Exchange exchange) {
             return "generatorbybean";
         }

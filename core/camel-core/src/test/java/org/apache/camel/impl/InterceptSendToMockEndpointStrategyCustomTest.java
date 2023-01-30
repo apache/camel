@@ -31,7 +31,7 @@ public class InterceptSendToMockEndpointStrategyCustomTest extends ContextTestSu
 
     private static boolean called;
 
-    private class MyStrategy extends InterceptSendToMockEndpointStrategy {
+    private static class MyStrategy extends InterceptSendToMockEndpointStrategy {
 
         @Override
         protected Producer onInterceptEndpoint(String uri, Endpoint endpoint, Endpoint mockEndpoint, Producer mockProducer) {

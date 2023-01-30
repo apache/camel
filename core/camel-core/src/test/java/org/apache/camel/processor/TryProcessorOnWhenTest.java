@@ -100,7 +100,6 @@ public class TryProcessorOnWhenTest extends ContextTestSupport {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

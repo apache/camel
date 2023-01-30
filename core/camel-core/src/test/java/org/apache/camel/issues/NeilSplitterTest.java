@@ -32,7 +32,7 @@ public class NeilSplitterTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
 
-    class CatFight {
+    static class CatFight {
         String name;
         String[] cats;
 
@@ -103,8 +103,7 @@ public class NeilSplitterTest extends ContextTestSupport {
                 Expression catFightCats = new ExpressionAdapter() {
                     public Object evaluate(Exchange exchange) {
                         CatFight catFight = (CatFight) exchange.getIn().getBody();
-                        String[] cats = catFight.getCats();
-                        return cats;
+                        return catFight.getCats();
                     }
                 };
 

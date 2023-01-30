@@ -43,8 +43,8 @@ public class LogProcessorWithProvidedLoggerTest extends ContextTestSupport {
         sw = new StringWriter();
 
         ConsumingAppender.newAppender("org.apache.camel.customlogger", "customlogger", Level.TRACE,
-                event -> sw.append(event.getLoggerName() + " " + event.getLevel().toString() + " "
-                                   + event.getMessage().getFormattedMessage()));
+                event -> sw.append(event.getLoggerName()).append(" ").append(event.getLevel().toString()).append(" ")
+                        .append(event.getMessage().getFormattedMessage()));
     }
 
     @Test

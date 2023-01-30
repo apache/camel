@@ -111,7 +111,7 @@ public class ChoiceWithEndTest extends ContextTestSupport {
         };
     }
 
-    public class MyChoiceBean {
+    public static class MyChoiceBean {
 
         public String echo(String s) {
             return "echo " + s;

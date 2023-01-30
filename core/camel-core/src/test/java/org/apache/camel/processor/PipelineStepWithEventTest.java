@@ -189,7 +189,7 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
 
     }
 
-    private class BeforeStepEvent extends AbstractExchangeEvent {
+    private static class BeforeStepEvent extends AbstractExchangeEvent {
 
         private final String id;
 
@@ -208,7 +208,7 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
         }
     }
 
-    private class AfterStepEvent extends AbstractExchangeEvent {
+    private static class AfterStepEvent extends AbstractExchangeEvent {
 
         private final String id;
         private final long timeTaken;

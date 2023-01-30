@@ -35,7 +35,7 @@ public class XsltCustomErrorListenerTest extends TestSupport {
 
     private MyErrorListener listener = new MyErrorListener();
 
-    private class MyErrorListener implements ErrorListener {
+    private static class MyErrorListener implements ErrorListener {
 
         private boolean warning;
         private boolean error;

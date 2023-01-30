@@ -117,7 +117,7 @@ public class ThrottlingExceptionRoutePolicyTest extends ContextTestSupport {
         };
     }
 
-    public class NeverCloseHandler implements ThrottlingExceptionHalfOpenHandler {
+    public static class NeverCloseHandler implements ThrottlingExceptionHalfOpenHandler {
 
         @Override
         public boolean isReadyToBeClosed() {

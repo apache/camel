@@ -89,7 +89,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("Duck", passwordBean.getNewPassword());
     }
 
-    public class MyPasswordBean {
+    public static class MyPasswordBean {
         private String oldPassword;
         private String newPassword;
 
@@ -110,7 +110,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         }
     }
 
-    public class MyOverloadedBean {
+    public static class MyOverloadedBean {
         private ExampleBean bean;
 
         public void setBean(ExampleBean bean) {
@@ -127,7 +127,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         }
     }
 
-    public class MyBuilderBean {
+    public static class MyBuilderBean {
         private String name;
 
         public String getName() {
@@ -164,7 +164,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertTrue(builderBean.isGoldCustomer());
     }
 
-    public class MyBuilderPatternWithBean {
+    public static class MyBuilderPatternWithBean {
         private String name;
         private int age;
         private boolean goldCustomer;
@@ -208,7 +208,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertTrue(builderBean.isGoldCustomer());
     }
 
-    public class MyBuilderPatternBean {
+    public static class MyBuilderPatternBean {
         private String name;
         private int age;
         private boolean goldCustomer;
@@ -597,7 +597,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("Andrea", target.getNames()[2]);
     }
 
-    public class MyBeanWithArray {
+    public static class MyBeanWithArray {
         private String[] names = new String[10];
 
         public String[] getNames() {

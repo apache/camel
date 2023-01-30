@@ -58,7 +58,7 @@ public class DeadLetterChannelUnmarshalSetHeaderTest extends ContextTestSupport 
         };
     }
 
-    private class MyDataFormat extends ServiceSupport implements DataFormat {
+    private static class MyDataFormat extends ServiceSupport implements DataFormat {
 
         @Override
         public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {

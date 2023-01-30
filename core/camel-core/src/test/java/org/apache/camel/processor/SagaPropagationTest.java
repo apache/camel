@@ -164,7 +164,7 @@ public class SagaPropagationTest extends ContextTestSupport {
     }
 
     private void assertNonNullSagaIds(int num) {
-        List<String> nonNull = this.sagaIds.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        List<String> nonNull = this.sagaIds.stream().filter(Objects::nonNull).toList();
         if (nonNull.size() != num) {
             fail("Expeced size " + num + ", actual " + nonNull.size());
         }

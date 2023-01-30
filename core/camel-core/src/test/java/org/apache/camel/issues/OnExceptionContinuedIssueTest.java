@@ -87,7 +87,7 @@ public class OnExceptionContinuedIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public class OrderFailedException extends Exception {
+    public static class OrderFailedException extends Exception {
 
         public OrderFailedException(String s) {
             super(s);

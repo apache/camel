@@ -37,8 +37,7 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        return context;
+        return super.createCamelContext();
     }
 
     @Test

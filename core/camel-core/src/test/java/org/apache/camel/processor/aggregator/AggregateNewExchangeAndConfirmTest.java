@@ -66,7 +66,7 @@ public class AggregateNewExchangeAndConfirmTest extends ContextTestSupport {
         };
     }
 
-    private class MyNewExchangeAggregationStrategy implements AggregationStrategy {
+    private static class MyNewExchangeAggregationStrategy implements AggregationStrategy {
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

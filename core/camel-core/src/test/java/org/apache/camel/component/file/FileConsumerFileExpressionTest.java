@@ -87,7 +87,7 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public class MyGuidGenerator {
+    public static class MyGuidGenerator {
         public String next() {
             return "123";
         }

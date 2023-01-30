@@ -60,8 +60,7 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         URL resource = getClass().getResource(uri);
         assertNotNull(resource, "Cannot find resource on the classpath: " + uri);
-        Object value = unmarshaller.unmarshal(resource);
-        return value;
+        return unmarshaller.unmarshal(resource);
     }
 
     protected RestDefinition loadRest(String uri) throws Exception {

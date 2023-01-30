@@ -81,7 +81,7 @@ public class CamelContextReloadStrategyPropertiesFunctionTest extends ContextTes
         };
     }
 
-    private class MyFunction implements PropertiesFunction {
+    private static class MyFunction implements PropertiesFunction {
 
         private int counter = 1;
 

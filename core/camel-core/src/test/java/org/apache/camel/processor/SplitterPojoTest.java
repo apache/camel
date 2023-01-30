@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.Body;
@@ -89,7 +90,7 @@ public class SplitterPojoTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e2
-    public class MySplitterBean {
+    public static class MySplitterBean {
 
         /**
          * The split body method returns something that is iteratable such as a java.util.List.
@@ -105,9 +106,7 @@ public class SplitterPojoTest extends ContextTestSupport {
             // you have the full power how you like to split your messages
             List<String> answer = new ArrayList<>();
             String[] parts = body.split(",");
-            for (String part : parts) {
-                answer.add(part);
-            }
+            answer.addAll(Arrays.asList(parts));
             return answer;
         }
 

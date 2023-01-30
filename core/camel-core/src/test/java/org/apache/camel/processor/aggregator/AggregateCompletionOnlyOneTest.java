@@ -69,7 +69,7 @@ public class AggregateCompletionOnlyOneTest extends ContextTestSupport {
         };
     }
 
-    private class MyRepo implements AggregationRepository {
+    private static class MyRepo implements AggregationRepository {
 
         private int add;
         private int get;

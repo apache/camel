@@ -92,7 +92,7 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
     // This is our processor that is executed before every redelivery attempt
     // here we can do what we want in the java code, such as altering the
     // message
-    public class MyRedeliverProcessor implements Processor {
+    public static class MyRedeliverProcessor implements Processor {
 
         @Override
         public void process(Exchange exchange) throws Exception {

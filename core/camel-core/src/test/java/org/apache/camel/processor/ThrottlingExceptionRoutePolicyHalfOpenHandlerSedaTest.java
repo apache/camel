@@ -116,7 +116,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends Conte
         };
     }
 
-    public class AlwaysCloseHandler implements ThrottlingExceptionHalfOpenHandler {
+    public static class AlwaysCloseHandler implements ThrottlingExceptionHalfOpenHandler {
 
         @Override
         public boolean isReadyToBeClosed() {

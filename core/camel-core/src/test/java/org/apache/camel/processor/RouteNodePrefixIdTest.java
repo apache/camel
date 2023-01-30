@@ -21,8 +21,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class RouteNodePrefixIdTest extends ContextTestSupport {
 
     @Test

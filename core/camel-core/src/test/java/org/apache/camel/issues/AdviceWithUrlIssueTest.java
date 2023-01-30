@@ -61,7 +61,7 @@ public class AdviceWithUrlIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    private class Advice extends AdviceWithRouteBuilder {
+    private static class Advice extends AdviceWithRouteBuilder {
         @Override
         public void configure() throws Exception {
             interceptSendToEndpoint("mock:target").skipSendToOriginalEndpoint().to("mock:target2");
