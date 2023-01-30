@@ -28,8 +28,6 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
 import static org.mockito.Mockito.*;
 
-import java.lang.reflect.Field;
-
 public class Plc4XEndpointTest {
 
     Plc4XEndpoint sut;
@@ -59,11 +57,9 @@ public class Plc4XEndpointTest {
 
     @Test
     public void doStopBadConnection() throws Exception {
-        Field openRequests = sut.getClass().getDeclaredField("connection");
-        openRequests.setAccessible(true);
         PlcConnection plcConnectionMock = mock(PlcConnection.class);
+        sut.connection = plcConnectionMock;
         doThrow(new RuntimeException("oh noes")).when(plcConnectionMock).close();
-        openRequests.set(sut, plcConnectionMock);
         sut.doStop();
     }
 

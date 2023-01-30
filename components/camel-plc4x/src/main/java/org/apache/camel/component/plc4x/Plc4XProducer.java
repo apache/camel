@@ -25,7 +25,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcException;
 import org.apache.plc4x.java.api.exceptions.PlcInvalidFieldException;
@@ -36,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 public class Plc4XProducer extends DefaultAsyncProducer {
     private final Logger log = LoggerFactory.getLogger(Plc4XProducer.class);
-    private AtomicInteger openRequests;
+    protected AtomicInteger openRequests;
     private final Plc4XEndpoint plc4XEndpoint;
 
     public Plc4XProducer(Plc4XEndpoint endpoint) {
@@ -54,7 +53,7 @@ public class Plc4XProducer extends DefaultAsyncProducer {
             log.error("Connection setup failed, stopping producer");
             doStop();
         }
-        if (plc4XEndpoint.canWrite()) {
+        if (!plc4XEndpoint.canWrite()) {
             throw new PlcException("This connection (" + plc4XEndpoint.getUri() + ") doesn't support writing.");
         }
     }
