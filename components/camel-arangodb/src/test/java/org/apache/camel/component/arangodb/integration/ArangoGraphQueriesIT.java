@@ -22,6 +22,7 @@ import com.arangodb.ArangoDBException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY;
 import static org.apache.camel.component.arangodb.ArangoDbConstants.RESULT_CLASS_TYPE;
@@ -30,6 +31,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+                          disabledReason = "Apache CI nodes are too resource constrained for this test")
 public class ArangoGraphQueriesIT extends BaseGraph {
     @Override
     protected RouteBuilder createRouteBuilder() {
