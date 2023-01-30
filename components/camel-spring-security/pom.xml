@@ -117,13 +117,6 @@
                         <id>default-resources</id>
                         <phase>none</phase>
                     </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-resources-plugin</artifactId>
-                <version>${project.version}</version>
-                <executions>
                     <execution>
                         <id>copy-resources</id>
                         <phase>process-resources</phase>
