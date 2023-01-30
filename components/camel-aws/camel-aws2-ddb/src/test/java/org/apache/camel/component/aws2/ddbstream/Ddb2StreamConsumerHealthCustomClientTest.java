@@ -38,7 +38,7 @@ import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Apache CI")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
 public class Ddb2StreamConsumerHealthCustomClientTest extends CamelTestSupport {
 
     @RegisterExtension
