@@ -529,7 +529,6 @@
         <zendesk-client-version>0.19.0</zendesk-client-version>
         <zookeeper-version>3.5.10</zookeeper-version>
         <zxing-version>3.5.0</zxing-version>
-
     </properties>
 
 </project>
