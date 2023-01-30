@@ -95,16 +95,9 @@ public class Plc4XConsumer extends DefaultConsumer {
                 return;
             }
         }
-        PlcReadRequest.Builder builder = plcConnection.readRequestBuilder();
-        for (Map.Entry<String, Object> tag : tags.entrySet()) {
-            try {
-                builder.addItem(tag.getKey(), (String) tag.getValue());
-            } catch (PlcIncompatibleDatatypeException e) {
-                LOGGER.error("For consumer, please use Map<String,String>, currently using {}",
-                        tags.getClass().getSimpleName());
-            }
-        }
-        PlcReadRequest request = builder.build();
+
+        PlcReadRequest request = plc4XEndpoint.buildPlcReadRequest(plcConnection);
+
         future = executorService.schedule(() -> request.execute().thenAccept(response -> {
             try {
                 Exchange exchange = plc4XEndpoint.createExchange();

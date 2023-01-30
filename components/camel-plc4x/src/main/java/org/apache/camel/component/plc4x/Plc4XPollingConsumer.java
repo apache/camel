@@ -27,7 +27,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.EventDrivenPollingConsumer;
 import org.apache.plc4x.java.api.PlcConnection;
-import org.apache.plc4x.java.api.exceptions.PlcIncompatibleDatatypeException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.api.messages.PlcReadResponse;
 import org.slf4j.Logger;
@@ -37,13 +36,11 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XPollingConsumer.class);
 
     private PlcConnection plcConnection;
-    private final Map<String, Object> tags;
     private final Plc4XEndpoint plc4XEndpoint;
 
     public Plc4XPollingConsumer(Plc4XEndpoint endpoint) {
         super(endpoint);
         this.plc4XEndpoint = endpoint;
-        this.tags = endpoint.getTags();
     }
 
     @Override
@@ -82,16 +79,8 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
     }
 
     protected Exchange doReceive(long timeout) {
-        PlcReadRequest.Builder builder = plcConnection.readRequestBuilder();
-        for (Map.Entry<String, Object> tag : tags.entrySet()) {
-            try {
-                builder.addItem(tag.getKey(), (String) tag.getValue());
-            } catch (PlcIncompatibleDatatypeException e) {
-                LOGGER.error("For consumer, please use Map<String,String>, currently using {}", tags.getClass().getSimpleName());
-            }
-        }
+        PlcReadRequest request = plc4XEndpoint.buildPlcReadRequest(plcConnection);
         Exchange exchange = plc4XEndpoint.createExchange();
-        PlcReadRequest request = builder.build();
         try {
             CompletableFuture<? extends PlcReadResponse> future = request.execute().whenComplete((plcReadResponse, throwable) -> {});
             PlcReadResponse response;

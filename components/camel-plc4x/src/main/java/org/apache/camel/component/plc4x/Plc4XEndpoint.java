@@ -33,6 +33,8 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.plc4x.java.PlcDriverManager;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
+import org.apache.plc4x.java.api.exceptions.PlcIncompatibleDatatypeException;
+import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.utils.connectionpool.PooledPlcDriverManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -134,6 +136,24 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     public PollingConsumer createPollingConsumer() {
         LOGGER.debug("Creating Plc4XPollingConsumer");
         return new Plc4XPollingConsumer(this);
+    }
+
+    /**
+     * Build a {@link PlcReadRequest} using the tags specified in the endpoint.
+     * <p>
+     * @param plcConnection {@link PlcConnection}
+     * @return {@link PlcReadRequest}
+     */
+    public PlcReadRequest buildPlcReadRequest(PlcConnection plcConnection) {
+        PlcReadRequest.Builder builder = plcConnection.readRequestBuilder();
+        for (Map.Entry<String, Object> tag : tags.entrySet()) {
+            try {
+                builder.addItem(tag.getKey(), (String) tag.getValue());
+            } catch (PlcIncompatibleDatatypeException e) {
+                LOGGER.error("For consumer, please use Map<String,String>, currently using {}", tags.getClass().getSimpleName());
+            }
+        }
+        return builder.build();
     }
 
     public PlcDriverManager getPlcDriverManager() {
