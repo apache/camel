@@ -70,6 +70,10 @@ has been renamed to `org.apache.camel.model.errorhandler.RefErrorHandlerDefiniti
 
 The component supports now an Health Check. The component verifier has been removed.
 
+== camel-aws2-eventbridge
+
+The component supports now an Health Check. The component verifier has been removed.
+
 == camel-bom
 
 The `camel-bom` BOM no longer includes dependencies with `<type>test-jar</type>` as these are for internal testing
