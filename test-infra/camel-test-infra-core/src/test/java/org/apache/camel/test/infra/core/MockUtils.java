@@ -26,10 +26,23 @@ import org.apache.camel.util.URISupport;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-final class MockUtils {
+public final class MockUtils {
     private MockUtils() {
 
     }
+
+
+    /**
+     * Resolves an endpoint and asserts that it is found.
+     */
+    public static Endpoint resolveMandatoryEndpoint(CamelContext context, String endpointUri) {
+        Endpoint endpoint = context.getEndpoint(endpointUri);
+
+        assertNotNull(endpoint, "No endpoint found for URI: " + endpointUri);
+
+        return endpoint;
+    }
+
 
     /**
      * Resolves an endpoint and asserts that it is found.

@@ -18,8 +18,12 @@
 package org.apache.camel.test.infra.core.api;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.MockUtils;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -38,5 +42,21 @@ public interface CamelTestSupportHelper {
 
     default MockEndpoint getMockEndpoint(String uri) {
         return getCamelContextExtension().getMockEndpoint(uri);
+    }
+
+    default <T extends Endpoint> T resolveMandatoryEndpoint(String endpointUri, Class<T> endpointType) {
+        return MockUtils.resolveMandatoryEndpoint(getCamelContextExtension().getContext(), endpointUri, endpointType);
+    }
+
+    default Endpoint resolveMandatoryEndpoint(String endpointUri) {
+        return MockUtils.resolveMandatoryEndpoint(getCamelContextExtension().getContext(), endpointUri);
+    }
+
+    default Exchange createExchangeWithBody(Object body) {
+        Exchange exchange = new DefaultExchange(getCamelContextExtension().getContext());
+        Message message = exchange.getIn();
+        message.setBody(body);
+
+        return exchange;
     }
 }
