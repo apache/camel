@@ -59,7 +59,7 @@ public class RollbackDefaultErrorHandlerTest extends ContextTestSupport {
         });
         assertNotNull(out.getException());
         assertIsInstanceOf(RollbackExchangeException.class, out.getException());
-        assertEquals(true, out.isRollbackOnly(), "Should be marked as rollback");
+        assertTrue(out.isRollbackOnly(), "Should be marked as rollback");
     }
 
     @Override

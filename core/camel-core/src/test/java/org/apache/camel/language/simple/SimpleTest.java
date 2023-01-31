@@ -95,9 +95,8 @@ public class SimpleTest extends LanguageTestSupport {
         assertEquals("123",
                 context.resolveLanguage("simple").createExpression("${header.bar}").evaluate(exchange, String.class));
         // should not be possible
-        assertEquals(null, context.resolveLanguage("simple").createExpression("${header.bar}").evaluate(exchange, Date.class));
-        assertEquals(null,
-                context.resolveLanguage("simple").createExpression("${header.unknown}").evaluate(exchange, String.class));
+        assertNull(context.resolveLanguage("simple").createExpression("${header.bar}").evaluate(exchange, Date.class));
+        assertNull(context.resolveLanguage("simple").createExpression("${header.unknown}").evaluate(exchange, String.class));
     }
 
     @Test

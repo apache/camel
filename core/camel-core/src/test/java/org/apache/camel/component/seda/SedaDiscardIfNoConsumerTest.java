@@ -25,6 +25,7 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SedaDiscardIfNoConsumerTest extends ContextTestSupport {
 
@@ -63,7 +64,7 @@ public class SedaDiscardIfNoConsumerTest extends ContextTestSupport {
 
         assertEquals(0, bar.getCurrentQueueSize());
 
-        assertEquals(true, myCompletion.isCalled());
+        assertTrue(myCompletion.isCalled());
     }
 
     @Override

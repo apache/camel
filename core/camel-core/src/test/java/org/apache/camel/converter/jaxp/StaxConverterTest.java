@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
@@ -200,7 +199,7 @@ public class StaxConverterTest extends ContextTestSupport {
                 if (n2 < 0) {
                     break;
                 }
-                assertTrue(Arrays.equals(tmp1, tmp2));
+                assertArrayEquals(tmp1, tmp2);
             }
         } finally {
             if (xreader != null) {
@@ -238,7 +237,7 @@ public class StaxConverterTest extends ContextTestSupport {
                 if (n2 < 0) {
                     break;
                 }
-                assertTrue(Arrays.equals(tmp1, tmp2));
+                assertArrayEquals(tmp1, tmp2);
             }
         } finally {
             if (xreader != null) {

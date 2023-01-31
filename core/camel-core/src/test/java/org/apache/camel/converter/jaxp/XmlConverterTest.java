@@ -73,7 +73,7 @@ public class XmlConverterTest extends ContextTestSupport {
 
         Source source = null;
         String out = conv.toString(source, null);
-        assertEquals(null, out);
+        assertNull(out);
     }
 
     @Test

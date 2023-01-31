@@ -145,7 +145,7 @@ public class MessageHelperTest {
 
         MessageHelper.copyHeaders(source, target, headerFilterStrategy, true);
 
-        assertEquals(null, target.getHeader("foo"));
+        assertNull(target.getHeader("foo"));
         assertEquals(456, target.getHeader("bar"));
         context.stop();
     }

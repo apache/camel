@@ -33,7 +33,7 @@ public class ObjectConverterTest {
         Iterator<?> it = ObjectConverter.iterator("Claus,Jonathan");
         assertEquals("Claus", it.next());
         assertEquals("Jonathan", it.next());
-        assertEquals(false, it.hasNext());
+        assertFalse(it.hasNext());
     }
 
     @Test
@@ -42,7 +42,7 @@ public class ObjectConverterTest {
         assertEquals("Claus", it.next());
         assertEquals("Jonathan", it.next());
         assertEquals("Andrea", it.next());
-        assertEquals(false, it.hasNext());
+        assertFalse(it.hasNext());
     }
 
     @SuppressWarnings("unchecked")
@@ -70,7 +70,7 @@ public class ObjectConverterTest {
     @Test
     public void testToClass() {
         assertEquals(String.class, ObjectConverter.toClass("java.lang.String", null));
-        assertEquals(null, ObjectConverter.toClass("foo.Bar", null));
+        assertNull(ObjectConverter.toClass("foo.Bar", null));
     }
 
     @Test
@@ -79,8 +79,8 @@ public class ObjectConverterTest {
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort(Integer.valueOf("4")));
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort("4"));
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort("4".getBytes(StandardCharsets.UTF_8), null));
-        assertEquals(null, ObjectConverter.toShort(Double.NaN));
-        assertEquals(null, ObjectConverter.toShort(Float.NaN));
+        assertNull(ObjectConverter.toShort(Double.NaN));
+        assertNull(ObjectConverter.toShort(Float.NaN));
         assertEquals(Short.valueOf("4"), ObjectConverter.toShort(Short.valueOf("4")));
     }
 
@@ -90,8 +90,8 @@ public class ObjectConverterTest {
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger(Long.valueOf("4")));
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger("4"));
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger("4".getBytes(StandardCharsets.UTF_8), null));
-        assertEquals(null, ObjectConverter.toInteger(Double.NaN));
-        assertEquals(null, ObjectConverter.toInteger(Float.NaN));
+        assertNull(ObjectConverter.toInteger(Double.NaN));
+        assertNull(ObjectConverter.toInteger(Float.NaN));
         assertEquals(Integer.valueOf("4"), ObjectConverter.toInteger(Integer.valueOf("4")));
     }
 
@@ -101,8 +101,8 @@ public class ObjectConverterTest {
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong(Integer.valueOf("4")));
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong("4"));
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong("4".getBytes(StandardCharsets.UTF_8), null));
-        assertEquals(null, ObjectConverter.toLong(Double.NaN));
-        assertEquals(null, ObjectConverter.toLong(Float.NaN));
+        assertNull(ObjectConverter.toLong(Double.NaN));
+        assertNull(ObjectConverter.toLong(Float.NaN));
         assertEquals(Long.valueOf("4"), ObjectConverter.toLong(Long.valueOf("4")));
     }
 
@@ -134,9 +134,9 @@ public class ObjectConverterTest {
         assertEquals(BigInteger.valueOf(4), ObjectConverter.toBigInteger(Integer.valueOf("4")));
         assertEquals(BigInteger.valueOf(4), ObjectConverter.toBigInteger("4"));
         assertEquals(BigInteger.valueOf(123456789L), ObjectConverter.toBigInteger("123456789"));
-        assertEquals(null, ObjectConverter.toBigInteger(new Date()));
-        assertEquals(null, ObjectConverter.toBigInteger(Double.NaN));
-        assertEquals(null, ObjectConverter.toBigInteger(Float.NaN));
+        assertNull(ObjectConverter.toBigInteger(new Date()));
+        assertNull(ObjectConverter.toBigInteger(Double.NaN));
+        assertNull(ObjectConverter.toBigInteger(Float.NaN));
         assertEquals(BigInteger.valueOf(4), ObjectConverter.toBigInteger(Long.valueOf("4")));
         assertEquals(new BigInteger("14350442579497085228"), ObjectConverter.toBigInteger("14350442579497085228"));
     }

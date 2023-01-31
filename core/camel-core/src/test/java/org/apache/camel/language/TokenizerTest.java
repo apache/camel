@@ -26,7 +26,9 @@ import org.apache.camel.model.language.TokenizerExpression;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TokenizerTest extends ExchangeTestSupport {
 
@@ -123,8 +125,8 @@ public class TokenizerTest extends ExchangeTestSupport {
 
         assertEquals("names", lan.getHeaderName());
         assertEquals(",", lan.getToken());
-        assertEquals(false, lan.isRegex());
-        assertEquals(true, lan.isSingleton());
+        assertFalse(lan.isRegex());
+        assertTrue(lan.isSingleton());
     }
 
     @Test

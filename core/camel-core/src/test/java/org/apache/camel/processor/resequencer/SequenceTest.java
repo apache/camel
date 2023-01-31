@@ -21,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SequenceTest {
 
@@ -48,15 +49,15 @@ public class SequenceTest {
     @Test
     public void testPredecessor() {
         assertEquals(e1, set.predecessor(e2));
-        assertEquals(null, set.predecessor(e1));
-        assertEquals(null, set.predecessor(e3));
+        assertNull(set.predecessor(e1));
+        assertNull(set.predecessor(e3));
     }
 
     @Test
     public void testSuccessor() {
         assertEquals(e2, set.successor(e1));
-        assertEquals(null, set.successor(e2));
-        assertEquals(null, set.successor(e3));
+        assertNull(set.successor(e2));
+        assertNull(set.successor(e3));
     }
 
 }

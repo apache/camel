@@ -30,6 +30,7 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTestSupport {
@@ -49,7 +50,7 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
             }
         });
 
-        assertEquals(false, out.isFailed(), "Should not fail");
+        assertFalse(out.isFailed(), "Should not fail");
 
         Map<?, ?> foo = myBean.foo;
         Map<?, ?> bar = myBean.bar;

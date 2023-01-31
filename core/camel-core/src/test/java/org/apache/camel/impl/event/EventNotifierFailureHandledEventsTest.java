@@ -95,14 +95,14 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(10));
 
         ExchangeFailureHandlingEvent e0 = assertIsInstanceOf(ExchangeFailureHandlingEvent.class, events.get(11));
-        assertEquals(true, e0.isDeadLetterChannel(), "should be DLC");
+        assertTrue(e0.isDeadLetterChannel(), "should be DLC");
         assertEquals("mock:dead", e0.getDeadLetterUri());
 
         assertIsInstanceOf(ExchangeSendingEvent.class, events.get(12));
         assertIsInstanceOf(ExchangeSentEvent.class, events.get(13));
 
         ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(14));
-        assertEquals(true, e.isDeadLetterChannel(), "should be DLC");
+        assertTrue(e.isDeadLetterChannel(), "should be DLC");
         assertTrue(e.isHandled(), "should be marked as failure handled");
         assertFalse(e.isContinued(), "should not be continued");
         Processor fh = e.getFailureHandler();
@@ -151,13 +151,13 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(10));
 
         ExchangeFailureHandlingEvent e0 = assertIsInstanceOf(ExchangeFailureHandlingEvent.class, events.get(11));
-        assertEquals(false, e0.isDeadLetterChannel(), "should NOT be DLC");
+        assertFalse(e0.isDeadLetterChannel(), "should NOT be DLC");
 
         assertIsInstanceOf(ExchangeSendingEvent.class, events.get(12));
         assertIsInstanceOf(ExchangeSentEvent.class, events.get(13));
 
         ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(14));
-        assertEquals(false, e.isDeadLetterChannel(), "should NOT be DLC");
+        assertFalse(e.isDeadLetterChannel(), "should NOT be DLC");
         assertTrue(e.isHandled(), "should be marked as failure handled");
         assertFalse(e.isContinued(), "should not be continued");
 
@@ -198,13 +198,13 @@ public class EventNotifierFailureHandledEventsTest extends ContextTestSupport {
         assertIsInstanceOf(ExchangeCreatedEvent.class, events.get(10));
 
         ExchangeFailureHandlingEvent e0 = assertIsInstanceOf(ExchangeFailureHandlingEvent.class, events.get(11));
-        assertEquals(false, e0.isDeadLetterChannel(), "should NOT be DLC");
+        assertFalse(e0.isDeadLetterChannel(), "should NOT be DLC");
 
         assertIsInstanceOf(ExchangeSendingEvent.class, events.get(12));
         assertIsInstanceOf(ExchangeSentEvent.class, events.get(13));
 
         ExchangeFailureHandledEvent e = assertIsInstanceOf(ExchangeFailureHandledEvent.class, events.get(14));
-        assertEquals(false, e.isDeadLetterChannel(), "should NOT be DLC");
+        assertFalse(e.isDeadLetterChannel(), "should NOT be DLC");
         assertFalse(e.isHandled(), "should not be marked as failure handled as it was continued instead");
         assertTrue(e.isContinued(), "should be continued");
 
