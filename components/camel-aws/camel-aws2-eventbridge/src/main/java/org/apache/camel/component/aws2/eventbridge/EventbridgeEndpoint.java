@@ -91,7 +91,7 @@ public class EventbridgeEndpoint extends DefaultEndpoint {
             healthCheckRepository.removeHealthCheck(clientHealthCheck);
             clientHealthCheck = null;
         }
-        
+
         if (ObjectHelper.isEmpty(configuration.getEventbridgeClient())) {
             if (eventbridgeClient != null) {
                 eventbridgeClient.close();
