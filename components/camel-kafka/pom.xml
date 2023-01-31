@@ -143,6 +143,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <skipITs>${skipTests}</skipITs>
+                    <skipTests>${skipTests}</skipTests>
                     <reuseForks>true</reuseForks>
                 </configuration>
             </plugin>
@@ -150,6 +151,14 @@
     </build>
 
     <profiles>
+        <!-- Ensures camel-kafka does not run any tests during the release -->
+        <profile>
+            <id>release</id>
+            <properties>
+                <skipITs>true</skipITs>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
         <profile>
             <id>arm</id>
             <activation>
