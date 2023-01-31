@@ -711,8 +711,6 @@ class Run extends CamelCommand {
         String jbang = "jbang " + WORK_DIR + "/CustomCamelJBang.java ";
         cmd = jbang + cmd;
 
-        System.out.println(">>> " + cmd);
-
         ProcessBuilder pb = new ProcessBuilder();
         String[] arr = cmd.split("\\s+"); // TODO: safe split
         List<String> args = Arrays.asList(arr);
