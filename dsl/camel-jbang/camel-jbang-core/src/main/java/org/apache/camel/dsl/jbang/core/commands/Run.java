@@ -658,7 +658,7 @@ class Run extends CamelCommand {
         String content = IOHelper.loadText(is);
         IOHelper.close(is);
 
-        content = content.replaceFirst("\\{\\{ \\.JavaVersion }}", "17"); // TODO: java 11 or 17
+        content = content.replaceFirst("\\{\\{ \\.JavaVersion }}", "11"); // TODO: java 11 or 17
         if (repos != null) {
             content = content.replaceFirst("\\{\\{ \\.MavenRepositories }}", "//REPOS " + repos);
         }
