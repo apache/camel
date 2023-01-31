@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.aws2.eventbridge;
 
+import java.util.Map;
+
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -24,8 +26,6 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 import software.amazon.awssdk.services.eventbridge.model.ListEventBusesRequest;
-
-import java.util.Map;
 
 public class EventbridgeClientHealthCheck extends AbstractHealthCheck {
 
