@@ -25,7 +25,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
 import org.apache.plc4x.java.api.exceptions.PlcException;
 import org.apache.plc4x.java.api.exceptions.PlcInvalidFieldException;
@@ -35,9 +34,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Plc4XProducer extends DefaultAsyncProducer {
+    protected AtomicInteger openRequests;
     private final Logger log = LoggerFactory.getLogger(Plc4XProducer.class);
-    private PlcConnection plcConnection;
-    private AtomicInteger openRequests;
     private final Plc4XEndpoint plc4XEndpoint;
 
     public Plc4XProducer(Plc4XEndpoint endpoint) {
@@ -49,43 +47,44 @@ public class Plc4XProducer extends DefaultAsyncProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.plcConnection = plc4XEndpoint.getConnection();
-        if (!plcConnection.isConnected()) {
-            plc4XEndpoint.reconnect();
+        try {
+            plc4XEndpoint.setupConnection();
+        } catch (PlcConnectionException e) {
+            if (log.isTraceEnabled()) {
+                log.error("Connection setup failed, stopping producer", e);
+            } else {
+                log.error("Connection setup failed, stopping producer");
+            }
+            doStop();
         }
-        if (!plcConnection.getMetadata().canWrite()) {
+        if (!plc4XEndpoint.canWrite()) {
             throw new PlcException("This connection (" + plc4XEndpoint.getUri() + ") doesn't support writing.");
         }
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        if (plc4XEndpoint.isAutoReconnect() && !plcConnection.isConnected()) {
-            try {
-                plc4XEndpoint.reconnect();
-                log.debug("Successfully reconnected");
-            } catch (PlcConnectionException e) {
+        try {
+            plc4XEndpoint.reconnectIfNeeded();
+        } catch (PlcConnectionException e) {
+            if (log.isTraceEnabled()) {
                 log.warn("Unable to reconnect, skipping request", e);
-                return;
+            } else {
+                log.warn("Unable to reconnect, skipping request");
             }
+            return;
         }
+
         Message in = exchange.getIn();
         Object body = in.getBody();
-        PlcWriteRequest.Builder builder = plcConnection.writeRequestBuilder();
+        PlcWriteRequest plcWriteRequest;
         if (body instanceof Map) { //Check if we have a Map
             Map<String, Map<String, Object>> tags = (Map<String, Map<String, Object>>) body;
-            for (Map.Entry<String, Map<String, Object>> entry : tags.entrySet()) {
-                //Tags are stored like this --> Map<Tagname,Map<Query,Value>> for writing
-                String name = entry.getKey();
-                String query = entry.getValue().keySet().iterator().next();
-                Object value = entry.getValue().get(query);
-                builder.addItem(name, query, value);
-            }
+            plcWriteRequest = plc4XEndpoint.buildPlcWriteRequest(tags);
         } else {
             throw new PlcInvalidFieldException("The body must contain a Map<String,Map<String,Object>");
         }
-
-        CompletableFuture<? extends PlcWriteResponse> completableFuture = builder.build().execute();
+        CompletableFuture<? extends PlcWriteResponse> completableFuture = plcWriteRequest.execute();
         int currentlyOpenRequests = openRequests.incrementAndGet();
         try {
             log.debug("Currently open requests including {}:{}", exchange, currentlyOpenRequests);
