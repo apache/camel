@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.catalog;
+package org.apache.camel.dsl.jbang.core.common;
 
 import org.apache.camel.util.StringHelper;
 
-final class VersionHelper {
+public final class VersionHelper {
 
     private VersionHelper() {
     }
