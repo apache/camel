@@ -66,6 +66,10 @@ with a `CamelContext` otherwise an exception is thrown.
 The model class `org.apache.camel.model.errorhandler.ErrorHandlerRefDefinition`
 has been renamed to `org.apache.camel.model.errorhandler.RefErrorHandlerDefinition`.
 
+== camel-aws2-lambda
+
+The component supports now an Health Check. The component verifier has been removed.
+
 == camel-bom
 
 The `camel-bom` BOM no longer includes dependencies with `<type>test-jar</type>` as these are for internal testing
