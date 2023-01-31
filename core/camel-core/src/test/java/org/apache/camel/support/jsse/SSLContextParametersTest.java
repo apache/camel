@@ -835,7 +835,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
             }
         }
 
-        return enabled.toArray(new String[enabled.size()]);
+        return enabled.toArray(new String[0]);
     }
 
     protected void assertStartsWith(String[] values, String prefix) {
