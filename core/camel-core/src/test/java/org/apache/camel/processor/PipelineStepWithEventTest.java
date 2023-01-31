@@ -115,7 +115,7 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
 
     }
 
-    private class MyStepEventListener extends ServiceSupport implements StepEventListener {
+    private static class MyStepEventListener extends ServiceSupport implements StepEventListener {
 
         private final List<EventObject> events = new ArrayList<>();
 
@@ -162,7 +162,7 @@ public class PipelineStepWithEventTest extends ContextTestSupport {
         }
     }
 
-    private class MyStepEventProcessor extends DelegateAsyncProcessor {
+    private static class MyStepEventProcessor extends DelegateAsyncProcessor {
 
         private final StepEventListener listener;
         private final String id;

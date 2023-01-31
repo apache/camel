@@ -326,7 +326,7 @@ public class ClusterServiceSelectorTest {
     // Helpers
     // **************************************
 
-    private final class DummyClusterService1 extends AbstractCamelClusterService {
+    private static final class DummyClusterService1 extends AbstractCamelClusterService {
         public DummyClusterService1() {
         }
 
@@ -336,7 +336,7 @@ public class ClusterServiceSelectorTest {
         }
     }
 
-    private final class DummyClusterService2 extends AbstractCamelClusterService {
+    private static final class DummyClusterService2 extends AbstractCamelClusterService {
         public DummyClusterService2() {
         }
 

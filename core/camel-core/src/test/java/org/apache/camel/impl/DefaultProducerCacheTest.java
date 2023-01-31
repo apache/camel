@@ -208,7 +208,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(3, stopCounter.get()));
     }
 
-    private class MyProducerCache extends DefaultProducerCache {
+    private static class MyProducerCache extends DefaultProducerCache {
 
         private MyServicePool myServicePool;
 

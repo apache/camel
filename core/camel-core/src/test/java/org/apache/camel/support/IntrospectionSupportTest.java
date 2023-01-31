@@ -141,7 +141,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         }
     }
 
-    public class MyOtherBuilderBean extends MyBuilderBean {
+    public static class MyOtherBuilderBean extends MyBuilderBean {
     }
 
     public class MyOtherOtherBuilderBean extends MyOtherBuilderBean {

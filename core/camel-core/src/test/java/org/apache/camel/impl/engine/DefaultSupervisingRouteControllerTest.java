@@ -143,7 +143,7 @@ public class DefaultSupervisingRouteControllerTest extends ContextTestSupport {
         }
     }
 
-    private class MyJmsEndpoint extends SedaEndpoint {
+    private static class MyJmsEndpoint extends SedaEndpoint {
 
         private String name;
 

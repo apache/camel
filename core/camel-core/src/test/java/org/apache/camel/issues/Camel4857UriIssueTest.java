@@ -70,7 +70,7 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
         }
     }
 
-    class MyComponent extends DefaultComponent {
+    static class MyComponent extends DefaultComponent {
 
         @Override
         protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters)
