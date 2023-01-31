@@ -19,6 +19,7 @@ package org.apache.camel.component.plc4x;
 import org.apache.camel.Component;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.plc4x.java.api.PlcConnection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -52,6 +53,14 @@ public class Plc4XEndpointTest {
     @Test
     public void isSingleton() {
         assertThat(sut.isSingleton(), is(true));
+    }
+
+    @Test
+    public void doStopBadConnection() throws Exception {
+        PlcConnection plcConnectionMock = mock(PlcConnection.class);
+        sut.connection = plcConnectionMock;
+        doThrow(new RuntimeException("oh noes")).when(plcConnectionMock).close();
+        sut.doStop();
     }
 
 }
