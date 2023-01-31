@@ -38,7 +38,7 @@ public class MyAsyncComponent extends DefaultComponent {
         String[] words = value.split(":");
         StringBuilder result = new StringBuilder();
         for (String word : words) {
-            result.append((result.length() == 0) ? "" : " ");
+            result.append(result.isEmpty() ? "" : " ");
             result.append(word.substring(0, 1).toUpperCase(Locale.ENGLISH)).append(word.substring(1));
         }
         return result.toString();

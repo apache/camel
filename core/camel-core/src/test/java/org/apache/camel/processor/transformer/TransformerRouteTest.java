@@ -274,13 +274,15 @@ public class TransformerRouteTest extends ContextTestSupport {
 
                 @Override
                 public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-                    String line = "";
                     StringBuilder input = new StringBuilder();
-                    while ((line = reader.readLine()) != null) {
-                        input.append(line);
+
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+                        String line = "";
+                        while ((line = reader.readLine()) != null) {
+                            input.append(line);
+                        }
                     }
-                    reader.close();
+
                     assertEquals("{name:XOrder}", input.toString());
                     LOG.info("DataFormat: JSON -> XOrder");
                     return new XOrder();

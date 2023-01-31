@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -59,8 +57,7 @@ public class SplitCustomExpressionTest extends ContextTestSupport {
 
             // just split the body by comma
             String[] parts = body.split(",");
-            List<String> list = new ArrayList<>();
-            list.addAll(Arrays.asList(parts));
+            List<String> list = List.of(parts);
 
             return (T) list.iterator();
         }
