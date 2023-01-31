@@ -255,7 +255,7 @@ public class URISupportTest {
     public void testSanitizeAccessToken() throws Exception {
         String out1 = URISupport
                 .sanitizeUri("google-sheets-stream://spreadsheets?accessToken=MY_TOKEN&clientId=foo&clientSecret=MY_SECRET");
-        assertEquals("google-sheets-stream://spreadsheets?accessToken=xxxxxx&clientId=foo&clientSecret=xxxxxx", out1);
+        assertEquals("google-sheets-stream://spreadsheets?accessToken=xxxxxx&clientId=xxxxxx&clientSecret=xxxxxx", out1);
     }
 
     @Test
