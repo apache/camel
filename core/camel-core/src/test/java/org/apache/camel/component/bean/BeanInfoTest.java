@@ -225,7 +225,7 @@ public class BeanInfoTest {
         }
     }
 
-    public class PublicClassImplementingBySuperPackagePrivateClass extends PackagePrivateClassDefiningMethod
+    public static class PublicClassImplementingBySuperPackagePrivateClass extends PackagePrivateClassDefiningMethod
             implements IMethodInterface {
     }
 

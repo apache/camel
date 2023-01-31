@@ -37,7 +37,7 @@ public class RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest extends Conte
         private static final long serialVersionUID = 1L;
     }
 
-    private class ExceptionThrowingProcessor implements Processor {
+    private static class ExceptionThrowingProcessor implements Processor {
 
         @Override
         public void process(Exchange exchange) throws Exception {

@@ -93,11 +93,11 @@ public class BeanInfoAMoreComplexOverloadedTest extends ContextTestSupport {
         public long id;
     }
 
-    class RequestA extends BaseRequest {
+    static class RequestA extends BaseRequest {
         public int i;
     }
 
-    class RequestB extends BaseRequest {
+    static class RequestB extends BaseRequest {
         public String s;
     }
 

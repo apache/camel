@@ -57,7 +57,7 @@ public class CustomUnitOfWorkFactoryTest extends ContextTestSupport {
         };
     }
 
-    private class MyUnitOfWorkFactory implements UnitOfWorkFactory {
+    private static class MyUnitOfWorkFactory implements UnitOfWorkFactory {
 
         @Override
         public UnitOfWork createUnitOfWork(Exchange exchange) {

@@ -90,7 +90,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
         }
     }
 
-    public final class MyComponent extends DefaultComponent {
+    public static final class MyComponent extends DefaultComponent {
 
         private MyComponent(CamelContext context) {
             super(context);

@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
-    public final class MyComponent extends DefaultComponent {
+    public static final class MyComponent extends DefaultComponent {
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

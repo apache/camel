@@ -105,7 +105,7 @@ public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport 
         return false;
     }
 
-    private final class MyQueueComponent extends DefaultComponent {
+    private static final class MyQueueComponent extends DefaultComponent {
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

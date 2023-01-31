@@ -71,7 +71,7 @@ public class ProducerCacheNonSingletonTest extends ContextTestSupport {
         }
     }
 
-    public class MyDummyEndpoint extends DefaultEndpoint {
+    public static class MyDummyEndpoint extends DefaultEndpoint {
 
         @Override
         public Producer createProducer() throws Exception {
