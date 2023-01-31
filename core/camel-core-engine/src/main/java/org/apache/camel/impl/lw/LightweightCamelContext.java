@@ -151,7 +151,6 @@ import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
-import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.vault.VaultConfiguration;
@@ -1677,16 +1676,6 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     @Override
     public void setEventNotificationApplicable(boolean eventNotificationApplicable) {
         getExtendedCamelContext().setEventNotificationApplicable(eventNotificationApplicable);
-    }
-
-    @Override
-    public void setXMLRoutesDefinitionLoader(XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader) {
-        getExtendedCamelContext().setXMLRoutesDefinitionLoader(xmlRoutesDefinitionLoader);
-    }
-
-    @Override
-    public XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader() {
-        return getExtendedCamelContext().getXMLRoutesDefinitionLoader();
     }
 
     @Override

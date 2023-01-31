@@ -88,7 +88,6 @@ import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.ValidatorRegistry;
-import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.NormalizedUri;
@@ -507,22 +506,6 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected BeanIntrospection createBeanIntrospection() {
         return new DefaultBeanIntrospection();
-    }
-
-    @Override
-    protected XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader() {
-        Optional<XMLRoutesDefinitionLoader> result = ResolverHelper.resolveService(
-                getCamelContextReference(),
-                getBootstrapFactoryFinder(),
-                XMLRoutesDefinitionLoader.FACTORY,
-                XMLRoutesDefinitionLoader.class);
-
-        if (result.isPresent()) {
-            return result.get();
-        } else {
-            throw new IllegalArgumentException(
-                    "Cannot find XMLRoutesDefinitionLoader on classpath. Add either camel-xml-io-dsl or camel-xml-jaxb-dsl to classpath.");
-        }
     }
 
     @Override

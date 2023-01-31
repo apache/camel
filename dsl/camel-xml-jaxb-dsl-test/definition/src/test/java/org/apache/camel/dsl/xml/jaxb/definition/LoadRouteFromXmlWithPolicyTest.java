@@ -16,17 +16,15 @@
  */
 package org.apache.camel.dsl.xml.jaxb.definition;
 
-import java.io.InputStream;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.Resource;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,10 +46,10 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
 
     @Test
     public void testLoadRouteFromXmlWitPolicy() throws Exception {
-        InputStream is = getClass().getResourceAsStream("barPolicyRoute.xml");
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-        RoutesDefinition routes = (RoutesDefinition) ecc.getXMLRoutesDefinitionLoader().loadRoutesDefinition(ecc, is);
-        context.addRouteDefinitions(routes.getRoutes());
+        Resource resource
+                = ecc.getResourceLoader().resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barPolicyRoute.xml");
+        ecc.getRoutesLoader().loadRoutes(resource);
         context.start();
 
         assertNotNull(context.getRoute("foo"), "Loaded foo route should be there");
