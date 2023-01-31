@@ -20,22 +20,36 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ActiveMQPropagateHeadersTest extends AbstractJMSTest {
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
     protected final Object expectedBody = "<time>" + new Date() + "</time>";
     protected final ActiveMQQueue replyQueue = new ActiveMQQueue("test.reply.queue.ActiveMQPropagateHeadersTest");
     protected final String correlationID = "ABC-123";
     protected final String messageType = getClass().getName();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testForwardingAMessageAcrossJMSKeepingCustomJMSHeaders() throws Exception {
@@ -81,5 +95,17 @@ public class ActiveMQPropagateHeadersTest extends AbstractJMSTest {
                 from("activemq:test.b.ActiveMQPropagateHeadersTest").to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

@@ -16,15 +16,30 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
 public class JmsMultipleConsumersTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testMultipleConsumersTopic() throws Exception {
@@ -38,7 +53,6 @@ public class JmsMultipleConsumersTest extends AbstractJMSTest {
                 from("jms:topic:JmsMultipleConsumersTest").to("mock:bar");
             }
         });
-        context.start();
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
@@ -62,8 +76,6 @@ public class JmsMultipleConsumersTest extends AbstractJMSTest {
             }
         });
 
-        context.start();
-
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         template.sendBody("jms:queue:JmsMultipleConsumersTest", "Hello World");
@@ -78,7 +90,19 @@ public class JmsMultipleConsumersTest extends AbstractJMSTest {
     }
 
     @Override
-    public boolean isUseRouteBuilder() {
-        return false;
+    protected RouteBuilder createRouteBuilder() {
+        return null;
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

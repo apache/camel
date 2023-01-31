@@ -19,28 +19,38 @@ package org.apache.camel.component.jms;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileRouteJmsKeepLastModifiedTest extends AbstractJMSTest {
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
     protected final String componentName = "activemq";
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
     private final File inbox = new File("target/FileRouteJmsKeepLastModifiedTest/inbox/hello.txt");
 
-    @Override
     @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory("target/FileRouteJmsKeepLastModifiedTest/inbox");
         deleteDirectory("target/FileRouteJmsKeepLastModifiedTest/outbox");
-
-        super.setUp();
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBodyAndHeader("file://target/FileRouteJmsKeepLastModifiedTest/inbox", "Hello World", Exchange.FILE_NAME,
@@ -75,5 +85,17 @@ public class FileRouteJmsKeepLastModifiedTest extends AbstractJMSTest {
                         .to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

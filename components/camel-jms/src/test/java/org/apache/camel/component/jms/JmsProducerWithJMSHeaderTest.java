@@ -23,13 +23,21 @@ import java.util.concurrent.TimeUnit;
 import jakarta.jms.Destination;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.jms.JmsConstants.JMS_X_GROUP_ID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,6 +48,13 @@ import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 @Tags({ @Tag("slow") })
 @Timeout(60)
 public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testInOnlyJMSPrioritory() throws Exception {
@@ -321,5 +336,17 @@ public class JmsProducerWithJMSHeaderTest extends AbstractJMSTest {
 
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

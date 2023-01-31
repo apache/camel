@@ -20,12 +20,19 @@ import java.io.File;
 import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
 import org.apache.camel.util.FileUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -37,14 +44,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * This test cannot run in parallel: it reuses the same path for different test iterations
  */
-@ResourceLock("target/stream/JmsStreamMessageTypeTest")
+@ResourceLock("src/test/data")
 public class JmsStreamMessageTypeTest extends AbstractJMSTest {
 
-    @Override
-    @BeforeEach
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
+
+    @AfterEach
     public void setUp() throws Exception {
         deleteDirectory("target/stream/JmsStreamMessageTypeTest");
-        super.setUp();
     }
 
     @Override
@@ -98,4 +110,15 @@ public class JmsStreamMessageTypeTest extends AbstractJMSTest {
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }

@@ -24,12 +24,19 @@ import java.util.concurrent.TimeUnit;
 import jakarta.jms.Destination;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,11 +47,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class JmsSimpleRequestLateReplyTest extends AbstractJMSTest {
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
     private static final Logger LOG = LoggerFactory.getLogger(JmsSimpleRequestLateReplyTest.class);
     private static Destination replyDestination;
     private static String cid;
     protected final String expectedBody = "Late Reply";
     protected JmsComponent activeMQComponent;
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
     private final CountDownLatch latch = new CountDownLatch(1);
 
     @Test
@@ -64,6 +77,18 @@ public class JmsSimpleRequestLateReplyTest extends AbstractJMSTest {
         MockEndpoint.assertIsSatisfied(context);
 
         assertEquals(expectedBody, body);
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 
     private class SendLateReply implements Runnable {

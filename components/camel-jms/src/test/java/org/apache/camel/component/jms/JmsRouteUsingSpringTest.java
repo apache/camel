@@ -18,16 +18,19 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.test.infra.core.annotations.ContextProvider;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+@Isolated
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class JmsRouteUsingSpringTest extends JmsRouteTest {
     private ClassPathXmlApplicationContext applicationContext;
 
-    @Override
+    @ContextProvider
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = createApplicationContext();
         return SpringCamelContext.springCamelContext(applicationContext, true);
@@ -37,10 +40,8 @@ public class JmsRouteUsingSpringTest extends JmsRouteTest {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsRouteUsingSpring.xml");
     }
 
-    @Override
     @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void tearDown() {
         IOHelper.close(applicationContext);
     }
 }

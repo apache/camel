@@ -16,12 +16,19 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 /**
  * Tests filtering using Camel Test
@@ -29,11 +36,17 @@ import org.junit.jupiter.api.Test;
 // START SNIPPET: example
 public class JmsFilterTest extends AbstractJMSTest {
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
     @Produce("direct:start")
     protected ProducerTemplate template;
+    protected CamelContext context;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testSendMatchingMessage() throws Exception {
@@ -68,6 +81,17 @@ public class JmsFilterTest extends AbstractJMSTest {
                 from("jms:myQueue").filter(header("foo").isEqualTo("bar")).to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }
 // END SNIPPET: example
