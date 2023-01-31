@@ -108,7 +108,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     /**
      * Set up the connection.
      * <p>
-     * 
+     *
      * @throws PlcConnectionException if no connection could be established and auto-reconnect is turned off
      */
     public void setupConnection() throws PlcConnectionException {
@@ -134,7 +134,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     /**
      * Reconnects if needed. If connection is lost and auto-reconnect is turned off, endpoint will be shutdown.
      * <p>
-     * 
+     *
      * @throws PlcConnectionException If reconnect failed and auto-reconnect is turned on
      */
     public void reconnectIfNeeded() throws PlcConnectionException {
@@ -180,7 +180,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     /**
      * Build a {@link PlcReadRequest} using the tags specified in the endpoint.
      * <p>
-     * 
+     *
      * @return {@link PlcReadRequest}
      */
     public PlcReadRequest buildPlcReadRequest() {
@@ -199,7 +199,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     /**
      * Build a {@link PlcWriteRequest}.
      * <p>
-     * 
+     *
      * @param  tags tags to add to write request
      * @return      {@link PlcWriteRequest}
      */
