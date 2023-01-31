@@ -19,12 +19,20 @@ package org.apache.camel.component.jms;
 import java.io.File;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.util.FileUtil;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.ResourceLock;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -33,14 +41,19 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ResourceLock("target/stream/JmsStreamMessageTypeNoStreamCachingTest")
+@ResourceLock("src/test/data")
 public class JmsStreamMessageTypeNoStreamCachingTest extends AbstractJMSTest {
 
-    @Override
-    @BeforeEach
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
+
+    @AfterEach
     public void setUp() throws Exception {
         deleteDirectory("target/stream/JmsStreamMessageTypeNoStreamCachingTest");
-        super.setUp();
     }
 
     @Override
@@ -56,12 +69,9 @@ public class JmsStreamMessageTypeNoStreamCachingTest extends AbstractJMSTest {
         return component;
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        camelContext.setStreamCaching(false);
-
-        return camelContext;
+    @ContextFixture
+    public void setupStreamCaching(CamelContext context) {
+        context.setStreamCaching(false);
     }
 
     @ParameterizedTest
@@ -108,4 +118,15 @@ public class JmsStreamMessageTypeNoStreamCachingTest extends AbstractJMSTest {
         };
     }
 
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }

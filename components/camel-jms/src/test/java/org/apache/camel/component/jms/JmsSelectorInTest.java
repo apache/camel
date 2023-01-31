@@ -16,14 +16,21 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.Timeout;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,6 +39,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Isolated
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class JmsSelectorInTest extends AbstractJMSTest {
+
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     @Order(1)
@@ -64,11 +78,23 @@ public class JmsSelectorInTest extends AbstractJMSTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                JmsEndpoint endpoint = context.getEndpoint("activemq:queue:JmsSelectorInTest", JmsEndpoint.class);
+                JmsEndpoint endpoint = getContext().getEndpoint("activemq:queue:JmsSelectorInTest", JmsEndpoint.class);
                 endpoint.setSelector("drink IN ('beer', 'wine')");
 
                 from(endpoint).to("log:drink").to("mock:result2");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

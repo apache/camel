@@ -21,13 +21,21 @@ import jakarta.jms.DeliveryMode;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.BindToRegistry;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
@@ -51,10 +59,16 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class JmsEndpointConfigurationTest extends AbstractJMSTest {
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
     private static final Logger LOG = LoggerFactory.getLogger(ConsumeJmsMapMessageTest.class);
 
     @RegisterExtension
     public ArtemisService service = ArtemisServiceFactory.createVMService();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @BindToRegistry("myConnectionFactory")
     private final ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(service.serviceAddress());
@@ -580,5 +594,22 @@ public class JmsEndpointConfigurationTest extends AbstractJMSTest {
         assertEquals("James", listenerContainer.getDurableSubscriptionName(), "getDurableSubscriptionName()");
         assertEquals("ABC", listenerContainer.getClientId(), "getClientId()");
         assertTrue(listenerContainer.isSubscriptionDurable(), "isSubscriptionDurable()");
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return null;
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

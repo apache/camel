@@ -24,23 +24,36 @@ import java.util.Map;
 
 import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ActiveMQPropagateSerializableHeadersTest extends AbstractJMSTest {
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
     protected final Object expectedBody = "<time>" + new Date() + "</time>";
     protected ActiveMQQueue replyQueue = new ActiveMQQueue("ActiveMQPropagateSerializableHeadersTest.reply.queue");
     protected String correlationID = "ABC-123";
     protected String messageType = getClass().getName();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
     private Calendar calValue;
     private Map<String, Object> mapValue;
 
@@ -87,14 +100,10 @@ public class ActiveMQPropagateSerializableHeadersTest extends AbstractJMSTest {
         return "activemq";
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-
+    @ContextFixture
+    public void configureComponent(CamelContext context) {
         // prevent java.io.NotSerializableException: org.apache.camel.support.DefaultMessageHistory
-        camelContext.setMessageHistory(false);
-
-        return camelContext;
+        context.setMessageHistory(false);
     }
 
     @Override
@@ -112,5 +121,17 @@ public class ActiveMQPropagateSerializableHeadersTest extends AbstractJMSTest {
                 from("activemq:ActiveMQPropagateSerializableHeadersTest.b").to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

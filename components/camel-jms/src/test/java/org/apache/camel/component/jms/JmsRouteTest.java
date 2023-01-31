@@ -18,16 +18,30 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class JmsRouteTest extends AbstractJMSTest {
+public abstract class JmsRouteTest extends AbstractJMSTest {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
+
     protected MockEndpoint resultEndpoint;
     protected String componentName = "activemq";
     protected String startEndpointUri;
     protected String endEndpointUri;
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     private final int endpointNum = ThreadLocalRandom.current().nextInt(10000);
 
@@ -60,28 +74,34 @@ public class JmsRouteTest extends AbstractJMSTest {
     }
 
     @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        startEndpointUri = componentName + ":queue:test.a.JmsRouteTest" + endpointNum;
-        endEndpointUri = componentName + ":queue:test.b.JmsRouteTest" + endpointNum;
-
-        super.setUp();
-
-        resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
-    }
-
-    @Override
     public String getComponentName() {
         return componentName;
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() {
+        startEndpointUri = componentName + ":queue:test.a.JmsRouteTest" + endpointNum;
+        endEndpointUri = componentName + ":queue:test.b.JmsRouteTest" + endpointNum;
+
         return new RouteBuilder() {
             public void configure() {
                 from(startEndpointUri).to(endEndpointUri);
                 from(endEndpointUri).to("mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+
+        resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
     }
 }

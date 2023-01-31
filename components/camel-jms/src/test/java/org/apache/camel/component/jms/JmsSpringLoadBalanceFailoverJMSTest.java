@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -26,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Unit test for Camel loadbalancer failover with JMS
  */
+@Isolated
 public class JmsSpringLoadBalanceFailoverJMSTest extends AbstractSpringJMSTestSupport {
 
     @Override

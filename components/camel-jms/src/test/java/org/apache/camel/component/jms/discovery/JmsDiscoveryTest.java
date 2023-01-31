@@ -18,18 +18,32 @@ package org.apache.camel.component.jms.discovery;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.spi.Registry;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JmsDiscoveryTest extends AbstractJMSTest {
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
     protected final MyRegistry myRegistry = new MyRegistry();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Test
     public void testDiscovery() throws Exception {
@@ -51,10 +65,10 @@ public class JmsDiscoveryTest extends AbstractJMSTest {
         return "activemq";
     }
 
-    @Override
-    protected void bindToRegistry(Registry registry) {
-        registry.bind("service1", new MyService("service1"));
-        registry.bind("registry", myRegistry);
+    @ContextFixture
+    public void configureComponent(CamelContext context) {
+        context.getRegistry().bind("service1", new MyService("service1"));
+        context.getRegistry().bind("registry", myRegistry);
     }
 
     @Override
@@ -73,5 +87,17 @@ public class JmsDiscoveryTest extends AbstractJMSTest {
                         .to("bean:registry?method=onEvent", "mock:result");
             }
         };
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
     }
 }

@@ -16,43 +16,89 @@
  */
 package org.apache.camel.component.jms.issues;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.ConsumerTemplate;
+import org.apache.camel.FailedToStartRouteException;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.ContextLifeCycleManager;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class JmsReplyToComponentEndlessLoopTest extends AbstractJMSTest {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension(new ContextLifeCycleManager() {
+        @Override
+        public void afterAll(CamelContext context) {
+
+        }
+
+        @Override
+        public void beforeAll(CamelContext context) {
+
+        }
+
+        @Override
+        public void afterEach(CamelContext context) {
+
+        }
+
+        @Override
+        public void beforeEach(CamelContext context) {
+
+        }
+    });
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Override
     protected String getComponentName() {
         return "activemq";
     }
 
-    @Test
-    public void testReplyToInvalid() throws Exception {
-        context.addRoutes(new RouteBuilder() {
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
             @Override
             public void configure() {
                 from("activemq:queue:JmsReplyToComponentEndlessLoopTest?replyTo=JmsReplyToComponentEndlessLoopTest")
                         .to("mock:result");
             }
-        });
-        try {
-            context.start();
-            fail("Should throw exception");
-        } catch (Exception e) {
-            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertTrue(iae.getMessage()
-                    .contains("ReplyTo=JmsReplyToComponentEndlessLoopTest cannot be the same as the destination name"));
-        }
+        };
     }
 
+    @Test
+    public void testReplyToInvalid() {
+        Exception ex = assertThrows(FailedToStartRouteException.class, () -> context.start(),
+                "Should have thrown exception");
+
+        IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, ex.getCause());
+        assertTrue(iae.getMessage()
+                .contains("ReplyTo=JmsReplyToComponentEndlessLoopTest cannot be the same as the destination name"));
+
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }

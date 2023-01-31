@@ -20,18 +20,29 @@ import jakarta.jms.JMSException;
 import jakarta.jms.Queue;
 
 import org.apache.camel.Body;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Header;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JmsRequestReplyManualWithJMSReplyToTest extends AbstractJMSTest {
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected CamelContext context;
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
 
     @Consume("activemq:queue:fooJmsRequestReplyManualWithJMSReplyToTest")
     public void doSomething(@Header("JMSReplyTo") Queue jmsReplyTo, @Body String body) throws JMSException {
@@ -43,8 +54,6 @@ public class JmsRequestReplyManualWithJMSReplyToTest extends AbstractJMSTest {
 
     @Test
     public void testManualRequestReply() {
-        context.start();
-
         // send an InOnly but force Camel to pass JMSReplyTo
         template.send("activemq:queue:fooJmsRequestReplyManualWithJMSReplyToTest?preserveMessageQos=true", exchange -> {
             exchange.getIn().setBody("Hello World");
@@ -60,4 +69,20 @@ public class JmsRequestReplyManualWithJMSReplyToTest extends AbstractJMSTest {
         return "activemq";
     }
 
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return null;
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        context = camelContextExtension.getContext();
+        template = camelContextExtension.getProducerTemplate();
+        consumer = camelContextExtension.getConsumerTemplate();
+    }
 }
