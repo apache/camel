@@ -54,6 +54,10 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-health</artifactId>
+        </dependency>
 
         <!-- for testing -->
         <dependency>
@@ -84,10 +88,6 @@
             <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-health</artifactId>
         </dependency>
 
     </dependencies>
