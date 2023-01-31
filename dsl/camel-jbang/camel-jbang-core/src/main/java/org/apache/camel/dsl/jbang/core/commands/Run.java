@@ -51,6 +51,7 @@ import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.generator.openapi.RestDslGenerator;
 import org.apache.camel.impl.lw.LightweightCamelContext;
 import org.apache.camel.main.KameletMain;
@@ -547,7 +548,14 @@ class Run extends CamelCommand {
         // okay we have validated all input and are ready to run
         if (camelVersion != null) {
             // run in another JVM with different camel version (foreground or background)
-            return runCamelVersion(main);
+            boolean custom = camelVersion.contains("-");
+            if (custom) {
+                // custom camel distribution
+                return runCustomCamelVersion(main);
+            } else {
+                // apache camel distribution
+                return runCamelVersion(main);
+            }
         } else if (background) {
             // spawn new JVM to run in background
             return runBackground(main);
@@ -643,6 +651,83 @@ class Run extends CamelCommand {
         Process p = pb.start();
         System.out.println("Running Camel integration: " + name + " in background with PID: " + p.pid());
         return 0;
+    }
+
+    protected int runCustomCamelVersion(KameletMain main) throws Exception {
+        InputStream is = Run.class.getClassLoader().getResourceAsStream("templates/run-custom-camel-version.tmpl");
+        String content = IOHelper.loadText(is);
+        IOHelper.close(is);
+
+        content = content.replaceFirst("\\{\\{ \\.JavaVersion }}", "17"); // TODO: java 11 or 17
+        if (repos != null) {
+            content = content.replaceFirst("\\{\\{ \\.MavenRepositories }}", "//REPOS " + repos);
+        }
+
+        // use custom distribution of camel
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("//DEPS org.apache.camel:camel-bom:%s@pom\n", camelVersion));
+        sb.append(String.format("//DEPS org.apache.camel:camel-core:%s\n", camelVersion));
+        sb.append(String.format("//DEPS org.apache.camel:camel-core-engine:%s\n", camelVersion));
+        sb.append(String.format("//DEPS org.apache.camel:camel-main:%s\n", camelVersion));
+        sb.append(String.format("//DEPS org.apache.camel:camel-java-joor-dsl:%s\n", camelVersion));
+        sb.append(String.format("//DEPS org.apache.camel:camel-kamelet:%s\n", camelVersion));
+        content = content.replaceFirst("\\{\\{ \\.CamelDependencies }}", sb.toString());
+
+        // use apache distribution of camel-jbang
+        String v = camelVersion.substring(0, camelVersion.lastIndexOf('.'));
+        sb = new StringBuilder();
+        sb.append(String.format("//DEPS org.apache.camel:camel-jbang-core:%s\n", v));
+        sb.append(String.format("//DEPS org.apache.camel:camel-kamelet-main:%s\n", v));
+        sb.append(String.format("//DEPS org.apache.camel:camel-resourceresolver-github:%s\n", v));
+        if (VersionHelper.isGE(v, "3.19.0")) {
+            sb.append(String.format("//DEPS org.apache.camel:camel-cli-connector:%s\n", v));
+        }
+        content = content.replaceFirst("\\{\\{ \\.CamelJBangDependencies }}", sb.toString());
+
+        String fn = WORK_DIR + "/CustomCamelJBang.java";
+        Files.write(Paths.get(fn), content.getBytes(StandardCharsets.UTF_8));
+
+        String cmd = ProcessHandle.current().info().commandLine().orElse(null);
+        if (cmd != null) {
+            cmd = StringHelper.after(cmd, "main.CamelJBang ");
+        }
+        if (cmd == null) {
+            System.err.println("No Camel integration files to run");
+            return 1;
+        }
+        if (background) {
+            cmd = cmd.replaceFirst("--background=true", "");
+            cmd = cmd.replaceFirst("--background", "");
+        }
+        if (repos != null) {
+            if (!VersionHelper.isGE(v, "3.18.1")) {
+                // --repos is not supported in 3.18.0 or older, so remove
+                cmd = cmd.replaceFirst("--repos=" + repos, "");
+            }
+        }
+
+        cmd = cmd.replaceFirst("--camel-version=" + camelVersion, "");
+        // need to use jbang command to specify camel version
+        String jbang = "jbang " + WORK_DIR + "/CustomCamelJBang.java ";
+        cmd = jbang + cmd;
+
+        System.out.println(">>> " + cmd);
+
+        ProcessBuilder pb = new ProcessBuilder();
+        String[] arr = cmd.split("\\s+"); // TODO: safe split
+        List<String> args = Arrays.asList(arr);
+        pb.command(args);
+        if (background) {
+            Process p = pb.start();
+            System.out.println("Running Camel integration: " + name + " (version: " + camelVersion
+                               + ") in background with PID: " + p.pid());
+            return 0;
+        } else {
+            pb.inheritIO(); // run in foreground (with IO so logs are visible)
+            Process p = pb.start();
+            // wait for that process to exit as we run in foreground
+            return p.waitFor();
+        }
     }
 
     protected int runKameletMain(KameletMain main) throws Exception {
