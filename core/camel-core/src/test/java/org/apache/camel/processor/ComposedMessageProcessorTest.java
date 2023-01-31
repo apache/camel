@@ -40,7 +40,7 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedHeaderReceived("orderId", "myorderid");
 
-        List<OrderItem> order = Arrays.asList(new OrderItem[] { new OrderItem("widget", 5), new OrderItem("gadget", 10) });
+        List<OrderItem> order = Arrays.asList(new OrderItem("widget", 5), new OrderItem("gadget", 10));
 
         template.sendBodyAndHeader("direct:start", order, "orderId", "myorderid");
 
@@ -59,7 +59,7 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
         resultEndpoint.expectedHeaderReceived("orderId", "myorderid");
 
         // START SNIPPET: e1
-        List<OrderItem> order = Arrays.asList(new OrderItem[] { new OrderItem("widget", 500), new OrderItem("gadget", 200) });
+        List<OrderItem> order = Arrays.asList(new OrderItem("widget", 500), new OrderItem("gadget", 200));
 
         template.sendBodyAndHeader("direct:start", order, "orderId", "myorderid");
         // END SNIPPET: e1
