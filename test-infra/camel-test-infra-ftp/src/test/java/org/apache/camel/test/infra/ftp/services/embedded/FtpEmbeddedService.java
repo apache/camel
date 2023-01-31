@@ -67,7 +67,7 @@ public class FtpEmbeddedService extends AbstractTestService implements FtpServic
 
     @Override
     protected void setUp() throws Exception {
-        embeddedConfigurationTemplate.withTestDirectory(context.getDisplayName());
+        embeddedConfigurationTemplate.withTestDirectory(context.getDisplayName().replace("()", ""));
         EmbeddedConfiguration embeddedConfiguration = embeddedConfigurationTemplate.build();
 
         rootDir = testDirectory().resolve(embeddedConfiguration.getTestDirectory());
