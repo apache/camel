@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
+import java.net.URI;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,11 +29,10 @@ import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 import static org.apache.camel.component.vertx.websocket.VertxWebsocketHelper.createHostKey;
-import static org.apache.camel.component.vertx.websocket.VertxWebsocketHelper.extractHostName;
-import static org.apache.camel.component.vertx.websocket.VertxWebsocketHelper.extractPath;
-import static org.apache.camel.component.vertx.websocket.VertxWebsocketHelper.extractPortNumber;
 
 @Component("vertx-websocket")
 public class VertxWebsocketComponent extends DefaultComponent implements SSLContextParametersAware {
@@ -51,10 +51,44 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        String wsUri = remaining;
+        if (wsUri.matches("^wss?:.*")) {
+            int schemeSeparatorIndex = remaining.indexOf(":");
+            String scheme = remaining.substring(0, schemeSeparatorIndex);
+            wsUri = scheme + "://" + wsUri.replaceFirst("wss?:/*", "");
+        } else {
+            String scheme = "ws://";
+            // Preserves backwards compatibility for the vertx-websocket  on camel-quarkus / camel-k where the HTTP
+            // server is provided by the runtime platform and the host:port configuration is not strictly required
+            if (remaining.startsWith("/")) {
+                wsUri = scheme + "/" + remaining.replaceAll("^/+", "");
+            } else {
+                wsUri = scheme + remaining;
+            }
+        }
+
+        URI endpointUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(wsUri));
+        URI websocketURI = URISupport.createRemainingURI(endpointUri, parameters);
+
+        if (websocketURI.getHost() == null || websocketURI.getPort() == -1) {
+            String host = websocketURI.getHost();
+            int port = websocketURI.getPort();
+            if (websocketURI.getHost() == null) {
+                host = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_HOST;
+            }
+
+            if (websocketURI.getPort() == -1) {
+                port = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT;
+            }
+
+            websocketURI = new URI(
+                    websocketURI.getScheme(), websocketURI.getUserInfo(),
+                    host, port, websocketURI.getPath(), websocketURI.getQuery(),
+                    websocketURI.getFragment());
+        }
+
         VertxWebsocketConfiguration configuration = new VertxWebsocketConfiguration();
-        configuration.setHost(extractHostName(remaining));
-        configuration.setPort(extractPortNumber(remaining));
-        configuration.setPath(extractPath(remaining));
+        configuration.setWebsocketURI(websocketURI);
 
         VertxWebsocketEndpoint endpoint = new VertxWebsocketEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
@@ -103,7 +137,7 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
     public void connectConsumer(VertxWebsocketConsumer consumer) {
         VertxWebsocketEndpoint endpoint = consumer.getEndpoint();
         VertxWebsocketConfiguration configuration = endpoint.getConfiguration();
-        VertxWebsocketHostKey hostKey = createHostKey(configuration);
+        VertxWebsocketHostKey hostKey = createHostKey(configuration.getWebsocketURI());
         VertxWebsocketHost host = vertxHostRegistry.computeIfAbsent(hostKey, key -> {
             Router vertxRouter = configuration.getRouter();
             if (vertxRouter == null) {
@@ -141,11 +175,11 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
     public void disconnectConsumer(VertxWebsocketConsumer consumer) {
         VertxWebsocketEndpoint endpoint = consumer.getEndpoint();
         VertxWebsocketConfiguration configuration = endpoint.getConfiguration();
-        VertxWebsocketHostKey hostKey = createHostKey(configuration);
+        VertxWebsocketHostKey hostKey = createHostKey(configuration.getWebsocketURI());
         VertxWebsocketHost vertxWebsocketHost = vertxHostRegistry.remove(hostKey);
 
         if (vertxWebsocketHost != null) {
-            vertxWebsocketHost.disconnect(configuration.getPath());
+            vertxWebsocketHost.disconnect(configuration.getWebsocketURI().getPath());
         }
     }
 

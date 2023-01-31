@@ -27,10 +27,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
+
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.common.HttpsSettings;
@@ -64,9 +65,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public abstract class HttpsTest extends CamelTestSupport {
 
     protected static WireMockServer petstore = new WireMockServer(
-            wireMockConfig().httpServerFactory(new Jetty94ServerFactory()).containerThreads(13).dynamicPort()
+            wireMockConfig().httpServerFactory(new WireMockJettyServerFactory()).containerThreads(13).dynamicPort()
                     .dynamicHttpsPort().keystorePath(Resources.getResource("localhost.p12").toString()).keystoreType("PKCS12")
-                    .keystorePassword("changeit"));
+                    .keystorePassword("changeit").keyManagerPassword("changeit"));
 
     static final Object NO_BODY = null;
 

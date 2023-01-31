@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf.holder;
 
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;

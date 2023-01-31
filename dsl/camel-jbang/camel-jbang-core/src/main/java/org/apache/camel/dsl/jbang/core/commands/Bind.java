@@ -27,6 +27,7 @@ import java.util.Stack;
 import org.apache.camel.github.GitHubResourceResolver;
 import org.apache.camel.impl.engine.DefaultResourceResolvers;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceResolver;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.snakeyaml.engine.v2.api.LoadSettings;
@@ -131,15 +132,26 @@ class Bind extends CamelCommand {
 
         InputStream is;
         String loc;
+        Resource res;
 
         // try local disk first before github
-        Resource res = new DefaultResourceResolvers.FileResolver().resolve("file:" + kamelet + ".kamelet.yaml");
+        ResourceResolver resolver = new DefaultResourceResolvers.FileResolver();
+        try {
+            res = resolver.resolve("file:" + kamelet + ".kamelet.yaml");
+        } finally {
+            resolver.close();
+        }
         if (res.exists()) {
             is = res.getInputStream();
             loc = res.getLocation();
         } else {
-            res = new GitHubResourceResolver().resolve(
-                    "github:apache:camel-kamelets:main:kamelets/" + kamelet + ".kamelet.yaml");
+            resolver = new GitHubResourceResolver();
+            try {
+                res = resolver.resolve(
+                        "github:apache:camel-kamelets:main:kamelets/" + kamelet + ".kamelet.yaml");
+            } finally {
+                resolver.close();
+            }
             loc = res.getLocation();
             URL u = new URL(loc);
             is = u.openStream();

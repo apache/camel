@@ -58,9 +58,9 @@ public class DownloadDeleteFunctionalTest extends CamelTestSupport {
                      "&includeFolders=" + INCLUDE_FOLDERS +
                      "&deleteAfterRead=true" +
                      "&moveAfterRead=false")
-                             .log("Download objects successful")
-                             .to("log:LOG?showAll=true")
-                             .to("mock:download_objects_result");
+                        .log("Download objects successful")
+                        .to("log:LOG?showAll=true")
+                        .to("mock:download_objects_result");
             }
         };
     }

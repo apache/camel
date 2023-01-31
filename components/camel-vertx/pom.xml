@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-vertx-parent</artifactId>
@@ -36,7 +36,6 @@
         <module>camel-vertx-common</module>
         <module>camel-vertx</module>
         <module>camel-vertx-http</module>
-        <module>camel-vertx-kafka</module>
         <module>camel-vertx-websocket</module>
     </modules>
 

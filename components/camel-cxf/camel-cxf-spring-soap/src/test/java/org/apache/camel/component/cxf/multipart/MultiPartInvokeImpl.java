@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.cxf.multipart;
 
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 
 import org.apache.camel.cxf.multipart.MultiPartInvoke;
 import org.apache.camel.cxf.multipart.types.InE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@javax.jws.WebService(
-                      serviceName = "MultiPartInvokeService",
-                      portName = "MultiPartInvokePort",
-                      targetNamespace = "http://adapter.ti.tongtech.com/ws",
-                      endpointInterface = "org.apache.camel.cxf.multipart.MultiPartInvoke")
+@jakarta.jws.WebService(
+                        serviceName = "MultiPartInvokeService",
+                        portName = "MultiPartInvokePort",
+                        targetNamespace = "http://adapter.ti.tongtech.com/ws",
+                        endpointInterface = "org.apache.camel.cxf.multipart.MultiPartInvoke")
 
 public class MultiPartInvokeImpl implements MultiPartInvoke {
 

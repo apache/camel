@@ -27,15 +27,11 @@ import org.apache.camel.oaipmh.handler.Harvester;
 import org.apache.camel.oaipmh.handler.ProducerResponseHandler;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The OAIPMH producer.
  */
 public class OAIPMHProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(OAIPMHProducer.class);
     private OAIPMHEndpoint endpoint;
 
     public OAIPMHProducer(OAIPMHEndpoint endpoint) {

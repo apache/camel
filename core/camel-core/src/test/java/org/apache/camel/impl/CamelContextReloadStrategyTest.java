@@ -86,7 +86,7 @@ public class CamelContextReloadStrategyTest extends ContextTestSupport {
         };
     }
 
-    private class MySource extends ServiceSupport implements PropertiesSource {
+    private static class MySource extends ServiceSupport implements PropertiesSource {
 
         private int counter;
 

@@ -55,7 +55,7 @@
         <property name="defaultDomain" value="org.apache.camel.test"/>
     </bean>
 
-    <bean id="registry" class="org.springframework.remoting.rmi.RmiRegistryFactoryBean">
+    <bean id="registry" class="org.apache.camel.spring.rmi.RmiRegistryFactoryBean">
         <property name="port" value="9877"/>
     </bean>
 

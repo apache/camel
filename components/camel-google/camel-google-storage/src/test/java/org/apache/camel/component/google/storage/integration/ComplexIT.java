@@ -78,11 +78,11 @@ public class ComplexIT extends CamelTestSupport {
                      + "&autoCreateBucket=true"
                      + "&deleteAfterRead=true"
                      + "&includeBody=true")
-                             .log("consuming: ${header.CamelGoogleCloudStorageBucketName}/${header.CamelGoogleCloudStorageObjectName}")
-                             .to("direct:processed")
-                             .to("mock:processed");
+                        .log("consuming: ${header.CamelGoogleCloudStorageBucketName}/${header.CamelGoogleCloudStorageObjectName}")
+                        .to("direct:processed")
+                        .to("mock:processed");
 
-                //upload these files to bucket2 
+                //upload these files to bucket2
                 from("direct:processed")
                         .to("google-storage://" + bucket2 + "?serviceAccountKey=file:" + serviceAccountKeyFile)
                         .log("uploaded file object:${header.CamelGoogleCloudStorageObjectName}, body:${body}")

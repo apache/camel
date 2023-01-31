@@ -22,8 +22,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.Marshaller;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -212,7 +212,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
 
     /**
      * the individual size of one record is: fooBarSize = 1 -> 104 bytes fooBarSize = 50 -> 2046 bytes
-     * 
+     *
      * @return the payloads used for this stress test
      */
     public Foo[] createFoo(int testCount) {
@@ -234,7 +234,7 @@ public class DataFormatConcurrentTest extends CamelTestSupport {
 
     /**
      * the individual size of one record is: fooBarSize = 1 -> 104 bytes fooBarSize = 50 -> 2046 bytes
-     * 
+     *
      * @return           the payloads used for this stress test
      * @throws Exception
      */

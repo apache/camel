@@ -67,12 +67,16 @@ import static java.util.stream.Collectors.joining;
 /**
  * Factory class for creating {@linkplain com.fasterxml.jackson.databind.ObjectMapper}
  */
-public abstract class JsonUtils {
+public final class JsonUtils {
 
     public static final String SCHEMA4 = "http://json-schema.org/draft-04/schema#";
     public static final String DEFAULT_ID_PREFIX = "urn:jsonschema:org:apache:camel:component:salesforce:dto";
 
     private static final String API_DTO_ID = "org:urn:jsonschema:org:apache:camel:component:salesforce:api:dto";
+
+    private JsonUtils() {
+
+    }
 
     public static ObjectMapper createObjectMapper() {
         // enable date time support including Java 1.8 ZonedDateTime

@@ -21,8 +21,8 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
 import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpException;
-import org.apache.http.util.Args;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSException;
 import org.bouncycastle.cms.jcajce.JceCMSContentEncryptorBuilder;
@@ -36,7 +36,7 @@ public final class EncryptingUtils {
 
     public static CMSEnvelopedDataGenerator createEnvelopDataGenerator(Certificate[] encryptionCertificateChain)
             throws HttpException {
-        Args.notNull(encryptionCertificateChain, "encryptionCertificateChain");
+        ObjectHelper.notNull(encryptionCertificateChain, "encryptionCertificateChain");
         if (encryptionCertificateChain.length == 0 || !(encryptionCertificateChain[0] instanceof X509Certificate)) {
             throw new IllegalArgumentException("Invalid certificate chain");
         }
@@ -57,7 +57,7 @@ public final class EncryptingUtils {
     }
 
     public static OutputEncryptor createEncryptor(AS2EncryptionAlgorithm encryptionAlgorithm) throws HttpException {
-        Args.notNull(encryptionAlgorithm, "encryptionAlgorithmName");
+        ObjectHelper.notNull(encryptionAlgorithm, "encryptionAlgorithmName");
         try {
             return new JceCMSContentEncryptorBuilder(encryptionAlgorithm.getAlgorithmOID()).build();
         } catch (CMSException e) {

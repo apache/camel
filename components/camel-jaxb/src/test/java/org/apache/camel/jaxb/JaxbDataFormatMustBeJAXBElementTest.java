@@ -16,9 +16,9 @@
  */
 package org.apache.camel.jaxb;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.InvalidPayloadException;

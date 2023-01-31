@@ -66,7 +66,7 @@ public class AggregateNewExchangeAndConfirmTest extends ContextTestSupport {
         };
     }
 
-    private class MyNewExchangeAggregationStrategy implements AggregationStrategy {
+    private static class MyNewExchangeAggregationStrategy implements AggregationStrategy {
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
@@ -86,7 +86,7 @@ public class AggregateNewExchangeAndConfirmTest extends ContextTestSupport {
 
         @Override
         public void confirm(CamelContext camelContext, String exchangeId) {
-            log.info("Confirmed id: " + exchangeId);
+            log.info("Confirmed id: {}", exchangeId);
             this.id = exchangeId;
         }
 

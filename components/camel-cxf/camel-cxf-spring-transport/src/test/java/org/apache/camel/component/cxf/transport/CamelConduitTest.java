@@ -87,7 +87,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         assertEquals("conduit_context", context.getName(), "get the wrong camel context");
         assertEquals("direct://EndpointA", context.getRoutes().get(0).getEndpoint().getEndpointUri());
 
-        // test the configuration of camelContextId attribute 
+        // test the configuration of camelContextId attribute
         endpointInfo.setAddress("camel://direct:EndpointA");
         endpointInfo.setName(testEndpointQNameC);
         conduit = new CamelConduit(null, bus, endpointInfo);

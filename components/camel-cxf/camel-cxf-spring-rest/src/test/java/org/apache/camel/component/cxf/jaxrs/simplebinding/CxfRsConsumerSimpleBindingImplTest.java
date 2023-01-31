@@ -18,7 +18,7 @@ package org.apache.camel.component.cxf.jaxrs.simplebinding;
 
 import java.io.StringWriter;
 
-import javax.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBContext;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

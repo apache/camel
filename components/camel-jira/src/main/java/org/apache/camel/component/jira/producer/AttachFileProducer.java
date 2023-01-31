@@ -26,15 +26,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.jira.JiraEndpoint;
 import org.apache.camel.support.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jira.JiraConstants.ISSUE_KEY;
 
 public class AttachFileProducer extends DefaultProducer {
-
-    private static final transient Logger LOG = LoggerFactory.getLogger(AttachFileProducer.class);
-
     public AttachFileProducer(JiraEndpoint endpoint) {
         super(endpoint);
     }

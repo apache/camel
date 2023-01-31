@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;

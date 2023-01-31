@@ -36,10 +36,11 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
         int exit;
         if (watch) {
             do {
-                // output command
                 exit = doCall();
-                // use 2-sec delay in watch mode
-                Thread.sleep(2000);
+                if (exit == 0) {
+                    // use 2-sec delay in watch mode
+                    Thread.sleep(2000);
+                }
             } while (exit == 0);
         } else {
             exit = doCall();
@@ -48,8 +49,7 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
     }
 
     protected void clearScreen() {
-        AnsiConsole.out().print(Ansi.ansi().eraseScreen());
-        AnsiConsole.out().print(Ansi.ansi().cursor(0, 0));
+        AnsiConsole.out().print(Ansi.ansi().eraseScreen().cursor(1, 1));
     }
 
     protected abstract Integer doCall() throws Exception;

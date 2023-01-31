@@ -33,12 +33,14 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
         assertThat(
                 fluentTemplate
                         .to("direct:someId")
-                        .request(String.class)).isEqualTo("from-route-someId");
+                        .request(String.class))
+                .isEqualTo("from-route-someId");
 
         assertThat(
                 fluentTemplate
                         .to("kamelet:setBody/test")
-                        .request(String.class)).isEqualTo("from-route");
+                        .request(String.class))
+                .isEqualTo("from-route");
     }
 
     @Test
@@ -46,7 +48,8 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
         assertThat(
                 fluentTemplate
                         .to("kamelet:setBody")
-                        .request(String.class)).isEqualTo("from-template");
+                        .request(String.class))
+                .isEqualTo("from-template");
     }
 
     @Test
@@ -54,7 +57,8 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
         assertThat(
                 fluentTemplate
                         .to("kamelet:setBody?bodyValue={{bodyValue}}")
-                        .request(String.class)).isEqualTo("from-uri");
+                        .request(String.class))
+                .isEqualTo("from-uri");
     }
 
     @Test
@@ -64,11 +68,11 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
 
         assertThat(context.getEndpoints().stream().filter(HttpEndpoint.class::isInstance).findFirst()
                 .map(HttpEndpoint.class::cast))
-                        .get()
-                        .hasFieldOrPropertyWithValue("endpointUri",
-                                "http://localhost:8080?proxyAuthUsername=u%2Bsr&proxyAuthPassword=p%2Bwd")
-                        .hasFieldOrPropertyWithValue("proxyAuthUsername", "u+sr")
-                        .hasFieldOrPropertyWithValue("proxyAuthPassword", "p+wd");
+                .get()
+                .hasFieldOrPropertyWithValue("endpointUri",
+                        "http://localhost:8080?proxyAuthUsername=u%2Bsr&proxyAuthPassword=p%2Bwd")
+                .hasFieldOrPropertyWithValue("proxyAuthUsername", "u+sr")
+                .hasFieldOrPropertyWithValue("proxyAuthPassword", "p+wd");
     }
 
     @Test
@@ -78,11 +82,11 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
 
         assertThat(context.getEndpoints().stream().filter(HttpEndpoint.class::isInstance).findFirst()
                 .map(HttpEndpoint.class::cast))
-                        .get()
-                        .hasFieldOrPropertyWithValue("endpointUri",
-                                "http://localhost:8080?proxyAuthUsername=u%2Bsr&proxyAuthPassword=p%2Bwd")
-                        .hasFieldOrPropertyWithValue("proxyAuthUsername", "u+sr")
-                        .hasFieldOrPropertyWithValue("proxyAuthPassword", "p+wd");
+                .get()
+                .hasFieldOrPropertyWithValue("endpointUri",
+                        "http://localhost:8080?proxyAuthUsername=u%2Bsr&proxyAuthPassword=p%2Bwd")
+                .hasFieldOrPropertyWithValue("proxyAuthUsername", "u+sr")
+                .hasFieldOrPropertyWithValue("proxyAuthPassword", "p+wd");
     }
 
     @Test
@@ -92,11 +96,11 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
 
         assertThat(context.getEndpoints().stream().filter(HttpEndpoint.class::isInstance).findFirst()
                 .map(HttpEndpoint.class::cast))
-                        .get()
-                        .hasFieldOrPropertyWithValue("endpointUri",
-                                "http://localhost:8080?proxyAuthUsername=u%2Bsr&proxyAuthPassword=p%2Bwd")
-                        .hasFieldOrPropertyWithValue("proxyAuthUsername", "u+sr")
-                        .hasFieldOrPropertyWithValue("proxyAuthPassword", "p+wd");
+                .get()
+                .hasFieldOrPropertyWithValue("endpointUri",
+                        "http://localhost:8080?proxyAuthUsername=u%2Bsr&proxyAuthPassword=p%2Bwd")
+                .hasFieldOrPropertyWithValue("proxyAuthUsername", "u+sr")
+                .hasFieldOrPropertyWithValue("proxyAuthPassword", "p+wd");
     }
 
     @Test
@@ -106,25 +110,25 @@ public class KameletGlobalPropertiesTest extends CamelTestSupport {
 
         assertThat(context.getEndpoints().stream().filter(HttpEndpoint.class::isInstance).findFirst()
                 .map(HttpEndpoint.class::cast))
-                        .get()
-                        .hasFieldOrPropertyWithValue("endpointUri",
-                                "http://localhost:8080?proxyAuthUsername=%23property%3Aproxy.usr&proxyAuthPassword=%23property%3Aproxy.pwd")
-                        .hasFieldOrPropertyWithValue("proxyAuthUsername", "u+sr")
-                        .hasFieldOrPropertyWithValue("proxyAuthPassword", "p+wd");
+                .get()
+                .hasFieldOrPropertyWithValue("endpointUri",
+                        "http://localhost:8080?proxyAuthUsername=%23property%3Aproxy.usr&proxyAuthPassword=%23property%3Aproxy.pwd")
+                .hasFieldOrPropertyWithValue("proxyAuthUsername", "u+sr")
+                .hasFieldOrPropertyWithValue("proxyAuthPassword", "p+wd");
     }
 
     @Test
     public void urlEncodingIsRespected() {
         assertThat(context.getEndpoint("kamelet:timer-source?message=Hello+Kamelets&period=1000", KameletEndpoint.class)
                 .getKameletProperties())
-                        .containsEntry("message", "Hello Kamelets");
+                .containsEntry("message", "Hello Kamelets");
         assertThat(context.getEndpoint("kamelet:timer-source?message=Hi%20Kamelets&period=1000", KameletEndpoint.class)
                 .getKameletProperties())
-                        .containsEntry("message", "Hi Kamelets");
+                .containsEntry("message", "Hi Kamelets");
         assertThat(context
                 .getEndpoint("kamelet:timer-source?message=messaging.knative.dev%2Fv1beta1&period=1000", KameletEndpoint.class)
                 .getKameletProperties())
-                        .containsEntry("message", "messaging.knative.dev/v1beta1");
+                .containsEntry("message", "messaging.knative.dev/v1beta1");
     }
 
     // **********************************************

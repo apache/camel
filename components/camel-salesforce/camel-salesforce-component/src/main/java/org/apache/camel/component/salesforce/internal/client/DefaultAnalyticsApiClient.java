@@ -250,7 +250,7 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
     @Override
     protected void setAccessToken(Request request) {
         // replace old token
-        request.getHeaders().put(HttpHeader.AUTHORIZATION, TOKEN_PREFIX + accessToken);
+        request.header(HttpHeader.AUTHORIZATION, TOKEN_PREFIX + accessToken);
     }
 
     @Override

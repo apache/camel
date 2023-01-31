@@ -61,7 +61,7 @@ public class HdfsProducerConsumerIntegrationIT extends CamelTestSupport {
                         service.getHDFSHost(), service.getPort());
                 fromF("hdfs://%s:%d/tmp/test/test-camel-simple-write-file?pattern=*&initialDelay=2000&fileSystemType=HDFS&chunkSize=5",
                         service.getHDFSHost(), service.getPort())
-                                .to("mock:result");
+                        .to("mock:result");
             }
         });
         context.start();
@@ -117,16 +117,16 @@ public class HdfsProducerConsumerIntegrationIT extends CamelTestSupport {
                 // difference in chunkSize only to allow multiple consumers
                 fromF("hdfs://%s:%d/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=128",
                         service.getHDFSHost(), service.getPort())
-                                .to("mock:result");
+                        .to("mock:result");
                 fromF("hdfs://%s:%d/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=256",
                         service.getHDFSHost(), service.getPort())
-                                .to("mock:result");
+                        .to("mock:result");
                 fromF("hdfs://%s:%d/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=512",
                         service.getHDFSHost(), service.getPort())
-                                .to("mock:result");
+                        .to("mock:result");
                 fromF("hdfs://%s:%d/tmp/test/multiple-consumers?pattern=*.txt&fileSystemType=HDFS&chunkSize=1024",
                         service.getHDFSHost(), service.getPort())
-                                .to("mock:result");
+                        .to("mock:result");
             }
         });
         context.start();

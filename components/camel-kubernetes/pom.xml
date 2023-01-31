@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-kubernetes</artifactId>
@@ -32,10 +32,6 @@
     <name>Camel :: Kubernetes</name>
 
     <properties>
-        <camel.osgi.export.pkg>
-            org.apache.camel.component.kubernetes*,
-            org.apache.camel.component.openshift*
-        </camel.osgi.export.pkg>
     </properties>
 
     <dependencyManagement>
@@ -135,12 +131,6 @@
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- logging -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- forcing okhttp v3.x related to https://issues.apache.org/jira/browse/CAMEL-16336 -->

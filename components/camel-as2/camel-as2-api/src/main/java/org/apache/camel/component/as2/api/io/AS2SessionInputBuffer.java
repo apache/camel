@@ -23,6 +23,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CoderResult;
 
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.MessageConstraintException;
 import org.apache.http.config.MessageConstraints;
 import org.apache.http.impl.io.HttpTransportMetricsImpl;
@@ -59,7 +60,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
                                  final int buffersize,
                                  final int minChunkLimit,
                                  MessageConstraints constraints) {
-        this.metrics = Args.notNull(metrics, "metrics");
+        this.metrics = ObjectHelper.notNull(metrics, "metrics");
         Args.positive(buffersize, "buffersize");
         this.buffer = new byte[buffersize];
         this.bufferpos = 0;
@@ -187,7 +188,7 @@ public class AS2SessionInputBuffer implements SessionInputBuffer, BufferInfo {
 
     @Override
     public int readLine(CharArrayBuffer charbuffer) throws IOException {
-        Args.notNull(charbuffer, "Char array buffer");
+        ObjectHelper.notNull(charbuffer, "Char array buffer");
         final int maxLineLen = this.constraints.getMaxLineLength();
         int noRead = 0;
         boolean retry = true;

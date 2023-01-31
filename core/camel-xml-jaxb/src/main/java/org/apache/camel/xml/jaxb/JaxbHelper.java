@@ -23,10 +23,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.bind.Binder;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import jakarta.xml.bind.Binder;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -326,7 +326,7 @@ public final class JaxbHelper {
 
     /**
      * Un-marshals the content of the input stream to an instance of {@link TemplatedRoutesDefinition}.
-     * 
+     *
      * @param  context     the Camel context from which the JAXBContext is extracted
      * @param  inputStream the input stream to unmarshal
      * @return             the content unmarshalled as a {@link TemplatedRoutesDefinition}.

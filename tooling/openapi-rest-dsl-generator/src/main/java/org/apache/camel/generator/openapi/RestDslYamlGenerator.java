@@ -19,8 +19,10 @@ package org.apache.camel.generator.openapi;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -139,13 +141,13 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         XmlMapper xmlMapper = new XmlMapper();
         JsonNode node = xmlMapper.readTree(newXml.getBytes());
 
-        List<String> toTagUris = new ArrayList<>();
+        Map<String, String> toTagData = new HashMap<>();
 
         for (String v : VERBS) {
             fixVerbNodes(xmlMapper, node, v);
             fixParamNodes(xmlMapper, node, v);
             sortVerb(node, v);
-            toTagUris.addAll(fixToTags(xmlMapper, node, v));
+            toTagData.putAll(fixToTags(xmlMapper, node, v));
         }
 
         // the root tag should be an array
@@ -153,9 +155,13 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
 
         // add Routes
         if (generateRoutes) {
-            for (String uri : toTagUris) {
+            for (String uri : toTagData.keySet()) {
                 ObjectNode from = JsonNodeFactory.instance.objectNode();
                 from.set("uri", new TextNode(uri));
+                String description = toTagData.get(uri);
+                if (description != null && !description.isBlank()) {
+                    from.set("description", new TextNode(description));
+                }
                 ObjectNode route = JsonNodeFactory.instance.objectNode();
                 route.set("from", from);
                 ((ArrayNode) node).add(xmlMapper.createObjectNode().set("route", route));
@@ -302,8 +308,8 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
     /**
      * to tag should be in implicit mode, ex: to: "direct:directX"
      */
-    private static List<String> fixToTags(XmlMapper xmlMapper, JsonNode node, String verb) {
-        List<String> toTags = new ArrayList<>();
+    private static Map<String, String> fixToTags(XmlMapper xmlMapper, JsonNode node, String verb) {
+        Map<String, String> toTags = new HashMap<>();
         JsonNode verbs = node.path("rest").path(verb);
         if (verbs == null || verbs.isMissingNode()) {
             return toTags;
@@ -319,7 +325,8 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
                 ObjectNode on = (ObjectNode) n;
                 JsonNode uri = n.get("to").get("uri");
                 on.set("to", uri);
-                toTags.add(uri.textValue());
+                String description = n.has("description") ? n.get("description").asText() : "";
+                toTags.put(uri.textValue(), description);
             }
         }
         return toTags;

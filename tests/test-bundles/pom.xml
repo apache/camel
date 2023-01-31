@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
         <relativePath>../../parent</relativePath>
     </parent>
 
@@ -35,13 +35,6 @@
 
     <properties>
         <servicemix.legal.version>1.0</servicemix.legal.version>
-        <camel.osgi.export>${camel.osgi.export.pkg}*;version=${pkgVersion};-split-package:=merge-first
-        </camel.osgi.export>
-        <camel.osgi.export.pkg />
-        <camel.osgi.import.pkg />
-        <camel.osgi.private.pkg />
-        <camel.osgi.dynamicimport.pkg />
-        <camel.osgi.failok>false</camel.osgi.failok>
     </properties>
 
     <build>
@@ -86,31 +79,6 @@
         </pluginManagement>
 
         <plugins>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bundle-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                    <instructions>
-                        <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                        <Export-Package>${camel.osgi.export}</Export-Package>
-                        <Import-Package>${camel.osgi.import.pkg}*</Import-Package>
-                        <Private-Package>${camel.osgi.private.pkg}</Private-Package>
-                        <DynamicImport-Package>${camel.osgi.dynamicimport.pkg}</DynamicImport-Package>
-                        <_failok>${camel.osgi.failok}</_failok>
-                    </instructions>
-                    <unpackBundle>true</unpackBundle>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>bundle-manifest</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>manifest</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -172,7 +140,7 @@
     </build>
 
     <modules>
-        <module>mock-javamail_1.7</module>
+        <!--module>mock-javamail_1.7</module-->
         <module>camel-validator-test-resources</module>
     </modules>
 </project>

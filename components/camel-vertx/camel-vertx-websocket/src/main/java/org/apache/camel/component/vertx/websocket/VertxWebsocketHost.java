@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpHeaders;
@@ -45,6 +47,7 @@ import org.slf4j.LoggerFactory;
  */
 public class VertxWebsocketHost {
     private static final Logger LOG = LoggerFactory.getLogger(VertxWebsocketHost.class);
+    private static final Pattern PATH_PARAMETER_PATTERN = Pattern.compile("\\{([^/}]+)\\}");
 
     private final VertxWebsocketHostConfiguration hostConfiguration;
     private final VertxWebsocketHostKey hostKey;
@@ -68,12 +71,16 @@ public class VertxWebsocketHost {
         VertxWebsocketEndpoint endpoint = consumer.getEndpoint();
         VertxWebsocketConfiguration configuration = endpoint.getConfiguration();
 
-        LOG.info("Connected consumer for path {}", configuration.getPath());
+        URI websocketURI = configuration.getWebsocketURI();
+
+        // Transform from the Camel path param syntax /path/{key} to Vert.x web /path/:key
+        String path = PATH_PARAMETER_PATTERN.matcher(websocketURI.getPath()).replaceAll(":$1");
         Router router = hostConfiguration.getRouter();
-        Route route = router.route(configuration.getPath());
+        Route route = router.route(path);
+        LOG.info("Connected consumer for path {}", path);
 
         if (!ObjectHelper.isEmpty(configuration.getAllowedOriginPattern())) {
-            CorsHandler corsHandler = CorsHandler.create(configuration.getAllowedOriginPattern());
+            CorsHandler corsHandler = CorsHandler.create().addRelativeOrigin(configuration.getAllowedOriginPattern());
             route.handler(corsHandler);
         }
 
@@ -112,10 +119,14 @@ public class VertxWebsocketHost {
                             }
                         }
 
-                        webSocket.textMessageHandler(message -> consumer.onMessage(connectionKey, message, remote));
+                        webSocket.textMessageHandler(
+                                message -> consumer.onMessage(connectionKey, message, remote, routingContext));
                         webSocket
-                                .binaryMessageHandler(message -> consumer.onMessage(connectionKey, message.getBytes(), remote));
-                        webSocket.exceptionHandler(exception -> consumer.onException(connectionKey, exception, remote));
+                                .binaryMessageHandler(
+                                        message -> consumer.onMessage(connectionKey, message.getBytes(), remote,
+                                                routingContext));
+                        webSocket.exceptionHandler(
+                                exception -> consumer.onException(connectionKey, exception, remote, routingContext));
                         webSocket.closeHandler(closeEvent -> {
                             if (LOG.isDebugEnabled()) {
                                 if (socketAddress != null) {
@@ -132,7 +143,7 @@ public class VertxWebsocketHost {
             }
         });
 
-        routeRegistry.put(configuration.getPath(), route);
+        routeRegistry.put(websocketURI.getPath(), route);
     }
 
     /**

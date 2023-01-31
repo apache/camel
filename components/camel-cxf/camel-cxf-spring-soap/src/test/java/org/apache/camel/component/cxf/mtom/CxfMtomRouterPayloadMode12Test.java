@@ -18,7 +18,7 @@ package org.apache.camel.component.cxf.mtom;
 
 import java.net.URL;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.apache.camel.cxf.mtom_feature.Hello;
 import org.apache.camel.cxf.mtom_feature.HelloService12;

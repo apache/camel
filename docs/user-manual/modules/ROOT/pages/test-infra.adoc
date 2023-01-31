@@ -1,5 +1,71 @@
 = Test Infrastructure
 
+The components in the Camel Test Infra provide utilities to simplify testing with Camel and other systems may interact with it. They work as JUnit 5 extensions.
+
+== Working with the Camel Context in Tests
+
+When testing Camel or a Camel-based integration, you almost certainly need to use the `CamelContext` to configure the registry, add routes and execute other operations. The test infra comes with a module that provides a JUnit 5 extension that allows you to inject a Camel context into your tests.
+
+Adding it to your test code is as simple as adding the following lines of code to your test class:
+
+[source,java]
+----
+@RegisterExtension
+protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+----
+
+Then, via the extension, you can access the context (ie.: ```contextExtension.getContext()`) to manipulate it as need in the tests.
+
+The extension comes with a few utilities to simplify configuring the context, and adding routes at the appropriate time.
+
+=== Configuring the Camel Context
+
+To create a method that configures the context, you can declare a method receiving an instance of `CamelContext` and annotate it with `@ContextFixture`.
+
+[source,java]
+----
+@ContextFixture
+public void configureContext(CamelContext context) {
+   // context configuration code here
+}
+----
+
+Additionally, you can simplify the class hierarchy, and ensure consistency you may also implement the `ConfigurableContext` interface.
+
+=== Configuring the Routes
+
+You can configure the routes using a similar process as the one described for configuring the Camel context. You can create a method that receives an instance of `CamelContext` and annotate it with `@RouteFixture`.
+
+[source,java]
+----
+@RouteFixture
+public void createRouteBuilder(CamelContext context) throws Exception {
+    context.addRoutes(new RouteBuilder() {
+        @Override
+        public void configure() {
+           from(fromUri).to(destUri);
+        }
+    });
+}
+----
+
+=== Use the Camel Context Extension
+
+To start using the Camel Context extension on your code, add the following dependency:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-test-infra-core</artifactId>
+    <version>${camel.version}</version>
+    <scope>test</scope>
+    <type>test-jar</type>
+</dependency>
+----
+
+For simplicity and consistency, you may also declare the route as implementing the `ConfigurableRoute`.
+
 == Simulating the Test Infrastructure
 
 One of the first steps when implementing a new test, is to identify how to simulate infrastructure required for it to 
@@ -10,7 +76,13 @@ and uses container images to simulate the environments. Additionally, it may als
 environments as well as, when available, embeddable components. This varies by each component, and it is recommended to 
 check the code for additional details.
 
-== Writing A New Test Infrastructure Module
+=== Writing A New Test Infrastructure Module
+
+
+[NOTE]
+====
+This section is aimed at Camel maintainers that need to write new test infra components. End users can skip this section.
+====
 
 The test code abstracts the provisioning of test environments behind service classes (i.e.: JMSService, JDBCService,
 etc). The purpose of the service class is to abstract the both the type service (i.e.: Kafka, Strimzi, etc) and
@@ -31,7 +103,7 @@ whenever possible.
 It is also possible to use embeddable components when required, although this usually lead to more code and higher 
 maintenance.
 
-=== Recommended Structure for Test Infrastructure Modules
+==== Recommended Structure for Test Infrastructure Modules
 
 The service should provide an interface, named after the infrastructure being implemented, and this interface should 
 extend the https://github.com/apache/camel/blob/main/test-infra/camel-test-infra-common/src/test/java/org/apache/camel/test/infra/common/services/TestService.java[TestService]
@@ -41,9 +113,12 @@ and https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/Afte
 should be the preferred extensions whenever possible because they allow the instance of the infrastructure to be static
 throughout the test execution.
 
-*Note*: bear in mind that, according to the https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/RegisterExtension.html[JUnit 5 extension]
+[NOTE]
+====
+Bear in mind that, according to the https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/RegisterExtension.html[JUnit 5 extension]
 model, the time of initialization of the service may differ depending on whether the service instance is declared as 
 static or not in the test class. As such, the code should make no assumptions as to its time of initialization.
+====
 
 Ideally, there should be two concrete implementations of the services: one of the remote service (if applicable) and 
 another for the container service: 
@@ -66,7 +141,7 @@ as `<name>.<parameter>`. More complex services may use the builder available thr
 the service accordingly.
 
 
-=== Registering Properties
+==== Registering Properties
 
 All services should register the properties, via `System.setProperty` that allow access to the services. This is required
 in order to resolve those properties when running tests using the Spring framework. This registration allows the properties
@@ -74,11 +149,12 @@ to be resolved in Spring's XML files.
 
 This registration is done in the `registerProperties` methods during the service initialization. 
 
-=== Registering Properties Example:
+==== Registering Properties Example:
 
-Registering the properties in the concrete service implementation: 
+Registering the properties in the concrete service implementation:
 
-```
+[source,java]
+----
     public void registerProperties() {
         // MyServiceProperties.MY_SERVICE_HOST is a string with value "my.service.host"
         System.setProperty(MyServiceProperties.MY_SERVICE_HOST, container.getHost());
@@ -97,25 +173,26 @@ Registering the properties in the concrete service implementation:
         registerProperties();
         LOG.info("MyService instance running at {}", getServiceAddress());
     }
-```
+----
 
 Then, when referring these properties in Camel routes or Spring XML properties, you may use `{{my.service.host}}`,
 `{{my.service.port}}` and `{{my.service.address}}`.
 
 
-=== Packaging Recommendations
+==== Packaging Recommendations
 
 This is test infrastructure code, therefore it should be package as test type artifacts. The 
 https://github.com/apache/camel/blob/main/test-infra/camel-test-infra-parent[parent pom] should provide all the necessary bits for packaging the test infrastructure.
 
-== Using The New Test Infrastructure
+=== Using The New Test Infrastructure
 
-Using the test infra in a new component test is rather straightforward similar to using any other reusable component. 
+Using the test infra in a new component test is rather straightforward, similar to using any other reusable component.
 You start by declaring the test infra dependencies in your pom file. 
 
 This should be similar to:
 
-```xml
+[source,xml]
+----
 <!-- test infra -->
 <dependency>
     <groupId>org.apache.camel</groupId>
@@ -124,22 +201,27 @@ This should be similar to:
     <type>test-jar</type>
     <scope>test</scope>
 </dependency>
-```
+----
 
-*Note*: on the dependencies above, the dependency version is set to `${project.version}`. This should be adjusted to the
+[NOTE]
+====
+On the dependencies above, the dependency version is set to `${project.version}`. This should be adjusted to the
 Camel version when used outside the Camel Core project.
+====
 
 On the test class, add a member variable for the service and annotate it with the https://junit.org/junit5/docs/5.1.1/api/org/junit/jupiter/api/extension/RegisterExtension.html[@RegisterExtension],
-in order to let JUnit 5 manage its lifecycle. 
+in order to let JUnit 5 manage its lifecycle.
 
-```
+[source,java]
+----
 @RegisterExtension
 static MyService service = MyServiceServiceFactory.createService();
-```
+----
 
-More complex test services can be created using something similar to: 
+More complex test services can be created using something similar to:
 
-```
+[source,java]
+----
 @RegisterExtension
 static MyService service = MyServiceServiceFactory
     .builder()
@@ -147,19 +229,21 @@ static MyService service = MyServiceServiceFactory
         .addLocalMapping(MyTestClass::staticMethodReturningAService) // sets the handler for -Dmy-service.instance.type=local-myservice-local-container
         .addMapping("local-alternative-service", MyTestClass::anotherMethodReturningAService) // sets the handler for -Dmy-service.instance.type=local-alternative-service
     .createService();
-```
+----
 
 You can use the methods as well as the registered properties to access the test infrastructure services available. 
-When using these properties in Spring XML files, you may use those properties. 
+When using these properties in Spring XML files, you may use those properties.
 
-```
+[source,xml]
+----
 <someSpringXmlElement httpHost="{{my.service.host}}" port="{{my.service.port}}" />
-```
+----
 
 It's also possible to use these properties in the test code itself. For example, when setting up the test url for the
 Camel component:
 
-```
+[source,java]
+----
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
@@ -168,10 +252,33 @@ Camel component:
             }
         };
     }
-```
+----
+
+==== Execution Ordering
+
+When combining the different modules of the test infra, you may need to ensure that they execute in the proper order. You can do so by using JUnit's `@Order` annotation.
+
+For instance:
+
+[source,java]
+----
+    @Order(1)
+    @RegisterExtension
+    protected static KafkaService service = KafkaServiceFactory.createSingletonService();
+
+    @Order(2)
+    @RegisterExtension
+    protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+----
 
 
 == Converting Camel TestContainers Code To The New Test Infrastructure
+
+
+[NOTE]
+====
+This section is aimed at Camel maintainers that need to write new test infra components. End users can skip this section.
+====
 
 Using the camel-nats as an example, we can compare how the base test class for nats changed between https://github.com/apache/camel/blob/camel-3.6.0/components/camel-nats/src/test/java/org/apache/camel/component/nats/NatsTestSupport.java[3.6.x]
 and https://github.com/apache/camel/blob/camel-3.7.0/components/camel-nats/src/test/java/org/apache/camel/component/nats/NatsTestSupport.java[3.7.x].

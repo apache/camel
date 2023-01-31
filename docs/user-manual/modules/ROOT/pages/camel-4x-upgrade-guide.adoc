@@ -1,0 +1,12 @@
+= Apache Camel 4.x Upgrade Guide
+
+IMPORTANT: If you are migrating from Camel 3.x then use the
+xref:camel-4-migration-guide.adoc[Camel 3.x to 4.0 Migration Guide] first.
+
+This document is for helping you upgrade your Apache Camel application
+from Camel 4.x to 4.y. For example if you are upgrading Camel 4.0 to 4.2, then you should follow the guides
+from both 4.0 to 4.1 and 4.1 to 4.2.
+
+You can find upgrade guide for each release in the following pages:
+
+

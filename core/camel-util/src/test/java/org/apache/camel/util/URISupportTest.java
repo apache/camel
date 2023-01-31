@@ -18,6 +18,7 @@ package org.apache.camel.util;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -597,6 +598,18 @@ public class URISupportTest {
         map.put("param1", "%2B447777111222");
         q = URISupport.createQueryString(map);
         assertEquals("param1=%252B447777111222", q);
+    }
+
+    @Test
+    public void testBuildMultiValueQuery() throws Exception {
+        List<Object> list = new ArrayList<>();
+        assertEquals("", URISupport.buildMultiValueQuery("id", list));
+        list = List.of("hello");
+        assertEquals("id=hello", URISupport.buildMultiValueQuery("id", list));
+        list = List.of(1, 2, 3);
+        assertEquals("id=1&id=2&id=3", URISupport.buildMultiValueQuery("id", list));
+        list = List.of("foo", "bar", 3, true, "baz");
+        assertEquals("hey=foo&hey=bar&hey=3&hey=true&hey=baz", URISupport.buildMultiValueQuery("hey", list));
     }
 
 }

@@ -24,7 +24,7 @@
         <artifactId>camel-test-infra-parent</artifactId>
         <groupId>org.apache.camel</groupId>
         <relativePath>../camel-test-infra-parent/pom.xml</relativePath>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -42,6 +42,13 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
+        </dependency>
+
+        <!-- Any JMS-based infra should provide their own implementation-->
+        <dependency>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

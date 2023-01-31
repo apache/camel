@@ -27,7 +27,7 @@ public interface SourceHandlerFactory {
 
     /**
      * Creates a specific {@link Source} depending on the current message exchanged
-     * 
+     *
      * @param  exchange  the exchange
      * @return           the source created from the message
      * @throws Exception if the source couldn't be created

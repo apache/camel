@@ -99,9 +99,9 @@ public final class CxfConstants {
     public static final String CAMEL_CXF_ATTACHMENTS = "CamelAttachments";
     public static final String CAMEL_CXF_RS_THROW_EXCEPTION_ON_FAILURE = "CamelCxfRsThrowExceptionOnFailure";
 
-    public static final String WSA_HEADERS_INBOUND = "javax.xml.ws.addressing.context.inbound";
+    public static final String WSA_HEADERS_INBOUND = "jakarta.xml.ws.addressing.context.inbound";
 
-    public static final String WSA_HEADERS_OUTBOUND = "javax.xml.ws.addressing.context.outbound";
+    public static final String WSA_HEADERS_OUTBOUND = "jakarta.xml.ws.addressing.context.outbound";
 
     public static final String CAMEL_CXF_PROTOCOL_HEADERS_MERGED = "CamelCxfProtocolHeadersMerged";
 

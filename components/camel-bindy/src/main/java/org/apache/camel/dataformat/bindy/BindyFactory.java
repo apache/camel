@@ -30,14 +30,14 @@ public interface BindyFactory {
     /**
      * Prior to bind or unbind the data to and from string or model classes, the factory must create a collection of
      * objects representing the model
-     * 
+     *
      * @throws Exception can be thrown
      */
     void initModel() throws Exception;
 
     /**
      * The bind allow to read the content of a record (expressed as a List<String>) and map it to the model classes.
-     * 
+     *
      * @param  data      List<String> represents the csv, ... data to transform
      * @param  model     Map<String, object> is a collection of objects used to bind data. String is the key name of the
      *                   class link to POJO objects
@@ -49,7 +49,7 @@ public interface BindyFactory {
     /**
      * The unbind is used to transform the content of the classes model objects into a string. The string represents a
      * record of a CSV file
-     * 
+     *
      * @return           String represents a csv record created
      * @param  model     Map<String, Object> is a collection of objects used to create csv, ... records. String is the
      *                   key name of the class link to POJO objects

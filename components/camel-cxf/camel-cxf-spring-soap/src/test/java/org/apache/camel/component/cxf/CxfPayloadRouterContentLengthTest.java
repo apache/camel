@@ -19,9 +19,9 @@ package org.apache.camel.component.cxf;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
@@ -64,7 +64,7 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
      * within the payload. This can cause issues with some type conversions in
      * PAYLOAD mode, as the Camel-CXF endpoint will return some kind of window
      * within the StAX parsing (and the namespace definitions are outside).
-     * 
+     *
      * If some CXF implementation bean is used as the service the namespaces
      * will be defined within the payload (and everything works fine).
      */

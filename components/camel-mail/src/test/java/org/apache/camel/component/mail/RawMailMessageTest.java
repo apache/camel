@@ -21,10 +21,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.mail.Folder;
-import javax.mail.Message;
-import javax.mail.Store;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Folder;
+import jakarta.mail.Message;
+import jakarta.mail.Store;
+import jakarta.mail.internet.MimeMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -73,7 +73,7 @@ public class RawMailMessageTest extends CamelTestSupport {
         Exchange exchange = getMockEndpoint("mock:mail").getReceivedExchanges().get(0);
 
         // START SNIPPET: e1
-        // get access to the raw javax.mail.Message as shown below
+        // get access to the raw jakarta.mail.Message as shown below
         Message javaMailMessage = exchange.getIn(MailMessage.class).getMessage();
         assertNotNull(javaMailMessage);
 

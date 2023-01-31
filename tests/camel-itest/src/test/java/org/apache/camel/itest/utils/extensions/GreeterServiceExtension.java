@@ -17,7 +17,7 @@
 
 package org.apache.camel.itest.utils.extensions;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 import org.apache.camel.test.AvailablePortFinder;
 import org.junit.jupiter.api.extension.AfterAllCallback;

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jetty;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpCommonEndpoint;

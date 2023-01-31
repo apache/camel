@@ -30,7 +30,7 @@ public final class EKS2ClientFactory {
 
     /**
      * Return the correct AWS EKS client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               EKSClient
      */

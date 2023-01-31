@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -74,7 +74,7 @@ public class CxfRsProducerHttpMethodHeaderTest extends CamelTestSupport {
             public void configure() throws Exception {
                 fromF("jetty://http://localhost:%s/CxfRsProducerHttpMethodHeaderTest/?matchOnUriPrefix=true",
                         CXFTestSupport.getPort7())
-                                .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

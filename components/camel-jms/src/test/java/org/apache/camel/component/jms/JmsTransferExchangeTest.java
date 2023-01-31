@@ -32,7 +32,7 @@ public class JmsTransferExchangeTest extends AbstractJMSTest {
     public void testBodyOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedHeaderReceived("JMSDestination", "queue://JmsTransferExchangeTest");
+        mock.expectedHeaderReceived("JMSDestination", "ActiveMQQueue[JmsTransferExchangeTest]");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -44,7 +44,7 @@ public class JmsTransferExchangeTest extends AbstractJMSTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", "cheese");
-        mock.expectedHeaderReceived("JMSDestination", "queue://JmsTransferExchangeTest");
+        mock.expectedHeaderReceived("JMSDestination", "ActiveMQQueue[JmsTransferExchangeTest]");
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "cheese");
 
@@ -57,7 +57,7 @@ public class JmsTransferExchangeTest extends AbstractJMSTest {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", "cheese");
         mock.expectedPropertyReceived("bar", 123);
-        mock.expectedHeaderReceived("JMSDestination", "queue://JmsTransferExchangeTest");
+        mock.expectedHeaderReceived("JMSDestination", "ActiveMQQueue[JmsTransferExchangeTest]");
 
         template.send("direct:start", exchange -> {
             exchange.getIn().setBody("Hello World");

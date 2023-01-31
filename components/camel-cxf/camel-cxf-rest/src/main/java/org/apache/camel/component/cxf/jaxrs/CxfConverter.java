@@ -21,10 +21,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPMessage;
+
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPMessage;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -126,7 +127,7 @@ public final class CxfConverter {
      * Use a fallback type converter so we can convert the embedded list element if the value is MessageContentsList.
      * The algorithm of this converter finds the first non-null list element from the list and applies conversion to the
      * list element.
-     * 
+     *
      * @param  type     the desired type to be converted to
      * @param  exchange optional exchange which can be null
      * @param  value    the object to be converted

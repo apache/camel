@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Isolated
 public class CamelContextTrackerTest {
 
-    private final class MyContextTracker extends CamelContextTracker {
+    private static final class MyContextTracker extends CamelContextTracker {
 
         private List<String> names = new ArrayList<>();
 

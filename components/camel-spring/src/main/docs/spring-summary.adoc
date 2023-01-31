@@ -28,7 +28,7 @@ Type Converter support for Spring Resources etc
 framework to simplify your unit and integration testing using
 xref:eips:enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's powerful xref:mock-component.adoc[Mock] and
-xref:others:test.adoc[Test] endpoints
+xref:others:test-junit5.adoc[Test] endpoints
 
 == Using Spring to configure the CamelContext
 

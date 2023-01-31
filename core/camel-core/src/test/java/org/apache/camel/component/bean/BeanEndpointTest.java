@@ -174,7 +174,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         assertEquals("Hello Moon", out);
     }
 
-    public class FooBean {
+    public static class FooBean {
 
         public String hello(String hello) {
             return "Hello " + hello;

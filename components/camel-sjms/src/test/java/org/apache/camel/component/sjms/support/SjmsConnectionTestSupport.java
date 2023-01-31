@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.sjms.support;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.broker.BrokerService;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -37,7 +36,7 @@ public abstract class SjmsConnectionTestSupport {
     protected Logger logger = LoggerFactory.getLogger(getClass());
     private ActiveMQConnectionFactory vmTestConnectionFactory;
     private ActiveMQConnectionFactory testConnectionFactory;
-    private BrokerService brokerService;
+    //    private BrokerService brokerService;
     private boolean persistenceEnabled;
 
     public abstract String getConnectionUri();
@@ -70,9 +69,6 @@ public abstract class SjmsConnectionTestSupport {
         if (testConnectionFactory != null) {
             testConnectionFactory = null;
         }
-        if (brokerService != null) {
-            destroyBroker();
-        }
     }
 
     public ActiveMQConnectionFactory createTestConnectionFactory(String uri) {
@@ -89,18 +85,6 @@ public abstract class SjmsConnectionTestSupport {
         String connectString = getConnectionUri();
         if (ObjectHelper.isEmpty(connectString)) {
             connectString = TCP_BROKER_CONNECT_STRING;
-        }
-        brokerService = new BrokerService();
-        brokerService.setPersistent(isPersistenceEnabled());
-        brokerService.addConnector(connectString);
-        brokerService.start();
-        brokerService.waitUntilStarted();
-    }
-
-    protected void destroyBroker() throws Exception {
-        if (brokerService != null) {
-            brokerService.stop();
-            brokerService.waitUntilStopped();
         }
     }
 

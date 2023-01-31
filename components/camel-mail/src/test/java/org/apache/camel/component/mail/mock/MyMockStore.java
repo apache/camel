@@ -19,10 +19,10 @@ package org.apache.camel.component.mail.mock;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.mail.Folder;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.URLName;
+import jakarta.mail.Folder;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.URLName;
 
 import org.jvnet.mock_javamail.Aliases;
 import org.jvnet.mock_javamail.Mailbox;

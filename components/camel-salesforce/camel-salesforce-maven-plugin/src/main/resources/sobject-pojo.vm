@@ -23,7 +23,7 @@ package $packageName;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 
 #set ( $hasPicklists = $utility.hasPicklists($desc) )
 #set ( $hasMultiSelectPicklists = $utility.hasMultiSelectPicklists($desc) )

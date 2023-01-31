@@ -30,9 +30,6 @@ import org.apache.camel.spi.RoutesBuilderLoader;
 public abstract class ExtendedRouteBuilderLoaderSupport extends RouteBuilderLoaderSupport
         implements ExtendedRoutesBuilderLoader {
 
-    boolean compileLoadFirst;
-    private String compileDirectory;
-
     protected ExtendedRouteBuilderLoaderSupport(String extension) {
         super(extension);
     }
@@ -45,28 +42,7 @@ public abstract class ExtendedRouteBuilderLoaderSupport extends RouteBuilderLoad
 
     @Override
     public Collection<RoutesBuilder> loadRoutesBuilders(Collection<Resource> resources) throws Exception {
-        Collection<RoutesBuilder> answer = doLoadRoutesBuilders(resources);
-        return answer;
-    }
-
-    @Override
-    public String getCompileDirectory() {
-        return compileDirectory;
-    }
-
-    @Override
-    public void setCompileDirectory(String compileDirectory) {
-        this.compileDirectory = compileDirectory;
-    }
-
-    @Override
-    public boolean isCompileLoadFirst() {
-        return compileLoadFirst;
-    }
-
-    @Override
-    public void setCompileLoadFirst(boolean compileLoadFirst) {
-        this.compileLoadFirst = compileLoadFirst;
+        return doLoadRoutesBuilders(resources);
     }
 
     protected abstract Collection<RoutesBuilder> doLoadRoutesBuilders(Collection<Resource> resources) throws Exception;

@@ -21,6 +21,7 @@
     "dataType": { "kind": "attribute", "displayName": "Data Type", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "defaultValue": "string", "description": "Sets the parameter data type." },
     "dataFormat": { "kind": "attribute", "displayName": "Data Format", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the parameter data format." },
     "allowableValues": { "kind": "element", "displayName": "Allowable Values", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.ValueDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the parameter list of allowable values (enum)." },
+    "examples": { "kind": "element", "displayName": "Examples", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.rest.RestPropertyDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the parameter examples." },
     "description": { "kind": "attribute", "displayName": "Description", "required": false, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "Sets the parameter description." }
   }
 }

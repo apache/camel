@@ -23,8 +23,8 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.activation.DataHandler;
-import javax.xml.bind.JAXBContext;
+import jakarta.activation.DataHandler;
+import jakarta.xml.bind.JAXBContext;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

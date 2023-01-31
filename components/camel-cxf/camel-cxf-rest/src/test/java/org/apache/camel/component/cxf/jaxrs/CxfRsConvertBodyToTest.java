@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;

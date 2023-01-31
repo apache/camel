@@ -22,7 +22,7 @@ public interface STS2InternalClient {
 
     /**
      * Returns an sts client after a factory method determines which one to return.
-     * 
+     *
      * @return StsClient stsClient
      */
     StsClient getStsClient();

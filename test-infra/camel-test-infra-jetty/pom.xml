@@ -24,7 +24,7 @@
         <artifactId>camel-test-infra-parent</artifactId>
         <groupId>org.apache.camel</groupId>
         <relativePath>../camel-test-infra-parent/pom.xml</relativePath>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -64,6 +64,18 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
+            <version>${jetty-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-jakarta-server</artifactId>
+            <version>${jetty-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <artifactId>websocket-jetty-server</artifactId>
             <version>${jetty-version}</version>
         </dependency>
     </dependencies>

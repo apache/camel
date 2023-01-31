@@ -19,8 +19,8 @@ package org.apache.camel.component.cm.test;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 
 import org.apache.camel.component.cm.CMConfiguration;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;

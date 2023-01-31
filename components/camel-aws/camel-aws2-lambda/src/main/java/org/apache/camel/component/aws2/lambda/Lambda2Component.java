@@ -23,17 +23,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * For working with Amazon Lambda SDK v2.
  */
 @Component("aws2-lambda")
 public class Lambda2Component extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Lambda2Component.class);
-
     @Metadata
     private Lambda2Configuration configuration = new Lambda2Configuration();
 

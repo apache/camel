@@ -19,7 +19,7 @@ package org.apache.camel.component.jms.issues;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.activemq.command.ActiveMQQueue;
+import org.apache.activemq.artemis.jms.client.ActiveMQQueue;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;

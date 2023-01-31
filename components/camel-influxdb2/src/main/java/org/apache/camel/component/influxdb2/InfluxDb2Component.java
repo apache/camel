@@ -52,7 +52,7 @@ public class InfluxDb2Component extends DefaultComponent {
 
     /**
      * The shared Influx DB to use for all endpoints
-     * 
+     *
      * @param influxDBClient
      */
     public void setInfluxDBClient(InfluxDBClient influxDBClient) {

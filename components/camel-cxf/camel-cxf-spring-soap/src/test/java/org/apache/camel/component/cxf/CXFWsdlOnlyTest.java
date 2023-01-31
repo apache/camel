@@ -18,10 +18,11 @@ package org.apache.camel.component.cxf;
 
 import java.net.URL;
 
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Endpoint;
+import jakarta.xml.ws.Holder;
+
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Endpoint;
-import javax.xml.ws.Holder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
@@ -60,7 +61,7 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         System.setProperty("CXFWsdlOnlyTest.port4", Integer.toString(port4));
 
         // When the Application is closed, the camel-cxf endpoint will be shutdown,
-        // this will cause the issue of the new http server doesn't send the response back. 
+        // this will cause the issue of the new http server doesn't send the response back.
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlOnlyBeans.xml");
     }
 

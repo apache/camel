@@ -42,14 +42,14 @@ public final class CxfConverterLoader implements TypeConverterLoader, CamelConte
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, java.io.InputStream.class, javax.ws.rs.core.Response.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.jaxrs.CxfConverter.toInputStream((javax.ws.rs.core.Response) value, exchange));
-        addTypeConverter(registry, java.io.InputStream.class, javax.xml.soap.SOAPMessage.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.jaxrs.CxfConverter.soapMessageToInputStream((javax.xml.soap.SOAPMessage) value, exchange));
+        addTypeConverter(registry, java.io.InputStream.class, jakarta.ws.rs.core.Response.class, false,
+            (type, exchange, value) -> org.apache.camel.component.cxf.jaxrs.CxfConverter.toInputStream((jakarta.ws.rs.core.Response) value, exchange));
+        addTypeConverter(registry, java.io.InputStream.class, jakarta.xml.soap.SOAPMessage.class, false,
+            (type, exchange, value) -> org.apache.camel.component.cxf.jaxrs.CxfConverter.soapMessageToInputStream((jakarta.xml.soap.SOAPMessage) value, exchange));
         addTypeConverter(registry, java.lang.Object[].class, java.lang.Object.class, false,
             (type, exchange, value) -> org.apache.camel.component.cxf.jaxrs.CxfConverter.toArray(value));
-        addTypeConverter(registry, java.lang.String.class, javax.xml.soap.SOAPMessage.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.jaxrs.CxfConverter.soapMessageToString((javax.xml.soap.SOAPMessage) value, exchange));
+        addTypeConverter(registry, java.lang.String.class, jakarta.xml.soap.SOAPMessage.class, false,
+            (type, exchange, value) -> org.apache.camel.component.cxf.jaxrs.CxfConverter.soapMessageToString((jakarta.xml.soap.SOAPMessage) value, exchange));
         addTypeConverter(registry, javax.xml.namespace.QName.class, java.lang.String.class, false,
             (type, exchange, value) -> org.apache.camel.component.cxf.jaxrs.CxfConverter.toQName((java.lang.String) value));
         addTypeConverter(registry, org.apache.camel.component.cxf.common.DataFormat.class, java.lang.String.class, false,

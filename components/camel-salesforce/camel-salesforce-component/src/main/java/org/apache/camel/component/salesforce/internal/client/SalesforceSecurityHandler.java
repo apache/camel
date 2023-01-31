@@ -36,7 +36,6 @@ import org.eclipse.jetty.client.api.Response;
 import org.eclipse.jetty.client.api.Result;
 import org.eclipse.jetty.client.util.BufferingResponseListener;
 import org.eclipse.jetty.http.HttpField;
-import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
@@ -71,6 +70,11 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
 
     @Override
     public boolean accept(Request request, Response response) {
+
+        // if using an HTTP proxy, this will be a TunnelRequest, which we're not interested in.
+        if (!(request instanceof SalesforceHttpRequest)) {
+            return false;
+        }
 
         HttpConversation conversation = ((SalesforceHttpRequest) request).getConversation();
         Integer retries = (Integer) conversation.getAttribute(AUTHENTICATION_RETRIES_ATTRIBUTE);
@@ -253,15 +257,16 @@ public class SalesforceSecurityHandler implements ProtocolHandler {
             if (copy) {
                 newRequest = httpClient.copyRequest(request, request.getURI());
                 newRequest.method(request.getMethod());
-                HttpFields headers = newRequest.getHeaders();
-                // copy cookies and host for subscriptions to avoid
-                // '403::Unknown Client' errors
-                for (HttpField field : request.getHeaders()) {
-                    HttpHeader header = field.getHeader();
-                    if (HttpHeader.COOKIE.equals(header) || HttpHeader.HOST.equals(header)) {
-                        headers.add(header, field.getValue());
+                newRequest.headers(headers -> {
+                    // copy cookies and host for subscriptions to avoid
+                    // '403::Unknown Client' errors
+                    for (HttpField field : request.getHeaders()) {
+                        HttpHeader header = field.getHeader();
+                        if (HttpHeader.COOKIE.equals(header) || HttpHeader.HOST.equals(header)) {
+                            headers.add(header, field.getValue());
+                        }
                     }
-                }
+                });
             } else {
                 newRequest = request;
             }

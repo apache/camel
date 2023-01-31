@@ -17,7 +17,7 @@
 package org.apache.camel.component.mail;
 
 /**
- * Allows to configure common {@link javax.mail.search.SearchTerm}'s using a POJO style, which can be done from XML
+ * Allows to configure common {@link jakarta.mail.search.SearchTerm}'s using a POJO style, which can be done from XML
  * DSLs.
  * <p/>
  * This POJO has default <tt>true</tt> for the {@link #isUnseen()} option.

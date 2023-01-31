@@ -28,11 +28,11 @@ public class CaffeineLoadCacheTestSupport extends CamelTestSupport {
 
     @BindToRegistry("cache")
     public Cache createCache() {
-        CacheLoader cl = new CacheLoader<Integer, Integer>() {
+        CacheLoader cl = new CacheLoader<String, Integer>() {
 
             @Override
-            public Integer load(Integer key) {
-                return key + 1;
+            public Integer load(String key) {
+                return Integer.valueOf(key) + 1;
             }
         };
         return cache = Caffeine.newBuilder().build(cl);

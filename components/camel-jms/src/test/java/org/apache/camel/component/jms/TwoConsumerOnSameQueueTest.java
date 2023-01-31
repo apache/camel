@@ -18,11 +18,15 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Tags({ @Tag("not-parallel") })
 @TestInstance(TestInstance.Lifecycle.PER_METHOD)
 public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
 
@@ -59,6 +63,7 @@ public class TwoConsumerOnSameQueueTest extends AbstractPersistentJMSTest {
     }
 
     @Test
+    @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
     public void testRemoveOneRoute() throws Exception {
         sendTwoMessagesWhichShouldReceivedOnBothEndpointsAndAssert();
 

@@ -24,14 +24,14 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-servicenow-parent</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.apache.camel.maven</groupId>
     <artifactId>camel-servicenow-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>Camel :: ServiceNow :: Maven plugin</name>
-    <description>Camel ServiceNow Maven plugin</description>
+    <name>Camel :: ServiceNow :: Maven Plugin</name>
+    <description>Camel ServiceNow Maven Plugin</description>
 
     <properties>
         <servicenow.component.root>..</servicenow.component.root>
@@ -125,20 +125,6 @@
             <version>${commons-text-version}</version>
         </dependency>
 
-        <!-- logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
-        </dependency>
-
         <!-- testing -->
         <dependency>
             <groupId>org.apache.maven.plugin-testing</groupId>
@@ -177,23 +163,6 @@
                         </manifest>
                     </archive>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bundle-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>versions</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>bundle-manifest</id>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.camel</groupId>

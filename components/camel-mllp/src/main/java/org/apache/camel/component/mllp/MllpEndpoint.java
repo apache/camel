@@ -307,16 +307,22 @@ public class MllpEndpoint extends DefaultEndpoint {
         final String logMessageFormat = "Exchange property {} = {} - {} connection";
         boolean answer = true;
 
-        if (exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND, boolean.class)) {
+        final boolean resetBeforeSend
+                = exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND, false, boolean.class);
+        if (resetBeforeSend) {
             log.warn(logMessageFormat, MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND,
                     exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_BEFORE_SEND), "resetting");
             doConnectionClose(socket, true, null);
             answer = false;
-        } else if (exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND, boolean.class)) {
-            log.warn(logMessageFormat, MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND,
-                    exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND), "closing");
-            doConnectionClose(socket, false, null);
-            answer = false;
+        } else {
+            final boolean closeBeforeSend
+                    = exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND, false, boolean.class);
+            if (closeBeforeSend) {
+                log.warn(logMessageFormat, MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND,
+                        exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_BEFORE_SEND), "closing");
+                doConnectionClose(socket, false, null);
+                answer = false;
+            }
         }
 
         return answer;
@@ -326,16 +332,22 @@ public class MllpEndpoint extends DefaultEndpoint {
         final String logMessageFormat = "Exchange property {} = {} - {} connection";
         boolean answer = true;
 
-        if (exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND, boolean.class)) {
+        final boolean resetAfterSend
+                = exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND, false, boolean.class);
+        if (resetAfterSend) {
             log.warn(logMessageFormat, MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND,
                     exchange.getProperty(MllpConstants.MLLP_RESET_CONNECTION_AFTER_SEND), "resetting");
             doConnectionClose(socket, true, log);
             answer = false;
-        } else if (exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND, boolean.class)) {
-            log.warn(logMessageFormat, MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND,
-                    exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND), "closing");
-            doConnectionClose(socket, false, log);
-            answer = false;
+        } else {
+            final boolean closeAfterSend
+                    = exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND, false, boolean.class);
+            if (closeAfterSend) {
+                log.warn(logMessageFormat, MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND,
+                        exchange.getProperty(MllpConstants.MLLP_CLOSE_CONNECTION_AFTER_SEND), "closing");
+                doConnectionClose(socket, false, log);
+                answer = false;
+            }
         }
 
         return answer;

@@ -43,7 +43,7 @@ public class BoxTasksManager {
 
     /**
      * Create tasks manager to manage the tasks of Box connection's authenticated user.
-     * 
+     *
      * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxTasksManager(BoxAPIConnection boxConnection) {
@@ -52,7 +52,7 @@ public class BoxTasksManager {
 
     /**
      * Get a list of any tasks on file.
-     * 
+     *
      * @param  fileId - the id of file.
      * @return        The list of tasks on file.
      */
@@ -75,7 +75,7 @@ public class BoxTasksManager {
 
     /**
      * Add task to file.
-     * 
+     *
      * @param  fileId  - the id of file to add task to.
      * @param  action  - the action the task assignee will be prompted to do.
      * @param  dueAt   - - the day at which this task is due.
@@ -105,7 +105,7 @@ public class BoxTasksManager {
 
     /**
      * Delete task.
-     * 
+     *
      * @param taskId - the id of task to delete.
      */
     public void deleteTask(String taskId) {
@@ -124,7 +124,7 @@ public class BoxTasksManager {
 
     /**
      * Get task information.
-     * 
+     *
      * @param  taskId - the id of task.
      * @return        The task information.
      */
@@ -146,7 +146,7 @@ public class BoxTasksManager {
 
     /**
      * Update task information.
-     * 
+     *
      * @param  taskId - the id of task.
      * @param  info   - the updated information
      * @return        The updated task.
@@ -173,7 +173,7 @@ public class BoxTasksManager {
 
     /**
      * Get a list of any assignments for task.
-     * 
+     *
      * @param  taskId - the id of task.
      * @return        The list of assignments for task.
      */
@@ -196,7 +196,7 @@ public class BoxTasksManager {
 
     /**
      * Add assignment for task.
-     * 
+     *
      * @param  taskId   - the id of task to add assignment for.
      * @param  assignTo - the user to assign to task.
      * @return          The assigned task.
@@ -225,7 +225,7 @@ public class BoxTasksManager {
 
     /**
      * Get task assignment information.
-     * 
+     *
      * @param  taskAssignmentId - the id of task assignment.
      * @return                  The task assignment information.
      */
@@ -283,7 +283,7 @@ public class BoxTasksManager {
 
     /**
      * Delete task assignment.
-     * 
+     *
      * @param taskAssignmentId - the id of task assignment to delete.
      */
     public void deleteTaskAssignment(String taskAssignmentId) {

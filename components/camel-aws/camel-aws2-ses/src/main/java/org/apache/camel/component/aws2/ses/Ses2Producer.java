@@ -58,7 +58,7 @@ public class Ses2Producer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        if (!(exchange.getIn().getBody() instanceof javax.mail.Message)) {
+        if (!(exchange.getIn().getBody() instanceof jakarta.mail.Message)) {
             SendEmailRequest request = createMailRequest(exchange);
             LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
             SendEmailResponse result = getEndpoint().getSESClient().sendEmail(request);
@@ -112,7 +112,7 @@ public class Ses2Producer extends DefaultProducer {
     private software.amazon.awssdk.services.ses.model.RawMessage createRawMessage(Exchange exchange) throws Exception {
         software.amazon.awssdk.services.ses.model.RawMessage.Builder message
                 = software.amazon.awssdk.services.ses.model.RawMessage.builder();
-        javax.mail.Message content = exchange.getIn().getBody(javax.mail.Message.class);
+        jakarta.mail.Message content = exchange.getIn().getBody(jakarta.mail.Message.class);
         OutputStream byteOutput = new ByteArrayOutputStream();
         try {
             content.writeTo(byteOutput);

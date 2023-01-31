@@ -69,13 +69,13 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
 
         registry.bind("A", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                log.info("A headers " + exchange.getIn().getHeaders());
+                log.info("A headers {}", exchange.getIn().getHeaders());
             }
         });
 
         registry.bind("B", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                log.info("B headers " + exchange.getIn().getHeaders());
+                log.info("B headers {}", exchange.getIn().getHeaders());
 
                 if ("ExchangeTimedOutException".equals(exchange.getIn().getBody(String.class))) {
                     throw new ExchangeTimedOutException(exchange, 1);
@@ -87,7 +87,7 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
 
         registry.bind("C", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                log.info("C headers " + exchange.getIn().getHeaders());
+                log.info("C headers {}", exchange.getIn().getHeaders());
             }
         });
 

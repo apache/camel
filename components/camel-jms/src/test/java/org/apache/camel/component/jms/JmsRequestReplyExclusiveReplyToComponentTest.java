@@ -18,7 +18,7 @@ package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.infra.activemq.services.ActiveMQService;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.util.StopWatch;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +60,7 @@ public class JmsRequestReplyExclusiveReplyToComponentTest extends AbstractJMSTes
     }
 
     @Override
-    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
         final JmsComponent jms = super.setupComponent(camelContext, service, componentName);
         // mark the reply to type as exclusive on the component
         jms.getConfiguration().setReplyToType(ReplyToType.Exclusive);

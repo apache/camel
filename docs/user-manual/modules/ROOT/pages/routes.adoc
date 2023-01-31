@@ -1,11 +1,12 @@
 = Routes
 
-A Camel _route_ is where the integration flow is defined.
-For example to integrate two systems then a Camel route can be _coded_ to specify how these systems are integrated.
+In Apache Camel, a _route_ is a set of processing steps that are applied to a message as it travels from a source to a destination. A route typically consists of a series of processing steps that are connected in a linear sequence.
 
-An example could be to take files from a FTP server and send to a ActiveMQ messaging system.
+A Camel _route_ is where the integration flow is defined. For example, you can write a Camel route to specify how two systems can be integrated. You can also specify how the data can be manipulated, routed, or mediated between the systems.
 
-This can be coded in a route using Java with the xref:java-dsl.adoc[Java DSL]
+The routes are typically defined using a simple, declarative syntax that is easy to read and understand.
+
+For instance, you could write a _route_ to consume files from an FTP server and send them to an http://activemq.apache.org[ActiveMQ] messaging system. A _route_ to do so, using xref:java-dsl.adoc[Java DSL], would look like this:
 
 [source,java]
 ----
@@ -13,7 +14,7 @@ from("ftp:myserver/folder")
   .to("activemq:queue:cheese");
 ----
 
-Camel support coding in other languages such as XML:
+Camel _routes_ can be defined using a variety of xref:dsl.adoc[domain-specific languages (DSLs)], such as Java, Spring XML, or YAML. For example, you could write the _route_ described above using XML:
 
 [source,xml]
 ----
@@ -23,10 +24,12 @@ Camel support coding in other languages such as XML:
 </route>
 ----
 
-== RouteBuilder with Java DSL
 
-When coding routes with the xref:java-dsl.adoc[Java DSL] then you would use a xref:route-builder.adoc[`RouteBuilder`] classes where
-you code the route in the `configure` method as shown:
+== Writing Routes in Java using the Java DSL
+
+You can create a route using the Java language by extending the xref:manual::route-builder.adoc[`RouteBuilder` class], and implementing the `configure` method.
+
+Here's an example:
 
 [source,java]
 ------------------------------------------------------
@@ -37,28 +40,15 @@ RouteBuilder builder = new RouteBuilder() {
 };
 ------------------------------------------------------
 
-As you can see from the above Camel uses URIs to wire endpoints together.
+As you can see from the code snippet above, Camel uses xref:manual::uris.adoc[URIs] to wire endpoints together.
 
-=== Routes using Java lambda style
-
-Camel now supports to define Camel routes in Java DSL using Lambda style. This can be beneficial for microservices or serverless where
-you may want to quickly define a few routes.
-
-For example using lambda style you can define a Camel route that takes messages from Kafka and send to JMS in a single line of code:
-
-[source,java]
-----
-rb -> rb.from("kafka:cheese").to("jms:queue:foo");
-----
-
-There is a bit more to this as the lambda route must be coded in a Java method that returns an instance of `LambdaRouteBuilder`.
-See more at the xref:lambda-route-builder.adoc[LambdaRouteBuilder] documentation.
+We refer to this way of writing route as using the xref:manual::java-dsl.adoc[Java DSL].
 
 == Route Precondition
 
-The routes can be included or not according to the result of a test expressed in simple language that is evaluated only once during the initialization phase.
+The routes can be included or not according to the result of a test. You can express the condition for the tests using the simple language. Camel evaluates this condition only once during the initialization phase.
 
-In the next example, the route is only included if the parameter `format` has been set to `xml`.
+Here's an example that includes the route only if the parameter `format` has been set to `xml`:
 
 [source,java]
 ----
@@ -67,7 +57,7 @@ from("direct:in").precondition("'{{format}}' == 'xml'")
    .to("direct:out");
 ----
 
-And the same example using XML DSL:
+You can write the same route described above using the xref:components:others:java-xml-io-dsl.adoc[XML DSL]:
 
 [source,xml]
 ----
@@ -78,7 +68,7 @@ And the same example using XML DSL:
 </route>
 ----
 
-And in YAML DSL:
+You can also write the same route described above using the xref:components:others:yaml-dsl.adoc[YAML DSL]:
 
 [source,yaml]
 ----
@@ -94,4 +84,4 @@ And in YAML DSL:
 
 == More Information
 
-See xref:route-builder.adoc[RouteBuilder] and xref:dsl.adoc[DSL] for a list of supported languages you can use for coding Camel routes.
+Check the xref:dsl.adoc[list of supported languages] that you can use for writing Camel routes.

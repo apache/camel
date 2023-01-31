@@ -18,7 +18,6 @@ package org.apache.camel.component.aws2.sns;
 
 import java.util.Map;
 
-import org.apache.camel.component.aws2.sns.client.Sns2ClientFactory;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
@@ -28,12 +27,10 @@ import software.amazon.awssdk.services.sns.SnsClient;
 public class Sns2HealthCheck extends AbstractHealthCheck {
 
     private final Sns2Endpoint sns2Endpoint;
-    private final String clientId;
 
     public Sns2HealthCheck(Sns2Endpoint sns2Endpoint, String clientId) {
         super("camel", "aws2-sns-client-" + clientId);
         this.sns2Endpoint = sns2Endpoint;
-        this.clientId = clientId;
     }
 
     @Override
@@ -53,9 +50,9 @@ public class Sns2HealthCheck extends AbstractHealthCheck {
                 return;
             }
 
-            SnsClient client = Sns2ClientFactory.getSnsClient(configuration).getSNSClient();
-            client.listSubscriptions();
+            SnsClient client = sns2Endpoint.getSNSClient();
 
+            client.listSubscriptions();
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);

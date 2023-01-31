@@ -27,8 +27,6 @@ public class RestComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "componentname":
-        case "componentName": target.setComponentName(property(camelContext, java.lang.String.class, value)); return true;
         case "consumercomponentname":
         case "consumerComponentName": target.setConsumerComponentName(property(camelContext, java.lang.String.class, value)); return true;
         case "host": target.setHost(property(camelContext, java.lang.String.class, value)); return true;
@@ -49,8 +47,6 @@ public class RestComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "componentname":
-        case "componentName": return java.lang.String.class;
         case "consumercomponentname":
         case "consumerComponentName": return java.lang.String.class;
         case "host": return java.lang.String.class;
@@ -72,8 +68,6 @@ public class RestComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "componentname":
-        case "componentName": return target.getComponentName();
         case "consumercomponentname":
         case "consumerComponentName": return target.getConsumerComponentName();
         case "host": return target.getHost();

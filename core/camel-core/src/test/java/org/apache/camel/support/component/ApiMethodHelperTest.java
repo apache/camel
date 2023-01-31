@@ -37,7 +37,7 @@ public class ApiMethodHelperTest {
     static {
         final HashMap<String, String> aliases = new HashMap<>();
         aliases.put("say(.*)", "$1");
-        apiMethodHelper = new ApiMethodHelper<>(TestMethod.class, aliases, Arrays.asList("names"));
+        apiMethodHelper = new ApiMethodHelper<>(TestMethod.class, aliases, List.of("names"));
     }
 
     @Test
@@ -48,19 +48,19 @@ public class ApiMethodHelperTest {
         methods = apiMethodHelper.getCandidateMethods("hi");
         assertEquals(2, methods.size(), "Can't find sayHi(name)");
 
-        methods = apiMethodHelper.getCandidateMethods("hi", Arrays.asList("name"));
+        methods = apiMethodHelper.getCandidateMethods("hi", List.of("name"));
         assertEquals(1, methods.size(), "Can't find sayHi(name)");
 
         methods = apiMethodHelper.getCandidateMethods("greetMe");
         assertEquals(1, methods.size(), "Can't find greetMe(name)");
 
-        methods = apiMethodHelper.getCandidateMethods("greetUs", Arrays.asList("name1"));
+        methods = apiMethodHelper.getCandidateMethods("greetUs", List.of("name1"));
         assertEquals(1, methods.size(), "Can't find greetUs(name1, name2)");
 
-        methods = apiMethodHelper.getCandidateMethods("greetAll", Arrays.asList("nameMap"));
+        methods = apiMethodHelper.getCandidateMethods("greetAll", List.of("nameMap"));
         assertEquals(1, methods.size(), "Can't find greetAll(nameMap)");
 
-        methods = apiMethodHelper.getCandidateMethods("greetInnerChild", Arrays.asList("child"));
+        methods = apiMethodHelper.getCandidateMethods("greetInnerChild", List.of("child"));
         assertEquals(1, methods.size(), "Can't find greetInnerChild(child)");
     }
 
@@ -73,17 +73,17 @@ public class ApiMethodHelperTest {
         methods = apiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUBSET);
         assertEquals(2, methods.size(), "Subset match failed for sayHi(*)");
 
-        methods = apiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUBSET, Arrays.asList("name"));
+        methods = apiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUBSET, List.of("name"));
         assertEquals(1, methods.size(), "Subset match failed for sayHi(name)");
         assertEquals(TestMethod.SAYHI_1, methods.get(0), "Exact match failed for sayHi()");
 
         methods = apiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUPER_SET,
-                Arrays.asList("name"));
+                List.of("name"));
         assertEquals(1, methods.size(), "Super set match failed for sayHi(name)");
         assertEquals(TestMethod.SAYHI_1, methods.get(0), "Exact match failed for sayHi()");
 
         methods = apiMethodHelper.filterMethods(Arrays.asList(TestMethod.values()), ApiMethodHelper.MatchType.SUPER_SET,
-                Arrays.asList("name"));
+                List.of("name"));
         assertEquals(2, methods.size(), "Super set match failed for sayHi(name)");
 
         // test nullable names
@@ -138,7 +138,7 @@ public class ApiMethodHelperTest {
     @Test
     public void testInvokeMethod() throws Exception {
         TestProxy proxy = new TestProxy();
-        assertEquals("Hello!", ApiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI, Collections.<String, Object> emptyMap()),
+        assertEquals("Hello!", ApiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI, Collections.emptyMap()),
                 "sayHi()");
 
         final HashMap<String, Object> properties = new HashMap<>();
@@ -189,13 +189,13 @@ public class ApiMethodHelperTest {
         GREETME(String.class, "greetMe", arg("name", String.class)),
         GREETUS(String.class,
                 "greetUs", arg("name1", String.class), arg("name2", String.class)),
-        GREETALL(String.class, "greetAll", arg("names", new String[0].getClass())),
+        GREETALL(String.class, "greetAll", arg("names", String[].class)),
         GREETALL_1(String.class,
                    "greetAll", arg("nameList", List.class)),
         GREETALL_2(Map.class, "greetAll", arg("nameMap", Map.class)),
-        GREETTIMES(new String[0].getClass(), "greetTimes",
+        GREETTIMES(String[].class, "greetTimes",
                    arg("name", String.class), arg("times", int.class)),
-        GREETINNERCHILD(new String[0].getClass(), "greetInnerChild",
+        GREETINNERCHILD(String[].class, "greetInnerChild",
                         arg("child", TestProxy.InnerChild.class));
 
         private final ApiMethod apiMethod;

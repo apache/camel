@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Destination;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
@@ -226,7 +226,7 @@ public class JmsConfiguration implements Cloneable {
     private boolean deliveryPersistent = true;
     @UriParam(enums = "1,2", label = "producer",
               description = "Specifies the delivery mode to be used."
-                            + " Possible values are those defined by javax.jms.DeliveryMode."
+                            + " Possible values are those defined by jakarta.jms.DeliveryMode."
                             + " NON_PERSISTENT = 1 and PERSISTENT = 2.")
     private Integer deliveryMode;
     @UriParam(defaultValue = "true", label = "consumer",
@@ -238,10 +238,10 @@ public class JmsConfiguration implements Cloneable {
               description = "When sending messages, specifies the time-to-live of the message (in milliseconds).")
     private long timeToLive = -1;
     @UriParam(label = "advanced",
-              description = "To use a custom Spring org.springframework.jms.support.converter.MessageConverter so you can be in control how to map to/from a javax.jms.Message.")
+              description = "To use a custom Spring org.springframework.jms.support.converter.MessageConverter so you can be in control how to map to/from a jakarta.jms.Message.")
     private MessageConverter messageConverter;
     @UriParam(defaultValue = "true", label = "advanced",
-              description = "Specifies whether Camel should auto map the received JMS message to a suited payload type, such as javax.jms.TextMessage to a String etc.")
+              description = "Specifies whether Camel should auto map the received JMS message to a suited payload type, such as jakarta.jms.TextMessage to a String etc.")
     private boolean mapJmsMessage = true;
     @UriParam(defaultValue = "true", label = "advanced",
               description = "When sending, specifies whether message IDs should be added. This is just an hint to the JMS broker."
@@ -342,7 +342,7 @@ public class JmsConfiguration implements Cloneable {
                             + " consume from. This prevents an endless loop by consuming and sending back the same message to itself.")
     private boolean replyToSameDestinationAllowed;
     @UriParam(enums = "Bytes,Map,Object,Stream,Text",
-              description = "Allows you to force the use of a specific javax.jms.Message implementation for sending JMS messages."
+              description = "Allows you to force the use of a specific jakarta.jms.Message implementation for sending JMS messages."
                             + " Possible values are: Bytes, Map, Object, Stream, Text."
                             + " By default, Camel would determine which JMS message type to use from the In body type. This option allows you to specify it.")
     private JmsMessageType jmsMessageType;
@@ -370,7 +370,7 @@ public class JmsConfiguration implements Cloneable {
     private boolean allowSerializedHeaders;
     @UriParam(label = "advanced",
               description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side,"
-                            + " then the caused Exception will be send back in response as a javax.jms.ObjectMessage."
+                            + " then the caused Exception will be send back in response as a jakarta.jms.ObjectMessage."
                             + " If the client is Camel, the returned Exception is rethrown. This allows you to use Camel JMS as a bridge"
                             + " in your routing - for example, using persistent queues to enable robust routing."
                             + " Notice that if you also have transferExchange enabled, this option takes precedence."
@@ -399,7 +399,7 @@ public class JmsConfiguration implements Cloneable {
               description = "Whether to stop the JmsConsumer message listener asynchronously, when stopping a route.")
     private boolean asyncStopListener;
     // if the message is a JmsMessage and mapJmsMessage=false, force the
-    // producer to send the javax.jms.Message body to the next JMS destination
+    // producer to send the jakarta.jms.Message body to the next JMS destination
     @UriParam(label = "producer,advanced",
               description = "When using mapJmsMessage=false Camel will create a new JMS message to send to a new JMS destination"
                             + " if you touch the headers (get or set) during the route. Set this option to true to force Camel to send"
@@ -470,7 +470,7 @@ public class JmsConfiguration implements Cloneable {
                             + " Note: If you are using a custom headerFilterStrategy then this option does not apply.")
     private boolean includeAllJMSXProperties;
     @UriParam(label = "advanced",
-              description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of javax.jms.Message objects when Camel is sending a JMS message.")
+              description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of jakarta.jms.Message objects when Camel is sending a JMS message.")
     private MessageCreatedStrategy messageCreatedStrategy;
     @UriParam(label = "producer,advanced",
               description = "When using InOut exchange pattern use this JMS property instead of JMSCorrelationID"
@@ -1337,7 +1337,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Specifies the delivery mode to be used. Possible values are those defined by javax.jms.DeliveryMode.
+     * Specifies the delivery mode to be used. Possible values are those defined by jakarta.jms.DeliveryMode.
      * NON_PERSISTENT = 1 and PERSISTENT = 2.
      */
     public void setDeliveryMode(Integer deliveryMode) {
@@ -1374,7 +1374,7 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * To use a custom Spring org.springframework.jms.support.converter.MessageConverter so you can be in control how to
-     * map to/from a javax.jms.Message.
+     * map to/from a jakarta.jms.Message.
      */
     public void setMessageConverter(MessageConverter messageConverter) {
         this.messageConverter = messageConverter;
@@ -1386,7 +1386,7 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * Specifies whether Camel should auto map the received JMS message to a suited payload type, such as
-     * javax.jms.TextMessage to a String etc.
+     * jakarta.jms.TextMessage to a String etc.
      */
     public void setMapJmsMessage(boolean mapJmsMessage) {
         this.mapJmsMessage = mapJmsMessage;
@@ -1893,7 +1893,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Allows you to force the use of a specific javax.jms.Message implementation for sending JMS messages. Possible
+     * Allows you to force the use of a specific jakarta.jms.Message implementation for sending JMS messages. Possible
      * values are: Bytes, Map, Object, Stream, Text. By default, Camel would determine which JMS message type to use
      * from the In body type. This option allows you to specify it.
      */
@@ -1967,7 +1967,7 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side, then
-     * the caused Exception will be send back in response as a javax.jms.ObjectMessage. If the client is Camel, the
+     * the caused Exception will be send back in response as a jakarta.jms.ObjectMessage. If the client is Camel, the
      * returned Exception is rethrown. This allows you to use Camel JMS as a bridge in your routing - for example, using
      * persistent queues to enable robust routing. Notice that if you also have transferExchange enabled, this option
      * takes precedence. The caught exception is required to be serializable. The original Exception on the consumer
@@ -2168,7 +2168,7 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of
-     * <tt>javax.jms.Message</tt> objects when Camel is sending a JMS message.
+     * <tt>jakarta.jms.Message</tt> objects when Camel is sending a JMS message.
      */
     public void setMessageCreatedStrategy(MessageCreatedStrategy messageCreatedStrategy) {
         this.messageCreatedStrategy = messageCreatedStrategy;

@@ -43,14 +43,14 @@ import static org.apache.camel.util.BufferCaster.cast;
  * {@link ReaderInputStream} implements the inverse transformation of {@link java.io.InputStreamReader}; in the
  * following example, reading from <tt>in2</tt> would return the same byte sequence as reading from <tt>in</tt>
  * (provided that the initial byte sequence is legal with respect to the charset encoding):
- * 
+ *
  * <pre>
  * InputStream in = ...
  * Charset cs = ...
  * InputStreamReader reader = new InputStreamReader(in, cs);
  * ReaderInputStream in2 = new ReaderInputStream(reader, cs);
  * </pre>
- * 
+ *
  * {@link ReaderInputStream} implements the same transformation as {@link java.io.OutputStreamWriter}, except that the
  * control flow is reversed: both classes transform a character stream into a byte stream, but
  * {@link java.io.OutputStreamWriter} pushes data to the underlying stream, while {@link ReaderInputStream} pulls it
@@ -60,16 +60,16 @@ import static org.apache.camel.util.BufferCaster.cast;
  * this class is an indication of a flaw in the design of the code. This class is typically used in situations where an
  * existing API only accepts an {@link InputStream}, but where the most natural way to produce the data is as a
  * character stream, i.e. by providing a {@link Reader} instance. An example of a situation where this problem may
- * appear is when implementing the {@link javax.activation.DataSource} interface from the Java Activation Framework.
+ * appear is when implementing the {@link jakarta.activation.DataSource} interface from the Java Activation Framework.
  * <p>
  * Given the fact that the {@link Reader} class doesn't provide any way to predict whether the next read operation will
  * block or not, it is not possible to provide a meaningful implementation of the {@link InputStream#available()}
  * method. A call to this method will always return 0. Also, this class doesn't support {@link InputStream#mark(int)}.
  * <p>
  * Instances of {@link ReaderInputStream} are not thread safe.
- * 
+ *
  * @see   org.apache.commons.io.output.WriterOutputStream
- * 
+ *
  * @since 2.0
  */
 public class ReaderInputStream extends InputStream {
@@ -95,7 +95,7 @@ public class ReaderInputStream extends InputStream {
 
     /**
      * Construct a new {@link ReaderInputStream}.
-     * 
+     *
      * @param reader  the target {@link Reader}
      * @param encoder the charset encoder
      * @since         2.1
@@ -106,7 +106,7 @@ public class ReaderInputStream extends InputStream {
 
     /**
      * Construct a new {@link ReaderInputStream}.
-     * 
+     *
      * @param reader     the target {@link Reader}
      * @param encoder    the charset encoder
      * @param bufferSize the size of the input buffer in number of characters
@@ -123,7 +123,7 @@ public class ReaderInputStream extends InputStream {
 
     /**
      * Construct a new {@link ReaderInputStream}.
-     * 
+     *
      * @param reader     the target {@link Reader}
      * @param charset    the charset encoding
      * @param bufferSize the size of the input buffer in number of characters
@@ -138,7 +138,7 @@ public class ReaderInputStream extends InputStream {
 
     /**
      * Construct a new {@link ReaderInputStream} with a default input buffer size of 1024 characters.
-     * 
+     *
      * @param reader  the target {@link Reader}
      * @param charset the charset encoding
      */
@@ -148,7 +148,7 @@ public class ReaderInputStream extends InputStream {
 
     /**
      * Construct a new {@link ReaderInputStream}.
-     * 
+     *
      * @param reader      the target {@link Reader}
      * @param charsetName the name of the charset encoding
      * @param bufferSize  the size of the input buffer in number of characters
@@ -159,7 +159,7 @@ public class ReaderInputStream extends InputStream {
 
     /**
      * Construct a new {@link ReaderInputStream} with a default input buffer size of 1024 characters.
-     * 
+     *
      * @param reader      the target {@link Reader}
      * @param charsetName the name of the charset encoding
      */
@@ -170,7 +170,7 @@ public class ReaderInputStream extends InputStream {
     /**
      * Construct a new {@link ReaderInputStream} that uses the default character encoding with a default input buffer
      * size of 1024 characters.
-     * 
+     *
      * @param reader the target {@link Reader}
      */
     public ReaderInputStream(Reader reader) {
@@ -179,7 +179,7 @@ public class ReaderInputStream extends InputStream {
 
     /**
      * Fills the internal char buffer from the reader.
-     * 
+     *
      * @throws IOException If an I/O error occurs
      */
     private void fillBuffer() throws IOException {
@@ -204,7 +204,7 @@ public class ReaderInputStream extends InputStream {
 
     /**
      * Read the specified number of bytes into an array.
-     * 
+     *
      * @param  b           the byte array to read into
      * @param  off         the offset to start reading bytes into
      * @param  len         the number of bytes to read
@@ -244,7 +244,7 @@ public class ReaderInputStream extends InputStream {
 
     /**
      * Read the specified number of bytes into an array.
-     * 
+     *
      * @param  b           the byte array to read into
      * @return             the number of bytes read or <code>-1</code> if the end of the stream has been reached
      * @throws IOException if an I/O error occurs
@@ -276,7 +276,7 @@ public class ReaderInputStream extends InputStream {
 
     /**
      * Close the stream. This method will cause the underlying {@link Reader} to be closed.
-     * 
+     *
      * @throws IOException if an I/O error occurs
      */
     @Override

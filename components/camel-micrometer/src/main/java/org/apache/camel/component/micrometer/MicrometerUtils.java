@@ -26,9 +26,13 @@ import org.apache.camel.spi.Registry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class MicrometerUtils {
+public final class MicrometerUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(MicrometerUtils.class);
+
+    private MicrometerUtils() {
+
+    }
 
     public static Meter.Type getByName(String meterName) {
         switch (meterName) {

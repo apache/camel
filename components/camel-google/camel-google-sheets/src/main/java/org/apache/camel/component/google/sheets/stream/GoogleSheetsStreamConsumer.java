@@ -37,16 +37,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The GoogleSheets consumer.
  */
 public class GoogleSheetsStreamConsumer extends ScheduledBatchPollingConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(GoogleSheetsStreamConsumer.class);
-
     public GoogleSheetsStreamConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }

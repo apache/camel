@@ -1878,23 +1878,6 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
-    protected Any23DataFormat doParseAny23DataFormat() throws IOException, XmlPullParserException {
-        return doParse(new Any23DataFormat(), (def, key, val) -> {
-            switch (key) {
-                case "baseUri": def.setBaseUri(val); break;
-                case "outputFormat": def.setOutputFormat(val); break;
-                default: return identifiedTypeAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        }, (def, key) -> {
-            switch (key) {
-                case "configuration": doAdd(doParsePropertyDefinition(), def.getConfiguration(), def::setConfiguration); break;
-                case "extractors": doAdd(doParseText(), def.getExtractors(), def::setExtractors); break;
-                default: return false;
-            }
-            return true;
-        }, noValueHandler());
-    }
     protected AvroDataFormat doParseAvroDataFormat() throws IOException, XmlPullParserException {
         return doParse(new AvroDataFormat(), (def, key, val) -> {
             switch (key) {
@@ -2472,29 +2455,6 @@ public class ModelParser extends BaseParser {
             }
             return true;
         }, noElementHandler(), noValueHandler());
-    }
-    protected XStreamDataFormat doParseXStreamDataFormat() throws IOException, XmlPullParserException {
-        return doParse(new XStreamDataFormat(), (def, key, val) -> {
-            switch (key) {
-                case "contentTypeHeader": def.setContentTypeHeader(val); break;
-                case "driver": def.setDriver(val); break;
-                case "driverRef": def.setDriverRef(val); break;
-                case "encoding": def.setEncoding(val); break;
-                case "mode": def.setMode(val); break;
-                case "permissions": def.setPermissions(val); break;
-                default: return identifiedTypeAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        }, (def, key) -> {
-            switch (key) {
-                case "aliases": doAdd(doParsePropertyDefinition(), def.getAliases(), def::setAliases); break;
-                case "converters": doAdd(doParsePropertyDefinition(), def.getConverters(), def::setConverters); break;
-                case "implicitCollections": doAdd(doParsePropertyDefinition(), def.getImplicitCollections(), def::setImplicitCollections); break;
-                case "omitFields": doAdd(doParsePropertyDefinition(), def.getOmitFields(), def::setOmitFields); break;
-                default: return false;
-            }
-            return true;
-        }, noValueHandler());
     }
     protected YAMLDataFormat doParseYAMLDataFormat() throws IOException, XmlPullParserException {
         return doParse(new YAMLDataFormat(), (def, key, val) -> {
@@ -3390,7 +3350,6 @@ public class ModelParser extends BaseParser {
     protected DataFormatDefinition doParseDataFormatDefinitionRef(String key) throws IOException, XmlPullParserException {
         switch (key) {
             case "asn1": return doParseASN1DataFormat();
-            case "any23": return doParseAny23DataFormat();
             case "avro": return doParseAvroDataFormat();
             case "barcode": return doParseBarcodeDataFormat();
             case "base64": return doParseBase64DataFormat();
@@ -3426,7 +3385,6 @@ public class ModelParser extends BaseParser {
             case "univocityFixed": return doParseUniVocityFixedDataFormat();
             case "univocityTsv": return doParseUniVocityTsvDataFormat();
             case "xmlSecurity": return doParseXMLSecurityDataFormat();
-            case "xstream": return doParseXStreamDataFormat();
             case "yaml": return doParseYAMLDataFormat();
             case "zipDeflater": return doParseZipDeflaterDataFormat();
             case "zipFile": return doParseZipFileDataFormat();

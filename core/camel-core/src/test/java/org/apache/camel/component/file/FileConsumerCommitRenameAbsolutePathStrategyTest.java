@@ -44,7 +44,7 @@ public class FileConsumerCommitRenameAbsolutePathStrategyTest extends ContextTes
             public void configure() throws Exception {
                 from(fileUri(
                         "reports?move=" + testDirectory("done").toAbsolutePath() + "/${file:name}&initialDelay=0&delay=10"))
-                                .convertBodyTo(String.class).to("mock:report");
+                        .convertBodyTo(String.class).to("mock:report");
             }
         };
     }

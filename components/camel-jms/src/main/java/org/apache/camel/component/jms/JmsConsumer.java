@@ -18,8 +18,8 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.ExecutorService;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.Processor;
@@ -35,7 +35,7 @@ import org.springframework.jms.support.JmsUtils;
 /**
  * A {@link org.apache.camel.Consumer} which uses Spring's {@link AbstractMessageListenerContainer} implementations to
  * consume JMS messages.
- * 
+ *
  * @see DefaultJmsMessageListenerContainer
  * @see SimpleJmsMessageListenerContainer
  */

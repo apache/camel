@@ -77,7 +77,7 @@ public class GrokDataFormat extends ServiceSupport implements DataFormat, DataFo
 
     /**
      * Sets the flattened mode flag
-     * 
+     *
      * @param flattened If true, conversion throws exception for conficting named matches.
      */
     public GrokDataFormat setFlattened(boolean flattened) {
@@ -155,7 +155,7 @@ public class GrokDataFormat extends ServiceSupport implements DataFormat, DataFo
         int start = 0;
         while (start < charBuffer.length()) { //Allow multiple matches per line
             Match gm = grok.match(charBuffer.subSequence(start, charBuffer.length()));
-            if (!gm.isNull()) {
+            if (Boolean.FALSE.equals(gm.isNull())) {
                 if (flattened) {
                     resultList.add(gm.captureFlattened());
                 } else {

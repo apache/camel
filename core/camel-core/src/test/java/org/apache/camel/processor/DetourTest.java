@@ -80,7 +80,7 @@ public class DetourTest extends ContextTestSupport {
         };
     }
 
-    public final class ControlBean {
+    public static final class ControlBean {
         private boolean detour;
 
         public void setDetour(boolean detour) {

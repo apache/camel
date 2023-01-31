@@ -22,6 +22,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.msk.client.MSK2ClientFactory;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -36,6 +38,8 @@ import software.amazon.awssdk.services.kafka.KafkaClient;
              headersClass = MSK2Constants.class)
 public class MSK2Endpoint extends ScheduledPollEndpoint {
 
+    private ComponentsHealthCheckRepository healthCheckRepository;
+    private MSK2HealthCheck clientHealthCheck;
     private KafkaClient mskClient;
 
     @UriParam
@@ -63,6 +67,14 @@ public class MSK2Endpoint extends ScheduledPollEndpoint {
         mskClient = configuration.getMskClient() != null
                 ? configuration.getMskClient()
                 : MSK2ClientFactory.getKafkaClient(configuration).getKafkaClient();
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getCamelContext(),
+                ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
+
+        if (healthCheckRepository != null) {
+            clientHealthCheck = new MSK2HealthCheck(this, getId());
+            healthCheckRepository.addHealthCheck(clientHealthCheck);
+        }
+
     }
 
     @Override
@@ -72,6 +84,11 @@ public class MSK2Endpoint extends ScheduledPollEndpoint {
                 mskClient.close();
             }
         }
+        if (healthCheckRepository != null && clientHealthCheck != null) {
+            healthCheckRepository.removeHealthCheck(clientHealthCheck);
+            clientHealthCheck = null;
+        }
+
         super.doStop();
     }
 

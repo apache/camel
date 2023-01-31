@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.sjms;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 
 @FunctionalInterface
 public interface SessionMessageListener {

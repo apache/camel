@@ -62,7 +62,7 @@ public class DynamicRouterConcurrentPOJOTest extends ContextTestSupport {
         };
     }
 
-    public class MyDynamicRouterPojo {
+    public static class MyDynamicRouterPojo {
 
         private final String target;
 

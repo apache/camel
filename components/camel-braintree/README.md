@@ -18,7 +18,7 @@ privateKey  = private key from sandbox ui
 Then, you can use the following commands to run the tests:
 
 ```
-CAMEL_BRAINTREE_REPORT_DATE=$(date '+%Y-%m-%d') CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID="merchant ID taken from sandbox" ui mvn mvn -DbraintreeAuthenticationType=PUBLIC_PRIVATE_KEYS clean verify 
+CAMEL_BRAINTREE_REPORT_DATE=$(date '+%Y-%m-%d') CAMEL_BRAINTREE_MERCHANT_ACCOUNT_ID="merchant ID taken from sandbox" mvn -Pbraintree-test -DbraintreeAuthenticationType=PUBLIC_PRIVATE_KEYS clean verify 
 ```
 
 It's also possible to run a smaller set of tests by running them without the environment variables:

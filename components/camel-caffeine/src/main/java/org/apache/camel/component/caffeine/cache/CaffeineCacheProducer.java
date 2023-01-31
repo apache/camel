@@ -113,13 +113,8 @@ public class CaffeineCacheProducer extends HeaderSelectorProducer {
     // ****************************
 
     private Object getKey(final Message message) throws Exception {
-        Object value;
-        if (configuration.getKeyType() != null) {
-            Class<?> clazz = getEndpoint().getCamelContext().getClassResolver().resolveClass(configuration.getKeyType());
-            value = message.getHeader(CaffeineConstants.KEY, clazz);
-        } else {
-            value = message.getHeader(CaffeineConstants.KEY);
-        }
+        String value;
+        value = message.getHeader(CaffeineConstants.KEY, String.class);
         if (value == null) {
             value = configuration.getKey();
         }

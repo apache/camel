@@ -16,7 +16,7 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 /**
  * Balances message processing among a number of nodes

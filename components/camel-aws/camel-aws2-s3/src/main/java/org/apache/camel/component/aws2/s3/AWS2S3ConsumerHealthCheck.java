@@ -21,23 +21,18 @@ import java.util.Map;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.S3ClientBuilder;
 import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 
 public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
 
     private final AWS2S3Consumer aws2S3Consumer;
-    private final String routeId;
 
     public AWS2S3ConsumerHealthCheck(AWS2S3Consumer aws2S3Consumer, String routeId) {
         super("camel", "aws2-s3-consumer-" + routeId);
         this.aws2S3Consumer = aws2S3Consumer;
-        this.routeId = routeId;
     }
 
     @Override
@@ -58,19 +53,8 @@ public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
                     return;
                 }
             }
-            S3Client client;
-            if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())) {
-                AwsBasicCredentials cred
-                        = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
-                S3ClientBuilder clientBuilder = S3Client.builder();
-                client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
-                        .region(Region.of(configuration.getRegion())).build();
-            } else if (ObjectHelper.isNotEmpty(configuration.getAmazonS3Client())) {
-                client = configuration.getAmazonS3Client();
-            } else {
-                S3ClientBuilder clientBuilder = S3Client.builder();
-                client = clientBuilder.region(Region.of(configuration.getRegion())).build();
-            }
+            S3Client client = aws2S3Consumer.getAmazonS3Client();
+
             client.headBucket(HeadBucketRequest.builder().bucket(configuration.getBucketName()).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());

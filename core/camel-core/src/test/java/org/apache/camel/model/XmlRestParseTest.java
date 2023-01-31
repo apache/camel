@@ -16,7 +16,7 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.camel.model.rest.GetDefinition;
 import org.apache.camel.model.rest.RestContainer;
@@ -40,8 +40,7 @@ public class XmlRestParseTest extends XmlTestSupport {
 
     protected RestDefinition assertOneRest(String uri) throws JAXBException {
         RestContainer context = assertParseRestAsJaxb(uri);
-        RestDefinition rest = assertOneElement(context.getRests());
-        return rest;
+        return assertOneElement(context.getRests());
     }
 
 }

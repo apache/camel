@@ -33,6 +33,7 @@ import org.apache.camel.component.as2.api.entity.ApplicationEDIEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIFACTEntity;
 import org.apache.camel.component.as2.api.entity.ApplicationEDIX12Entity;
 import org.apache.camel.component.as2.api.entity.MimeEntity;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.codec.binary.Base64OutputStream;
@@ -43,7 +44,6 @@ import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpMessage;
 import org.apache.http.HttpResponse;
 import org.apache.http.entity.ContentType;
-import org.apache.http.util.Args;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +85,7 @@ public final class EntityUtils {
     }
 
     public static byte[] encode(byte[] data, String encoding) throws CamelException {
-        Args.notNull(data, "Data");
+        ObjectHelper.notNull(data, "Data");
 
         if (encoding == null) {
             // Identity encoding
@@ -109,7 +109,7 @@ public final class EntityUtils {
     }
 
     public static OutputStream encode(OutputStream os, String encoding) throws CamelException {
-        Args.notNull(os, "Output Stream");
+        ObjectHelper.notNull(os, "Output Stream");
 
         if (encoding == null) {
             // Identity encoding
@@ -137,7 +137,7 @@ public final class EntityUtils {
     }
 
     public static byte[] decode(byte[] data, String encoding) throws CamelException, DecoderException {
-        Args.notNull(data, "Data");
+        ObjectHelper.notNull(data, "Data");
 
         if (encoding == null) {
             // Identity encoding
@@ -159,7 +159,7 @@ public final class EntityUtils {
     }
 
     public static InputStream decode(InputStream is, String encoding) throws CamelException {
-        Args.notNull(is, "Input Stream");
+        ObjectHelper.notNull(is, "Input Stream");
 
         if (encoding == null) {
             // Identity encoding
@@ -185,8 +185,8 @@ public final class EntityUtils {
             String ediMessage, ContentType ediMessageContentType, String contentTransferEncoding, boolean isMainBody,
             String filename)
             throws CamelException {
-        Args.notNull(ediMessage, "EDI Message");
-        Args.notNull(ediMessageContentType, "EDI Message Content Type");
+        ObjectHelper.notNull(ediMessage, "EDI Message");
+        ObjectHelper.notNull(ediMessageContentType, "EDI Message Content Type");
         String charset = null;
         if (ediMessageContentType.getCharset() != null) {
             charset = ediMessageContentType.getCharset().toString();
@@ -260,7 +260,7 @@ public final class EntityUtils {
             ContentType contentType,
             String bodyPartTransferEncoding)
             throws CamelException, DecoderException {
-        Args.notNull(bodyPartContent, "bodyPartContent");
+        ObjectHelper.notNull(bodyPartContent, "bodyPartContent");
         Charset contentCharset = contentType.getCharset();
         if (contentCharset == null) {
             contentCharset = StandardCharsets.US_ASCII;

@@ -17,7 +17,6 @@
 package org.apache.camel.component.jms;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -25,7 +24,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * JMS with XPath
  */
-public class SpringJmsXPathHeaderTest extends CamelSpringTestSupport {
+public class SpringJmsXPathHeaderTest extends AbstractSpringJMSTestSupport {
 
     @Test
     public void testTrue() throws Exception {

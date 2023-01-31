@@ -18,7 +18,6 @@ package org.apache.camel.component.hashicorp.vault;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
@@ -170,7 +169,7 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         if (key != null) {
             try {
                 returnValue = getSecretFromSource(key, subkey, defaultValue, version);
-            } catch (JsonProcessingException e) {
+            } catch (Exception e) {
                 throw new RuntimeCamelException("Something went wrong while recovering " + key + " from vault");
             }
         }
@@ -178,9 +177,7 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
         return returnValue;
     }
 
-    private String getSecretFromSource(
-            String key, String subkey, String defaultValue, String version)
-            throws JsonProcessingException {
+    private String getSecretFromSource(String key, String subkey, String defaultValue, String version) {
         String returnValue = null;
         try {
             String completePath = engine + "/" + "data" + "/" + key;

@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ws.rs.client.ClientRequestContext;
-import javax.ws.rs.core.Cookie;
+import jakarta.ws.rs.client.ClientRequestContext;
+import jakarta.ws.rs.core.Cookie;
 
 import org.apache.camel.component.bonita.api.filter.BonitaAuthFilter;
 import org.apache.camel.component.bonita.api.util.BonitaAPIConfig;

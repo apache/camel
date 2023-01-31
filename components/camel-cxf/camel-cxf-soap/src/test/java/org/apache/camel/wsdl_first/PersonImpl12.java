@@ -16,14 +16,14 @@
  */
 package org.apache.camel.wsdl_first;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
 
 @WebService(serviceName = "PersonService12",
             targetNamespace = "http://camel.apache.org/wsdl-first",
             endpointInterface = "org.apache.camel.wsdl_first.Person",
             wsdlLocation = "classpath:/person.wsdl")
 
-@javax.xml.ws.BindingType(value = "http://www.w3.org/2003/05/soap/bindings/HTTP/")
+@jakarta.xml.ws.BindingType(value = "http://www.w3.org/2003/05/soap/bindings/HTTP/")
 public class PersonImpl12 extends PersonImpl {
 
 }

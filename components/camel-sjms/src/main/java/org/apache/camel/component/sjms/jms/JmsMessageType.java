@@ -17,7 +17,7 @@
 package org.apache.camel.component.sjms.jms;
 
 /**
- * Enum for different {@link javax.jms.Message} types.
+ * Enum for different {@link jakarta.jms.Message} types.
  */
 public enum JmsMessageType {
 

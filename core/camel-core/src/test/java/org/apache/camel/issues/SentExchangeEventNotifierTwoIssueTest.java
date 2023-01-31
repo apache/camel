@@ -33,7 +33,7 @@ public class SentExchangeEventNotifierTwoIssueTest extends ContextTestSupport {
 
     private MyNotifier notifier = new MyNotifier();
 
-    private class MyNotifier extends EventNotifierSupport {
+    private static class MyNotifier extends EventNotifierSupport {
 
         private int counter;
 

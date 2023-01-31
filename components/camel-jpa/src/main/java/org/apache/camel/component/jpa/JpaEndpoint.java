@@ -18,9 +18,9 @@ package org.apache.camel.component.jpa;
 
 import java.util.Map;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.LockModeType;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.LockModeType;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;

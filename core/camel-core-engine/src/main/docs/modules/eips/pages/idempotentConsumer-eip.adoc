@@ -37,7 +37,6 @@ Camel provides the following Idempotent Consumer implementations:
 xref:ROOT:cql-component.adoc[NamedCassandraIdempotentRepository]
 * xref:ROOT:ehcache-component.adoc[EHCacheIdempotentRepository]
 * xref:ROOT:hazelcast-summary.adoc[HazelcastIdempotentRepository]
-* xref:ROOT:hbase-component.adoc[HBaseIdempotentRepository]
 * xref:ROOT:infinispan-component.adoc[InfinispanIdempotentRepository]
 xref:ROOT:infinispan-component.adoc[InfinispanEmbeddedIdempotentRepository]
 xref:ROOT:infinispan-component.adoc[InfinispanRemoteIdempotentRepository]

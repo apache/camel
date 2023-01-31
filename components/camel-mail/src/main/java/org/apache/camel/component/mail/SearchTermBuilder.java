@@ -18,21 +18,21 @@ package org.apache.camel.component.mail;
 
 import java.util.Date;
 
-import javax.mail.Flags;
-import javax.mail.Message;
-import javax.mail.search.AndTerm;
-import javax.mail.search.BodyTerm;
-import javax.mail.search.ComparisonTerm;
-import javax.mail.search.FlagTerm;
-import javax.mail.search.FromStringTerm;
-import javax.mail.search.HeaderTerm;
-import javax.mail.search.NotTerm;
-import javax.mail.search.OrTerm;
-import javax.mail.search.ReceivedDateTerm;
-import javax.mail.search.RecipientStringTerm;
-import javax.mail.search.SearchTerm;
-import javax.mail.search.SentDateTerm;
-import javax.mail.search.SubjectTerm;
+import jakarta.mail.Flags;
+import jakarta.mail.Message;
+import jakarta.mail.search.AndTerm;
+import jakarta.mail.search.BodyTerm;
+import jakarta.mail.search.ComparisonTerm;
+import jakarta.mail.search.FlagTerm;
+import jakarta.mail.search.FromStringTerm;
+import jakarta.mail.search.HeaderTerm;
+import jakarta.mail.search.NotTerm;
+import jakarta.mail.search.OrTerm;
+import jakarta.mail.search.ReceivedDateTerm;
+import jakarta.mail.search.RecipientStringTerm;
+import jakarta.mail.search.SearchTerm;
+import jakarta.mail.search.SentDateTerm;
+import jakarta.mail.search.SubjectTerm;
 
 /**
  * A builder to build compound {@link SearchTerm}s.

@@ -21,9 +21,10 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.soap.SOAPFaultException;
+
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.test.AvailablePortFinder;
@@ -60,14 +61,14 @@ public class GreeterClientTest {
     protected CamelContext camelContext;
 
     protected String sendMessageWithUsernameToken(String username, String password, String message) throws Exception {
-        final javax.xml.ws.Service svc = javax.xml.ws.Service.create(WSDL_LOC, SERVICE_QNAME);
+        final jakarta.xml.ws.Service svc = jakarta.xml.ws.Service.create(WSDL_LOC, SERVICE_QNAME);
         final Greeter greeter = svc.getPort(PORT_QNAME, Greeter.class);
 
         Client client = ClientProxy.getClient(greeter);
         Map<String, Object> props = new HashMap<>();
         props.put("action", "UsernameToken");
         props.put("user", username);
-        // Set the password type to be plain text, 
+        // Set the password type to be plain text,
         // so we can keep using the password to authenticate with spring security
         props.put("passwordType", "PasswordText");
         WSS4JOutInterceptor wss4jOut = new WSS4JOutInterceptor(props);

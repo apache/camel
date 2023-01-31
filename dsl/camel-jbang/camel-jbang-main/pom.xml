@@ -25,7 +25,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jbang-parent</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -79,14 +79,14 @@
                     <execution>
                         <phase>prepare-package</phase>
                         <configuration>
-                            <tasks>
+                            <target>
                                 <copy todir="${dist.dir}">
                                     <fileset dir="${project.build.directory}">
                                         <include name="**/*.java"/>
                                     </fileset>
                                 </copy>
                                 <chmod file="${dist.dir}/*.java" perm="u+x" />
-                            </tasks>
+                            </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>

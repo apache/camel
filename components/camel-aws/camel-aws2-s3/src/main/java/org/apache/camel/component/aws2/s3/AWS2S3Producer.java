@@ -41,6 +41,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -561,7 +562,18 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setBody(objectList.contents());
             }
         } else {
-            ListObjectsResponse objectList = s3Client.listObjects(ListObjectsRequest.builder().bucket(bucketName).build());
+            final String delimiter
+                    = exchange.getIn().getHeader(AWS2S3Constants.DELIMITER, getConfiguration().getDelimiter(), String.class);
+            final String prefix
+                    = exchange.getIn().getHeader(AWS2S3Constants.PREFIX, getConfiguration().getPrefix(), String.class);
+
+            final ListObjectsRequest listObjectsRequest = ListObjectsRequest
+                    .builder()
+                    .bucket(bucketName)
+                    .delimiter(delimiter)
+                    .prefix(prefix)
+                    .build();
+            ListObjectsResponse objectList = s3Client.listObjects(listObjectsRequest);
 
             Message message = getMessageForResponse(exchange);
             message.setBody(objectList.contents());
@@ -586,8 +598,11 @@ public class AWS2S3Producer extends DefaultProducer {
             presigner = getConfiguration().getAmazonS3Presigner();
         } else {
             S3Presigner.Builder builder = S3Presigner.builder();
-            builder.credentialsProvider(StaticCredentialsProvider.create(
-                    AwsBasicCredentials.create(getConfiguration().getAccessKey(), getConfiguration().getSecretKey())))
+            builder.credentialsProvider(
+                    getConfiguration().isUseDefaultCredentialsProvider()
+                            ? DefaultCredentialsProvider.create() : StaticCredentialsProvider.create(
+                                    AwsBasicCredentials.create(getConfiguration().getAccessKey(),
+                                            getConfiguration().getSecretKey())))
                     .region(Region.of(getConfiguration().getRegion()));
 
             String uriEndpointOverride = getConfiguration().getUriEndpointOverride();

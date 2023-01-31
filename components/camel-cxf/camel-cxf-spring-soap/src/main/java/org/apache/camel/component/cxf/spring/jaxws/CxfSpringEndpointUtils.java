@@ -18,9 +18,10 @@ package org.apache.camel.component.cxf.spring.jaxws;
 
 import java.lang.annotation.Annotation;
 
-import javax.jws.WebService;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.WebServiceProvider;
+
 import javax.xml.namespace.QName;
-import javax.xml.ws.WebServiceProvider;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
@@ -118,7 +119,7 @@ public final class CxfSpringEndpointUtils {
      * Get effective address for a client to invoke a service. It first looks for the
      * {@link org.apache.camel.Exchange#DESTINATION_OVERRIDE_URL} in the IN message header. If the header is not found,
      * it will return the default address.
-     * 
+     *
      * @param exchange
      * @param defaultAddress
      */
@@ -136,7 +137,7 @@ public final class CxfSpringEndpointUtils {
     /**
      * Create a CXF bus with either BusFactory or SpringBusFactory if Camel Context is SpringCamelContext. In the latter
      * case, this method updates the bus configuration with the applicationContext which SpringCamelContext holds
-     * 
+     *
      * @param context - the Camel Context
      */
     public static Bus createBus(CamelContext context) {

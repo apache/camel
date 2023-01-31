@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.cxf.transport;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

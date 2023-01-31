@@ -83,7 +83,7 @@ public class CometdProducerConsumerInteractiveAuthenticatedManualTest {
      * Custom SecurityPolicy, see http://cometd.org/documentation/howtos/authentication for details
      */
     public static final class BayeuxAuthenticator extends DefaultSecurityPolicy
-            implements BayeuxServer.Extension, ServerSession.RemoveListener {
+            implements BayeuxServer.Extension, ServerSession.RemovedListener {
 
         private String user = "changeit";
         private String pwd = "changeit";
@@ -143,7 +143,7 @@ public class CometdProducerConsumerInteractiveAuthenticatedManualTest {
         }
 
         @Override
-        public void removed(ServerSession session, boolean timeout) {
+        public void removed(ServerSession session, ServerMessage message, boolean timeout) {
             // Remove authentication data
         }
 

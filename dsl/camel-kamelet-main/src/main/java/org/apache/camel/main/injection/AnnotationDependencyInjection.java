@@ -19,11 +19,11 @@ package org.apache.camel.main.injection;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.inject.Produces;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelConfiguration;

@@ -109,3 +109,7 @@ inner class gets a bit more complicated it is of course advised to
 refactor it into a separate class. This approach is better if you do not want to use this processor again.
 From reusability perspective, it is not recommended to use this approach with anonymous inner classes.
 
+== See Also
+
+** xref:manual::consumertemplate.adoc[Consumer Template]: to learn how to consume data (including within processors)
+** xref:manual::producertemplate.adoc[Producer Template]: to learn how to produce data (including within processors)

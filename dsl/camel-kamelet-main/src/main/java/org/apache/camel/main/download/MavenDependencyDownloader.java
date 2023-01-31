@@ -100,9 +100,11 @@ import org.eclipse.aether.impl.LocalRepositoryProvider;
 import org.eclipse.aether.impl.MetadataGeneratorFactory;
 import org.eclipse.aether.impl.MetadataResolver;
 import org.eclipse.aether.impl.OfflineController;
+import org.eclipse.aether.impl.RemoteRepositoryFilterManager;
 import org.eclipse.aether.impl.RemoteRepositoryManager;
 import org.eclipse.aether.impl.RepositoryConnectorProvider;
 import org.eclipse.aether.impl.RepositoryEventDispatcher;
+import org.eclipse.aether.impl.RepositorySystemLifecycle;
 import org.eclipse.aether.impl.UpdateCheckManager;
 import org.eclipse.aether.impl.UpdatePolicyAnalyzer;
 import org.eclipse.aether.impl.VersionRangeResolver;
@@ -122,6 +124,7 @@ import org.eclipse.aether.internal.impl.DefaultRepositoryConnectorProvider;
 import org.eclipse.aether.internal.impl.DefaultRepositoryEventDispatcher;
 import org.eclipse.aether.internal.impl.DefaultRepositoryLayoutProvider;
 import org.eclipse.aether.internal.impl.DefaultRepositorySystem;
+import org.eclipse.aether.internal.impl.DefaultRepositorySystemLifecycle;
 import org.eclipse.aether.internal.impl.DefaultTrackingFileManager;
 import org.eclipse.aether.internal.impl.DefaultTransporterProvider;
 import org.eclipse.aether.internal.impl.DefaultUpdateCheckManager;
@@ -138,15 +141,18 @@ import org.eclipse.aether.internal.impl.collect.DefaultDependencyCollector;
 import org.eclipse.aether.internal.impl.collect.DependencyCollectorDelegate;
 import org.eclipse.aether.internal.impl.collect.bf.BfDependencyCollector;
 import org.eclipse.aether.internal.impl.collect.df.DfDependencyCollector;
+import org.eclipse.aether.internal.impl.filter.DefaultRemoteRepositoryFilterManager;
 import org.eclipse.aether.internal.impl.slf4j.Slf4jLoggerFactory;
 import org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory;
-import org.eclipse.aether.internal.impl.synccontext.named.GAVNameMapper;
 import org.eclipse.aether.internal.impl.synccontext.named.NameMapper;
-import org.eclipse.aether.internal.impl.synccontext.named.NamedLockFactorySelector;
-import org.eclipse.aether.internal.impl.synccontext.named.SimpleNamedLockFactorySelector;
+import org.eclipse.aether.internal.impl.synccontext.named.NameMappers;
+import org.eclipse.aether.internal.impl.synccontext.named.NamedLockFactoryAdapterFactory;
+import org.eclipse.aether.internal.impl.synccontext.named.NamedLockFactoryAdapterFactoryImpl;
 import org.eclipse.aether.named.NamedLockFactory;
 import org.eclipse.aether.named.providers.FileLockNamedLockFactory;
 import org.eclipse.aether.named.providers.LocalReadWriteLockNamedLockFactory;
+import org.eclipse.aether.named.providers.LocalSemaphoreNamedLockFactory;
+import org.eclipse.aether.named.providers.NoopNamedLockFactory;
 import org.eclipse.aether.repository.Authentication;
 import org.eclipse.aether.repository.AuthenticationSelector;
 import org.eclipse.aether.repository.LocalRepository;
@@ -648,7 +654,9 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         registry.bind(LocalRepositoryManagerFactory.class, EnhancedLocalRepositoryManagerFactory.class);
 
         // remaining requirements of org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory
-        registry.bind(NamedLockFactorySelector.class, SimpleNamedLockFactorySelector.class);
+        registry.bind(NamedLockFactoryAdapterFactory.class, NamedLockFactoryAdapterFactoryImpl.class);
+
+        HashMap<String, NameMapper> mappers = new HashMap<>();
 
         // remaining requirements of org.eclipse.aether.internal.impl.DefaultRemoteRepositoryManager
         registry.bind(UpdatePolicyAnalyzer.class, DefaultUpdatePolicyAnalyzer.class);
@@ -659,10 +667,16 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         // requirements of org.eclipse.aether.internal.impl.DefaultUpdateCheckManager
         registry.bind(TrackingFileManager.class, DefaultTrackingFileManager.class);
 
-        // requirements of org.eclipse.aether.internal.impl.synccontext.named.SimpleNamedLockFactorySelector
+        // requirements of org.eclipse.aether.internal.impl.synccontext.named.NamedLockFactoryAdapterFactoryImpl
         registry.bind(NamedLockFactory.class, FileLockNamedLockFactory.class);
         registry.bind(NamedLockFactory.class, LocalReadWriteLockNamedLockFactory.class);
-        registry.bind(NameMapper.class, GAVNameMapper.class);
+        registry.bind(NamedLockFactory.class, NoopNamedLockFactory.class);
+        registry.bind(NamedLockFactory.class, LocalSemaphoreNamedLockFactory.class);
+        registry.bind(NameMappers.GAV_NAME, NameMapper.class, NameMappers.gavNameMapper());
+        registry.bind(NameMappers.STATIC_NAME, NameMapper.class, NameMappers.staticNameMapper());
+        registry.bind(NameMappers.DISCRIMINATING_NAME, NameMapper.class, NameMappers.discriminatingNameMapper());
+        registry.bind(NameMappers.FILE_GAV_NAME, NameMapper.class, NameMappers.fileGavNameMapper());
+        registry.bind(NameMappers.FILE_HGAV_NAME, NameMapper.class, NameMappers.fileHashingGavNameMapper());
 
         // requirements of org.apache.maven.repository.internal.DefaultVersionResolver (these are deprecated)
         registry.bind(org.eclipse.aether.impl.SyncContextFactory.class,
@@ -674,6 +688,10 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
         // additional services
         registry.bind(org.eclipse.aether.spi.log.LoggerFactory.class, Slf4jLoggerFactory.class);
+
+        // resolver 1.9.x
+        registry.bind(RemoteRepositoryFilterManager.class, DefaultRemoteRepositoryFilterManager.class);
+        registry.bind(RepositorySystemLifecycle.class, DefaultRepositorySystemLifecycle.class);
     }
 
     /**
@@ -750,7 +768,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         // we could use org.apache.maven.settings.building.DefaultSettingsBuilder directly, but it's better
         // to be consistent and use DI for that - especially because after
         // https://issues.apache.org/jira/browse/MNG-6680, DefaultSettingsBuilder is no longer annotated
-        // with @org.codehaus.plexus.component.annotations.Component, but with @javax.inject.Named
+        // with @org.codehaus.plexus.component.annotations.Component, but with @jakarta.inject.Named
         registry.bind(SettingsReader.class, DefaultSettingsReader.class);
         registry.bind(SettingsWriter.class, DefaultSettingsWriter.class);
         registry.bind(SettingsValidator.class, DefaultSettingsValidator.class);
@@ -1202,8 +1220,10 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                     })
                     .collect(Collectors.toList());
         } catch (DependencyResolutionException e) {
-            String msg = "Cannot resolve dependencies in " + repositories.stream().map(RemoteRepository::getUrl)
-                    .collect(Collectors.joining(", "));
+            String repos = repositories == null
+                    ? "(empty URL list)"
+                    : repositories.stream().map(RemoteRepository::getUrl).collect(Collectors.joining(", "));
+            String msg = "Cannot resolve dependencies in " + repos;
             throw new DownloadException(msg, e);
         } catch (RuntimeException e) {
             throw new DownloadException("Unknown error occurred while trying to resolve dependencies", e);

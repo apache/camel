@@ -19,7 +19,7 @@ package org.apache.camel.generator.swagger;
 import java.io.IOException;
 import java.nio.file.Path;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import javax.lang.model.element.Modifier;
 
 import com.squareup.javapoet.AnnotationSpec;
@@ -79,8 +79,8 @@ public class SpringBootProjectSourceCodeGenerator {
     }
 
     MethodSpec generateRestMethod() {
-        ClassName req = ClassName.bestGuess("javax.servlet.http.HttpServletRequest");
-        ClassName res = ClassName.bestGuess("javax.servlet.http.HttpServletResponse");
+        ClassName req = ClassName.bestGuess("jakarta.servlet.http.HttpServletRequest");
+        ClassName res = ClassName.bestGuess("jakarta.servlet.http.HttpServletResponse");
 
         final AnnotationSpec.Builder reqAnnotation
                 = AnnotationSpec.builder(ClassName.bestGuess("org.springframework.web.bind.annotation.RequestMapping"))

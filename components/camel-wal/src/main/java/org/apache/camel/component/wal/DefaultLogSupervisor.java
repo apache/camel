@@ -36,7 +36,7 @@ public class DefaultLogSupervisor implements LogSupervisor {
 
     /**
      * Constructs a new log supervisor
-     * 
+     *
      * @param interval the interval between executions of the task
      */
     public DefaultLogSupervisor(long interval) {
@@ -45,7 +45,7 @@ public class DefaultLogSupervisor implements LogSupervisor {
 
     /**
      * Constructs a new log supervisor
-     * 
+     *
      * @param interval                 the interval between executions of the task
      * @param scheduledExecutorService the executor service to use for running the task
      */

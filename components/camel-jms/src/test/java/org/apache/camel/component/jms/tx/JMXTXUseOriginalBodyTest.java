@@ -22,13 +22,13 @@ import org.apache.camel.Handler;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class JMXTXUseOriginalBodyTest extends CamelSpringTestSupport {
+public class JMXTXUseOriginalBodyTest extends AbstractSpringJMSTestSupport {
 
     @EndpointInject("mock:end")
     protected MockEndpoint endpoint;

@@ -29,23 +29,20 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("attachedFileName", java.lang.String.class);
         map.put("clientFqdn", java.lang.String.class);
         map.put("compressionAlgorithm", org.apache.camel.component.as2.api.AS2CompressionAlgorithm.class);
-        map.put("decryptingPrivateKey", java.security.PrivateKey.class);
         map.put("dispositionNotificationTo", java.lang.String.class);
         map.put("ediMessageTransferEncoding", java.lang.String.class);
         map.put("ediMessageType", org.apache.http.entity.ContentType.class);
-        map.put("encryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
-        map.put("encryptingCertificateChain", java.security.cert.Certificate[].class);
         map.put("from", java.lang.String.class);
+        map.put("httpConnectionPoolSize", java.lang.Integer.class);
+        map.put("httpConnectionPoolTtl", java.time.Duration.class);
+        map.put("httpConnectionTimeout", java.time.Duration.class);
+        map.put("httpSocketTimeout", java.time.Duration.class);
         map.put("inBody", java.lang.String.class);
         map.put("mdnMessageTemplate", java.lang.String.class);
         map.put("requestUri", java.lang.String.class);
         map.put("server", java.lang.String.class);
         map.put("serverFqdn", java.lang.String.class);
         map.put("serverPortNumber", java.lang.Integer.class);
-        map.put("signedReceiptMicAlgorithms", java.lang.String[].class);
-        map.put("signingAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class);
-        map.put("signingCertificateChain", java.security.cert.Certificate[].class);
-        map.put("signingPrivateKey", java.security.PrivateKey.class);
         map.put("subject", java.lang.String.class);
         map.put("targetHostname", java.lang.String.class);
         map.put("targetPortNumber", java.lang.Integer.class);
@@ -53,6 +50,14 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
         map.put("exchangePattern", org.apache.camel.ExchangePattern.class);
         map.put("lazyStartProducer", boolean.class);
+        map.put("decryptingPrivateKey", java.security.PrivateKey.class);
+        map.put("encryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
+        map.put("encryptingCertificateChain", java.security.cert.Certificate[].class);
+        map.put("signedReceiptMicAlgorithms", java.lang.String[].class);
+        map.put("signingAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class);
+        map.put("signingCertificateChain", java.security.cert.Certificate[].class);
+        map.put("signingPrivateKey", java.security.PrivateKey.class);
+        map.put("validateSigningCertificateChain", java.security.cert.Certificate[].class);
         ALL_OPTIONS = map;
     }
 
@@ -91,6 +96,14 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "from": target.getConfiguration().setFrom(property(camelContext, java.lang.String.class, value)); return true;
+        case "httpconnectionpoolsize":
+        case "httpConnectionPoolSize": target.getConfiguration().setHttpConnectionPoolSize(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "httpconnectionpoolttl":
+        case "httpConnectionPoolTtl": target.getConfiguration().setHttpConnectionPoolTtl(property(camelContext, java.time.Duration.class, value)); return true;
+        case "httpconnectiontimeout":
+        case "httpConnectionTimeout": target.getConfiguration().setHttpConnectionTimeout(property(camelContext, java.time.Duration.class, value)); return true;
+        case "httpsockettimeout":
+        case "httpSocketTimeout": target.getConfiguration().setHttpSocketTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "inbody":
         case "inBody": target.setInBody(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
@@ -119,6 +132,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "targetPortNumber": target.getConfiguration().setTargetPortNumber(property(camelContext, java.lang.Integer.class, value)); return true;
         case "useragent":
         case "userAgent": target.getConfiguration().setUserAgent(property(camelContext, java.lang.String.class, value)); return true;
+        case "validatesigningcertificatechain":
+        case "validateSigningCertificateChain": target.getConfiguration().setValidateSigningCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
         default: return false;
         }
     }
@@ -162,6 +177,14 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "from": return java.lang.String.class;
+        case "httpconnectionpoolsize":
+        case "httpConnectionPoolSize": return java.lang.Integer.class;
+        case "httpconnectionpoolttl":
+        case "httpConnectionPoolTtl": return java.time.Duration.class;
+        case "httpconnectiontimeout":
+        case "httpConnectionTimeout": return java.time.Duration.class;
+        case "httpsockettimeout":
+        case "httpSocketTimeout": return java.time.Duration.class;
         case "inbody":
         case "inBody": return java.lang.String.class;
         case "lazystartproducer":
@@ -190,6 +213,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "targetPortNumber": return java.lang.Integer.class;
         case "useragent":
         case "userAgent": return java.lang.String.class;
+        case "validatesigningcertificatechain":
+        case "validateSigningCertificateChain": return java.security.cert.Certificate[].class;
         default: return null;
         }
     }
@@ -229,6 +254,14 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "from": return target.getConfiguration().getFrom();
+        case "httpconnectionpoolsize":
+        case "httpConnectionPoolSize": return target.getConfiguration().getHttpConnectionPoolSize();
+        case "httpconnectionpoolttl":
+        case "httpConnectionPoolTtl": return target.getConfiguration().getHttpConnectionPoolTtl();
+        case "httpconnectiontimeout":
+        case "httpConnectionTimeout": return target.getConfiguration().getHttpConnectionTimeout();
+        case "httpsockettimeout":
+        case "httpSocketTimeout": return target.getConfiguration().getHttpSocketTimeout();
         case "inbody":
         case "inBody": return target.getInBody();
         case "lazystartproducer":
@@ -257,6 +290,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "targetPortNumber": return target.getConfiguration().getTargetPortNumber();
         case "useragent":
         case "userAgent": return target.getConfiguration().getUserAgent();
+        case "validatesigningcertificatechain":
+        case "validateSigningCertificateChain": return target.getConfiguration().getValidateSigningCertificateChain();
         default: return null;
         }
     }

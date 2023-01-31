@@ -21,7 +21,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import javax.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolation;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
@@ -74,7 +74,7 @@ class BeanValidatorRouteTest extends CamelTestSupport {
     @MethodSource("provideValidCars")
     void validateShouldSuccessWithExpliciteDefaultGroup(Object cars) {
 
-        Exchange exchange = template.request("bean-validator://x?group=javax.validation.groups.Default", new Processor() {
+        Exchange exchange = template.request("bean-validator://x?group=jakarta.validation.groups.Default", new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setBody(cars);
             }
@@ -121,7 +121,7 @@ class BeanValidatorRouteTest extends CamelTestSupport {
     @MethodSource("provideInvalidCarsWithoutLicensePlate")
     void validateShouldFailWithExpliciteDefaultGroup(Object cars, int numberOfViolations) {
 
-        final String url = "bean-validator://x?group=javax.validation.groups.Default";
+        final String url = "bean-validator://x?group=jakarta.validation.groups.Default";
 
         try {
             template.requestBody(url, cars);

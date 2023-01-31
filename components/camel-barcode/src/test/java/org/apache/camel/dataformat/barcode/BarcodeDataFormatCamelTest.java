@@ -37,7 +37,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
 
     /**
      * tests barcode (QR-Code) generation and reading.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -54,7 +54,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
 
     /**
      * tests barcode (QR-Code) generation with modified size and reading.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -71,7 +71,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
 
     /**
      * tests barcode (QR-Code) generation with modified image type and reading.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -88,7 +88,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
 
     /**
      * tests barcode (PDF-417) with modiefied size and image taype generation and reading.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -163,7 +163,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
                         .to(TestSupport.fileUri(testDirectory));
 
                 // generic file read --->
-                // 
+                //
                 // read file and route it
                 from(TestSupport.fileUri(testDirectory, "?noop=true&initialDelay=0&delay=10"))
                         .multicast().to("direct:unmarshall", "mock:image");

@@ -380,9 +380,6 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                     case "json-fastson":
                         option.setDefaultValue("Fastjson");
                         break;
-                    case "xstreamJson":
-                        option.setDefaultValue("XStream");
-                        break;
                     default:
                 }
             }
@@ -426,7 +423,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
     private static String asModelName(String name) {
         // special for some data formats
         if ("gson".equals(name) || "jackson".equals(name) || "johnzon".equals(name)
-                || "xstreamJson".equals(name) || "fastjson".equals(name) || "jsonb".equals(name)) {
+                || "fastjson".equals(name) || "jsonb".equals(name)) {
             return "json";
         } else if ("bindyCsv".equals(name) || "bindyFixed".equals(name) || "bindyKvp".equals(name)) {
             return "bindy";
@@ -450,8 +447,6 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                 return "2.18.0";
             case "jsonb":
                 return "3.7.0";
-            case "xstreamJson":
-                return "2.0.0";
             case "fastjson":
                 return "2.20.0";
             case "avroJackson":
@@ -477,8 +472,6 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             return "JSON Johnzon";
         } else if ("jsonb".equals(name)) {
             return "JSON JSON-B";
-        } else if ("xstreamJson".equals(name)) {
-            return "JSON XStream";
         } else if ("fastjson".equals(name)) {
             return "JSON Fastjson";
         } else if ("bindyCsv".equals(name)) {

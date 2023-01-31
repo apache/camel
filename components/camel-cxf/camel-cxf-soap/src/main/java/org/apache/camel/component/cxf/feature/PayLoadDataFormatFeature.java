@@ -139,7 +139,7 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         if (bmi != null) {
             int size = bmi.getMessageParts().size();
             for (int x = 0; x < size; x++) {
-                //last part can be streamed, others need DOM parsing 
+                //last part can be streamed, others need DOM parsing
                 if (x < (size - 1)) {
                     bmi.getMessageParts().get(x).setTypeClass(allowStreaming ? DOMSource.class : null);
                 } else {
@@ -153,7 +153,7 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         if (msgInfo != null) {
             int size = msgInfo.getMessageParts().size();
             for (int x = 0; x < size; x++) {
-                //last part can be streamed, others need DOM parsing 
+                //last part can be streamed, others need DOM parsing
                 if (x < (size - 1)) {
                     msgInfo.getMessageParts().get(x).setTypeClass(allowStreaming ? DOMSource.class : null);
                 } else {

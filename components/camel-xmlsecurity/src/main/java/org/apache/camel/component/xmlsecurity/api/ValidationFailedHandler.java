@@ -24,12 +24,12 @@ import javax.xml.crypto.dsig.XMLSignatureException;
 /**
  * Handler for handling the case when the core signature validation fails or a {@link XMLSignatureException} occurs
  * during calling {@link XMLSignature#validate(javax.xml.crypto.dsig.XMLValidateContext)}.
- * 
+ *
  * This handler can be used to react in a specific way on validation failures. For example, the handler could write logs
  * or may even ignore certain validation failures.
  * <p>
  * Typically the handler throws an exception when a validation failure occurs.
- * 
+ *
  * There is a certain order how the methods are called.
  * <ul>
  * <li>First, the method {@link #start()} is called when a core validation fails.
@@ -55,7 +55,7 @@ public interface ValidationFailedHandler {
      * {@link XMLSignature#validate(javax.xml.crypto.dsig.XMLValidateContext)}.
      * <p>
      * You can return more specific exceptions which are useful for your use-case.
-     * 
+     *
      * @param  e exception
      * @return   exception exception which is then thrown by XmlSignerProcessor.
      */
@@ -75,7 +75,7 @@ public interface ValidationFailedHandler {
      * <p>
      * Best practice is to return <code>false</code> to ensure that after a core validation failure, the verification
      * fails.
-     * 
+     *
      * @return           true or false
      * @throws Exception
      */

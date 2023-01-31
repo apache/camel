@@ -30,7 +30,7 @@ public final class Athena2ClientFactory {
 
     /**
      * Return the correct AWS Athena client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               AthenaClient
      */

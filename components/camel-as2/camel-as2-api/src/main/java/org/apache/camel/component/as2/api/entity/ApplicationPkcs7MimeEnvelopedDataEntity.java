@@ -25,12 +25,12 @@ import java.security.PrivateKey;
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.CanonicalOutputStream;
 import org.apache.camel.component.as2.api.util.EntityUtils;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpException;
 import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.Args;
 import org.bouncycastle.cms.CMSEnvelopedData;
 import org.bouncycastle.cms.CMSEnvelopedDataGenerator;
 import org.bouncycastle.cms.CMSException;
@@ -64,7 +64,7 @@ public class ApplicationPkcs7MimeEnvelopedDataEntity extends MimeEntity {
 
     public ApplicationPkcs7MimeEnvelopedDataEntity(byte[] encryptedData, String encryptedContentTransferEncoding,
                                                    boolean isMainBody) {
-        this.encryptedData = Args.notNull(encryptedData, "encryptedData");
+        this.encryptedData = ObjectHelper.notNull(encryptedData, "encryptedData");
 
         setContentType(ContentType.create("application/pkcs7-mime", new BasicNameValuePair("smime-type", "enveloped-data"),
                 new BasicNameValuePair("name", "smime.p7m")));

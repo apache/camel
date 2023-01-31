@@ -18,10 +18,11 @@ package org.apache.camel.component.cxf.jaxws;
 
 import java.util.Map;
 
+import jakarta.xml.ws.Provider;
+
 import javax.wsdl.Definition;
 import javax.wsdl.Service;
 import javax.xml.namespace.QName;
-import javax.xml.ws.Provider;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.cxf.endpoint.Endpoint;
@@ -126,7 +127,7 @@ public class WSDLServiceFactoryBean extends JaxWsServiceFactoryBean {
 
     @Override
     protected Invoker createInvoker() {
-        // Camel specific invoker will be set 
+        // Camel specific invoker will be set
         return null;
     }
 

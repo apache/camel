@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.ws.Endpoint;
+import jakarta.xml.ws.Endpoint;
 
 import org.w3c.dom.Document;
 
@@ -159,7 +159,7 @@ public class CxfProducerTest {
         Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>) out.getHeader(Client.RESPONSE_CONTEXT));
         assertNotNull(responseContext);
         assertEquals("{http://apache.org/hello_world_soap_http}greetMe",
-                responseContext.get("javax.xml.ws.wsdl.operation").toString(), "Get the wrong wsdl operation name");
+                responseContext.get("jakarta.xml.ws.wsdl.operation").toString(), "Get the wrong wsdl operation name");
         assertEquals("Hello " + TEST_MESSAGE, result, "reply body on Camel");
 
         // check the other camel header copying

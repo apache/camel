@@ -16,7 +16,7 @@
  */
 package org.apache.camel.itest.proxy;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 

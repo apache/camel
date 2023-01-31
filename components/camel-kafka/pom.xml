@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-kafka</artifactId>
@@ -70,6 +70,14 @@
 
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-core</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-kafka</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
@@ -95,6 +103,10 @@
             <scope>test</scope>
         </dependency>
 
+        <!--
+        It does not really have a dependency on camel-test-junit5, but it brings a lot of dependencies that are needed for
+        running the tests
+        -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
@@ -115,16 +127,6 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-1.2-api</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -140,6 +142,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
+                    <skipITs>${skipTests}</skipITs>
                     <reuseForks>true</reuseForks>
                 </configuration>
             </plugin>
@@ -161,13 +164,14 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
+                            <skipITs>${skipTests}</skipITs>
                             <reuseForks>true</reuseForks>
                         </configuration>
                         <executions>
                             <execution>
                                 <id>kafka-2</id>
                                 <configuration>
-                                    <skipITs>${isKafkaCompatible}</skipITs>
+                                    <skipITs>${skipTests}</skipITs>
                                     <systemPropertyVariables>
                                         <kafka.instance.type>local-kafka2-container</kafka.instance.type>
                                     </systemPropertyVariables>

@@ -22,17 +22,17 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.component.as2.api.AS2MediaType;
 import org.apache.camel.component.as2.api.CanonicalOutputStream;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.entity.ContentType;
-import org.apache.http.util.Args;
 
 public class TextPlainEntity extends MimeEntity {
 
     private String content;
 
     public TextPlainEntity(String content, String charset, String contentTransferEncoding, boolean isMainBody) {
-        this.content = Args.notNull(content, "Content");
+        this.content = ObjectHelper.notNull(content, "Content");
         setContentType(ContentType.create(AS2MediaType.TEXT_PLAIN, charset));
         setContentTransferEncoding(contentTransferEncoding);
         setMainBody(isMainBody);

@@ -20,8 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.dsl.yaml.KameletRoutesBuilderLoader;
-import org.apache.camel.main.MainConfigurationProperties;
-import org.apache.camel.main.MainRoutesLoader;
+import org.apache.camel.impl.engine.DefaultRoutesLoader;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.RoutesBuilderLoader;
 import org.apache.camel.support.ResolverHelper;
@@ -30,12 +29,11 @@ import org.apache.camel.support.service.ServiceHelper;
 /**
  * Auto downloaded needed DSL JARs.
  */
-public class DependencyDownloaderRoutesLoader extends MainRoutesLoader {
+public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
 
     private final DependencyDownloader downloader;
 
-    public DependencyDownloaderRoutesLoader(CamelContext camelContext, MainConfigurationProperties configuration) {
-        super(configuration);
+    public DependencyDownloaderRoutesLoader(CamelContext camelContext) {
         setCamelContext(camelContext);
         this.downloader = camelContext.hasService(DependencyDownloader.class);
     }

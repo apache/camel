@@ -66,7 +66,7 @@ public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
 
     /**
      * Gets the Camel Exchange payload
-     * 
+     *
      * @return
      */
     public KafkaManualCommitFactory.CamelExchangePayload getCamelExchangePayload() {
@@ -75,7 +75,7 @@ public abstract class DefaultKafkaManualCommit implements KafkaManualCommit {
 
     /**
      * Gets the Kafka record payload
-     * 
+     *
      * @return
      */
     public KafkaManualCommitFactory.KafkaRecordPayload getKafkaRecordPayload() {

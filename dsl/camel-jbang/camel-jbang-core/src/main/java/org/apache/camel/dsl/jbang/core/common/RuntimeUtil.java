@@ -32,8 +32,12 @@ public final class RuntimeUtil {
     private RuntimeUtil() {
     }
 
-    public static void configureLog(String level, boolean color, boolean json, boolean pipe, boolean export) {
+    public static void configureLog(
+            String level, boolean color, boolean json, boolean pipe, boolean export) {
         if (INIT_DONE.compareAndSet(false, true)) {
+            long pid = ProcessHandle.current().pid();
+            System.setProperty("pid", "" + pid);
+
             if (export) {
                 Configurator.initialize("CamelJBang", "log4j2-export.properties");
             } else if (pipe) {
@@ -97,6 +101,14 @@ public final class RuntimeUtil {
             deps = "";
         }
         return deps;
+    }
+
+    public static String getPid() {
+        try {
+            return "" + ProcessHandle.current().pid();
+        } catch (Throwable e) {
+            return null;
+        }
     }
 
 }

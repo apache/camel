@@ -23,14 +23,9 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component("aws2-ddbstream")
 public class Ddb2StreamComponent extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Ddb2StreamComponent.class);
-
     @Metadata
     private Ddb2StreamConfiguration configuration = new Ddb2StreamConfiguration();
 

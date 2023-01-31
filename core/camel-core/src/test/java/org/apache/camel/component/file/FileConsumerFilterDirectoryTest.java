@@ -59,7 +59,7 @@ public class FileConsumerFilterDirectoryTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from(fileUri(
                         "?initialDelay=0&delay=10&recursive=true&filterDirectory=${header.CamelFileNameOnly.length()} > 4"))
-                                .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

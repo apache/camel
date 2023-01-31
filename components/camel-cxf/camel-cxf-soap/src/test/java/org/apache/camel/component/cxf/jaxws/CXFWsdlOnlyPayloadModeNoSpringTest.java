@@ -18,10 +18,11 @@ package org.apache.camel.component.cxf.jaxws;
 
 import java.net.URL;
 
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Endpoint;
+import jakarta.xml.ws.Holder;
+
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Endpoint;
-import javax.xml.ws.Holder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -87,17 +88,17 @@ public class CXFWsdlOnlyPayloadModeNoSpringTest extends CamelTestSupport {
                 from("cxf://http://localhost:" + port2
                      + "/" + cn + "/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName() + "&"
                      + WSDL_URL_PROP + "&dataFormat=" + getDataFormat())
-                             .process(new Processor() {
+                        .process(new Processor() {
 
-                                 @Override
-                                 public void process(Exchange exchange) throws Exception {
-                                     checkSOAPAction(exchange);
-                                 }
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                checkSOAPAction(exchange);
+                            }
 
-                             })
-                             .to("cxf://http://localhost:" + port1
-                                 + "/" + cn + "/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName()
-                                 + "&" + WSDL_URL_PROP + "&dataFormat=" + getDataFormat());
+                        })
+                        .to("cxf://http://localhost:" + port1
+                            + "/" + cn + "/PersonService?" + PORT_NAME_PROP + "&" + SERVICE_NAME_PROP + getServiceName()
+                            + "&" + WSDL_URL_PROP + "&dataFormat=" + getDataFormat());
             }
         };
     }

@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-infinispan-parent</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-infinispan-embedded</artifactId>
@@ -45,7 +45,7 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-core</artifactId>
+            <artifactId>infinispan-core-jakarta</artifactId>
             <version>${infinispan-version}</version>
             <exclusions>
                 <exclusion>
@@ -56,7 +56,7 @@
         </dependency>
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-query</artifactId>
+            <artifactId>infinispan-query-jakarta</artifactId>
             <version>${infinispan-version}</version>
         </dependency>
         <dependency>
@@ -99,12 +99,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-spring5-embedded</artifactId>
-            <version>${infinispan-version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.infinispan.protostream</groupId>
             <artifactId>sample-domain-implementation</artifactId>
             <version>${protostream-version}</version>
@@ -112,11 +106,6 @@
         </dependency>
 
         <!-- testing - misc -->
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>

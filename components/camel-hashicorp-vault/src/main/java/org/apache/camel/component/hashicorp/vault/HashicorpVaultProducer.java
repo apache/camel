@@ -23,16 +23,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.vault.core.VaultKeyValueOperations;
 import org.springframework.vault.core.VaultKeyValueOperationsSupport;
 import org.springframework.vault.support.VaultResponse;
 
 public class HashicorpVaultProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HashicorpVaultProducer.class);
-
     public HashicorpVaultProducer(final Endpoint endpoint) {
         super(endpoint);
     }

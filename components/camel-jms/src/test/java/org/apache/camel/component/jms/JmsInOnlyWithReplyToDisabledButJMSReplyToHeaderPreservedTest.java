@@ -25,7 +25,8 @@ public class JmsInOnlyWithReplyToDisabledButJMSReplyToHeaderPreservedTest extend
     @Test
     public void testJMSReplyToHeaderPreserved() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:foo").expectedHeaderReceived("JMSReplyTo", "queue://bar");
+
+        getMockEndpoint("mock:foo").expectedHeaderReceived("JMSReplyTo", "ActiveMQQueue[bar]");
         getMockEndpoint("mock:done").expectedBodiesReceived("Hello World");
 
         template.sendBody("direct:start", "Hello World");

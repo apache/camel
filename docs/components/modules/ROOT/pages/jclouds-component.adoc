@@ -1,1 +1,0 @@
-../../../../../components/camel-jclouds/src/main/docs/jclouds-component.adoc

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.resilience4j;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -386,7 +387,7 @@ public class ResilienceProcessor extends AsyncProcessorSupport
 
     @ManagedAttribute
     public long getCircuitBreakerWaitDurationInOpenState() {
-        return circuitBreakerConfig.getWaitDurationInOpenState().getSeconds();
+        return Duration.ofMillis(circuitBreakerConfig.getWaitIntervalFunctionInOpenState().apply(1)).getSeconds();
     }
 
     @ManagedAttribute

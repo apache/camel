@@ -38,7 +38,7 @@ public class JmsInOnlyWithReplyToHeaderTopicTest extends AbstractJMSTest {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-        mock.expectedHeaderReceived("JMSReplyTo", "topic://JmsInOnlyWithReplyToHeaderTopicTest.bar");
+        mock.expectedHeaderReceived("JMSReplyTo", "ActiveMQTopic[JmsInOnlyWithReplyToHeaderTopicTest.bar]");
 
         template.send("activemq:queue:JmsInOnlyWithReplyToHeaderTopicTest.foo?preserveMessageQos=true", exchange -> {
             exchange.getIn().setBody("World");

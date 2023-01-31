@@ -17,11 +17,11 @@
     limitations under the License.
 
 -->
-<jaxb:bindings version="2.1" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+<jaxb:bindings version="3.0" xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
 	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	jaxb:extensionBindingPrefixes="xjc"
-	xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd">
+	xsi:schemaLocation="https://jakarta.ee/xml/ns/jaxb https://jakarta.ee/xml/ns/jaxb/bindingschema_3_0.xsd">
 	<jaxb:globalBindings>
 		<jaxb:serializable uid="1" />
 		<xjc:simple />

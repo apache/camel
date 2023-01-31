@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>maven-plugins</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-maven-plugin</artifactId>
@@ -82,11 +82,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-main</artifactId>
         </dependency>
-        <!-- camel-cdi-main has Main class for running CDI -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-cdi-main</artifactId>
-        </dependency>
         <!-- for logging in color -->
         <dependency>
             <groupId>org.fusesource.jansi</groupId>
@@ -100,7 +95,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>

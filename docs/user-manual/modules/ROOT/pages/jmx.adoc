@@ -1,22 +1,21 @@
 = JMX
 
-Camel has optional support for JMX management which are
+Camel has optional support for JMX management, which is 
 part of the `camel-management` and `camel-management-api` JARs.
 
 == Using JMX to manage Apache Camel
 
-By default (requires `camel-management` JAR to be included in the classpath),
-JMX instrumentation agent is enabled in Camel, which means
-that Camel runtime creates and registers MBean management objects with a
-`MBeanServer` instance in the VM. This allows Camel users to instantly
-obtain insights into how Camel routes perform down to the individual
-processor level.
+The JMX instrumentation agent is enabled in Camel when the `camel-management`
+JAR is included in the classpath. Once enabled, the Camel runtime creates and
+registers MBean management objects with a `MBeanServer` instance in the VM. 
+This allows Camel users to instantly obtain insights into how Camel routes 
+perform down to the individual processor level.
 
 The high level supported types of management objects are:
 
 - https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedCamelContext.html[CamelContext]
 - https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedComponent.html[Component]
-- https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedConsumer.html[Donsumer]
+- https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedConsumer.html[Consumer]
 - https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedDataFormat.html[DataFormat]
 - https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedEndpoint.html[Endpoint]
 - https://www.javadoc.io/doc/org.apache.camel/camel-management/current/org/apache/camel/management/mbean/ManagedProcessor.html[Processor]
@@ -29,12 +28,13 @@ addition to performance counter attributes.
 
 == Disabling or enabling Camel JMX
 
-Camel is only using JMX if `camel-management` is on the classpath.
-So a quick way to enable or disable JMX is to either include or exclude this JAR on the classpath.
+JMX is only enabled in Camel when the `camel-management` JAR is included on the
+classpath. To quickly enable or disable JMX, simply add or remove this JAR 
+from the classpath.
 
-Its also possible to enable or disable JMX via configuration as documented in the following.
+It is also possible to enable or disable JMX via configuration as documented below.
 
-You can disable JMX instrumentation agent by setting the Java VM system
+You can disable the JMX instrumentation agent by setting the Java VM system
 property as follows:
 
 [source,bash]
@@ -44,7 +44,7 @@ property as follows:
 
 The property value is treated as `boolean`.
 
-Or, by adding a `jmxAgent` element inside the `camelContext` element in
+Alternatively, add a `jmxAgent` element inside the `camelContext` element in
 Spring XML configuration:
 
 [source,xml]
@@ -65,7 +65,7 @@ camel.disableJMX();
 
 == Camel JMX configuration options
 
-The Camel JMX can be configured with the following options.
+Camel JMX can be configured with the following options.
 
 [width="100%",cols="25%,25%,25%,25%",options="header",]
 |=======================================================================
@@ -119,11 +119,13 @@ from MBean names and attributes.
 
 === Registering MBeans for specific resources only
 
-By default Camel registers MBeans for the context, all the routes and the processors when its starting. You can set a level whether MBeans are registered or not when Camel starts up. The levels are:
+Camel automatically registers MBeans for the context, routes, and processors
+when it starts up. However, you can specify a level to control whether or not
+MBeans are registered at startup. The levels are:
 
 * `Default` - Camel will register MBeans for the context, all the routes and the processors.
 
-* `RoutesOnly` - Camel will register MBeans for the context and for all the routes. (not for any processor).
+* `RoutesOnly` - Camel will register MBeans for the context and for all the routes (not for any processor).
 
 * `ContextOnly` -  Camel will register MBeans for the context (neither for any route nor for any processor).
 
@@ -134,31 +136,30 @@ Camel provides two settings to control when to register mbeans.
 [width="100%",cols="34%,33%,33%",options="header",]
 |=======================================================================
 |Option |Default |Description
-|`registerAlways` |`false` |If enabled then MBeans is always registered.
+|`registerAlways` |`false` |If enabled then MBeans are always registered.
 
 |`registerNewRoutes` |`true` |If enabled then adding new routes after
 CamelContext has been started will also register
 MBeans from that given route.
 |=======================================================================
 
-By default Camel registers MBeans for all the routes configured when its
-starting. The `registerNewRoutes` option control if MBeans should also
-be registered if you add new routes thereafter. You can disable this, if
-you for example add and remove temporary routes where management is not
-needed.
+By default, Camel automatically registers MBeans for all routes configured at
+startup. The `registerNewRoutes` option controls whether MBeans should also be
+registered for new routes added later on. This feature can be disabled, for
+example, if you are adding and removing temporary routes that do not require
+management.
 
-CAUTION: Be a bit careful to use the `registerAlways` option when using dynamic
-EIP patterns such as the xref:components:eips:recipientList-eip.adoc[Recipient List] having unique endpoints. If so
-then each unique endpoint and its associated services/producers would
-also be registered. This could potentially lead to system degradation due
-the rising number of mbeans in the registry. A MBean is not a
-light-weight object and consumes memory.
-
+CAUTION: However, be cautious when using the `registerAlways` option in
+conjunction with dynamic EIP patterns, such as the xref:components:eips:recipientList-eip.adoc[Recipient List],
+which have unique endpoints. This can potentially lead to system degradation
+due to the increasing number of MBeans in the registry from its associated
+services/producers. Keep in mind that an MBean is not a lightweight object
+and consumes memory.
 
 == Management naming pattern
 
 You can configure a naming pattern for the MBeans names that Camel creates.
-The pattern is used as part of the `ObjectName` as they key after the domain name.
+The pattern is used as part of the `ObjectName` as the key after the domain name.
 
 By default Camel will use MBean names for the `ManagedCamelContextMBean`
 as follows:
@@ -183,11 +184,11 @@ Then the MBean names will be as follows:
 org.apache.camel:context=myCamel,type=context,name=myCamel
 ----
 
-Now if there is a naming clash in the JVM, such as there already exists
-a MBean with that given name above, then Camel will by default try to
-auto-correct this by finding a new free name in the `JMXMBeanServer` by
-using a counter. As shown below the counter is now appended, so we have
-`myCamel-1` as part of the `ObjectName`:
+In the event of a naming clash within the JVM, such as when there is already an
+MBean with the same name, Camel will automatically try to resolve the issue by
+finding a new, available name in the `JMXMBeanServer` using a counter. For
+example, the counter will be appended to the name, resulting in an `ObjectName`
+such as `myCamel-1`:
 
 [source,text]
 ----
@@ -199,34 +200,34 @@ org.apache.camel:context=myCamel-1,type=context,name=myCamel
 This is possible because Camel uses a naming pattern by default that
 supports the following tokens:
 
-* `#camelId#` = the CamelContext id (eg the name)
-* `#name#` - same as `#camelId#`
-* `#counter#` - an incrementing counter
-* `#bundleId#` - the OSGi bundle id (only for OSGi environments)
-* `#symbolicName#` - the OSGi symbolic name (only for OSGi environments)
-* `#version#` - the OSGi bundle version (only for OSGi environments)
+* `\#camelId#` = the CamelContext id (eg the name)
+* `\#name#` - same as `\#camelId#`
+* `\#counter#` - an incrementing counter
+* `\#bundleId#` - the OSGi bundle id (only for OSGi environments)
+* `\#symbolicName#` - the OSGi symbolic name (only for OSGi environments)
+* `\#version#` - the OSGi bundle version (only for OSGi environments)
 
 The default naming pattern is differentiated between OSGi and non-OSGi
 as follows:
 
-* non OSGI: `#name#`
-* OSGi: `#symbolicName#`
+* non OSGI: `\#name#`
+* OSGi: `\#symbolicName#`
 
 If there is a naming clash in the `JMXMBeanServer` then Camel
-will automatic fallback and use the `#counter#` in the pattern to remedy
-this. And thus the following patterns will then be used:
+will automatically fallback and use the `\#counter#` in the pattern to remedy
+this. Thus the following patterns will then be used:
 
-* non OSGI: `#name#-#counter#`
-* OSGi: `#symbolicName#-#counter#`
+* non OSGI: `\#name#-\#counter#`
+* OSGi: `\#symbolicName#-\#counter#`
 
 If you set an explicit naming pattern, then that pattern is always used,
-and the default patterns above is *not* used.
+and the default patterns above are *not* used.
 
 This allows us to have full control, very easily, of the naming for both
-the `CamelContext` id in the Registry as well the JMX MBeans in the `JMXMBeanRegistry`.
+the `CamelContext` id in the Registry and the JMX MBeans in the `JMXMBeanRegistry`.
 
-So if we want to explicit name both the `CamelContext` and to use fixed
-MBean names, that do not change (eg has no counters), then we can use
+So if we want to explicitly name both the `CamelContext` and to use fixed
+MBean names that do not change (i.e. without counters), then we can use
 the `managementNamePattern` attribute:
 
 [source,xml]
@@ -250,14 +251,14 @@ context.getManagementNameStrategy().setNamePattern("#name#");
 
 == Configuring performance statistics
 
-You can set a level whether performance statistics is
+You can set a level for whether performance statistics are
 enabled or not when Camel starts up. The levels are:
+
+* `Default` - Camel will enable statistics for both routes and
+processors (fine grained).
 
 * `Extended` - As default but with additional statistics gathered during
 runtime such as fine grained level of usage of endpoints and more.
-
-* ``Default` - Camel will enable statistics for both routes and
-processors (fine grained).
 
 * `RoutesOnly` - Camel will only enable statistics for routes (coarse
 grained)
@@ -270,9 +271,8 @@ grained)
 *What does statistics enabled mean?*
 
 Statistics enabled means that Camel will do fine grained performance
-statistics for that particular MBean. The statistics you can see are
-many, such as: number of exchanges completed/failed,
-last/total/mina/max/mean processing time, first/last failed time, etc.
+statistics for that particular MBean. There are statistics you can see, such as: number of exchanges completed/failed,
+last/total/min/max/mean processing time, first/last failed time, etc.
 
 ====
 
@@ -296,10 +296,10 @@ And from XML DSL you can do:
 
 === Performance load statistics
 
-It is possible to include load statistics
-per CamelContext and Route MBeans. The statistics is
-average load based on the number of in-flight exchanges, on a per 1, 5,
-and 15 minute rate. This is similar to load statistics on Unix systems.
+It is possible to include load statistics for CamelContext and Route MBeans.
+These statistics are for average load based on the number of in-flight
+exchanges, measured over periods of 1, 5, and 15 minutes. This is similar to
+load statistics on Unix systems.
 
 You can enable this by setting `loadStatisticsEnabled=true`.
 
@@ -317,7 +317,7 @@ passphrase, and use `xxxxxx` as the replacement value.
 When implementing custom Camel components you can mark which
 JMX attributes to mask with the `@ManagedAttribute` and `@ManagedOperation` annotations.
 
-Te attribute `mask` can be set to `true` to indicate that the result of this JMX
+The `mask` attribute can be set to `true` to indicate that the result of this JMX
 attribute/operation should be masked (if enabled on JMX agent, see
 above).
 

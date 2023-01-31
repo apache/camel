@@ -36,15 +36,16 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.apache.camel.support.SupplierRegistry;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.function.Suppliers;
 
 /**
  * <p>
- * {@link SupplierRegistry} extension that allows registration of bean <em>recipes</em> based on javax.inject
+ * {@link SupplierRegistry} extension that allows registration of bean <em>recipes</em> based on jakarta.inject
  * annotations.
  * </p>
  *
@@ -67,10 +68,53 @@ public class DIRegistry extends SupplierRegistry {
         bind(type, type);
     }
 
+    private static boolean hasInjectAnnotation(Constructor<?> ctr) {
+        if (ctr.getAnnotation(Inject.class) != null) {
+            return true;
+        }
+
+        for (Annotation a : ctr.getAnnotations()) {
+            String s = a.annotationType().getName();
+            if ("javax.inject.Inject".equals(s)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean isNamedAnnotation(Annotation ann) {
+        if (Named.class == ann.annotationType()) {
+            return true;
+        }
+
+        // backwards comp
+        String s = ann.annotationType().getName();
+        return "javax.inject.Named".equals(s);
+    }
+
+    private static String getNamedAnnotationValue(Class<?> type) {
+        Named ann = type.getAnnotation(Named.class);
+        if (ann != null) {
+            return ann.value();
+        }
+
+        for (Annotation a : type.getAnnotations()) {
+            if (isNamedAnnotation(a)) {
+                String s = a.toString();
+                // @javax.inject.Named("valueHere")
+                String name = StringHelper.between(s, "(\"", "\")");
+                return name;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * Main "registration" method, where {@code beanClass} is expected to be a pojo class with non-default constructor
      * annotated with {@link Inject}. The class may be annotated with {@link Named}. (Maybe supporting
-     * {@link javax.inject.Singleton} soon).
+     * {@link jakarta.inject.Singleton} soon).
      *
      * @param key  the lookup type
      * @param type the actual type (to use when instantiating a bean)
@@ -78,8 +122,8 @@ public class DIRegistry extends SupplierRegistry {
     public void bind(Class<?> key, Class<?> type) {
         String name = key.getName();
         for (Annotation ann : type.getAnnotations()) {
-            if (Named.class == ann.annotationType()) {
-                name = type.getAnnotation(Named.class).value();
+            if (isNamedAnnotation(ann)) {
+                name = getNamedAnnotationValue(type);
                 if (name == null || "".equals(name.trim())) {
                     name = key.getName();
                 }
@@ -94,7 +138,7 @@ public class DIRegistry extends SupplierRegistry {
             if (ctr.getParameterCount() == 0) {
                 defaultConstructor = ctr;
             } else {
-                if (ctr.getAnnotation(Inject.class) != null) {
+                if (hasInjectAnnotation(ctr)) {
                     constructors.add(ctr);
                 }
             }
@@ -215,7 +259,7 @@ public class DIRegistry extends SupplierRegistry {
 
     /**
      * Make an {@code alias} point to the same target bean as existing {@code key}.
-     * 
+     *
      * @param alias
      * @param key
      */

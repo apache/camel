@@ -97,7 +97,7 @@ public class ExchangeIdempotentConsumerTest extends ContextTestSupport {
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
-    private final class MyIdempotentRepo implements IdempotentRepository {
+    private static final class MyIdempotentRepo implements IdempotentRepository {
 
         private IdempotentRepository delegate;
         private Set<String> exchanges = new LinkedHashSet<>();

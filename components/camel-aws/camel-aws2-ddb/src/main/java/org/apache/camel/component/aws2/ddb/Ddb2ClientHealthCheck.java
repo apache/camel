@@ -19,24 +19,21 @@ package org.apache.camel.component.aws2.ddb;
 
 import java.util.Map;
 
-import org.apache.camel.component.aws2.ddb.client.Ddb2ClientFactory;
-import org.apache.camel.component.aws2.ddb.client.Ddb2InternalClient;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.model.ListTablesRequest;
 
 public class Ddb2ClientHealthCheck extends AbstractHealthCheck {
 
     private final Ddb2Endpoint ddb2Endpoint;
-    private final String clientId;
 
     public Ddb2ClientHealthCheck(Ddb2Endpoint ddb2Endpoint, String clientId) {
         super("camel", "aws2-ddb-client-" + clientId);
         this.ddb2Endpoint = ddb2Endpoint;
-        this.clientId = clientId;
     }
 
     @Override
@@ -56,8 +53,9 @@ public class Ddb2ClientHealthCheck extends AbstractHealthCheck {
             }
         }
         try {
-            Ddb2InternalClient ddb2Client = Ddb2ClientFactory.getDynamoDBClient(configuration);
-            ddb2Client.getDynamoDBClient().listTables();
+            DynamoDbClient ddbClient = ddb2Endpoint.getDdbClient();
+
+            ddbClient.listTables(ListTablesRequest.builder().limit(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);

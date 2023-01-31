@@ -25,13 +25,14 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.Variant;
+
 import javax.security.auth.Subject;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Variant;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;

@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * Test class used to demonstrate the problematic disconnect sequence of the {@link FtpOperations}.
  * <p>
  * Setting the logging level of {@code org.apache.camel.file.remote} to {@code TRACE} will provide useful information
- * 
+ *
  * @author l.chiarello
  */
 public class FtpSoTimeoutTest extends CamelTestSupport {

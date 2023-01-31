@@ -18,7 +18,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 118 options, which are listed below.
+The camel.main supports 116 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -97,8 +97,6 @@ The camel.main supports 118 options, which are listed below.
 | *camel.main.routesBuilder{zwsp}Classes* | Sets classes names that implement RoutesBuilder . |  | String
 | *camel.main.routesBuilders* | Sets the RoutesBuilder instances. |  | List
 | *camel.main.routesCollector{zwsp}Enabled* | Whether the routes collector is enabled or not. When enabled Camel will auto-discover routes (RouteBuilder instances from the registry and also load additional routes from the file system). The routes collector is default enabled. | true | boolean
-| *camel.main.routesCompile{zwsp}Directory* | Directory to use for saving runtime compiled Camel routes to class files, when using camel-java-joor-dsl as Java DSL (such as when using Camel K with Java source routes). Camel will compile to in-memory only by default. Specifying this option, allows Camel to persist the compiled class to disk. And when starting the application again the routes are loaded from the pre-compiled class files instead of re-compiling again. |  | String
-| *camel.main.routesCompileLoad{zwsp}First* | Whether to load preexisting compiled Camel routes class files, when using camel-java-joor-dsl as Java DSL (such as when using Camel K with Java source routes). If enabled then Camel will look in the routes compile directory if a compiled Java route already exists and load its bytecode instead of runtime compiling from its java source file. | false | boolean
 | *camel.main.routesExclude{zwsp}Pattern* | Used for exclusive filtering of routes from directories. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma, as example, to exclude all the routes from a directory whose name contains foo use: &#42;&#42;/foo. |  | String
 | *camel.main.routesInclude{zwsp}Pattern* | Used for inclusive filtering of routes from directories. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma, as example, to include all the routes from a directory whose name contains foo use: &#42;&#42;/foo. | classpath:camel/*,classpath:camel-template/*,classpath:camel-rest/* | String
 | *camel.main.routesReload{zwsp}Directory* | Directory to scan for route changes. Camel cannot scan the classpath, so this must be configured to a file directory. Development with Maven as build tool, you can configure the directory to be src/main/resources to scan for Camel routes in XML or YAML files. | src/main/resources/camel | String
@@ -202,7 +200,7 @@ The camel.rest supports 27 options, which are listed below.
 | *camel.rest.inlineRoutes* | Inline routes in rest-dsl which are linked using direct endpoints. By default, each service in Rest DSL is an individual route, meaning that you would have at least two routes per service (rest-dsl, and the route linked from rest-dsl). Enabling this allows Camel to optimize and inline this as a single route, however this requires to use direct endpoints, which must be unique per service. This option is default false. | false | boolean
 | *camel.rest.jsonDataFormat* | Sets a custom json data format to be used Important: This option is only for setting a custom name of the data format, not to refer to an existing data format instance. |  | String
 | *camel.rest.port* | Sets the port to use by the REST consumer |  | int
-| *camel.rest.producerApiDoc* | Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document. This requires adding camel-openapi-java, or camel-swagger-java to the classpath, and any miss configuration will let Camel fail on startup and report the error(s). The location of the api document is loaded from classpath by default, but you can use file: or http: to refer to resources to load from file or http url. |  | String
+| *camel.rest.producerApiDoc* | Sets the location of the api document (swagger api) the REST producer will use to validate the REST uri and query parameters are valid accordingly to the api document. This requires adding camel-openapi-java to the classpath, and any miss configuration will let Camel fail on startup and report the error(s). The location of the api document is loaded from classpath by default, but you can use file: or http: to refer to resources to load from file or http url. |  | String
 | *camel.rest.producerComponent* | Sets the name of the Camel component to use as the REST producer |  | String
 | *camel.rest.scheme* | Sets the scheme to use by the REST consumer |  | String
 | *camel.rest.skipBindingOnError{zwsp}Code* | Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is. This option is default true. | true | boolean

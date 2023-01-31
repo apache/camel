@@ -21,22 +21,18 @@ import java.util.Map;
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.model.ListStreamsRequest;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
-import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClientBuilder;
 
 public class Ddb2StreamConsumerHealthCheck extends AbstractHealthCheck {
 
     private final Ddb2StreamConsumer ddb2StreamConsumer;
-    private final String routeId;
 
     public Ddb2StreamConsumerHealthCheck(Ddb2StreamConsumer ddb2StreamConsumer, String routeId) {
         super("camel", "aws2-ddbstream-consumer-" + routeId);
         this.ddb2StreamConsumer = ddb2StreamConsumer;
-        this.routeId = routeId;
     }
 
     @Override
@@ -57,20 +53,9 @@ public class Ddb2StreamConsumerHealthCheck extends AbstractHealthCheck {
                     return;
                 }
             }
-            DynamoDbStreamsClient client;
-            if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider())) {
-                AwsBasicCredentials cred
-                        = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
-                DynamoDbStreamsClientBuilder clientBuilder = DynamoDbStreamsClient.builder();
-                client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
-                        .region(Region.of(configuration.getRegion())).build();
-            } else if (ObjectHelper.isNotEmpty(configuration.getAmazonDynamoDbStreamsClient())) {
-                client = configuration.getAmazonDynamoDbStreamsClient();
-            } else {
-                DynamoDbStreamsClientBuilder clientBuilder = DynamoDbStreamsClient.builder();
-                client = clientBuilder.region(Region.of(configuration.getRegion())).build();
-            }
-            client.listStreams();
+            DynamoDbStreamsClient client = ddb2StreamConsumer.getEndpoint().getClient();
+
+            client.listStreams(ListStreamsRequest.builder().limit(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
             builder.error(e);

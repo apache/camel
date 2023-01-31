@@ -93,7 +93,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     /**
      * Constructs a fully-initialized DefaultEndpoint instance. This is the preferred method of constructing an object
      * from Java code (as opposed to Spring beans, etc.).
-     * 
+     *
      * @param endpointUri the full URI used to create this endpoint
      * @param component   the component that created this endpoint
      */
@@ -493,7 +493,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     protected void doInit() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
 
-        if (autowiredEnabled && getComponent() != null) {
+        if (autowiredEnabled && getComponent() != null && getComponent().isAutowiredEnabled()) {
             PropertyConfigurer configurer = getComponent().getEndpointPropertyConfigurer();
             if (configurer instanceof PropertyConfigurerGetter) {
                 PropertyConfigurerGetter getter = (PropertyConfigurerGetter) configurer;

@@ -27,25 +27,35 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mongodb.CamelMongoDbException;
 import org.apache.camel.component.mongodb.MongoDbComponent;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.api.ConfigurableContext;
 import org.apache.camel.test.infra.mongodb.services.MongoDBService;
 import org.apache.camel.test.infra.mongodb.services.MongoDBServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.bson.Document;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public abstract class AbstractMongoDbITSupport extends CamelTestSupport {
+public abstract class AbstractMongoDbITSupport implements ConfigurableContext {
 
+    @Order(1)
     @RegisterExtension
     public static MongoDBService service = MongoDBServiceFactory.createSingletonService();
+
+    @Order(2)
+    @RegisterExtension
+    protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
     protected static final String SCHEME = "mongodb";
     protected static final String USER = "test-user";
@@ -60,18 +70,26 @@ public abstract class AbstractMongoDbITSupport extends CamelTestSupport {
     protected static String testCollectionName;
     protected static String dynamicCollectionName;
 
-    @Override
-    public void doPreSetup() throws Exception {
-        super.doPreSetup();
+    protected CamelContext context;
+    protected ProducerTemplate template;
 
-        mongo = MongoClients.create(service.getReplicaSetUrl());
-        //    mongo = MongoClients.create("mongodb://admin:password@localhost:27017");
-        db = mongo.getDatabase(dbName);
-        //    createAuthorizationUser();
+    @BeforeEach
+    public void setupContextAndTemplates() {
+        template = contextExtension.getProducerTemplate();
+        context = contextExtension.getContext();
     }
 
-    @Override
-    public void doPostSetup() {
+    protected void doPreSetup() throws Exception {
+        mongo = MongoClients.create(service.getReplicaSetUrl());
+
+        db = mongo.getDatabase(dbName);
+    }
+
+    protected void doPostSetup() {
+        refresh();
+    }
+
+    protected void refresh() {
         // Refresh the test collection - drop it and recreate it. We don't do
         // this for the database because MongoDB would create large
         // store files each time
@@ -86,26 +104,28 @@ public abstract class AbstractMongoDbITSupport extends CamelTestSupport {
         dynamicCollection = db.getCollection(dynamicCollectionName, Document.class);
     }
 
-    @Override
     @AfterEach
-    public void tearDown() throws Exception {
-        testCollection.drop();
-        dynamicCollection.drop();
+    public void tearDown() {
+        if (testCollection != null) {
+            testCollection.drop();
+        }
 
-        super.tearDown();
+        if (dynamicCollection != null) {
+            dynamicCollection.drop();
+        }
     }
 
+    @ContextFixture
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        MongoDbComponent component = new MongoDbComponent();
-        component.setMongoConnection(mongo);
+    public void configureContext(CamelContext context) throws Exception {
+        doPreSetup();
 
-        @SuppressWarnings("deprecation")
-        CamelContext ctx = new DefaultCamelContext();
-        ctx.getPropertiesComponent().setLocation("classpath:mongodb.test.properties");
-        ctx.addComponent(SCHEME, component);
+        context.getPropertiesComponent().setLocation("classpath:mongodb.test.properties");
 
-        return ctx;
+        context.getComponent(SCHEME, MongoDbComponent.class).setMongoConnection(null);
+        context.getRegistry().bind("myDb", mongo);
+
+        doPostSetup();
     }
 
     /**
@@ -147,8 +167,6 @@ public abstract class AbstractMongoDbITSupport extends CamelTestSupport {
     }
 
     protected CamelMongoDbException extractAndAssertCamelMongoDbException(Object result, String message) {
-        assertTrue(result instanceof Throwable, "Result is not an Exception");
-        assertTrue(result instanceof CamelExecutionException, "Result is not an CamelExecutionException");
         Throwable exc = ((CamelExecutionException) result).getCause();
         assertTrue(exc instanceof CamelMongoDbException, "Result is not an CamelMongoDbException");
         CamelMongoDbException camelExc = ObjectHelper.cast(CamelMongoDbException.class, exc);

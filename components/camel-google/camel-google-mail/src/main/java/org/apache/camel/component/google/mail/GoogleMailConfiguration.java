@@ -164,7 +164,7 @@ public class GoogleMailConfiguration {
 
     /**
      * GMail scopes
-     * 
+     *
      * @see com.google.api.services.gmail.GmailScopes
      */
     public void setScopes(Collection<String> scopes) {

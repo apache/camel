@@ -20,7 +20,6 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.LegacyDefaultErrorHandlerBuilder;
 import org.apache.camel.reifier.errorhandler.ErrorHandlerReifier;
 import org.apache.camel.spi.CamelLogger;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -37,8 +36,6 @@ public class LegacyTransactionErrorHandlerBuilder extends LegacyDefaultErrorHand
                 LegacyTransactionErrorHandlerReifier::new);
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(LegacyTransactionErrorHandlerBuilder.class);
-    private static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
     private TransactionTemplate transactionTemplate;
     private LoggingLevel rollbackLoggingLevel = LoggingLevel.WARN;
 

@@ -18,7 +18,7 @@ package org.apache.camel.converter.jaxb;
 
 import java.lang.reflect.Method;
 
-import javax.xml.bind.annotation.XmlElementDecl;
+import jakarta.xml.bind.annotation.XmlElementDecl;
 
 import org.apache.camel.CamelContext;
 

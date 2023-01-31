@@ -124,7 +124,7 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
 
         /**
          * This method creates the response to the caller if the order could not be processed
-         * 
+         *
          * @param  headers the in headers
          * @param  payload the in payload
          * @return         the out payload

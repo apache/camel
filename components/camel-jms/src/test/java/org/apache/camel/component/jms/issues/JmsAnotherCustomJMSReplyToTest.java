@@ -18,9 +18,9 @@ package org.apache.camel.component.jms.issues;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.TextMessage;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Queue;
+import jakarta.jms.TextMessage;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
@@ -49,11 +49,11 @@ public class JmsAnotherCustomJMSReplyToTest extends AbstractJMSTest {
         assertEquals("What's your name", msg.getText());
 
         // there should be a JMSReplyTo so we know where to send the reply
-        Destination replyTo = msg.getJMSReplyTo();
-        assertEquals("queue://JmsAnotherCustomJMSReplyToTest.reply", replyTo.toString());
+        Queue replyTo = (Queue) msg.getJMSReplyTo();
+        assertEquals("ActiveMQQueue[JmsAnotherCustomJMSReplyToTest.reply]", replyTo.toString());
 
         // send reply
-        template.sendBody("activemq:" + replyTo, "My name is Arnio");
+        template.sendBody("activemq:" + replyTo.getQueueName(), "My name is Arnio");
 
         Awaitility.await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> MockEndpoint.assertIsSatisfied(context));
     }

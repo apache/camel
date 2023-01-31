@@ -30,6 +30,8 @@
 * xref:migration-and-upgrade.adoc[Migration and Upgrade]
 ** xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide]
 ** xref:camel-3x-upgrade-guide.adoc[Camel 3.x Upgrade Guide]
+** xref:camel-4-migration-guide.adoc[Camel 3.x to 4.0 Migration Guide]
+** xref:camel-4x-upgrade-guide.adoc[Camel 4.x Upgrade Guide]
 * xref:architecture.adoc[Architecture]
 ** xref:backlog-debugger.adoc[Backlog debugger]
 ** xref:backlog-tracer.adoc[Backlog Tracer]

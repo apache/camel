@@ -106,7 +106,7 @@ public final class CamelAnnotationsHandler {
         } else if (!testClass.isAnnotationPresent(EnableRouteCoverage.class)) {
             // route coverage need JMX so do not disable it by default
             LOGGER.info(
-                    "Disabling Camel JMX globally for tests by default.  Use the DisableJMX annotation to override the default setting.");
+                    "Disabling Camel JMX globally for tests by default. Use the DisableJMX annotation to override the default setting.");
             DefaultCamelContext.setDisableJmx(true);
         } else {
             LOGGER.info("Enabling Camel JMX as EnableRouteCoverage is used.");

@@ -104,7 +104,7 @@ public class Web3jConsumerCatchUpToLatestTransactionsObservableMockTest extends 
                 errorHandler(deadLetterChannel("mock:error"));
                 from(getUrl() + OPERATION.toLowerCase() + "=" + CATCH_UP_TO_LATEST_TRANSACTION_OBSERVABLE
                      + "&fromBlock=5499965")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

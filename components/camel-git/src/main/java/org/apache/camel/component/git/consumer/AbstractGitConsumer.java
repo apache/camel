@@ -22,13 +22,8 @@ import org.apache.camel.component.git.GitEndpoint;
 import org.apache.camel.support.ScheduledPollConsumer;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.Repository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractGitConsumer extends ScheduledPollConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractGitConsumer.class);
-
     private final GitEndpoint endpoint;
 
     private Repository repo;

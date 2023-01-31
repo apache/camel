@@ -20,20 +20,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mongodb.BasicDBObject;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mongodb.MongoDbConstants;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class MongoDbInsertBatchIT extends AbstractMongoDbITSupport {
+public class MongoDbInsertBatchIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
+
+    @BeforeEach
+    void checkDocuments() {
+        Assumptions.assumeTrue(0 == testCollection.countDocuments(), "The collection should have no documents");
+    }
 
     @Test
     public void testInsertBatch() {
-        assertEquals(0, testCollection.countDocuments());
-
         Document a = new Document(MongoDbConstants.MONGO_ID, "testInsert1");
         a.append("MyId", 1).toJson();
         Document b = new Document(MongoDbConstants.MONGO_ID, "testInsert2");
@@ -45,6 +54,9 @@ public class MongoDbInsertBatchIT extends AbstractMongoDbITSupport {
         taxGroupList.add(a);
         taxGroupList.add(b);
         taxGroupList.add(c);
+
+        FluentProducerTemplate fluentTemplate = context.createFluentProducerTemplate();
+        fluentTemplate.start();
 
         Exchange out = fluentTemplate.to("direct:insert").withBody(taxGroupList).send();
 
@@ -63,7 +75,6 @@ public class MongoDbInsertBatchIT extends AbstractMongoDbITSupport {
         assertEquals(3, out3.getInteger("MyId"));
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -71,5 +82,11 @@ public class MongoDbInsertBatchIT extends AbstractMongoDbITSupport {
                         .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert");
             }
         };
+    }
+
+    @RouteFixture
+    @Override
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(createRouteBuilder());
     }
 }

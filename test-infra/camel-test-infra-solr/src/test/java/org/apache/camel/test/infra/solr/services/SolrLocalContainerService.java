@@ -25,7 +25,7 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class SolrLocalContainerService implements SolrService, ContainerService<GenericContainer> {
-    public static final String CONTAINER_IMAGE = "solr:8.11.1";
+    public static final String CONTAINER_IMAGE = "solr:8.11.2";
     public static final String CONTAINER_NAME = "solr";
     private static final int PORT = 8983;
 

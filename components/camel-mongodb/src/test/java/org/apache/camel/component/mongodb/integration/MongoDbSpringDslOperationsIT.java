@@ -17,16 +17,16 @@
 package org.apache.camel.component.mongodb.integration;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.test.infra.core.annotations.ContextProvider;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 
 public class MongoDbSpringDslOperationsIT extends MongoDbOperationsIT {
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
+    @ContextProvider
+    protected static CamelContext createSpringCamelContext() {
         GenericApplicationContext applicationContext = new GenericApplicationContext();
         applicationContext.getBeanFactory().registerSingleton("myDb", mongo);
 
@@ -36,19 +36,13 @@ public class MongoDbSpringDslOperationsIT extends MongoDbOperationsIT {
         applicationContext.refresh();
 
         @SuppressWarnings("deprecation")
-        CamelContext ctx = SpringCamelContext.springCamelContext(applicationContext, true);
+        CamelContext ctx = null;
+        try {
+            ctx = SpringCamelContext.springCamelContext(applicationContext, true);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         return ctx;
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            @Override
-            public void configure() {
-                // Nothing, all routes are initialized by the Spring DSL context
-                // file
-            }
-        };
     }
 }

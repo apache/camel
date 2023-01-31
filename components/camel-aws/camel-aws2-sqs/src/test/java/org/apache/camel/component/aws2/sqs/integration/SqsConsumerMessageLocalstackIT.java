@@ -62,9 +62,9 @@ public class SqsConsumerMessageLocalstackIT extends Aws2SQSBaseTest {
 
                 fromF("aws2-sqs://%s?deleteAfterRead=false&deleteIfFiltered=true&autoCreateQueue=true",
                         sharedNameGenerator.getName())
-                                .startupOrder(1)
-                                .filter(simple("${body} != 'ignore'")).log("${body}").log("${header.CamelAwsSqsReceiptHandle}")
-                                .to("mock:result");
+                        .startupOrder(1)
+                        .filter(simple("${body} != 'ignore'")).log("${body}").log("${header.CamelAwsSqsReceiptHandle}")
+                        .to("mock:result");
             }
         };
     }

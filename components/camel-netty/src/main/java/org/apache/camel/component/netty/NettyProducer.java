@@ -111,6 +111,8 @@ public class NettyProducer extends DefaultAsyncProducer {
             config.setMaxTotal(configuration.getProducerPoolMaxTotal());
             config.setMinIdle(configuration.getProducerPoolMinIdle());
             config.setMaxIdle(configuration.getProducerPoolMaxIdle());
+            config.setBlockWhenExhausted(configuration.isProducerPoolBlockWhenExhausted());
+            config.setMaxWait(Duration.ofMillis(configuration.getProducerPoolMaxWait()));
             // we should test on borrow to ensure the channel is still valid
             config.setTestOnBorrow(true);
             // idle channels can be evicted
@@ -549,7 +551,7 @@ public class NettyProducer extends DefaultAsyncProducer {
                 LOG.trace("Putting channel back to pool {}", channel);
                 pool.returnObject(channelFuture);
             } else {
-                // and if its not active then invalidate it
+                // and if it's not active then invalidate it
                 LOG.trace("Invalidating channel from pool {}", channel);
                 pool.invalidateObject(channelFuture);
             }

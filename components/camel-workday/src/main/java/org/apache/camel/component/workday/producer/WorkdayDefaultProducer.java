@@ -29,8 +29,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The Workday Default producer.
@@ -39,8 +37,6 @@ public abstract class WorkdayDefaultProducer extends DefaultProducer {
 
     @Metadata(description = "The workday URL", javaType = "String")
     public static final String WORKDAY_URL_HEADER = "CamelWorkdayURL";
-
-    private static final Logger LOG = LoggerFactory.getLogger(WorkdayReportProducer.class);
 
     private WorkdayEndpoint endpoint;
 

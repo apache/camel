@@ -29,7 +29,7 @@ public interface ManagedRestRegistryMBean extends ManagedServiceMBean {
     @ManagedOperation(description = "Lists all the Rest services in the registry (url, path, verb, consumes, produces)")
     TabularData listRestServices();
 
-    @ManagedOperation(description = "Outputs the Rest services API documentation in JSON (requires camel-openapi-java, or camel-swagger-java on classpath)")
+    @ManagedOperation(description = "Outputs the Rest services API documentation in JSON (requires camel-openapi-java on classpath)")
     String apiDocAsJson();
 
 }

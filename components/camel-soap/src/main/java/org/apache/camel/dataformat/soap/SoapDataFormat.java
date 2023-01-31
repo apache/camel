@@ -22,10 +22,11 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBIntrospector;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBIntrospector;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.Exchange;
@@ -95,7 +96,7 @@ public class SoapDataFormat extends JaxbDataFormat {
     /**
      * Marshal inputObjects to SOAP xml. If the exchange or message has an EXCEPTION_CAUGTH property or header then
      * instead of the object the exception is marshaled.
-     * 
+     *
      * To determine the name of the top level xml elements the elementNameStrategy is used.
      */
     @Override
@@ -109,11 +110,11 @@ public class SoapDataFormat extends JaxbDataFormat {
 
     /**
      * Create body content from a non Exception object. So the interface should be in doc lit bare style.
-     * 
+     *
      * @param  inputObject    object to be put into the SOAP body
      * @param  soapAction     for name resolution
      * @param  headerElements in/out parameter used to capture header content if present
-     * 
+     *
      * @return                JAXBElement for the body content
      */
     protected List<Object> createContentFromObject(
@@ -158,8 +159,8 @@ public class SoapDataFormat extends JaxbDataFormat {
         // In the case of a parameter, the class of the value of the holder class
         // is used for the mapping rather than the holder class itself.
 
-        if (fromObj instanceof javax.xml.ws.Holder) {
-            javax.xml.ws.Holder holder = (javax.xml.ws.Holder) fromObj;
+        if (fromObj instanceof jakarta.xml.ws.Holder) {
+            jakarta.xml.ws.Holder holder = (jakarta.xml.ws.Holder) fromObj;
             value = holder.value;
             if (null == value) {
                 return null;

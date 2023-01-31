@@ -18,11 +18,11 @@ package org.apache.camel.component.sjms;
 
 import java.util.concurrent.ExecutorService;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.DeliveryMode;
-import javax.jms.ExceptionListener;
-import javax.jms.Message;
-import javax.jms.Session;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
@@ -155,7 +155,7 @@ public class SjmsEndpoint extends DefaultEndpoint
     private boolean eagerLoadingOfProperties;
     @UriParam(enums = "1,2", label = "producer",
               description = "Specifies the delivery mode to be used."
-                            + " Possible values are those defined by javax.jms.DeliveryMode."
+                            + " Possible values are those defined by jakarta.jms.DeliveryMode."
                             + " NON_PERSISTENT = 1 and PERSISTENT = 2.")
     private Integer deliveryMode;
     @UriParam(defaultValue = "-1", label = "producer",
@@ -205,14 +205,14 @@ public class SjmsEndpoint extends DefaultEndpoint
               description = "Whether to allow sending messages with no body. If this option is false and the message body is null, then an JMSException is thrown.")
     private boolean allowNullBody = true;
     @UriParam(label = "advanced", defaultValue = "true",
-              description = "Specifies whether Camel should auto map the received JMS message to a suited payload type, such as javax.jms.TextMessage to a String etc."
+              description = "Specifies whether Camel should auto map the received JMS message to a suited payload type, such as jakarta.jms.TextMessage to a String etc."
                             + " See section about how mapping works below for more details.")
     private boolean mapJmsMessage = true;
     @UriParam(label = "advanced",
               description = "To use a custom DestinationCreationStrategy.")
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
     @UriParam(label = "advanced",
-              description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of <tt>javax.jms.Message</tt> objects when Camel is sending a JMS message.")
+              description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances of <tt>jakarta.jms.Message</tt> objects when Camel is sending a JMS message.")
     private MessageCreatedStrategy messageCreatedStrategy;
     @UriParam(label = "advanced",
               description = "Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification."
@@ -232,7 +232,7 @@ public class SjmsEndpoint extends DefaultEndpoint
     private long recoveryInterval = 5000;
     @UriParam(label = "advanced",
               description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side,"
-                            + " then the caused Exception will be send back in response as a javax.jms.ObjectMessage."
+                            + " then the caused Exception will be send back in response as a jakarta.jms.ObjectMessage."
                             + " If the client is Camel, the returned Exception is rethrown. This allows you to use Camel JMS as a bridge"
                             + " in your routing - for example, using persistent queues to enable robust routing."
                             + " Notice that if you also have transferExchange enabled, this option takes precedence."

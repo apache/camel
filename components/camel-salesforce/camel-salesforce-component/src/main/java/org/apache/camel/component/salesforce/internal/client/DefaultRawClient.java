@@ -49,8 +49,10 @@ public class DefaultRawClient extends AbstractClientBase implements RawClient {
     @Override
     protected void setAccessToken(Request request) {
         // replace old token
-        request.getHeaders().put(BULK_TOKEN_HEADER, accessToken);
-        request.getHeaders().put(REST_TOKEN_HEADER, TOKEN_PREFIX + accessToken);
+        request.header(BULK_TOKEN_HEADER, null);
+        request.header(REST_TOKEN_HEADER, null);
+        request.header(BULK_TOKEN_HEADER, accessToken);
+        request.header(REST_TOKEN_HEADER, TOKEN_PREFIX + accessToken);
     }
 
     @Override
@@ -66,7 +68,7 @@ public class DefaultRawClient extends AbstractClientBase implements RawClient {
 
     /**
      * Make a raw HTTP request to salesforce
-     * 
+     *
      * @param method   HTTP method. "GET", "POST", etc.
      * @param path     The path of the URL. Must begin with a "/"
      * @param format   Encoding format

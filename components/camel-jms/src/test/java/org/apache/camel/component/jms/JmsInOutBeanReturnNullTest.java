@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.infra.activemq.services.ActiveMQService;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
@@ -53,13 +53,12 @@ public class JmsInOutBeanReturnNullTest extends AbstractJMSTest {
         assertNull(out);
     }
 
-    @SuppressWarnings("deprecated")
     @Test
     public void testReturnNullExchange() {
         Exchange reply
                 = template.request("activemq:queue:JmsInOutBeanReturnNullTest", exchange -> exchange.getIn().setBody("foo"));
         assertNotNull(reply);
-        assertNotEquals("foo", reply.getOut().getBody(), "There shouldn't be an out message");
+        assertNotEquals("foo", reply.getMessage().getBody(), "There shouldn't be an out message");
         Message out = reply.getMessage();
         assertNotNull(out);
         Object body = out.getBody();
@@ -72,7 +71,7 @@ public class JmsInOutBeanReturnNullTest extends AbstractJMSTest {
     }
 
     @Override
-    protected JmsComponent setupComponent(CamelContext camelContext, ActiveMQService service, String componentName) {
+    protected JmsComponent setupComponent(CamelContext camelContext, ArtemisService service, String componentName) {
         final JmsComponent jmsComponent = super.setupComponent(camelContext, service, componentName);
 
         jmsComponent.setRequestTimeout(5000);

@@ -25,7 +25,7 @@ public interface Ddb2InternalClient {
 
     /**
      * Returns an DynamoDb client after a factory method determines which one to return.
-     * 
+     *
      * @return DynamoDbClient DynamoDbClient
      */
     DynamoDbClient getDynamoDBClient();

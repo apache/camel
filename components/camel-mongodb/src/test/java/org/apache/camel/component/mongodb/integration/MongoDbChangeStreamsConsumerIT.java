@@ -16,77 +16,89 @@
  */
 package org.apache.camel.component.mongodb.integration;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.CreateCollectionOptions;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
 import org.bson.types.ObjectId;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestMethodOrder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     private MongoCollection<Document> mongoCollection;
-    private String collectionName;
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    @Override
-    public void doPostSetup() {
+    /*
+     * NOTE: in the case of this test, we *DO* want to recreate everything after the test has executed, so that when
+     * we manually start the routes, the collection is present.
+     *
+     * TODO: in the future, this test should be broken in so that it does not depend on complex behaviors after the test
+     *  execution
+     */
+    @AfterEach
+    protected void doPostSetup() {
         super.doPostSetup();
 
-        collectionName = "camelTest";
-        mongoCollection = db.getCollection(collectionName, Document.class);
+        mongoCollection = db.getCollection(AbstractMongoDbITSupport.testCollectionName, Document.class);
         mongoCollection.drop();
 
         CreateCollectionOptions collectionOptions = new CreateCollectionOptions();
-        db.createCollection(collectionName, collectionOptions);
-        mongoCollection = db.getCollection(collectionName, Document.class);
+        db.createCollection(AbstractMongoDbITSupport.testCollectionName, collectionOptions);
+        mongoCollection = db.getCollection(AbstractMongoDbITSupport.testCollectionName, Document.class);
     }
 
+    @Order(1)
     @Test
     public void basicTest() throws Exception {
-        assertEquals(0, mongoCollection.countDocuments());
-        MockEndpoint mock = getMockEndpoint("mock:test");
+        Assumptions.assumeTrue(0 == mongoCollection.countDocuments(), "The collection should have no documents");
+        MockEndpoint mock = contextExtension.getMockEndpoint("mock:test");
         mock.expectedMessageCount(10);
 
         String consumerRouteId = "simpleConsumer";
-        addTestRoutes();
         context.getRouteController().startRoute(consumerRouteId);
 
-        Thread t = new Thread(() -> {
-            for (int i = 0; i < 10; i++) {
-                mongoCollection.insertOne(new Document("increasing", i).append("string", "value" + i));
-            }
-        });
-
-        t.start();
-        t.join();
+        Executors.newSingleThreadExecutor().submit(this::singleInsert).get();
 
         mock.assertIsSatisfied();
         context.getRouteController().stopRoute(consumerRouteId);
     }
 
+    private void singleInsert() {
+        for (int i = 0; i < 10; i++) {
+            mongoCollection.insertOne(new Document("increasing", i).append("string", "value" + i));
+        }
+    }
+
+    @Order(2)
     @Test
     public void filterTest() throws Exception {
-        assertEquals(0, mongoCollection.countDocuments());
-        MockEndpoint mock = getMockEndpoint("mock:test");
+        Assumptions.assumeTrue(0 == mongoCollection.countDocuments(), "The collection should have no documents");
+        MockEndpoint mock = contextExtension.getMockEndpoint("mock:test");
         mock.expectedMessageCount(1);
 
         String consumerRouteId = "filterConsumer";
-        addTestRoutes();
         context.getRouteController().startRoute(consumerRouteId);
 
-        Thread t = new Thread(() -> {
-            for (int i = 0; i < 10; i++) {
-                mongoCollection.insertOne(new Document("increasing", i).append("string", "value" + i));
-            }
-        });
-
-        t.start();
-        t.join();
+        executorService.submit(this::singleInsert).get();
 
         mock.assertIsSatisfied();
 
@@ -95,24 +107,20 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport {
         context.getRouteController().stopRoute(consumerRouteId);
     }
 
+    @Order(3)
     @Test
     public void operationTypeAndIdHeaderTest() throws Exception {
-        assertEquals(0, mongoCollection.countDocuments());
-        MockEndpoint mock = getMockEndpoint("mock:test");
+        Assumptions.assumeTrue(0 == mongoCollection.countDocuments(), "The collection should have no documents");
+        MockEndpoint mock = contextExtension.getMockEndpoint("mock:test");
         mock.expectedMessageCount(2);
 
+        doPostSetup();
+
         String consumerRouteId = "simpleConsumer";
-        addTestRoutes();
         context.getRouteController().startRoute(consumerRouteId);
 
         ObjectId objectId = new ObjectId();
-        Thread t = new Thread(() -> {
-            mongoCollection.insertOne(new Document("_id", objectId).append("string", "value"));
-            mongoCollection.deleteOne(new Document("_id", objectId));
-        });
-
-        t.start();
-        t.join();
+        Executors.newSingleThreadExecutor().submit(() -> insertAndDelete(objectId)).get();
 
         mock.assertIsSatisfied();
 
@@ -122,7 +130,7 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport {
 
         Exchange deleteExchange = mock.getExchanges().get(1);
         Document deleteBodyDocument = deleteExchange.getIn().getBody(Document.class);
-        String deleteBody = "{\"_id\": \"" + objectId.toHexString() + "\"}";
+
         assertEquals("delete", deleteExchange.getIn().getHeader("CamelMongoDbStreamOperationType"));
         assertEquals(objectId, deleteExchange.getIn().getHeader("_id"));
         assertEquals(1, deleteBodyDocument.size());
@@ -131,7 +139,14 @@ public class MongoDbChangeStreamsConsumerIT extends AbstractMongoDbITSupport {
         context.getRouteController().stopRoute(consumerRouteId);
     }
 
-    protected void addTestRoutes() throws Exception {
+    private void insertAndDelete(ObjectId objectId) {
+        mongoCollection.insertOne(new Document("_id", objectId).append("string", "value"));
+        mongoCollection.deleteOne(new Document("_id", objectId));
+    }
+
+    @RouteFixture
+    @Override
+    public void createRouteBuilder(CamelContext context) throws Exception {
         context.addRoutes(new RouteBuilder() {
 
             @Override

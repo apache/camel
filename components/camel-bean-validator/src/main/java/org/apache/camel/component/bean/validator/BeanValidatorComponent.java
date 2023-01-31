@@ -18,11 +18,11 @@ package org.apache.camel.component.bean.validator;
 
 import java.util.Map;
 
-import javax.validation.ConstraintValidatorFactory;
-import javax.validation.MessageInterpolator;
-import javax.validation.TraversableResolver;
-import javax.validation.ValidationProviderResolver;
-import javax.validation.ValidatorFactory;
+import jakarta.validation.ConstraintValidatorFactory;
+import jakarta.validation.MessageInterpolator;
+import jakarta.validation.TraversableResolver;
+import jakarta.validation.ValidationProviderResolver;
+import jakarta.validation.ValidatorFactory;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;

@@ -1,6 +1,25 @@
 = Components
 
-A Component is essentially a factory of xref:endpoint.adoc[Endpoint] instances.
+Components are a fundamental building block of Apache Camel and are used to connect routes to a wide variety of external systems and services. Camel comes with a large number of built-in components that provide connectivity to a wide range of technologies and protocols, such as HTTP, JMS, file, and many others. You can also create a custom components if the built-in components do not meet your needs.
+
+== Components: the basics
+
+A Component is essentially a factory of Endpoint instances. Typically, applications shouldn't need to interact directly with a component. However, there are some circumstances where manipulating the component may be beneficial for the performance, operation, or scalability of the application. In such cases, these applications may use the context to get access to an instance of the endpoint they need to manipulate. The applications can do so by using the method `CamelContext.getEndpoint()`. This method returns an implementation of the `Component` interface that is appropriate for the component requested. For instance, consider the following code:
+
+[source,java]
+----
+myCamelContext.getEndpoint("pop3://john.smith@mailserv.example.com?password=myPassword");
+----
+
+For the URI given in the above example, the `CamelContext` object would map the `pop3` prefix to an instance of the `MailComponent` class.
+
+The parameter to `getEndpoint()` is a URI. The URI _scheme_ (that is,
+the part before `:`) specifies the name of a component. Internally, the `CamelContext` object maintains a mapping from the names of components to `Component` objects.
+
+[NOTE]
+====
+Our documentation contains an in-depth overview of the xref:manual::component.adoc[Component] if you want to learn more about it, including important details necessary to write your own.
+====
 
 == Configuring Component Options
 
@@ -10,32 +29,36 @@ Camel components are configured on two separate levels:
 - endpoint level
 
 The component level is the highest level which holds general and common configurations that are inherited by the endpoints.
-For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+For example, a component may have security settings, credentials for authentication, urls for network connection and so forth.
 
-Some components only have a few options, and others may have many. Because components typically have pre configured defaults
+Some components only have a few options, and others may have many. Because components typically have pre-configured defaults
 that are commonly used, then you may often only need to configure a few options on a component; or none at all.
 
-Configuring components can be done with the xref:component-dsl.adoc[Component DSL],
-in a configuration file (application.properties|yaml), or directly with Java code.
+Configuring components can be done with the xref:component-dsl.adoc[Component DSL], in a configuration file (application.properties|yaml), or directly with Java code.
 
 == Configuring Endpoint Options
 
-Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to
-configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from)
-or as a producer (to), or used for both.
+Typically, you want to configure endpoints, as endpoints often have many options, which allows you to configure what you need the endpoint to do. These endpoint options are also categorized according to the type of endpoint:
+
+* consumer (_from_)
+* producer (_to_)
+* or both.
 
 Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use
 the xref:Endpoint-dsl.adoc[Endpoint DSL] as a _type safe_ way of configuring endpoints.
 
 A good practice when configuring options is to use xref:using-propertyplaceholder.adoc[Property Placeholders],
-which allows to not hardcode urls, port numbers, sensitive information, and other settings.
-In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
+which allow us to avoid using hardcoded urls, port numbers, sensitive information, and other settings.
+In other words, with placeholders you can externalize the configuration from your code, thus obtaining more flexibility and reuse.
 
 === How Camel maps names to components
 
 In the getting started guide, we explained that Camel maintains a map of names to components. This raises the question of how Camel populates this map with named `Component` objects.
 
-*Note*: normally application developers don't need to worry about this. However, this information is fundamental if you are writing a custom component.
+[NOTE]
+====
+Normally, application developers don't need to worry about this. However, this information is fundamental if you are writing a custom component.
+====
 
 There are two ways of populating the map.
 
@@ -73,7 +96,7 @@ If you want Camel to also recognize the class by the name `bar` then you write a
 Camel provides out-of-the-box support for various communication technologies. This support consists of classes that implement the `Component` interface plus properties files that enable a `CamelContext` object to populate its map of named `Component`
 objects.
 
-In the "Getting Started" guide, we provided the following example of calling `CamelContext.getEndpoint()`:
+Earlier in this guide, we provided the following example of calling `CamelContext.getEndpoint()`:
 
 [source,java]
 ----
@@ -82,7 +105,10 @@ myCamelContext.getEndpoint("pop3://john.smith@mailserv.example.com?password=myPa
 
 We originally referred to the parameter as a URI because the online Camel documentation and the Camel source code both claim the parameter is a URI. In reality, the parameter is restricted to being a URL. This is because when Camel extracts the component name from the parameter, it looks for the first ":", which is a simplistic algorithm.
 
-*Note*: to understand, why recall from the Getting Started that a URI can be a URL or a URN.
+[NOTE]
+====
+Remember that in the xref:camel-core:getting-started:index.adoc[Getting Started With Camel] we explained that a URI could be a URL or a URN.
+====
 
 Now consider the following calls to `getEndpoint`:
 
@@ -99,11 +125,19 @@ Camel identifies the components in the above example as `pop3`, `jms`, `urn`, an
 [NOTE]
 ====
 Make sure to read xref:faq:how-do-i-configure-endpoints.adoc[How do I configure endpoints?]
-to learn more about configuring endpoints. For
-example how to refer to beans in the xref:registry.adoc[Registry] or how
-to use raw values for password options, and using
-xref:using-propertyplaceholder.adoc[property placeholders] etc.
+to learn more about configuring endpoints. For example, how to refer to beans in the xref:registry.adoc[Registry] or how
+to use raw values for password options, and using xref:using-propertyplaceholder.adoc[property placeholders] etc.
 ====
+
+== Component DSL
+
+Component-DSL is a builder API that allows using type-safe construction of Camel Components and injecting them directly to the xref:camelcontext.adoc[Camel Context] instead of initializing through a constructor.
+
+** xref:manual::component-dsl.adoc[Component DSL]
+
+== Writing Components
+
+This is an advanced topic and described in more detail in the xref:writing-components.adoc[Writing Components Guide].
 
 == See Also
 

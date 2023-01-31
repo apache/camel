@@ -98,7 +98,7 @@ final class Marshaller<W extends AbstractWriter<?>> {
 
     /**
      * Writes the given map as row.
-     * 
+     *
      * @param map    row values by header
      * @param writer uniVocity writer to use
      */

@@ -72,7 +72,7 @@ public class MDCOnCompletionOnCompletionTest extends ContextTestSupport {
         };
     }
 
-    private class MyOnCompletion extends SynchronizationAdapter {
+    private static class MyOnCompletion extends SynchronizationAdapter {
 
         @Override
         public void onDone(Exchange exchange) {

@@ -18,7 +18,7 @@ package org.apache.camel.model;
 
 import java.util.function.Function;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.support.PatternHelper;
 import org.slf4j.Logger;

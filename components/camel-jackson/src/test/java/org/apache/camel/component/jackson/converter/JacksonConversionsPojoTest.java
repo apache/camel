@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jackson.converter;
 
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationModule;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jackson.JacksonConstants;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -44,7 +44,7 @@ public class JacksonConversionsPojoTest extends CamelTestSupport {
         context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
         context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_TO_POJO, "true");
         context.getGlobalOptions().put(JacksonConstants.TYPE_CONVERTER_MODULE_CLASS_NAMES,
-                JaxbAnnotationModule.class.getName());
+                JakartaXmlBindAnnotationModule.class.getName());
 
         Order order = new Order();
         order.setAmount(1);

@@ -34,9 +34,9 @@
   <!-- configure the ActiveMQ component -->
   <bean id="activemq" class="org.apache.camel.component.jms.JmsComponent">
     <property name="connectionFactory">
-      <bean class="org.apache.activemq.spring.ActiveMQConnectionFactory">
+      <bean class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
         <property name="brokerURL">
-          <bean class="org.apache.camel.test.infra.activemq.services.LegacyEmbeddedBroker" factory-method="createBrokerUrl"/>
+          <bean class="org.apache.camel.component.jms.AbstractSpringJMSTestSupport"  factory-method="getServiceAddress"/>
         </property>
       </bean>
     </property>

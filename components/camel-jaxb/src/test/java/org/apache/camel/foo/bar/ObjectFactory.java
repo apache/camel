@@ -16,9 +16,10 @@
  */
 package org.apache.camel.foo.bar;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlElementDecl;
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.annotation.XmlElementDecl;
+import jakarta.xml.bind.annotation.XmlRegistry;
+
 import javax.xml.namespace.QName;
 
 /**
@@ -38,14 +39,14 @@ public class ObjectFactory {
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package:
      * com.foo.bar
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link PersonType }
-     * 
+     *
      */
     public PersonType createPersonType() {
         return new PersonType();

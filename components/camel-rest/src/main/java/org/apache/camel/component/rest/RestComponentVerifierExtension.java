@@ -81,7 +81,7 @@ public class RestComponentVerifierExtension extends DefaultComponentVerifierExte
         // componentName is required for validation even at runtime camel might
         // be able to find a suitable component at runtime.
 
-        String componentName = (String) map.get("componentName");
+        String componentName = (String) map.get("producerComponentName");
         if (ObjectHelper.isNotEmpty(componentName)) {
 
             // make a defensive copy of the parameters as we mutate the map

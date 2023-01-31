@@ -18,7 +18,7 @@ package org.apache.camel.component.jsonb;
 
 import java.math.BigDecimal;
 
-import javax.json.bind.config.PropertyOrderStrategy;
+import jakarta.json.bind.config.PropertyOrderStrategy;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class JsonbAttributeOrderTest extends CamelTestSupport {
 
     final String expectedJson
-            = "{\"bg\":\"123.123\",\"bool\":true,\"doubleNumber\":123.123,\"floatNumber\":123.0,\"intNumber\":123,\"longNumber\":123}";
+            = "{\"bg\":123.123,\"bool\":true,\"doubleNumber\":123.123,\"floatNumber\":123.0,\"intNumber\":123,\"longNumber\":123}";
 
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {

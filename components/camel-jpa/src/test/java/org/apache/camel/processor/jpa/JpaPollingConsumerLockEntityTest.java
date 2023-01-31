@@ -19,7 +19,7 @@ package org.apache.camel.processor.jpa;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.persistence.OptimisticLockException;
+import jakarta.persistence.OptimisticLockException;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;

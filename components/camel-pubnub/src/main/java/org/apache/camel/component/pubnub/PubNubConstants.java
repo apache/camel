@@ -18,7 +18,7 @@ package org.apache.camel.component.pubnub;
 
 import org.apache.camel.spi.Metadata;
 
-public abstract class PubNubConstants {
+public final class PubNubConstants {
     @Metadata(label = "producer", description = "The operation to perform.", javaType = "String")
     public static final String OPERATION = "CamelPubNubOperation";
     @Metadata(description = "The Timestamp for the event.", javaType = "Long")
@@ -27,4 +27,8 @@ public abstract class PubNubConstants {
     public static final String CHANNEL = "CamelPubNubChannel";
     @Metadata(label = "producer", description = "UUID to be used as a device identifier.", javaType = "String")
     public static final String UUID = "CamelPubNubUUID";
+
+    private PubNubConstants() {
+
+    }
 }

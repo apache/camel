@@ -1,1 +1,0 @@
-../../../../../components/camel-cdi/src/main/docs/cdi.adoc

@@ -28,16 +28,21 @@ public class ActiveMQConsumeWildcardQueuesTest extends AbstractJMSTest {
 
     @Test
     public void testWildcard() throws Exception {
-        getMockEndpoint("mock:chelsea").expectedBodiesReceived("B");
-        getMockEndpoint("mock:1st").expectedBodiesReceived("D");
-        getMockEndpoint("mock:other").expectedBodiesReceivedInAnyOrder("A", "C");
+        MockEndpoint chelsea = getMockEndpoint("mock:chelsea");
+        chelsea.expectedBodiesReceived("B");
+        MockEndpoint first = getMockEndpoint("mock:1st");
+        first.expectedBodiesReceived("D");
+        MockEndpoint other = getMockEndpoint("mock:other");
+        other.expectedBodiesReceivedInAnyOrder("A", "C");
 
         template.sendBody("activemq:queue:sport.pl.manu", "A");
         template.sendBody("activemq:queue:sport.pl.chelsea", "B");
         template.sendBody("activemq:queue:sport.pl.arsenal", "C");
         template.sendBody("activemq:queue:sport.1st.leeds", "D");
 
-        MockEndpoint.assertIsSatisfied(context);
+        chelsea.assertIsSatisfied();
+        other.assertIsSatisfied();
+        first.assertIsSatisfied();
     }
 
     @Override
@@ -50,14 +55,14 @@ public class ActiveMQConsumeWildcardQueuesTest extends AbstractJMSTest {
         return new RouteBuilder() {
             public void configure() {
                 // use wildcard to consume from all sports
-                from("activemq:queue:sport.>")
+                from("activemq:queue:sport.#")
                         .to("log:received?showHeaders=true")
                         .choice()
                         // the JMSDestination contains from which queue the message was consumed from
-                        .when(header("JMSDestination").isEqualTo("queue://sport.pl.chelsea"))
+                        .when(header("JMSDestination").isEqualTo("ActiveMQQueue[sport.pl.chelsea]"))
                         .to("mock:chelsea")
                         // we can use a reg exp to match any message from 1st division
-                        .when(header("JMSDestination").regex("queue://sport.1st.*"))
+                        .when(header("JMSDestination").regex("ActiveMQQueue\\[sport.1st.*\\]"))
                         .to("mock:1st")
                         .otherwise()
                         .to("mock:other")

@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class Camel715ThreadProcessorTest {
     private static final int ITERS = 50000;
 
-    class SendingProcessor implements Processor {
+    static class SendingProcessor implements Processor {
         int iterationNumber;
 
         public SendingProcessor(int iter) {

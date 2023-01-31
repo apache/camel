@@ -24,13 +24,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.xml.ws.RequestWrapper;
+import jakarta.xml.ws.ResponseWrapper;
+import jakarta.xml.ws.WebFault;
+
 import javax.xml.namespace.QName;
-import javax.xml.ws.RequestWrapper;
-import javax.xml.ws.ResponseWrapper;
-import javax.xml.ws.WebFault;
 
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
@@ -50,7 +51,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
 
     /**
      * Init with JAX-WS service interface
-     * 
+     *
      * @param serviceInterface
      * @param isClient         determines if marhalling looks at input or output of method
      */
@@ -159,7 +160,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
                 TypeInfo ti = info.getIn()[i];
                 if (inTypeNameToQName.containsKey(ti.getTypeName())) {
                     if (ti.getTypeName() != null) {
-                        if (!ti.getTypeName().equals("javax.xml.ws.Holder")
+                        if (!ti.getTypeName().equals("jakarta.xml.ws.Holder")
                                 && !inTypeNameToQName.get(ti.getTypeName()).equals(ti.getElName())) {
                             LOG.warn("Ambiguous QName mapping. The type [{}] is already mapped to a QName in this context.",
                                     ti.getTypeName());
@@ -197,7 +198,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
     /**
      * Determine the QName of the method parameter of the method that matches either soapAction and type or if not
      * possible only the type
-     * 
+     *
      * @param  soapAction
      * @param  type
      * @return            matching QName throws RuntimeException if no matching QName was found

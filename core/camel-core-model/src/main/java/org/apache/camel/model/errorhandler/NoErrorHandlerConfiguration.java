@@ -16,7 +16,7 @@
  */
 package org.apache.camel.model.errorhandler;
 
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.ErrorHandlerFactory;
 

@@ -19,8 +19,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.ASN1DataFormat": return new ModelDeserializers.ASN1DataFormatDeserializer();
             case "aggregate": return new ModelDeserializers.AggregateDefinitionDeserializer();
             case "org.apache.camel.model.AggregateDefinition": return new ModelDeserializers.AggregateDefinitionDeserializer();
-            case "any23": return new ModelDeserializers.Any23DataFormatDeserializer();
-            case "org.apache.camel.model.dataformat.Any23DataFormat": return new ModelDeserializers.Any23DataFormatDeserializer();
             case "api-key": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
             case "apiKey": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
             case "org.apache.camel.model.rest.ApiKeyDefinition": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
@@ -545,8 +543,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.language.XPathExpression": return new ModelDeserializers.XPathExpressionDeserializer();
             case "xquery": return new ModelDeserializers.XQueryExpressionDeserializer();
             case "org.apache.camel.model.language.XQueryExpression": return new ModelDeserializers.XQueryExpressionDeserializer();
-            case "xstream": return new ModelDeserializers.XStreamDataFormatDeserializer();
-            case "org.apache.camel.model.dataformat.XStreamDataFormat": return new ModelDeserializers.XStreamDataFormatDeserializer();
             case "yaml": return new ModelDeserializers.YAMLDataFormatDeserializer();
             case "org.apache.camel.model.dataformat.YAMLDataFormat": return new ModelDeserializers.YAMLDataFormatDeserializer();
             case "type-filter": return new ModelDeserializers.YAMLTypeFilterDefinitionDeserializer();

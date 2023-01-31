@@ -28,6 +28,8 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.util.ReflectionUtils;
 
+import static org.apache.camel.component.hdfs.HdfsHelper.asCompressionType;
+
 class HdfsBloomMapFileHandler extends DefaultHdfsFile<BloomMapFile.Writer, BloomMapFile.Reader> {
 
     @SuppressWarnings("rawtypes")
@@ -44,7 +46,7 @@ class HdfsBloomMapFileHandler extends DefaultHdfsFile<BloomMapFile.Writer, Bloom
                     new Path(hdfsPath),
                     MapFile.Writer.keyClass(keyWritableClass),
                     MapFile.Writer.valueClass(valueWritableClass),
-                    MapFile.Writer.compression(endpointConfig.getCompressionType(),
+                    MapFile.Writer.compression(asCompressionType(endpointConfig.getCompressionType()),
                             endpointConfig.getCompressionCodec().getCodec()),
                     MapFile.Writer.progressable(() -> {
                     }));

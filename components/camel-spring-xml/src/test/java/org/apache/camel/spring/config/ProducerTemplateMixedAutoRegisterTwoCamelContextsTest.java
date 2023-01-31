@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spring.config;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;

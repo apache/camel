@@ -21,11 +21,13 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
-import org.apache.camel.EndpointInject;
-import org.apache.camel.RoutesBuilder;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.api.ConfigurableContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -50,26 +52,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * annotations.
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
-public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTestSupport {
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTestSupport implements ConfigurableContext {
 
     private KafkaIdempotentRepository kafkaIdempotentRepository;
-
-    @EndpointInject("mock:out")
-    private MockEndpoint mockOut;
-
-    @EndpointInject("mock:before")
-    private MockEndpoint mockBefore;
 
     void clearTopics() {
         kafkaAdminClient.deleteTopics(Arrays.asList("TEST_PERSISTENCE")).all();
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() {
+    @ContextFixture
+    public void configureContext(CamelContext context) {
         kafkaIdempotentRepository = new KafkaIdempotentRepository("TEST_PERSISTENCE", getBootstrapServers());
         context.getRegistry().bind("kafkaIdempotentRepositoryPersistence", kafkaIdempotentRepository);
+    }
 
+    @Override
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
@@ -80,6 +80,8 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
     }
 
     private void sendMessages(long count) {
+        ProducerTemplate template = contextExtension.getProducerTemplate();
+
         for (int i = 0; i < count; i++) {
             template.sendBodyAndHeader("direct:in", "Test message", "id", i % 5);
         }
@@ -89,14 +91,17 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
     @Test
     @DisplayName("Checks that half of the messages pass and duplicates are blocked")
     public void testFirstPassFiltersAsExpected() {
+        await().until(() -> kafkaIdempotentRepository.isCacheReady());
         int count = 10;
         sendMessages(count);
 
         // all records sent initially
+        MockEndpoint mockBefore = contextExtension.getMockEndpoint("mock:before");
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(count, mockBefore.getReceivedCounter()));
 
         // only first 5 records are received, the rest are filtered
+        MockEndpoint mockOut = contextExtension.getMockEndpoint("mock:out");
         assertEquals(5, mockOut.getReceivedCounter());
     }
 
@@ -110,10 +115,12 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
         sendMessages(count);
 
         // all records sent initially
+        MockEndpoint mockBefore = contextExtension.getMockEndpoint("mock:before");
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(count, mockBefore.getReceivedCounter()));
 
         // nothing pass the idempotent consumer this time
+        MockEndpoint mockOut = contextExtension.getMockEndpoint("mock:out");
         assertEquals(0, mockOut.getReceivedCounter());
     }
 
@@ -129,10 +136,12 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
         }
 
         // all records sent initially
+        MockEndpoint mockBefore = contextExtension.getMockEndpoint("mock:before");
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(count * passes, mockBefore.getReceivedCounter()));
 
         // nothing gets passed the idempotent consumer this time
+        MockEndpoint mockOut = contextExtension.getMockEndpoint("mock:out");
         assertEquals(0, mockOut.getReceivedCounter());
     }
 
@@ -148,16 +157,19 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
     @Test
     @DisplayName("Checks that the remaining messages can finally go through")
     public void testFourthPass() {
+        ProducerTemplate template = contextExtension.getProducerTemplate();
         int count = 5;
         for (int i = 5; i < 10; i++) {
             template.sendBodyAndHeader("direct:in", "Test message", "id", i);
         }
 
         // all records sent initially
+        MockEndpoint mockBefore = contextExtension.getMockEndpoint("mock:before");
         await().atMost(10, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(count, mockBefore.getReceivedCounter()));
 
         // there are no duplicate messages on this run so all of them should pass
+        MockEndpoint mockOut = contextExtension.getMockEndpoint("mock:out");
         assertEquals(count, mockOut.getReceivedCounter());
     }
 
@@ -170,5 +182,4 @@ public class KafkaIdempotentRepositoryPersistenceIT extends BaseEmbeddedKafkaTes
 
         clearTopics();
     }
-
 }

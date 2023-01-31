@@ -19,8 +19,8 @@ package org.apache.camel.component.sjms;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.ExceptionListener;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.ExceptionListener;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
@@ -57,7 +57,7 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     private DestinationCreationStrategy destinationCreationStrategy = new DefaultDestinationCreationStrategy();
     @Metadata(label = "advanced",
               description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances"
-                            + " of javax.jms.Message objects when Camel is sending a JMS message.")
+                            + " of jakarta.jms.Message objects when Camel is sending a JMS message.")
     private MessageCreatedStrategy messageCreatedStrategy;
     @Metadata(defaultValue = "5000", label = "advanced", javaType = "java.time.Duration",
               description = "Specifies the interval between recovery attempts, i.e. when a connection is being refreshed, in milliseconds."

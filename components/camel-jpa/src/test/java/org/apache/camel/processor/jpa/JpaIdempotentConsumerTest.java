@@ -20,8 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Query;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;

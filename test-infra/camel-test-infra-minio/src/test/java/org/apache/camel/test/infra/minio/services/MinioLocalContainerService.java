@@ -61,7 +61,7 @@ public class MinioLocalContainerService implements MinioService, ContainerServic
                 .withCommand("server /data")
                 .withExposedPorts(BROKER_PORT)
                 .waitingFor(new HttpWaitStrategy()
-                        .forPath("/minio/health/ready")
+                        .forPath("/minio/health/live")
                         .forPort(BROKER_PORT)
                         .withStartupTimeout(Duration.ofSeconds(10)));
     }

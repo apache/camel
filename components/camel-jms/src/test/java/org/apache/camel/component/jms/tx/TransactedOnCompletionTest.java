@@ -16,17 +16,23 @@
  */
 package org.apache.camel.component.jms.tx;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 public class TransactedOnCompletionTest extends CamelTestSupport {
+
+    @RegisterExtension
+    public ArtemisService service = ArtemisServiceFactory.createVMService();
 
     @Produce
     protected ProducerTemplate template;
@@ -44,7 +50,7 @@ public class TransactedOnCompletionTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         ActiveMQConnectionFactory connectionFactory
-                = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+                = new ActiveMQConnectionFactory(service.serviceAddress());
         CamelContext camelContext = super.createCamelContext();
         JmsComponent component = new JmsComponent();
         component.setConnectionFactory(connectionFactory);
@@ -58,11 +64,11 @@ public class TransactedOnCompletionTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .onCompletion()
-                        .setBody(simple("onCompletion"))
-                        .to("mock:onCompletion")
-                        .end()
-                        .to("jms:queue:test.queue?transacted=true");
+                    .onCompletion()
+                    .setBody(simple("onCompletion"))
+                    .to("mock:onCompletion")
+                    .end()
+                    .to("jms:queue:test.queue?transacted=true");
 
                 from("jms:queue:test.queue?transacted=true")
                         .to("mock:result");

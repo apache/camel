@@ -99,7 +99,7 @@ public class StreamCacheInternalErrorTest extends ContextTestSupport {
         };
     }
 
-    private class BodyToStreamCacheConverter extends TypeConverterSupport {
+    private static class BodyToStreamCacheConverter extends TypeConverterSupport {
 
         private int invoked;
 
@@ -130,7 +130,7 @@ public class StreamCacheInternalErrorTest extends ContextTestSupport {
         }
     }
 
-    private class MyBody {
+    private static class MyBody {
         private String body;
 
         public MyBody(String body) {

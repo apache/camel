@@ -49,7 +49,7 @@ class MongoDbTailingThread extends MongoAbstractConsumerThread {
                     String.format("db: %s, col: %s", endpoint.getMongoDatabase(), endpoint.getCollection()));
         }
 
-        if (!isCollectionCapped()) {
+        if (Boolean.FALSE.equals(isCollectionCapped())) {
             throw new CamelMongoDbException(
                     String.format(
                             "Tailable cursors are only compatible with capped collections, and collection %s is not capped",

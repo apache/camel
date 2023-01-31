@@ -18,10 +18,11 @@ package org.apache.camel.component.cxf.jaxws;
 
 import java.net.URL;
 
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Endpoint;
+import jakarta.xml.ws.Holder;
+
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Endpoint;
-import javax.xml.ws.Holder;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.CXFTestSupport;
@@ -71,10 +72,10 @@ public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSuppor
                      + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&"
                      + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat="
                      + getDataFormat() + "&loggingFeatureEnabled=true")
-                             .to("cxf://http://localhost:" + port1
-                                 + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&"
-                                 + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat="
-                                 + getDataFormat() + "&loggingFeatureEnabled=true");
+                        .to("cxf://http://localhost:" + port1
+                            + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&"
+                            + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat="
+                            + getDataFormat() + "&loggingFeatureEnabled=true");
             }
         };
     }

@@ -140,7 +140,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     /**
      * Sets the name of the Kafka topic used by this idempotent repository. Each functionally-separate repository should
      * use a different topic.
-     * 
+     *
      * @param topic The topic name.
      */
     public void setTopic(String topic) {
@@ -153,21 +153,21 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
     /**
      * Sets the
-     * 
+     *
      * <pre>
      * bootstrap.servers
      * </pre>
-     * 
+     *
      * property on the internal Kafka producer and consumer. Use this as shorthand if not setting
      * {@link #consumerConfig} and {@link #producerConfig}. If used, this component will apply sensible default
      * configurations for the producer and consumer.
-     * 
+     *
      * @param bootstrapServers The
-     * 
+     *
      *                         <pre>
      *                         bootstrap.servers
      *                         </pre>
-     * 
+     *
      *                         value to use.
      */
     public void setBootstrapServers(String bootstrapServers) {
@@ -181,14 +181,14 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     /**
      * Sets the properties that will be used by the Kafka producer. Overrides {@link #bootstrapServers}, so must define
      * the
-     * 
+     *
      * <pre>
      * bootstrap.servers
      * </pre>
-     * 
+     *
      * property itself. Prefer using {@link #bootstrapServers} for default configuration unless you specifically need
      * non-standard configuration options such as SSL/SASL.
-     * 
+     *
      * @param producerConfig The producer configuration properties.
      */
     public void setProducerConfig(Properties producerConfig) {
@@ -202,14 +202,14 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     /**
      * Sets the properties that will be used by the Kafka consumer. Overrides {@link #bootstrapServers}, so must define
      * the
-     * 
+     *
      * <pre>
      * bootstrap.servers
      * </pre>
-     * 
+     *
      * property itself. Prefer using {@link #bootstrapServers} for default configuration unless you specifically need
      * non-standard configuration options such as SSL/SASL.
-     * 
+     *
      * @param consumerConfig The consumer configuration properties.
      */
     public void setConsumerConfig(Properties consumerConfig) {
@@ -222,7 +222,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
     /**
      * Sets the maximum size of the local key cache.
-     * 
+     *
      * @param maxCacheSize The maximum key cache size.
      */
     public void setMaxCacheSize(int maxCacheSize) {
@@ -243,7 +243,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
      * the stream has been consumed up to the current point. If the poll duration is excessively long for the rate at
      * which messages are sent on the topic, there exists a possibility that the cache cannot be warmed up and will
      * operate in an inconsistent state relative to its peers until it catches up.
-     * 
+     *
      * @param pollDurationMs The poll duration in milliseconds.
      */
     public void setPollDurationMs(int pollDurationMs) {
@@ -359,6 +359,8 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     private void broadcastAction(String key, CacheAction action) {
         try {
             log.debug("Broadcasting action:{} for key:{}", action, key);
+            assert producer != null;
+
             producer.send(new ProducerRecord<>(topic, key, action.toString())).get(); // sync
                                                                                      // send
         } catch (ExecutionException | InterruptedException e) {
@@ -397,6 +399,10 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     @ManagedOperation(description = "Number of times duplicate messages have been detected")
     public boolean isPollerRunning() {
         return topicPoller.isRunning();
+    }
+
+    public boolean isCacheReady() {
+        return cacheReadyLatch.getCount() == 0;
     }
 
     private class TopicPoller implements Runnable {

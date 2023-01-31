@@ -20,8 +20,8 @@ import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Unit test for issue CAMEL-706
  */
-public class TransactionErrorHandlerRedeliveryDelayTest extends CamelSpringTestSupport {
+public class TransactionErrorHandlerRedeliveryDelayTest extends AbstractSpringJMSTestSupport {
 
     private static final LongAdder COUNTER = new LongAdder();
 

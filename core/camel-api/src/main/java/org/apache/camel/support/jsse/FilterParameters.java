@@ -71,7 +71,7 @@ public class FilterParameters extends JsseParameters {
      * Returns a list of compiled {@code Pattern}s based on the values of the exclude list.
      *
      * @return                        the list of compiled expressions, never {@code null}
-     * 
+     *
      * @throws PatternSyntaxException if any of the expressions are invalid
      */
     public List<Pattern> getExcludePatterns() {

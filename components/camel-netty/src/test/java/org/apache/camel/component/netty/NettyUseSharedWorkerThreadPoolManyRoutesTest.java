@@ -84,8 +84,8 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
                 for (AvailablePortFinder.Port port : ports) {
                     from("netty:tcp://localhost:" + port.getPort() + "?textline=true&sync=true&usingExecutorService=false"
                          + "&bossGroup=#sharedBoss&workerGroup=#sharedWorker")
-                                 .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result")
-                                 .transform(body().regexReplaceAll("Hello", "Bye"));
+                            .validate(body().isInstanceOf(String.class)).to("log:result").to("mock:result")
+                            .transform(body().regexReplaceAll("Hello", "Bye"));
                 }
             }
         };

@@ -18,7 +18,7 @@ package org.apache.camel.component.cxf.holder;
 
 import java.util.List;
 
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -151,6 +151,22 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * The delimiter which is used in the
+         * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
+         * objects we are interested in.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder delimiter(String delimiter) {
+            doSetProperty("delimiter", delimiter);
+            return this;
+        }
+        /**
          * Set the need for overidding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
@@ -229,6 +245,22 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointConsumerBuilder policy(String policy) {
             doSetProperty("policy", policy);
+            return this;
+        }
+        /**
+         * The prefix which is used in the
+         * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
+         * objects we are interested in.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param prefix the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointConsumerBuilder prefix(String prefix) {
+            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -457,22 +489,6 @@ public interface AWS2S3EndpointBuilderFactory {
         default AWS2S3EndpointConsumerBuilder deleteAfterRead(
                 String deleteAfterRead) {
             doSetProperty("deleteAfterRead", deleteAfterRead);
-            return this;
-        }
-        /**
-         * The delimiter which is used in the
-         * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
-         * objects we are interested in.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param delimiter the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder delimiter(String delimiter) {
-            doSetProperty("delimiter", delimiter);
             return this;
         }
         /**
@@ -779,22 +795,6 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointConsumerBuilder moveAfterRead(String moveAfterRead) {
             doSetProperty("moveAfterRead", moveAfterRead);
-            return this;
-        }
-        /**
-         * The prefix which is used in the
-         * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
-         * objects we are interested in.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param prefix the value to set
-         * @return the dsl builder
-         */
-        default AWS2S3EndpointConsumerBuilder prefix(String prefix) {
-            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -1706,6 +1706,22 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * The delimiter which is used in the
+         * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
+         * objects we are interested in.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder delimiter(String delimiter) {
+            doSetProperty("delimiter", delimiter);
+            return this;
+        }
+        /**
          * Set the need for overidding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
@@ -1784,6 +1800,22 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointProducerBuilder policy(String policy) {
             doSetProperty("policy", policy);
+            return this;
+        }
+        /**
+         * The prefix which is used in the
+         * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
+         * objects we are interested in.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param prefix the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointProducerBuilder prefix(String prefix) {
+            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -2684,6 +2716,22 @@ public interface AWS2S3EndpointBuilderFactory {
             return this;
         }
         /**
+         * The delimiter which is used in the
+         * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
+         * objects we are interested in.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder delimiter(String delimiter) {
+            doSetProperty("delimiter", delimiter);
+            return this;
+        }
+        /**
          * Set the need for overidding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
@@ -2760,6 +2808,22 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         default AWS2S3EndpointBuilder policy(String policy) {
             doSetProperty("policy", policy);
+            return this;
+        }
+        /**
+         * The prefix which is used in the
+         * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
+         * objects we are interested in.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param prefix the value to set
+         * @return the dsl builder
+         */
+        default AWS2S3EndpointBuilder prefix(String prefix) {
+            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -3500,6 +3564,36 @@ public interface AWS2S3EndpointBuilderFactory {
          */
         public String messageTimestamp() {
             return "MessageTimestamp";
+        }
+
+        /**
+         * The prefix which is used in the
+         * com.amazonaws.services.s3.model.ListObjectsRequest to only list
+         * objects we are interested in.
+         * 
+         * The option is a: {@code } type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3Prefix}.
+         */
+        public String awsS3Prefix() {
+            return "AwsS3Prefix";
+        }
+
+        /**
+         * The delimiter which is used in the
+         * com.amazonaws.services.s3.model.ListObjectsRequest to only list
+         * objects we are interested in.
+         * 
+         * The option is a: {@code String} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code AwsS3Delimiter}.
+         */
+        public String awsS3Delimiter() {
+            return "AwsS3Delimiter";
         }
     }
     static AWS2S3EndpointBuilder endpointBuilder(

@@ -36,7 +36,7 @@ for this component:
 You can store a Java entity bean in a database by sending it to a JPA
 producer endpoint. The body of the _In_ message is assumed to be an
 entity bean (that is, a POJO with an
-http://java.sun.com/javaee/5/docs/api/javax/persistence/Entity.html[@Entity]
+https://jakarta.ee/specifications/persistence/2.2/apidocs/javax/persistence/entity[@Entity]
 annotation on it) or a collection or array of entity beans.
 
 If the body is a List of entities, make sure to use

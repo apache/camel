@@ -50,7 +50,7 @@ public class EKS2ClientIAMOptimizedImpl implements EKS2InternalClient {
 
     /**
      * Getting the EKS aws client that is used.
-     * 
+     *
      * @return EcsClient Client.
      */
     @Override

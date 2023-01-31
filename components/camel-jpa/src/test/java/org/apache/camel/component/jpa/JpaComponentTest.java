@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.jpa;
 
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.LockModeType;
-import javax.persistence.Persistence;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.LockModeType;
+import jakarta.persistence.Persistence;
 
 import org.apache.camel.examples.SendEmail;
 import org.apache.camel.test.junit5.CamelTestSupport;

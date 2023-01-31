@@ -124,7 +124,6 @@ import org.apache.camel.model.cloud.ZooKeeperServiceCallServiceDiscoveryConfigur
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
-import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
@@ -162,7 +161,6 @@ import org.apache.camel.model.dataformat.UniVocityFixedDataFormat;
 import org.apache.camel.model.dataformat.UniVocityHeader;
 import org.apache.camel.model.dataformat.UniVocityTsvDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
-import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.YAMLDataFormat;
 import org.apache.camel.model.dataformat.YAMLTypeFilterDefinition;
 import org.apache.camel.model.dataformat.ZipDeflaterDataFormat;
@@ -508,71 +506,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "steps": {
                     setSteps(target, node);
-                    break;
-                }
-                default: {
-                    return false;
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = "any23",
-            inline = true,
-            types = org.apache.camel.model.dataformat.Any23DataFormat.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            properties = {
-                    @YamlProperty(name = "base-uri", type = "string"),
-                    @YamlProperty(name = "configuration", type = "array:org.apache.camel.model.PropertyDefinition"),
-                    @YamlProperty(name = "extractors", type = "array:string"),
-                    @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "output-format", type = "enum:NTRIPLES,TURTLE,NQUADS,RDFXML,JSONLD,RDFJSON,RDF4JMODEL")
-            }
-    )
-    public static class Any23DataFormatDeserializer extends YamlDeserializerBase<Any23DataFormat> {
-        public Any23DataFormatDeserializer() {
-            super(Any23DataFormat.class);
-        }
-
-        @Override
-        protected Any23DataFormat newInstance() {
-            return new Any23DataFormat();
-        }
-
-        @Override
-        protected Any23DataFormat newInstance(String value) {
-            return new Any23DataFormat(value);
-        }
-
-        @Override
-        protected boolean setProperty(Any23DataFormat target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "base-uri": {
-                    String val = asText(node);
-                    target.setBaseUri(val);
-                    break;
-                }
-                case "configuration": {
-                    java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
-                    target.setConfiguration(val);
-                    break;
-                }
-                case "extractors": {
-                    java.util.List<String> val = asStringList(node);
-                    target.setExtractors(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "output-format": {
-                    String val = asText(node);
-                    target.setOutputFormat(val);
                     break;
                 }
                 default: {
@@ -2932,7 +2865,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.transformer.DataFormatTransformerDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
-                    @YamlProperty(name = "any23", type = "object:org.apache.camel.model.dataformat.Any23DataFormat"),
                     @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat"),
                     @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat"),
                     @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat"),
@@ -2972,7 +2904,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocity-tsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
                     @YamlProperty(name = "xml-security", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat"),
-                    @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat"),
                     @YamlProperty(name = "zip-deflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
                     @YamlProperty(name = "zip-file", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
@@ -2995,11 +2926,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "data-format-type": {
                     MappingNode val = asMappingNode(node);
                     setProperties(target, val);
-                    break;
-                }
-                case "any23": {
-                    org.apache.camel.model.dataformat.Any23DataFormat val = asType(node, org.apache.camel.model.dataformat.Any23DataFormat.class);
-                    target.setDataFormatType(val);
                     break;
                 }
                 case "asn1": {
@@ -3174,11 +3100,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "xml-security": {
                     org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
-                case "xstream": {
-                    org.apache.camel.model.dataformat.XStreamDataFormat val = asType(node, org.apache.camel.model.dataformat.XStreamDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -3233,7 +3154,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.dataformat.DataFormatsDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
-                    @YamlProperty(name = "any23", type = "object:org.apache.camel.model.dataformat.Any23DataFormat"),
                     @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat"),
                     @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat"),
                     @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat"),
@@ -3270,7 +3190,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocity-tsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
                     @YamlProperty(name = "xml-security", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat"),
-                    @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat"),
                     @YamlProperty(name = "zip-deflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
                     @YamlProperty(name = "zip-file", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
@@ -3293,16 +3212,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "data-formats": {
                     MappingNode val = asMappingNode(node);
                     setProperties(target, val);
-                    break;
-                }
-                case "any23": {
-                    org.apache.camel.model.dataformat.Any23DataFormat val = asType(node, org.apache.camel.model.dataformat.Any23DataFormat.class);
-                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
-                    if (existing == null) {
-                        existing = new java.util.ArrayList<>();
-                    }
-                    existing.add(val);
-                    target.setDataFormats(existing);
                     break;
                 }
                 case "asn1": {
@@ -3647,16 +3556,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "xml-security": {
                     org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
-                    java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
-                    if (existing == null) {
-                        existing = new java.util.ArrayList<>();
-                    }
-                    existing.add(val);
-                    target.setDataFormats(existing);
-                    break;
-                }
-                case "xstream": {
-                    org.apache.camel.model.dataformat.XStreamDataFormat val = asType(node, org.apache.camel.model.dataformat.XStreamDataFormat.class);
                     java.util.List<org.apache.camel.model.DataFormatDefinition> existing = target.getDataFormats();
                     if (existing == null) {
                         existing = new java.util.ArrayList<>();
@@ -8400,7 +8299,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.MarshalDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
-                    @YamlProperty(name = "any23", type = "object:org.apache.camel.model.dataformat.Any23DataFormat"),
                     @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat"),
                     @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat"),
                     @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat"),
@@ -8441,7 +8339,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocity-tsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
                     @YamlProperty(name = "xml-security", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat"),
-                    @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat"),
                     @YamlProperty(name = "zip-deflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
                     @YamlProperty(name = "zip-file", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
@@ -8464,11 +8361,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "data-format-type": {
                     MappingNode val = asMappingNode(node);
                     setProperties(target, val);
-                    break;
-                }
-                case "any23": {
-                    org.apache.camel.model.dataformat.Any23DataFormat val = asType(node, org.apache.camel.model.dataformat.Any23DataFormat.class);
-                    target.setDataFormatType(val);
                     break;
                 }
                 case "asn1": {
@@ -8643,11 +8535,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "xml-security": {
                     org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
-                case "xstream": {
-                    org.apache.camel.model.dataformat.XStreamDataFormat val = asType(node, org.apache.camel.model.dataformat.XStreamDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -10026,6 +9913,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "data-type", type = "string"),
                     @YamlProperty(name = "default-value", type = "string"),
                     @YamlProperty(name = "description", type = "string"),
+                    @YamlProperty(name = "examples", type = "array:org.apache.camel.model.rest.RestPropertyDefinition"),
                     @YamlProperty(name = "name", type = "string", required = true),
                     @YamlProperty(name = "required", type = "boolean"),
                     @YamlProperty(name = "type", type = "enum:body,formData,header,path,query", required = true)
@@ -10077,6 +9965,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "description": {
                     String val = asText(node);
                     target.setDescription(val);
+                    break;
+                }
+                case "examples": {
+                    java.util.List<org.apache.camel.model.rest.RestPropertyDefinition> val = asFlatList(node, org.apache.camel.model.rest.RestPropertyDefinition.class);
+                    target.setExamples(val);
                     break;
                 }
                 case "name": {
@@ -17605,7 +17498,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
                     @YamlProperty(name = "allow-null-body", type = "boolean"),
-                    @YamlProperty(name = "any23", type = "object:org.apache.camel.model.dataformat.Any23DataFormat"),
                     @YamlProperty(name = "asn1", type = "object:org.apache.camel.model.dataformat.ASN1DataFormat"),
                     @YamlProperty(name = "avro", type = "object:org.apache.camel.model.dataformat.AvroDataFormat"),
                     @YamlProperty(name = "barcode", type = "object:org.apache.camel.model.dataformat.BarcodeDataFormat"),
@@ -17646,7 +17538,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "univocity-fixed", type = "object:org.apache.camel.model.dataformat.UniVocityFixedDataFormat"),
                     @YamlProperty(name = "univocity-tsv", type = "object:org.apache.camel.model.dataformat.UniVocityTsvDataFormat"),
                     @YamlProperty(name = "xml-security", type = "object:org.apache.camel.model.dataformat.XMLSecurityDataFormat"),
-                    @YamlProperty(name = "xstream", type = "object:org.apache.camel.model.dataformat.XStreamDataFormat"),
                     @YamlProperty(name = "yaml", type = "object:org.apache.camel.model.dataformat.YAMLDataFormat"),
                     @YamlProperty(name = "zip-deflater", type = "object:org.apache.camel.model.dataformat.ZipDeflaterDataFormat"),
                     @YamlProperty(name = "zip-file", type = "object:org.apache.camel.model.dataformat.ZipFileDataFormat")
@@ -17674,11 +17565,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "data-format-type": {
                     MappingNode val = asMappingNode(node);
                     setProperties(target, val);
-                    break;
-                }
-                case "any23": {
-                    org.apache.camel.model.dataformat.Any23DataFormat val = asType(node, org.apache.camel.model.dataformat.Any23DataFormat.class);
-                    target.setDataFormatType(val);
                     break;
                 }
                 case "asn1": {
@@ -17853,11 +17739,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "xml-security": {
                     org.apache.camel.model.dataformat.XMLSecurityDataFormat val = asType(node, org.apache.camel.model.dataformat.XMLSecurityDataFormat.class);
-                    target.setDataFormatType(val);
-                    break;
-                }
-                case "xstream": {
-                    org.apache.camel.model.dataformat.XStreamDataFormat val = asType(node, org.apache.camel.model.dataformat.XStreamDataFormat.class);
                     target.setDataFormatType(val);
                     break;
                 }
@@ -18833,107 +18714,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     } else {
                         return false;
                     }
-                }
-            }
-            return true;
-        }
-    }
-
-    @YamlType(
-            nodes = "xstream",
-            inline = true,
-            types = org.apache.camel.model.dataformat.XStreamDataFormat.class,
-            order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            properties = {
-                    @YamlProperty(name = "aliases", type = "array:org.apache.camel.model.PropertyDefinition"),
-                    @YamlProperty(name = "content-type-header", type = "boolean"),
-                    @YamlProperty(name = "converters", type = "array:org.apache.camel.model.PropertyDefinition"),
-                    @YamlProperty(name = "driver", type = "string"),
-                    @YamlProperty(name = "driver-ref", type = "string"),
-                    @YamlProperty(name = "encoding", type = "string"),
-                    @YamlProperty(name = "id", type = "string"),
-                    @YamlProperty(name = "implicit-collections", type = "array:org.apache.camel.model.PropertyDefinition"),
-                    @YamlProperty(name = "mode", type = "enum:NO_REFERENCES,ID_REFERENCES,XPATH_RELATIVE_REFERENCES,XPATH_ABSOLUTE_REFERENCES,SINGLE_NODE_XPATH_RELATIVE_REFERENCES,SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES"),
-                    @YamlProperty(name = "omit-fields", type = "array:org.apache.camel.model.PropertyDefinition"),
-                    @YamlProperty(name = "permissions", type = "string")
-            }
-    )
-    public static class XStreamDataFormatDeserializer extends YamlDeserializerBase<XStreamDataFormat> {
-        public XStreamDataFormatDeserializer() {
-            super(XStreamDataFormat.class);
-        }
-
-        @Override
-        protected XStreamDataFormat newInstance() {
-            return new XStreamDataFormat();
-        }
-
-        @Override
-        protected XStreamDataFormat newInstance(String value) {
-            return new XStreamDataFormat(value);
-        }
-
-        @Override
-        protected boolean setProperty(XStreamDataFormat target, String propertyKey,
-                String propertyName, Node node) {
-            switch(propertyKey) {
-                case "aliases": {
-                    java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
-                    target.setAliases(val);
-                    break;
-                }
-                case "content-type-header": {
-                    String val = asText(node);
-                    target.setContentTypeHeader(val);
-                    break;
-                }
-                case "converters": {
-                    java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
-                    target.setConverters(val);
-                    break;
-                }
-                case "driver": {
-                    String val = asText(node);
-                    target.setDriver(val);
-                    break;
-                }
-                case "driver-ref": {
-                    String val = asText(node);
-                    target.setDriverRef(val);
-                    break;
-                }
-                case "encoding": {
-                    String val = asText(node);
-                    target.setEncoding(val);
-                    break;
-                }
-                case "id": {
-                    String val = asText(node);
-                    target.setId(val);
-                    break;
-                }
-                case "implicit-collections": {
-                    java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
-                    target.setImplicitCollections(val);
-                    break;
-                }
-                case "mode": {
-                    String val = asText(node);
-                    target.setMode(val);
-                    break;
-                }
-                case "omit-fields": {
-                    java.util.List<org.apache.camel.model.PropertyDefinition> val = asFlatList(node, org.apache.camel.model.PropertyDefinition.class);
-                    target.setOmitFields(val);
-                    break;
-                }
-                case "permissions": {
-                    String val = asText(node);
-                    target.setPermissions(val);
-                    break;
-                }
-                default: {
-                    return false;
                 }
             }
             return true;

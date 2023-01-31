@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -47,7 +47,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
     public void testExchangePropertyPropagation() throws Exception {
         Exchange exchange = sendSimpleMessage();
 
-        // No direct access to native CXF Message but we can verify the 
+        // No direct access to native CXF Message but we can verify the
         // request context from the Camel exchange
         assertNotNull(exchange);
         String actualValue = (String) exchange.getProperties().get(TEST_KEY);

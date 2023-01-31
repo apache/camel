@@ -16,7 +16,8 @@
  */
 package org.apache.camel.component.spring.ws.filter.impl;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.attachment.AttachmentMessage;

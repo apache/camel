@@ -267,6 +267,56 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         assertEquals("Hello Camel", results.get(0));
     }
 
+    @Test
+    void testWsSchemeUriPrefix() throws InterruptedException {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedBodiesReceived("Hello World 1", "Hello World 2", "Hello World 3");
+        template.sendBody("vertx-websocket:ws:localhost:" + port + "/test", "World 1");
+        template.sendBody("vertx-websocket:ws:/localhost:" + port + "/test", "World 2");
+        template.sendBody("vertx-websocket:ws://localhost:" + port + "/test", "World 3");
+        mockEndpoint.assertIsSatisfied(5000);
+    }
+
+    @Test
+    void testPathParams() throws InterruptedException {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:pathParamResult");
+        mockEndpoint.expectedHeaderReceived("firstParam", "Hello");
+        mockEndpoint.expectedHeaderReceived("secondParam", "World");
+        mockEndpoint.expectedBodiesReceived("Hello World");
+
+        template.sendBody("vertx-websocket:localhost:" + port + "/path/params/Hello/World", "null");
+
+        mockEndpoint.assertIsSatisfied(5000);
+    }
+
+    @Test
+    void testQueryParams() throws InterruptedException {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:queryParamResult");
+        mockEndpoint.expectedHeaderReceived("firstParam", "Hello");
+        mockEndpoint.expectedHeaderReceived("secondParam", "World");
+        mockEndpoint.expectedBodiesReceived("Hello World");
+
+        template.sendBody("vertx-websocket:localhost:" + port + "/query/params?firstParam=Hello&secondParam=World", "null");
+
+        mockEndpoint.assertIsSatisfied(5000);
+    }
+
+    @Test
+    void testOverlappingPathAndQueryParams() throws InterruptedException {
+        List<String> expectedFirstParams = new ArrayList<>();
+        expectedFirstParams.add("Goodbye");
+        expectedFirstParams.add("Hello");
+
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:pathParamResult");
+        mockEndpoint.expectedHeaderReceived("firstParam", expectedFirstParams);
+        mockEndpoint.expectedHeaderReceived("secondParam", "World");
+        mockEndpoint.expectedMessageCount(1);
+
+        template.sendBody("vertx-websocket:localhost:" + port + "/path/params/Hello/World?firstParam=Goodbye", "null");
+
+        mockEndpoint.assertIsSatisfied(5000);
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -282,7 +332,15 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
                 fromF("vertx-websocket:localhost:%d/test-other", port)
                         .setBody(simple("Hello ${body}"));
 
-                from("vertx-websocket://greeting")
+                fromF("vertx-websocket:localhost:%d/path/params/{firstParam}/{secondParam}", port)
+                        .setBody(simple("${header.firstParam} ${header.secondParam}"))
+                        .to("mock:pathParamResult");
+
+                fromF("vertx-websocket:localhost:%d/query/params", port)
+                        .setBody(simple("${header.firstParam} ${header.secondParam}"))
+                        .to("mock:queryParamResult");
+
+                fromF("vertx-websocket:localhost:0/greeting")
                         .setBody(simple("Hello ${body}"))
                         .process(new Processor() {
                             @Override

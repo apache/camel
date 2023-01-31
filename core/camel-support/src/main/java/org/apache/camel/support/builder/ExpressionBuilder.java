@@ -1439,6 +1439,53 @@ public class ExpressionBuilder {
         };
     }
 
+    public static Expression joinExpression(final Expression expression, final String separator, final String prefix) {
+        return new ExpressionAdapter() {
+            private TypeConverter converter;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                // evaluate expression as iterator
+                Iterator<?> it = expression.evaluate(exchange, Iterator.class);
+                ObjectHelper.notNull(it, "expression: " + expression + " evaluated on " + exchange + " must return an java.util.Iterator");
+
+                StringBuilder sb = new StringBuilder();
+                while (it.hasNext()) {
+                    Object o = it.next();
+                    if (o != null) {
+                        String s = converter.tryConvertTo(String.class, exchange, o);
+                        if (s != null) {
+                            if (sb.length() > 0) {
+                                sb.append(separator);
+                            }
+                            if (prefix != null) {
+                                sb.append(prefix);
+                            }
+                            sb.append(s);
+                        }
+                    }
+                }
+
+                return sb.toString();
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                expression.init(context);
+                converter = context.getTypeConverter();
+            }
+
+            @Override
+            public String toString() {
+                if (prefix != null) {
+                    return "join(" + expression + "," + separator + "," + prefix + ")";
+                } else {
+                    return "join(" + expression + "," + separator + ")";
+                }
+            }
+        };
+    }
+
     /**
      * Returns a sort expression which will sort the expression with the given comparator.
      * <p/>

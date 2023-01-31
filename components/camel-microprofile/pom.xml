@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-microprofile-parent</artifactId>
@@ -36,7 +36,6 @@
         <module>camel-microprofile-config</module>
         <module>camel-microprofile-fault-tolerance</module>
         <module>camel-microprofile-health</module>
-        <module>camel-microprofile-metrics</module>
     </modules>
 
 </project>

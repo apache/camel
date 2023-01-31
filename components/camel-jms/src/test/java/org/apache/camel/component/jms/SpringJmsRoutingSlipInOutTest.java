@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.Headers;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -28,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  *
  */
-public class SpringJmsRoutingSlipInOutTest extends CamelSpringTestSupport {
+public class SpringJmsRoutingSlipInOutTest extends AbstractSpringJMSTestSupport {
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {

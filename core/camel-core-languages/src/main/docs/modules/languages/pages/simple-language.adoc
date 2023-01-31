@@ -213,6 +213,12 @@ similar to the collate method in Groovy.
 the first number of items. This can be used with the
 Splitter EIP to split a message body and skip the first N number of items.
 
+|join(separator,prefix,exp) | String | The join function iterates the message body (by default) and joins
+the data into a string. The separator is by default a comma. The prefix is optional.
+
+The join uses the message body as source by default. It is possible to refer to another
+source (simple language) such as a header via the exp parameter. For example `join('&','id=','$\{header.ids}')`.
+
 |messageHistory |String |The message history of the current exchange how it has
 been routed. This is similar to the route stack-trace message history
 the error handler logs in case of an unhandled exception.

@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -42,6 +42,39 @@ public interface Plc4XEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AdvancedPlc4XEndpointConsumerBuilder advanced() {
             return (AdvancedPlc4XEndpointConsumerBuilder) this;
+        }
+        /**
+         * Whether to reconnect when no connection is present upon doing a
+         * request.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param autoReconnect the value to set
+         * @return the dsl builder
+         */
+        default Plc4XEndpointConsumerBuilder autoReconnect(boolean autoReconnect) {
+            doSetProperty("autoReconnect", autoReconnect);
+            return this;
+        }
+        /**
+         * Whether to reconnect when no connection is present upon doing a
+         * request.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param autoReconnect the value to set
+         * @return the dsl builder
+         */
+        default Plc4XEndpointConsumerBuilder autoReconnect(String autoReconnect) {
+            doSetProperty("autoReconnect", autoReconnect);
+            return this;
         }
         /**
          * The tags to read as Map containing the tag name associated to its
@@ -258,6 +291,39 @@ public interface Plc4XEndpointBuilderFactory {
             return (AdvancedPlc4XEndpointProducerBuilder) this;
         }
         /**
+         * Whether to reconnect when no connection is present upon doing a
+         * request.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param autoReconnect the value to set
+         * @return the dsl builder
+         */
+        default Plc4XEndpointProducerBuilder autoReconnect(boolean autoReconnect) {
+            doSetProperty("autoReconnect", autoReconnect);
+            return this;
+        }
+        /**
+         * Whether to reconnect when no connection is present upon doing a
+         * request.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param autoReconnect the value to set
+         * @return the dsl builder
+         */
+        default Plc4XEndpointProducerBuilder autoReconnect(String autoReconnect) {
+            doSetProperty("autoReconnect", autoReconnect);
+            return this;
+        }
+        /**
          * The tags to read as Map containing the tag name associated to its
          * query.
          * 
@@ -362,6 +428,39 @@ public interface Plc4XEndpointBuilderFactory {
                 Plc4XEndpointProducerBuilder {
         default AdvancedPlc4XEndpointBuilder advanced() {
             return (AdvancedPlc4XEndpointBuilder) this;
+        }
+        /**
+         * Whether to reconnect when no connection is present upon doing a
+         * request.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param autoReconnect the value to set
+         * @return the dsl builder
+         */
+        default Plc4XEndpointBuilder autoReconnect(boolean autoReconnect) {
+            doSetProperty("autoReconnect", autoReconnect);
+            return this;
+        }
+        /**
+         * Whether to reconnect when no connection is present upon doing a
+         * request.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param autoReconnect the value to set
+         * @return the dsl builder
+         */
+        default Plc4XEndpointBuilder autoReconnect(String autoReconnect) {
+            doSetProperty("autoReconnect", autoReconnect);
+            return this;
         }
         /**
          * The tags to read as Map containing the tag name associated to its

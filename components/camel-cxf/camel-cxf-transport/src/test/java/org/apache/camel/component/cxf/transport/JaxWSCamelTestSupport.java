@@ -18,15 +18,16 @@ package org.apache.camel.component.cxf.transport;
 
 import java.util.concurrent.Future;
 
-import javax.jws.WebMethod;
-import javax.jws.WebParam;
-import javax.jws.WebResult;
-import javax.jws.WebService;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebResult;
+import jakarta.jws.WebService;
+import jakarta.xml.ws.AsyncHandler;
+import jakarta.xml.ws.Endpoint;
+import jakarta.xml.ws.Response;
+import jakarta.xml.ws.Service;
+
 import javax.xml.namespace.QName;
-import javax.xml.ws.AsyncHandler;
-import javax.xml.ws.Endpoint;
-import javax.xml.ws.Response;
-import javax.xml.ws.Service;
 
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.cxf.Bus;
@@ -97,7 +98,7 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
 
     /**
      * Create a SampleWS JAXWS-Proxy to a specified route
-     * 
+     *
      * @param  camelEndpoint
      * @return
      */
@@ -129,7 +130,7 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
 
     /**
      * Create a SampleWS Server to a specified route
-     * 
+     *
      * @param camelEndpoint
      */
 
@@ -140,7 +141,7 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
 
     /**
      * Create a SampleWS Server with Gzip enabled to a specified route
-     * 
+     *
      * @param camelEndpoint
      */
 

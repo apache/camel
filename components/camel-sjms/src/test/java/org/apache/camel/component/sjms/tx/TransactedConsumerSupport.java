@@ -20,20 +20,26 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.SjmsComponent;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class TransactedConsumerSupport extends CamelTestSupport {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
+
+    @RegisterExtension
+    protected ArtemisService service = ArtemisServiceFactory.createVMService();
 
     public abstract String getBrokerUri();
 
@@ -76,11 +82,6 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(getBrokerUri());
-        // use low redelivery delay to speed
-        connectionFactory.getRedeliveryPolicy().setInitialRedeliveryDelay(100);
-        connectionFactory.getRedeliveryPolicy().setRedeliveryDelay(100);
-        connectionFactory.getRedeliveryPolicy().setUseCollisionAvoidance(false);
-        connectionFactory.getRedeliveryPolicy().setUseExponentialBackOff(false);
 
         SjmsComponent component = new SjmsComponent();
         component.setConnectionFactory(connectionFactory);
@@ -106,42 +107,42 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
                 // Our test consumer route
                 from(destinationName + "?transacted=true&concurrentConsumers="
                      + concurrentConsumers)
-                             .id("consumer.route." + routeNumber)
-                             // first consume all the messages that are not redelivered
-                             .choice().when(header("JMSRedelivered").isEqualTo("false"))
-                             // The rollback processor
-                             .log("Route " + routeNumber + " 1st attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
-                             .to("mock:test.before." + routeNumber)
-                             .process(new Processor() {
-                                 private final AtomicInteger counter = new AtomicInteger();
+                        .id("consumer.route." + routeNumber)
+                        // first consume all the messages that are not redelivered
+                        .choice().when(header("JMSRedelivered").isEqualTo("false"))
+                        // The rollback processor
+                        .log("Route " + routeNumber + " 1st attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
+                        .to("mock:test.before." + routeNumber)
+                        .process(new Processor() {
+                            private final AtomicInteger counter = new AtomicInteger();
 
-                                 @Override
-                                 public void process(Exchange exchange) {
-                                     if (counter.incrementAndGet() == maxAttemptsCount) {
-                                         log.info(
-                                                 "{} Messages have been processed. Failing the exchange to force a rollback of the transaction.",
-                                                 maxAttemptsCount);
-                                         throw new IllegalArgumentException("Forced rollback");
-                                     }
+                            @Override
+                            public void process(Exchange exchange) {
+                                if (counter.incrementAndGet() == maxAttemptsCount) {
+                                    log.info(
+                                            "{} Messages have been processed. Failing the exchange to force a rollback of the transaction.",
+                                            maxAttemptsCount);
+                                    throw new IllegalArgumentException("Forced rollback");
+                                }
 
-                                     // Countdown the latch
-                                     latch.countDown();
-                                 }
-                             })
-                             // Now process again any messages that were redelivered
-                             .when(header("JMSRedelivered").isEqualTo("true"))
-                             .log("Route " + routeNumber + " 2nd attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
-                             .to("mock:test.after." + routeNumber)
-                             .process(new Processor() {
-                                 @Override
-                                 public void process(Exchange exchange) {
+                                // Countdown the latch
+                                latch.countDown();
+                            }
+                        })
+                        // Now process again any messages that were redelivered
+                        .when(header("JMSRedelivered").isEqualTo("true"))
+                        .log("Route " + routeNumber + " 2nd attempt Body: ${body} | Redeliverd: ${header.JMSRedelivered}")
+                        .to("mock:test.after." + routeNumber)
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
 
-                                     // Countdown the latch
-                                     latch.countDown();
-                                 }
-                             })
-                             .otherwise()
-                             .to("mock:test.after");
+                                // Countdown the latch
+                                latch.countDown();
+                            }
+                        })
+                        .otherwise()
+                        .to("mock:test.after");
             }
         });
     }

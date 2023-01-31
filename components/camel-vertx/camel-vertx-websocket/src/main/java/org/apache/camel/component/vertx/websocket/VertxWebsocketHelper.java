@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public final class VertxWebsocketHelper {
 
     private VertxWebsocketHelper() {
@@ -23,58 +28,29 @@ public final class VertxWebsocketHelper {
     }
 
     /**
-     * Extracts the port number from the endpoint URI path or returns the Vert.x default HTTP server port (0) if one was
-     * not provided
-     */
-    public static int extractPortNumber(String remaining) {
-        int index1 = remaining.indexOf(':');
-        int index2 = remaining.indexOf('/');
-        if (index1 != -1 && index2 != -1) {
-            String result = remaining.substring(index1 + 1, index2);
-            if (result.isEmpty()) {
-                throw new IllegalArgumentException("Unable to resolve port from URI: " + remaining);
-            }
-
-            try {
-                return Integer.parseInt(result);
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Unable to parse port: " + result);
-            }
-        } else {
-            return VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT;
-        }
-    }
-
-    /**
-     * Extracts the host name from the endpoint URI path or returns the Vert.x default HTTP server host (0.0.0.0) if one
-     * was not provided
-     */
-    public static String extractHostName(String remaining) {
-        int index = remaining.indexOf(':');
-        if (index != -1) {
-            return remaining.substring(0, index);
-        } else {
-            return VertxWebsocketConstants.DEFAULT_VERTX_SERVER_HOST;
-        }
-    }
-
-    /**
-     * Extracts the WebSocket path from the endpoint URI path or returns the Vert.x default HTTP server path (/) if one
-     * was not provided
-     */
-    public static String extractPath(String remaining) {
-        int index = remaining.indexOf('/');
-        if (index != -1) {
-            return remaining.substring(index);
-        } else {
-            return VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PATH + remaining;
-        }
-    }
-
-    /**
      * Creates a VertxWebsocketHostKey from a given VertxWebsocketConfiguration
      */
-    public static VertxWebsocketHostKey createHostKey(VertxWebsocketConfiguration configuration) {
-        return new VertxWebsocketHostKey(configuration.getHost(), configuration.getPort());
+    public static VertxWebsocketHostKey createHostKey(URI websockerURI) {
+        return new VertxWebsocketHostKey(websockerURI.getHost(), websockerURI.getPort());
+    }
+
+    /**
+     * Appends a header value to exchange headers, using a List if there are multiple items for the same key
+     */
+    @SuppressWarnings("unchecked")
+    public static void appendHeader(Map<String, Object> headers, String key, Object value) {
+        if (headers.containsKey(key)) {
+            Object existing = headers.get(key);
+            List<Object> list;
+            if (existing instanceof List) {
+                list = (List<Object>) existing;
+            } else {
+                list = new ArrayList<>();
+                list.add(existing);
+            }
+            list.add(value);
+            value = list;
+        }
+        headers.put(key, value);
     }
 }

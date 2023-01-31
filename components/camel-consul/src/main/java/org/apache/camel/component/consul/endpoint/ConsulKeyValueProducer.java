@@ -46,7 +46,7 @@ public final class ConsulKeyValueProducer extends AbstractConsulProducer<KeyValu
     protected void getValue(Message message) throws Exception {
         Object result;
 
-        Boolean asString = message.getHeader(ConsulConstants.CONSUL_VALUE_AS_STRING, getConfiguration().isValueAsString(),
+        boolean asString = message.getHeader(ConsulConstants.CONSUL_VALUE_AS_STRING, getConfiguration().isValueAsString(),
                 Boolean.class);
         if (asString) {
             result = getClient()
@@ -68,7 +68,7 @@ public final class ConsulKeyValueProducer extends AbstractConsulProducer<KeyValu
     protected void getValues(Message message) throws Exception {
         Object result;
 
-        Boolean asString = message.getHeader(ConsulConstants.CONSUL_VALUE_AS_STRING, getConfiguration().isValueAsString(),
+        boolean asString = message.getHeader(ConsulConstants.CONSUL_VALUE_AS_STRING, getConfiguration().isValueAsString(),
                 Boolean.class);
         if (asString) {
             result = getClient().getValuesAsString(

@@ -72,10 +72,10 @@ import quickfix.UnsupportedMessageType;
 /**
  * This is a wrapper class that provided QuickFIX/J initialization capabilities beyond those supported in the core
  * QuickFIX/J distribution.
- * 
+ *
  * Specifically, it infers dependencies on specific implementations of message stores and logs. It also supports
  * extended QuickFIX/J settings properties to specify threading models, custom store and log implementations, etc.
- * 
+ *
  * The wrapper will create an initiator or acceptor or both depending on the roles of sessions described in the settings
  * file.
  */

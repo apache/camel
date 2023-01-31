@@ -251,7 +251,7 @@ public class PgReplicationSlotConsumer extends ScheduledPollConsumer {
         this.pgConnection = this.connection.unwrap(PGConnection.class);
         this.replicationStream = null;
 
-        if (this.endpoint.getAutoCreateSlot() && !this.isSlotCreated()) {
+        if (Boolean.TRUE.equals(this.endpoint.getAutoCreateSlot()) && !this.isSlotCreated()) {
             this.createSlot();
         }
     }

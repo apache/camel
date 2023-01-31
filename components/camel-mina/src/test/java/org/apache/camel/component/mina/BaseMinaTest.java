@@ -76,7 +76,7 @@ public abstract class BaseMinaTest extends CamelTestSupport {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
 
         //with tls 1.3 there are random failures, 1.2 is used instead
-        //(see https://issues.apache.org/jira/browse/DIRMINA-1132) 
+        //(see https://issues.apache.org/jira/browse/DIRMINA-1132)
         SecureSocketProtocolsParameters secureSocketProtocols = new SecureSocketProtocolsParameters();
         secureSocketProtocols.setSecureSocketProtocol(Collections.singletonList("TLSv1.2"));
         sslContextParameters.setSecureSocketProtocols(secureSocketProtocols);

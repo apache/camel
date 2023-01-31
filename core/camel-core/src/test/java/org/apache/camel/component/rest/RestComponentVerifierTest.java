@@ -53,7 +53,7 @@ public class RestComponentVerifierTest extends ContextTestSupport {
         ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("componentName", "rest-component");
+        parameters.put("producerComponentName", "rest-component");
         parameters.put("host", "http://localhost:1234");
         parameters.put("path", "verify");
         parameters.put("method", "get");
@@ -73,7 +73,7 @@ public class RestComponentVerifierTest extends ContextTestSupport {
         ComponentVerifierExtension verifier = component.getVerifier();
 
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("componentName", "rest-component");
+        parameters.put("producerComponentName", "rest-component");
         parameters.put("host", "http://localhost:" + 1234);
         parameters.put("path", "verify");
 
@@ -95,7 +95,7 @@ public class RestComponentVerifierTest extends ContextTestSupport {
     //
     // ***************************************************
 
-    private final class MyComponent extends DefaultComponent implements RestProducerFactory, RestConsumerFactory {
+    private static final class MyComponent extends DefaultComponent implements RestProducerFactory, RestConsumerFactory {
         public MyComponent() {
             registerExtension(new ComponentVerifierExtension() {
                 @Override

@@ -64,7 +64,7 @@ public class SplitContinuedLogIssueTest extends ContextTestSupport {
         };
     }
 
-    private class SplitAggregationStrategy implements AggregationStrategy {
+    private static class SplitAggregationStrategy implements AggregationStrategy {
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.redis.services;
 
 import org.apache.camel.test.infra.common.services.TestService;
+import org.apache.camel.test.infra.common.services.TestServiceUtil;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -35,12 +36,12 @@ public interface RedisService extends BeforeAllCallback, AfterAllCallback, TestS
     }
 
     @Override
-    default void beforeAll(ExtensionContext extensionContext) {
-        initialize();
+    default void beforeAll(ExtensionContext extensionContext) throws Exception {
+        TestServiceUtil.tryInitialize(this, extensionContext);
     }
 
     @Override
-    default void afterAll(ExtensionContext extensionContext) {
-        shutdown();
+    default void afterAll(ExtensionContext extensionContext) throws Exception {
+        TestServiceUtil.tryShutdown(this, extensionContext);
     }
 }

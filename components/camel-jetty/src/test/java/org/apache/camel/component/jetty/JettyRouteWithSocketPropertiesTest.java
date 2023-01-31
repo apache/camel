@@ -19,7 +19,7 @@ package org.apache.camel.component.jetty;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

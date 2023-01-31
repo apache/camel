@@ -31,13 +31,12 @@ public class JavaJoorClassLoader extends ClassLoader implements CompilePostProce
     }
 
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
+    protected Class<?> findClass(String name) {
         return classes.get(name);
     }
 
     @Override
-    public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance)
-            throws Exception {
+    public void postCompile(CamelContext camelContext, String name, Class<?> clazz, byte[] byteCode, Object instance) {
         if (name != null && clazz != null) {
             classes.put(name, clazz);
         }

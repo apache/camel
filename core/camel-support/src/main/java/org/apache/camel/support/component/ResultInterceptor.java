@@ -25,7 +25,7 @@ public interface ResultInterceptor {
 
     /**
      * Split a complex result into result elements.
-     * 
+     *
      * @param  result API method invocation result
      * @return        either the same result if it cannot be split, an array or collection object with split results
      */
@@ -33,7 +33,7 @@ public interface ResultInterceptor {
 
     /**
      * Do additional result exchange processing, for example, adding custom headers.
-     * 
+     *
      * @param result         result of API method invocation.
      * @param resultExchange result as a Camel exchange, may be a split result from Arrays or Collections.
      */

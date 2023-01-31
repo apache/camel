@@ -116,7 +116,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends Conte
         };
     }
 
-    public class AlwaysCloseHandler implements ThrottlingExceptionHalfOpenHandler {
+    public static class AlwaysCloseHandler implements ThrottlingExceptionHalfOpenHandler {
 
         @Override
         public boolean isReadyToBeClosed() {
@@ -129,7 +129,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerSedaTest extends Conte
         try {
             template.sendBody(url, bodyText);
         } catch (Exception e) {
-            log.debug("Error sending:" + e.getCause().getMessage());
+            log.debug("Error sending: {}", e.getCause().getMessage());
         }
     }
 }

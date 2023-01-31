@@ -21,12 +21,8 @@ import java.time.Duration;
 import org.apache.camel.support.cluster.AbstractCamelClusterService;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class ConsulClusterService extends AbstractCamelClusterService<ConsulClusterView> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulClusterService.class);
-
     private ConsulClusterConfiguration configuration;
 
     public ConsulClusterService() {

@@ -24,11 +24,11 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.MimeMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
@@ -134,7 +134,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
     /**
      * Duplicate filenames are ignored, same as handleDuplicateAttachmentNames=never
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -151,7 +151,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
     /**
      * Attachment with empty filename are ignored, same as generateMissingAttachmentNames=never
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -166,7 +166,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
     /**
      * Attachment with no filename are ignored, same as generateMissingAttachmentNames=never
-     * 
+     *
      * @throws Exception
      */
     @Test

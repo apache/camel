@@ -95,8 +95,8 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
 
     @Test
     void testWebsocketBroadcastClient() throws Exception {
-        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
-        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
+        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + PORT + "/broadcast", 2);
+        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + PORT + "/broadcast", 2);
         wsclient1.connect();
         wsclient2.connect();
 
@@ -142,11 +142,11 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
                 }).to("atmosphere-websocket:///hola");
 
                 // route for a broadcast line
-                from("atmosphere-websocket:///hola2").to("log:info").process(new Processor() {
+                from("atmosphere-websocket:///broadcast").to("log:info").process(new Processor() {
                     public void process(final Exchange exchange) {
                         createResponse(exchange, false);
                     }
-                }).to("atmosphere-websocket:///hola2?sendToAll=true");
+                }).to("atmosphere-websocket:///broadcast?sendToAll=true");
 
                 // route for a single stream line
                 from("atmosphere-websocket:///hola3?useStreaming=true").to("log:info").process(new Processor() {

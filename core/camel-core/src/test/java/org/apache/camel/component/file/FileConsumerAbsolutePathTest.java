@@ -41,7 +41,7 @@ public class FileConsumerAbsolutePathTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUri("?initialDelay=0&delay=10&delete=true")).convertBodyTo(String.class).to("mock:report");
+                from(fileUri("?initialDelay=0&delay=100&delete=true")).convertBodyTo(String.class).to("mock:report");
             }
         };
     }

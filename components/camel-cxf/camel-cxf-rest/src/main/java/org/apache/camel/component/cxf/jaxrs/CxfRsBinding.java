@@ -19,9 +19,9 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import javax.ws.rs.client.AsyncInvoker;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.client.AsyncInvoker;
+import jakarta.ws.rs.client.Entity;
+import jakarta.ws.rs.core.MultivaluedMap;
 
 import org.apache.cxf.message.Exchange;
 
@@ -112,7 +112,7 @@ public interface CxfRsBinding {
 
     /**
      * Bind the Camel message to a request {@link Entity} that gets passed to
-     * {@link AsyncInvoker#method(java.lang.String, javax.ws.rs.client.Entity, javax.ws.rs.client.InvocationCallback)}.
+     * {@link AsyncInvoker#method(java.lang.String, jakarta.ws.rs.client.Entity, jakarta.ws.rs.client.InvocationCallback)}.
      *
      * @param  camelMessage  the source message
      * @param  camelExchange the Camel exchange
@@ -126,7 +126,7 @@ public interface CxfRsBinding {
 
     /**
      * Bind the Camel message to a request {@link Entity} that gets passed to
-     * {@link AsyncInvoker#method(java.lang.String, javax.ws.rs.client.Entity, javax.ws.rs.client.InvocationCallback)}.
+     * {@link AsyncInvoker#method(java.lang.String, jakarta.ws.rs.client.Entity, jakarta.ws.rs.client.InvocationCallback)}.
      *
      * @param  camelMessage  the source message
      * @param  camelExchange the Camel exchange

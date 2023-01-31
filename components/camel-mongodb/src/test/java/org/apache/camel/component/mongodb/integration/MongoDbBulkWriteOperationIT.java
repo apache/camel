@@ -27,9 +27,12 @@ import com.mongodb.client.model.ReplaceOneModel;
 import com.mongodb.client.model.UpdateManyModel;
 import com.mongodb.client.model.UpdateOneModel;
 import com.mongodb.client.model.WriteModel;
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mongodb.MongoDbConstants;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class MongoDbBulkWriteOperationIT extends AbstractMongoDbITSupport {
+public class MongoDbBulkWriteOperationIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
 
     @Test
     public void testBulkWrite() {
@@ -117,7 +120,6 @@ public class MongoDbBulkWriteOperationIT extends AbstractMongoDbITSupport {
         }
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -127,5 +129,11 @@ public class MongoDbBulkWriteOperationIT extends AbstractMongoDbITSupport {
                         .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=bulkWrite");
             }
         };
+    }
+
+    @RouteFixture
+    @Override
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(createRouteBuilder());
     }
 }

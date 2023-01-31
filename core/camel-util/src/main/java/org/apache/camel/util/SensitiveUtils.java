@@ -45,16 +45,14 @@ public final class SensitiveUtils {
                     "blobstoragesharedkeycredential",
                     "certresourcepassword",
                     "cipherkey",
+                    "clientid",
                     "clientsecret",
                     "connectionstring",
                     "consumerkey",
                     "consumersecret",
                     "emailaddress",
-                    "fulltokenid",
                     "httpproxypassword",
-                    "keypassword",
                     "keystore",
-                    "keystorepassword",
                     "login",
                     "oauthaccesstoken",
                     "oauthappid",
@@ -94,7 +92,6 @@ public final class SensitiveUtils {
                     "token",
                     "tokencredential",
                     "user",
-                    "userauthenticationcredentials",
                     "username",
                     "userpassword",
                     "verificationcode",
@@ -123,16 +120,14 @@ public final class SensitiveUtils {
                                                     + "|\\Qblobstoragesharedkeycredential\\E"
                                                     + "|\\Qcertresourcepassword\\E"
                                                     + "|\\Qcipherkey\\E"
+                                                    + "|\\Qclientid\\E"
                                                     + "|\\Qclientsecret\\E"
                                                     + "|\\Qconnectionstring\\E"
                                                     + "|\\Qconsumerkey\\E"
                                                     + "|\\Qconsumersecret\\E"
                                                     + "|\\Qemailaddress\\E"
-                                                    + "|\\Qfulltokenid\\E"
                                                     + "|\\Qhttpproxypassword\\E"
-                                                    + "|\\Qkeypassword\\E"
                                                     + "|\\Qkeystore\\E"
-                                                    + "|\\Qkeystorepassword\\E"
                                                     + "|\\Qlogin\\E"
                                                     + "|\\Qoauthaccesstoken\\E"
                                                     + "|\\Qoauthappid\\E"
@@ -172,7 +167,6 @@ public final class SensitiveUtils {
                                                     + "|\\Qtoken\\E"
                                                     + "|\\Qtokencredential\\E"
                                                     + "|\\Quser\\E"
-                                                    + "|\\Quserauthenticationcredentials\\E"
                                                     + "|\\Qusername\\E"
                                                     + "|\\Quserpassword\\E"
                                                     + "|\\Qverificationcode\\E"

@@ -50,7 +50,7 @@ public class SecretsManagerClientIAMOptimized implements SecretsManagerInternalC
 
     /**
      * Getting the Secrets Manager aws client that is used.
-     * 
+     *
      * @return Amazon Secrets Manager Client.
      */
     @Override

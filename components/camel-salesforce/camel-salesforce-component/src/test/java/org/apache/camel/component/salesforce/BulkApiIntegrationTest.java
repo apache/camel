@@ -24,10 +24,13 @@ import org.apache.camel.component.salesforce.api.dto.bulk.OperationEnum;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.HttpClientTransport;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
 import org.eclipse.jetty.http.HttpMethod;
 import org.eclipse.jetty.http.HttpStatus;
+import org.eclipse.jetty.io.ClientConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -42,9 +45,12 @@ public class BulkApiIntegrationTest extends AbstractBulkApiTestBase {
         final SalesforceComponent sf = context().getComponent("salesforce", SalesforceComponent.class);
         final String accessToken = sf.getSession().getAccessToken();
 
-        final SslContextFactory sslContextFactory = new SslContextFactory.Client();
+        final SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
         sslContextFactory.setSslContext(new SSLContextParameters().createSSLContext(context));
-        final HttpClient httpClient = new HttpClient(sslContextFactory);
+        final ClientConnector connector = new ClientConnector();
+        connector.setSslContextFactory(sslContextFactory);
+        final HttpClientTransport transport = new HttpClientTransportOverHTTP(connector);
+        final HttpClient httpClient = new HttpClient(transport);
         httpClient.setConnectTimeout(60000);
         httpClient.start();
 

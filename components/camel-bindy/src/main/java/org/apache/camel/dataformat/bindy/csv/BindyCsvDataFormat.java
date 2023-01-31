@@ -244,7 +244,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 List<String> result = Arrays.asList(tokens);
 
                 // must unquote tokens before use
-                if (removeQuotes) {
+                if (Boolean.TRUE.equals(removeQuotes)) {
                     result = unquoteTokens(result, separators, quote);
                 }
 

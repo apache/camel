@@ -44,9 +44,7 @@ public class CaffeineLoadCacheComponentConfigurer extends PropertyConfigurerSupp
         case "expireAfterWriteTime": getOrCreateConfiguration(target).setExpireAfterWriteTime(property(camelContext, int.class, value)); return true;
         case "initialcapacity":
         case "initialCapacity": getOrCreateConfiguration(target).setInitialCapacity(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "key": getOrCreateConfiguration(target).setKey(property(camelContext, java.lang.Object.class, value)); return true;
-        case "keytype":
-        case "keyType": getOrCreateConfiguration(target).setKeyType(property(camelContext, java.lang.String.class, value)); return true;
+        case "key": getOrCreateConfiguration(target).setKey(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maximumsize":
@@ -82,9 +80,7 @@ public class CaffeineLoadCacheComponentConfigurer extends PropertyConfigurerSupp
         case "expireAfterWriteTime": return int.class;
         case "initialcapacity":
         case "initialCapacity": return java.lang.Integer.class;
-        case "key": return java.lang.Object.class;
-        case "keytype":
-        case "keyType": return java.lang.String.class;
+        case "key": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maximumsize":
@@ -122,8 +118,6 @@ public class CaffeineLoadCacheComponentConfigurer extends PropertyConfigurerSupp
         case "initialcapacity":
         case "initialCapacity": return getOrCreateConfiguration(target).getInitialCapacity();
         case "key": return getOrCreateConfiguration(target).getKey();
-        case "keytype":
-        case "keyType": return getOrCreateConfiguration(target).getKeyType();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maximumsize":

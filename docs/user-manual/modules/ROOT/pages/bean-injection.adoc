@@ -50,9 +50,9 @@ xref:registry.adoc[Registry].
    MyFooBean foo;
 ----
 
-== Bean Injection with Quarkus or CDI
+== Bean Injection with Quarkus
 
-When using Camel with CDI, Spring Boot, or Quarkus, then the `@Inject`, or `@Named` annotations can
+When using Camel with Spring Boot, or Quarkus, then the `@Inject`, or `@Named` annotations can
 be used to inject Camel resources as well.
 
 == Bean Injection with Spring Boot

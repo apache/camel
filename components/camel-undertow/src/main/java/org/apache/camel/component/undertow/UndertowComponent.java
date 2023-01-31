@@ -95,7 +95,6 @@ public class UndertowComponent extends DefaultComponent
 
     public UndertowComponent(CamelContext context) {
         super(context);
-        registerExtension(UndertowComponentVerifierExtension::new);
     }
 
     @Override

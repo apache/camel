@@ -16,11 +16,11 @@
  */
 package org.apache.camel.model.config;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 import org.apache.camel.spi.Metadata;
@@ -67,7 +67,7 @@ public class StreamResequencerConfig extends ResequencerConfig {
     /**
      * Creates a new {@link StreamResequencerConfig} instance using the given values for <code>capacity</code> and
      * <code>timeout</code>. Elements of the sequence are compared using the default {@link ExpressionResultComparator}.
-     * 
+     *
      * @param capacity capacity of the resequencer's inbound queue.
      * @param timeout  minimum time to wait for missing elements (messages).
      */
@@ -78,7 +78,7 @@ public class StreamResequencerConfig extends ResequencerConfig {
     /**
      * Creates a new {@link StreamResequencerConfig} instance using the given values for <code>capacity</code> and
      * <code>timeout</code>. Elements of the sequence are compared with the given {@link ExpressionResultComparator}.
-     * 
+     *
      * @param capacity   capacity of the resequencer's inbound queue.
      * @param timeout    minimum time to wait for missing elements (messages).
      * @param comparator comparator for sequence comparison
@@ -119,7 +119,7 @@ public class StreamResequencerConfig extends ResequencerConfig {
      * Returns a new {@link StreamResequencerConfig} instance using default values for <code>capacity</code> (1000) and
      * <code>timeout</code> (1000L). Elements of the sequence are compared using the default
      * {@link ExpressionResultComparator}.
-     * 
+     *
      * @return a default {@link StreamResequencerConfig}.
      */
     public static StreamResequencerConfig getDefault() {

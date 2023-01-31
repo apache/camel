@@ -61,7 +61,7 @@ public class LanguageServiceTest extends ContextTestSupport {
         assertTrue(context.getLanguageNames().isEmpty());
     }
 
-    public class MyLanguage extends ServiceSupport implements Language, IsSingleton {
+    public static class MyLanguage extends ServiceSupport implements Language, IsSingleton {
 
         private String state;
 

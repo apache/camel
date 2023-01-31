@@ -26,9 +26,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ThreadPoolProfileBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+@Tag("not-parallel")
 class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
 
     private static final int SIZE = 5_000;

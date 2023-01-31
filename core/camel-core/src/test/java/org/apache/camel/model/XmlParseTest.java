@@ -18,7 +18,7 @@ package org.apache.camel.model;
 
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.loadbalancer.FailoverLoadBalancerDefinition;
@@ -267,12 +267,6 @@ public class XmlParseTest extends XmlTestSupport {
     @Test
     public void testParseHL7DataFormat() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithHL7DataFormat.xml");
-        assertFrom(route, "seda:a");
-    }
-
-    @Test
-    public void testParseXStreamDataFormat() throws Exception {
-        RouteDefinition route = assertOneRoute("routeWithXStreamDataFormat.xml");
         assertFrom(route, "seda:a");
     }
 

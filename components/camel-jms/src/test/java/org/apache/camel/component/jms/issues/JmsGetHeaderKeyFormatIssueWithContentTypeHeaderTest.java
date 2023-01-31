@@ -68,7 +68,7 @@ public class JmsGetHeaderKeyFormatIssueWithContentTypeHeaderTest extends Abstrac
 
                             // do not mutate it
                             JmsMessage msg = assertIsInstanceOf(JmsMessage.class, exchange.getIn());
-                            assertNotNull(msg.getJmsMessage(), "javax.jms.Message should not be null");
+                            assertNotNull(msg.getJmsMessage(), "jakarta.jms.Message should not be null");
                         })
                         .to("activemq:queue:JmsGetHeaderKeyFormatIssueWithContentTypeHeaderTest.copy", "mock:result");
 

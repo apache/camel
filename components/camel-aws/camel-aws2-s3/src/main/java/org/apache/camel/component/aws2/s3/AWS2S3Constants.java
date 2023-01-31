@@ -129,4 +129,10 @@ public interface AWS2S3Constants {
     String METADATA = "CamelAwsS3Metadata";
     @Metadata(label = "consumer", description = "The timestamp of the message", javaType = "long")
     String MESSAGE_TIMESTAMP = Exchange.MESSAGE_TIMESTAMP;
+
+    @Metadata(description = "The prefix which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only list objects we are interested in")
+    String PREFIX = "CamelAwsS3Prefix";
+    @Metadata(description = "The delimiter which is used in the com.amazonaws.services.s3.model.ListObjectsRequest to only list objects we are interested in",
+              javaType = "String")
+    String DELIMITER = "CamelAwsS3Delimiter";
 }

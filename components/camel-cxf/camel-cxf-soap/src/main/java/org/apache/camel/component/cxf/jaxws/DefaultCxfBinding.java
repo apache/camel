@@ -34,13 +34,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
+import jakarta.xml.ws.Holder;
+
 import javax.security.auth.Subject;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.ws.Holder;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -139,7 +140,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
         DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY,
                 DataFormat.class);
-        // we should avoid adding the attachments if the data format is CXFMESSAGE, as the message stream 
+        // we should avoid adding the attachments if the data format is CXFMESSAGE, as the message stream
         // already has the attachment information
         if (!DataFormat.CXF_MESSAGE.equals(dataFormat)) {
             if (camelExchange.getIn(AttachmentMessage.class).hasAttachments()) {
@@ -327,7 +328,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             }
         }
 
-        // Propagating properties from CXF Exchange to Camel Exchange has an  
+        // Propagating properties from CXF Exchange to Camel Exchange has an
         // side effect of copying reply side stuff when the producer is retried.
         // So, we do not want to do this.
         //camelExchange.getProperties().putAll(cxfExchange);
@@ -351,7 +352,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             camelExchange.getIn().setBody(body);
         }
 
-        // propagate attachments if the data format is not POJO        
+        // propagate attachments if the data format is not POJO
         if (cxfMessage.getAttachments() != null
                 && !camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class).equals(DataFormat.POJO)) {
             for (Attachment attachment : cxfMessage.getAttachments()) {
@@ -644,7 +645,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {
                 if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(),
                         entry.getValue(), exchange)) {
-                    // We need to filter the content type with multi-part, 
+                    // We need to filter the content type with multi-part,
                     // as the multi-part stream is already consumed by AttachmentInInterceptor,
                     // it will cause some trouble when route this message to another CXF endpoint.
 
@@ -672,8 +673,10 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                         List<String> values = entry.getValue();
                         Object evalue;
                         if (values.size() > 1) {
-                            if (exchange.getProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.FALSE,
-                                    Boolean.class)) {
+                            final boolean headersMerged
+                                    = exchange.getProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.FALSE,
+                                            Boolean.class);
+                            if (headersMerged) {
                                 StringBuilder sb = new StringBuilder();
                                 for (Iterator<String> it = values.iterator(); it.hasNext();) {
                                     sb.append(it.next());
@@ -1069,7 +1072,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     public void extractJaxWsContext(org.apache.cxf.message.Exchange cxfExchange, Map<String, Object> context) {
         org.apache.cxf.message.Message inMessage = cxfExchange.getInMessage();
         for (Map.Entry<String, Object> entry : inMessage.entrySet()) {
-            if (entry.getKey().startsWith("javax.xml.ws")) {
+            if (entry.getKey().startsWith("jakarta.xml.ws")) {
                 context.put(entry.getKey(), entry.getValue());
             }
         }

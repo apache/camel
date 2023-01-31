@@ -21,10 +21,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -167,7 +167,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                     Session session = holder.getSession();
                     SjmsMessage response = new SjmsMessage(exchange, message, session, endpoint.getBinding());
                     // the JmsBinding is designed to be "pull-based": it will populate the Camel message on demand
-                    // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full access 
+                    // therefore, we link Exchange and OUT message before continuing, so that the JmsBinding has full access
                     // to everything it may need, and can populate headers, properties, etc. accordingly (solves CAMEL-6218).
                     exchange.setOut(response);
                     Object body = response.getBody();

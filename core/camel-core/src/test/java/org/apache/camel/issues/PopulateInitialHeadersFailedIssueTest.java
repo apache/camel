@@ -59,7 +59,7 @@ public class PopulateInitialHeadersFailedIssueTest extends ContextTestSupport {
         };
     }
 
-    private class MyFaultMessage extends DefaultMessage {
+    private static class MyFaultMessage extends DefaultMessage {
 
         public MyFaultMessage(Exchange exchange) {
             super(exchange);

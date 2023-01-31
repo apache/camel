@@ -29,10 +29,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlTransient;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.BeanScope;
@@ -3050,7 +3050,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <pre>
      * {@code
      * fom("direct:start")
-     *     .enrichWith("direct:resource")
+     *         .enrichWith("direct:resource")
      *         .body(String.class, (o, n) -> n + o);
      * }
      * </pre>
@@ -3098,7 +3098,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <pre>
      * {@code
      * fom("direct:start")
-     *     .enrichWith("direct:resource")
+     *         .enrichWith("direct:resource")
      *         .body(String.class, (o, n) -> n + o);
      * }
      * </pre>

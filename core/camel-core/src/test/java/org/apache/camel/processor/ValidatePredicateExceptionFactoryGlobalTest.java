@@ -80,7 +80,7 @@ public class ValidatePredicateExceptionFactoryGlobalTest extends ContextTestSupp
         };
     }
 
-    private class MyExceptionFactory implements PredicateExceptionFactory {
+    private static class MyExceptionFactory implements PredicateExceptionFactory {
 
         @Override
         public Exception newPredicateException(Exchange exchange, Predicate predicate, String id) {

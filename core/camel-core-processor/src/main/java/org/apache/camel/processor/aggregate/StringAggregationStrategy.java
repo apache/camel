@@ -35,7 +35,7 @@ public class StringAggregationStrategy implements AggregationStrategy {
 
     /**
      * Set delimiter used for joining aggregated String
-     * 
+     *
      * @param delimiter The delimiter to join with. Default empty String
      */
     public StringAggregationStrategy delimiter(String delimiter) {
@@ -47,7 +47,7 @@ public class StringAggregationStrategy implements AggregationStrategy {
      * Set an expression to extract the element to be aggregated from the incoming {@link Exchange}.
      * <p/>
      * By default, it picks the full IN message body of the incoming exchange.
-     * 
+     *
      * @param  expression The picking expression.
      * @return            This instance.
      */

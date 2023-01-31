@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
+import java.net.URI;
+
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.ext.web.Router;
@@ -28,12 +30,15 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 @UriParams
 public class VertxWebsocketConfiguration {
 
-    @UriPath(name = "host", defaultValue = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_HOST)
-    private String host;
-    @UriPath(name = "port", defaultValue = "0")
-    private int port;
-    @UriPath(name = "path", defaultValue = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PATH)
+    private URI websocketURI;
+
+    @UriPath
     @Metadata(required = true)
+    private String host;
+    @UriPath
+    @Metadata(required = true)
+    private int port;
+    @UriPath
     private String path;
     @UriParam(label = "consumer")
     private String allowedOriginPattern;
@@ -41,6 +46,14 @@ public class VertxWebsocketConfiguration {
     private Router router;
     @UriParam(label = "consumer")
     private HttpServerOptions serverOptions;
+    @UriParam(label = "consumer")
+    private boolean consumeAsClient;
+    @UriParam(label = "consumer", defaultValue = "0")
+    private int reconnectInitialDelay;
+    @UriParam(label = "consumer", defaultValue = "1000")
+    private int reconnectInterval = 1000;
+    @UriParam(label = "consumer", defaultValue = "0")
+    private int maxReconnectAttempts;
     @UriParam(label = "producer")
     private HttpClientOptions clientOptions;
     @UriParam(label = "producer")
@@ -50,13 +63,26 @@ public class VertxWebsocketConfiguration {
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
 
+    /**
+     * The WebSocket URI address to use.
+     */
+    public void setWebsocketURI(URI websocketURI) {
+        this.websocketURI = websocketURI;
+        this.host = websocketURI.getHost();
+        this.port = websocketURI.getPort();
+        this.path = websocketURI.getPath();
+    }
+
+    public URI getWebsocketURI() {
+        return websocketURI;
+    }
+
     public String getHost() {
         return host;
     }
 
     /**
-     * The host that the consumer should bind to or the host of the remote websocket destination that the producer
-     * should connect to
+     * WebSocket hostname, such as localhost or a remote host when in client mode.
      */
     public void setHost(String host) {
         this.host = host;
@@ -67,8 +93,7 @@ public class VertxWebsocketConfiguration {
     }
 
     /**
-     * The port that the consumer should bind to or port of the remote websocket destination that the producer should
-     * connect to
+     * WebSocket port number to use.
      */
     public void setPort(int port) {
         this.port = port;
@@ -76,6 +101,13 @@ public class VertxWebsocketConfiguration {
 
     public String getPath() {
         return path;
+    }
+
+    /**
+     * WebSocket path to use.
+     */
+    public void setPath(String path) {
+        this.path = path;
     }
 
     /**
@@ -96,12 +128,51 @@ public class VertxWebsocketConfiguration {
         this.serverOptions = serverOptions;
     }
 
+    public boolean isConsumeAsClient() {
+        return consumeAsClient;
+    }
+
+    public int getReconnectInitialDelay() {
+        return reconnectInitialDelay;
+    }
+
     /**
-     * The path that the consumer should bind to or path of the remote websocket destination that the producer should
-     * connect to
+     * When consumeAsClient is set to true this sets the initial delay in milliseconds before attempting to reconnect to
+     * a previously closed WebSocket.
      */
-    public void setPath(String path) {
-        this.path = path;
+    public void setReconnectInitialDelay(int reconnectInitialDelay) {
+        this.reconnectInitialDelay = reconnectInitialDelay;
+    }
+
+    public int getReconnectInterval() {
+        return reconnectInterval;
+    }
+
+    /**
+     * When consumeAsClient is set to true this sets the interval in milliseconds at which reconnecting to a previously
+     * closed WebSocket occurs.
+     */
+    public void setReconnectInterval(int reconnectInterval) {
+        this.reconnectInterval = reconnectInterval;
+    }
+
+    public int getMaxReconnectAttempts() {
+        return maxReconnectAttempts;
+    }
+
+    /**
+     * When consumeAsClient is set to true this sets the maximum number of allowed reconnection attempts to a previously
+     * closed WebSocket. A value of 0 (the default) will attempt to reconnect indefinitely.
+     */
+    public void setMaxReconnectAttempts(int maxReconnectAttempts) {
+        this.maxReconnectAttempts = maxReconnectAttempts;
+    }
+
+    /**
+     * When set to true, the consumer acts as a WebSocket client, creating exchanges on each received WebSocket event.
+     */
+    public void setConsumeAsClient(boolean consumeAsClient) {
+        this.consumeAsClient = consumeAsClient;
     }
 
     public HttpClientOptions getClientOptions() {

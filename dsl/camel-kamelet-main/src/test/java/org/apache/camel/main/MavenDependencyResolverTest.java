@@ -135,14 +135,14 @@ public class MavenDependencyResolverTest {
              MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
             downloader.build();
 
-            List<MavenArtifact> answer = downloader.resolveDependenciesViaAether(deps, null, true);
+            List<MavenArtifact> answer = downloader.resolveDependenciesViaAether(deps, true);
             Assertions.assertNotNull(answer);
             assertTrue(answer.size() > 15);
             for (MavenArtifact ma : answer) {
                 LOG.info("Artifact (transitive): {}", ma);
             }
 
-            answer = downloader.resolveDependenciesViaAether(deps, null, false);
+            answer = downloader.resolveDependenciesViaAether(deps, false);
             Assertions.assertNotNull(answer);
             assertEquals(1, answer.size());
             for (MavenArtifact ma : answer) {

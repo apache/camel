@@ -228,7 +228,8 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
 
     @Override
     protected void setAccessToken(final Request request) {
-        request.getHeaders().put("Authorization", "Bearer " + accessToken);
+        request.header("Authorization", null);
+        request.header("Authorization", "Bearer " + accessToken);
     }
 
     static void checkCompositeBatchVersion(final String configuredVersion, final Version batchVersion)

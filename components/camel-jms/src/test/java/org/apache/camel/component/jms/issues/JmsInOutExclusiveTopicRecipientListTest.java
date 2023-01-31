@@ -29,6 +29,8 @@ public class JmsInOutExclusiveTopicRecipientListTest extends AbstractJMSTest {
     public void testJmsInOutExclusiveTopicTest() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye Camel");
 
+        Thread.sleep(1000); // instantiate JmsInOutExclusiveTopicRecipientListTest.reply queue
+
         String out = template.requestBodyAndHeader("direct:start", "Camel", "whereTo",
                 "activemq:topic:JmsInOutExclusiveTopicRecipientListTest.news?replyToType=Exclusive&replyTo=queue:JmsInOutExclusiveTopicRecipientListTest.reply",
                 String.class);
@@ -50,7 +52,7 @@ public class JmsInOutExclusiveTopicRecipientListTest extends AbstractJMSTest {
                         .recipientList().header("whereTo")
                         .to("mock:result");
 
-                from("activemq:topic:JmsInOutExclusiveTopicRecipientListTest.news?disableReplyTo=true")
+                from("activemq:topic:JmsInOutExclusiveTopicRecipientListTest.news")
                         .transform(body().prepend("Bye "))
                         .process(exchange -> {
                             String replyTo = exchange.getIn().getHeader("JMSReplyTo", String.class);

@@ -18,15 +18,15 @@ package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class JMSTXInOutPersistentQueueTest extends CamelSpringTestSupport {
+public class JMSTXInOutPersistentQueueTest extends AbstractSpringJMSTestSupport {
 
     private static int counter;
 

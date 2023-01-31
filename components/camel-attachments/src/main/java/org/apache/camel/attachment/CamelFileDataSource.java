@@ -18,8 +18,8 @@ package org.apache.camel.attachment;
 
 import java.io.File;
 
-import javax.activation.FileDataSource;
-import javax.activation.FileTypeMap;
+import jakarta.activation.FileDataSource;
+import jakarta.activation.FileTypeMap;
 
 public class CamelFileDataSource extends FileDataSource {
     private final String fileName;

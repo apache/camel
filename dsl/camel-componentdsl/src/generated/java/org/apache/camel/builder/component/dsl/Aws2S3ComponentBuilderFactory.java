@@ -16,7 +16,7 @@
  */
 package org.apache.camel.builder.component.dsl;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;
@@ -120,6 +120,22 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * The delimiter which is used in the
+         * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
+         * objects we are interested in.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param delimiter the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder delimiter(java.lang.String delimiter) {
+            doSetProperty("delimiter", delimiter);
+            return this;
+        }
+        /**
          * Set the need for overidding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
@@ -163,6 +179,22 @@ public interface Aws2S3ComponentBuilderFactory {
          */
         default Aws2S3ComponentBuilder policy(java.lang.String policy) {
             doSetProperty("policy", policy);
+            return this;
+        }
+        /**
+         * The prefix which is used in the
+         * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
+         * objects we are interested in.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param prefix the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder prefix(java.lang.String prefix) {
+            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -368,22 +400,6 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
-         * The delimiter which is used in the
-         * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
-         * objects we are interested in.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param delimiter the value to set
-         * @return the dsl builder
-         */
-        default Aws2S3ComponentBuilder delimiter(java.lang.String delimiter) {
-            doSetProperty("delimiter", delimiter);
-            return this;
-        }
-        /**
          * Define the destination bucket where an object must be moved when
          * moveAfterRead is set to true.
          * 
@@ -535,22 +551,6 @@ public interface Aws2S3ComponentBuilderFactory {
          */
         default Aws2S3ComponentBuilder moveAfterRead(boolean moveAfterRead) {
             doSetProperty("moveAfterRead", moveAfterRead);
-            return this;
-        }
-        /**
-         * The prefix which is used in the
-         * com.amazonaws.services.s3.model.ListObjectsRequest to only consume
-         * objects we are interested in.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: consumer
-         * 
-         * @param prefix the value to set
-         * @return the dsl builder
-         */
-        default Aws2S3ComponentBuilder prefix(java.lang.String prefix) {
-            doSetProperty("prefix", prefix);
             return this;
         }
         /**
@@ -923,9 +923,11 @@ public interface Aws2S3ComponentBuilderFactory {
             case "amazonS3Presigner": getOrCreateConfiguration((AWS2S3Component) component).setAmazonS3Presigner((software.amazon.awssdk.services.s3.presigner.S3Presigner) value); return true;
             case "autoCreateBucket": getOrCreateConfiguration((AWS2S3Component) component).setAutoCreateBucket((boolean) value); return true;
             case "configuration": ((AWS2S3Component) component).setConfiguration((org.apache.camel.component.aws2.s3.AWS2S3Configuration) value); return true;
+            case "delimiter": getOrCreateConfiguration((AWS2S3Component) component).setDelimiter((java.lang.String) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((AWS2S3Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((AWS2S3Component) component).setPojoRequest((boolean) value); return true;
             case "policy": getOrCreateConfiguration((AWS2S3Component) component).setPolicy((java.lang.String) value); return true;
+            case "prefix": getOrCreateConfiguration((AWS2S3Component) component).setPrefix((java.lang.String) value); return true;
             case "proxyHost": getOrCreateConfiguration((AWS2S3Component) component).setProxyHost((java.lang.String) value); return true;
             case "proxyPort": getOrCreateConfiguration((AWS2S3Component) component).setProxyPort((java.lang.Integer) value); return true;
             case "proxyProtocol": getOrCreateConfiguration((AWS2S3Component) component).setProxyProtocol((software.amazon.awssdk.core.Protocol) value); return true;
@@ -938,7 +940,6 @@ public interface Aws2S3ComponentBuilderFactory {
             case "customerKeyMD5": getOrCreateConfiguration((AWS2S3Component) component).setCustomerKeyMD5((java.lang.String) value); return true;
             case "bridgeErrorHandler": ((AWS2S3Component) component).setBridgeErrorHandler((boolean) value); return true;
             case "deleteAfterRead": getOrCreateConfiguration((AWS2S3Component) component).setDeleteAfterRead((boolean) value); return true;
-            case "delimiter": getOrCreateConfiguration((AWS2S3Component) component).setDelimiter((java.lang.String) value); return true;
             case "destinationBucket": getOrCreateConfiguration((AWS2S3Component) component).setDestinationBucket((java.lang.String) value); return true;
             case "destinationBucketPrefix": getOrCreateConfiguration((AWS2S3Component) component).setDestinationBucketPrefix((java.lang.String) value); return true;
             case "destinationBucketSuffix": getOrCreateConfiguration((AWS2S3Component) component).setDestinationBucketSuffix((java.lang.String) value); return true;
@@ -948,7 +949,6 @@ public interface Aws2S3ComponentBuilderFactory {
             case "includeBody": getOrCreateConfiguration((AWS2S3Component) component).setIncludeBody((boolean) value); return true;
             case "includeFolders": getOrCreateConfiguration((AWS2S3Component) component).setIncludeFolders((boolean) value); return true;
             case "moveAfterRead": getOrCreateConfiguration((AWS2S3Component) component).setMoveAfterRead((boolean) value); return true;
-            case "prefix": getOrCreateConfiguration((AWS2S3Component) component).setPrefix((java.lang.String) value); return true;
             case "autocloseBody": getOrCreateConfiguration((AWS2S3Component) component).setAutocloseBody((boolean) value); return true;
             case "batchMessageNumber": getOrCreateConfiguration((AWS2S3Component) component).setBatchMessageNumber((int) value); return true;
             case "batchSize": getOrCreateConfiguration((AWS2S3Component) component).setBatchSize((int) value); return true;

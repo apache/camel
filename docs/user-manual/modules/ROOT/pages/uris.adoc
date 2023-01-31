@@ -1,8 +1,8 @@
 = URIs
 
-Camel makes extensive use of URIs to allow you to refer to xref:endpoint.adoc[Endpoint]s.
+Camel makes extensive use of URIs to allow you to refer to xref:endpoint.adoc[Endpoints].
 
-For example the following URI:
+For example, consider the following URI:
 
 [source,text]
 ----
@@ -11,17 +11,13 @@ kafka:cheese?brokers=mykafka:1234&clientId=foo
 
 This endpoint is created by the xref:components::kafka-component.adoc[Kafka] component.
 The URI contains endpoint configurations as context-path and query parameters.
-In this example the context-path is `cheese` which is the kafka topic to use.
+In this example, the context-path is `cheese` which is the kafka topic to use.
 
 The query parameters have two parameters:
 
-- `brokers=mykafka:1234` which is the remote Kafka broker to connect to.
-- `clientId=foo` is the client id
+1. `brokers=mykafka:1234`: the remote Kafka broker to connect to.
+2. `clientId=foo`: the client id, which is a configuration of the Kafka component
 
-Make sure to read
-xref:faq:how-do-i-configure-endpoints.adoc[How do I configure endpoints]
-to learn more about configuring endpoints. For
-example how to refer to beans in the xref:registry.adoc[registry] or how
-to use raw values for password options, and using
-xref:using-propertyplaceholder.adoc[property placeholders], or how to use
-the type safe xref:Endpoint-dsl.adoc[Endpoint DSL] and xref:dataformat-dsl.adoc[DataFormat DSL].
+== More Information
+
+You can read the guide xref:faq:how-do-i-configure-endpoints.adoc[How do I configure endpoints] to learn more about configuring _endpoints_. Among other things, this guide explains how to refer to beans in the xref:registry.adoc[registry], how to use raw values for password options, how to use xref:using-propertyplaceholder.adoc[property placeholders], or how to use the type safe xref:Endpoint-dsl.adoc[Endpoint DSL] and xref:dataformat-dsl.adoc[DataFormat DSL].

@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class MainBeansTest {
@@ -193,6 +194,80 @@ public class MainBeansTest {
         assertEquals("ldaps://ldap.local:636", ldapserver.get("java.naming.provider.url"));
         assertEquals("scott", ldapserver.get("java.naming.security.principal"));
         assertEquals("tiger", ldapserver.get("java.naming.security.credentials"));
+
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeansDottedHybridMap() {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // defining a factory bean
+        main.addProperty("camel.beans.myfactory", "#class:org.apache.camel.main.MyFooFactory");
+        main.addProperty("camel.beans.myfactory.hostName", "localhost");
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Object bean = camelContext.getRegistry().lookupByName("myfactory");
+        assertNotNull(bean);
+        assertInstanceOf(MyFooFactory.class, bean);
+
+        MyFooFactory factory = (MyFooFactory) bean;
+        assertNull(factory.get("hostName"));
+        assertEquals("localhost", factory.getHostName());
+
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeansSquareHybridMap() {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // defining a factory bean
+        main.addProperty("camel.beans.myfactory", "#class:org.apache.camel.main.MyFooFactory");
+        main.addProperty("camel.beans.myfactory[hostName]", "localhost");
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Object bean = camelContext.getRegistry().lookupByName("myfactory");
+        assertNotNull(bean);
+        assertInstanceOf(MyFooFactory.class, bean);
+
+        MyFooFactory factory = (MyFooFactory) bean;
+        assertNull(factory.getHostName());
+        assertEquals("localhost", factory.get("hostName"));
+
+        main.stop();
+    }
+
+    @Test
+    public void testBindBeansDottedAndSquareHybridMap() {
+        Main main = new Main();
+        main.configure().addRoutesBuilder(new MyRouteBuilder());
+
+        // defining a factory bean
+        main.addProperty("camel.beans.myfactory", "#class:org.apache.camel.main.MyFooFactory");
+        main.addProperty("camel.beans.myfactory.hostName", "localhost");
+        main.addProperty("camel.beans.myfactory[region]", "emea");
+        main.start();
+
+        CamelContext camelContext = main.getCamelContext();
+        assertNotNull(camelContext);
+
+        Object bean = camelContext.getRegistry().lookupByName("myfactory");
+        assertNotNull(bean);
+        assertInstanceOf(MyFooFactory.class, bean);
+
+        MyFooFactory factory = (MyFooFactory) bean;
+        assertNull(factory.get("hostName"));
+        assertEquals("localhost", factory.getHostName());
+        assertEquals("emea", factory.get("region"));
 
         main.stop();
     }

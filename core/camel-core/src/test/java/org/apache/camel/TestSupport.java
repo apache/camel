@@ -321,7 +321,7 @@ public abstract class TestSupport {
         try {
             PredicateAssertHelper.assertMatches(predicate, "Predicate should match: ", exchange);
         } catch (AssertionError e) {
-            LOG.debug("Caught expected assertion error: " + e);
+            LOG.debug("Caught expected assertion error: {}", e.getMessage(), e);
         }
         assertPredicate(predicate, exchange, false);
     }
@@ -639,7 +639,7 @@ public abstract class TestSupport {
      * Returns the current major Java version e.g 8.
      * <p/>
      * Uses <tt>java.specification.version</tt> from the system properties to determine the major version.
-     * 
+     *
      * @return the current major Java version.
      */
     public static int getJavaMajorVersion() {

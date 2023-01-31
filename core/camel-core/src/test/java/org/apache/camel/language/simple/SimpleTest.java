@@ -1846,6 +1846,32 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     @Test
+    public void testJoinBody() throws Exception {
+        List<Object> data = new ArrayList<>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        exchange.getIn().setBody(data);
+
+        assertExpression("${join()}", "A,B,C");
+        assertExpression("${join(;)}", "A;B;C");
+        assertExpression("${join(' ')}", "A B C");
+        assertExpression("${join(',','id=')}", "id=A,id=B,id=C");
+        assertExpression("${join(&,id=)}", "id=A&id=B&id=C");
+    }
+
+    @Test
+    public void testJoinHeader() throws Exception {
+        List<Object> data = new ArrayList<>();
+        data.add("A");
+        data.add("B");
+        data.add("C");
+        exchange.getIn().setHeader("id", data);
+
+        assertExpression("${join('&','id=','${header.id}')}", "id=A&id=B&id=C");
+    }
+
+    @Test
     public void testRandomExpression() throws Exception {
         int min = 1;
         int max = 10;

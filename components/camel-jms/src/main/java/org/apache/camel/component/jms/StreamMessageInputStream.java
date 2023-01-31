@@ -19,9 +19,9 @@ package org.apache.camel.component.jms;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.jms.JMSException;
-import javax.jms.MessageEOFException;
-import javax.jms.StreamMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageEOFException;
+import jakarta.jms.StreamMessage;
 
 public class StreamMessageInputStream extends InputStream {
 
@@ -49,7 +49,7 @@ public class StreamMessageInputStream extends InputStream {
         try {
             int num = message.readBytes(array);
             if (num < 0) {
-                //the first 128K(FileUtil.BUFFER_SIZE/128K is used when sending JMS StreamMessage) 
+                //the first 128K(FileUtil.BUFFER_SIZE/128K is used when sending JMS StreamMessage)
                 //buffer reached, give a chance to see if there is the next 128K buffer
                 num = message.readBytes(array);
             }

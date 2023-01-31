@@ -30,9 +30,7 @@ public class CaffeineConfiguration implements Cloneable {
     @UriParam(enums = "GET,GET_ALL,PUT,PUT_ALL,INVALIDATE,INVALIDATE_ALL,CLEANUP,AS_MAP")
     private String action;
     @UriParam
-    private Object key;
-    @UriParam(label = "advanced")
-    private String keyType;
+    private String key;
     @UriParam(label = "advanced")
     private String valueType;
     @UriParam
@@ -80,7 +78,7 @@ public class CaffeineConfiguration implements Cloneable {
         this.action = action;
     }
 
-    public Object getKey() {
+    public String getKey() {
         return key;
     }
 
@@ -88,19 +86,8 @@ public class CaffeineConfiguration implements Cloneable {
      * To configure the default action key. If a key is set in the message header, then the key from the header takes
      * precedence.
      */
-    public void setKey(Object key) {
+    public void setKey(String key) {
         this.key = key;
-    }
-
-    public String getKeyType() {
-        return keyType;
-    }
-
-    /**
-     * The cache key type, default "java.lang.Object"
-     */
-    public void setKeyType(String keyType) {
-        this.keyType = keyType;
     }
 
     public String getValueType() {

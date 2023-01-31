@@ -21,12 +21,12 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.Enumeration;
 
-import javax.activation.DataHandler;
-import javax.mail.Address;
-import javax.mail.Flags;
-import javax.mail.Header;
-import javax.mail.Message;
-import javax.mail.Multipart;
+import jakarta.activation.DataHandler;
+import jakarta.mail.Address;
+import jakarta.mail.Flags;
+import jakarta.mail.Header;
+import jakarta.mail.Message;
+import jakarta.mail.Multipart;
 
 public class MockMessage extends Message {
 

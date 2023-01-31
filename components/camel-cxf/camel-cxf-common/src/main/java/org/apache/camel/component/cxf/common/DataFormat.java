@@ -41,14 +41,14 @@ public enum DataFormat {
      * <p>
      * Out phases: {Phase.PREPARE_SEND, Phase.WRITE, Phase.SEND, Phase.PREPARE_SEND_ENDING}
      * </p>
-     * 
+     *
      */
     RAW,
 
     /**
      * MESSAGE is the raw message that is received from the transport layer. Streaming and non-streaming are both
      * supported.
-     * 
+     *
      * @deprecated - equivalent to RAW mode for Camel 2.x
      */
     @Deprecated

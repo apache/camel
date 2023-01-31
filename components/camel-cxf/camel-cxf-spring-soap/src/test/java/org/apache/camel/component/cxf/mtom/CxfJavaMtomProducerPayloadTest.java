@@ -19,7 +19,7 @@ package org.apache.camel.component.cxf.mtom;
 import java.awt.*;
 import java.util.List;
 
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

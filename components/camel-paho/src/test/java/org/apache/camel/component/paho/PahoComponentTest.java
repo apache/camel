@@ -22,27 +22,13 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class PahoComponentTest extends CamelTestSupport {
-
-    static int mqttPort = AvailablePortFinder.getNextAvailable();
-
-    @RegisterExtension
-    public ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
-            .bare()
-            .withPersistent(false)
-            .withMqttTransport(mqttPort)
-            .build();
+public class PahoComponentTest extends PahoTestSupport {
 
     @EndpointInject("mock:test")
     MockEndpoint mock;
@@ -63,15 +49,17 @@ public class PahoComponentTest extends CamelTestSupport {
                 PahoComponent customizedPaho = new PahoComponent();
                 context.addComponent("customizedPaho", customizedPaho);
 
-                from("direct:test").to("paho:queue?brokerUrl=tcp://localhost:" + mqttPort);
-                from("paho:queue?brokerUrl=tcp://localhost:" + mqttPort).to("mock:test");
+                from("direct:test").to("paho:queue?brokerUrl=" + service.serviceAddress());
+                from("paho:queue?brokerUrl=" + service.serviceAddress()).to("mock:test");
 
-                from("direct:test2").to("paho:queue?brokerUrl=tcp://localhost:" + mqttPort);
+                from("direct:test2").to("paho:queue?brokerUrl=" + service.serviceAddress());
 
-                from("paho:persistenceTest?persistence=FILE&brokerUrl=tcp://localhost:" + mqttPort).to("mock:persistenceTest");
+                from("paho:persistenceTest?persistence=FILE&brokerUrl=" + service.serviceAddress())
+                        .to("mock:persistenceTest");
 
-                from("direct:testCustomizedPaho").to("customizedPaho:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort);
-                from("paho:testCustomizedPaho?brokerUrl=tcp://localhost:" + mqttPort).to("mock:testCustomizedPaho");
+                from("direct:testCustomizedPaho")
+                        .to("customizedPaho:testCustomizedPaho?brokerUrl=" + service.serviceAddress());
+                from("paho:testCustomizedPaho?brokerUrl=" + service.serviceAddress()).to("mock:testCustomizedPaho");
             }
         };
     }
@@ -80,7 +68,8 @@ public class PahoComponentTest extends CamelTestSupport {
 
     @Test
     public void checkOptions() {
-        String uri = "paho:/test/topic" + "?clientId=sampleClient" + "&brokerUrl=tcp://localhost:" + mqttPort + "&qos=2"
+        String uri = "paho:/test/topic" + "?clientId=sampleClient" + "&brokerUrl=" + service.serviceAddress()
+                     + "&qos=2"
                      + "&persistence=file";
 
         PahoEndpoint endpoint = getMandatoryEndpoint(uri, PahoEndpoint.class);
@@ -88,7 +77,7 @@ public class PahoComponentTest extends CamelTestSupport {
         // Then
         assertEquals("/test/topic", endpoint.getTopic());
         assertEquals("sampleClient", endpoint.getConfiguration().getClientId());
-        assertEquals("tcp://localhost:" + mqttPort, endpoint.getConfiguration().getBrokerUrl());
+        assertEquals("" + service.serviceAddress(), endpoint.getConfiguration().getBrokerUrl());
         assertEquals(2, endpoint.getConfiguration().getQos());
         assertEquals(PahoPersistence.FILE, endpoint.getConfiguration().getPersistence());
     }
@@ -112,7 +101,7 @@ public class PahoComponentTest extends CamelTestSupport {
         mock.expectedMessageCount(0);
 
         // When
-        template.sendBody("paho:someRandomQueue?brokerUrl=tcp://localhost:" + mqttPort, "msg");
+        template.sendBody("paho:someRandomQueue?brokerUrl=" + service.serviceAddress(), "msg");
 
         // Then
         mock.assertIsSatisfied();
@@ -174,10 +163,11 @@ public class PahoComponentTest extends CamelTestSupport {
         mock.expectedMessageCount(0);
 
         // When
-        template.sendBody("paho:someRandomQueue?brokerUrl=tcp://localhost:" + mqttPort + "&userName=test&password=test", "msg");
+        template.sendBody(
+                "paho:someRandomQueue?brokerUrl=" + service.serviceAddress() + "&userName=test&password=test",
+                "msg");
 
         // Then
         mock.assertIsSatisfied();
     }
-
 }

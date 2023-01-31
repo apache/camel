@@ -196,7 +196,7 @@ public final class CamelXmlHelper {
         return selectedElement;
     }
 
-    private static Document loadCamelXmlFileAsDom(InputStream resourceInputStream) throws Exception {
+    private static Document loadCamelXmlFileAsDom(InputStream resourceInputStream) {
         // must enforce the namespace to be http://camel.apache.org/schema/spring which is what the camel-core JAXB model uses
         return XmlLineNumberParser.parseXml(resourceInputStream, "camelContext,routes,rests",
                 "http://camel.apache.org/schema/spring");

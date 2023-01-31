@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.mail.mock;
 
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.URLName;
+import jakarta.mail.MessagingException;
+import jakarta.mail.Session;
+import jakarta.mail.URLName;
 
 import org.jvnet.mock_javamail.MockStore;
 

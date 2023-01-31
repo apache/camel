@@ -16,19 +16,15 @@
  */
 package org.apache.camel.component.cxf.jaxws;
 
-import java.util.logging.Logger;
-
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.w3c.dom.Node;
 
-import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.databinding.DataReader;
 import org.apache.cxf.databinding.DataWriter;
 import org.apache.cxf.databinding.source.NodeDataReader;
 import org.apache.cxf.databinding.source.NodeDataWriter;
-import org.apache.cxf.databinding.source.SourceDataBinding;
 import org.apache.cxf.databinding.source.XMLStreamDataReader;
 import org.apache.cxf.databinding.source.XMLStreamDataWriter;
 import org.apache.cxf.jaxb.JAXBDataBinding;
@@ -43,8 +39,6 @@ import org.apache.cxf.service.model.MessagePartInfo;
  * de/serialization without requiring users to provide a WSDL.
  */
 public class HybridSourceDataBinding extends JAXBDataBinding {
-    private static final Logger LOG = LogUtils.getL7dLogger(SourceDataBinding.class);
-
     public HybridSourceDataBinding() {
     }
 

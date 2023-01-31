@@ -16,7 +16,7 @@
  */
 package org.apache.camel.builder.component.dsl;
 
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.Component;
 import org.apache.camel.builder.component.AbstractComponentBuilder;
 import org.apache.camel.builder.component.ComponentBuilder;

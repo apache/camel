@@ -41,7 +41,7 @@ class CamelOutputStream extends CachedOutputStream {
     private static final Logger LOG = LoggerFactory.getLogger(CamelOutputStream.class);
 
     /**
-     * 
+     *
      */
     private final Message outMessage;
     private boolean isOneWay;

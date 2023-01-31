@@ -34,9 +34,7 @@ public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport i
         case "expireAfterWriteTime": target.getConfiguration().setExpireAfterWriteTime(property(camelContext, int.class, value)); return true;
         case "initialcapacity":
         case "initialCapacity": target.getConfiguration().setInitialCapacity(property(camelContext, java.lang.Integer.class, value)); return true;
-        case "key": target.getConfiguration().setKey(property(camelContext, java.lang.Object.class, value)); return true;
-        case "keytype":
-        case "keyType": target.getConfiguration().setKeyType(property(camelContext, java.lang.String.class, value)); return true;
+        case "key": target.getConfiguration().setKey(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maximumsize":
@@ -69,9 +67,7 @@ public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport i
         case "expireAfterWriteTime": return int.class;
         case "initialcapacity":
         case "initialCapacity": return java.lang.Integer.class;
-        case "key": return java.lang.Object.class;
-        case "keytype":
-        case "keyType": return java.lang.String.class;
+        case "key": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maximumsize":
@@ -106,8 +102,6 @@ public class CaffeineCacheEndpointConfigurer extends PropertyConfigurerSupport i
         case "initialcapacity":
         case "initialCapacity": return target.getConfiguration().getInitialCapacity();
         case "key": return target.getConfiguration().getKey();
-        case "keytype":
-        case "keyType": return target.getConfiguration().getKeyType();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maximumsize":

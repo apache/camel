@@ -46,7 +46,7 @@ public final class Sqs2MessageHelper {
         } else if (value instanceof Boolean) {
             MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
             mav.dataType("Number.Boolean");
-            mav.stringValue(((Boolean) value) ? "1" : "0");
+            mav.stringValue(Boolean.TRUE.equals(value) ? "1" : "0");
             return mav.build();
         } else if (value instanceof Number) {
             MessageAttributeValue.Builder mav = MessageAttributeValue.builder();

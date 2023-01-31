@@ -19,6 +19,7 @@ package org.apache.camel.component.jms.issues;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.AbstractJMSTest;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.StringHelper;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,6 +63,7 @@ public class JmsInOutExclusiveTopicTest extends AbstractJMSTest {
                         .transform(body().prepend("Bye "))
                         .process(exchange -> {
                             String replyTo = exchange.getIn().getHeader("JMSReplyTo", String.class);
+                            replyTo = StringHelper.between(replyTo, "ActiveMQQueue[", "]");
                             String cid = exchange.getIn().getHeader("JMSCorrelationID", String.class);
 
                             log.info("ReplyTo: {}", replyTo);

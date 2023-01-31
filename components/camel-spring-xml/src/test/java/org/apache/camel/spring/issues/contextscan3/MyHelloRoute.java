@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spring.issues.contextscan3;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.issues.MyHelloBean;

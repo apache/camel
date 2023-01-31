@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.mail;
 
-import javax.mail.Folder;
-import javax.mail.Store;
+import jakarta.mail.Folder;
+import jakarta.mail.Store;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

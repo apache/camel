@@ -91,3 +91,8 @@ You can also add a default value if the key does not exist, such as:
 @PropertyInject(value = "myTimeout", defaultValue = "5000")
 private int timeout;
 ----
+
+== See Also
+
+** xref:bean-injection.adoc[Bean Injection]
+** xref:bean-binding.adoc[Bean Binding]

@@ -19,8 +19,8 @@ package org.apache.camel.component.mail;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.mail.Message;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.Message;
+import jakarta.mail.internet.MimeMultipart;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;

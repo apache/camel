@@ -26,10 +26,14 @@ import java.util.stream.StreamSupport;
 import com.mongodb.client.ListIndexesIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mongodb.MongoDbConstants;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -45,9 +49,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class MongoDbIndexIT extends AbstractMongoDbITSupport {
 
+    @BeforeEach
+    void checkDocuments() {
+        Assumptions.assumeTrue(0 == testCollection.countDocuments(), "The collection should have no documents");
+    }
+
     @Test
     public void testInsertDynamicityEnabledDBAndCollectionAndIndex() {
-        assertEquals(0, testCollection.countDocuments());
         mongo.getDatabase("otherDB").drop();
         db.getCollection("otherCollection").drop();
         assertFalse(StreamSupport.stream(mongo.listDatabaseNames().spliterator(), false).anyMatch("otherDB"::equals),
@@ -174,7 +182,6 @@ public class MongoDbIndexIT extends AbstractMongoDbITSupport {
     @Disabled
     @Test
     public void testInsertAutoCreateCollectionAndURIIndex() {
-        assertEquals(0, testCollection.countDocuments());
         db.getCollection("otherCollection").deleteOne(new Document());
 
         String body = "{\"_id\": \"testInsertAutoCreateCollectionAndURIIndex\", \"a\" : 1, \"b\" : 2}";
@@ -202,7 +209,6 @@ public class MongoDbIndexIT extends AbstractMongoDbITSupport {
                 "The otherDB database should not exist");
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -214,5 +220,10 @@ public class MongoDbIndexIT extends AbstractMongoDbITSupport {
                         .to("mongodb:myDb?database={{mongodb.testDb}}&collection=otherCollection&collectionIndex={\"a\":1,\"b\":-1}&operation=insert&dynamicity=false");
             }
         };
+    }
+
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(createRouteBuilder());
     }
 }

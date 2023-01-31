@@ -169,8 +169,7 @@ public class CaseInsensitiveMapTest {
         assertEquals(123, map.get("BaR"));
 
         // key case should be preserved
-        Map<String, Object> keys = new HashMap<>();
-        keys.putAll(map);
+        Map<String, Object> keys = new HashMap<>(map);
 
         assertEquals("cheese", keys.get("Foo"));
         assertNull(keys.get("foo"));
@@ -417,8 +416,7 @@ public class CaseInsensitiveMapTest {
         assertEquals(true, map.containsKey("foo"));
         assertEquals(true, map.containsKey("bar"));
 
-        Map<String, Object> other = new HashMap<>();
-        other.putAll(map);
+        Map<String, Object> other = new HashMap<>(map);
 
         assertEquals(false, other.containsKey("foo"));
         assertEquals(true, other.containsKey("Foo"));

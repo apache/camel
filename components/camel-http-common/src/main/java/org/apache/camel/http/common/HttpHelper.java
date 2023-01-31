@@ -27,8 +27,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;

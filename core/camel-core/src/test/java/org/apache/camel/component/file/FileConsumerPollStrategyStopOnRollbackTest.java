@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.time.Duration;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -25,6 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.Registry;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
@@ -67,7 +70,7 @@ public class FileConsumerPollStrategyStopOnRollbackTest extends ContextTestSuppo
         // never get a message
         mock.assertIsSatisfied(50);
 
-        assertEquals("rollback", event);
+        Awaitility.await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> assertEquals("rollback", event));
     }
 
     private static class MyPollStrategy implements PollingConsumerPollStrategy {

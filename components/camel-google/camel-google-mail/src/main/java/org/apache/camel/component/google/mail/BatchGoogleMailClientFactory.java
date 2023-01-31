@@ -27,11 +27,8 @@ import com.google.api.services.gmail.Gmail;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ResourceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class BatchGoogleMailClientFactory implements GoogleMailClientFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(BatchGoogleMailClientFactory.class);
     private NetHttpTransport transport;
     private JacksonFactory jsonFactory;
 

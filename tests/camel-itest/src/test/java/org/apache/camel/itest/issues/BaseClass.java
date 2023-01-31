@@ -16,8 +16,8 @@
  */
 package org.apache.camel.itest.issues;
 
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

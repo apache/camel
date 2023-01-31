@@ -51,7 +51,7 @@ public class SshComponentKnownHostEdDSATest extends SshComponentTestSupport {
 
                 from("ssh://smx:smx@localhost:" + port
                      + "?useFixedDelay=true&delay=40000&pollCommand=test%0A&knownHostsResource=classpath:known_hosts_eddsa&failOnUnknownHost=true")
-                             .to("mock:result");
+                        .to("mock:result");
 
                 from("direct:ssh")
                         .to("ssh://smx:smx@localhost:" + port

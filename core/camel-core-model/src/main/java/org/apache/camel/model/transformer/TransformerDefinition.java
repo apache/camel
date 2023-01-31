@@ -16,10 +16,10 @@
  */
 package org.apache.camel.model.transformer;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.model.InputTypeDefinition;
 import org.apache.camel.model.OutputTypeDefinition;
@@ -70,7 +70,7 @@ public abstract class TransformerDefinition {
      * Set the 'from' data type name. If you specify 'xml:XYZ', the transformer will be picked up if source type is
      * 'xml:XYZ'. If you specify just 'xml', the transformer matches with all of 'xml' source type like 'xml:ABC' or
      * 'xml:DEF'.
-     * 
+     *
      * @param from 'from' data type name
      */
     public void setFromType(String from) {

@@ -71,13 +71,13 @@ public class VertxHttpGzipTest extends VertxHttpTestSupport {
         HttpHandler handler = new EncodingHandler(
                 new ContentEncodingRepository()
                         .addEncodingHandler("gzip", new GzipEncodingProvider(), 50, Predicates.parse("max-content-size[5]")))
-                                .setNext(new HttpHandler() {
-                                    @Override
-                                    public void handleRequest(final HttpServerExchange exchange) {
-                                        exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, message.length() + "");
-                                        exchange.getResponseSender().send(message, IoCallback.END_EXCHANGE);
-                                    }
-                                });
+                .setNext(new HttpHandler() {
+                    @Override
+                    public void handleRequest(final HttpServerExchange exchange) {
+                        exchange.getResponseHeaders().put(Headers.CONTENT_LENGTH, message.length() + "");
+                        exchange.getResponseSender().send(message, IoCallback.END_EXCHANGE);
+                    }
+                });
 
         return new CamelUndertowHttpHandler() {
             @Override

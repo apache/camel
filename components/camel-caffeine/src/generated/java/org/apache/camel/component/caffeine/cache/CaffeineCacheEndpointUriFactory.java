@@ -21,7 +21,7 @@ public class CaffeineCacheEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(16);
+        Set<String> props = new HashSet<>(15);
         props.add("action");
         props.add("cacheLoader");
         props.add("cacheName");
@@ -31,7 +31,6 @@ public class CaffeineCacheEndpointUriFactory extends org.apache.camel.support.co
         props.add("expireAfterWriteTime");
         props.add("initialCapacity");
         props.add("key");
-        props.add("keyType");
         props.add("lazyStartProducer");
         props.add("maximumSize");
         props.add("removalListener");

@@ -16,48 +16,39 @@
  */
 package org.apache.camel.dsl.java.joor;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.support.ExtendedRouteBuilderLoaderSupport;
 import org.apache.camel.spi.CompilePostProcessor;
-import org.apache.camel.spi.ExtendedRoutesBuilderLoader;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceAware;
 import org.apache.camel.spi.annotations.RoutesLoader;
-import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.RouteWatcherReloadStrategy;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.dsl.java.joor.Helper.determineName;
 
 @ManagedResource(description = "Managed JavaRoutesBuilderLoader")
 @RoutesLoader(JavaRoutesBuilderLoader.EXTENSION)
 public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
 
     public static final String EXTENSION = "java";
-    public static final Pattern PACKAGE_PATTERN = Pattern.compile(
-            "^\\s*package\\s+([a-zA-Z][\\.\\w]*)\\s*;.*$", Pattern.MULTILINE);
 
     private static final Logger LOG = LoggerFactory.getLogger(JavaRoutesBuilderLoader.class);
 
@@ -69,7 +60,7 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
     protected void doBuild() throws Exception {
         super.doBuild();
 
-        // register joor classloader to camel so we are able to load classes we have compiled
+        // register jOOR classloader to camel, so we are able to load classes we have compiled
         CamelContext context = getCamelContext();
         if (context != null) {
             JavaJoorClassLoader cl = new JavaJoorClassLoader();
@@ -110,14 +101,6 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
             }
         }
 
-        if (getCompileDirectory() != null && isCompileLoadFirst()) {
-            resources = doLoadCompiledFirst(nameToResource, answer);
-            if (resources.isEmpty()) {
-                // all resources are loaded from pre-compiled
-                return answer;
-            }
-        }
-
         LOG.debug("Compiling unit: {}", unit);
         CompilationUnit.Result result = MultiCompile.compileUnit(unit);
 
@@ -152,13 +135,6 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
                 }
             }
 
-            if (getCompileDirectory() != null) {
-                byte[] byteCode = result.getByteCode(className);
-                if (byteCode != null) {
-                    saveByteCodeToDisk(getCompileDirectory(), className, byteCode);
-                }
-            }
-
             // support custom annotation scanning post compilation
             // such as to register custom beans, type converters, etc.
             for (CompilePostProcessor pre : getCompilePostProcessors()) {
@@ -173,68 +149,6 @@ public class JavaRoutesBuilderLoader extends ExtendedRouteBuilderLoaderSupport {
         }
 
         return answer;
-    }
-
-    private Collection<Resource> doLoadCompiledFirst(Map<String, Resource> nameToResource, Collection<RoutesBuilder> answer)
-            throws Exception {
-        // look for existing compiled and load them first, and any that are missing is to be compiled
-        Collection<Resource> toBeCompiled = new ArrayList<>();
-
-        Collection<Resource> byteCodes = new ArrayList<>();
-        for (var entry : nameToResource.entrySet()) {
-            final String className = entry.getKey();
-
-            File source = new File(getCompileDirectory(), className + ".class");
-            if (source.exists()) {
-                byte[] code = Files.readAllBytes(source.toPath());
-                byteCodes.add(ResourceHelper.fromBytes("class:" + className + ".class", code));
-            } else {
-                final Resource resource = entry.getValue();
-                toBeCompiled.add(resource);
-            }
-        }
-        if (!byteCodes.isEmpty()) {
-            // use the loader that can load from class byte codes
-            ExtendedRoutesBuilderLoader loader
-                    = (ExtendedRoutesBuilderLoader) getCamelContext().adapt(ExtendedCamelContext.class)
-                            .getRoutesLoader().getRoutesLoader("class");
-            Collection<RoutesBuilder> loaded = loader.loadRoutesBuilders(byteCodes);
-            answer.addAll(loaded);
-        }
-
-        return toBeCompiled;
-    }
-
-    private static void saveByteCodeToDisk(String outputDirectory, String name, byte[] byteCode) {
-        // write to disk (can be triggered multiple times so only write once)
-        File target = new File(outputDirectory, name + ".class");
-        if (!target.exists()) {
-            // create work-dir if needed
-            new File(outputDirectory).mkdirs();
-            try {
-                try (FileOutputStream fos = new FileOutputStream(target)) {
-                    LOG.debug("Writing compiled class: {} as bytecode to file: {}", name, target);
-                    fos.write(byteCode);
-                }
-            } catch (Exception e) {
-                LOG.warn("Error saving compiled class: {} as bytecode to file: {} due to {}", name, target, e.getMessage());
-            }
-        }
-    }
-
-    private static String determineName(Resource resource, String content) {
-        String loc = resource.getLocation();
-        // strip scheme to compute the name
-        String scheme = ResourceHelper.getScheme(loc);
-        if (scheme != null) {
-            loc = loc.substring(scheme.length());
-        }
-        final String name = FileUtil.onlyName(loc, true);
-        final Matcher matcher = PACKAGE_PATTERN.matcher(content);
-
-        return matcher.find()
-                ? matcher.group(1) + "." + name
-                : name;
     }
 
 }

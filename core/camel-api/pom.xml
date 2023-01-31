@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>core</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-api</artifactId>
@@ -36,12 +36,6 @@
     <properties>
         <firstVersion>3.0.0</firstVersion>
         <label>core</label>
-        <camel.osgi.export.pkg>$${replace;{local-packages};;;\;},org.apache.camel.spi.annotations
-        </camel.osgi.export.pkg>
-        <camel.osgi.import>
-            javax.xml.bind*;version="[2.2,3.0)",
-            *
-        </camel.osgi.import>
     </properties>
 
     <dependencies>
@@ -59,7 +53,7 @@
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>${jakarta-jaxb-version}</version>
+            <version>${jakarta-xml-bind-api-version}</version>
             <scope>compile</scope>
         </dependency>
 

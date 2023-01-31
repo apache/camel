@@ -17,14 +17,14 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.AbstractSpringJMSTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
+public class JmsToJmsTransactedTest extends AbstractSpringJMSTestSupport {
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
@@ -103,7 +103,7 @@ public class JmsToJmsTransactedTest extends CamelSpringTestSupport {
         MockEndpoint.assertIsSatisfied(context);
 
         // it should be moved to DLQ in JMS broker
-        Object body = consumer.receiveBody("activemq:queue:ActiveMQ.DLQ", 2000);
+        Object body = consumer.receiveBody("activemq:queue:DLQ", 2000);
         assertEquals("Hello World", body);
     }
 

@@ -18,9 +18,9 @@ package org.apache.camel.component.wordpress.api.service.impl;
 
 import java.util.Collections;
 
-import javax.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MediaType;
 
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import org.apache.camel.component.wordpress.api.auth.WordpressAuthentication;
 import org.apache.camel.component.wordpress.api.service.WordpressService;
 import org.apache.cxf.ext.logging.LoggingInInterceptor;

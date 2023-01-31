@@ -18,7 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;

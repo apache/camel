@@ -116,7 +116,7 @@ public interface OptionalChecks {
 
 with the following Camel route, only the *@NotNull* constraints on the
 attributes manufacturer and licensePlate will be validated (Camel uses
-the default group `javax.validation.groups.Default`).
+the default group `jakarta.validation.groups.Default`).
 
 [source,java]
 -------------------------
@@ -184,9 +184,10 @@ annotations. In this case, you have to provide the file
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------
 <validation-config
-    xmlns="http://jboss.org/xml/ns/javax/validation/configuration"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/configuration">
+        xmlns="https://jakarta.ee/xml/ns/validation/configuration"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/validation/configuration https://jakarta.ee/xml/ns/validation/validation-configuration-3.0.xsd"
+        version="3.0">
 
     <default-provider>org.hibernate.validator.HibernateValidator</default-provider>
     <message-interpolator>org.hibernate.validator.engine.ResourceBundleMessageInterpolator</message-interpolator>
@@ -203,21 +204,24 @@ and the `constraints-car.xml` file
 
 [source,xml]
 ----------------------------------------------------------------------------------------------------
-<constraint-mappings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://jboss.org/xml/ns/javax/validation/mapping validation-mapping-1.0.xsd"
-    xmlns="http://jboss.org/xml/ns/javax/validation/mapping">
+<constraint-mappings
+        xmlns="https://jakarta.ee/xml/ns/validation/mapping"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://jakarta.ee/xml/ns/validation/mapping
+            https://jakarta.ee/xml/ns/validation/validation-mapping-3.0.xsd"
+        version="3.0">
 
     <default-package>org.apache.camel.component.bean.validator</default-package>
     
     <bean class="CarWithoutAnnotations" ignore-annotations="true">
         <field name="manufacturer">
-            <constraint annotation="javax.validation.constraints.NotNull" />
+            <constraint annotation="jakarta.validation.constraints.NotNull" />
         </field>
         
         <field name="licensePlate">
-            <constraint annotation="javax.validation.constraints.NotNull" />
+            <constraint annotation="jakarta.validation.constraints.NotNull" />
             
-            <constraint annotation="javax.validation.constraints.Size">
+            <constraint annotation="jakarta.validation.constraints.Size">
                 <groups>
                     <value>org.apache.camel.component.bean.validator.OptionalChecks</value>
                 </groups>

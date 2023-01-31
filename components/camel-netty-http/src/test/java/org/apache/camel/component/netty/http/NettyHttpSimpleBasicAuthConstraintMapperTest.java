@@ -113,8 +113,8 @@ public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest 
             public void configure() {
                 from("netty-http:http://0.0.0.0:{{port}}/foo?matchOnUriPrefix=true"
                      + "&securityConfiguration.realm=karaf&securityConfiguration.securityConstraint=#myConstraint")
-                             .to("mock:input")
-                             .transform().constant("Bye World");
+                        .to("mock:input")
+                        .transform().constant("Bye World");
             }
         };
     }

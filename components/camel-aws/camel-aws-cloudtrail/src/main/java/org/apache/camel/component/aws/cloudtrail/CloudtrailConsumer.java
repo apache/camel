@@ -29,8 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 import software.amazon.awssdk.services.cloudtrail.model.Event;
 import software.amazon.awssdk.services.cloudtrail.model.LookupAttribute;
@@ -39,9 +37,6 @@ import software.amazon.awssdk.services.cloudtrail.model.LookupEventsRequest;
 import software.amazon.awssdk.services.cloudtrail.model.LookupEventsResponse;
 
 public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CloudtrailConsumer.class);
-
     private static Instant lastTime;
 
     public CloudtrailConsumer(CloudtrailEndpoint endpoint, Processor processor) {

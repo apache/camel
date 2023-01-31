@@ -81,7 +81,7 @@ public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
                 public void process(Exchange exchange) throws Exception {
                     // we just count number of interceptions
                     count++;
-                    LOG.info("I am the container wide interceptor. Intercepted total count: " + count);
+                    LOG.info("I am the container wide interceptor. Intercepted total count: {}", count);
                     target.process(exchange);
                 }
 

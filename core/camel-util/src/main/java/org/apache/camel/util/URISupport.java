@@ -794,4 +794,18 @@ public final class URISupport {
         return joined.toString();
     }
 
+    public static String buildMultiValueQuery(String key, Iterable<Object> values) {
+        StringBuilder sb = new StringBuilder();
+        for (Object v : values) {
+            String s = v.toString();
+            if (sb.length() > 0) {
+                sb.append("&");
+            }
+            sb.append(key);
+            sb.append("=");
+            sb.append(v);
+        }
+        return sb.toString();
+    }
+
 }

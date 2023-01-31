@@ -30,7 +30,7 @@ public final class ECS2ClientFactory {
 
     /**
      * Return the correct AWS ECS client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               EcsClient
      */

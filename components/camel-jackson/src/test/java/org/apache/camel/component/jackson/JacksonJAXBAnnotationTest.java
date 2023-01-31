@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.jackson;
 
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import com.fasterxml.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationModule;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -58,7 +58,7 @@ public class JacksonJAXBAnnotationTest extends CamelTestSupport {
                 from("direct:back").unmarshal(format).to("mock:reverse");
 
                 JacksonDataFormat formatPojo = new JacksonDataFormat(TestJAXBPojo.class);
-                formatPojo.setModuleClassNames(JaxbAnnotationModule.class.getName());
+                formatPojo.setModuleClassNames(JakartaXmlBindAnnotationModule.class.getName());
 
                 from("direct:inPojo").marshal(formatPojo);
                 from("direct:backPojo").unmarshal(formatPojo).to("mock:reversePojo");

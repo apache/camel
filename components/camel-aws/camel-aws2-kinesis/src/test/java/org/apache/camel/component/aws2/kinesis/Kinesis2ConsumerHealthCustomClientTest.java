@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.testcontainers.shaded.org.awaitility.Awaitility.await;
 
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Apache CI")
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on GitHub Actions")
 public class Kinesis2ConsumerHealthCustomClientTest extends CamelTestSupport {
 
     @RegisterExtension

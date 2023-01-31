@@ -42,7 +42,7 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
         // use requestBody as its InOut
         Object out = template.requestBody("direct:start", "A@B@C");
         assertEquals(expectedBody, out);
-        LOG.debug("Response to caller: " + out);
+        LOG.debug("Response to caller: {}", out);
 
         assertMockEndpointsSatisfied();
     }
@@ -97,7 +97,7 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
          * We just handle the order by returning a id line for the order
          */
         public String handleOrder(String line) {
-            LOG.debug("HandleOrder: " + line);
+            LOG.debug("HandleOrder: {}", line);
             return "(id=" + ++counter + ",item=" + line + ")";
         }
 
@@ -105,7 +105,7 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
          * We use the same bean for building the combined response to send back to the original caller
          */
         public String buildCombinedResponse(String line) {
-            LOG.debug("BuildCombinedResponse: " + line);
+            LOG.debug("BuildCombinedResponse: {}", line);
             return "Response[" + line + "]";
         }
     }
@@ -133,8 +133,8 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
             String orders = oldExchange.getIn().getBody(String.class);
             String newLine = newExchange.getIn().getBody(String.class);
 
-            LOG.debug("Aggregate old orders: " + orders);
-            LOG.debug("Aggregate new order: " + newLine);
+            LOG.debug("Aggregate old orders: {}", orders);
+            LOG.debug("Aggregate new order: {}", newLine);
 
             // put orders together separating by semi colon
             orders = orders + ";" + newLine;

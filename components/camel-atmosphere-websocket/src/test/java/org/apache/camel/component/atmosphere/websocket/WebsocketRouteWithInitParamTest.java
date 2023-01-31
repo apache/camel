@@ -63,9 +63,9 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         final int awaitTime = 5;
         connectionKeyUserMap.clear();
 
-        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
-        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
-        WebsocketTestClient wsclient3 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola2", 2);
+        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + PORT + "/broadcast", 2);
+        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + PORT + "/broadcast", 2);
+        WebsocketTestClient wsclient3 = new WebsocketTestClient("ws://localhost:" + PORT + "/broadcast", 2);
 
         wsclient1.connect();
         wsclient1.await(awaitTime);
@@ -110,9 +110,9 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         final int awaitTime = 5;
         connectionKeyUserMap.clear();
 
-        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola3", 2);
-        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola3", 2);
-        WebsocketTestClient wsclient3 = new WebsocketTestClient("ws://localhost:" + PORT + "/hola3", 2);
+        WebsocketTestClient wsclient1 = new WebsocketTestClient("ws://localhost:" + PORT + "/guarantee", 2);
+        WebsocketTestClient wsclient2 = new WebsocketTestClient("ws://localhost:" + PORT + "/guarantee", 2);
+        WebsocketTestClient wsclient3 = new WebsocketTestClient("ws://localhost:" + PORT + "/guarantee", 2);
 
         wsclient1.connect();
         wsclient1.await(awaitTime);
@@ -171,7 +171,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
                 });
 
                 // route for single client broadcast to multiple clients
-                from("atmosphere-websocket:///hola2").to("log:info")
+                from("atmosphere-websocket:///broadcast").to("log:info")
                         .choice()
                         .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONOPEN_EVENT_TYPE))
                         .process(new Processor() {
@@ -196,10 +196,10 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
                             public void process(final Exchange exchange) {
                                 createBroadcastMultipleClientsResponse(exchange);
                             }
-                        }).to("atmosphere-websocket:///hola2");
+                        }).to("atmosphere-websocket:///broadcast");
 
                 // route for single client broadcast to multiple clients guarantee delivery
-                from("atmosphere-websocket:///hola3").to("log:info")
+                from("atmosphere-websocket:///guarantee").to("log:info")
                         .choice()
                         .when(header(WebsocketConstants.EVENT_TYPE).isEqualTo(WebsocketConstants.ONOPEN_EVENT_TYPE))
                         .process(new Processor() {
@@ -230,7 +230,7 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
                             public void process(final Exchange exchange) {
                                 createBroadcastMultipleClientsResponse(exchange);
                             }
-                        }).to("atmosphere-websocket:///hola3");
+                        }).to("atmosphere-websocket:///guarantee");
             }
         };
     }

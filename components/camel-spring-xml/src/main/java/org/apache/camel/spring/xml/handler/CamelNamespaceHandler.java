@@ -22,9 +22,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.bind.Binder;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.Binder;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -219,7 +219,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             doBeforeParse(element);
             super.doParse(element, builder);
 
-            // Note: prefer to use doParse from parent and postProcess; however, parseUsingJaxb requires 
+            // Note: prefer to use doParse from parent and postProcess; however, parseUsingJaxb requires
             // parserContext for no apparent reason.
             Binder<Node> binder;
             try {

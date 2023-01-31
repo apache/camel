@@ -20,10 +20,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.mail.Address;
-import javax.mail.Message;
-import javax.mail.Message.RecipientType;
-import javax.mail.MessagingException;
+import jakarta.mail.Address;
+import jakarta.mail.Message;
+import jakarta.mail.Message.RecipientType;
+import jakarta.mail.MessagingException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

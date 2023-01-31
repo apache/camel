@@ -93,7 +93,7 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "peek": getOrCreateConfiguration(target).setPeek(property(camelContext, boolean.class, value)); return true;
         case "replyto":
         case "replyTo": getOrCreateConfiguration(target).setReplyTo(property(camelContext, java.lang.String.class, value)); return true;
-        case "session": getOrCreateConfiguration(target).setSession(property(camelContext, javax.mail.Session.class, value)); return true;
+        case "session": getOrCreateConfiguration(target).setSession(property(camelContext, jakarta.mail.Session.class, value)); return true;
         case "skipfailedmessage":
         case "skipFailedMessage": getOrCreateConfiguration(target).setSkipFailedMessage(property(camelContext, boolean.class, value)); return true;
         case "sslcontextparameters":
@@ -178,7 +178,7 @@ public class MailComponentConfigurer extends PropertyConfigurerSupport implement
         case "peek": return boolean.class;
         case "replyto":
         case "replyTo": return java.lang.String.class;
-        case "session": return javax.mail.Session.class;
+        case "session": return jakarta.mail.Session.class;
         case "skipfailedmessage":
         case "skipFailedMessage": return boolean.class;
         case "sslcontextparameters":

@@ -78,7 +78,7 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
         };
     }
 
-    public class MyServiceBean extends ServiceSupport implements Processor {
+    public static class MyServiceBean extends ServiceSupport implements Processor {
 
         private String name;
         private boolean started;

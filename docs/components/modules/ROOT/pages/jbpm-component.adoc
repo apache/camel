@@ -1,1 +1,0 @@
-../../../../../components/camel-jbpm/src/main/docs/jbpm-component.adoc

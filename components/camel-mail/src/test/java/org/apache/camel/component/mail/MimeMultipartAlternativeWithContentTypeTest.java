@@ -18,7 +18,7 @@ package org.apache.camel.component.mail;
 
 import java.io.ByteArrayOutputStream;
 
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.internet.MimeMultipart;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

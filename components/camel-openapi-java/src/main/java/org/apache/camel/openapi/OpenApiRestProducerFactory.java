@@ -77,7 +77,7 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
         // validate if we have the query parameters also
         if (queryParameters != null) {
             for (OasParameter param : operation.parameters) {
-                if ("query".equals(param.in) && param.required) {
+                if ("query".equals(param.in) && Boolean.TRUE.equals(param.required)) {
                     // check if we have the required query parameter defined
                     String key = param.getName();
                     String token = key + "=";

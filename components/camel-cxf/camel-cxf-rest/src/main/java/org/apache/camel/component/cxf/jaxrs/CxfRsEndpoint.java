@@ -154,6 +154,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public CxfRsEndpoint(Component component, String uri, AbstractJAXRSFactoryBean bean) {
         super(uri, component);
         setAddress(bean.getAddress());
+        setFeatures(bean.getFeatures());
+        setProperties(bean.getProperties());
         // Update the sfb address by resolving the properties
         bean.setAddress(getAddress());
 
@@ -695,7 +697,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
      * Set the feature list to the CxfRs endpoint.
      */
     public void setFeatures(List<Feature> features) {
-        this.features = features;
+        this.features = new ArrayList<Feature>(features);
     }
 
     public Map<String, Object> getProperties() {

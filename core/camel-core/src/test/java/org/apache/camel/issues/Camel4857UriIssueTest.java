@@ -41,7 +41,7 @@ public class Camel4857UriIssueTest extends ContextTestSupport {
      * separated by "+" character (which is more or less usually used on the Web to make lists), but every tube name may
      * contain URI special characters like ? or +
      */
-    class MyEndpoint extends DefaultEndpoint {
+    static class MyEndpoint extends DefaultEndpoint {
         String uri;
         String remaining;
 

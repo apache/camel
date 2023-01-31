@@ -24,7 +24,7 @@ public interface ThrottlingExceptionHalfOpenHandler {
 
     /**
      * Check the state of the Camel route
-     * 
+     *
      * @return true to close the route and false to leave open
      */
     boolean isReadyToBeClosed();

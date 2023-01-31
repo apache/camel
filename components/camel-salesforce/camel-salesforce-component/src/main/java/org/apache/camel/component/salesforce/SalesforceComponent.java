@@ -391,7 +391,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
                         .orElseGet(() -> Optional.ofNullable(retrieveGlobalSslContextParameters())
                                 .orElseGet(() -> new SSLContextParameters()));
 
-                final SslContextFactory sslContextFactory = new SslContextFactory();
+                final SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
                 sslContextFactory.setSslContext(contextParameters.createSSLContext(getCamelContext()));
 
                 httpClient = createHttpClient(this, sslContextFactory, getCamelContext(), workerPoolSize, workerPoolMaxSize);
@@ -820,7 +820,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
         // let's work with a copy so original properties are intact
         PropertyBindingSupport.bindProperties(camelContext, sslContextParameters, new HashMap<>(properties));
 
-        final SslContextFactory sslContextFactory = new SslContextFactory();
+        final SslContextFactory.Client sslContextFactory = new SslContextFactory.Client();
         sslContextFactory.setSslContext(sslContextParameters.createSSLContext(camelContext));
 
         final SalesforceHttpClient httpClient
@@ -838,7 +838,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     }
 
     static SalesforceHttpClient createHttpClient(
-            Object source, final SslContextFactory sslContextFactory, final CamelContext context, int workerPoolSize,
+            Object source, final SslContextFactory.Client sslContextFactory, final CamelContext context, int workerPoolSize,
             int workerPoolMaxSize) {
         SecurityUtils.adaptToIBMCipherNames(sslContextFactory);
 

@@ -19,10 +19,10 @@ package org.apache.camel.component.salesforce.api.dto.bulk;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 //CHECKSTYLE:OFF
 /**
@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlType;
  * The following schema fragment specifies the expected content contained within
  * this class.
  * <p/>
- * 
+ *
  * <pre>
  * &lt;complexType name="ResultError">
  *   &lt;complexContent>
@@ -70,7 +70,7 @@ public class ResultError {
      * <p/>
      * <p/>
      * For example, to add a new item, do as follows:
-     * 
+     *
      * <pre>
      * getFields().add(newItem);
      * </pre>

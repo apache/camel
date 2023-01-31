@@ -29,10 +29,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
+import org.springframework.amqp.rabbit.RabbitMessageFuture;
 import org.springframework.amqp.rabbit.connection.Connection;
 import org.springframework.amqp.rabbit.connection.RabbitUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.util.concurrent.ListenableFutureCallback;
 
 public class SpringRabbitMQProducer extends DefaultAsyncProducer {
 
@@ -147,30 +147,25 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
 
         try {
             // will use RabbitMQ direct reply-to
-            AsyncRabbitTemplate.RabbitMessageFuture future = getInOutTemplate().sendAndReceive(exchangeName, routingKey, msg);
-            future.addCallback(new ListenableFutureCallback<Message>() {
-                @Override
-                public void onFailure(Throwable throwable) {
-                    exchange.setException(throwable);
-                    callback.done(false);
-                }
-
-                @Override
-                public void onSuccess(Message message) {
-                    try {
-                        Object body = getEndpoint().getMessageConverter().fromMessage(message);
-                        exchange.getMessage().setBody(body);
+            RabbitMessageFuture future = getInOutTemplate().sendAndReceive(exchangeName, routingKey, msg);
+            future.whenCompleteAsync((message, throwable) -> {
+                try {
+                    if (throwable != null) {
+                        exchange.setException(throwable);
+                    } else {
+                        Object body1 = getEndpoint().getMessageConverter().fromMessage(message);
+                        exchange.getMessage().setBody(body1);
                         Map<String, Object> headers
                                 = getEndpoint().getMessagePropertiesConverter()
                                         .fromMessageProperties(message.getMessageProperties(), exchange);
                         if (!headers.isEmpty()) {
                             exchange.getMessage().getHeaders().putAll(headers);
                         }
-                    } catch (Exception e) {
-                        exchange.setException(e);
-                    } finally {
-                        callback.done(false);
                     }
+                } catch (Exception e) {
+                    exchange.setException(e);
+                } finally {
+                    callback.done(false);
                 }
             });
 

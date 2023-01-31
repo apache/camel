@@ -24,13 +24,14 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBIntrospector;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBIntrospector;
+import jakarta.xml.soap.SOAPException;
+import jakarta.xml.soap.SOAPFactory;
+import jakarta.xml.ws.WebFault;
+import jakarta.xml.ws.soap.SOAPFaultException;
+
 import javax.xml.namespace.QName;
-import javax.xml.soap.SOAPException;
-import javax.xml.soap.SOAPFactory;
-import javax.xml.ws.WebFault;
-import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
@@ -109,7 +110,7 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
     /**
      * Creates a SOAP fault from the exception and populates the message as well as the detail. The detail object is
      * read from the method getFaultInfo of the throwable if present
-     * 
+     *
      * @param  exception the cause exception
      * @return           SOAP fault from given Throwable
      */
@@ -187,7 +188,7 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
      * Creates an exception and eventually an embedded bean that contains the fault detail. The exception class is
      * determined by using the elementNameStrategy. The qName of the fault detail should match the WebFault annotation
      * of the Exception class. If no fault detail is set a SOAPFaultException is created.
-     * 
+     *
      * @param  fault Soap fault
      * @return       created Exception
      */

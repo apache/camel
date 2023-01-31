@@ -19,10 +19,11 @@ package org.apache.camel.component.spring.ws;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.xml.soap.MimeHeaders;
+import jakarta.xml.soap.SOAPMessage;
+
 import javax.xml.namespace.QName;
-import javax.xml.soap.MimeHeaders;
-import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 
 import org.apache.camel.Endpoint;
@@ -106,8 +107,8 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
                 if (mimeHeaders != null) {
                     String[] breadcrumbIdHeaderValues = mimeHeaders.getHeader(SpringWebserviceConstants.BREADCRUMB_ID);
                     // expected to get one token
-                    // if more than one token expected, 
-                    // presumably breadcrumb generation strategy 
+                    // if more than one token expected,
+                    // presumably breadcrumb generation strategy
                     // may be required to implement
                     if (breadcrumbIdHeaderValues != null && breadcrumbIdHeaderValues.length >= 1) {
                         exchange.getIn().setHeader(SpringWebserviceConstants.BREADCRUMB_ID, breadcrumbIdHeaderValues[0]);

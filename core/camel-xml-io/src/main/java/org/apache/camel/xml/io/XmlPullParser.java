@@ -1051,7 +1051,7 @@ public interface XmlPullParser {
      *   String content = p.nextText();
      *   p.requireEvent(p.END_TAG, "", "tag");
      * </pre>
-     * 
+     *
      * </li>
      * </ol>
      * This function together with nextTag make it very easy to parse XML that

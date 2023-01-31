@@ -22,7 +22,7 @@ public interface Sns2InternalClient {
 
     /**
      * Returns an sns client after a factory method determines which one to return.
-     * 
+     *
      * @return SnsClient snsClient
      */
     SnsClient getSNSClient();

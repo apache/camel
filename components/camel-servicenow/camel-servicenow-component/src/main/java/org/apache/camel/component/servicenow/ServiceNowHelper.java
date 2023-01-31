@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.Response;
 
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;

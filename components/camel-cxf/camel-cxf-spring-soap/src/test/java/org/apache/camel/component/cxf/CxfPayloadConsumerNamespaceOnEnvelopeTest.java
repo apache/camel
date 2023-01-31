@@ -37,7 +37,7 @@ public class CxfPayloadConsumerNamespaceOnEnvelopeTest extends CamelSpringTestSu
      * the payload. This can cause issues with some type conversions in PAYLOAD
      * mode, as the Camel-CXF endpoint will return some kind of window within
      * the StAX parsing (and the namespace definitions are outside).
-     * 
+     *
      * If some CXF proxy is used to send the message the namespaces will be
      * defined within the payload (and everything works fine).
      */

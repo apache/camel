@@ -26,6 +26,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.component.as2.api.AS2Header;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.entity.AbstractHttpEntity;
@@ -33,7 +34,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.HeaderGroup;
 import org.apache.http.protocol.HTTP;
-import org.apache.http.util.Args;
 
 public abstract class MimeEntity extends AbstractHttpEntity {
 
@@ -190,7 +190,7 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     }
 
     public void addHeader(final String name, final String value) {
-        Args.notNull(name, "Header name");
+        ObjectHelper.notNull(name, "Header name");
         this.headergroup.addHeader(new BasicHeader(name, value));
     }
 
@@ -199,7 +199,7 @@ public abstract class MimeEntity extends AbstractHttpEntity {
     }
 
     public void setHeader(final String name, final String value) {
-        Args.notNull(name, "Header name");
+        ObjectHelper.notNull(name, "Header name");
         this.headergroup.updateHeader(new BasicHeader(name, value));
     }
 

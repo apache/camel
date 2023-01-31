@@ -18,8 +18,8 @@ package org.apache.camel.attachment;
 
 import java.net.URL;
 
-import javax.activation.DataHandler;
-import javax.activation.URLDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.URLDataSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

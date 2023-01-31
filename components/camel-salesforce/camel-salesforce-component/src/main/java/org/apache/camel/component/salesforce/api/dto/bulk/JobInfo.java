@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.salesforce.api.dto.bulk;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlSchemaType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlSchemaType;
+import jakarta.xml.bind.annotation.XmlType;
+
 import javax.xml.datatype.XMLGregorianCalendar;
 
 /**
@@ -29,7 +30,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * <p>
  * The following schema fragment specifies the expected content contained within this class.
  * <p/>
- * 
+ *
  * <pre>
  * &lt;complexType name="JobInfo">
  *   &lt;complexContent>

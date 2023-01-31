@@ -21,7 +21,7 @@
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
     wsdlLocation=""
-    xmlns="http://java.sun.com/xml/ns/jaxws">
+    xmlns="https://jakarta.ee/xml/ns/jaxws">
     <bindings node="wsdl:definitions">
         <enableWrapperStyle>false</enableWrapperStyle>
     </bindings>

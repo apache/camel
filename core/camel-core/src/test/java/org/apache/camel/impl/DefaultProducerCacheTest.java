@@ -228,7 +228,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
     }
 
-    private class MyServicePool extends ProducerServicePool {
+    private static class MyServicePool extends ProducerServicePool {
 
         public MyServicePool(ThrowingFunction<Endpoint, AsyncProducer, Exception> creator,
                              Function<AsyncProducer, Endpoint> getEndpoint, int capacity) {
@@ -252,7 +252,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         return new MyEndpoint(component, isSingleton, number);
     }
 
-    private final class MyComponent extends DefaultComponent {
+    private static final class MyComponent extends DefaultComponent {
 
         public MyComponent(CamelContext context) {
             super(context);

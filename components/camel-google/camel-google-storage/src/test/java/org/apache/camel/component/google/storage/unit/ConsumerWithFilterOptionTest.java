@@ -57,8 +57,8 @@ public class ConsumerWithFilterOptionTest extends GoogleCloudStorageBaseTest {
                      + "&deleteAfterRead=true"
                      + "&includeBody=true"
                      + "&filter=.*.csv")
-                             .startupOrder(2)
-                             .to("mock:consumedObjects");
+                        .startupOrder(2)
+                        .to("mock:consumedObjects");
 
             }
         };

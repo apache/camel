@@ -28,9 +28,9 @@ import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulTestSupport;
+import org.apache.camel.test.AvailablePortFinder;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.SocketUtils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -53,7 +53,7 @@ public class ConsulServiceDiscoveryIT extends ConsulTestSupport {
 
         for (int i = 0; i < 6; i++) {
             final boolean healty = ThreadLocalRandom.current().nextBoolean();
-            final int port = SocketUtils.findAvailableTcpPort();
+            final int port = AvailablePortFinder.getNextAvailable();
 
             Registration.RegCheck c = ImmutableRegCheck.builder().ttl("1m").status(healty ? "passing" : "critical").build();
 

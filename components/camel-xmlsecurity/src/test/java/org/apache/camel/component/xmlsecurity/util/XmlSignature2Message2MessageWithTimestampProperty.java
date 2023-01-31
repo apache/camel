@@ -35,7 +35,7 @@ public class XmlSignature2Message2MessageWithTimestampProperty extends DefaultXm
         List<Reference> result = new ArrayList<>(1);
         for (Reference ref : input.getReferences()) {
             if (ref.getURI() != null && ref.getURI().contains("propert")) {
-                // do not add 
+                // do not add
             } else {
                 result.add(ref);
             }

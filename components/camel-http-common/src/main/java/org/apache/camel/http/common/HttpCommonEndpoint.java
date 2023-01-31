@@ -101,7 +101,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
               description = "Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma.")
     String httpMethodRestrict;
     @UriParam(label = "consumer",
-              description = "To use a custom buffer size on the javax.servlet.ServletResponse.")
+              description = "To use a custom buffer size on the jakarta.servlet.ServletResponse.")
     Integer responseBufferSize;
     @UriParam(label = "producer,advanced",
               description = "If this option is true, The http producer won't read response body and cache the input stream")
@@ -460,7 +460,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     }
 
     /**
-     * To use a custom buffer size on the javax.servlet.ServletResponse.
+     * To use a custom buffer size on the jakarta.servlet.ServletResponse.
      */
     public void setResponseBufferSize(Integer responseBufferSize) {
         this.responseBufferSize = responseBufferSize;

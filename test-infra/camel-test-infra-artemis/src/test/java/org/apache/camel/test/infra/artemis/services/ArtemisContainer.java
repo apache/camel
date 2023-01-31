@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.test.infra.artemis.services;
 
 import org.apache.camel.test.infra.common.TestUtils;
@@ -45,7 +44,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the port number used for exchanging messages using the AMQP protocol
-     * 
+     *
      * @return the port number
      */
     public int amqpPort() {
@@ -54,7 +53,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the end point URL used exchanging messages using the AMQP protocol (ie.: tcp://host:${amqp.port})
-     * 
+     *
      * @return the end point URL as a string
      */
     public String amqpEndpoint() {
@@ -63,7 +62,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the port number used for exchanging messages using the MQTT protocol
-     * 
+     *
      * @return the port number
      */
     public int mqttPort() {
@@ -72,7 +71,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the end point URL used exchanging messages using the MQTT protocol (ie.: tcp://host:${mqtt.port})
-     * 
+     *
      * @return the end point URL as a string
      */
     public String mqttEndpoint() {
@@ -81,7 +80,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the port number used for accessing the web management console or the management API
-     * 
+     *
      * @return the port number
      */
     public int adminPort() {
@@ -90,7 +89,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the end point URL used for accessing the web management console or the management API
-     * 
+     *
      * @return the admin URL as a string
      */
     public String adminURL() {
@@ -99,7 +98,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the port number used for exchanging messages using the default acceptor port
-     * 
+     *
      * @return the port number
      */
     public int defaultAcceptorPort() {
@@ -108,7 +107,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the end point URL used exchanging messages through the default acceptor port
-     * 
+     *
      * @return the end point URL as a string
      */
     public String defaultEndpoint() {
@@ -117,7 +116,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the port number used for exchanging messages using the Openwire protocol
-     * 
+     *
      * @return the port number
      */
     public int openwirePort() {
@@ -126,7 +125,7 @@ public class ArtemisContainer extends GenericContainer<ArtemisContainer> impleme
 
     /**
      * Gets the end point URL used exchanging messages using the Openwire protocol (ie.: tcp://host:${amqp.port})
-     * 
+     *
      * @return the end point URL as a string
      */
     public String getOpenwireEndpoint() {

@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
-import javax.annotation.Generated;
+import javax.annotation.processing.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -1239,7 +1239,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression type to use (is default not in use).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.hadoop.io.SequenceFile.CompressionType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.hdfs.HdfsCompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: advanced
@@ -1248,7 +1248,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHdfsEndpointConsumerBuilder compressionType(
-                org.apache.hadoop.io.SequenceFile.CompressionType compressionType) {
+                org.apache.camel.component.hdfs.HdfsCompressionType compressionType) {
             doSetProperty("compressionType", compressionType);
             return this;
         }
@@ -1256,7 +1256,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression type to use (is default not in use).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hadoop.io.SequenceFile.CompressionType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.hdfs.HdfsCompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: advanced
@@ -1923,7 +1923,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression type to use (is default not in use).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.hadoop.io.SequenceFile.CompressionType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.hdfs.HdfsCompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: advanced
@@ -1932,7 +1932,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHdfsEndpointProducerBuilder compressionType(
-                org.apache.hadoop.io.SequenceFile.CompressionType compressionType) {
+                org.apache.camel.component.hdfs.HdfsCompressionType compressionType) {
             doSetProperty("compressionType", compressionType);
             return this;
         }
@@ -1940,7 +1940,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression type to use (is default not in use).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hadoop.io.SequenceFile.CompressionType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.hdfs.HdfsCompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: advanced
@@ -2493,7 +2493,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression type to use (is default not in use).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.hadoop.io.SequenceFile.CompressionType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.hdfs.HdfsCompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: advanced
@@ -2502,7 +2502,7 @@ public interface HdfsEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedHdfsEndpointBuilder compressionType(
-                org.apache.hadoop.io.SequenceFile.CompressionType compressionType) {
+                org.apache.camel.component.hdfs.HdfsCompressionType compressionType) {
             doSetProperty("compressionType", compressionType);
             return this;
         }
@@ -2510,7 +2510,7 @@ public interface HdfsEndpointBuilderFactory {
          * The compression type to use (is default not in use).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.hadoop.io.SequenceFile.CompressionType&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.camel.component.hdfs.HdfsCompressionType&lt;/code&gt; type.
          * 
          * Default: NONE
          * Group: advanced

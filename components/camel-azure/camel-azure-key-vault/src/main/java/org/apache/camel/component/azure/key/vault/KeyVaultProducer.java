@@ -25,13 +25,8 @@ import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class KeyVaultProducer extends DefaultProducer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(KeyVaultProducer.class);
-
     public KeyVaultProducer(final Endpoint endpoint) {
         super(endpoint);
     }

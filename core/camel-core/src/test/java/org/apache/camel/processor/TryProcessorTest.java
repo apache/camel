@@ -86,7 +86,7 @@ public class TryProcessorTest extends ContextTestSupport {
         };
     }
 
-    private class ProcessorFail implements Processor, Predicate, Expression {
+    private static class ProcessorFail implements Processor, Predicate, Expression {
         @Override
         public void process(Exchange exchange) throws Exception {
             throw new RuntimeCamelException(new CamelException("Force to fail"));

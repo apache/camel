@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.Session;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.Session;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -346,7 +346,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
      * Provides an explicit reply to destination which overrides any incoming value of {@link Message#getJMSReplyTo()}
      *
      * @param replyToDestination the destination that should be used to send replies to as either a String or
-     *                           {@link javax.jms.Destination} type.
+     *                           {@link jakarta.jms.Destination} type.
      */
     public void setReplyToDestination(Object replyToDestination) {
         this.replyToDestination = replyToDestination;

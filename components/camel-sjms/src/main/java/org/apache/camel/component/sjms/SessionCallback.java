@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.sjms;
 
-import javax.jms.Connection;
-import javax.jms.Session;
+import jakarta.jms.Connection;
+import jakarta.jms.Session;
 
 import static org.apache.camel.component.sjms.SjmsHelper.closeConnection;
 import static org.apache.camel.component.sjms.SjmsHelper.closeSession;

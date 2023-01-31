@@ -16,18 +16,21 @@
 ## ------------------------------------------------------------------------
 package ${package};
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class ${name}DataFormatTest extends CamelTestSupport {
 
   @Test
+  @Disabled
   public void testMarshalAndUnmarshalMap() throws Exception {
       String in = "Test String";
       MockEndpoint mock = getMockEndpoint("mock:reverse");

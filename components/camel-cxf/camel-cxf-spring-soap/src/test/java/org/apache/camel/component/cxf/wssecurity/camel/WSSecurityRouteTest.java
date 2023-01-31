@@ -18,7 +18,7 @@ package org.apache.camel.component.cxf.wssecurity.camel;
 
 import java.net.URL;
 
-import javax.xml.ws.BindingProvider;
+import jakarta.xml.ws.BindingProvider;
 
 import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.wssecurity.server.CxfServer;

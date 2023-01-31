@@ -22,7 +22,7 @@ public interface SecretsManagerInternalClient {
 
     /**
      * Returns an secrets manager client after a factory method determines which one to return.
-     * 
+     *
      * @return SecretsManagerClient secretsManagerClient
      */
     SecretsManagerClient getSecretsManagerClient();

@@ -38,7 +38,7 @@ public interface ResumeStrategyConfigurationBuilder<
 
     /**
      * Sets the local resume cache instance to use in the strategy
-     * 
+     *
      * @param  resumeCache the local resume cache instance to use in the strategy
      * @return             this instance
      */

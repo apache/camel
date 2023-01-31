@@ -19,7 +19,7 @@ package org.apache.camel.component.sjms.reply;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
-import javax.jms.Destination;
+import jakarta.jms.Destination;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;

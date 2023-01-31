@@ -25,16 +25,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.annotation.Resource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.annotation.Resource;
+import jakarta.mail.util.ByteArrayDataSource;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.WebServiceContext;
+import jakarta.xml.ws.handler.MessageContext;
+
 import javax.imageio.ImageIO;
-import javax.mail.util.ByteArrayDataSource;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.ws.Holder;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -57,10 +58,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * 
+ *
  * Unit test for exercising SOAP with Attachment (SwA) feature of a CxfProducer in PAYLOAD mode. That is, testing
  * attachment with MTOM optimization off.
- * 
+ *
  */
 @ContextConfiguration
 public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPayloadModeTest {

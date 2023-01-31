@@ -20,8 +20,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.mail.Message;
-import javax.mail.Session;
+import jakarta.mail.Message;
+import jakarta.mail.Session;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;

@@ -1,5 +1,0 @@
-= Camel CDI Integration Tests
-
-== Overview
-
-This module is where you should add Camel CDI component tests on Arquillian Weld embedded container.

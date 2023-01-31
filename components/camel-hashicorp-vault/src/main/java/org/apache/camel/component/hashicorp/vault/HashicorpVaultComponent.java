@@ -23,17 +23,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Hashicorp Vault component
  */
 @Component("hashicorp-vault")
 public class HashicorpVaultComponent extends DefaultComponent {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HashicorpVaultComponent.class);
-
     @Metadata
     private HashicorpVaultConfiguration configuration = new HashicorpVaultConfiguration();
 

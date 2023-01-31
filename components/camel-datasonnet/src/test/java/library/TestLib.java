@@ -24,10 +24,10 @@ import java.util.Set;
 import java.util.function.Function;
 
 import com.datasonnet.header.Header;
+import com.datasonnet.jsonnet.Val;
 import com.datasonnet.spi.DataFormatService;
 import com.datasonnet.spi.Library;
 import org.springframework.stereotype.Component;
-import sjsonnet.Val;
 
 @Component
 public class TestLib extends Library {

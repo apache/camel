@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 /**
- * The connectProxy() method implementation is inspired from 
+ * The connectProxy() method implementation is inspired from
  * com.jcraft.jsch.ProxyHTTP available under a BSD style license (below).
- * 
+ *
  * Copyright (c) 2002-2010 ymnk, JCraft,Inc. All rights reserved.
 
  * Redistribution and use in source and binary forms, with or without

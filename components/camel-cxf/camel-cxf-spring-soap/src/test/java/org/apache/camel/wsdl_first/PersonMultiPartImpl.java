@@ -16,7 +16,7 @@
  */
 package org.apache.camel.wsdl_first;
 
-import javax.xml.ws.Holder;
+import jakarta.xml.ws.Holder;
 
 /**
  * Test Impl class for PersonMultiPartType port type that verifies multi part SOAP message functionality.

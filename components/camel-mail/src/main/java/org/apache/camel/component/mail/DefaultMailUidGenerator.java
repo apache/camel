@@ -19,9 +19,9 @@ package org.apache.camel.component.mail;
 import java.util.Enumeration;
 import java.util.UUID;
 
-import javax.mail.Header;
-import javax.mail.Message;
-import javax.mail.MessagingException;
+import jakarta.mail.Header;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
 
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;

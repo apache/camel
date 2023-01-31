@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.UUID;
 
 import org.apache.camel.Exchange;
@@ -69,7 +70,7 @@ public class ExecJava8IssueTest {
 
         String tempFilePath = tempDir.getAbsolutePath() + "/" + tempFileName;
 
-        final File script = File.createTempFile("script", ".sh", tempDir);
+        final File script = Files.createTempFile(tempDir.toPath(), "script", ".sh").toFile();
 
         writeScript(script);
 

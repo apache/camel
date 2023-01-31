@@ -27,6 +27,8 @@ import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.util.ReflectionUtils;
 
+import static org.apache.camel.component.hdfs.HdfsHelper.asCompressionType;
+
 class HdfsMapFileHandler extends DefaultHdfsFile<MapFile.Writer, MapFile.Reader> {
 
     @Override
@@ -43,7 +45,7 @@ class HdfsMapFileHandler extends DefaultHdfsFile<MapFile.Writer, MapFile.Reader>
                     new Path(hdfsPath),
                     MapFile.Writer.keyClass(keyWritableClass),
                     MapFile.Writer.valueClass(valueWritableClass),
-                    MapFile.Writer.compression(endpointConfig.getCompressionType(),
+                    MapFile.Writer.compression(asCompressionType(endpointConfig.getCompressionType()),
                             endpointConfig.getCompressionCodec().getCodec()),
                     MapFile.Writer.progressable(() -> {
                     }));

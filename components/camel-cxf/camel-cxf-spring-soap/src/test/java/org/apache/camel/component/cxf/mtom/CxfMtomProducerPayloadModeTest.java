@@ -24,13 +24,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.activation.DataHandler;
+import jakarta.activation.DataHandler;
+import jakarta.mail.util.ByteArrayDataSource;
+import jakarta.xml.ws.Endpoint;
+import jakarta.xml.ws.soap.SOAPBinding;
+
 import javax.imageio.ImageIO;
-import javax.mail.util.ByteArrayDataSource;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.ws.Endpoint;
-import javax.xml.ws.soap.SOAPBinding;
 import javax.xml.xpath.XPathConstants;
 
 import org.w3c.dom.Element;
@@ -120,7 +121,7 @@ public class CxfMtomProducerPayloadModeTest {
 
         });
 
-        // process response 
+        // process response
 
         CxfPayload<SoapHeader> out = exchange.getMessage().getBody(CxfPayload.class);
         assertEquals(1, out.getBody().size());

@@ -18,8 +18,8 @@ package org.apache.camel.component.bean.validator;
 
 import java.util.List;
 
-import javax.validation.ValidationProviderResolver;
-import javax.validation.spi.ValidationProvider;
+import jakarta.validation.ValidationProviderResolver;
+import jakarta.validation.spi.ValidationProvider;
 
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;

@@ -25,7 +25,7 @@ public interface MQ2InternalClient {
 
     /**
      * Returns an MQ client after a factory method determines which one to return.
-     * 
+     *
      * @return MqClient MqClient
      */
     MqClient getMqClient();

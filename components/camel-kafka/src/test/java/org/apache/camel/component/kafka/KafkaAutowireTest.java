@@ -17,15 +17,23 @@
 package org.apache.camel.component.kafka;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.CamelContext;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class KafkaAutowireTest extends CamelTestSupport {
+public class KafkaAutowireTest {
+
+    @RegisterExtension
+    protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
+
+    private CamelContext context = contextExtension.getContext();
 
     @BindToRegistry
-    KafkaClientFactory clientFactory = new TestKafkaClientFactory();
+    private KafkaClientFactory clientFactory = new TestKafkaClientFactory();
 
     @Test
     public void testKafkaComponentAutowiring() {

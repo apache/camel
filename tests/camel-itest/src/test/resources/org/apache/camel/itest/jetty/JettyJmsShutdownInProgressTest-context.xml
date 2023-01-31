@@ -24,9 +24,8 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
     <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent"/>
-    <bean id="jms" class="org.apache.camel.component.activemq.ActiveMQComponent">
-        <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;create=false"/>
-        <property name="acceptMessagesWhileStopping" value="true"/>
+    <bean id="jms" class="org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="vm://itest-jms?broker.persistent=false&amp;create=false"/>
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">

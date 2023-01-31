@@ -19,7 +19,6 @@ package org.apache.camel.impl.health;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -49,7 +48,7 @@ public class ReadinessAndLivenessTest {
         context.start();
         registry.start();
 
-        List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
+        List<HealthCheck> checks = registry.stream().toList();
         assertEquals(2, checks.size());
 
         Collection<HealthCheck.Result> results = HealthCheckHelper.invokeReadiness(context);
@@ -81,7 +80,7 @@ public class ReadinessAndLivenessTest {
         context.start();
         registry.start();
 
-        List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
+        List<HealthCheck> checks = registry.stream().toList();
         assertEquals(1, checks.size());
 
         Collection<HealthCheck.Result> results = HealthCheckHelper.invokeReadiness(context);

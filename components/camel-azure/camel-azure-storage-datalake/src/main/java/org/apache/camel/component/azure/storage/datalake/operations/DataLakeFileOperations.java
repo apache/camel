@@ -90,7 +90,7 @@ public class DataLakeFileOperations {
 
             return new DataLakeOperationResponse(outputStream, dataLakeExchangeHeaders.toMap());
         } finally {
-            if (configurationProxy.getConfiguration().getCloseStreamAfterRead()) {
+            if (Boolean.TRUE.equals(configurationProxy.getConfiguration().getCloseStreamAfterRead())) {
                 outputStream.close();
             }
         }

@@ -124,12 +124,12 @@ public class GrpcConsumerPropagationTest extends CamelTestSupport {
 
                 from("grpc://localhost:" + GRPC_ASYNC_NEXT_REQUEST_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION")
-                             .to("mock:async-on-next-propagation")
-                             .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
+                        .to("mock:async-on-next-propagation")
+                        .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
 
                 from("grpc://localhost:" + GRPC_ASYNC_COMPLETED_REQUEST_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&forwardOnCompleted=true")
-                             .to("mock:async-on-completed-propagation");
+                        .to("mock:async-on-completed-propagation");
             }
         };
     }

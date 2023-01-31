@@ -30,15 +30,13 @@
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-dependencies</artifactId>
-    <version>3.21.0-SNAPSHOT</version>
+    <version>@version@</version>
 
     <packaging>pom</packaging>
     <name>Camel :: Dependencies</name>
     <description>Camel Dependencies POM</description>
 
     <!-- sync properties here from parent/pom.xml -->
-    <properties>
-
-    </properties>
+    <properties>@properties@</properties>
 
 </project>

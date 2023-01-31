@@ -56,7 +56,7 @@ public class TryProcessorHandleWrappedExceptionTest extends ContextTestSupport {
         };
     }
 
-    private class ProcessorFail implements Processor {
+    private static class ProcessorFail implements Processor {
         @Override
         public void process(Exchange exchange) throws Exception {
             throw new IllegalStateException("Force to fail");

@@ -1,1 +1,0 @@
-../../../../../components/camel-microprofile/camel-microprofile-metrics/src/main/docs/microprofile-metrics-component.adoc

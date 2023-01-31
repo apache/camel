@@ -20,11 +20,12 @@ import java.awt.*;
 import java.net.URL;
 import java.util.List;
 
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.soap.SOAPBinding;
+
 import javax.imageio.ImageIO;
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Holder;
-import javax.xml.ws.soap.SOAPBinding;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -77,7 +78,7 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
                         photo.value = "ResponseFromCamel".getBytes("UTF-8");
                         Holder<Image> image = (Holder<Image>) parameter.get(1);
                         assertNotNull(image.value, "We should get the image here");
-                        // set the holder message back    
+                        // set the holder message back
                         exchange.getMessage().setBody(new Object[] { null, photo, image });
 
                     }

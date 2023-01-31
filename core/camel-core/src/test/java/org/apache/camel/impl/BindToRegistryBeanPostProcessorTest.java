@@ -54,7 +54,7 @@ public class BindToRegistryBeanPostProcessorTest extends ContextTestSupport {
         assertSame(context, other.getCamelContext());
     }
 
-    public class FooService {
+    public static class FooService {
 
         @BeanInject
         private CamelContext camelContext;

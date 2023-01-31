@@ -49,7 +49,7 @@ public class JMSNestedTransactionRollbackTest extends CamelSpringTestSupport {
         mock.expectedMessageCount(0);
         mock.setAssertPeriod(100);
 
-        template.sendBody("activemq:queue:okay", "test");
+        template.sendBody("jms:queue:okay", "test");
 
         error.assertIsSatisfied();
         mock.assertIsSatisfied();

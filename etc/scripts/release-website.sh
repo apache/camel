@@ -26,7 +26,6 @@ COMPLIST=( "camel-spring-xml:spring-xml"
   "camel-cxf:cxf"
   "camel-cxf-spring-rest:cxf/jaxrs"
   "camel-cxf-spring-soap:cxf/jaxws"
-  "camel-spring-integration:spring/integration"
   "camel-spring-security:spring-security"
   "karaf/camel-blueprint:blueprint"
   "karaf/camel-cxf-blueprint:cxf" )

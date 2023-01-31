@@ -18,7 +18,7 @@ package org.apache.camel.component.undertow;
 
 import java.net.URL;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;

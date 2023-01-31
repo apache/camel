@@ -197,7 +197,7 @@ such as by declaring the following Maven dependency in your pom.xml file:
 You can enable route coverage while running unit tests either by:
 
 - setting global JVM system property enabling for all test classes
-- using `@EnableRouteCoverage` annotation per test class if using `camel-test-spring` module
+- using `@EnableRouteCoverage` annotation per test class if using `camel-test-spring-junit5` module
 - overriding `isDumpRouteCoverage` method per test class if using `camel-test` module
 
 ==== Enabling via JVM system property
@@ -227,7 +227,7 @@ mvn clean test -DCamelTestRouteCoverage=true
 ==== Enabling via @EnableRouteCoverage annotation
 
 You need to enable route coverage in the unit tests classes. You can do this by adding the `@EnableRouteCoverage`
-annotation to the test class if you are testing using `camel-test-spring`:
+annotation to the test class if you are testing using `camel-test-spring-junit5`:
 
 [source,java]
 ----

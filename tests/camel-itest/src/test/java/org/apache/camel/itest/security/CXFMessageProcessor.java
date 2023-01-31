@@ -19,8 +19,8 @@ package org.apache.camel.itest.security;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import javax.xml.soap.MessageFactory;
-import javax.xml.soap.SOAPMessage;
+import jakarta.xml.soap.MessageFactory;
+import jakarta.xml.soap.SOAPMessage;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;

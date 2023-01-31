@@ -24,7 +24,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-parent</artifactId>
-        <version>3.21.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
@@ -34,14 +34,12 @@
     <packaging>pom</packaging>
 
     <properties>
-        <camel.osgi.export.pkg />
     </properties>
 
     <modules>
         <module>test-bundles</module>
         <module>camel-itest-standalone</module>
         <module>camel-itest</module>
-        <module>camel-itest-cdi</module>
         <module>camel-itest-jms2</module>
         <module>camel-partial-classpath-test</module>
         <module>camel-typeconverterscan-test</module>
@@ -49,22 +47,6 @@
 
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-bundle-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                 </configuration>
-                <executions>
-                    <execution>
-                        <id>bundle-manifest</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>manifest</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 </project>

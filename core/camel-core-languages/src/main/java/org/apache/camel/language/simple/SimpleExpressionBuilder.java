@@ -186,6 +186,37 @@ public final class SimpleExpressionBuilder {
     }
 
     /**
+     * Joins together the values from the expression
+     */
+    public static Expression joinExpression(final String expression, final String separator, final String prefix) {
+        return new ExpressionAdapter() {
+            private Expression exp;
+
+            @Override
+            public void init(CamelContext context) {
+                exp = context.resolveLanguage("simple").createExpression(expression);
+                exp.init(context);
+                exp = ExpressionBuilder.joinExpression(exp, separator, prefix);
+                exp.init(context);
+            }
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                return exp.evaluate(exchange, Object.class);
+            }
+
+            @Override
+            public String toString() {
+                if (prefix != null) {
+                    return "join(" + expression + "," + separator + "," + prefix + ")";
+                } else {
+                    return "join(" + expression + "," + separator + ")";
+                }
+            }
+        };
+    }
+
+    /**
      * Returns a random number between min and max (exclusive)
      */
     public static Expression randomExpression(final String min, final String max) {

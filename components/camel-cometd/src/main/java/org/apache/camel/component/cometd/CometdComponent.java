@@ -23,7 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.DispatcherType;
+import jakarta.servlet.DispatcherType;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
@@ -233,7 +233,7 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
             sslParams = retrieveGlobalSslContextParameters();
         }
 
-        SslContextFactory sslContextFactory = new SslContextFactory();
+        SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
         sslContextFactory.setEndpointIdentificationAlgorithm(null);
         if (sslParams != null) {
             sslContextFactory.setSslContext(sslParams.createSSLContext(getCamelContext()));

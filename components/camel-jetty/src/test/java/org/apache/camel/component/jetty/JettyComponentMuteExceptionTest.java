@@ -17,7 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jetty9.JettyHttpComponent9;
+import org.apache.camel.component.jetty11.JettyHttpComponent11;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -48,8 +48,8 @@ public class JettyComponentMuteExceptionTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() {
-                JettyHttpComponent9 jc = context.getComponent("jetty", JettyHttpComponent9.class);
+            public void configure() throws Exception {
+                JettyHttpComponent11 jc = context.getComponent("jetty", JettyHttpComponent11.class);
                 jc.setMuteException(true);
 
                 from("jetty:http://localhost:{{port}}/foo").to("mock:destination")

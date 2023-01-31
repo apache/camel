@@ -108,7 +108,7 @@ public final class FacebookMethodsTypeHelper {
      * Gets methods that match the given name and arguments.
      * <p/>
      * Note that the args list is a required subset of arguments for returned methods.
-     * 
+     *
      * @param  name     case sensitive full method name to lookup
      * @param  argNames unordered required argument names
      * @return          non-null unmodifiable list of methods that take all of the given arguments, empty if there is no
@@ -189,7 +189,7 @@ public final class FacebookMethodsTypeHelper {
 
     /**
      * Gets argument types and names for all overloaded methods with the given name.
-     * 
+     *
      * @param  name method name, must be a long form (i.e. get*, or search*)
      * @return      list of arguments of the form Class type1, String name1, Class type2, String name2,...
      */
@@ -203,7 +203,7 @@ public final class FacebookMethodsTypeHelper {
 
     /**
      * Gets argument types and names for all overloaded methods with the given short form name.
-     * 
+     *
      * @param  name  method name, may be a short form
      * @param  style name style
      * @return       list of arguments of the form Class type1, String name1, Class type2, String name2,...
@@ -230,7 +230,7 @@ public final class FacebookMethodsTypeHelper {
 
     /**
      * Get missing properties.
-     * 
+     *
      * @param  methodName method name
      * @param  nameStyle  method name style
      * @param  argNames   available arguments
@@ -252,7 +252,7 @@ public final class FacebookMethodsTypeHelper {
 
     /**
      * Get argument types and names used by all methods.
-     * 
+     *
      * @return map with argument names as keys, and types as values
      */
     public static Map<String, Class<?>> allArguments() {
@@ -261,7 +261,7 @@ public final class FacebookMethodsTypeHelper {
 
     /**
      * Get the type for the given argument name.
-     * 
+     *
      * @param  argName argument name
      * @return         argument type
      */

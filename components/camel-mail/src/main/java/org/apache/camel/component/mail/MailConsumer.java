@@ -24,14 +24,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-import javax.mail.Flags;
-import javax.mail.Folder;
-import javax.mail.FolderNotFoundException;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Store;
-import javax.mail.search.SearchTerm;
+import jakarta.mail.Flags;
+import jakarta.mail.Folder;
+import jakarta.mail.FolderNotFoundException;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Store;
+import jakarta.mail.search.SearchTerm;
 
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.imap.IMAPStore;
@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.Consumer Consumer} which consumes messages from JavaMail using a
- * {@link javax.mail.Transport Transport} and dispatches them to the {@link Processor}
+ * {@link jakarta.mail.Transport Transport} and dispatches them to the {@link Processor}
  */
 public class MailConsumer extends ScheduledBatchPollingConsumer {
     public static final String MAIL_MESSAGE_UID = "CamelMailMessageId";
@@ -403,7 +403,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 Exchange exchange = createExchange(message);
                 if (getEndpoint().getConfiguration().isMapMailMessage()) {
                     // ensure the mail message is mapped, which can be ensured by touching the body/header/attachment
-                    LOG.trace("Mapping from javax.mail.Message to Camel MailMessage");
+                    LOG.trace("Mapping from jakarta.mail.Message to Camel MailMessage");
                     exchange.getIn().getBody();
                     exchange.getIn().getHeaders();
                     // must also map attachments

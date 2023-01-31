@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 /**
  * Contains constants that are used within this component.
  */
-public abstract class DynamicRouterConstants {
+public final class DynamicRouterConstants {
 
     /**
      * The camel version where this router became dynamic.
@@ -109,4 +109,8 @@ public abstract class DynamicRouterConstants {
      */
     public static final Pattern PATH_PARAMS_PATTERN = Pattern.compile(
             String.format("(?<%s>[^/]+)(/(?<%s>[^/]+)/(?<%s>[^/]+))?", CHANNEL_GROUP, ACTION_GROUP, SUBSCRIBE_GROUP));
+
+    private DynamicRouterConstants() {
+
+    }
 }

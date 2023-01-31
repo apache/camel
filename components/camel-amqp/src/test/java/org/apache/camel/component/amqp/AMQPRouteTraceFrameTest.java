@@ -17,52 +17,55 @@
 package org.apache.camel.component.amqp;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedService;
-import org.apache.camel.test.infra.activemq.services.ActiveMQEmbeddedServiceBuilder;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
 import org.apache.qpid.jms.JmsConnectionFactory;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.apache.camel.component.amqp.AMQPComponent.amqpComponent;
-import static org.apache.camel.component.amqp.AMQPConnectionDetails.AMQP_PORT;
+import static org.apache.camel.component.amqp.AMQPConnectionDetails.discoverAMQP;
 
-public class AMQPRouteTraceFrameTest extends CamelTestSupport {
-
-    static int amqpPort = AvailablePortFinder.getNextAvailable();
+public class AMQPRouteTraceFrameTest extends AMQPTestSupport {
 
     @RegisterExtension
-    public static ActiveMQEmbeddedService service = ActiveMQEmbeddedServiceBuilder
-            .defaultBroker()
-            .withAmqpTransport(amqpPort)
-            .build();
+    protected static ArtemisService service = ArtemisServiceFactory.createSingletonAMQPService();
 
-    @EndpointInject("mock:result")
-    MockEndpoint resultEndpoint;
+    @RegisterExtension
+    protected static CamelContextExtension contextExtension = new DefaultCamelContextExtension();
 
-    String expectedBody = "Hello there!";
+    private MockEndpoint resultEndpoint;
 
-    @BeforeAll
-    public static void beforeClass() {
-        System.setProperty(AMQP_PORT, amqpPort + "");
+    private String expectedBody = "Hello there!";
+    private ProducerTemplate template;
+
+    @BeforeEach
+    void setupTemplate() {
+        resultEndpoint = contextExtension.getMockEndpoint("mock:result");
+        template = contextExtension.getProducerTemplate();
     }
 
     @Test
     public void testTraceFrame() throws Exception {
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
-        template.sendBodyAndHeader("amqp-customized:queue:ping", expectedBody, "cheese", 123);
+
+        template.sendBodyAndHeader("amqp-with-trace:queue:ping", expectedBody, "cheese", 123);
         resultEndpoint.assertIsSatisfied();
     }
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
+    @ContextFixture
+    public void configureContext(CamelContext context) {
+        System.setProperty(AMQPConnectionDetails.AMQP_PORT, service.brokerPort() + "");
+        context.getRegistry().bind("amqpConnection", discoverAMQP(context));
 
         JmsConnectionFactory connectionFactory
                 = new JmsConnectionFactory(service.serviceAddress() + "?amqp.traceFrames=true");
@@ -70,19 +73,17 @@ public class AMQPRouteTraceFrameTest extends CamelTestSupport {
         AMQPComponent amqp = amqpComponent(service.serviceAddress());
         amqp.getConfiguration().setConnectionFactory(connectionFactory);
 
-        camelContext.addComponent("amqp-customized", amqp);
-        return camelContext;
+        context.addComponent("amqp-with-trace", amqp);
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
+    @RouteFixture
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("amqp-customized:queue:ping")
+                from("amqp-with-trace:queue:ping")
                         .to("log:routing")
                         .to("mock:result");
             }
-        };
+        });
     }
-
 }

@@ -149,7 +149,7 @@ public class MyPojo {
 ----
 
 The `MyPojo` is a class that with standalone Camel can be discovered and registered with the `@BindToRegistry` annotation.
-If you use Spring Boot, CDI, or Quarkus etc then you should use their kind of annotations for this.
+If you use Spring Boot, or Quarkus etc then you should use their kind of annotations for this.
 
 That's not the point of this example, it is the Endpoint DSL to configure the MQTT endpoint (camel-paho).
 The endpoint is configured the same way as before by the type-safe endpoint-dsl by static importing the `paho`,

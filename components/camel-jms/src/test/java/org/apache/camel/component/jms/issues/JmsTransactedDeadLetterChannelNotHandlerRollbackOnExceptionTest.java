@@ -39,7 +39,7 @@ public class JmsTransactedDeadLetterChannelNotHandlerRollbackOnExceptionTest
 
         // as we do not handle new exception, then the exception propagates back
         // and causes the transaction to rollback, and we can find the message in the ActiveMQ DLQ
-        Object dlqBody = consumer.receiveBody("activemq:ActiveMQ.DLQ", 2000);
+        Object dlqBody = consumer.receiveBody("activemq:DLQ", 2000);
         assertEquals("Hello World", dlqBody);
     }
 

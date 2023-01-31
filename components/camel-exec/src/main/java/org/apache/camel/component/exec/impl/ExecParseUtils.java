@@ -40,7 +40,7 @@ public final class ExecParseUtils {
      * E.g. The string <code>"arg 1"  arg2<code> will return the tokens <code>arg 1</code>, <code>arg2</code><br>
      * The string <code>""arg 1""  "arg2" arg 3<code> will return the tokens <code>"arg 1"</code> ,
      * <code>arg2</code>,<code>arg</code> and <code>3</code> <br>
-     * 
+     *
      * @param  input the input to split.
      * @return       a not-null list of tokens
      */
@@ -86,7 +86,7 @@ public final class ExecParseUtils {
 
     /**
      * Tests if the input is enclosed within {@link #QUOTE_CHAR} characters
-     * 
+     *
      * @param  input a not null String
      * @return       true if the regular expression is matched
      */
@@ -99,7 +99,7 @@ public final class ExecParseUtils {
 
     /**
      * Tests if the input is enclosed within a double-{@link #QUOTE_CHAR} string
-     * 
+     *
      * @param  input a not null String
      * @return       true if the regular expression is matched
      */

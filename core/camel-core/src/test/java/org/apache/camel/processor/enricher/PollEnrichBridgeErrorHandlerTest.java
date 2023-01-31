@@ -77,7 +77,7 @@ public class PollEnrichBridgeErrorHandlerTest extends ContextTestSupport {
         };
     }
 
-    private class MyPollingStrategy implements PollingConsumerPollStrategy {
+    private static class MyPollingStrategy implements PollingConsumerPollStrategy {
 
         private int counter;
 

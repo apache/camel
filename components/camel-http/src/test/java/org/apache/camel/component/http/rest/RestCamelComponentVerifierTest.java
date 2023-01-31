@@ -62,7 +62,7 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
         verifier = component.getVerifier();
 
         parameters = new HashMap<>();
-        parameters.put("componentName", "http");
+        parameters.put("producerComponentName", "http");
         parameters.put("host", "http://localhost:" + localServer.getLocalPort());
         parameters.put("path", "verify");
     }

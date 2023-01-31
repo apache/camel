@@ -131,7 +131,7 @@ public class GoogleCloudStorageConfiguration implements Cloneable {
 
     /**
      * The Cloud Storage class to use when creating the new buckets
-     * 
+     *
      * @param storageClass
      */
     public void setStorageClass(StorageClass storageClass) {
@@ -144,7 +144,7 @@ public class GoogleCloudStorageConfiguration implements Cloneable {
 
     /**
      * The storage client
-     * 
+     *
      * @param storageClient
      */
     public void setStorageClient(Storage storageClient) {
@@ -157,7 +157,7 @@ public class GoogleCloudStorageConfiguration implements Cloneable {
 
     /**
      * Set the operation for the producer
-     * 
+     *
      * @param operation
      */
     public void setOperation(GoogleCloudStorageOperations operation) {

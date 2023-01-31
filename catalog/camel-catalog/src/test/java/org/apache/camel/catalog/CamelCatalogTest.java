@@ -28,7 +28,6 @@ import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.LanguageModel;
-import org.apache.camel.tooling.model.OtherModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -81,7 +80,7 @@ public class CamelCatalogTest {
         assertTrue(names.contains("log"));
         assertTrue(names.contains("docker"));
         assertTrue(names.contains("jms"));
-        assertTrue(names.contains("activemq"));
+        // TODO: camel4 assertTrue(names.contains("activemq"));
         assertTrue(names.contains("zookeeper-master"));
     }
 
@@ -89,9 +88,7 @@ public class CamelCatalogTest {
     public void testFindOtherNames() {
         List<String> names = catalog.findOtherNames();
 
-        assertTrue(names.contains("leveldb"));
-        assertTrue(names.contains("swagger-java"));
-        assertTrue(names.contains("test-spring"));
+        assertTrue(names.contains("test-spring-junit5"));
 
         assertFalse(names.contains("http-common"));
         assertFalse(names.contains("kura"));
@@ -152,9 +149,6 @@ public class CamelCatalogTest {
         assertNotNull(schema);
 
         schema = catalog.modelJSonSchema("aggregate");
-        assertNotNull(schema);
-
-        schema = catalog.otherJSonSchema("swagger-java");
         assertNotNull(schema);
 
         // lets make it possible to find bean/method using both names
@@ -1400,48 +1394,6 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testValidateConfigurationPropertyComponentJClouds() {
-        String text = "camel.component.jclouds.autowiredEnabled=true";
-        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores=#myStores";
-        result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores=foo";
-        result = catalog.validateConfigurationProperty(text);
-        assertFalse(result.isSuccess());
-        assertTrue(result.getInvalidArray().containsKey("camel.component.jclouds.blobStores"));
-
-        text = "camel.component.jclouds.blobStores[0]=foo";
-        result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores[1]=bar";
-        result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores[foo]=123";
-        result = catalog.validateConfigurationProperty(text);
-        assertFalse(result.isSuccess());
-        assertEquals("foo", result.getInvalidInteger().get("camel.component.jclouds.blobStores[foo]"));
-
-        text = "camel.component.jclouds.blobStores[0].beer=yes";
-        result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores[1].drink=no";
-        result = catalog.validateConfigurationProperty(text);
-        assertTrue(result.isSuccess());
-
-        text = "camel.component.jclouds.blobStores[foo].beer=yes";
-        result = catalog.validateConfigurationProperty(text);
-        assertFalse(result.isSuccess());
-        assertEquals("foo", result.getInvalidInteger().get("camel.component.jclouds.blobStores[foo].beer"));
-    }
-
-    @Test
     public void testValidateConfigurationPropertyMain() {
         String text = "camel.main.allow-use-original-message=true";
         ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
@@ -1564,10 +1516,6 @@ public class CamelCatalogTest {
         Assertions.assertInstanceOf(DataFormatModel.class, am);
         Assertions.assertEquals("Marshal and unmarshal between POJOs and Comma separated values (CSV) format using Camel Bindy",
                 am.getDescription());
-
-        am = catalog.modelFromMavenGAV("org.apache.camel", "camel-zipkin", catalog.getCatalogVersion());
-        Assertions.assertInstanceOf(OtherModel.class, am);
-        Assertions.assertEquals("Distributed message tracing using Zipkin", am.getDescription());
 
         am = catalog.modelFromMavenGAV("org.apache.camel", "camel-unknown", catalog.getCatalogVersion());
         Assertions.assertNull(am);

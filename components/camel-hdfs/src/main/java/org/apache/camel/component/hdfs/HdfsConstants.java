@@ -18,7 +18,6 @@ package org.apache.camel.component.hdfs;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
-import org.apache.hadoop.io.SequenceFile;
 
 public final class HdfsConstants {
 
@@ -30,7 +29,7 @@ public final class HdfsConstants {
 
     public static final long DEFAULT_BLOCKSIZE = 64 * 1024 * 1024L;
 
-    public static final SequenceFile.CompressionType DEFAULT_COMPRESSIONTYPE = SequenceFile.CompressionType.NONE;
+    public static final HdfsCompressionType DEFAULT_COMPRESSIONTYPE = HdfsCompressionType.NONE;
 
     public static final HdfsCompressionCodec DEFAULT_CODEC = HdfsCompressionCodec.DEFAULT;
 

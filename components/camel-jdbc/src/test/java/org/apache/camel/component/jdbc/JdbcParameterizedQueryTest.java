@@ -35,7 +35,7 @@ public class JdbcParameterizedQueryTest extends AbstractJdbcTestSupport {
         mock.expectedMessageCount(1);
 
         // The linkedHashMap values has different order in JDK7 and JDK8
-        // so I had to reduce the parameters size 
+        // so I had to reduce the parameters size
         Map<String, Object> jdbcParams = new HashMap<>();
         jdbcParams.put("name", "jstrachan");
 

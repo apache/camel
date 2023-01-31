@@ -120,6 +120,9 @@ public class PulsarConfiguration implements Cloneable {
     private long initialSequenceId = -1;
     @UriParam(label = "producer", description = "Compression type to use", defaultValue = "NONE")
     private CompressionType compressionType = CompressionType.NONE;
+    @UriParam(label = "producer", description = "Control whether chunking of messages is enabled for the producer.",
+              defaultValue = "false")
+    private boolean chunkingEnabled;
     @UriParam(label = "producer", description = "Message Routing Mode to use", defaultValue = "RoundRobinPartition")
     private MessageRoutingMode messageRoutingMode = MessageRoutingMode.RoundRobinPartition;
     @UriParam(label = "producer", description = "Custom Message Router to use")
@@ -429,6 +432,17 @@ public class PulsarConfiguration implements Cloneable {
 
     public CompressionType getCompressionType() {
         return compressionType;
+    }
+
+    /**
+     * Control whether chunking of messages is enabled for the producer. Default is false.
+     */
+    public void setChunkingEnabled(boolean chunkingEnabled) {
+        this.chunkingEnabled = chunkingEnabled;
+    }
+
+    public boolean isChunkingEnabled() {
+        return chunkingEnabled;
     }
 
     /**

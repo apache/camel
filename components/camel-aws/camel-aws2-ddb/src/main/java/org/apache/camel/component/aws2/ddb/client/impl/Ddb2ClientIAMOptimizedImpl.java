@@ -50,7 +50,7 @@ public class Ddb2ClientIAMOptimizedImpl implements Ddb2InternalClient {
 
     /**
      * Getting the DynamoDB aws client that is used.
-     * 
+     *
      * @return DynamoDB Client.
      */
     @Override

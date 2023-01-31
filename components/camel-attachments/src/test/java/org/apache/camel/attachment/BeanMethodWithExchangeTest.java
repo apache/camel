@@ -16,8 +16,8 @@
  */
 package org.apache.camel.attachment;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

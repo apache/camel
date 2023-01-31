@@ -16,16 +16,26 @@
  */
 package org.apache.camel.component.sjms2;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.test.infra.artemis.services.ArtemisService;
+import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class Sjms2EndpointTest extends CamelTestSupport {
+
+    @RegisterExtension
+    public ArtemisService service = ArtemisServiceFactory.createVMService();
 
     @Override
     protected boolean useJmx() {
@@ -146,7 +156,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
         CamelContext camelContext = super.createCamelContext();
 
         ActiveMQConnectionFactory connectionFactory
-                = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
+                = new ActiveMQConnectionFactory(service.serviceAddress());
         Sjms2Component component = new Sjms2Component();
         component.setConnectionFactory(connectionFactory);
         camelContext.addComponent("sjms2", component);

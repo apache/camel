@@ -52,7 +52,7 @@ public class AWS2S3ClientStandardImpl implements AWS2CamelS3InternalClient {
 
     /**
      * Getting the s3 aws client that is used.
-     * 
+     *
      * @return Amazon S3 Client.
      */
     @Override

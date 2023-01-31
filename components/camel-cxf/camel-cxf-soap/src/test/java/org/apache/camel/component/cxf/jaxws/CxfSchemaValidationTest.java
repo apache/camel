@@ -18,10 +18,11 @@ package org.apache.camel.component.cxf.jaxws;
 
 import java.net.URL;
 
+import jakarta.xml.ws.BindingProvider;
+import jakarta.xml.ws.Holder;
+import jakarta.xml.ws.soap.SOAPFaultException;
+
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Holder;
-import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -124,7 +125,7 @@ public class CxfSchemaValidationTest extends CamelTestSupport {
 
         /*
             Generate a personId string that should cause a validation error:
-        
+
         <simpleType name="MyStringType">
             <restriction base="string">
                 <maxLength value="30" />
@@ -132,7 +133,7 @@ public class CxfSchemaValidationTest extends CamelTestSupport {
         </simpleType>
         ......
         <xsd:element name="personId" type="tns:MyStringType"/>
-        
+
         */
         try {
             invokeService(serviceAddressValidationEnabled, RandomStringUtils.random(40, true, true));

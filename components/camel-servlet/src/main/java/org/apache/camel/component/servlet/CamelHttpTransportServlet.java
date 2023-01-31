@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.servlet;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletException;
 
 import org.apache.camel.http.common.CamelServlet;
 import org.apache.camel.http.common.DefaultHttpRegistry;

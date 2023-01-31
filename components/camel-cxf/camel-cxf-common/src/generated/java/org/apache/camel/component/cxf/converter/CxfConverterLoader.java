@@ -42,12 +42,12 @@ public final class CxfConverterLoader implements TypeConverterLoader, CamelConte
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, java.io.InputStream.class, javax.xml.soap.SOAPMessage.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.converter.CxfConverter.soapMessageToInputStream((javax.xml.soap.SOAPMessage) value, exchange));
+        addTypeConverter(registry, java.io.InputStream.class, jakarta.xml.soap.SOAPMessage.class, false,
+            (type, exchange, value) -> org.apache.camel.component.cxf.converter.CxfConverter.soapMessageToInputStream((jakarta.xml.soap.SOAPMessage) value, exchange));
         addTypeConverter(registry, java.lang.Object[].class, java.lang.Object.class, false,
             (type, exchange, value) -> org.apache.camel.component.cxf.converter.CxfConverter.toArray(value));
-        addTypeConverter(registry, java.lang.String.class, javax.xml.soap.SOAPMessage.class, false,
-            (type, exchange, value) -> org.apache.camel.component.cxf.converter.CxfConverter.soapMessageToString((javax.xml.soap.SOAPMessage) value, exchange));
+        addTypeConverter(registry, java.lang.String.class, jakarta.xml.soap.SOAPMessage.class, false,
+            (type, exchange, value) -> org.apache.camel.component.cxf.converter.CxfConverter.soapMessageToString((jakarta.xml.soap.SOAPMessage) value, exchange));
         addTypeConverter(registry, javax.xml.namespace.QName.class, java.lang.String.class, false,
             (type, exchange, value) -> org.apache.camel.component.cxf.converter.CxfConverter.toQName((java.lang.String) value));
         addTypeConverter(registry, org.apache.camel.component.cxf.common.DataFormat.class, java.lang.String.class, false,

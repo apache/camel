@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.activation.FileDataSource;
+import jakarta.activation.FileDataSource;
 
 import io.undertow.client.ClientExchange;
 import io.undertow.client.ClientRequest;
@@ -406,7 +406,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
         if (codeToUse != 500) {
             if (body == null || body instanceof String && ((String) body).trim().isEmpty()) {
-                // no content 
+                // no content
                 codeToUse = currentCode == null ? 204 : currentCode;
             }
         }
