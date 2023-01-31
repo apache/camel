@@ -16,16 +16,14 @@
  */
 package org.apache.camel.dsl.xml.jaxb.definition;
 
-import java.io.InputStream;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.component.rest.DummyRestProcessorFactory;
-import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.Resource;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,10 +52,9 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
         foo.assertIsSatisfied();
 
         // load rest from XML and add them to the existing camel context
-        InputStream is = getClass().getResourceAsStream("barRest.xml");
         ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
-        RestsDefinition rests = (RestsDefinition) ecc.getXMLRoutesDefinitionLoader().loadRestsDefinition(ecc, is);
-        context.addRestDefinitions(rests.getRests(), true);
+        Resource resource = ecc.getResourceLoader().resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barRest.xml");
+        ecc.getRoutesLoader().loadRoutes(resource);
 
         assertNotNull(context.getRoute("route1"), "Loaded rest route should be there");
         assertEquals(3, context.getRoutes().size());

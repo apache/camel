@@ -74,7 +74,6 @@ import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
-import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 
 /**
  * Extended {@link CamelContext} which contains the methods and APIs that are not primary intended for Camel end users
@@ -692,19 +691,6 @@ public interface ExtendedCamelContext extends CamelContext {
      * there are no event listeners that are listening for exchange events.
      */
     void setEventNotificationApplicable(boolean eventNotificationApplicable);
-
-    /**
-     * Gets the {@link XMLRoutesDefinitionLoader} to be used.
-     *
-     * @deprecated use {@link #getRoutesLoader()}
-     */
-    @Deprecated
-    XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader();
-
-    /**
-     * Sets a custom {@link XMLRoutesDefinitionLoader} to be used.
-     */
-    void setXMLRoutesDefinitionLoader(XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader);
 
     /**
      * Gets the {@link RoutesLoader} to be used.

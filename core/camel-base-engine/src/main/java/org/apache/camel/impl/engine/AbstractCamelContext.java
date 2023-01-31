@@ -174,7 +174,6 @@ import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
-import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
@@ -322,7 +321,6 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile CliConnectorFactory cliConnectorFactory;
     private volatile BeanProxyFactory beanProxyFactory;
     private volatile BeanProcessorFactory beanProcessorFactory;
-    private volatile XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader;
     private volatile RoutesLoader routesLoader;
     private volatile ResourceLoader resourceLoader;
     private volatile ModelToXMLDumper modelToXMLDumper;
@@ -3946,7 +3944,6 @@ public abstract class AbstractCamelContext extends BaseService
         getReactiveExecutor();
         getBeanIntrospection();
         getUriFactoryResolver();
-        getXMLRoutesDefinitionLoader();
         getModelToXMLDumper();
         getNodeIdFactory();
         getModelJAXBContextFactory();
@@ -5051,23 +5048,6 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader() {
-        if (xmlRoutesDefinitionLoader == null) {
-            synchronized (lock) {
-                if (xmlRoutesDefinitionLoader == null) {
-                    setXMLRoutesDefinitionLoader(createXMLRoutesDefinitionLoader());
-                }
-            }
-        }
-        return xmlRoutesDefinitionLoader;
-    }
-
-    @Override
-    public void setXMLRoutesDefinitionLoader(XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader) {
-        this.xmlRoutesDefinitionLoader = doAddService(xmlRoutesDefinitionLoader);
-    }
-
-    @Override
     public RoutesLoader getRoutesLoader() {
         if (routesLoader == null) {
             synchronized (lock) {
@@ -5417,8 +5397,6 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract BeanProcessorFactory createBeanProcessorFactory();
 
     protected abstract BeanIntrospection createBeanIntrospection();
-
-    protected abstract XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader();
 
     protected abstract RoutesLoader createRoutesLoader();
 

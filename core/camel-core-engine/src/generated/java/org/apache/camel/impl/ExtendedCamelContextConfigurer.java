@@ -223,8 +223,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "UuidGenerator": target.setUuidGenerator(property(camelContext, org.apache.camel.spi.UuidGenerator.class, value)); return true;
         case "vaultconfiguration":
         case "VaultConfiguration": target.setVaultConfiguration(property(camelContext, org.apache.camel.vault.VaultConfiguration.class, value)); return true;
-        case "xmlroutesdefinitionloader":
-        case "XMLRoutesDefinitionLoader": target.setXMLRoutesDefinitionLoader(property(camelContext, org.apache.camel.spi.XMLRoutesDefinitionLoader.class, value)); return true;
         default: return false;
         }
     }
@@ -434,8 +432,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "UuidGenerator": return org.apache.camel.spi.UuidGenerator.class;
         case "vaultconfiguration":
         case "VaultConfiguration": return org.apache.camel.vault.VaultConfiguration.class;
-        case "xmlroutesdefinitionloader":
-        case "XMLRoutesDefinitionLoader": return org.apache.camel.spi.XMLRoutesDefinitionLoader.class;
         default: return null;
         }
     }
@@ -646,8 +642,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "UuidGenerator": return target.getUuidGenerator();
         case "vaultconfiguration":
         case "VaultConfiguration": return target.getVaultConfiguration();
-        case "xmlroutesdefinitionloader":
-        case "XMLRoutesDefinitionLoader": return target.getXMLRoutesDefinitionLoader();
         default: return null;
         }
     }
