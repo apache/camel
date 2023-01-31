@@ -29,7 +29,7 @@ import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
 
@@ -53,7 +53,7 @@ public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(true, strategy.isInvoked());
+        assertTrue(strategy.isInvoked());
     }
 
     @Test
@@ -67,7 +67,7 @@ public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(true, strategy.isInvoked());
+        assertTrue(strategy.isInvoked());
     }
 
     @Override

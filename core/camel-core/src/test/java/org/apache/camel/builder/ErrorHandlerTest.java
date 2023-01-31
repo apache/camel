@@ -31,6 +31,7 @@ import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ErrorHandlerTest extends TestSupport {
 
@@ -145,7 +146,7 @@ public class ErrorHandlerTest extends TestSupport {
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
 
             assertEquals(2, redeliveryPolicy.getMaximumRedeliveries(), "getMaximumRedeliveries()");
-            assertEquals(true, redeliveryPolicy.isUseExponentialBackOff(), "isUseExponentialBackOff()");
+            assertTrue(redeliveryPolicy.isUseExponentialBackOff(), "isUseExponentialBackOff()");
         }
     }
 

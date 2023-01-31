@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class FromRestGetTest extends ContextTestSupport {
 
@@ -82,7 +83,7 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("1", rest.getVerbs().get(0).getParams().get(0).getDefaultValue());
         assertEquals("b", rest.getVerbs().get(0).getParams().get(1).getDefaultValue());
 
-        assertEquals(null, rest.getVerbs().get(0).getParams().get(0).getCollectionFormat());
+        assertNull(rest.getVerbs().get(0).getParams().get(0).getCollectionFormat());
         assertEquals(CollectionFormat.multi, rest.getVerbs().get(0).getParams().get(1).getCollectionFormat());
 
         assertEquals("header_count", rest.getVerbs().get(0).getParams().get(0).getName());

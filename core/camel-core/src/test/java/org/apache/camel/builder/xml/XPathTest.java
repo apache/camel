@@ -93,7 +93,7 @@ public class XPathTest extends ContextTestSupport {
     public void testXPathBooleanResult() throws Exception {
         Object result = xpath("/foo/bar/@xyz").booleanResult().evaluate(createExchange("<foo><bar xyz='cheese'/></foo>"));
         Boolean bool = assertIsInstanceOf(Boolean.class, result);
-        assertEquals(true, bool.booleanValue());
+        assertTrue(bool.booleanValue());
     }
 
     @Test
@@ -347,7 +347,7 @@ public class XPathTest extends ContextTestSupport {
         assertEquals(123, number.intValue());
 
         Boolean bool = XPathBuilder.xpath("foo/bar").evaluate(context, "<foo><bar>true</bar></foo>", Boolean.class);
-        assertEquals(true, bool.booleanValue());
+        assertTrue(bool.booleanValue());
     }
 
     @Test

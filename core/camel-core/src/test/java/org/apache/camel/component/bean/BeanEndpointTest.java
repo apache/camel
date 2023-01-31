@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BeanEndpointTest extends ContextTestSupport {
 
@@ -47,7 +48,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         endpoint.setBeanName("foo");
         assertEquals("foo", endpoint.getBeanName());
 
-        assertEquals(true, endpoint.isSingleton());
+        assertTrue(endpoint.isSingleton());
         assertNull(endpoint.getBeanHolder());
         assertNull(endpoint.getMethod());
         assertEquals("bean:foo", endpoint.getEndpointUri());
@@ -73,7 +74,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         endpoint.setBeanName("foo");
         assertEquals("foo", endpoint.getBeanName());
 
-        assertEquals(true, endpoint.isSingleton());
+        assertTrue(endpoint.isSingleton());
         assertNull(endpoint.getBeanHolder());
         assertNull(endpoint.getMethod());
         assertEquals("bean:foo", endpoint.getEndpointUri());
@@ -101,7 +102,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         endpoint.setBeanName("foo");
         assertEquals("foo", endpoint.getBeanName());
 
-        assertEquals(true, endpoint.isSingleton());
+        assertTrue(endpoint.isSingleton());
         assertNull(endpoint.getBeanHolder());
         assertNull(endpoint.getMethod());
         assertEquals("bean:foo", endpoint.getEndpointUri());
@@ -127,7 +128,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         endpoint.setMethod("hello");
         assertEquals("foo", endpoint.getBeanName());
 
-        assertEquals(true, endpoint.isSingleton());
+        assertTrue(endpoint.isSingleton());
         assertNull(endpoint.getBeanHolder());
         assertEquals("hello", endpoint.getMethod());
         assertEquals("bean:foo?method=hello", endpoint.getEndpointUri());
@@ -154,7 +155,7 @@ public class BeanEndpointTest extends ContextTestSupport {
         endpoint.setMethod("hello");
         assertEquals("foo", endpoint.getBeanName());
 
-        assertEquals(true, endpoint.isSingleton());
+        assertTrue(endpoint.isSingleton());
         assertNull(endpoint.getBeanHolder());
         assertEquals("hello", endpoint.getMethod());
         assertEquals("bean:foo?method=hello", endpoint.getEndpointUri());

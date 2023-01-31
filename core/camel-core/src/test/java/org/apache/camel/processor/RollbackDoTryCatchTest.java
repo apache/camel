@@ -24,7 +24,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -74,7 +73,7 @@ public class RollbackDoTryCatchTest extends ContextTestSupport {
 
         assertNotNull(out.getException());
         assertIsInstanceOf(RollbackExchangeException.class, out.getException());
-        assertEquals(true, out.isRollbackOnly(), "Should be marked as rollback");
+        assertTrue(out.isRollbackOnly(), "Should be marked as rollback");
     }
 
     @Override

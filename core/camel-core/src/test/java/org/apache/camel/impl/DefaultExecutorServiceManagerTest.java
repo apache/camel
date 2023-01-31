@@ -133,7 +133,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
     @Test
     public void testDefaultThreadPool() throws Exception {
         ExecutorService myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
-        assertEquals(false, myPool.isShutdown());
+        assertFalse(myPool.isShutdown());
 
         // should use default settings
         ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
@@ -143,7 +143,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(1000, executor.getQueue().remainingCapacity());
 
         context.stop();
-        assertEquals(true, myPool.isShutdown());
+        assertTrue(myPool.isShutdown());
     }
 
     @Test
@@ -155,10 +155,10 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         custom.setMaxQueueSize(Integer.MAX_VALUE);
 
         context.getExecutorServiceManager().setDefaultThreadPoolProfile(custom);
-        assertEquals(true, custom.isDefaultProfile().booleanValue());
+        assertTrue(custom.isDefaultProfile().booleanValue());
 
         ExecutorService myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
-        assertEquals(false, myPool.isShutdown());
+        assertFalse(myPool.isShutdown());
 
         // should use default settings
         ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
@@ -168,7 +168,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(Integer.MAX_VALUE, executor.getQueue().remainingCapacity());
 
         context.stop();
-        assertEquals(true, myPool.isShutdown());
+        assertTrue(myPool.isShutdown());
     }
 
     @Test
@@ -180,10 +180,10 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         custom.setMaxQueueSize(0);
 
         context.getExecutorServiceManager().setDefaultThreadPoolProfile(custom);
-        assertEquals(true, custom.isDefaultProfile().booleanValue());
+        assertTrue(custom.isDefaultProfile().booleanValue());
 
         ExecutorService myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
-        assertEquals(false, myPool.isShutdown());
+        assertFalse(myPool.isShutdown());
 
         // should use default settings
         ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
@@ -193,7 +193,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(0, executor.getQueue().remainingCapacity());
 
         context.stop();
-        assertEquals(true, myPool.isShutdown());
+        assertTrue(myPool.isShutdown());
     }
 
     @Test
@@ -205,10 +205,10 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         custom.setMaxQueueSize(2000);
 
         context.getExecutorServiceManager().setDefaultThreadPoolProfile(custom);
-        assertEquals(true, custom.isDefaultProfile().booleanValue());
+        assertTrue(custom.isDefaultProfile().booleanValue());
 
         ExecutorService myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
-        assertEquals(false, myPool.isShutdown());
+        assertFalse(myPool.isShutdown());
 
         // should use default settings
         ThreadPoolExecutor executor = (ThreadPoolExecutor) myPool;
@@ -218,7 +218,7 @@ public class DefaultExecutorServiceManagerTest extends ContextTestSupport {
         assertEquals(2000, executor.getQueue().remainingCapacity());
 
         context.stop();
-        assertEquals(true, myPool.isShutdown());
+        assertTrue(myPool.isShutdown());
     }
 
     @Test

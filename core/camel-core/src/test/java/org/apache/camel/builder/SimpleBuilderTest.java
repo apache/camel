@@ -80,12 +80,12 @@ public class SimpleBuilderTest extends TestSupport {
         assertEquals(true, SimpleBuilder.simple("${header.cool}", boolean.class).evaluate(exchange, Object.class));
         assertEquals("true", SimpleBuilder.simple("${header.cool}", String.class).evaluate(exchange, Object.class));
         // not possible
-        assertEquals(null, SimpleBuilder.simple("${header.cool}", int.class).evaluate(exchange, Object.class));
+        assertNull(SimpleBuilder.simple("${header.cool}", int.class).evaluate(exchange, Object.class));
 
         assertEquals(true, SimpleBuilder.simple("${header.cool}").resultType(Boolean.class).evaluate(exchange, Object.class));
         assertEquals("true", SimpleBuilder.simple("${header.cool}").resultType(String.class).evaluate(exchange, Object.class));
         // not possible
-        assertEquals(null, SimpleBuilder.simple("${header.cool}").resultType(int.class).evaluate(exchange, Object.class));
+        assertNull(SimpleBuilder.simple("${header.cool}").resultType(int.class).evaluate(exchange, Object.class));
 
         // should be convertable to integers
         assertEquals(11, SimpleBuilder.simple("11", int.class).evaluate(exchange, Object.class));

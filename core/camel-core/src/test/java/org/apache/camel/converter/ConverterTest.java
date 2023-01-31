@@ -47,6 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -174,8 +175,9 @@ public class ConverterTest extends TestSupport {
 
     @Test
     public void testPrimitiveBooleanConversion() {
-        boolean value = assertDoesNotThrow(() -> converter.convertTo(boolean.class, null));
-        assertFalse(value);
+        boolean value = assertDoesNotThrow(() -> converter.convertTo(boolean.class, null),
+                "A conversion from primitive boolean must not throw when receiving a null value");
+        assertFalse(value, "A conversion from primitive boolean must default to false when converting from null");
     }
 
     @Test
@@ -187,8 +189,9 @@ public class ConverterTest extends TestSupport {
     @Test
     public void testPrimitiveIntPropertySetter() {
         MyBean bean = new MyBean();
-        assertDoesNotThrow(() -> IntrospectionSupport.setProperty(converter, bean, "foo", "4"));
-        assertEquals(4, bean.getFoo(), "bean.foo");
+        assertDoesNotThrow(() -> IntrospectionSupport.setProperty(converter, bean, "foo", "4"),
+                "Setting an int property in a bean, should have succeeded without throwing exceptions");
+        assertEquals(4, bean.getFoo(), "The property bean.foo does not match the value that was previously set");
     }
 
     @Test
@@ -200,7 +203,7 @@ public class ConverterTest extends TestSupport {
         assertEquals(Boolean.FALSE, value, "converted boolean value");
 
         value = converter.convertTo(Boolean.class, null);
-        assertEquals(null, value, "converted boolean value");
+        assertNull(value, "converted boolean value");
     }
 
     @Test
@@ -237,11 +240,14 @@ public class ConverterTest extends TestSupport {
 
     @Test
     public void testStringToChar() {
-        char ch = assertDoesNotThrow(() -> converter.convertTo(char.class, "A"));
-        assertEquals('A', (int) ch);
+        char ch = assertDoesNotThrow(() -> converter.convertTo(char.class, "A"),
+                "A conversion from String to char should have succeeded without throwing exceptions");
+        assertEquals('A', (int) ch, "The converted value does not match what was set");
 
-        ch = assertDoesNotThrow(() -> converter.convertTo(char.class, " "));
-        assertEquals(' ', (int) ch);
+        ch = assertDoesNotThrow(() -> converter.convertTo(char.class, " "),
+                "A conversion from String with spaces to char should have succeeded without throwing exceptions");
+        assertEquals(' ', (int) ch,
+                "The converted value does not match what was set");
 
         Exception ex = assertThrows(TypeConversionException.class,
                 () -> converter.mandatoryConvertTo(char.class, "ABC"), "Should have thrown an exception");

@@ -22,6 +22,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultCamelContextAutoStartupTest extends TestSupport {
 
@@ -39,14 +41,14 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
         });
         camel.start();
 
-        assertEquals(true, camel.isStarted());
+        assertTrue(camel.isStarted());
         assertEquals(1, camel.getRoutes().size());
-        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStopped());
+        assertTrue(camel.getRouteController().getRouteStatus("foo").isStopped());
 
         // now start all routes
         camel.getRouteController().startAllRoutes();
 
-        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(camel.getRouteController().getRouteStatus("foo").isStarted());
 
         // and now its started we can test that it works by sending in a message
         // to the route
@@ -74,14 +76,14 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
         });
         camel.start();
 
-        assertEquals(true, camel.isStarted());
+        assertTrue(camel.isStarted());
         assertEquals(1, camel.getRoutes().size());
-        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStopped());
+        assertTrue(camel.getRouteController().getRouteStatus("foo").isStopped());
 
         // now start the routes
         camel.startRoute("foo");
 
-        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(camel.getRouteController().getRouteStatus("foo").isStarted());
 
         // and now its started we can test that it works by sending in a message
         // to the route
@@ -109,9 +111,9 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
         });
         camel.start();
 
-        assertEquals(true, camel.isStarted());
+        assertTrue(camel.isStarted());
         assertEquals(1, camel.getRoutes().size());
-        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(camel.getRouteController().getRouteStatus("foo").isStarted());
 
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);
@@ -140,15 +142,15 @@ public class DefaultCamelContextAutoStartupTest extends TestSupport {
         // this is special, when you have auto startup=false on CamelContext,
         // then NO routes is started
 
-        assertEquals(true, camel.isStarted());
+        assertTrue(camel.isStarted());
         assertEquals(1, camel.getRoutes().size());
-        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStopped());
-        assertEquals(false, camel.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(camel.getRouteController().getRouteStatus("foo").isStopped());
+        assertFalse(camel.getRouteController().getRouteStatus("foo").isStarted());
 
         // now start all the routes
         camel.getRouteController().startAllRoutes();
 
-        assertEquals(true, camel.getRouteController().getRouteStatus("foo").isStarted());
+        assertTrue(camel.getRouteController().getRouteStatus("foo").isStarted());
 
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);

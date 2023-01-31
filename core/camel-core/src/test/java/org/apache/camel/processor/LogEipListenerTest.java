@@ -26,6 +26,7 @@ import org.apache.camel.support.DefaultRegistry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LogEipListenerTest {
     private static boolean listenerFired;
@@ -44,7 +45,7 @@ public class LogEipListenerTest {
         context.start();
         context.createProducerTemplate().sendBody("direct:foo", "hello");
         mock.assertIsSatisfied();
-        assertEquals(true, listenerFired);
+        assertTrue(listenerFired);
         context.stop();
     }
 

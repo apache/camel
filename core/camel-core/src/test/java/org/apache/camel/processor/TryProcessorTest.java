@@ -112,7 +112,7 @@ public class TryProcessorTest extends ContextTestSupport {
         public void process(Exchange exchange) throws Exception {
             handled = true;
 
-            assertEquals(false, exchange.isFailed(), "Should not be marked as failed");
+            assertFalse(exchange.isFailed(), "Should not be marked as failed");
 
             Exception e = (Exception) exchange.getProperty(Exchange.EXCEPTION_CAUGHT);
             assertNotNull(e, "There should be an exception");

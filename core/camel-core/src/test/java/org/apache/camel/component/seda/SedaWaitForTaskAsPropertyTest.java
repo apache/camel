@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SedaWaitForTaskAsPropertyTest extends ContextTestSupport {
 
@@ -58,7 +59,7 @@ public class SedaWaitForTaskAsPropertyTest extends ContextTestSupport {
         // we do not expecy a reply and thus do no wait so we just get our own
         // input back
         assertEquals("Hello World", out.getIn().getBody());
-        assertEquals(null, out.getOut().getBody());
+        assertNull(out.getOut().getBody());
 
         assertMockEndpointsSatisfied();
     }
