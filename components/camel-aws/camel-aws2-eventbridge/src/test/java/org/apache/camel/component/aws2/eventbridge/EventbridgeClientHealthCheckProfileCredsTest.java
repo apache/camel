@@ -83,7 +83,7 @@ public class EventbridgeClientHealthCheckProfileCredsTest extends CamelTestSuppo
             Collection<HealthCheck.Result> res2 = HealthCheckHelper.invokeReadiness(context);
             boolean down = res2.stream().allMatch(r -> r.getState().equals(HealthCheck.State.DOWN));
             boolean containsAwsEventbridgeHealthCheck = res2.stream()
-                    .filter(result -> result.getCheck().getId().startsWith("aws2-evenbridge-client"))
+                    .filter(result -> result.getCheck().getId().startsWith("aws2-eventbridge-client"))
                     .findAny()
                     .isPresent();
             boolean hasRegionMessage = res2.stream()
