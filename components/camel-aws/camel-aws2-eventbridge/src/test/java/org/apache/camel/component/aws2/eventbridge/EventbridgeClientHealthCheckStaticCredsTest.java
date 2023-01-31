@@ -66,7 +66,7 @@ public class EventbridgeClientHealthCheckStaticCredsTest extends CamelTestSuppor
             @Override
             public void configure() {
                 from("direct:listClusters")
-                        .to("aws2-eventbridge://test?operation=listFunctions&region=l&secretKey=l&accessKey=k");
+                        .to("aws2-eventbridge://test?operation=listRules&region=l&secretKey=l&accessKey=k");
             }
         };
     }
