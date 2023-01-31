@@ -40,7 +40,7 @@ public class RemoteFileIgnoreDoPollErrorTest {
 
     private final CamelContext camelContext = new DefaultCamelContext();
 
-    private final RemoteFileEndpoint<Object> remoteFileEndpoint = new RemoteFileEndpoint<Object>() {
+    private final RemoteFileEndpoint<Object> remoteFileEndpoint = new RemoteFileEndpoint<>() {
         @Override
         protected RemoteFileConsumer<Object> buildConsumer(Processor processor) {
             return null;
@@ -70,14 +70,14 @@ public class RemoteFileIgnoreDoPollErrorTest {
     @Test
     public void testReadDirErrorIsHandled() {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("true", true);
-        boolean result = consumer.doSafePollSubDirectory("anyPath", "adir", new ArrayList<GenericFile<Object>>(), 0);
+        boolean result = consumer.doSafePollSubDirectory("anyPath", "adir", new ArrayList<>(), 0);
         assertTrue(result);
     }
 
     @Test
     public void testReadDirErrorIsHandledWithNoMorePoll() {
         RemoteFileConsumer<Object> consumer = getRemoteFileConsumer("false", true);
-        boolean result = consumer.doSafePollSubDirectory("anyPath", "adir", new ArrayList<GenericFile<Object>>(), 0);
+        boolean result = consumer.doSafePollSubDirectory("anyPath", "adir", new ArrayList<>(), 0);
         assertFalse(result);
     }
 
@@ -108,7 +108,7 @@ public class RemoteFileIgnoreDoPollErrorTest {
 
         remoteFileEndpoint.setCamelContext(camelContext);
 
-        return new RemoteFileConsumer<Object>(remoteFileEndpoint, null, null, null) {
+        return new RemoteFileConsumer<>(remoteFileEndpoint, null, null, null) {
             @Override
             protected boolean doPollDirectory(
                     String absolutePath, String dirName, List<GenericFile<Object>> genericFiles, int depth) {

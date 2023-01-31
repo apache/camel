@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 public class FromFtpFilterIT extends FtpServerTestSupport {
 
     @BindToRegistry("myFilter")
-    private final MyFileFilter filter = new MyFileFilter<>();
+    private final MyFileFilter<Object> filter = new MyFileFilter<>();
 
     protected String getFtpUrl() {
         return "ftp://admin@localhost:{{ftp.server.port}}/filter?password=admin&binary=false&filter=#myFilter";
