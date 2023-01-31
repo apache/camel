@@ -111,11 +111,11 @@ public class SnmpTrapProducer extends DefaultProducer {
 
             trap.setErrorIndex(0);
             trap.setErrorStatus(0);
-            trap.setMaxRepetitions(0);
             if (this.endpoint.getSnmpVersion() == SnmpConstants.version1) {
                 trap.setType(PDU.V1TRAP);
             } else {
                 trap.setType(PDU.TRAP);
+                trap.setMaxRepetitions(0);
             }
 
             LOG.debug("SnmpTrap: sending");
