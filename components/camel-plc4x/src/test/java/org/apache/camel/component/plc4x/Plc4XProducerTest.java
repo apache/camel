@@ -16,16 +16,12 @@
  */
 package org.apache.camel.component.plc4x;
 
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.plc4x.java.api.PlcConnection;
-import org.apache.plc4x.java.api.messages.PlcWriteRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -41,16 +37,9 @@ public class Plc4XProducerTest {
     public void setUp() throws Exception {
         Plc4XEndpoint endpointMock = mock(Plc4XEndpoint.class, RETURNS_DEEP_STUBS);
         when(endpointMock.getEndpointUri()).thenReturn("plc4x:mock:10.10.10.1/1/1");
-        PlcConnection mockConnection = mock(PlcConnection.class, RETURNS_DEEP_STUBS);
+        when(endpointMock.canWrite()).thenReturn(true);
 
-        when(mockConnection.getMetadata().canRead()).thenReturn(true);
-        when(mockConnection.getMetadata().canWrite()).thenReturn(true);
-        when(mockConnection.writeRequestBuilder())
-                .thenReturn(mock(PlcWriteRequest.Builder.class, RETURNS_DEEP_STUBS));
-
-        when(endpointMock.getConnection()).thenReturn(mockConnection);
         sut = new Plc4XProducer(endpointMock);
-        sut.doStart();
         testExchange = mock(Exchange.class, RETURNS_DEEP_STUBS);
         Map<String, Map<String, Object>> tags = new HashMap();
         tags.put("test1", Collections.singletonMap("testAddress1", 0));
@@ -89,21 +78,7 @@ public class Plc4XProducerTest {
 
     @Test
     public void doStopOpenRequest() throws Exception {
-        Field openRequests = sut.getClass().getDeclaredField("openRequests");
-        openRequests.setAccessible(true);
-        AtomicInteger atomicInteger = (AtomicInteger) openRequests.get(sut);
-        atomicInteger.incrementAndGet();
+        sut.openRequests.incrementAndGet();
         sut.doStop();
     }
-
-    @Test
-    public void doStopBadConnection() throws Exception {
-        Field openRequests = sut.getClass().getDeclaredField("plcConnection");
-        openRequests.setAccessible(true);
-        PlcConnection plcConnectionMock = mock(PlcConnection.class);
-        doThrow(new RuntimeException("oh noes")).when(plcConnectionMock).close();
-        openRequests.set(sut, plcConnectionMock);
-        sut.doStop();
-    }
-
 }

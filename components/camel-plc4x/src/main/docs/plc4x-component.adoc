@@ -63,11 +63,14 @@ where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
 == Consumer
-The consumer supports one-time reading or Triggered Reading. (_Schedulded Reading using Period only soon_).To read from
+The consumer supports one-time reading or Triggered Reading. To read from
 the PLC, use a  `Map<String,String>` containing the Alias and Queries for the Data you want.
 
-The Body create by the Consumer will be a `Map<String,Object>` containing the Aliases and there associated value
+The Body created by the Consumer will be a `Map<String,Object>` containing the Aliases and their associated value
 read from the PLC.
+
+== Polling Consumer
+The polling consumer supports consecutive reading. The input and output is the same as for the regular consumer.
 
 == Producer
 To write data to the PLC, we also use a `Map`. The difference with the Producer is that the `Value` of the Map has also to

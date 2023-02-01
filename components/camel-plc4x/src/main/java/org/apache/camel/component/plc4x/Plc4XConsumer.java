@@ -29,9 +29,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
-import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
-import org.apache.plc4x.java.api.exceptions.PlcIncompatibleDatatypeException;
 import org.apache.plc4x.java.api.messages.PlcReadRequest;
 import org.apache.plc4x.java.scraper.config.JobConfigurationImpl;
 import org.apache.plc4x.java.scraper.config.ScraperConfiguration;
@@ -46,7 +44,6 @@ import org.slf4j.LoggerFactory;
 public class Plc4XConsumer extends DefaultConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XConsumer.class);
 
-    private PlcConnection plcConnection;
     private final Map<String, Object> tags;
     private final String trigger;
     private final Plc4XEndpoint plc4XEndpoint;
@@ -74,9 +71,15 @@ public class Plc4XConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        this.plcConnection = plc4XEndpoint.getConnection();
-        if (!plcConnection.isConnected()) {
-            plc4XEndpoint.reconnect();
+        try {
+            plc4XEndpoint.setupConnection();
+        } catch (PlcConnectionException e) {
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.error("Connection setup failed, stopping Consumer", e);
+            } else {
+                LOGGER.error("Connection setup failed, stopping Consumer");
+            }
+            doStop();
         }
         if (trigger == null) {
             startUnTriggered();
@@ -86,25 +89,19 @@ public class Plc4XConsumer extends DefaultConsumer {
     }
 
     private void startUnTriggered() {
-        if (plc4XEndpoint.isAutoReconnect() && !plcConnection.isConnected()) {
-            try {
-                plc4XEndpoint.reconnect();
-                LOGGER.debug("Successfully reconnected");
-            } catch (PlcConnectionException e) {
+        try {
+            plc4XEndpoint.reconnectIfNeeded();
+        } catch (PlcConnectionException e) {
+            if (LOGGER.isTraceEnabled()) {
                 LOGGER.warn("Unable to reconnect, skipping request", e);
-                return;
+            } else {
+                LOGGER.warn("Unable to reconnect, skipping request");
             }
+            return;
         }
-        PlcReadRequest.Builder builder = plcConnection.readRequestBuilder();
-        for (Map.Entry<String, Object> tag : tags.entrySet()) {
-            try {
-                builder.addItem(tag.getKey(), (String) tag.getValue());
-            } catch (PlcIncompatibleDatatypeException e) {
-                LOGGER.error("For consumer, please use Map<String,String>, currently using {}",
-                        tags.getClass().getSimpleName());
-            }
-        }
-        PlcReadRequest request = builder.build();
+
+        PlcReadRequest request = plc4XEndpoint.buildPlcReadRequest();
+
         future = executorService.schedule(() -> request.execute().thenAccept(response -> {
             try {
                 Exchange exchange = plc4XEndpoint.createExchange();
@@ -126,15 +123,17 @@ public class Plc4XConsumer extends DefaultConsumer {
 
         TriggeredScraperImpl scraper = new TriggeredScraperImpl(configuration, (job, alias, response) -> {
             try {
-                if (plc4XEndpoint.isAutoReconnect() && !plcConnection.isConnected()) {
-                    plc4XEndpoint.reconnect();
-                    LOGGER.debug("Successfully reconnected");
-                }
+                plc4XEndpoint.reconnectIfNeeded();
+
                 Exchange exchange = plc4XEndpoint.createExchange();
                 exchange.getIn().setBody(response);
                 getProcessor().process(exchange);
             } catch (PlcConnectionException e) {
-                LOGGER.warn("Unable to reconnect, skipping request", e);
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.warn("Unable to reconnect, skipping request", e);
+                } else {
+                    LOGGER.warn("Unable to reconnect, skipping request");
+                }
             } catch (Exception e) {
                 getExceptionHandler().handleException(e);
             }
