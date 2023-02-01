@@ -66,9 +66,6 @@ pipeline {
         }
 
         stage('Build & Install') {
-            when {
-                branch 'main'
-            }
             steps {
                 // Skip modules camel-kudu and docs as these are not supported on s390x.
                 sh "./mvnw -U $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean install -pl '!docs,!components/camel-kudu'"
