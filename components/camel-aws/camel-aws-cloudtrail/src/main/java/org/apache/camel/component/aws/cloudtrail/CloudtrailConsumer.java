@@ -31,13 +31,10 @@ import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-<<<<<<< HEAD
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
-=======
->>>>>>> 9446467e2e9 (CAMEL-18131 - camel-health - Add health checks for components that has extension for connectivity verification - AWS Cloudtrail)
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 import software.amazon.awssdk.services.cloudtrail.model.Event;
 import software.amazon.awssdk.services.cloudtrail.model.LookupAttribute;
