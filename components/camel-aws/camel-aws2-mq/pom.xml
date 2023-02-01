@@ -50,6 +50,10 @@
             <artifactId>apache-client</artifactId>
             <version>${aws-java-sdk2-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-health</artifactId>
+        </dependency>
 
         <!-- for testing -->
         <dependency>
@@ -61,10 +65,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core-catalog</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-health</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
