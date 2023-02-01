@@ -26,11 +26,15 @@ import java.util.Queue;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.health.WritableHealthCheckRepository;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
 import software.amazon.awssdk.services.cloudtrail.model.Event;
 import software.amazon.awssdk.services.cloudtrail.model.LookupAttribute;
@@ -44,8 +48,26 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
 
     private static Instant lastTime;
 
+    private WritableHealthCheckRepository healthCheckRepository;
+    private CloudtrailConsumerHealthCheck consumerHealthCheck;
+
     public CloudtrailConsumer(CloudtrailEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(
+                getEndpoint().getCamelContext(),
+                "components",
+                WritableHealthCheckRepository.class);
+
+        if (healthCheckRepository != null) {
+            consumerHealthCheck = new CloudtrailConsumerHealthCheck(this, getRouteId());
+            healthCheckRepository.addHealthCheck(consumerHealthCheck);
+        }
     }
 
     @Override
@@ -90,6 +112,15 @@ public class CloudtrailConsumer extends ScheduledBatchPollingConsumer {
             processedExchanges++;
         }
         return processedExchanges;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (healthCheckRepository != null && consumerHealthCheck != null) {
+            healthCheckRepository.removeHealthCheck(consumerHealthCheck);
+            consumerHealthCheck = null;
+        }
+        super.doStop();
     }
 
     private CloudTrailClient getClient() {
