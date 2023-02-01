@@ -45,6 +45,7 @@ public class Plc4XComponentTest extends CamelTestSupport {
                 tags.put("Test1", "%TestQuery");
                 Plc4XEndpoint producer = getContext().getEndpoint("plc4x:mock:10.10.10.1/1/1", Plc4XEndpoint.class);
                 producer.setTags(tags);
+                producer.setAutoReconnect(true);
                 from("direct:plc4x")
                         .setBody(constant(Collections.singletonMap("test", Collections.singletonMap("testAddress", false))))
                         .to("plc4x:mock:10.10.10.1/1/1")
