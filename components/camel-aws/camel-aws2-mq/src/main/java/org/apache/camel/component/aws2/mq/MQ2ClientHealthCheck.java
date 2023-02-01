@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.aws2.mq;
 
+import java.util.Map;
+
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -24,8 +26,6 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.mq.MqClient;
 import software.amazon.awssdk.services.mq.model.ListBrokersRequest;
-
-import java.util.Map;
 
 public class MQ2ClientHealthCheck extends AbstractHealthCheck {
 
