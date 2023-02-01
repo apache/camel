@@ -22,6 +22,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.mq.client.MQ2ClientFactory;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -36,6 +38,9 @@ import software.amazon.awssdk.services.mq.MqClient;
 public class MQ2Endpoint extends ScheduledPollEndpoint {
 
     private MqClient mqClient;
+
+    private ComponentsHealthCheckRepository healthCheckRepository;
+    private MQ2ClientHealthCheck clientHealthCheck;
 
     @UriParam
     private MQ2Configuration configuration;
@@ -62,10 +67,23 @@ public class MQ2Endpoint extends ScheduledPollEndpoint {
         mqClient = configuration.getAmazonMqClient() != null
                 ? configuration.getAmazonMqClient()
                 : MQ2ClientFactory.getMqClient(configuration).getMqClient();
+
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getCamelContext(),
+                ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
+
+        if (healthCheckRepository != null) {
+            clientHealthCheck = new MQ2ClientHealthCheck(this, getId());
+            healthCheckRepository.addHealthCheck(clientHealthCheck);
+        }
     }
 
     @Override
     public void doStop() throws Exception {
+        if (healthCheckRepository != null && clientHealthCheck != null) {
+            healthCheckRepository.removeHealthCheck(clientHealthCheck);
+            clientHealthCheck = null;
+        }
+
         if (ObjectHelper.isEmpty(configuration.getAmazonMqClient())) {
             if (mqClient != null) {
                 mqClient.close();
