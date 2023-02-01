@@ -78,6 +78,10 @@ The component supports now an Health Check. The component verifier has been remo
 
 The component supports now an Health Check.
 
+== camel-aws2-mq
+
+The component supports now an Health Check. The component verifier has been removed.
+
 == camel-bom
 
 The `camel-bom` BOM no longer includes dependencies with `<type>test-jar</type>` as these are for internal testing
