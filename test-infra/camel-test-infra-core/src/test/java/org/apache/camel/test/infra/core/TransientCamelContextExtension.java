@@ -31,10 +31,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A simple Camel context extension suitable for most of the simple use cases in Camel and end-user applications.
+ * A transient Camel context extension that is recreated after every test, and is suitable for most of the simple use
+ * cases in Camel and end-user applications.
  */
-public class DefaultCamelContextExtension extends AbstractCamelContextExtension {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContextExtension.class);
+public class TransientCamelContextExtension extends AbstractCamelContextExtension {
+    private static final Logger LOG = LoggerFactory.getLogger(TransientCamelContextExtension.class);
     private final ContextLifeCycleManager lifeCycleManager;
     private final AnnotationProcessor fixtureProcessor;
 
@@ -42,11 +43,20 @@ public class DefaultCamelContextExtension extends AbstractCamelContextExtension 
     private ProducerTemplate producerTemplate;
     private ConsumerTemplate consumerTemplate;
 
+    private static class TransientLifeCycleManager extends DefaultContextLifeCycleManager {
+        @Override
+        public void afterEach(CamelContext context) {
+            super.afterEach(context);
+
+            context.shutdown();
+        }
+    }
+
     /**
      * Creates a new instance of the extension
      */
-    public DefaultCamelContextExtension() {
-        this(new DefaultContextLifeCycleManager());
+    public TransientCamelContextExtension() {
+        this(new TransientLifeCycleManager());
     }
 
     /**
@@ -54,7 +64,7 @@ public class DefaultCamelContextExtension extends AbstractCamelContextExtension 
      *
      * @param lifeCycleManager a life cycle manager for the context
      */
-    public DefaultCamelContextExtension(ContextLifeCycleManager lifeCycleManager) {
+    public TransientCamelContextExtension(ContextLifeCycleManager lifeCycleManager) {
         this.lifeCycleManager = lifeCycleManager;
         this.fixtureProcessor = new DefaultAnnotationProcessor(this);
 
@@ -68,6 +78,10 @@ public class DefaultCamelContextExtension extends AbstractCamelContextExtension 
 
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
+        recreateContext(extensionContext);
+    }
+
+    private void recreateContext(ExtensionContext extensionContext) {
         context = createCamelContext(fixtureProcessor, extensionContext);
 
         producerTemplate = context.createProducerTemplate();
@@ -107,6 +121,8 @@ public class DefaultCamelContextExtension extends AbstractCamelContextExtension 
         final Object o = extensionContext.getTestInstance().get();
         LOG.info("Testing done: {} ({})", extensionContext.getDisplayName(), o.getClass().getName());
         LOG.info("********************************************************************************");
+
+        recreateContext(extensionContext);
     }
 
     @Override
