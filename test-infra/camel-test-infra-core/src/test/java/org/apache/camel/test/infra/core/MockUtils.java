@@ -31,7 +31,6 @@ public final class MockUtils {
 
     }
 
-
     /**
      * Resolves an endpoint and asserts that it is found.
      */
@@ -42,7 +41,6 @@ public final class MockUtils {
 
         return endpoint;
     }
-
 
     /**
      * Resolves an endpoint and asserts that it is found.
