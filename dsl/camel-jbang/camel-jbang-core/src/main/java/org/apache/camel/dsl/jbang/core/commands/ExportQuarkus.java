@@ -20,9 +20,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -141,6 +145,63 @@ class ExportQuarkus extends Export {
         FileUtil.removeDir(new File(BUILD_DIR));
 
         return 0;
+    }
+
+    @Override
+    protected void prepareApplicationProperties(Properties properties) {
+        // quarkus native compilation only works if we specify each resource explicit
+
+        StringJoiner sj = new StringJoiner(",");
+        StringJoiner sj2 = new StringJoiner(",");
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            String k = entry.getKey().toString();
+            String v = entry.getValue().toString();
+
+            if ("camel.main.routesIncludePattern".equals(k)) {
+                v = Arrays.stream(v.split(","))
+                        .map(ExportQuarkus::removeScheme) // remove scheme and routes are in camel sub-folder
+                        .map(s -> "camel/" + s)
+                        .collect(Collectors.joining(","));
+                sj.add(v);
+            }
+            // extra classpath files
+            if ("camel.jbang.classpathFiles".equals(k)) {
+                v = Arrays.stream(v.split(","))
+                        .map(ExportQuarkus::removeScheme) // remove scheme
+                        .collect(Collectors.joining(","));
+                sj2.add(v);
+            }
+        }
+
+        String routes = sj.length() > 0 ? sj.toString() : null;
+        String extra = sj2.length() > 0 ? sj2.toString() : null;
+
+        if (routes != null || extra != null) {
+            sj = new StringJoiner(",");
+            String e = properties.getProperty("quarkus.native.resources.includes");
+            if (e != null) {
+                sj.add(e);
+            }
+            if (routes != null) {
+                sj.add(routes);
+            }
+            if (extra != null) {
+                sj.add(extra);
+            }
+            if (sj.length() > 0) {
+                properties.setProperty("quarkus.native.resources.includes", sj.toString());
+            }
+            if (routes != null) {
+                properties.setProperty("camel.main.routes-include-pattern", routes);
+            }
+        }
+    }
+
+    private static String removeScheme(String s) {
+        if (s.contains(":")) {
+            return StringHelper.after(s, ":");
+        }
+        return s;
     }
 
     private void createGradleProperties(File output) throws Exception {
