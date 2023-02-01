@@ -145,6 +145,11 @@ public class Plc4XEndpoint extends DefaultEndpoint {
             LOGGER.debug("Successfully reconnected");
         } else if (autoReconnect && !connection.isConnected()) {
             connection.connect();
+            // If reconnection fails without Exception, reset connection
+            if (!connection.isConnected()) {
+                LOGGER.debug("No connection established after connect, resetting connection");
+                connection = plcDriverManager.getConnection(uri);
+            }
             LOGGER.debug("Successfully reconnected");
         } else {
             LOGGER.warn("Connection lost and auto-reconnect is turned off, shutting down Plc4XEndpoint");
