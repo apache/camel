@@ -17,8 +17,6 @@
 package org.apache.camel.component.cassandra;
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -29,10 +27,6 @@ import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
-import com.datastax.oss.driver.api.core.session.SessionBuilder;
-import com.datastax.oss.driver.api.core.type.codec.ExtraTypeCodecs;
-import com.datastax.oss.driver.api.core.type.codec.TypeCodec;
-import com.datastax.oss.driver.api.core.type.codec.TypeCodecs;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -172,8 +166,7 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
         if (extraTypeCodecs != null) {
             String[] c = extraTypeCodecs.split(",");
             System.err.println(c.toString());
-            for (String codec: c
-                 ) {
+            for (String codec : c) {
                 if (ObjectHelper.isNotEmpty(CassandraExtraCodecs.valueOf(codec))) {
                     sessionBuilder.addTypeCodecs(CassandraExtraCodecs.valueOf(codec).codec());
                 }
@@ -377,10 +370,10 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     }
 
     /**
-     * To use a specific comma separated list of Extra Type codecs. Possible values are: BLOB_TO_ARRAY, BOOLEAN_LIST_TO_ARRAY,
-     * BYTE_LIST_TO_ARRAY, SHORT_LIST_TO_ARRAY, INT_LIST_TO_ARRAY, LONG_LIST_TO_ARRAY, FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY,
-     * TIMESTAMP_UTC, TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC, ZONED_TIMESTAMP_SYSTEM, ZONED_TIMESTAMP_UTC,
-     * ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM and
+     * To use a specific comma separated list of Extra Type codecs. Possible values are: BLOB_TO_ARRAY,
+     * BOOLEAN_LIST_TO_ARRAY, BYTE_LIST_TO_ARRAY, SHORT_LIST_TO_ARRAY, INT_LIST_TO_ARRAY, LONG_LIST_TO_ARRAY,
+     * FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY, TIMESTAMP_UTC, TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC,
+     * ZONED_TIMESTAMP_SYSTEM, ZONED_TIMESTAMP_UTC, ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM and
      * LOCAL_TIMESTAMP_UTC
      */
     public String getExtraTypeCodecs() {

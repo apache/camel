@@ -24,7 +24,7 @@ public enum CassandraExtraCodecs {
 
     private final TypeCodec codec;
 
-    private CassandraExtraCodecs(TypeCodec codec){
+    private CassandraExtraCodecs(TypeCodec codec) {
         this.codec = codec;
     }
 
