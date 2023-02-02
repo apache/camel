@@ -34,7 +34,7 @@ import picocli.CommandLine.Command;
 
 @Command(name = "count",
          description = "Get total and failed exchanges for running integrations")
-public class CamelCount extends ProcessBaseCommand {
+public class CamelCount extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -56,7 +56,7 @@ public class CamelCount extends ProcessBaseCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);

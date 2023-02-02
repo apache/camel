@@ -34,7 +34,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "route", description = "Get status of Camel routes")
-public class CamelRouteStatus extends ProcessBaseCommand {
+public class CamelRouteStatus extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -64,7 +64,7 @@ public class CamelRouteStatus extends ProcessBaseCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);

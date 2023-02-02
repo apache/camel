@@ -34,7 +34,7 @@ import picocli.CommandLine.Command;
 
 @Command(name = "circuit-breaker",
          description = "Get status of Circuit Breaker EIPs")
-public class ListCircuitBreaker extends ProcessBaseCommand {
+public class ListCircuitBreaker extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -48,7 +48,7 @@ public class ListCircuitBreaker extends ProcessBaseCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);

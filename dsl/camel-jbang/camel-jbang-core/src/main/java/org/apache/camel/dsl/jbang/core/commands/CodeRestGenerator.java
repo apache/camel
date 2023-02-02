@@ -56,7 +56,8 @@ public class CodeRestGenerator extends CamelCommand {
     private boolean generateRoutes;
     @CommandLine.Option(names = { "-d", "--dto" }, description = "Data Objects")
     private boolean generateDataObjects;
-    @CommandLine.Option(names = { "-run", "--runtime" }, description = "Runtime (quarkus, spring-boot)", defaultValue = "quarkus")
+    @CommandLine.Option(names = { "-run", "--runtime" }, description = "Runtime (quarkus, spring-boot)",
+                        defaultValue = "quarkus")
     private String runtime;
     @CommandLine.Option(names = { "-p", "--package" }, description = "Package for generated models", defaultValue = "model")
     private String packageName;
@@ -104,14 +105,14 @@ public class CodeRestGenerator extends CamelCommand {
     }
 
     private void generateDto() throws IOException {
-        final String CODE = "code";
-        final String GENERATOR_NAME = "quarkus".equals(runtime) ? "jaxrs-spec" : "java-camel";
-        final String LIBRARY = "quarkus".equals(runtime) ? "quarkus" : "spring-boot";
+        final String code = "code";
+        final String generatorName = "quarkus".equals(runtime) ? "jaxrs-spec" : "java-camel";
+        final String library = "quarkus".equals(runtime) ? "quarkus" : "spring-boot";
         File output = Files.createTempDirectory("gendto").toFile();
 
         final CodegenConfigurator configurator = new CodegenConfigurator()
-                .setGeneratorName(GENERATOR_NAME)
-                .setLibrary(LIBRARY)
+                .setGeneratorName(generatorName)
+                .setLibrary(library)
                 .setInputSpec(input)
                 .setModelPackage(packageName)
                 .setAdditionalProperties(
@@ -122,14 +123,12 @@ public class CodeRestGenerator extends CamelCommand {
                                 GENERATE_MODELS, "true",
                                 "generatePom", "false",
                                 "generateApis", "false",
-                                "sourceFolder", CODE
-                        )
-                )
+                                "sourceFolder", code))
                 .setOutputDir(output.getAbsolutePath());
 
         final ClientOptInput clientOptInput = configurator.toClientOptInput();
         new DefaultGenerator().opts(clientOptInput).generate();
-        File generated = new File(Paths.get(output.getAbsolutePath(), CODE, packageName).toUri());
+        File generated = new File(Paths.get(output.getAbsolutePath(), code, packageName).toUri());
         generated.renameTo(new File(packageName));
     }
 }

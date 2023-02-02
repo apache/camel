@@ -34,7 +34,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "endpoint", description = "Get usage of Camel endpoints")
-public class CamelEndpointStatus extends ProcessBaseCommand {
+public class ListEndpoint extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -63,12 +63,12 @@ public class CamelEndpointStatus extends ProcessBaseCommand {
                         description = "List endpoint URI without query parameters (short)")
     boolean shortUri;
 
-    public CamelEndpointStatus(CamelJBangMain main) {
+    public ListEndpoint(CamelJBangMain main) {
         super(main);
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
         // make it easier to filter

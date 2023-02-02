@@ -14,29 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands.process;
+package org.apache.camel.dsl.jbang.core.commands;
 
-import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
-import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "get",
-                     description = "Get status of Camel integrations (use get --help to see sub commands)")
-public class CamelStatus extends CamelCommand {
+@CommandLine.Command(name = "dependency",
+                     description = "Displays all Camel dependencies required to run (use dependency --help to see sub commands)")
+public class DependencyCommand extends CamelCommand {
 
-    @CommandLine.Option(names = { "--watch" },
-                        description = "Execute periodically and showing output fullscreen")
-    boolean watch;
-
-    public CamelStatus(CamelJBangMain main) {
+    public DependencyCommand(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer call() throws Exception {
-        // default to get the integrations
-        CamelContextStatus cmd = new CamelContextStatus(getMain());
-        cmd.watch = watch;
-        return new CommandLine(cmd).execute();
+        // default to list
+        new CommandLine(new DependencyList(getMain())).execute();
+        return 0;
     }
+
 }

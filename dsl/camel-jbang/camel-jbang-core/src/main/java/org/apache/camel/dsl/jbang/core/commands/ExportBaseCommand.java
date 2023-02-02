@@ -79,7 +79,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String javaVersion;
 
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.0")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.1.1")
     protected String kameletsVersion;
 
     @CommandLine.Option(names = { "--local-kamelet-dir" },
@@ -370,13 +370,16 @@ abstract class ExportBaseCommand extends CamelCommand {
         if (profile.exists()) {
             RuntimeUtil.loadProperties(prop2, profile);
         }
+        prop2.putAll(prop);
+        prepareApplicationProperties(prop2);
 
         for (Map.Entry<Object, Object> entry : prop.entrySet()) {
             String key = entry.getKey().toString();
-            boolean skip = "camel.main.routesCompileDirectory".equals(key)
+            boolean skip = !key.startsWith("camel.main")
+                    || "camel.main.routesCompileDirectory".equals(key)
                     || "camel.main.routesReloadEnabled".equals(key);
-            if (!skip && key.startsWith("camel.main")) {
-                prop2.put(entry.getKey(), entry.getValue());
+            if (skip) {
+                prop2.remove(key);
             }
         }
 
@@ -385,33 +388,39 @@ abstract class ExportBaseCommand extends CamelCommand {
         }
 
         FileOutputStream fos = new FileOutputStream(new File(targetDir, "application.properties"), false);
-        for (Map.Entry<Object, Object> entry : prop2.entrySet()) {
-            String k = entry.getKey().toString();
-            String v = entry.getValue().toString();
+        try {
+            for (Map.Entry<Object, Object> entry : prop2.entrySet()) {
+                String k = entry.getKey().toString();
+                String v = entry.getValue().toString();
 
-            boolean skip = k.startsWith("camel.jbang.") || k.startsWith("jkube.");
-            if (skip) {
-                continue;
-            }
+                boolean skip = k.startsWith("camel.jbang.") || k.startsWith("jkube.");
+                if (skip) {
+                    continue;
+                }
 
-            // files are now loaded in classpath
-            v = v.replaceAll("file:", "classpath:");
-            if ("camel.main.routesIncludePattern".equals(k)) {
-                // camel.main.routesIncludePattern should remove all .java as we use spring boot
-                // to load them
-                // camel.main.routesIncludePattern should remove all file: classpath: as we copy
-                // them to src/main/resources/camel where camel auto-load from
-                v = Arrays.stream(v.split(","))
-                        .filter(n -> !n.endsWith(".java") && !n.startsWith("file:") && !n.startsWith("classpath:"))
-                        .collect(Collectors.joining(","));
+                // files are now loaded in classpath
+                v = v.replaceAll("file:", "classpath:");
+                if ("camel.main.routesIncludePattern".equals(k)) {
+                    // camel.main.routesIncludePattern should remove all .java as we use move them to regular src/main/java
+                    // camel.main.routesIncludePattern should remove all file: classpath: as we copy
+                    // them to src/main/resources/camel where camel autoload from
+                    v = Arrays.stream(v.split(","))
+                            .filter(n -> !n.endsWith(".java") && !n.startsWith("file:") && !n.startsWith("classpath:"))
+                            .collect(Collectors.joining(","));
+                }
+                if (!v.isBlank()) {
+                    String line = applicationPropertyLine(k, v);
+                    fos.write(line.getBytes(StandardCharsets.UTF_8));
+                    fos.write("\n".getBytes(StandardCharsets.UTF_8));
+                }
             }
-            if (!v.isBlank()) {
-                String line = applicationPropertyLine(k, v);
-                fos.write(line.getBytes(StandardCharsets.UTF_8));
-                fos.write("\n".getBytes(StandardCharsets.UTF_8));
-            }
+        } finally {
+            IOHelper.close(fos);
         }
-        IOHelper.close(fos);
+    }
+
+    protected void prepareApplicationProperties(Properties properties) {
+        // noop
     }
 
     protected void copyMavenWrapper() throws Exception {

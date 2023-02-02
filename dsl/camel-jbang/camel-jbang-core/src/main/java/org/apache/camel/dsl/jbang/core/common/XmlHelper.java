@@ -42,6 +42,11 @@ public final class XmlHelper {
             factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (ParserConfigurationException e) {
         }
+        try {
+            // Disable the external-parameter-entities by default
+            factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        } catch (ParserConfigurationException e) {
+        }
         // setup the SecurityManager by default if it's apache xerces
         try {
             Class<?> smClass = ObjectHelper.loadClass("org.apache.xerces.util.SecurityManager");

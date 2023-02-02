@@ -34,7 +34,7 @@ import picocli.CommandLine.Command;
 
 @Command(name = "event",
          description = "Get latest events of Camel integrations")
-public class ListEvent extends ProcessBaseCommand {
+public class ListEvent extends ProcessWatchCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
@@ -52,7 +52,7 @@ public class ListEvent extends ProcessBaseCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);

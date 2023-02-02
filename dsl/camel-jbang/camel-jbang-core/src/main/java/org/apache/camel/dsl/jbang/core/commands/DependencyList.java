@@ -35,16 +35,16 @@ import org.apache.camel.util.CamelCaseOrderedProperties;
 import org.apache.camel.util.FileUtil;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "dependencies",
+@CommandLine.Command(name = "list",
                      description = "Displays all Camel dependencies required to run")
-public class DependencyTree extends Export {
+public class DependencyList extends Export {
 
     protected static final String EXPORT_DIR = ".camel-jbang/export";
 
     @CommandLine.Option(names = { "--output" }, description = "Output format (gav or maven)", defaultValue = "gav")
     protected String output;
 
-    public DependencyTree(CamelJBangMain main) {
+    public DependencyList(CamelJBangMain main) {
         super(main);
     }
 

@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
@@ -32,9 +31,6 @@ import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
 abstract class ActionBaseCommand extends CamelCommand {
-
-    private static final String[] DSL_EXT = new String[] { "groovy", "java", "js", "jsh", "kts", "xml", "yaml" };
-    private static final Pattern PATTERN = Pattern.compile("([\\w|\\-.])+");
 
     public ActionBaseCommand(CamelJBangMain main) {
         super(main);

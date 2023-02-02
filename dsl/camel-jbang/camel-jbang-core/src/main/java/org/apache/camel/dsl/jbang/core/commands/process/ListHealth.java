@@ -40,7 +40,7 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "health", description = "Get health check status of running Camel integrations")
-public class ListHealth extends ProcessBaseCommand {
+public class ListHealth extends ProcessWatchCommand {
 
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by pid, name or age", defaultValue = "pid")
@@ -75,7 +75,7 @@ public class ListHealth extends ProcessBaseCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         final List<Row> rows = new ArrayList<>();
 
         // include stack-traces

@@ -22,6 +22,7 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelGCAction;
+import org.apache.camel.dsl.jbang.core.commands.action.CamelLogAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelReloadAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelResetStatsAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStartAction;
@@ -41,7 +42,6 @@ import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogOther;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextTop;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelCount;
-import org.apache.camel.dsl.jbang.core.commands.process.CamelEndpointStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelProcessorStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelProcessorTop;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelRouteStatus;
@@ -52,6 +52,7 @@ import org.apache.camel.dsl.jbang.core.commands.process.Hawtio;
 import org.apache.camel.dsl.jbang.core.commands.process.Jolokia;
 import org.apache.camel.dsl.jbang.core.commands.process.ListBlocked;
 import org.apache.camel.dsl.jbang.core.commands.process.ListCircuitBreaker;
+import org.apache.camel.dsl.jbang.core.commands.process.ListEndpoint;
 import org.apache.camel.dsl.jbang.core.commands.process.ListEvent;
 import org.apache.camel.dsl.jbang.core.commands.process.ListHealth;
 import org.apache.camel.dsl.jbang.core.commands.process.ListInflight;
@@ -72,6 +73,7 @@ public class CamelJBangMain implements Callable<Integer> {
         commandLine = new CommandLine(main)
                 .addSubcommand("init", new CommandLine(new Init(main)))
                 .addSubcommand("run", new CommandLine(new Run(main)))
+                .addSubcommand("log", new CommandLine(new CamelLogAction(main)))
                 .addSubcommand("ps", new CommandLine(new ListProcess(main)))
                 .addSubcommand("stop", new CommandLine(new StopProcess(main)))
                 .addSubcommand("get", new CommandLine(new CamelStatus(main))
@@ -80,7 +82,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("processor", new CommandLine(new CamelProcessorStatus(main)))
                         .addSubcommand("count", new CommandLine(new CamelCount(main)))
                         .addSubcommand("health", new CommandLine(new ListHealth(main)))
-                        .addSubcommand("endpoint", new CommandLine(new CamelEndpointStatus(main)))
+                        .addSubcommand("endpoint", new CommandLine(new ListEndpoint(main)))
                         .addSubcommand("event", new CommandLine(new ListEvent(main)))
                         .addSubcommand("inflight", new CommandLine(new ListInflight(main)))
                         .addSubcommand("blocked", new CommandLine(new ListBlocked(main)))
@@ -103,6 +105,9 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("thread-dump", new CommandLine(new CamelThreadDump(main)))
                         .addSubcommand("logger", new CommandLine(new LoggerAction(main)))
                         .addSubcommand("gc", new CommandLine(new CamelGCAction(main))))
+                .addSubcommand("dependency", new CommandLine(new DependencyCommand(main))
+                        .addSubcommand("list", new CommandLine(new DependencyList(main)))
+                        .addSubcommand("copy", new CommandLine(new DependencyCopy(main))))
                 .addSubcommand("generate", new CommandLine(new CodeGenerator(main))
                         .addSubcommand("rest", new CommandLine(new CodeRestGenerator(main))))
                 .addSubcommand("catalog", new CommandLine(new CatalogCommand(main))
@@ -116,7 +121,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("hawtio", new CommandLine(new Hawtio(main)))
                 .addSubcommand("bind", new CommandLine(new Bind(main)))
                 .addSubcommand("pipe", new CommandLine(new Pipe(main)))
-                .addSubcommand("dependencies", new CommandLine(new DependencyTree(main)))
+                .addSubcommand("dependencies", new CommandLine(new DependencyList(main)))
                 .addSubcommand("export", new CommandLine(new Export(main)))
                 .addSubcommand("completion", new CommandLine(new Complete(main)));
 
