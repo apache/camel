@@ -598,6 +598,25 @@ public interface NettyComponentBuilderFactory {
             return this;
         }
         /**
+         * Sets the value for the blockWhenExhausted configuration attribute. It
+         * determines whether to block when the borrowObject() method is invoked
+         * when the pool is exhausted (the maximum number of active objects has
+         * been reached).
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolBlockWhenExhausted the value to set
+         * @return the dsl builder
+         */
+        default NettyComponentBuilder producerPoolBlockWhenExhausted(
+                boolean producerPoolBlockWhenExhausted) {
+            doSetProperty("producerPoolBlockWhenExhausted", producerPoolBlockWhenExhausted);
+            return this;
+        }
+        /**
          * Whether producer pool is enabled or not. Important: If you turn this
          * off then a single shared connection is used for the producer, also if
          * you are doing request/reply. That means there is a potential issue
@@ -655,6 +674,25 @@ public interface NettyComponentBuilderFactory {
         default NettyComponentBuilder producerPoolMaxTotal(
                 int producerPoolMaxTotal) {
             doSetProperty("producerPoolMaxTotal", producerPoolMaxTotal);
+            return this;
+        }
+        /**
+         * Sets the maximum duration (value in millis) the borrowObject() method
+         * should block before throwing an exception when the pool is exhausted
+         * and producerPoolBlockWhenExhausted is true. When less than 0, the
+         * borrowObject() method may block indefinitely.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: -1
+         * Group: producer (advanced)
+         * 
+         * @param producerPoolMaxWait the value to set
+         * @return the dsl builder
+         */
+        default NettyComponentBuilder producerPoolMaxWait(
+                long producerPoolMaxWait) {
+            doSetProperty("producerPoolMaxWait", producerPoolMaxWait);
             return this;
         }
         /**
@@ -1370,9 +1408,11 @@ public interface NettyComponentBuilderFactory {
             case "clientInitializerFactory": getOrCreateConfiguration((NettyComponent) component).setClientInitializerFactory((org.apache.camel.component.netty.ClientInitializerFactory) value); return true;
             case "correlationManager": getOrCreateConfiguration((NettyComponent) component).setCorrelationManager((org.apache.camel.component.netty.NettyCamelStateCorrelationManager) value); return true;
             case "lazyChannelCreation": getOrCreateConfiguration((NettyComponent) component).setLazyChannelCreation((boolean) value); return true;
+            case "producerPoolBlockWhenExhausted": getOrCreateConfiguration((NettyComponent) component).setProducerPoolBlockWhenExhausted((boolean) value); return true;
             case "producerPoolEnabled": getOrCreateConfiguration((NettyComponent) component).setProducerPoolEnabled((boolean) value); return true;
             case "producerPoolMaxIdle": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMaxIdle((int) value); return true;
             case "producerPoolMaxTotal": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMaxTotal((int) value); return true;
+            case "producerPoolMaxWait": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMaxWait((long) value); return true;
             case "producerPoolMinEvictableIdle": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMinEvictableIdle((long) value); return true;
             case "producerPoolMinIdle": getOrCreateConfiguration((NettyComponent) component).setProducerPoolMinIdle((int) value); return true;
             case "udpConnectionlessSending": getOrCreateConfiguration((NettyComponent) component).setUdpConnectionlessSending((boolean) value); return true;
