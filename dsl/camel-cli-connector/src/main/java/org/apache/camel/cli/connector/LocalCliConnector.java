@@ -311,7 +311,6 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 }
             }
         } catch (Throwable e) {
-            e.printStackTrace();
             // ignore
         }
         return null;
