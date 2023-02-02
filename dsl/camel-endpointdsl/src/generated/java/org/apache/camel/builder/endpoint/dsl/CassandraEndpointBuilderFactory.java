@@ -122,6 +122,28 @@ public interface CassandraEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a specific comma separated list of Extra Type codecs. Possible
+         * values are: BLOB_TO_ARRAY, BOOLEAN_LIST_TO_ARRAY, BYTE_LIST_TO_ARRAY,
+         * SHORT_LIST_TO_ARRAY, INT_LIST_TO_ARRAY, LONG_LIST_TO_ARRAY,
+         * FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY, TIMESTAMP_UTC,
+         * TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC,
+         * ZONED_TIMESTAMP_SYSTEM, ZONED_TIMESTAMP_UTC,
+         * ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM and
+         * LOCAL_TIMESTAMP_UTC.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param extraTypeCodecs the value to set
+         * @return the dsl builder
+         */
+        default CassandraEndpointConsumerBuilder extraTypeCodecs(
+                String extraTypeCodecs) {
+            doSetProperty("extraTypeCodecs", extraTypeCodecs);
+            return this;
+        }
+        /**
          * To use a specific LoadBalancingPolicyClass.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1029,6 +1051,28 @@ public interface CassandraEndpointBuilderFactory {
             return this;
         }
         /**
+         * To use a specific comma separated list of Extra Type codecs. Possible
+         * values are: BLOB_TO_ARRAY, BOOLEAN_LIST_TO_ARRAY, BYTE_LIST_TO_ARRAY,
+         * SHORT_LIST_TO_ARRAY, INT_LIST_TO_ARRAY, LONG_LIST_TO_ARRAY,
+         * FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY, TIMESTAMP_UTC,
+         * TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC,
+         * ZONED_TIMESTAMP_SYSTEM, ZONED_TIMESTAMP_UTC,
+         * ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM and
+         * LOCAL_TIMESTAMP_UTC.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param extraTypeCodecs the value to set
+         * @return the dsl builder
+         */
+        default CassandraEndpointProducerBuilder extraTypeCodecs(
+                String extraTypeCodecs) {
+            doSetProperty("extraTypeCodecs", extraTypeCodecs);
+            return this;
+        }
+        /**
          * To use a specific LoadBalancingPolicyClass.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1317,6 +1361,27 @@ public interface CassandraEndpointBuilderFactory {
          */
         default CassandraEndpointBuilder datacenter(String datacenter) {
             doSetProperty("datacenter", datacenter);
+            return this;
+        }
+        /**
+         * To use a specific comma separated list of Extra Type codecs. Possible
+         * values are: BLOB_TO_ARRAY, BOOLEAN_LIST_TO_ARRAY, BYTE_LIST_TO_ARRAY,
+         * SHORT_LIST_TO_ARRAY, INT_LIST_TO_ARRAY, LONG_LIST_TO_ARRAY,
+         * FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY, TIMESTAMP_UTC,
+         * TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC,
+         * ZONED_TIMESTAMP_SYSTEM, ZONED_TIMESTAMP_UTC,
+         * ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM and
+         * LOCAL_TIMESTAMP_UTC.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: common
+         * 
+         * @param extraTypeCodecs the value to set
+         * @return the dsl builder
+         */
+        default CassandraEndpointBuilder extraTypeCodecs(String extraTypeCodecs) {
+            doSetProperty("extraTypeCodecs", extraTypeCodecs);
             return this;
         }
         /**
