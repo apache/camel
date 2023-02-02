@@ -500,37 +500,6 @@ public interface MinaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to auto start SSL handshake.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: security
-         * 
-         * @param autoStartTls the value to set
-         * @return the dsl builder
-         */
-        default MinaEndpointConsumerBuilder autoStartTls(boolean autoStartTls) {
-            doSetProperty("autoStartTls", autoStartTls);
-            return this;
-        }
-        /**
-         * Whether to auto start SSL handshake.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: security
-         * 
-         * @param autoStartTls the value to set
-         * @return the dsl builder
-         */
-        default MinaEndpointConsumerBuilder autoStartTls(String autoStartTls) {
-            doSetProperty("autoStartTls", autoStartTls);
-            return this;
-        }
-        /**
          * To configure SSL security.
          * 
          * The option is a:
@@ -1304,37 +1273,6 @@ public interface MinaEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to auto start SSL handshake.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: security
-         * 
-         * @param autoStartTls the value to set
-         * @return the dsl builder
-         */
-        default MinaEndpointProducerBuilder autoStartTls(boolean autoStartTls) {
-            doSetProperty("autoStartTls", autoStartTls);
-            return this;
-        }
-        /**
-         * Whether to auto start SSL handshake.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: security
-         * 
-         * @param autoStartTls the value to set
-         * @return the dsl builder
-         */
-        default MinaEndpointProducerBuilder autoStartTls(String autoStartTls) {
-            doSetProperty("autoStartTls", autoStartTls);
-            return this;
-        }
-        /**
          * To configure SSL security.
          * 
          * The option is a:
@@ -2071,37 +2009,6 @@ public interface MinaEndpointBuilderFactory {
          */
         default MinaEndpointBuilder textlineDelimiter(String textlineDelimiter) {
             doSetProperty("textlineDelimiter", textlineDelimiter);
-            return this;
-        }
-        /**
-         * Whether to auto start SSL handshake.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: security
-         * 
-         * @param autoStartTls the value to set
-         * @return the dsl builder
-         */
-        default MinaEndpointBuilder autoStartTls(boolean autoStartTls) {
-            doSetProperty("autoStartTls", autoStartTls);
-            return this;
-        }
-        /**
-         * Whether to auto start SSL handshake.
-         * 
-         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
-         * type.
-         * 
-         * Default: true
-         * Group: security
-         * 
-         * @param autoStartTls the value to set
-         * @return the dsl builder
-         */
-        default MinaEndpointBuilder autoStartTls(String autoStartTls) {
-            doSetProperty("autoStartTls", autoStartTls);
             return this;
         }
         /**

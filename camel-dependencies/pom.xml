@@ -381,7 +381,7 @@
         <microprofile-fault-tolerance-version>4.0.2</microprofile-fault-tolerance-version>
         <milo-version>0.6.8</milo-version>
         <milo-guava-version>31.1-jre</milo-guava-version>
-        <mina-version>2.1.6</mina-version>
+        <mina-version>2.2.1</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
         <minio-version>8.5.1</minio-version>
