@@ -43,8 +43,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.utils.cassandra.CassandraExtraCodecs;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 
@@ -174,7 +174,7 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
             System.err.println(c.toString());
             for (String codec: c
                  ) {
-                if (CassandraExtraCodecs.valueOf(codec).codec() != null) {
+                if (ObjectHelper.isNotEmpty(CassandraExtraCodecs.valueOf(codec))) {
                     sessionBuilder.addTypeCodecs(CassandraExtraCodecs.valueOf(codec).codec());
                 }
             }
