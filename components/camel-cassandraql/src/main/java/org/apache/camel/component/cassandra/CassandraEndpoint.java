@@ -17,6 +17,8 @@
 package org.apache.camel.component.cassandra;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -27,6 +29,10 @@ import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
+import com.datastax.oss.driver.api.core.session.SessionBuilder;
+import com.datastax.oss.driver.api.core.type.codec.ExtraTypeCodecs;
+import com.datastax.oss.driver.api.core.type.codec.TypeCodec;
+import com.datastax.oss.driver.api.core.type.codec.TypeCodecs;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -37,7 +43,9 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.utils.cassandra.CassandraExtraCodecs;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 
 /**
@@ -78,6 +86,8 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     private String loadBalancingPolicyClass;
     @UriParam
     private ResultSetConversionStrategy resultSetConversionStrategy = ResultSetConversionStrategies.all();
+    @UriParam
+    private String extraTypeCodecs;
 
     public CassandraEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -157,6 +167,17 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
         ClassLoader classLoader = getCamelContext().getApplicationContextClassLoader();
         if (classLoader != null) {
             sessionBuilder.withClassLoader(classLoader);
+        }
+
+        if (extraTypeCodecs != null) {
+            String[] c = extraTypeCodecs.split(",");
+            System.err.println(c.toString());
+            for (String codec: c
+                 ) {
+                if (CassandraExtraCodecs.valueOf(codec).codec() != null) {
+                    sessionBuilder.addTypeCodecs(CassandraExtraCodecs.valueOf(codec).codec());
+                }
+            }
         }
 
         return sessionBuilder;
@@ -355,4 +376,14 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
         this.loadBalancingPolicyClass = loadBalancingPolicyClass;
     }
 
+    /**
+     * To use a specific comma separated list of Extra Type codecs
+     */
+    public String getExtraTypeCodecs() {
+        return extraTypeCodecs;
+    }
+
+    public void setExtraTypeCodecs(String extraTypeCodecs) {
+        this.extraTypeCodecs = extraTypeCodecs;
+    }
 }
