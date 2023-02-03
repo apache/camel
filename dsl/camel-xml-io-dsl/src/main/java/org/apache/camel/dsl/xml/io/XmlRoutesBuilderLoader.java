@@ -71,6 +71,9 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
 
             @Override
             public void configuration() throws Exception {
+                new ModelParser(resource, NAMESPACE)
+                        .parseRouteConfigurationsDefinition()
+                        .ifPresent(this::addConfigurations);
                 new ModelParser(resource)
                         .parseRouteConfigurationsDefinition()
                         .ifPresent(this::addConfigurations);
