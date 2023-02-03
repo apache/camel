@@ -5128,7 +5128,7 @@
           },
           "library" : {
             "type" : "string",
-            "enum" : [ "Fastjson", "Gson", "Jackson", "Johnzon", "Jsonb", "XStream" ]
+            "enum" : [ "Fastjson", "Gson", "Jackson", "Johnzon", "Jsonb" ]
           },
           "moduleClassNames" : {
             "type" : "string"
@@ -5140,9 +5140,6 @@
             "type" : "string"
           },
           "objectMapper" : {
-            "type" : "string"
-          },
-          "permissions" : {
             "type" : "string"
           },
           "prettyPrint" : {

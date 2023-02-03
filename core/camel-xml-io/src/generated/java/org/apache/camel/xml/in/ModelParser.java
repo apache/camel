@@ -2203,7 +2203,6 @@ public class ModelParser extends BaseParser {
                 case "moduleRefs": def.setModuleRefs(val); break;
                 case "namingStrategy": def.setNamingStrategy(val); break;
                 case "objectMapper": def.setObjectMapper(val); break;
-                case "permissions": def.setPermissions(val); break;
                 case "prettyPrint": def.setPrettyPrint(val); break;
                 case "schemaResolver": def.setSchemaResolver(val); break;
                 case "timezone": def.setTimezone(val); break;
