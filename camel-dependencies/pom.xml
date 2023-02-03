@@ -484,7 +484,6 @@
         <swagger-java-version>1.6.4</swagger-java-version>
         <swagger-openapi3-version>2.2.8</swagger-openapi3-version>
         <swagger-java-parser-version>1.0.62</swagger-java-parser-version>
-        <swagger-java-guava-version>27.1-jre</swagger-java-guava-version>
         <stax-api-version>1.0.1</stax-api-version>
         <stringtemplate-version>4.3.4</stringtemplate-version>
         <templating-maven-plugin-version>1.0.0</templating-maven-plugin-version>
