@@ -20,6 +20,8 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.pubnub.api.PNConfiguration;
 import com.pubnub.api.PubNub;
+import com.pubnub.api.PubNubException;
+import com.pubnub.api.UserId;
 import com.pubnub.api.enums.PNLogVerbosity;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.AvailablePortFinder;
@@ -52,13 +54,17 @@ public class PubNubTestBase extends CamelTestSupport {
     }
 
     private PubNub createPubNubInstance() {
-        PNConfiguration pnConfiguration = new PNConfiguration();
+        PNConfiguration pnConfiguration = null;
+        try {
+            pnConfiguration = new PNConfiguration(new UserId("myUUID"));
+        } catch (PubNubException e) {
+            throw new RuntimeException(e);
+        }
 
         pnConfiguration.setOrigin("localhost" + ":" + port);
         pnConfiguration.setSecure(false);
         pnConfiguration.setSubscribeKey("mySubscribeKey");
         pnConfiguration.setPublishKey("myPublishKey");
-        pnConfiguration.setUuid("myUUID");
         pnConfiguration.setLogVerbosity(PNLogVerbosity.NONE);
         pnConfiguration.setHeartbeatNotificationOptions(NONE);
         class MockedTimePubNub extends PubNub {
