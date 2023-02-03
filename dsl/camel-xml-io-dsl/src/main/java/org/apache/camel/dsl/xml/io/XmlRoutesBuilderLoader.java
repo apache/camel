@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dsl.xml.io;
 
+import java.util.List;
+
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
@@ -28,6 +30,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
+import org.apache.camel.support.CachedResource;
 import org.apache.camel.xml.in.ModelParser;
 
 @ManagedResource(description = "Managed XML RoutesBuilderLoader")
@@ -35,51 +38,43 @@ import org.apache.camel.xml.in.ModelParser;
 public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
     public static final String EXTENSION = "xml";
     public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
+    private static final List<String> NAMESPACES = List.of("", NAMESPACE);
 
     public XmlRoutesBuilderLoader() {
         super(EXTENSION);
     }
 
     @Override
-    public RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
+    public RouteBuilder doLoadRouteBuilder(Resource input) throws Exception {
         return new RouteConfigurationBuilder() {
+            final Resource resource = new CachedResource(input);
+
             @Override
             public void configure() throws Exception {
                 // we use configure to load the routes (with namespace and without namespace)
-                new ModelParser(resource, NAMESPACE)
-                        .parseRouteTemplatesDefinition()
-                        .ifPresent(this::setRouteTemplateCollection);
-                new ModelParser(resource, NAMESPACE)
-                        .parseTemplatedRoutesDefinition()
-                        .ifPresent(this::setTemplatedRouteCollection);
-                new ModelParser(resource, NAMESPACE)
-                        .parseRestsDefinition()
-                        .ifPresent(this::setRestCollection);
-                new ModelParser(resource, NAMESPACE)
-                        .parseRoutesDefinition()
-                        .ifPresent(this::addRoutes);
-                new ModelParser(resource)
-                        .parseRouteTemplatesDefinition()
-                        .ifPresent(this::setRouteTemplateCollection);
-                new ModelParser(resource)
-                        .parseTemplatedRoutesDefinition()
-                        .ifPresent(this::setTemplatedRouteCollection);
-                new ModelParser(resource)
-                        .parseRestsDefinition()
-                        .ifPresent(this::setRestCollection);
-                new ModelParser(resource)
-                        .parseRoutesDefinition()
-                        .ifPresent(this::addRoutes);
+                for (String ns : NAMESPACES) {
+                    new ModelParser(resource, ns)
+                            .parseRouteTemplatesDefinition()
+                            .ifPresent(this::setRouteTemplateCollection);
+                    new ModelParser(resource, ns)
+                            .parseTemplatedRoutesDefinition()
+                            .ifPresent(this::setTemplatedRouteCollection);
+                    new ModelParser(resource, ns)
+                            .parseRestsDefinition()
+                            .ifPresent(this::setRestCollection);
+                    new ModelParser(resource, ns)
+                            .parseRoutesDefinition()
+                            .ifPresent(this::addRoutes);
+                }
             }
 
             @Override
             public void configuration() throws Exception {
-                new ModelParser(resource, NAMESPACE)
-                        .parseRouteConfigurationsDefinition()
-                        .ifPresent(this::addConfigurations);
-                new ModelParser(resource)
-                        .parseRouteConfigurationsDefinition()
-                        .ifPresent(this::addConfigurations);
+                for (String ns : NAMESPACES) {
+                    new ModelParser(resource, ns)
+                            .parseRouteConfigurationsDefinition()
+                            .ifPresent(this::addConfigurations);
+                }
             }
 
             private void addRoutes(RoutesDefinition routes) {
