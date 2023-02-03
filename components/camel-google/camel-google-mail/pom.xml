@@ -48,10 +48,8 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <!-- TODO: can we upgrade - test this component with real gmail account -->
-            <version>20.0</version>
+            <version>${google-mail-guava-version}</version>
         </dependency>
-
         <dependency>
             <groupId>com.google.http-client</groupId>
             <artifactId>google-http-client</artifactId>
