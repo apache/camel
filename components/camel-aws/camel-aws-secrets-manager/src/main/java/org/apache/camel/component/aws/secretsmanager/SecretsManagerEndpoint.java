@@ -22,6 +22,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws.secretsmanager.client.SecretsManagerClientFactory;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
@@ -37,6 +39,9 @@ import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 public class SecretsManagerEndpoint extends ScheduledPollEndpoint {
 
     private SecretsManagerClient secretsManagerClient;
+
+    private ComponentsHealthCheckRepository healthCheckRepository;
+    private SecretsManagerClientHealthCheck clientHealthCheck;
 
     @UriParam
     private SecretsManagerConfiguration configuration;
@@ -63,10 +68,23 @@ public class SecretsManagerEndpoint extends ScheduledPollEndpoint {
         secretsManagerClient = configuration.getSecretsManagerClient() != null
                 ? configuration.getSecretsManagerClient()
                 : SecretsManagerClientFactory.getSecretsManagerClient(configuration).getSecretsManagerClient();
+
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getCamelContext(),
+                ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
+
+        if (healthCheckRepository != null) {
+            clientHealthCheck = new SecretsManagerClientHealthCheck(this, getId());
+            healthCheckRepository.addHealthCheck(clientHealthCheck);
+        }
     }
 
     @Override
     public void doStop() throws Exception {
+        if (healthCheckRepository != null && clientHealthCheck != null) {
+            healthCheckRepository.removeHealthCheck(clientHealthCheck);
+            clientHealthCheck = null;
+        }
+
         if (ObjectHelper.isEmpty(configuration.getSecretsManagerClient())) {
             if (secretsManagerClient != null) {
                 secretsManagerClient.close();
