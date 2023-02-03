@@ -1126,7 +1126,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 }
                 case "class-type": {
                     String val = asText(node);
-                    target.setClassType(val);
+                    target.setClassTypeAsString(val);
                     break;
                 }
                 case "id": {

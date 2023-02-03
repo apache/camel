@@ -70,6 +70,11 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     public SagaDefinition() {
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
