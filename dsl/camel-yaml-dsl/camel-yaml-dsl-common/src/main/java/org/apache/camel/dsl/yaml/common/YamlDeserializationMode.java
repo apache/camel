@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.yaml.common;
 
+@Deprecated
 public enum YamlDeserializationMode {
 
     /**
@@ -36,6 +37,7 @@ public enum YamlDeserializationMode {
      * }
      * </pre>
      */
+    @Deprecated
     CLASSIC,
 
     /**

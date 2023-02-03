@@ -71,10 +71,12 @@ public class YamlDeserializationContext extends StandardConstructor implements C
         this.resolvers.addAll(resolvers);
     }
 
+    @Deprecated
     public void setDeserializationMode(YamlDeserializationMode deserializationMode) {
         this.deserializationMode = deserializationMode;
     }
 
+    @Deprecated
     public YamlDeserializationMode getDeserializationMode() {
         return deserializationMode;
     }
