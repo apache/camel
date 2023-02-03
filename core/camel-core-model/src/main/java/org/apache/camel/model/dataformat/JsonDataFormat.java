@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model.dataformat;
 
-import java.util.StringJoiner;
-
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
