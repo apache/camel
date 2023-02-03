@@ -50,6 +50,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: common
          * 
          * @param uuid the value to set
@@ -368,6 +369,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: common
          * 
          * @param uuid the value to set
@@ -615,6 +617,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Required: true
          * Group: common
          * 
          * @param uuid the value to set
