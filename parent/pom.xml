@@ -186,7 +186,7 @@
         <gmavenplus-plugin-version>1.13.1</gmavenplus-plugin-version>
         <google-auth-library-oauth2-http-version>1.7.0</google-auth-library-oauth2-http-version>
         <google-guava-version>20.0</google-guava-version>
-        <google-api-client-version>1.32.1</google-api-client-version>
+        <google-api-client-version>1.35.2</google-api-client-version>
         <google-api-services-drive-version>v2-rev20220110-1.32.1</google-api-services-drive-version>
         <google-api-services-calendar-version>v3-rev20211229-1.32.1</google-api-services-calendar-version>
         <google-api-services-sheets-version>v4-rev20210629-1.32.1</google-api-services-sheets-version>
@@ -3052,7 +3052,7 @@
                 <artifactId>jakarta.jms-api</artifactId>
                 <version>${jakarta-jms-api-version}</version>
             </dependency>
-            
+
             <dependency>
                 <groupId>jakarta.persistence</groupId>
                 <artifactId>jakarta.persistence-api</artifactId>
@@ -3647,7 +3647,7 @@
                 <artifactId>pdfbox-debugger</artifactId>
                 <version>${pdfbox-version}</version>
             </dependency>
- 
+
             <!-- apache pulsar -->
             <dependency>
               <groupId>org.apache.pulsar</groupId>
@@ -3786,16 +3786,16 @@
                             <version>${jakarta-xml-bind-api-version}</version>
                         </dependency>
                         <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-             <artifactId>jaxb-xjc</artifactId>
-            <version>${jaxb-xjc-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-jxc</artifactId>
-            <version>${jaxb-jxc-version}</version>
-        </dependency>
-    </dependencies>
+                            <groupId>com.sun.xml.bind</groupId>
+                            <artifactId>jaxb-xjc</artifactId>
+                            <version>${jaxb-xjc-version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>com.sun.xml.bind</groupId>
+                            <artifactId>jaxb-jxc</artifactId>
+                            <version>${jaxb-jxc-version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -4390,7 +4390,7 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
         </profile>
-        
+
         <profile>
             <id>fastinstall</id>
             <activation>
