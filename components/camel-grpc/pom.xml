@@ -33,8 +33,6 @@
     <description>Camel component for gRPC (Remote Procedure Call) support</description>
 
     <properties>
-        <!-- gRPC requires strong own of the Google Guava version -->
-        <google-guava-version>${grpc-guava-version}</google-guava-version>
         <protobuf-version>${grpc-protobuf-version}</protobuf-version>
     </properties>
 
@@ -272,7 +270,7 @@
                     <dependency>
                         <groupId>com.google.guava</groupId>
                         <artifactId>guava</artifactId>
-                        <version>${google-guava-version}</version>
+                        <version>${grpc-guava-version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
