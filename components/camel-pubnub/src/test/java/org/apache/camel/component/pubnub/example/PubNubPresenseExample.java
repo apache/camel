@@ -35,7 +35,7 @@ public final class PubNubPresenseExample {
     static class PresensRoute extends RouteBuilder {
         @Override
         public void configure() {
-            from("pubnub:iot?withPresence=true&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
+            from("pubnub:iot?uuid=camel&withPresence=true&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY)
                     .log("${body}")
                     .to("mock:result");
         }
