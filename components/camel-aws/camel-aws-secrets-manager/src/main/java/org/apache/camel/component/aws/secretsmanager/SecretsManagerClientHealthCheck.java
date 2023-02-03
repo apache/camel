@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.aws.secretsmanager;
 
+import java.util.Map;
+
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -24,8 +26,6 @@ import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.ListSecretsRequest;
-
-import java.util.Map;
 
 public class SecretsManagerClientHealthCheck extends AbstractHealthCheck {
 
