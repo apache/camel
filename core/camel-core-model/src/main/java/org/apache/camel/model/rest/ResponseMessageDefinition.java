@@ -71,7 +71,7 @@ public class ResponseMessageDefinition {
     }
 
     public String getResponseModel() {
-        return responseModel != null ? responseModel : "";
+        return responseModel;
     }
 
     public void setResponseModel(String responseModel) {

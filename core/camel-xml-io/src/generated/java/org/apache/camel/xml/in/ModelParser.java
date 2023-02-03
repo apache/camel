@@ -779,7 +779,7 @@ public class ModelParser extends BaseParser {
     protected PropertyDefinitions doParsePropertyDefinitions() throws IOException, XmlPullParserException {
         return doParse(new PropertyDefinitions(),
             noAttributeHandler(), (def, key) -> {
-            if ("properties".equals(key)) {
+            if ("property".equals(key)) {
                 doAdd(doParsePropertyDefinition(), def.getProperties(), def::setProperties);
                 return true;
             }
@@ -1933,7 +1933,7 @@ public class ModelParser extends BaseParser {
         return doParse(new BindyDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "allowEmptyStream": def.setAllowEmptyStream(val); break;
-                case "classType": def.setClassType(val); break;
+                case "classType": def.setClassTypeAsString(val); break;
                 case "locale": def.setLocale(val); break;
                 case "type": def.setType(val); break;
                 case "unwrapSingleInstance": def.setUnwrapSingleInstance(val); break;

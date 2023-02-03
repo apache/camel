@@ -34,6 +34,7 @@
         <firstVersion>3.1.0</firstVersion>
         <label>dsl</label>
         <camel-generate-xml-parser>true</camel-generate-xml-parser>
+        <camel-generate-xml-writer>true</camel-generate-xml-writer>
     </properties>
 
     <dependencies>
@@ -66,6 +67,7 @@
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>generate-xml-parser</goal>
+                            <goal>generate-xml-writer</goal>
                         </goals>
                     </execution>
                 </executions>
