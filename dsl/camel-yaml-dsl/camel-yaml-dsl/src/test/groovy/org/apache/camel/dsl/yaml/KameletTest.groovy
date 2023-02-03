@@ -30,15 +30,14 @@ class KameletTest extends YamlTestSupport {
         context.start()
     }
 
-    def "kamelet (#resource)"(Tuple2<YamlDeserializationMode, Resource> resource) {
+    def "kamelet (#resource)"(Tuple<Resource> resource) {
         setup:
             addTemplate('setPayload') {
                 from('kamelet:source')
                     .setBody().simple('${body}: {{payload}}')
             }
 
-            setFlowMode(resource[0] as YamlDeserializationMode)
-            loadRoutes(resource[1] as Resource)
+            loadRoutes(resource[0] as Resource)
 
             withMock('mock:kamelet') {
                 expectedMessageCount 1
@@ -54,63 +53,7 @@ class KameletTest extends YamlTestSupport {
 
         where:
             resource << [
-                new Tuple2<YamlDeserializationMode, Resource>(
-                    YamlDeserializationMode.CLASSIC,
-                    asResource('inline', '''
-                        - from:
-                            uri: "direct:start"
-                            steps:
-                              - kamelet: "setPayload?payload=1"
-                              - to: "mock:kamelet"
-                        ''')),
-                new Tuple2<YamlDeserializationMode, Resource>(
-                    YamlDeserializationMode.CLASSIC,
-                    asResource('name', '''
-                        - from:
-                            uri: "direct:start"
-                            steps:
-                              - kamelet: 
-                                  name: "setPayload?payload=1"
-                              - to: "mock:kamelet"
-                        ''')),
-                new Tuple2<YamlDeserializationMode, Resource>(
-                        YamlDeserializationMode.CLASSIC,
-                        asResource('name_with_steps', '''
-                        - from:
-                            uri: "direct:start"
-                            steps:
-                              - kamelet: 
-                                  name: "setPayload?payload=1"
-                                  steps:
-                                    - to: "mock:kamelet"
-                        ''')),
-                new Tuple2<YamlDeserializationMode, Resource>(
-                        YamlDeserializationMode.CLASSIC,
-                        asResource('properties', '''
-                            - from:
-                                uri: "direct:start"
-                                steps:
-                                  - kamelet: 
-                                      name: "setPayload"
-                                      parameters:
-                                        payload: 1
-                                  - to: "mock:kamelet"
-                            ''')),
-                new Tuple2<YamlDeserializationMode, Resource>(
-                        YamlDeserializationMode.CLASSIC,
-                        asResource('properties_with_steps', '''
-                            - from:
-                                uri: "direct:start"
-                                steps:
-                                  - kamelet: 
-                                      name: "setPayload"
-                                      parameters:
-                                        payload: 1
-                                      steps:
-                                        - to: "mock:kamelet"
-                            ''')),
-                new Tuple2<YamlDeserializationMode, Resource>(
-                        YamlDeserializationMode.FLOW,
+                new Tuple<Resource>(
                         asResource('inline', '''
                         - from:
                             uri: "direct:start"
@@ -118,8 +61,7 @@ class KameletTest extends YamlTestSupport {
                               - kamelet: "setPayload?payload=1"
                               - to: "mock:kamelet"
                         ''')),
-                new Tuple2<YamlDeserializationMode, Resource>(
-                        YamlDeserializationMode.FLOW,
+                new Tuple<Resource>(
                         asResource('name', '''
                         - from:
                             uri: "direct:start"
@@ -128,8 +70,7 @@ class KameletTest extends YamlTestSupport {
                                   name: "setPayload?payload=1"
                               - to: "mock:kamelet"
                         ''')),
-                new Tuple2<YamlDeserializationMode, Resource>(
-                        YamlDeserializationMode.FLOW,
+                new Tuple<Resource>(
                         asResource('properties', '''
                             - from:
                                 uri: "direct:start"

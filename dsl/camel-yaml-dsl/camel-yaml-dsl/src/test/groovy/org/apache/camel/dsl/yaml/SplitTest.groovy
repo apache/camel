@@ -84,20 +84,4 @@ class SplitTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "split (flow disabled)"() {
-        setup:
-            setFlowMode(YamlDeserializationMode.CLASSIC)
-        when:
-            loadRoutes '''
-                - from:
-                    uri: "direct:route"
-                    steps:
-                      - split:
-                          tokenize: ","
-                      - to: "mock:split"
-            '''
-        then:
-            def ex = thrown(FailedToCreateRouteException)
-            ex.message.contains('Failed to create route')
-    }
 }

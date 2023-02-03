@@ -19,15 +19,12 @@ package org.apache.camel.dsl.yaml;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
-import org.apache.camel.dsl.yaml.common.YamlDeserializationMode;
 import org.apache.camel.dsl.yaml.common.exception.YamlDeserializationException;
 import org.apache.camel.dsl.yaml.deserializers.CustomResolver;
 import org.apache.camel.dsl.yaml.deserializers.ModelDeserializersResolver;
@@ -46,8 +43,6 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 
 public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderSupport {
 
-    public static final String DESERIALIZATION_MODE = "CamelYamlDslDeserializationMode";
-
     public YamlRoutesBuilderLoaderSupport(String extension) {
         super(extension);
     }
@@ -55,14 +50,6 @@ public abstract class YamlRoutesBuilderLoaderSupport extends RouteBuilderLoaderS
     protected YamlDeserializationContext newYamlDeserializationContext(LoadSettings settings, Resource resource) {
         YamlDeserializationContext ctx = new YamlDeserializationContext(settings);
 
-        YamlDeserializationMode deserializationMode = YamlDeserializationMode.FLOW;
-        final Map<String, String> options = getCamelContext().getGlobalOptions();
-        final String mode = options.get(DESERIALIZATION_MODE);
-        if (mode != null) {
-            deserializationMode = YamlDeserializationMode.valueOf(mode.toUpperCase(Locale.US));
-        }
-
-        ctx.setDeserializationMode(deserializationMode);
         ctx.setResource(resource);
         ctx.setCamelContext(getCamelContext());
         ctx.addResolvers(new CustomResolver());
