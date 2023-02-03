@@ -5210,9 +5210,6 @@
           "disable-features" : {
             "type" : "string"
           },
-          "drop-root-node" : {
-            "type" : "boolean"
-          },
           "enable-features" : {
             "type" : "string"
           },

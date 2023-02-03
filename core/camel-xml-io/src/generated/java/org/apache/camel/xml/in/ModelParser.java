@@ -2195,7 +2195,6 @@ public class ModelParser extends BaseParser {
                 case "collectionType": def.setCollectionTypeName(val); break;
                 case "contentTypeHeader": def.setContentTypeHeader(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
-                case "dropRootNode": def.setDropRootNode(val); break;
                 case "enableFeatures": def.setEnableFeatures(val); break;
                 case "include": def.setInclude(val); break;
                 case "jsonView": def.setJsonViewTypeName(val); break;

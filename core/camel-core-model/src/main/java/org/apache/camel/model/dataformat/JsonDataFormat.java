@@ -94,9 +94,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(label = "advanced")
     private String timezone;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
-    private String dropRootNode;
-    @XmlAttribute
     @Metadata(label = "advanced")
     private String schemaResolver;
     @XmlAttribute
@@ -144,7 +141,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         this.permissions = builder.permissions;
         this.allowUnmarshallType = builder.allowUnmarshallType;
         this.timezone = builder.timezone;
-        this.dropRootNode = builder.dropRootNode;
         this.schemaResolver = builder.schemaResolver;
         this.autoDiscoverSchemaResolver = builder.autoDiscoverSchemaResolver;
         this.namingStrategy = builder.namingStrategy;
@@ -430,7 +426,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
 
     /**
      * If set then Jackson will use the Timezone when marshalling/unmarshalling. This option will have no effect on the
-     * others Json DataFormat, like gson, fastjson and xstream.
+     * others Json DataFormat, like gson and fastjson.
      */
     public void setTimezone(String timezone) {
         this.timezone = timezone;
@@ -445,19 +441,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
      */
     public void setAutoDiscoverObjectMapper(String autoDiscoverObjectMapper) {
         this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
-    }
-
-    public String getDropRootNode() {
-        return dropRootNode;
-    }
-
-    /**
-     * Whether XStream will drop the root node in the generated JSon. You may want to enable this when using POJOs; as
-     * then the written object will include the class name as root node, which is often not intended to be written in
-     * the JSON output.
-     */
-    public void setDropRootNode(String dropRootNode) {
-        this.dropRootNode = dropRootNode;
     }
 
     /**
@@ -622,15 +605,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return this;
     }
 
-    public JsonDataFormat dropRootNode(boolean dropRootNode) {
-        return dropRootNode(Boolean.toString(dropRootNode));
-    }
-
-    public JsonDataFormat dropRootNode(String dropRootNode) {
-        this.dropRootNode = dropRootNode;
-        return this;
-    }
-
     public JsonDataFormat namingStrategy(String namingStrategy) {
         this.namingStrategy = namingStrategy;
         return this;
@@ -663,7 +637,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         private String permissions;
         private String allowUnmarshallType;
         private String timezone;
-        private String dropRootNode;
         private String schemaResolver;
         private String autoDiscoverSchemaResolver;
         private String namingStrategy;
@@ -922,7 +895,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
 
         /**
          * If set then Jackson will use the Timezone when marshalling/unmarshalling. This option will have no effect on
-         * the others Json DataFormat, like gson, fastjson and xstream.
+         * the others Json DataFormat, like gson and fastjson.
          */
         public Builder timezone(String timezone) {
             this.timezone = timezone;
@@ -942,26 +915,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
          */
         public Builder autoDiscoverObjectMapper(boolean autoDiscoverObjectMapper) {
             this.autoDiscoverObjectMapper = Boolean.toString(autoDiscoverObjectMapper);
-            return this;
-        }
-
-        /**
-         * Whether XStream will drop the root node in the generated JSon. You may want to enable this when using POJOs;
-         * as then the written object will include the class name as root node, which is often not intended to be
-         * written in the JSON output.
-         */
-        public Builder dropRootNode(String dropRootNode) {
-            this.dropRootNode = dropRootNode;
-            return this;
-        }
-
-        /**
-         * Whether XStream will drop the root node in the generated JSon. You may want to enable this when using POJOs;
-         * as then the written object will include the class name as root node, which is often not intended to be
-         * written in the JSON output.
-         */
-        public Builder dropRootNode(boolean dropRootNode) {
-            this.dropRootNode = Boolean.toString(dropRootNode);
             return this;
         }
 

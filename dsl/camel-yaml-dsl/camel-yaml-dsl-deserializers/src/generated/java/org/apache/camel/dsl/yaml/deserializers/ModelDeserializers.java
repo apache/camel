@@ -7346,7 +7346,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "collection-type", type = "string"),
                     @YamlProperty(name = "content-type-header", type = "boolean"),
                     @YamlProperty(name = "disable-features", type = "string"),
-                    @YamlProperty(name = "drop-root-node", type = "boolean"),
                     @YamlProperty(name = "enable-features", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "include", type = "string"),
@@ -7412,11 +7411,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "disable-features": {
                     String val = asText(node);
                     target.setDisableFeatures(val);
-                    break;
-                }
-                case "drop-root-node": {
-                    String val = asText(node);
-                    target.setDropRootNode(val);
                     break;
                 }
                 case "enable-features": {

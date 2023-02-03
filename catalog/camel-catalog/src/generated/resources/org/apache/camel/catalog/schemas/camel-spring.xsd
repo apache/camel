@@ -10059,19 +10059,8 @@ enabled when desired to be used. Default value: false
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
 If set then Jackson will use the Timezone when marshalling/unmarshalling. This
-option will have no effect on the others Json DataFormat, like gson, fastjson
-and xstream.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-                
-        <xs:attribute name="dropRootNode" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Whether XStream will drop the root node in the generated JSon. You may want to
-enable this when using POJOs; as then the written object will include the class
-name as root node, which is often not intended to be written in the JSON output.
-Default value: false
+option will have no effect on the others Json DataFormat, like gson and
+fastjson.
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
