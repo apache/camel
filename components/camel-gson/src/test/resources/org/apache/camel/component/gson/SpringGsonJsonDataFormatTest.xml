@@ -61,8 +61,8 @@
             <from uri="direct:inFormatDate"/>
             <marshal><custom ref="format_date"/></marshal>
         </route>
-		
-		<route>
+
+        <route>
             <from uri="direct:backFormatDate"/>
             <unmarshal><custom ref="format_date"/></unmarshal>
 			<to uri="mock:reversePojo"/>
