@@ -605,8 +605,8 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         private String dateFormatPattern;
 
         /**
-         * Whether the data format should set the Content-Type header with the type from the data format.
-         * For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON
+         * Whether the data format should set the Content-Type header with the type from the data format. For example
+         * application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON
          */
         public Builder contentTypeHeader(String contentTypeHeader) {
             this.contentTypeHeader = contentTypeHeader;
@@ -614,8 +614,8 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * Whether the data format should set the Content-Type header with the type from the data format.
-         * For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON
+         * Whether the data format should set the Content-Type header with the type from the data format. For example
+         * application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON
          */
         public Builder contentTypeHeader(boolean contentTypeHeader) {
             this.contentTypeHeader = Boolean.toString(contentTypeHeader);
