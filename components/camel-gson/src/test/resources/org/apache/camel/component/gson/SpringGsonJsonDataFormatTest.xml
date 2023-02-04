@@ -65,7 +65,7 @@
         <route>
             <from uri="direct:backFormatDate"/>
             <unmarshal><custom ref="format_date"/></unmarshal>
-			<to uri="mock:reversePojo"/>
+            <to uri="mock:reversePojo"/>
         </route>
 
     </camelContext>
