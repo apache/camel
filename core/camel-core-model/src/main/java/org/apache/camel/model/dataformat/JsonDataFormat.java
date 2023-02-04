@@ -103,6 +103,9 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
               description = "Whether the data format should set the Content-Type header with the type from the data format."
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
+    @XmlAttribute
+    @Metadata(description = "To configure the date format while marshall or unmarshall Date fields in JSON using Gson")
+    private String dateFormatPattern;
 
     public JsonDataFormat() {
         super("json");
@@ -139,6 +142,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         this.autoDiscoverSchemaResolver = builder.autoDiscoverSchemaResolver;
         this.namingStrategy = builder.namingStrategy;
         this.contentTypeHeader = builder.contentTypeHeader;
+        this.dateFormatPattern = builder.dateFormatPattern;
     }
 
     @Override
@@ -153,6 +157,14 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
 
     public void setContentTypeHeader(String contentTypeHeader) {
         this.contentTypeHeader = contentTypeHeader;
+    }
+
+    public String getDateFormatPattern() {
+        return dateFormatPattern;
+    }
+
+    public void setDateFormatPattern(String dateFormatPattern) {
+        this.dateFormatPattern = dateFormatPattern;
     }
 
     public String getObjectMapper() {
@@ -590,6 +602,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         private String autoDiscoverSchemaResolver;
         private String namingStrategy;
         private String contentTypeHeader;
+        private String dateFormatPattern;
 
         public Builder contentTypeHeader(String contentTypeHeader) {
             this.contentTypeHeader = contentTypeHeader;
@@ -598,6 +611,16 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
 
         public Builder contentTypeHeader(boolean contentTypeHeader) {
             this.contentTypeHeader = Boolean.toString(contentTypeHeader);
+            return this;
+        }
+
+        public Builder dateFormatPattern(String dateFormatPattern) {
+            this.dateFormatPattern = dateFormatPattern;
+            return this;
+        }
+
+        public Builder dateFormatPattern(boolean dateFormatPattern) {
+            this.dateFormatPattern = Boolean.toString(dateFormatPattern);
             return this;
         }
 

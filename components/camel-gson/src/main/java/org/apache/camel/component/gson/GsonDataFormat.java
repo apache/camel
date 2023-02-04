@@ -48,7 +48,7 @@ import org.apache.camel.util.IOHelper;
  * Marshal POJOs to JSON and back using <a href="http://code.google.com/p/google-gson/">Gson</a>
  */
 @Dataformat("gson")
-@Metadata(includeProperties = "unmarshalType,unmarshalTypeName,prettyPrint,contentTypeHeader")
+@Metadata(includeProperties = "unmarshalType,unmarshalTypeName,prettyPrint,dateFormatPattern,contentTypeHeader")
 public class GsonDataFormat extends ServiceSupport
         implements DataFormat, DataFormatName, DataFormatContentTypeHeader, CamelContextAware {
 

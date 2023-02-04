@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.gson;
 
+import java.text.SimpleDateFormat;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.junit.jupiter.api.Test;
@@ -63,6 +65,27 @@ public class SpringGsonJsonDataFormatTest extends CamelSpringTestSupport {
         assertEquals(expected, marshalledAsString);
 
         template.sendBody("direct:backPretty", marshalled);
+
+        mock.assertIsSatisfied();
+    }
+
+    @Test
+    public void testMarshalAndUnmarshalPojoWithDateFormatPattern() throws Exception {
+        TestPojo in = new TestPojo();
+        in.setName("Camel");
+        in.setDob(new SimpleDateFormat("yyyyMMdd").parse("20230204"));
+
+        MockEndpoint mock = getMockEndpoint("mock:reversePojo");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(TestPojo.class);
+        mock.message(0).body().isEqualTo(in);
+
+        Object marshalled = template.requestBody("direct:inFormatDate", in);
+        String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
+        String expected = "{\"name\":\"Camel\",\"dob\":\"2023-02-04\"}";
+        assertEquals(expected, marshalledAsString);
+
+        template.sendBody("direct:backFormatDate", marshalled);
 
         mock.assertIsSatisfied();
     }
