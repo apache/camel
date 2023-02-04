@@ -97,7 +97,6 @@
         <californium-scandium-version>2.7.4</californium-scandium-version>
         <cassandra-driver-version>4.15.0</cassandra-driver-version>
         <cassandra-version>4.1.0</cassandra-version>
-        <jakarta-enterprise-cdi-api-version>4.0.1</jakarta-enterprise-cdi-api-version>
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.2.12</cglib-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
