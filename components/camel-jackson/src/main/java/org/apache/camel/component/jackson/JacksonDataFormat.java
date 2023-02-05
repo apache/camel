@@ -24,7 +24,7 @@ import org.apache.camel.spi.annotations.Dataformat;
  * Marshal POJOs to JSON and back using Jackson.
  */
 @Dataformat("jackson")
-@Metadata(excludeProperties = "library,permissions")
+@Metadata(excludeProperties = "library,permissions,dateFormatPattern")
 public class JacksonDataFormat extends AbstractJacksonDataFormat {
 
     /**

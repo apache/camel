@@ -46,7 +46,6 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
         }
         properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
         properties.put("prettyPrint", definition.getPrettyPrint());
-        properties.put("dateFormatPattern", definition.getDateFormatPattern());
         properties.put("include", definition.getInclude());
         properties.put("allowJmsType", definition.getAllowJmsType());
         properties.put("collectionType", or(definition.getCollectionType(), definition.getCollectionTypeName()));
@@ -61,6 +60,9 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
             properties.put("autoDiscoverSchemaResolver", definition.getAutoDiscoverSchemaResolver());
             properties.put("namingStrategy", definition.getNamingStrategy());
             properties.put("timezone", definition.getTimezone());
+        }
+        if (definition.getLibrary() == JsonLibrary.Fastjson || definition.getLibrary() == JsonLibrary.Gson) {
+            properties.put("dateFormatPattern", definition.getDateFormatPattern());
         }
     }
 
