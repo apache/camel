@@ -260,9 +260,9 @@ public class IOConverterTest extends ContextTestSupport {
         Properties p = IOConverter.toProperties(new File("src/test/resources/log4j2.properties"));
         assertNotNull(p);
         assertTrue(p.size() >= 8, "Should be 8 or more properties, was " + p.size());
-        String root = (String) p.get("rootLogger.level");
-        assertNotNull(root);
-        assertTrue(root.contains("INFO"));
+        String fn = (String) p.get("appender.file.fileName");
+        assertNotNull(fn);
+        assertTrue(fn.contains("camel-core-test.log"));
     }
 
 }
