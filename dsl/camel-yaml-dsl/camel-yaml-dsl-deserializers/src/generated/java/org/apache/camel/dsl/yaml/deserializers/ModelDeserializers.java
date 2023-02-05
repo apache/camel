@@ -7446,6 +7446,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "auto-discover-schema-resolver", type = "boolean"),
                     @YamlProperty(name = "collection-type", type = "string"),
                     @YamlProperty(name = "content-type-header", type = "boolean"),
+                    @YamlProperty(name = "date-format-pattern", type = "string"),
                     @YamlProperty(name = "disable-features", type = "string"),
                     @YamlProperty(name = "drop-root-node", type = "boolean"),
                     @YamlProperty(name = "enable-features", type = "string"),
@@ -7508,6 +7509,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                 case "content-type-header": {
                     String val = asText(node);
                     target.setContentTypeHeader(val);
+                    break;
+                }
+                case "date-format-pattern": {
+                    String val = asText(node);
+                    target.setDateFormatPattern(val);
                     break;
                 }
                 case "disable-features": {
