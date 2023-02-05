@@ -10085,6 +10085,15 @@ true
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
+                
+        <xs:attribute name="dateFormatPattern" type="xs:string">
+          <xs:annotation>
+            <xs:documentation xml:lang="en"><![CDATA[
+To configure the date format while marshall or unmarshall Date fields in JSON
+using Gson.
+            ]]></xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
               
       </xs:extension>
           

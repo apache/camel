@@ -5111,6 +5111,9 @@
           "contentTypeHeader" : {
             "type" : "boolean"
           },
+          "dateFormatPattern" : {
+            "type" : "string"
+          },
           "disableFeatures" : {
             "type" : "string"
           },

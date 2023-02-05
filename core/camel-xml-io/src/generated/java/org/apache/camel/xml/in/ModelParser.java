@@ -2194,6 +2194,7 @@ public class ModelParser extends BaseParser {
                 case "autoDiscoverSchemaResolver": def.setAutoDiscoverSchemaResolver(val); break;
                 case "collectionType": def.setCollectionTypeName(val); break;
                 case "contentTypeHeader": def.setContentTypeHeader(val); break;
+                case "dateFormatPattern": def.setDateFormatPattern(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
                 case "enableFeatures": def.setEnableFeatures(val); break;
                 case "include": def.setInclude(val); break;
