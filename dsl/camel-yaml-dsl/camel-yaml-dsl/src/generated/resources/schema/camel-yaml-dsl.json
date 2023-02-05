@@ -5207,6 +5207,9 @@
           "content-type-header" : {
             "type" : "boolean"
           },
+          "date-format-pattern" : {
+            "type" : "string"
+          },
           "disable-features" : {
             "type" : "string"
           },
