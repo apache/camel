@@ -21,10 +21,11 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Dataformat;
 
 /**
- * Marshal POJOs to JSON and back using <a href="https://github.com/FasterXML/jackson">Jackson</a>
+ * Marshal POJOs to JSON and back using Jackson
  */
 @Dataformat("jackson")
-@Metadata(excludeProperties = "library,permissions,dropRootNode")
+@Metadata(excludeProperties = "library,permissions,dropRootNode,dateFormatPattern")
+>>>>>>> 3fb33a356f2 (CAMEL-19009: camel-gson - Date Format with GsonBuilder)
 public class JacksonDataFormat extends AbstractJacksonDataFormat {
 
     /**
