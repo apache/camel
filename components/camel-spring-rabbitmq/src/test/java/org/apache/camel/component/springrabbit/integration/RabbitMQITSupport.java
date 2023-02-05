@@ -38,6 +38,7 @@ public abstract class RabbitMQITSupport extends CamelTestSupport {
 
     ConnectionFactory createConnectionFactory() {
         CachingConnectionFactory cf = new CachingConnectionFactory();
+        cf.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.SIMPLE);
         cf.setUri(service.getAmqpUrl());
         return cf;
     }

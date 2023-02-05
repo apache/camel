@@ -18,6 +18,7 @@ package org.apache.camel.component.springrabbit;
 
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
@@ -31,6 +32,7 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.RabbitMessageFuture;
 import org.springframework.amqp.rabbit.connection.Connection;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.connection.RabbitUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
@@ -201,8 +203,23 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
             msg = getEndpoint().getMessageConverter().toMessage(body, mp);
         }
 
+        final String ex = exchangeName;
+        final String rk = routingKey;
         try {
-            getInOnlyTemplate().send(exchangeName, routingKey, msg);
+            getInOnlyTemplate().setConfirmCallback(new RabbitTemplate.ConfirmCallback() {
+                @Override
+                public void confirm(CorrelationData correlationData, boolean ack, String cause) {
+
+                }
+            });
+
+            Boolean sent = getInOnlyTemplate().invoke(t -> {
+                t.send(ex, rk, msg);
+                return t.waitForConfirms(5000);
+            });
+            if (Boolean.FALSE == sent) {
+                exchange.setException(new TimeoutException("Message not sent within " + 5000 + " millis"));
+            }
         } catch (Exception e) {
             exchange.setException(e);
         }
