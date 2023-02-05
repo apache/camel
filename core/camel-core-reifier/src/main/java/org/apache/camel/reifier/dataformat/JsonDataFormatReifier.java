@@ -48,6 +48,7 @@ public class JsonDataFormatReifier extends DataFormatReifier<JsonDataFormat> {
             properties.put("unmarshalType", or(definition.getUnmarshalType(), definition.getUnmarshalTypeName()));
         }
         properties.put("prettyPrint", definition.getPrettyPrint());
+        properties.put("dateFormatPattern", definition.getDateFormatPattern());
         properties.put("include", definition.getInclude());
         properties.put("allowJmsType", definition.getAllowJmsType());
         if (definition.getLibrary() != JsonLibrary.XStream) {
