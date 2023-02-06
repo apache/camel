@@ -66,10 +66,6 @@
             <artifactId>log4j-slf4j-impl</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-health</artifactId>
-        </dependency>
 
         <!-- test infra -->
         <dependency>
