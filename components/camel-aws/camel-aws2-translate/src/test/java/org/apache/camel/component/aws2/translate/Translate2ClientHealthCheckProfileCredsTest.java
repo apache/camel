@@ -66,7 +66,7 @@ public class Translate2ClientHealthCheckProfileCredsTest extends CamelTestSuppor
             @Override
             public void configure() {
                 from("direct:listClusters")
-                        .to("aws2-translate://test?operation=translate&region=l&useDefaultCredentialsProvider=true");
+                        .to("aws2-translate://test?operation=translateText&region=l&useDefaultCredentialsProvider=true");
             }
         };
     }
