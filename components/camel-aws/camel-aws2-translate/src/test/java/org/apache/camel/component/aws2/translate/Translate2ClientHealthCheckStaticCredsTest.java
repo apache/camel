@@ -66,7 +66,7 @@ public class Translate2ClientHealthCheckStaticCredsTest extends CamelTestSupport
             @Override
             public void configure() {
                 from("direct:listClusters")
-                        .to("aws2-translate://test?operation=translate&region=l&secretKey=l&accessKey=k");
+                        .to("aws2-translate://test?operation=translateText&region=l&secretKey=l&accessKey=k");
             }
         };
     }
