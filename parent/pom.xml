@@ -491,7 +491,7 @@
         <vysper-version>0.7</vysper-version>
         <web3j-version>3.6.0</web3j-version>
         <web3j-quorum-version>0.8.0</web3j-quorum-version>
-        <wildfly-elytron>1.15.4.Final</wildfly-elytron>
+        <wildfly-elytron>1.15.15.Final</wildfly-elytron>
         <wiremock-version>3.0.0-beta-2</wiremock-version>
         <woodstox-version>4.4.1</woodstox-version>
         <woodstox-core-version>6.4.0</woodstox-core-version>
