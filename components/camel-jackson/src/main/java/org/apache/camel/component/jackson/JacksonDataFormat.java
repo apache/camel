@@ -25,7 +25,6 @@ import org.apache.camel.spi.annotations.Dataformat;
  */
 @Dataformat("jackson")
 @Metadata(excludeProperties = "library,permissions,dropRootNode,dateFormatPattern")
->>>>>>> 3fb33a356f2 (CAMEL-19009: camel-gson - Date Format with GsonBuilder)
 public class JacksonDataFormat extends AbstractJacksonDataFormat {
 
     /**
