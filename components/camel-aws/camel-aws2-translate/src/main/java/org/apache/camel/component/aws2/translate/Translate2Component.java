@@ -38,8 +38,6 @@ public class Translate2Component extends DefaultComponent {
 
     public Translate2Component(CamelContext context) {
         super(context);
-
-        registerExtension(new Translate2ComponentVerifierExtension());
     }
 
     @Override
