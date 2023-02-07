@@ -59,3 +59,7 @@ All the `camel-test` modules that were JUnit 4.x based has been removed. All tes
 === camel-caffeine
 
 The `keyType` parameter has been removed. The Key for the cache will now be only `String` type. More information in CAMEL-18877.
+
+=== camel-fhir
+
+The underlying `hapi-fhir` library has been upgraded from 4.2.0 to 6.2.4. Only the `Delete` API method has changed and now returns `ca.uhn.fhir.rest.api.MethodOutcome` instead of `org.hl7.fhir.instance.model.api.IBaseOperationOutcome`. See https://hapifhir.io/hapi-fhir/blog/ for a more detailed list of underlying changes (only the hapi-fhir client is used in Camel).
