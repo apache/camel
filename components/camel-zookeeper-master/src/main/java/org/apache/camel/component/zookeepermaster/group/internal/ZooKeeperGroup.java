@@ -48,7 +48,7 @@ import org.apache.camel.component.zookeepermaster.group.Group;
 import org.apache.camel.component.zookeepermaster.group.GroupListener;
 import org.apache.camel.component.zookeepermaster.group.NodeState;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.listen.ListenerContainer;
+import org.apache.curator.framework.listen.StandardListenerManager;
 import org.apache.curator.framework.state.ConnectionState;
 import org.apache.curator.framework.state.ConnectionStateListener;
 import org.apache.curator.utils.EnsurePath;
@@ -85,7 +85,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
     private final ExecutorService executorService;
     private final EnsurePath ensurePath;
     private final BlockingQueue<Operation> operations = new LinkedBlockingQueue<>();
-    private final ListenerContainer<GroupListener<T>> listeners = new ListenerContainer<>();
+    private final StandardListenerManager<GroupListener<T>> listeners = StandardListenerManager.standard();
     private final ConcurrentMap<String, ChildData<T>> currentData = new ConcurrentHashMap<>();
     private final AtomicBoolean started = new AtomicBoolean();
     private final AtomicBoolean connected = new AtomicBoolean();
@@ -396,7 +396,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
      *
      * @return listenable
      */
-    public ListenerContainer<GroupListener<T>> getListenable() {
+    public StandardListenerManager<GroupListener<T>> getListenable() {
         return listeners;
     }
 
@@ -491,7 +491,6 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
             } catch (Exception e) {
                 handleException(e);
             }
-            return null;
         });
     }
 
