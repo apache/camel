@@ -18,6 +18,7 @@ package org.apache.camel.component.vertx.websocket;
 
 import java.util.Map;
 
+import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.core.net.impl.ConnectionBase;
 import io.vertx.ext.web.RoutingContext;
@@ -63,7 +64,7 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
     public void onMessage(String connectionKey, Object message, SocketAddress remote, RoutingContext routingContext) {
         Exchange exchange = createExchange(true);
         exchange.getMessage().setBody(message);
-        populateExchangeHeaders(exchange, connectionKey, remote, routingContext);
+        populateExchangeHeaders(exchange, connectionKey, remote, routingContext, VertxWebsocketEvent.MESSAGE);
 
         // use default consumer callback
         AsyncCallback cb = defaultConsumerCallback(exchange, true);
@@ -77,18 +78,39 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
         }
 
         Exchange exchange = createExchange(false);
-        populateExchangeHeaders(exchange, connectionKey, remote, routingContext);
+        populateExchangeHeaders(exchange, connectionKey, remote, routingContext, VertxWebsocketEvent.ERROR);
 
         getExceptionHandler().handleException("Error processing exchange", exchange, cause);
         releaseExchange(exchange, false);
     }
 
+    public void onOpen(String connectionKey, SocketAddress remote, RoutingContext routingContext, ServerWebSocket webSocket) {
+        Exchange exchange = createExchange(true);
+        populateExchangeHeaders(exchange, connectionKey, remote, routingContext, VertxWebsocketEvent.OPEN);
+        exchange.getMessage().setBody(webSocket);
+
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
+    }
+
+    public void onClose(String connectionKey, SocketAddress remote, RoutingContext routingContext) {
+        Exchange exchange = createExchange(true);
+        populateExchangeHeaders(exchange, connectionKey, remote, routingContext, VertxWebsocketEvent.CLOSE);
+
+        // use default consumer callback
+        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        getAsyncProcessor().process(exchange, cb);
+    }
+
     protected void populateExchangeHeaders(
-            Exchange exchange, String connectionKey, SocketAddress remote, RoutingContext routingContext) {
+            Exchange exchange, String connectionKey, SocketAddress remote, RoutingContext routingContext,
+            VertxWebsocketEvent event) {
         Message message = exchange.getMessage();
         Map<String, Object> headers = message.getHeaders();
         message.setHeader(VertxWebsocketConstants.REMOTE_ADDRESS, remote);
         message.setHeader(VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
+        message.setHeader(VertxWebsocketConstants.EVENT, event);
         routingContext.queryParams()
                 .forEach((name, value) -> VertxWebsocketHelper.appendHeader(headers, name, value));
         routingContext.pathParams()
