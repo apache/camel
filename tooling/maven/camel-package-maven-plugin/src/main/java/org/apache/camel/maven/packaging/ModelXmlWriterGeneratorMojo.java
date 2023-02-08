@@ -396,6 +396,7 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                 // Attributes
                 if (hasDerived && !attributes.isEmpty()) {
                     writer.addMethod()
+                            .setProtected()
                             .setReturnType(Void.TYPE)
                             .setName("doWrite" + name + "Attributes")
                             .addParameter(qgname, "def")
@@ -410,6 +411,7 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                 // Elements
                 if (hasDerived && !elements.isEmpty()) {
                     writer.addMethod()
+                            .setProtected()
                             .setReturnType(Void.TYPE)
                             .setName("doWrite" + name + "Elements")
                             .addParameter(qgname, "def")
@@ -441,6 +443,9 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                     .forEach(cl -> {
                         String t = cl.getSimpleName();
                         String n = cl.getAnnotation(XmlRootElement.class).name();
+                        if ("##default".equals(n)) {
+                            n = lowercase(t);
+                        }
                         elements.add("        case \"" + t + "\" -> doWrite" + t + "(\"" + n + "\", (" + t + ") v);");
                     });
             elements.add("    }");
@@ -451,6 +456,7 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                         .collect(Collectors.joining(", ")) + ">";
             }
             writer.addMethod()
+                    .setProtected()
                     .setReturnType(Void.TYPE)
                     .setName("doWrite" + clazz.getSimpleName() + "Ref")
                     .addParameter("String", "n")
@@ -460,6 +466,7 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
         });
 
         writer.addMethod()
+                .setProtected()
                 .setReturnType(Void.TYPE)
                 .setName("doWriteAttribute")
                 .addParameter(String.class, "attribute")
@@ -469,6 +476,7 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                         "    attribute(attribute, value);",
                         "}");
         writer.addMethod()
+                .setProtected()
                 .setReturnType(Void.TYPE)
                 .setName("doWriteValue")
                 .addParameter(String.class, "value")
@@ -477,6 +485,7 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                         "    text(value);",
                         "}");
         writer.addMethod()
+                .setProtected()
                 .setSignature("private <T> void doWriteList(String wrapperName, String name, List<T> list, ElementSerializer<T> elementSerializer) throws IOException")
                 .setBody("""
                             if (list != null) {
@@ -491,6 +500,7 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                                 }
                             }""");
         writer.addMethod()
+                .setProtected()
                 .setSignature("private <T> void doWriteElement(String name, T v, ElementSerializer<T> elementSerializer) throws IOException")
                 .setBody("""
                             if (v != null) {
@@ -505,28 +515,33 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                         .setSignature("void doWriteElement(String name, T value) throws IOException");
 
         writer.addMethod()
+                .setProtected()
                 .setReturnType(String.class)
                 .setName("toString")
                 .addParameter("Boolean", "b")
                 .setBody("return b != null ? b.toString() : null;");
         writer.addMethod()
+                .setProtected()
                 .setReturnType(String.class)
                 .setName("toString")
                 .addParameter("Enum<?>", "e")
                 .setBody("return e != null ? e.name() : null;");
         writer.addMethod()
+                .setProtected()
                 .setReturnType(String.class)
                 .setName("toString")
                 .addParameter("Number", "n")
                 .setBody("return n != null ? n.toString() : null;");
         writer.addImport("java.util.Base64");
         writer.addMethod()
+                .setProtected()
                 .setReturnType(String.class)
                 .setName("toString")
                 .addParameter("byte[]", "b")
                 .setBody("return b != null ? Base64.getEncoder().encodeToString(b) : null;");
 
         writer.addMethod()
+                .setProtected()
                 .setReturnType(Void.TYPE)
                 .setName("doWriteString")
                 .addParameter(String.class, "name")
