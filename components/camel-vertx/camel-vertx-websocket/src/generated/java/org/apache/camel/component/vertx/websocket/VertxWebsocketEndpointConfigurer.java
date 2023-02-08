@@ -35,6 +35,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "exceptionHandler": target.setExceptionHandler(property(camelContext, org.apache.camel.spi.ExceptionHandler.class, value)); return true;
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
+        case "firewebsocketconnectionevents":
+        case "fireWebSocketConnectionEvents": target.getConfiguration().setFireWebSocketConnectionEvents(property(camelContext, boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxreconnectattempts":
@@ -71,6 +73,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "exceptionHandler": return org.apache.camel.spi.ExceptionHandler.class;
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
+        case "firewebsocketconnectionevents":
+        case "fireWebSocketConnectionEvents": return boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxreconnectattempts":
@@ -108,6 +112,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "exceptionHandler": return target.getExceptionHandler();
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
+        case "firewebsocketconnectionevents":
+        case "fireWebSocketConnectionEvents": return target.getConfiguration().isFireWebSocketConnectionEvents();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxreconnectattempts":
