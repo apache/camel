@@ -75,7 +75,7 @@ public class Athena2Endpoint extends DefaultEndpoint {
                 WritableHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
-            // Do not register the healt check until we resolve CAMEL-18992
+            // Do not register the health check until we resolve CAMEL-18992
             // clientHealthCheck = new Athena2ClientHealthCheck(this, getId());
             // healthCheckRepository.addHealthCheck(clientHealthCheck);
         }
