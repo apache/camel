@@ -71,8 +71,9 @@ public class EKS2Endpoint extends ScheduledPollEndpoint {
                 ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
-            clientHealthCheck = new EKS2ClientHealthCheck(this, getId());
-            healthCheckRepository.addHealthCheck(clientHealthCheck);
+            // Do not register the health check until we resolve CAMEL-18992
+            // clientHealthCheck = new EKS2ClientHealthCheck(this, getId());
+            // healthCheckRepository.addHealthCheck(clientHealthCheck);
         }
     }
 
