@@ -71,10 +71,10 @@ public class IAM2Endpoint extends ScheduledPollEndpoint {
                 ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
-            clientHealthCheck = new IAM2HealthCheck(this, getId());
+            // Do not register the health check until we resolve CAMEL-18992
+            // clientHealthCheck = new IAM2HealthCheck(this, getId());
+            // healthCheckRepository.addHealthCheck(clientHealthCheck);
         }
-
-        healthCheckRepository.addHealthCheck(clientHealthCheck);
     }
 
     @Override
