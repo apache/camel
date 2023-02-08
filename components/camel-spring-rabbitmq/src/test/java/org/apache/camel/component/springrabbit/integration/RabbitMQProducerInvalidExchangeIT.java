@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.springrabbit.integration;
 
-import org.apache.camel.CamelContext;
+import com.rabbitmq.client.ShutdownSignalException;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.springrabbit.SpringRabbitMQComponent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.AmqpAdmin;
@@ -29,14 +28,13 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 
+import static org.junit.Assert.fail;
+
 public class RabbitMQProducerInvalidExchangeIT extends RabbitMQITSupport {
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext camelContext = super.createCamelContext();
-        SpringRabbitMQComponent rmq = camelContext.getComponent("spring-rabbitmq", SpringRabbitMQComponent.class);
-        rmq.setAllowNullBody(true);
-        return camelContext;
+    protected boolean confirmEnabled() {
+        return true;
     }
 
     @Test
@@ -51,7 +49,12 @@ public class RabbitMQProducerInvalidExchangeIT extends RabbitMQITSupport {
         admin.declareExchange(t);
         admin.declareBinding(BindingBuilder.bind(q).to(t).with("foo.bar.#"));
 
-        Assertions.assertDoesNotThrow(() -> template.sendBody("direct:start", null));
+        try {
+            template.sendBody("direct:start", "Hello World");
+            fail("Should fail");
+        } catch (Exception e) {
+            Assertions.assertInstanceOf(ShutdownSignalException.class, e.getCause());
+        }
     }
 
     @Override

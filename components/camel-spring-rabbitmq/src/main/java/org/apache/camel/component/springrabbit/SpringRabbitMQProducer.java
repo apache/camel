@@ -32,7 +32,6 @@ import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.AsyncRabbitTemplate;
 import org.springframework.amqp.rabbit.RabbitMessageFuture;
 import org.springframework.amqp.rabbit.connection.Connection;
-import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.amqp.rabbit.connection.RabbitUtils;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
@@ -205,20 +204,26 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
 
         final String ex = exchangeName;
         final String rk = routingKey;
+        boolean confirm;
+        if ("auto".equalsIgnoreCase(getEndpoint().getConfirm())) {
+            confirm = getEndpoint().getConnectionFactory().isPublisherConfirms();
+        } else if ("enabled".equalsIgnoreCase(getEndpoint().getConfirm())) {
+            confirm = true;
+        } else {
+            confirm = false;
+        }
+        final long timeout = getEndpoint().getConfirmTimeout() <= 0 ? Long.MAX_VALUE : getEndpoint().getConfirmTimeout();
         try {
-            getInOnlyTemplate().setConfirmCallback(new RabbitTemplate.ConfirmCallback() {
-                @Override
-                public void confirm(CorrelationData correlationData, boolean ack, String cause) {
-
-                }
-            });
-
             Boolean sent = getInOnlyTemplate().invoke(t -> {
                 t.send(ex, rk, msg);
-                return t.waitForConfirms(5000);
+                if (confirm) {
+                    return t.waitForConfirms(timeout);
+                } else {
+                    return true;
+                }
             });
             if (Boolean.FALSE == sent) {
-                exchange.setException(new TimeoutException("Message not sent within " + 5000 + " millis"));
+                exchange.setException(new TimeoutException("Message not sent within " + timeout + " millis"));
             }
         } catch (Exception e) {
             exchange.setException(e);

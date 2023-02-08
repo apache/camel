@@ -34,6 +34,9 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
         case "concurrentconsumers":
         case "concurrentConsumers": target.setConcurrentConsumers(property(camelContext, java.lang.Integer.class, value)); return true;
+        case "confirm": target.setConfirm(property(camelContext, java.lang.String.class, value)); return true;
+        case "confirmtimeout":
+        case "confirmTimeout": target.setConfirmTimeout(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "connectionfactory":
         case "connectionFactory": target.setConnectionFactory(property(camelContext, org.springframework.amqp.rabbit.connection.ConnectionFactory.class, value)); return true;
         case "deadletterexchange":
@@ -104,6 +107,9 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "bridgeErrorHandler": return boolean.class;
         case "concurrentconsumers":
         case "concurrentConsumers": return java.lang.Integer.class;
+        case "confirm": return java.lang.String.class;
+        case "confirmtimeout":
+        case "confirmTimeout": return long.class;
         case "connectionfactory":
         case "connectionFactory": return org.springframework.amqp.rabbit.connection.ConnectionFactory.class;
         case "deadletterexchange":
@@ -175,6 +181,9 @@ public class SpringRabbitMQEndpointConfigurer extends PropertyConfigurerSupport 
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
         case "concurrentconsumers":
         case "concurrentConsumers": return target.getConcurrentConsumers();
+        case "confirm": return target.getConfirm();
+        case "confirmtimeout":
+        case "confirmTimeout": return target.getConfirmTimeout();
         case "connectionfactory":
         case "connectionFactory": return target.getConnectionFactory();
         case "deadletterexchange":
