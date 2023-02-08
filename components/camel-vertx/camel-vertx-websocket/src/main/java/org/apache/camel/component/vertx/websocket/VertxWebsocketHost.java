@@ -133,8 +133,17 @@ public class VertxWebsocketHost {
                                     LOG.debug("WebSocket peer {} disconnected from {}", connectionKey, socketAddress.host());
                                 }
                             }
+
+                            if (configuration.isFireWebSocketConnectionEvents()) {
+                                consumer.onClose(connectionKey, remote, routingContext);
+                            }
+
                             connectedPeers.remove(connectionKey);
                         });
+
+                        if (configuration.isFireWebSocketConnectionEvents()) {
+                            consumer.onOpen(connectionKey, remote, routingContext, webSocket);
+                        }
                     } else {
                         // the upgrade failed
                         routingContext.fail(toWebSocket.cause());
