@@ -57,7 +57,7 @@
         <activemq-artemis-version>2.27.1</activemq-artemis-version>
         <angus-mail-version>1.1.0</angus-mail-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
-        <apache-drill-version>1.19.0</apache-drill-version>
+        <apache-drill-version>1.20.2</apache-drill-version>
         <apicurio-version>1.1.26</apicurio-version>
         <arangodb-java-version>6.20.0</arangodb-java-version>
         <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
