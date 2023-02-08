@@ -1059,14 +1059,14 @@ public class ModelWriter extends BaseWriter {
         doWriteOptionalIdentifiedDefinitionElements(def);
         endElement();
     }
-    void doWriteBeanFactoryDefinitionAttributes(
+    protected void doWriteBeanFactoryDefinitionAttributes(
             BeanFactoryDefinition<?, ?> def)
             throws IOException {
         doWriteAttribute("name", def.getName());
         doWriteAttribute("type", def.getType());
         doWriteAttribute("beanType", def.getBeanType());
     }
-    void doWriteBeanFactoryDefinitionElements(
+    protected void doWriteBeanFactoryDefinitionElements(
             BeanFactoryDefinition<?, ?> def)
             throws IOException {
         doWriteElement("script", def.getScript(), this::doWriteString);
@@ -1154,7 +1154,7 @@ public class ModelWriter extends BaseWriter {
         doWriteOptionalIdentifiedDefinitionElements(def);
         endElement();
     }
-    void doWriteDataFormatDefinitionAttributes(
+    protected void doWriteDataFormatDefinitionAttributes(
             DataFormatDefinition def)
             throws IOException {
         doWriteIdentifiedTypeAttributes(def);
@@ -1234,10 +1234,14 @@ public class ModelWriter extends BaseWriter {
         });
         endElement();
     }
-    void doWriteExpressionNodeAttributes(ExpressionNode def) throws IOException {
+    protected void doWriteExpressionNodeAttributes(
+            ExpressionNode def)
+            throws IOException {
         doWriteProcessorDefinitionAttributes(def);
     }
-    void doWriteExpressionNodeElements(ExpressionNode def) throws IOException {
+    protected void doWriteExpressionNodeElements(
+            ExpressionNode def)
+            throws IOException {
         doWriteOptionalIdentifiedDefinitionElements(def);
         doWriteElement(null, def.getExpression(), this::doWriteExpressionDefinitionRef);
     }
@@ -1258,7 +1262,7 @@ public class ModelWriter extends BaseWriter {
         doWriteElement(null, def.getExpressionType(), this::doWriteExpressionDefinitionRef);
         endElement();
     }
-    void doWriteFaultToleranceConfigurationCommonAttributes(
+    protected void doWriteFaultToleranceConfigurationCommonAttributes(
             FaultToleranceConfigurationCommon def)
             throws IOException {
         doWriteIdentifiedTypeAttributes(def);
@@ -1353,7 +1357,9 @@ public class ModelWriter extends BaseWriter {
         doWriteOutputExpressionNodeElements(def);
         endElement();
     }
-    void doWriteIdentifiedTypeAttributes(IdentifiedType def) throws IOException {
+    protected void doWriteIdentifiedTypeAttributes(
+            IdentifiedType def)
+            throws IOException {
         doWriteAttribute("id", def.getId());
     }
     protected void doWriteIdentifiedType(
@@ -1393,12 +1399,12 @@ public class ModelWriter extends BaseWriter {
         doWriteOptionalIdentifiedDefinitionElements(def);
         endElement();
     }
-    void doWriteInterceptDefinitionAttributes(
+    protected void doWriteInterceptDefinitionAttributes(
             InterceptDefinition def)
             throws IOException {
         doWriteProcessorDefinitionAttributes(def);
     }
-    void doWriteInterceptDefinitionElements(
+    protected void doWriteInterceptDefinitionElements(
             InterceptDefinition def)
             throws IOException {
         doWriteOptionalIdentifiedDefinitionElements(def);
@@ -1468,7 +1474,7 @@ public class ModelWriter extends BaseWriter {
         });
         endElement();
     }
-    void doWriteLoadBalancerDefinitionAttributes(
+    protected void doWriteLoadBalancerDefinitionAttributes(
             LoadBalancerDefinition def)
             throws IOException {
         doWriteIdentifiedTypeAttributes(def);
@@ -1641,13 +1647,13 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("maximumRetryDelay", def.getMaximumRetryDelay());
         endElement();
     }
-    void doWriteOptionalIdentifiedDefinitionAttributes(
+    protected void doWriteOptionalIdentifiedDefinitionAttributes(
             OptionalIdentifiedDefinition<?> def)
             throws IOException {
         doWriteAttribute("id", def.getId());
         doWriteAttribute("customId", toString(def.getCustomId()));
     }
-    void doWriteOptionalIdentifiedDefinitionElements(
+    protected void doWriteOptionalIdentifiedDefinitionElements(
             OptionalIdentifiedDefinition<?> def)
             throws IOException {
         doWriteElement("description", def.getDescription(), this::doWriteDescriptionDefinition);
@@ -1671,12 +1677,12 @@ public class ModelWriter extends BaseWriter {
         doWriteList(null, null, def.getOutputs(), this::doWriteProcessorDefinitionRef);
         endElement();
     }
-    void doWriteOutputExpressionNodeAttributes(
+    protected void doWriteOutputExpressionNodeAttributes(
             OutputExpressionNode def)
             throws IOException {
         doWriteProcessorDefinitionAttributes(def);
     }
-    void doWriteOutputExpressionNodeElements(
+    protected void doWriteOutputExpressionNodeElements(
             OutputExpressionNode def)
             throws IOException {
         doWriteExpressionNodeElements(def);
@@ -1770,14 +1776,14 @@ public class ModelWriter extends BaseWriter {
         doWriteOptionalIdentifiedDefinitionElements(def);
         endElement();
     }
-    void doWriteProcessorDefinitionAttributes(
+    protected void doWriteProcessorDefinitionAttributes(
             ProcessorDefinition<?> def)
             throws IOException {
         doWriteOptionalIdentifiedDefinitionAttributes(def);
         doWriteAttribute("inheritErrorHandler", toString(def.isInheritErrorHandler()));
         doWriteAttribute("disabled", def.getDisabled());
     }
-    void doWriteProcessorDefinitionElements(
+    protected void doWriteProcessorDefinitionElements(
             ProcessorDefinition<?> def)
             throws IOException {
         doWriteOptionalIdentifiedDefinitionElements(def);
@@ -1931,7 +1937,7 @@ public class ModelWriter extends BaseWriter {
         });
         endElement();
     }
-    void doWriteResilience4jConfigurationCommonAttributes(
+    protected void doWriteResilience4jConfigurationCommonAttributes(
             Resilience4jConfigurationCommon def)
             throws IOException {
         doWriteIdentifiedTypeAttributes(def);
@@ -1949,7 +1955,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("slidingWindowType", def.getSlidingWindowType());
         doWriteAttribute("waitDurationInOpenState", def.getWaitDurationInOpenState());
     }
-    void doWriteResilience4jConfigurationCommonElements(
+    protected void doWriteResilience4jConfigurationCommonElements(
             Resilience4jConfigurationCommon def)
             throws IOException {
         doWriteElement("bulkheadMaxWaitDuration", def.getBulkheadMaxWaitDuration(), this::doWriteString);
@@ -2208,13 +2214,15 @@ public class ModelWriter extends BaseWriter {
         doWriteExpressionNodeElements(def);
         endElement();
     }
-    void doWriteSendDefinitionAttributes(
+    protected void doWriteSendDefinitionAttributes(
             SendDefinition<?> def)
             throws IOException {
         doWriteProcessorDefinitionAttributes(def);
         doWriteAttribute("uri", def.getUri());
     }
-    void doWriteSendDefinitionElements(SendDefinition<?> def) throws IOException {
+    protected void doWriteSendDefinitionElements(
+            SendDefinition<?> def)
+            throws IOException {
         doWriteOptionalIdentifiedDefinitionElements(def);
     }
     protected void doWriteSendDefinition(
@@ -2428,7 +2436,7 @@ public class ModelWriter extends BaseWriter {
         doWriteOptionalIdentifiedDefinitionElements(def);
         endElement();
     }
-    void doWriteToDynamicDefinitionAttributes(
+    protected void doWriteToDynamicDefinitionAttributes(
             ToDynamicDefinition def)
             throws IOException {
         doWriteProcessorDefinitionAttributes(def);
@@ -2439,7 +2447,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("allowOptimisedComponents", def.getAllowOptimisedComponents());
         doWriteAttribute("uri", def.getUri());
     }
-    void doWriteToDynamicDefinitionElements(
+    protected void doWriteToDynamicDefinitionElements(
             ToDynamicDefinition def)
             throws IOException {
         doWriteOptionalIdentifiedDefinitionElements(def);
@@ -2735,12 +2743,12 @@ public class ModelWriter extends BaseWriter {
         doWriteServiceCallConfigurationElements(def);
         endElement();
     }
-    void doWriteServiceCallConfigurationAttributes(
+    protected void doWriteServiceCallConfigurationAttributes(
             ServiceCallConfiguration def)
             throws IOException {
         doWriteIdentifiedTypeAttributes(def);
     }
-    void doWriteServiceCallConfigurationElements(
+    protected void doWriteServiceCallConfigurationElements(
             ServiceCallConfiguration def)
             throws IOException {
         doWriteList(null, "properties", def.getProperties(), this::doWritePropertyDefinition);
@@ -2862,12 +2870,12 @@ public class ModelWriter extends BaseWriter {
         doWriteServiceCallConfigurationElements(def);
         endElement();
     }
-    void doWriteServiceCallServiceDiscoveryConfigurationAttributes(
+    protected void doWriteServiceCallServiceDiscoveryConfigurationAttributes(
             ServiceCallServiceDiscoveryConfiguration def)
             throws IOException {
         doWriteIdentifiedTypeAttributes(def);
     }
-    void doWriteServiceCallServiceDiscoveryConfigurationElements(
+    protected void doWriteServiceCallServiceDiscoveryConfigurationElements(
             ServiceCallServiceDiscoveryConfiguration def)
             throws IOException {
         doWriteServiceCallConfigurationElements(def);
@@ -2881,12 +2889,12 @@ public class ModelWriter extends BaseWriter {
         doWriteServiceCallServiceDiscoveryConfigurationElements(def);
         endElement();
     }
-    void doWriteServiceCallServiceFilterConfigurationAttributes(
+    protected void doWriteServiceCallServiceFilterConfigurationAttributes(
             ServiceCallServiceFilterConfiguration def)
             throws IOException {
         doWriteIdentifiedTypeAttributes(def);
     }
-    void doWriteServiceCallServiceFilterConfigurationElements(
+    protected void doWriteServiceCallServiceFilterConfigurationElements(
             ServiceCallServiceFilterConfiguration def)
             throws IOException {
         doWriteServiceCallConfigurationElements(def);
@@ -2900,12 +2908,12 @@ public class ModelWriter extends BaseWriter {
         doWriteServiceCallServiceFilterConfigurationElements(def);
         endElement();
     }
-    void doWriteServiceCallServiceLoadBalancerConfigurationAttributes(
+    protected void doWriteServiceCallServiceLoadBalancerConfigurationAttributes(
             ServiceCallServiceLoadBalancerConfiguration def)
             throws IOException {
         doWriteIdentifiedTypeAttributes(def);
     }
-    void doWriteServiceCallServiceLoadBalancerConfigurationElements(
+    protected void doWriteServiceCallServiceLoadBalancerConfigurationElements(
             ServiceCallServiceLoadBalancerConfiguration def)
             throws IOException {
         doWriteServiceCallConfigurationElements(def);
@@ -3183,7 +3191,9 @@ public class ModelWriter extends BaseWriter {
         });
         endElement();
     }
-    void doWriteFhirDataformatAttributes(FhirDataformat def) throws IOException {
+    protected void doWriteFhirDataformatAttributes(
+            FhirDataformat def)
+            throws IOException {
         doWriteIdentifiedTypeAttributes(def);
         doWriteAttribute("contentTypeHeader", def.getContentTypeHeader());
         doWriteAttribute("dontStripVersionsFromReferencesAtPaths", def.getDontStripVersionsFromReferencesAtPaths());
@@ -3531,7 +3541,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("dataObjectType", def.getDataObjectTypeName());
         endElement();
     }
-    void doWriteUniVocityAbstractDataFormatAttributes(
+    protected void doWriteUniVocityAbstractDataFormatAttributes(
             UniVocityAbstractDataFormat def)
             throws IOException {
         doWriteIdentifiedTypeAttributes(def);
@@ -3549,7 +3559,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("comment", def.getComment());
         doWriteAttribute("numberOfRecordsToRead", def.getNumberOfRecordsToRead());
     }
-    void doWriteUniVocityAbstractDataFormatElements(
+    protected void doWriteUniVocityAbstractDataFormatElements(
             UniVocityAbstractDataFormat def)
             throws IOException {
         doWriteList(null, null, def.getHeaders(), this::doWriteUniVocityHeaderRef);
@@ -3688,7 +3698,7 @@ public class ModelWriter extends BaseWriter {
         doWriteDefaultErrorHandlerDefinitionElements(def);
         endElement();
     }
-    void doWriteDefaultErrorHandlerDefinitionAttributes(
+    protected void doWriteDefaultErrorHandlerDefinitionAttributes(
             DefaultErrorHandlerDefinition def)
             throws IOException {
         doWriteIdentifiedTypeAttributes(def);
@@ -3704,7 +3714,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("onExceptionOccurredRef", def.getOnExceptionOccurredRef());
         doWriteAttribute("redeliveryPolicyRef", def.getRedeliveryPolicyRef());
     }
-    void doWriteDefaultErrorHandlerDefinitionElements(
+    protected void doWriteDefaultErrorHandlerDefinitionElements(
             DefaultErrorHandlerDefinition def)
             throws IOException {
         doWriteElement("redeliveryPolicy", def.getRedeliveryPolicy(), this::doWriteRedeliveryPolicyDefinition);
@@ -3753,14 +3763,14 @@ public class ModelWriter extends BaseWriter {
         doWriteDefaultErrorHandlerDefinitionElements(def);
         endElement();
     }
-    void doWriteTransactionErrorHandlerDefinitionAttributes(
+    protected void doWriteTransactionErrorHandlerDefinitionAttributes(
             TransactionErrorHandlerDefinition def)
             throws IOException {
         doWriteDefaultErrorHandlerDefinitionAttributes(def);
         doWriteAttribute("rollbackLoggingLevel", def.getRollbackLoggingLevel());
         doWriteAttribute("transactedPolicyRef", def.getTransactedPolicyRef());
     }
-    void doWriteTransactionErrorHandlerDefinitionElements(
+    protected void doWriteTransactionErrorHandlerDefinitionElements(
             TransactionErrorHandlerDefinition def)
             throws IOException {
         doWriteDefaultErrorHandlerDefinitionElements(def);
@@ -3812,7 +3822,7 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement();
     }
-    void doWriteExpressionDefinitionAttributes(
+    protected void doWriteExpressionDefinitionAttributes(
             ExpressionDefinition def)
             throws IOException {
         doWriteAttribute("trim", def.getTrim());
@@ -3930,12 +3940,12 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement();
     }
-    void doWriteNamespaceAwareExpressionAttributes(
+    protected void doWriteNamespaceAwareExpressionAttributes(
             NamespaceAwareExpression def)
             throws IOException {
         doWriteSingleInputExpressionDefinitionAttributes(def);
     }
-    void doWriteNamespaceAwareExpressionElements(
+    protected void doWriteNamespaceAwareExpressionElements(
             NamespaceAwareExpression def)
             throws IOException {
         doWriteList(null, "namespace", def.getNamespace(), this::doWritePropertyDefinition);
@@ -3986,7 +3996,7 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement();
     }
-    void doWriteSingleInputExpressionDefinitionAttributes(
+    protected void doWriteSingleInputExpressionDefinitionAttributes(
             SingleInputExpressionDefinition def)
             throws IOException {
         doWriteExpressionDefinitionAttributes(def);
@@ -4002,7 +4012,7 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement();
     }
-    void doWriteSingleInputTypedExpressionDefinitionAttributes(
+    protected void doWriteSingleInputTypedExpressionDefinitionAttributes(
             SingleInputTypedExpressionDefinition def)
             throws IOException {
         doWriteTypedExpressionDefinitionAttributes(def);
@@ -4045,7 +4055,7 @@ public class ModelWriter extends BaseWriter {
         doWriteValue(def.getExpression());
         endElement();
     }
-    void doWriteTypedExpressionDefinitionAttributes(
+    protected void doWriteTypedExpressionDefinitionAttributes(
             TypedExpressionDefinition def)
             throws IOException {
         doWriteExpressionDefinitionAttributes(def);
@@ -4426,7 +4436,7 @@ public class ModelWriter extends BaseWriter {
         });
         endElement();
     }
-    void doWriteRestSecurityDefinitionAttributes(
+    protected void doWriteRestSecurityDefinitionAttributes(
             RestSecurityDefinition def)
             throws IOException {
         doWriteAttribute("description", def.getDescription());
@@ -4459,7 +4469,9 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("key", def.getKey());
         endElement();
     }
-    void doWriteVerbDefinitionAttributes(VerbDefinition def) throws IOException {
+    protected void doWriteVerbDefinitionAttributes(
+            VerbDefinition def)
+            throws IOException {
         doWriteOptionalIdentifiedDefinitionAttributes(def);
         doWriteAttribute("enableCORS", def.getEnableCORS());
         doWriteAttribute("deprecated", def.getDeprecated());
@@ -4475,7 +4487,9 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("disabled", def.getDisabled());
         doWriteAttribute("consumes", def.getConsumes());
     }
-    void doWriteVerbDefinitionElements(VerbDefinition def) throws IOException {
+    protected void doWriteVerbDefinitionElements(
+            VerbDefinition def)
+            throws IOException {
         doWriteOptionalIdentifiedDefinitionElements(def);
         doWriteList(null, null, def.getParams(), this::doWriteParamDefinitionRef);
         doWriteList(null, null, def.getSecurity(), this::doWriteSecurityDefinitionRef);
@@ -4562,7 +4576,7 @@ public class ModelWriter extends BaseWriter {
         doWriteAttribute("uri", def.getUri());
         endElement();
     }
-    void doWriteTransformerDefinitionAttributes(
+    protected void doWriteTransformerDefinitionAttributes(
             TransformerDefinition def)
             throws IOException {
         doWriteAttribute("toType", def.getToType());
@@ -4620,7 +4634,7 @@ public class ModelWriter extends BaseWriter {
         doWriteElement(null, def.getExpression(), this::doWriteExpressionDefinitionRef);
         endElement();
     }
-    void doWriteValidatorDefinitionAttributes(
+    protected void doWriteValidatorDefinitionAttributes(
             ValidatorDefinition def)
             throws IOException {
         doWriteAttribute("type", def.getType());
@@ -4647,14 +4661,17 @@ public class ModelWriter extends BaseWriter {
         });
         endElement();
     }
-    void doWriteFromDefinitionRef(String n, FromDefinition v) throws IOException {
+    protected void doWriteFromDefinitionRef(
+            String n,
+            FromDefinition v)
+            throws IOException {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
                 case "FromDefinition" -> doWriteFromDefinition("from", (FromDefinition) v);
             }
         }
     }
-    void doWriteInputTypeDefinitionRef(
+    protected void doWriteInputTypeDefinitionRef(
             String n,
             InputTypeDefinition v)
             throws IOException {
@@ -4664,7 +4681,7 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
-    void doWriteOutputTypeDefinitionRef(
+    protected void doWriteOutputTypeDefinitionRef(
             String n,
             OutputTypeDefinition v)
             throws IOException {
@@ -4674,7 +4691,7 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
-    void doWriteProcessorDefinitionRef(
+    protected void doWriteProcessorDefinitionRef(
             String n,
             ProcessorDefinition<?> v)
             throws IOException {
@@ -4750,7 +4767,7 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
-    void doWriteRouteConfigurationDefinitionRef(
+    protected void doWriteRouteConfigurationDefinitionRef(
             String n,
             RouteConfigurationDefinition v)
             throws IOException {
@@ -4760,7 +4777,7 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
-    void doWriteRouteDefinitionRef(
+    protected void doWriteRouteDefinitionRef(
             String n,
             RouteDefinition v)
             throws IOException {
@@ -4770,7 +4787,7 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
-    void doWriteRouteTemplateDefinitionRef(
+    protected void doWriteRouteTemplateDefinitionRef(
             String n,
             RouteTemplateDefinition v)
             throws IOException {
@@ -4780,7 +4797,7 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
-    void doWriteTemplatedRouteDefinitionRef(
+    protected void doWriteTemplatedRouteDefinitionRef(
             String n,
             TemplatedRouteDefinition v)
             throws IOException {
@@ -4790,14 +4807,17 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
-    void doWriteWhenDefinitionRef(String n, WhenDefinition v) throws IOException {
+    protected void doWriteWhenDefinitionRef(
+            String n,
+            WhenDefinition v)
+            throws IOException {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
                 case "WhenDefinition" -> doWriteWhenDefinition("when", (WhenDefinition) v);
             }
         }
     }
-    void doWriteUniVocityHeaderRef(
+    protected void doWriteUniVocityHeaderRef(
             String n,
             UniVocityHeader v)
             throws IOException {
@@ -4807,7 +4827,7 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
-    void doWriteExpressionDefinitionRef(
+    protected void doWriteExpressionDefinitionRef(
             String n,
             ExpressionDefinition v)
             throws IOException {
@@ -4817,7 +4837,7 @@ public class ModelWriter extends BaseWriter {
                 case "ConstantExpression" -> doWriteConstantExpression("constant", (ConstantExpression) v);
                 case "DatasonnetExpression" -> doWriteDatasonnetExpression("datasonnet", (DatasonnetExpression) v);
                 case "ExchangePropertyExpression" -> doWriteExchangePropertyExpression("exchangeProperty", (ExchangePropertyExpression) v);
-                case "ExpressionDefinition" -> doWriteExpressionDefinition("##default", (ExpressionDefinition) v);
+                case "ExpressionDefinition" -> doWriteExpressionDefinition("expressionDefinition", (ExpressionDefinition) v);
                 case "GroovyExpression" -> doWriteGroovyExpression("groovy", (GroovyExpression) v);
                 case "HeaderExpression" -> doWriteHeaderExpression("header", (HeaderExpression) v);
                 case "Hl7TerserExpression" -> doWriteHl7TerserExpression("hl7terser", (Hl7TerserExpression) v);
@@ -4840,7 +4860,7 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
-    void doWriteParamDefinitionRef(
+    protected void doWriteParamDefinitionRef(
             String n,
             ParamDefinition v)
             throws IOException {
@@ -4850,7 +4870,7 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
-    void doWriteResponseMessageDefinitionRef(
+    protected void doWriteResponseMessageDefinitionRef(
             String n,
             ResponseMessageDefinition v)
             throws IOException {
@@ -4860,14 +4880,17 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
-    void doWriteRestDefinitionRef(String n, RestDefinition v) throws IOException {
+    protected void doWriteRestDefinitionRef(
+            String n,
+            RestDefinition v)
+            throws IOException {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
                 case "RestDefinition" -> doWriteRestDefinition("rest", (RestDefinition) v);
             }
         }
     }
-    void doWriteSecurityDefinitionRef(
+    protected void doWriteSecurityDefinitionRef(
             String n,
             SecurityDefinition v)
             throws IOException {
@@ -4877,7 +4900,10 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
-    void doWriteVerbDefinitionRef(String n, VerbDefinition v) throws IOException {
+    protected void doWriteVerbDefinitionRef(
+            String n,
+            VerbDefinition v)
+            throws IOException {
         if (v != null) {
             switch (v.getClass().getSimpleName()) {
                 case "DeleteDefinition" -> doWriteDeleteDefinition("delete", (DeleteDefinition) v);
@@ -4889,12 +4915,15 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
-    void doWriteAttribute(String attribute, String value) throws IOException {
+    protected void doWriteAttribute(
+            String attribute,
+            String value)
+            throws IOException {
         if (value != null) {
             attribute(attribute, value);
         }
     }
-    void doWriteValue(String value) throws IOException {
+    protected void doWriteValue(String value) throws IOException {
         if (value != null) {
             text(value);
         }
@@ -4917,19 +4946,19 @@ public class ModelWriter extends BaseWriter {
             elementSerializer.doWriteElement(name, v);
         }
     }
-    String toString(Boolean b) {
+    protected String toString(Boolean b) {
         return b != null ? b.toString() : null;
     }
-    String toString(Enum<?> e) {
+    protected String toString(Enum<?> e) {
         return e != null ? e.name() : null;
     }
-    String toString(Number n) {
+    protected String toString(Number n) {
         return n != null ? n.toString() : null;
     }
-    String toString(byte[] b) {
+    protected String toString(byte[] b) {
         return b != null ? Base64.getEncoder().encodeToString(b) : null;
     }
-    void doWriteString(String name, String value) throws IOException {
+    protected void doWriteString(String name, String value) throws IOException {
         if (value != null) {
             startElement(name);
             text(value);

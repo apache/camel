@@ -23,9 +23,9 @@ import org.apache.camel.xml.io.XMLWriter;
 
 public class BaseWriter {
 
-    private final XMLWriter writer;
-    private final String namespace;
-    private boolean namespaceWritten;
+    protected final XMLWriter writer;
+    protected final String namespace;
+    protected boolean namespaceWritten;
 
     public BaseWriter(Writer writer, String namespace) throws IOException {
         this.writer = new XMLWriter(writer);

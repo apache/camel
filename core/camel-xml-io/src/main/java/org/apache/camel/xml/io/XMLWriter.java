@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -28,12 +27,6 @@ import java.util.regex.Pattern;
  */
 public class XMLWriter {
 
-    private static final Pattern AMP = Pattern.compile("&");
-    private static final Pattern LT = Pattern.compile("<");
-    private static final Pattern GT = Pattern.compile(">");
-    private static final Pattern DQUOTE = Pattern.compile("\"");
-    private static final Pattern SQUOTE = Pattern.compile("\'");
-    private static final Pattern CRLF = Pattern.compile("\r\n");
     private static final Pattern LOWERS = Pattern.compile("([\000-\037])");
 
     private final Writer writer;
@@ -91,7 +84,7 @@ public class XMLWriter {
     public XMLWriter(Writer writer, String lineIndenter, String lineSeparator,
                      String encoding, String doctype) throws IOException {
         this.writer = writer;
-        this.lineIndenter = lineIndenter != null ? lineIndenter : "  ";
+        this.lineIndenter = lineIndenter != null ? lineIndenter : "    ";
         this.lineSeparator = validateLineSeparator(lineSeparator);
         this.encoding = encoding;
         this.docType = doctype;
@@ -177,39 +170,21 @@ public class XMLWriter {
     }
 
     private static String escapeXml(String text) {
-        if (text.indexOf('&') >= 0) {
-            text = AMP.matcher(text).replaceAll("&amp;");
-        }
-        if (text.indexOf('<') >= 0) {
-            text = LT.matcher(text).replaceAll("&lt;");
-        }
-        if (text.indexOf('>') >= 0) {
-            text = GT.matcher(text).replaceAll("&gt;");
-        }
-        if (text.indexOf('"') >= 0) {
-            text = DQUOTE.matcher(text).replaceAll("&quot;");
-        }
-        if (text.indexOf('\'') >= 0) {
-            text = SQUOTE.matcher(text).replaceAll("&apos;");
-        }
-
-        return text;
+        return text
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
     }
 
     private static String escapeXmlAttribute(String text) {
-        text = escapeXml(text);
-
+        text = escapeXml(text)
+                .replace("\"", "&quot;")
+                .replace("'", "&apos;");
         // Windows
-        text = CRLF.matcher(text).replaceAll("&#10;");
-
-        StringBuilder b = new StringBuilder();
-        Matcher m = LOWERS.matcher(text);
-        while (m.find()) {
-            m.appendReplacement(b, "&#" + Integer.toString(m.group(1).charAt(0)) + ";");
-        }
-        m.appendTail(b);
-
-        return b.toString();
+        text = text.replace("\r\n", "&#10;");
+        // Non printable characters
+        text = LOWERS.matcher(text).replaceAll(r -> "&#" + Integer.toString(r.group(1).charAt(0)) + ";");
+        return text;
     }
 
     /**
