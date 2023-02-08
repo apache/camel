@@ -71,10 +71,10 @@ public class AWS2EC2Endpoint extends ScheduledPollEndpoint {
                 ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
-            clientHealthCheck = new AWS2EC2HealthCheck(this, getId());
+            // Do not register the health check until we resolve CAMEL-18992
+            //clientHealthCheck = new AWS2EC2HealthCheck(this, getId());
+            //healthCheckRepository.addHealthCheck(clientHealthCheck);
         }
-
-        healthCheckRepository.addHealthCheck(clientHealthCheck);
     }
 
     @Override
