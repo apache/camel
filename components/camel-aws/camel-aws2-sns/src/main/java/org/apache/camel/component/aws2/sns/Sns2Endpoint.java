@@ -118,8 +118,9 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
                 ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
-            clientHealthCheck = new Sns2HealthCheck(this, getId());
-            healthCheckRepository.addHealthCheck(clientHealthCheck);
+            // Do not register the health check until we resolve CAMEL-18992
+            // clientHealthCheck = new Sns2HealthCheck(this, getId());
+            // healthCheckRepository.addHealthCheck(clientHealthCheck);
         }
 
         if (configuration.getTopicArn() == null) {
