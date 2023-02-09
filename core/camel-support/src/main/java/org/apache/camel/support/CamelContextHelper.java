@@ -343,6 +343,7 @@ public final class CamelContextHelper {
      * <p/>
      * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_SIMPLE_CACHE_SIZE}. If no property
      * has been set, then it will fallback to return a size of 1000.
+     * Use value of 0 or negative to disable the cache.
      *
      * @param  camelContext             the camel context
      * @return                          the maximum cache size
@@ -354,12 +355,7 @@ public final class CamelContextHelper {
             if (s != null) {
                 // we cannot use Camel type converters as they may not be ready this early
                 try {
-                    Integer size = Integer.valueOf(s);
-                    if (size == null || size <= 0) {
-                        throw new IllegalArgumentException(
-                                "Property " + Exchange.MAXIMUM_SIMPLE_CACHE_SIZE + " must be a positive number, was: " + s);
-                    }
-                    return size;
+                    return Integer.parseInt(s);
                 } catch (NumberFormatException e) {
                     throw new IllegalArgumentException(
                             "Property " + Exchange.MAXIMUM_SIMPLE_CACHE_SIZE + " must be a positive number, was: " + s, e);
