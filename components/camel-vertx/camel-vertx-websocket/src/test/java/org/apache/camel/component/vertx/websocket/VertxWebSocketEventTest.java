@@ -78,25 +78,25 @@ public class VertxWebSocketEventTest extends VertxWebSocketTestSupport {
 
                 fromF("vertx-websocket:localhost:%d/test?fireWebSocketConnectionEvents=true&serverOptions=#serverOptions&bridgeErrorHandler=true",
                         port)
-                        .choice()
-                        .when(simple("${header.CamelVertxWebsocket.event} == 'OPEN'"))
-                        .process(exchange -> {
-                            Message message = exchange.getMessage();
-                            webSocket = message.getBody(ServerWebSocket.class);
-                        })
-                        .setBody().constant("WebSocket Open")
-                        .to("mock:result")
-                        .endChoice()
+                                .choice()
+                                .when(simple("${header.CamelVertxWebsocket.event} == 'OPEN'"))
+                                .process(exchange -> {
+                                    Message message = exchange.getMessage();
+                                    webSocket = message.getBody(ServerWebSocket.class);
+                                })
+                                .setBody().constant("WebSocket Open")
+                                .to("mock:result")
+                                .endChoice()
 
-                        .when(simple("${header.CamelVertxWebsocket.event} == 'MESSAGE'"))
-                        .setBody().constant("WebSocket Message")
-                        .to("mock:result")
-                        .endChoice()
+                                .when(simple("${header.CamelVertxWebsocket.event} == 'MESSAGE'"))
+                                .setBody().constant("WebSocket Message")
+                                .to("mock:result")
+                                .endChoice()
 
-                        .when(simple("${header.CamelVertxWebsocket.event} == 'CLOSE'"))
-                        .setBody().constant("WebSocket Close")
-                        .to("mock:result")
-                        .endChoice();
+                                .when(simple("${header.CamelVertxWebsocket.event} == 'CLOSE'"))
+                                .setBody().constant("WebSocket Close")
+                                .to("mock:result")
+                                .endChoice();
             }
         };
     }
