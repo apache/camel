@@ -1216,6 +1216,18 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     boolean isTracingStandby();
 
     /**
+     * Whether to set backlog tracing on standby. If on standby then the backlog tracer is installed and made available.
+     * Then the backlog tracer can be enabled later at runtime via JMX or via Java API.
+     */
+    void setBacklogTracingStandby(boolean backlogTracingStandby);
+
+    /**
+     * Whether to set backlog tracing on standby. If on standby then the backlog tracer is installed and made available.
+     * Then the backlog tracer can be enabled later at runtime via JMX or via Java API.
+     */
+    boolean isBacklogTracingStandby();
+
+    /**
      * Gets the current {@link UuidGenerator}
      *
      * @return the uuidGenerator
