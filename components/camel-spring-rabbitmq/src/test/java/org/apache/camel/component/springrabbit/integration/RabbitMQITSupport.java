@@ -36,16 +36,23 @@ public abstract class RabbitMQITSupport extends CamelTestSupport {
 
     protected Logger log = LoggerFactory.getLogger(getClass());
 
-    ConnectionFactory createConnectionFactory() {
+    ConnectionFactory createConnectionFactory(boolean confirm) {
         CachingConnectionFactory cf = new CachingConnectionFactory();
+        if (confirm) {
+            cf.setPublisherConfirmType(CachingConnectionFactory.ConfirmType.CORRELATED);
+        }
         cf.setUri(service.getAmqpUrl());
         return cf;
+    }
+
+    protected boolean confirmEnabled() {
+        return false;
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getRegistry().bind("myCF", createConnectionFactory());
+        context.getRegistry().bind("myCF", createConnectionFactory(confirmEnabled()));
 
         SpringRabbitMQComponent rmq = context.getComponent("spring-rabbitmq", SpringRabbitMQComponent.class);
         // turn on auto declare

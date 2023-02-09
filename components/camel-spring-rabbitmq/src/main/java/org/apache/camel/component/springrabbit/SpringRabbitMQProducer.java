@@ -18,6 +18,7 @@ package org.apache.camel.component.springrabbit;
 
 import java.util.Map;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
@@ -206,8 +207,29 @@ public class SpringRabbitMQProducer extends DefaultAsyncProducer {
             msg = getEndpoint().getMessageConverter().toMessage(body, mp);
         }
 
+        final String ex = exchangeName;
+        final String rk = routingKey;
+        boolean confirm;
+        if ("auto".equalsIgnoreCase(getEndpoint().getConfirm())) {
+            confirm = getEndpoint().getConnectionFactory().isPublisherConfirms();
+        } else if ("enabled".equalsIgnoreCase(getEndpoint().getConfirm())) {
+            confirm = true;
+        } else {
+            confirm = false;
+        }
+        final long timeout = getEndpoint().getConfirmTimeout() <= 0 ? Long.MAX_VALUE : getEndpoint().getConfirmTimeout();
         try {
-            getInOnlyTemplate().send(exchangeName, routingKey, msg);
+            Boolean sent = getInOnlyTemplate().invoke(t -> {
+                t.send(ex, rk, msg);
+                if (confirm) {
+                    return t.waitForConfirms(timeout);
+                } else {
+                    return true;
+                }
+            });
+            if (Boolean.FALSE == sent) {
+                exchange.setException(new TimeoutException("Message not sent within " + timeout + " millis"));
+            }
         } catch (Exception e) {
             exchange.setException(e);
         }

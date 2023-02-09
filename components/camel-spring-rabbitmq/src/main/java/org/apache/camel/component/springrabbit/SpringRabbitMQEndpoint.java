@@ -147,9 +147,18 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
                             + " message brokers and you want to route message from one system to another.")
     private boolean disableReplyTo;
     @UriParam(label = "producer", javaType = "java.time.Duration", defaultValue = "5000",
-              description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply messaging."
+              description = "Specify the timeout in milliseconds to be used when waiting for a reply message when doing request/reply (InOut) messaging."
                             + " The default value is 5 seconds. A negative value indicates an indefinite timeout.")
     private long replyTimeout = 5000;
+    @UriParam(label = "producer", javaType = "java.time.Duration", defaultValue = "5000",
+              description = "Specify the timeout in milliseconds to be used when waiting for a message sent to be confirmed by RabbitMQ when doing send only messaging (InOnly)."
+                            + " The default value is 5 seconds. A negative value indicates an indefinite timeout.")
+    private long confirmTimeout = 5000;
+    @UriParam(label = "producer", enums = "auto,enabled,disabled",
+              description = "Controls whether to wait for confirms. The connection factory must be configured for publisher confirms and this method."
+                            +
+                            "auto = Camel detects if the connection factory uses confirms or not. disabled = Confirms is disabled. enabled = Confirms is enabled.")
+    private String confirm = "auto";
     @UriParam(label = "producer", defaultValue = "false",
               description = "Use a separate connection for publishers and consumers")
     private boolean usePublisherConnection;
@@ -351,6 +360,22 @@ public class SpringRabbitMQEndpoint extends DefaultEndpoint implements AsyncEndp
 
     public void setReplyTimeout(long replyTimeout) {
         this.replyTimeout = replyTimeout;
+    }
+
+    public long getConfirmTimeout() {
+        return confirmTimeout;
+    }
+
+    public void setConfirmTimeout(long confirmTimeout) {
+        this.confirmTimeout = confirmTimeout;
+    }
+
+    public String getConfirm() {
+        return confirm;
+    }
+
+    public void setConfirm(String confirm) {
+        this.confirm = confirm;
     }
 
     public boolean isUsePublisherConnection() {
