@@ -140,8 +140,8 @@
         <mycila-license-version>3.0</mycila-license-version>
         <gmavenplus-plugin-version>1.11.1</gmavenplus-plugin-version>
         <groovy-version>3.0.15</groovy-version>
-	<cyclonedx-maven-plugin-version>2.7.4</cyclonedx-maven-plugin-version>
-	<antrun-maven-plugin-version>3.1.0</antrun-maven-plugin-version>
+        <cyclonedx-maven-plugin-version>2.7.4</cyclonedx-maven-plugin-version>
+        <antrun-maven-plugin-version>3.1.0</antrun-maven-plugin-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
     </properties>
