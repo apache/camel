@@ -253,6 +253,10 @@ public final class BacklogTracer extends ServiceSupport {
         return traceCounter.get();
     }
 
+    public long getQueueSize() {
+        return queue.size();
+    }
+
     public void resetTraceCounter() {
         traceCounter.set(0);
     }

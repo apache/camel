@@ -127,6 +127,11 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     }
 
     @Override
+    public long getQueueSize() {
+        return backlogTracer.getQueueSize();
+    }
+
+    @Override
     public int getBodyMaxChars() {
         return backlogTracer.getBodyMaxChars();
     }
