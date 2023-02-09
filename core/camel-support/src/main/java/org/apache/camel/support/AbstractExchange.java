@@ -84,6 +84,7 @@ class AbstractExchange implements Exchange {
     boolean interruptable = true;
     boolean redeliveryExhausted;
     boolean streamCacheDisabled;
+    boolean failureHandled;
     Boolean errorHandlerHandled;
     AsyncCallback defaultConsumerCallback; // optimize (do not reset)
     Map<String, SafeCopyProperty> safeCopyProperties;

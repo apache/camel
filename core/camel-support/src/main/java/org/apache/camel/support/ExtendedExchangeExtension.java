@@ -213,4 +213,14 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     public <T> T getSafeCopyProperty(String key, Class<T> type) {
         return this.exchange.getSafeCopyProperty(key, type);
     }
+
+    @Override
+    public boolean isFailureHandled() {
+        return this.exchange.failureHandled;
+    }
+
+    @Override
+    public void setFailureHandled(boolean failureHandled) {
+        this.exchange.failureHandled = failureHandled;
+    }
 }

@@ -76,6 +76,8 @@ We have removed deprecated APIs such as the following:
 -- Replaced `adapt()` from `org.apache.camel.CamelContext` with `getCamelContextExtension`
 - Decoupled the `org.apache.camel.ExtendedExchange` from the `org.apache.camel.Exchange`.
 -- Replaced `adapt()` from `org.apache.camel.ExtendedExchange` with `getExchangeExtension`
+- Exchange failure handling status has moved from being a property defined as `ExchangePropertyKey.FAILURE_HANDLED` to a member of the ExtendedExchange, accessible via `isFailureHandled()`method.
+
 
 == EIP Changes
 
