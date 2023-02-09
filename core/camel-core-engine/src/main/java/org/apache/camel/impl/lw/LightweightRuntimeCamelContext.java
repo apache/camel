@@ -1179,6 +1179,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         return false;
     }
 
+    @Override
+    public void setBacklogTracingStandby(boolean backlogTracingStandby) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isBacklogTracingStandby() {
+        return false;
+    }
+
     //
     // ExtendedCamelContext
     //

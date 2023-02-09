@@ -193,7 +193,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             }
         }
 
-        if (route.isBacklogTracing()) {
+        if (camelContext.isBacklogTracingStandby() || route.isBacklogTracing()) {
             // add jmx backlog tracer
             BacklogTracer backlogTracer = getOrCreateBacklogTracer(camelContext);
             addAdvice(new BacklogTracerAdvice(backlogTracer, targetOutputDef, routeDefinition, first));
@@ -280,6 +280,8 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         }
         if (tracer == null) {
             tracer = BacklogTracer.createTracer(camelContext);
+            tracer.setEnabled(camelContext.isBacklogTracing() != null && camelContext.isBacklogTracing());
+            tracer.setStandby(camelContext.isBacklogTracingStandby());
             camelContext.setExtension(BacklogTracer.class, tracer);
         }
         return tracer;

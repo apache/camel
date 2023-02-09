@@ -299,6 +299,7 @@ public final class DefaultConfigurationConfigurer {
         }
 
         camelContext.setBacklogTracing(config.isBacklogTracing());
+        camelContext.setBacklogTracingStandby(config.isBacklogTracingStandby());
         camelContext.setTracing(config.isTracing());
         camelContext.setTracingStandby(config.isTracingStandby());
         camelContext.setTracingPattern(config.getTracingPattern());
