@@ -34,7 +34,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
+import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
 import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.CamelLogger;

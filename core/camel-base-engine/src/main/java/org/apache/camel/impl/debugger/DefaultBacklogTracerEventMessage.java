@@ -18,7 +18,7 @@ package org.apache.camel.impl.debugger;
 
 import java.text.SimpleDateFormat;
 
-import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
+import org.apache.camel.spi.BacklogTracerEventMessage;
 
 /**
  * An event message holding the traced message by the {@link BacklogTracer}.

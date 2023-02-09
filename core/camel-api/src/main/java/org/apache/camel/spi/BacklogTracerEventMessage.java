@@ -14,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management.mbean;
-
-import java.io.Serializable;
+package org.apache.camel.spi;
 
 /**
  * Represents a traced message by the BacklogTracer.
  */
-public interface BacklogTracerEventMessage extends Serializable {
+public interface BacklogTracerEventMessage {
 
     String ROOT_TAG = "backlogTracerEventMessage";
     String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
