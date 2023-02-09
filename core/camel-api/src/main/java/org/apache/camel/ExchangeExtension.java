@@ -240,4 +240,8 @@ public interface ExchangeExtension {
      * This is only used when pooled exchange is enabled for optimization and reducing object allocations.
      */
     void setDefaultConsumerCallback(AsyncCallback callback);
+
+    boolean isFailureHandled();
+
+    void setFailureHandled(boolean failureHandled);
 }

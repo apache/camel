@@ -130,10 +130,7 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
                 answer.getExchangeExtension()
                         .setErrorHandlerHandled(newExchange.getExchangeExtension().getErrorHandlerHandled());
             }
-            if (newExchange.getProperty(ExchangePropertyKey.FAILURE_HANDLED) != null) {
-                answer.setProperty(ExchangePropertyKey.FAILURE_HANDLED,
-                        newExchange.getProperty(ExchangePropertyKey.FAILURE_HANDLED));
-            }
+            answer.getExchangeExtension().setFailureHandled(newExchange.getExchangeExtension().isFailureHandled());
         }
     }
 

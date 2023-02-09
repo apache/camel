@@ -574,7 +574,8 @@ public final class ExchangeHelper {
      * @return          <tt>true</tt> if failure handled, <tt>false</tt> otherwise
      */
     public static boolean isFailureHandled(Exchange exchange) {
-        return exchange.getProperty(ExchangePropertyKey.FAILURE_HANDLED, false, Boolean.class);
+        return exchange.getExchangeExtension().isFailureHandled();
+//        return exchange.getProperty(ExchangePropertyKey.FAILURE_HANDLED, false, Boolean.class);
     }
 
     /**
@@ -603,9 +604,9 @@ public final class ExchangeHelper {
      * @param exchange the exchange
      */
     public static void setFailureHandled(Exchange exchange) {
-        exchange.setProperty(ExchangePropertyKey.FAILURE_HANDLED, Boolean.TRUE);
         // clear exception since its failure handled
         exchange.setException(null);
+        exchange.getExchangeExtension().setFailureHandled(true);
     }
 
     /**

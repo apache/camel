@@ -137,8 +137,6 @@ public enum ExchangePropertyKey {
                 return EXCEPTION_HANDLED;
             case Exchange.FAILURE_ENDPOINT:
                 return FAILURE_ENDPOINT;
-            case Exchange.FAILURE_HANDLED:
-                return FAILURE_HANDLED;
             case Exchange.FAILURE_ROUTE_ID:
                 return FAILURE_ROUTE_ID;
             case Exchange.FATAL_FALLBACK_ERROR_HANDLER:

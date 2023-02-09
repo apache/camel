@@ -916,7 +916,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             exchange.getIn().removeHeader(Exchange.REDELIVERED);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_COUNTER);
             exchange.getIn().removeHeader(Exchange.REDELIVERY_MAX_COUNTER);
-            exchange.removeProperty(ExchangePropertyKey.FAILURE_HANDLED);
+            exchange.getExchangeExtension().setFailureHandled(false);
             // keep the Exchange.EXCEPTION_CAUGHT as property so end user knows the caused exception
 
             // create log message

@@ -167,7 +167,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         // but keep the caused exception stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
         boolean stop = exchange.isRouteStop();
         exchange.setRouteStop(false);
-        Object failureHandled = exchange.removeProperty(ExchangePropertyKey.FAILURE_HANDLED);
+        boolean failureHandled = exchange.getExchangeExtension().isFailureHandled();
         Boolean errorhandlerHandled = exchange.getExchangeExtension().getErrorHandlerHandled();
         exchange.getExchangeExtension().setErrorHandlerHandled(null);
         boolean rollbackOnly = exchange.isRollbackOnly();
@@ -190,8 +190,8 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         } finally {
             // restore the options
             exchange.setRouteStop(stop);
-            if (failureHandled != null) {
-                exchange.setProperty(ExchangePropertyKey.FAILURE_HANDLED, failureHandled);
+            if (failureHandled) {
+                exchange.getExchangeExtension().setFailureHandled(true);
             }
             if (errorhandlerHandled != null) {
                 exchange.getExchangeExtension().setErrorHandlerHandled(errorhandlerHandled);
