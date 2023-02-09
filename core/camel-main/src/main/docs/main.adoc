@@ -18,7 +18,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 118 options, which are listed below.
+The camel.main supports 119 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
