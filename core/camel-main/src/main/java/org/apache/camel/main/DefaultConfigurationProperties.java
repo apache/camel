@@ -71,6 +71,7 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean streamCachingStatisticsEnabled;
     private boolean debugging;
     private boolean backlogTracing;
+    private boolean backlogTracingStandby;
     private boolean typeConverterStatisticsEnabled;
     private boolean tracing;
     private boolean tracingStandby;
@@ -673,6 +674,20 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setBacklogTracing(boolean backlogTracing) {
         this.backlogTracing = backlogTracing;
+    }
+
+    public boolean isBacklogTracingStandby() {
+        return backlogTracingStandby;
+    }
+
+    /**
+     * Whether to set backlog tracing on standby. If on standby then the backlog tracer is installed and made available.
+     * Then the backlog tracer can be enabled later at runtime via JMX or via Java API.
+     *
+     * Default is false.
+     */
+    public void setBacklogTracingStandby(boolean backlogTracingStandby) {
+        this.backlogTracingStandby = backlogTracingStandby;
     }
 
     public boolean isMessageHistory() {
@@ -1943,6 +1958,17 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withBacklogTracing(boolean backlogTracing) {
         this.backlogTracing = backlogTracing;
+        return (T) this;
+    }
+
+    /**
+     * Whether to set backlog tracing on standby. If on standby then the backlog tracer is installed and made available.
+     * Then the backlog tracer can be enabled later at runtime via JMX or via Java API.
+     *
+     * Default is false.
+     */
+    public T withBacklogTracingStandby(boolean backlogTracingStandby) {
+        this.backlogTracingStandby = backlogTracingStandby;
         return (T) this;
     }
 

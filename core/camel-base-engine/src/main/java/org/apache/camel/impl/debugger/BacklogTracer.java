@@ -47,8 +47,9 @@ public final class BacklogTracer extends ServiceSupport {
     private final CamelContext camelContext;
     private final Language simple;
     private boolean enabled;
+    private boolean standby;
     private final AtomicLong traceCounter = new AtomicLong();
-    // use a queue with a upper limit to avoid storing too many messages
+    // use a queue with an upper limit to avoid storing too many messages
     private final Queue<BacklogTracerEventMessage> queue = new LinkedBlockingQueue<>(MAX_BACKLOG_SIZE);
     // how many of the last messages to keep in the backlog at total
     private int backlogSize = 1000;
@@ -147,6 +148,26 @@ public final class BacklogTracer extends ServiceSupport {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    /**
+     * Whether the tracer is standby.
+     *
+     * If a tracer is in standby then the tracer is activated during startup and are ready to be enabled manually via
+     * JMX or calling the enabled method.
+     */
+    public boolean isStandby() {
+        return standby;
+    }
+
+    /**
+     * Whether the tracer is standby.
+     *
+     * If a tracer is in standby then the tracer is activated during startup and are ready to be enabled manually via
+     * JMX or calling the enabled method.
+     */
+    public void setStandby(boolean standby) {
+        this.standby = standby;
     }
 
     public int getBacklogSize() {

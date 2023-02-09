@@ -18,7 +18,7 @@ The following tables lists all the options:
 
 // main options: START
 === Camel Main configurations
-The camel.main supports 116 options, which are listed below.
+The camel.main supports 117 options, which are listed below.
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -32,6 +32,7 @@ The camel.main supports 116 options, which are listed below.
 | *camel.main.autoStartup* | Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that takes precedence and no routes are started. You would need to start CamelContext explicit using the org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes manually using CamelContext.getRouteController().startRoute(String). Default is true to always start up. | true | boolean
 | *camel.main.autowiredEnabled* | Whether autowiring is enabled. This is used for automatic autowiring options (the option must be marked as autowired) by looking up in the registry to find if there is a single instance of matching type, which then gets configured on the component. This can be used for automatic configuring JDBC data sources, JMS connection factories, AWS Clients, etc. Default is true. | true | boolean
 | *camel.main.backlogTracing* | Sets whether backlog tracing is enabled or not. Default is false. | false | boolean
+| *camel.main.backlogTracing{zwsp}Standby* | Whether to set backlog tracing on standby. If on standby then the backlog tracer is installed and made available. Then the backlog tracer can be enabled later at runtime via JMX or via Java API. Default is false. | false | boolean
 | *camel.main.basePackageScan* | Package name to use as base (offset) for classpath scanning of RouteBuilder , and org.apache.camel.TypeConverter classes. If you are using Spring Boot then it is instead recommended to use Spring Boots component scanning and annotate your route builder classes with Component. In other words only use this for Camel Main in standalone mode. |  | String
 | *camel.main.basePackageScan{zwsp}Enabled* | Whether base package scan is enabled. | true | boolean
 | *camel.main.beanIntrospection{zwsp}ExtendedStatistics* | Sets whether bean introspection uses extended statistics. The default is false. | false | boolean

@@ -35,6 +35,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AutowiredEnabled": target.setAutowiredEnabled(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "backlogtracing":
         case "BacklogTracing": target.setBacklogTracing(property(camelContext, java.lang.Boolean.class, value)); return true;
+        case "backlogtracingstandby":
+        case "BacklogTracingStandby": target.setBacklogTracingStandby(property(camelContext, boolean.class, value)); return true;
         case "basepackagescan":
         case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "beanintrospection":
@@ -246,6 +248,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AutowiredEnabled": return java.lang.Boolean.class;
         case "backlogtracing":
         case "BacklogTracing": return java.lang.Boolean.class;
+        case "backlogtracingstandby":
+        case "BacklogTracingStandby": return boolean.class;
         case "basepackagescan":
         case "BasePackageScan": return java.lang.String.class;
         case "beanintrospection":
@@ -458,6 +462,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AutowiredEnabled": return target.isAutowiredEnabled();
         case "backlogtracing":
         case "BacklogTracing": return target.isBacklogTracing();
+        case "backlogtracingstandby":
+        case "BacklogTracingStandby": return target.isBacklogTracingStandby();
         case "basepackagescan":
         case "BasePackageScan": return target.getBasePackageScan();
         case "beanintrospection":

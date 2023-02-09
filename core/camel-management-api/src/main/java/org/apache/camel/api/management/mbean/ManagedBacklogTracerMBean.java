@@ -29,6 +29,9 @@ public interface ManagedBacklogTracerMBean {
     @ManagedAttribute(description = "Camel ManagementName")
     String getCamelManagementName();
 
+    @ManagedAttribute(description = "Is tracing standby")
+    boolean isStandby();
+
     @ManagedAttribute(description = "Is tracing enabled")
     boolean isEnabled();
 
