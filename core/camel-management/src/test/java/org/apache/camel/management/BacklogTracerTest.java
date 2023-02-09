@@ -49,16 +49,13 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertTrue(mbeanServer.isRegistered(on));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
         assertEquals(1000, size.intValue(), "Should be 1000");
 
         Boolean removeOnDump = (Boolean) mbeanServer.getAttribute(on, "RemoveOnDump");
         assertEquals(Boolean.TRUE, removeOnDump);
-
-        // enable it
-        mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
 
         getMockEndpoint("mock:foo").expectedMessageCount(2);
         getMockEndpoint("mock:bar").expectedMessageCount(2);
@@ -100,13 +97,10 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         Integer size = (Integer) mbeanServer.getAttribute(on, "BacklogSize");
         assertEquals(1000, size.intValue(), "Should be 1000");
-
-        // enable it
-        mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
 
         getMockEndpoint("mock:foo").expectedMessageCount(2);
         getMockEndpoint("mock:bar").expectedMessageCount(2);
@@ -140,10 +134,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
-
-        // enable it
-        mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         getMockEndpoint("mock:foo").expectedMessageCount(2);
         getMockEndpoint("mock:bar").expectedMessageCount(2);
@@ -220,10 +211,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
-
-        // enable it
-        mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
+        assertEquals(Boolean.TRUE, enabled, "Should not be enabled");
 
         getMockEndpoint("mock:foo").expectedMessageCount(2);
         getMockEndpoint("mock:bar").expectedMessageCount(2);
@@ -261,10 +249,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.setAttribute(on, new Attribute("RemoveOnDump", Boolean.FALSE));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
-
-        // enable it
-        mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
+        assertEquals(Boolean.TRUE, enabled, "Should not be enabled");
 
         getMockEndpoint("mock:foo").expectedMessageCount(2);
         getMockEndpoint("mock:bar").expectedMessageCount(2);
@@ -316,10 +301,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.setAttribute(on, new Attribute("RemoveOnDump", Boolean.FALSE));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
-
-        // enable it
-        mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
+        assertEquals(Boolean.TRUE, enabled, "Should be enabled");
 
         getMockEndpoint("mock:foo").expectedMessageCount(2);
         getMockEndpoint("mock:bar").expectedMessageCount(2);
@@ -385,10 +367,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         mbeanServer.setAttribute(on, new Attribute("TracePattern", "foo"));
 
         Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
-        assertEquals(Boolean.FALSE, enabled, "Should not be enabled");
-
-        // enable it
-        mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));
+        assertEquals(Boolean.TRUE, enabled, "Should not be enabled");
 
         getMockEndpoint("mock:foo").expectedMessageCount(10);
         getMockEndpoint("mock:bar").expectedMessageCount(10);
