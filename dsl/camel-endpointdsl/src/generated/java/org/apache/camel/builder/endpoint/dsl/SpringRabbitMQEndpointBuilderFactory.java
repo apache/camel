@@ -1186,9 +1186,64 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
+         * Controls whether to wait for confirms. The connection factory must be
+         * configured for publisher confirms and this method.auto = Camel
+         * detects if the connection factory uses confirms or not. disabled =
+         * Confirms is disabled. enabled = Confirms is enabled.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param confirm the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointProducerBuilder confirm(String confirm) {
+            doSetProperty("confirm", confirm);
+            return this;
+        }
+        /**
          * Specify the timeout in milliseconds to be used when waiting for a
-         * reply message when doing request/reply messaging. The default value
-         * is 5 seconds. A negative value indicates an indefinite timeout.
+         * message sent to be confirmed by RabbitMQ when doing send only
+         * messaging (InOnly). The default value is 5 seconds. A negative value
+         * indicates an indefinite timeout.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: producer
+         * 
+         * @param confirmTimeout the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointProducerBuilder confirmTimeout(
+                long confirmTimeout) {
+            doSetProperty("confirmTimeout", confirmTimeout);
+            return this;
+        }
+        /**
+         * Specify the timeout in milliseconds to be used when waiting for a
+         * message sent to be confirmed by RabbitMQ when doing send only
+         * messaging (InOnly). The default value is 5 seconds. A negative value
+         * indicates an indefinite timeout.
+         * 
+         * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 5000
+         * Group: producer
+         * 
+         * @param confirmTimeout the value to set
+         * @return the dsl builder
+         */
+        default SpringRabbitMQEndpointProducerBuilder confirmTimeout(
+                String confirmTimeout) {
+            doSetProperty("confirmTimeout", confirmTimeout);
+            return this;
+        }
+        /**
+         * Specify the timeout in milliseconds to be used when waiting for a
+         * reply message when doing request/reply (InOut) messaging. The default
+         * value is 5 seconds. A negative value indicates an indefinite timeout.
          * 
          * The option is a: &lt;code&gt;long&lt;/code&gt; type.
          * 
@@ -1205,8 +1260,8 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         }
         /**
          * Specify the timeout in milliseconds to be used when waiting for a
-         * reply message when doing request/reply messaging. The default value
-         * is 5 seconds. A negative value indicates an indefinite timeout.
+         * reply message when doing request/reply (InOut) messaging. The default
+         * value is 5 seconds. A negative value indicates an indefinite timeout.
          * 
          * The option will be converted to a &lt;code&gt;long&lt;/code&gt; type.
          * 
