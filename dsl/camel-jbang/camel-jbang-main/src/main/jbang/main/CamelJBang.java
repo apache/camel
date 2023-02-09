@@ -19,9 +19,9 @@
 
 //JAVA 11+
 //REPOS mavencentral,apache-snapshot=http://repository.apache.org/content/groups/snapshots/
-//DEPS org.apache.camel:camel-bom:${camel.jbang.version:3.20.2}@pom
-//DEPS org.apache.camel:camel-jbang-core:${camel.jbang.version:3.20.2}
-//DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:3.20.0}
+//DEPS org.apache.camel:camel-bom:${camel.jbang.version:3.20.3}@pom
+//DEPS org.apache.camel:camel-jbang-core:${camel.jbang.version:3.20.3}
+//DEPS org.apache.camel.kamelets:camel-kamelets:${camel-kamelets.version:3.20.1.1}
 
 package main;
 
