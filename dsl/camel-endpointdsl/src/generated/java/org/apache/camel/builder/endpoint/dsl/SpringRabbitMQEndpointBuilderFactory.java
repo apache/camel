@@ -584,7 +584,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Delay in msec a Rabbitmq consumer will wait before redelivering a
+         * Delay in millis a Rabbitmq consumer will wait before redelivering a
          * message that Camel failed to process.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -600,7 +600,7 @@ public interface SpringRabbitMQEndpointBuilderFactory {
             return this;
         }
         /**
-         * Delay in msec a Rabbitmq consumer will wait before redelivering a
+         * Delay in millis a Rabbitmq consumer will wait before redelivering a
          * message that Camel failed to process.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
@@ -1187,12 +1187,13 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         }
         /**
          * Controls whether to wait for confirms. The connection factory must be
-         * configured for publisher confirms and this method.auto = Camel
+         * configured for publisher confirms and this method. auto = Camel
          * detects if the connection factory uses confirms or not. disabled =
          * Confirms is disabled. enabled = Confirms is enabled.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Default: auto
          * Group: producer
          * 
          * @param confirm the value to set
