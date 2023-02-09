@@ -119,14 +119,13 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
         long stamp = sl.writeLock();
         try {
             if (jdbcTemplate.queryForObject(getQueryString(), Integer.class, processorName, key) == 0) {
-                int result =
-                    jdbcTemplate.update(getInsertString(), processorName, key, currentTimestamp);
+                int result = jdbcTemplate.update(getInsertString(), processorName, key, currentTimestamp);
                 processorNameMessageIdSet.add(new ProcessorNameAndMessageId(processorName, key));
                 return result;
             } else {
                 //Update in case of orphan lock where a process dies without releasing exist lock
                 return jdbcTemplate.update(getUpdateTimestampQuery(), currentTimestamp,
-                    processorName, key);
+                        processorName, key);
             }
         } finally {
             sl.unlockWrite(stamp);
