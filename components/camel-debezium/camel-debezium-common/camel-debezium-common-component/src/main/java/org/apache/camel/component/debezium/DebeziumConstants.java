@@ -16,16 +16,12 @@
  */
 package org.apache.camel.component.debezium;
 
-import io.debezium.relational.history.FileDatabaseHistory;
 import org.apache.camel.spi.Metadata;
 import org.apache.kafka.connect.storage.FileOffsetBackingStore;
 
 public final class DebeziumConstants {
     // embedded engine constant
     public static final String DEFAULT_OFFSET_STORAGE = FileOffsetBackingStore.class.getName();
-
-    // mysql constant
-    public static final String DEFAULT_DATABASE_HISTORY = FileDatabaseHistory.class.getName();
 
     // header names
     private static final String HEADER_PREFIX = "CamelDebezium";
