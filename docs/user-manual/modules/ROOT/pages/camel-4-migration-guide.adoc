@@ -60,6 +60,11 @@ The option `backlogTracing=true` now automatic enabled the tracer on startup. Th
 was _surprisingly_ that the tracer was only made available, and had to be manually enabled afterwards.
 The old behavior can be archived by setting `backlogTracingStandby=true`.
 
+== XML serialization
+
+The default xml serialization using `ModelToXMLDumper` has been improved and now uses a generated xml
+serializer located in the `camel-xml-io` module instead of the JAXB based one from `camel-jaxb`.
+
 == Component changes
 
 === camel-caffeine
