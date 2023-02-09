@@ -40,8 +40,6 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SendDefinition;
 import org.apache.camel.model.ToDynamicDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
-import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.annotations.JdkService;
@@ -167,21 +165,14 @@ public class LwModelToXMLDumper implements ModelToXMLDumper {
         // gather all namespaces from the routes or route which is stored on the expression nodes
         if (definition instanceof RouteTemplatesDefinition templates) {
             templates.getRouteTemplates().forEach(template -> extractor.accept(template.getRoute()));
-            writer.writeRouteTemplatesDefinition(templates);
         } else if (definition instanceof RouteTemplateDefinition template) {
             extractor.accept(template.getRoute());
-            writer.writeRouteTemplateDefinition(template);
         } else if (definition instanceof RoutesDefinition routes) {
             routes.getRoutes().forEach(extractor);
-            writer.writeRoutesDefinition(routes);
         } else if (definition instanceof RouteDefinition route) {
             extractor.accept(route);
-            writer.writeRouteDefinition(route);
-        } else if (definition instanceof RestsDefinition rests) {
-            writer.writeRestsDefinition(rests);
-        } else if (definition instanceof RestDefinition rest) {
-            writer.writeRestDefinition(rest);
         }
+        writer.writeOptionalIdentifiedDefinitionRef((OptionalIdentifiedDefinition) definition);
 
         return buffer.toString();
     }

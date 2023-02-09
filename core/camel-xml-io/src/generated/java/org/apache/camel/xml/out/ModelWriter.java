@@ -1009,6 +1009,9 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteValidatorsDefinition("validators", def);
     }
+    public void writeOptionalIdentifiedDefinitionRef(OptionalIdentifiedDefinition def) throws IOException {
+        doWriteOptionalIdentifiedDefinitionRef(null, def);
+    }
     protected void doWriteAggregateDefinition(
             String name,
             AggregateDefinition def)
@@ -4681,6 +4684,100 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
+    protected void doWriteOptionalIdentifiedDefinitionRef(
+            String n,
+            OptionalIdentifiedDefinition<?> v)
+            throws IOException {
+        if (v != null) {
+            switch (v.getClass().getSimpleName()) {
+                case "AggregateDefinition" -> doWriteAggregateDefinition("aggregate", (AggregateDefinition) v);
+                case "BeanDefinition" -> doWriteBeanDefinition("bean", (BeanDefinition) v);
+                case "CatchDefinition" -> doWriteCatchDefinition("doCatch", (CatchDefinition) v);
+                case "ChoiceDefinition" -> doWriteChoiceDefinition("choice", (ChoiceDefinition) v);
+                case "CircuitBreakerDefinition" -> doWriteCircuitBreakerDefinition("circuitBreaker", (CircuitBreakerDefinition) v);
+                case "ClaimCheckDefinition" -> doWriteClaimCheckDefinition("claimCheck", (ClaimCheckDefinition) v);
+                case "ConvertBodyDefinition" -> doWriteConvertBodyDefinition("convertBodyTo", (ConvertBodyDefinition) v);
+                case "DelayDefinition" -> doWriteDelayDefinition("delay", (DelayDefinition) v);
+                case "DynamicRouterDefinition" -> doWriteDynamicRouterDefinition("dynamicRouter", (DynamicRouterDefinition) v);
+                case "EnrichDefinition" -> doWriteEnrichDefinition("enrich", (EnrichDefinition) v);
+                case "FilterDefinition" -> doWriteFilterDefinition("filter", (FilterDefinition) v);
+                case "FinallyDefinition" -> doWriteFinallyDefinition("doFinally", (FinallyDefinition) v);
+                case "FromDefinition" -> doWriteFromDefinition("from", (FromDefinition) v);
+                case "IdempotentConsumerDefinition" -> doWriteIdempotentConsumerDefinition("idempotentConsumer", (IdempotentConsumerDefinition) v);
+                case "InOnlyDefinition" -> doWriteInOnlyDefinition("inOnly", (InOnlyDefinition) v);
+                case "InOutDefinition" -> doWriteInOutDefinition("inOut", (InOutDefinition) v);
+                case "InputTypeDefinition" -> doWriteInputTypeDefinition("inputType", (InputTypeDefinition) v);
+                case "InterceptDefinition" -> doWriteInterceptDefinition("intercept", (InterceptDefinition) v);
+                case "InterceptFromDefinition" -> doWriteInterceptFromDefinition("interceptFrom", (InterceptFromDefinition) v);
+                case "InterceptSendToEndpointDefinition" -> doWriteInterceptSendToEndpointDefinition("interceptSendToEndpoint", (InterceptSendToEndpointDefinition) v);
+                case "KameletDefinition" -> doWriteKameletDefinition("kamelet", (KameletDefinition) v);
+                case "LoadBalanceDefinition" -> doWriteLoadBalanceDefinition("loadBalance", (LoadBalanceDefinition) v);
+                case "LogDefinition" -> doWriteLogDefinition("log", (LogDefinition) v);
+                case "LoopDefinition" -> doWriteLoopDefinition("loop", (LoopDefinition) v);
+                case "MarshalDefinition" -> doWriteMarshalDefinition("marshal", (MarshalDefinition) v);
+                case "MulticastDefinition" -> doWriteMulticastDefinition("multicast", (MulticastDefinition) v);
+                case "OnCompletionDefinition" -> doWriteOnCompletionDefinition("onCompletion", (OnCompletionDefinition) v);
+                case "OnExceptionDefinition" -> doWriteOnExceptionDefinition("onException", (OnExceptionDefinition) v);
+                case "OnFallbackDefinition" -> doWriteOnFallbackDefinition("onFallback", (OnFallbackDefinition) v);
+                case "OtherwiseDefinition" -> doWriteOtherwiseDefinition("otherwise", (OtherwiseDefinition) v);
+                case "OutputTypeDefinition" -> doWriteOutputTypeDefinition("outputType", (OutputTypeDefinition) v);
+                case "PausableDefinition" -> doWritePausableDefinition("pausable", (PausableDefinition) v);
+                case "PipelineDefinition" -> doWritePipelineDefinition("pipeline", (PipelineDefinition) v);
+                case "PolicyDefinition" -> doWritePolicyDefinition("policy", (PolicyDefinition) v);
+                case "PollEnrichDefinition" -> doWritePollEnrichDefinition("pollEnrich", (PollEnrichDefinition) v);
+                case "ProcessDefinition" -> doWriteProcessDefinition("process", (ProcessDefinition) v);
+                case "RecipientListDefinition" -> doWriteRecipientListDefinition("recipientList", (RecipientListDefinition) v);
+                case "RemoveHeaderDefinition" -> doWriteRemoveHeaderDefinition("removeHeader", (RemoveHeaderDefinition) v);
+                case "RemoveHeadersDefinition" -> doWriteRemoveHeadersDefinition("removeHeaders", (RemoveHeadersDefinition) v);
+                case "RemovePropertiesDefinition" -> doWriteRemovePropertiesDefinition("removeProperties", (RemovePropertiesDefinition) v);
+                case "RemovePropertyDefinition" -> doWriteRemovePropertyDefinition("removeProperty", (RemovePropertyDefinition) v);
+                case "ResequenceDefinition" -> doWriteResequenceDefinition("resequence", (ResequenceDefinition) v);
+                case "ResumableDefinition" -> doWriteResumableDefinition("resumable", (ResumableDefinition) v);
+                case "RollbackDefinition" -> doWriteRollbackDefinition("rollback", (RollbackDefinition) v);
+                case "RouteConfigurationDefinition" -> doWriteRouteConfigurationDefinition("routeConfiguration", (RouteConfigurationDefinition) v);
+                case "RouteDefinition" -> doWriteRouteDefinition("route", (RouteDefinition) v);
+                case "RouteTemplateDefinition" -> doWriteRouteTemplateDefinition("routeTemplate", (RouteTemplateDefinition) v);
+                case "RouteTemplatesDefinition" -> doWriteRouteTemplatesDefinition("routeTemplates", (RouteTemplatesDefinition) v);
+                case "RoutesDefinition" -> doWriteRoutesDefinition("routes", (RoutesDefinition) v);
+                case "RoutingSlipDefinition" -> doWriteRoutingSlipDefinition("routingSlip", (RoutingSlipDefinition) v);
+                case "SagaDefinition" -> doWriteSagaDefinition("saga", (SagaDefinition) v);
+                case "SamplingDefinition" -> doWriteSamplingDefinition("sample", (SamplingDefinition) v);
+                case "ScriptDefinition" -> doWriteScriptDefinition("script", (ScriptDefinition) v);
+                case "SetBodyDefinition" -> doWriteSetBodyDefinition("setBody", (SetBodyDefinition) v);
+                case "SetExchangePatternDefinition" -> doWriteSetExchangePatternDefinition("setExchangePattern", (SetExchangePatternDefinition) v);
+                case "SetHeaderDefinition" -> doWriteSetHeaderDefinition("setHeader", (SetHeaderDefinition) v);
+                case "SetPropertyDefinition" -> doWriteSetPropertyDefinition("setProperty", (SetPropertyDefinition) v);
+                case "SortDefinition" -> doWriteSortDefinition("sort", (SortDefinition) v);
+                case "SplitDefinition" -> doWriteSplitDefinition("split", (SplitDefinition) v);
+                case "StepDefinition" -> doWriteStepDefinition("step", (StepDefinition) v);
+                case "StopDefinition" -> doWriteStopDefinition("stop", (StopDefinition) v);
+                case "TemplatedRoutesDefinition" -> doWriteTemplatedRoutesDefinition("templatedRoutes", (TemplatedRoutesDefinition) v);
+                case "ThreadPoolProfileDefinition" -> doWriteThreadPoolProfileDefinition("threadPoolProfile", (ThreadPoolProfileDefinition) v);
+                case "ThreadsDefinition" -> doWriteThreadsDefinition("threads", (ThreadsDefinition) v);
+                case "ThrottleDefinition" -> doWriteThrottleDefinition("throttle", (ThrottleDefinition) v);
+                case "ThrowExceptionDefinition" -> doWriteThrowExceptionDefinition("throwException", (ThrowExceptionDefinition) v);
+                case "ToDefinition" -> doWriteToDefinition("to", (ToDefinition) v);
+                case "ToDynamicDefinition" -> doWriteToDynamicDefinition("toD", (ToDynamicDefinition) v);
+                case "TransactedDefinition" -> doWriteTransactedDefinition("transacted", (TransactedDefinition) v);
+                case "TransformDefinition" -> doWriteTransformDefinition("transform", (TransformDefinition) v);
+                case "TryDefinition" -> doWriteTryDefinition("doTry", (TryDefinition) v);
+                case "UnmarshalDefinition" -> doWriteUnmarshalDefinition("unmarshal", (UnmarshalDefinition) v);
+                case "ValidateDefinition" -> doWriteValidateDefinition("validate", (ValidateDefinition) v);
+                case "WhenDefinition" -> doWriteWhenDefinition("when", (WhenDefinition) v);
+                case "WireTapDefinition" -> doWriteWireTapDefinition("wireTap", (WireTapDefinition) v);
+                case "ServiceCallDefinition" -> doWriteServiceCallDefinition("serviceCall", (ServiceCallDefinition) v);
+                case "DeleteDefinition" -> doWriteDeleteDefinition("delete", (DeleteDefinition) v);
+                case "GetDefinition" -> doWriteGetDefinition("get", (GetDefinition) v);
+                case "HeadDefinition" -> doWriteHeadDefinition("head", (HeadDefinition) v);
+                case "PatchDefinition" -> doWritePatchDefinition("patch", (PatchDefinition) v);
+                case "PostDefinition" -> doWritePostDefinition("post", (PostDefinition) v);
+                case "PutDefinition" -> doWritePutDefinition("put", (PutDefinition) v);
+                case "RestBindingDefinition" -> doWriteRestBindingDefinition("restBinding", (RestBindingDefinition) v);
+                case "RestDefinition" -> doWriteRestDefinition("rest", (RestDefinition) v);
+                case "RestsDefinition" -> doWriteRestsDefinition("rests", (RestsDefinition) v);
+            }
+        }
+    }
     protected void doWriteOutputTypeDefinitionRef(
             String n,
             OutputTypeDefinition v)
@@ -4928,7 +5025,7 @@ public class ModelWriter extends BaseWriter {
             text(value);
         }
     }
-    private <T> void doWriteList(String wrapperName, String name, List<T> list, ElementSerializer<T> elementSerializer) throws IOException {
+    protected <T> void doWriteList(String wrapperName, String name, List<T> list, ElementSerializer<T> elementSerializer) throws IOException {
         if (list != null) {
             if (wrapperName != null) {
                 startElement(wrapperName);
@@ -4941,7 +5038,7 @@ public class ModelWriter extends BaseWriter {
             }
         }
     }
-    private <T> void doWriteElement(String name, T v, ElementSerializer<T> elementSerializer) throws IOException {
+    protected <T> void doWriteElement(String name, T v, ElementSerializer<T> elementSerializer) throws IOException {
         if (v != null) {
             elementSerializer.doWriteElement(name, v);
         }

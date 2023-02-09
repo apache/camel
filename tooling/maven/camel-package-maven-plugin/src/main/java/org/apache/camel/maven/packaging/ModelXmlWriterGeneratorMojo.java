@@ -250,6 +250,13 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
 
         Set<Class<?>> elementRefs = new TreeSet<>(Comparator.comparing(Class::getName));
 
+        // Special case for OptionalIdentifiedDefinition
+        model.stream().filter(cl -> "OptionalIdentifiedDefinition".equals(cl.getSimpleName()))
+                .forEach(elementRefs::add);
+        writer.addMethod()
+                .setSignature("public void writeOptionalIdentifiedDefinitionRef(OptionalIdentifiedDefinition def) throws IOException")
+                .setBody("doWriteOptionalIdentifiedDefinitionRef(null, def);");
+
         for (Class<?> clazz : model) {
             if (clazz.getAnnotation(XmlEnum.class) != null || clazz.isInterface()) {
                 continue;
@@ -485,8 +492,7 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                         "    text(value);",
                         "}");
         writer.addMethod()
-                .setProtected()
-                .setSignature("private <T> void doWriteList(String wrapperName, String name, List<T> list, ElementSerializer<T> elementSerializer) throws IOException")
+                .setSignature("protected <T> void doWriteList(String wrapperName, String name, List<T> list, ElementSerializer<T> elementSerializer) throws IOException")
                 .setBody("""
                             if (list != null) {
                                 if (wrapperName != null) {
@@ -500,8 +506,7 @@ public class ModelXmlWriterGeneratorMojo extends AbstractGeneratorMojo {
                                 }
                             }""");
         writer.addMethod()
-                .setProtected()
-                .setSignature("private <T> void doWriteElement(String name, T v, ElementSerializer<T> elementSerializer) throws IOException")
+                .setSignature("protected <T> void doWriteElement(String name, T v, ElementSerializer<T> elementSerializer) throws IOException")
                 .setBody("""
                             if (v != null) {
                                 elementSerializer.doWriteElement(name, v);
