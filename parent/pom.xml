@@ -128,6 +128,8 @@
         <cxf-xjc-plugin-version>4.0.0</cxf-xjc-plugin-version>
 	<cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
         <datasonnet-mapper-version>2.5-jakarta4</datasonnet-mapper-version>
+        <debezium-version>2.1.2.Final</debezium-version>
+        <debezium-mysql-connector-version>8.0.29</debezium-mysql-connector-version>
         <deltaspike-version>1.9.5</deltaspike-version>
         <depends-maven-plugin-version>1.4.0</depends-maven-plugin-version>
         <derby-version>10.14.2.0</derby-version>
@@ -141,8 +143,6 @@
         <djl-tensorflow-native-version>2.4.1</djl-tensorflow-native-version>
         <docker-java-version>3.2.13</docker-java-version>
         <dropbox-version>5.4.4</dropbox-version>
-        <debezium-version>1.9.6.Final</debezium-version>
-        <debezium-mysql-connector-version>8.0.28</debezium-mysql-connector-version>
         <eddsa-version>0.3.0</eddsa-version>
         <egit-github-core-version>2.1.5</egit-github-core-version>
         <ehcache3-version>3.10.8</ehcache3-version>
