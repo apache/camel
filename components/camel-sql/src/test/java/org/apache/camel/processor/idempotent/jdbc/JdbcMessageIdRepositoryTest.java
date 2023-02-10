@@ -45,7 +45,6 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
     protected static final String PROCESSOR_NAME = "myProcessorName";
 
     protected JdbcTemplate jdbcTemplate;
-    protected DataSource dataSource;
 
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
@@ -58,7 +57,7 @@ public class JdbcMessageIdRepositoryTest extends CamelSpringTestSupport {
     public void setUp() throws Exception {
         super.setUp();
 
-        dataSource = context.getRegistry().lookupByNameAndType("dataSource", DataSource.class);
+        DataSource dataSource = context.getRegistry().lookupByNameAndType("dataSource", DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
     }

@@ -31,7 +31,6 @@ import javax.sql.DataSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ShutdownableService;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -119,12 +118,15 @@ public class JdbcOrphanLockAwareIdempotentRepository extends JdbcMessageIdReposi
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
         long stamp = sl.writeLock();
         try {
-            int result = jdbcTemplate.update(getInsertString(), processorName, key, currentTimestamp);
-            processorNameMessageIdSet.add(new ProcessorNameAndMessageId(processorName, key));
-            return result;
-        } catch (DuplicateKeyException e) {
-            //Update in case of orphan lock where a process dies without releasing exist lock
-            return jdbcTemplate.update(getUpdateTimestampQuery(), currentTimestamp, processorName, key);
+            if (jdbcTemplate.queryForObject(getQueryString(), Integer.class, processorName, key) == 0) {
+                int result = jdbcTemplate.update(getInsertString(), processorName, key, currentTimestamp);
+                processorNameMessageIdSet.add(new ProcessorNameAndMessageId(processorName, key));
+                return result;
+            } else {
+                //Update in case of orphan lock where a process dies without releasing exist lock
+                return jdbcTemplate.update(getUpdateTimestampQuery(), currentTimestamp,
+                        processorName, key);
+            }
         } finally {
             sl.unlockWrite(stamp);
         }
