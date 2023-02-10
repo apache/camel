@@ -27,7 +27,7 @@ import io.debezium.config.CommonConnectorConfig;
 import io.debezium.connector.mysql.MySqlConnector;
 import io.debezium.connector.mysql.MySqlConnectorConfig;
 import io.debezium.relational.RelationalDatabaseConnectorConfig;
-import io.debezium.relational.history.FileDatabaseHistory;
+import io.debezium.storage.file.history.FileSchemaHistory;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.connect.source.SourceConnector;
 import org.junit.jupiter.api.Test;
@@ -42,9 +42,9 @@ public class ConnectorConfigGeneratorTest {
     @Test
     void testIfCorrectlyGeneratedMySQLFile() {
         final Set<String> requiredFields = new HashSet<>(
-                Arrays.asList(MySqlConnectorConfig.PASSWORD.name(), RelationalDatabaseConnectorConfig.SERVER_NAME.name()));
+                Arrays.asList(MySqlConnectorConfig.PASSWORD.name(), RelationalDatabaseConnectorConfig.TOPIC_PREFIX.name()));
         final Map<String, Object> overrideFields = new HashMap<>();
-        overrideFields.put(MySqlConnectorConfig.DATABASE_HISTORY.name(), FileDatabaseHistory.class);
+        overrideFields.put(MySqlConnectorConfig.SCHEMA_HISTORY.name(), FileSchemaHistory.class);
         overrideFields.put(CommonConnectorConfig.TOMBSTONES_ON_DELETE.name(), false);
         overrideFields.put(MySqlConnectorConfig.SERVER_ID.name(), 1111);
 

@@ -23,7 +23,7 @@ import java.util.Set;
 import io.debezium.config.CommonConnectorConfig;
 import io.debezium.config.Configuration;
 import io.debezium.config.Field;
-import io.debezium.relational.history.FileDatabaseHistory;
+import io.debezium.storage.file.history.FileSchemaHistory;
 import org.apache.camel.component.debezium.configuration.ConfigurationValidation;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -88,7 +88,7 @@ public final class ConnectorConfigGenerator {
 
         final ConfigDef configDef = connector.config();
         // add additional fields
-        Field.group(configDef, "additionalFields", FileDatabaseHistory.FILE_PATH);
+        Field.group(configDef, "additionalFields", FileSchemaHistory.FILE_PATH);
         // get the name of the connector from the configClass
         final String connectorName = dbzConfigClass.getSimpleName().replace(CONNECTOR_SUFFIX, "");
 
