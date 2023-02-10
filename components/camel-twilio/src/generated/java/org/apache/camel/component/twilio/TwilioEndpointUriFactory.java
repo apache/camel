@@ -21,7 +21,7 @@ public class TwilioEndpointUriFactory extends org.apache.camel.support.component
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(67);
+        Set<String> props = new HashSet<>(66);
         props.add("apiName");
         props.add("applicationSid");
         props.add("areaCode");
@@ -69,7 +69,6 @@ public class TwilioEndpointUriFactory extends org.apache.camel.support.component
         props.add("phoneNumber");
         props.add("pollStrategy");
         props.add("postalCode");
-        props.add("qualityScore");
         props.add("region");
         props.add("repeatCount");
         props.add("runLoggingLevel");

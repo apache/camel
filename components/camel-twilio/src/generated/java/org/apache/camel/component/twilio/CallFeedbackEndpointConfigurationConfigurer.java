@@ -24,7 +24,6 @@ public class CallFeedbackEndpointConfigurationConfigurer extends org.apache.came
         map.put("MethodName", java.lang.String.class);
         map.put("PathAccountSid", java.lang.String.class);
         map.put("PathCallSid", java.lang.String.class);
-        map.put("QualityScore", java.lang.Integer.class);
         ALL_OPTIONS = map;
     }
 
@@ -40,8 +39,6 @@ public class CallFeedbackEndpointConfigurationConfigurer extends org.apache.came
         case "PathAccountSid": target.setPathAccountSid(property(camelContext, java.lang.String.class, value)); return true;
         case "pathcallsid":
         case "PathCallSid": target.setPathCallSid(property(camelContext, java.lang.String.class, value)); return true;
-        case "qualityscore":
-        case "QualityScore": target.setQualityScore(property(camelContext, java.lang.Integer.class, value)); return true;
         default: return false;
         }
     }
@@ -62,8 +59,6 @@ public class CallFeedbackEndpointConfigurationConfigurer extends org.apache.came
         case "PathAccountSid": return java.lang.String.class;
         case "pathcallsid":
         case "PathCallSid": return java.lang.String.class;
-        case "qualityscore":
-        case "QualityScore": return java.lang.Integer.class;
         default: return null;
         }
     }
@@ -80,8 +75,6 @@ public class CallFeedbackEndpointConfigurationConfigurer extends org.apache.came
         case "PathAccountSid": return target.getPathAccountSid();
         case "pathcallsid":
         case "PathCallSid": return target.getPathCallSid();
-        case "qualityscore":
-        case "QualityScore": return target.getQualityScore();
         default: return null;
         }
     }
