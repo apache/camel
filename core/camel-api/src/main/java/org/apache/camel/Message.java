@@ -32,6 +32,19 @@ import org.apache.camel.spi.HeadersMapFactory;
  */
 public interface Message {
 
+    interface MessageTrait {
+        /**
+         * A strategy for component-specific messages to determine whether the message is redelivered or not.
+         * <p/>
+         * <b>Important: </b> It is not always possible to determine if the transacted is a redelivery or not, and therefore
+         * <tt>null</tt> is returned. Such an example would be a JDBC message. However, JMS brokers provide details if a
+         * transacted message is redelivered.
+         *
+         * @return <tt>true</tt> if redelivered otherwise returns <tt>false</tt>
+         */
+        boolean isTransactedRedelivered();
+    }
+
     /**
      * Clears the message from user data, so the message can be reused.
      * <p/>
@@ -318,5 +331,14 @@ public interface Message {
      * @param newBody the new body to use
      */
     void copyFromWithNewBody(Message message, Object newBody);
+
+    default MessageTrait getMessageTraits() {
+        return new MessageTrait() {
+            @Override
+            public boolean isTransactedRedelivered() {
+                return false;
+            }
+        };
+    }
 
 }

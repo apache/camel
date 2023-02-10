@@ -109,7 +109,6 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
                 this.onCompletions.clear();
             }
             // do not reset endpoint/fromRouteId as it would be the same consumer/endpoint again
-            this.externalRedelivered = null;
             this.historyNodeId = null;
             this.historyNodeLabel = null;
             this.transacted = false;

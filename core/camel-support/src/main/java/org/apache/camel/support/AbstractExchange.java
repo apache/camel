@@ -71,7 +71,6 @@ class AbstractExchange implements Exchange {
     Endpoint fromEndpoint;
     String fromRouteId;
     List<Synchronization> onCompletions;
-    Boolean externalRedelivered;
     String historyNodeId;
     String historyNodeLabel;
     String historyNodeSource;
@@ -653,20 +652,8 @@ class AbstractExchange implements Exchange {
 
     @Override
     public boolean isExternalRedelivered() {
-        if (externalRedelivered == null) {
-            // lets avoid adding methods to the Message API, so we use the
-            // DefaultMessage to allow component specific messages to extend
-            // and implement the isExternalRedelivered method.
-            Message msg = getIn();
-            if (msg instanceof DefaultMessage) {
-                externalRedelivered = ((DefaultMessage) msg).isTransactedRedelivered();
-            }
-            // not from a transactional resource so mark it as false by default
-            if (externalRedelivered == null) {
-                externalRedelivered = false;
-            }
-        }
-        return externalRedelivered;
+        Message message = getIn();
+        return message.getMessageTraits().isTransactedRedelivered();
     }
 
     @Override

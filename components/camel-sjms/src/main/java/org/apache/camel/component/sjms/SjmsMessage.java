@@ -288,12 +288,13 @@ public class SjmsMessage extends DefaultMessage {
     }
 
     @Override
-    protected Boolean isTransactedRedelivered() {
-        if (jmsMessage != null) {
-            return JmsMessageHelper.getJMSRedelivered(jmsMessage);
-        } else {
-            return null;
-        }
+    public MessageTrait getMessageTraits() {
+        return new MessageTrait() {
+            @Override
+            public boolean isTransactedRedelivered() {
+                return JmsMessageHelper.getJMSRedelivered(jmsMessage);
+            }
+        };
     }
 
     private String getDestinationAsString(Destination destination) throws JMSException {
