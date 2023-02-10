@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.camel.spi.HeadersMapFactory;
+import org.apache.camel.trait.message.MessageTrait;
 
 /**
  * Implements the <a href="http://camel.apache.org/message.html">Message</a> pattern and represents an inbound or
@@ -318,5 +319,29 @@ public interface Message {
      * @param newBody the new body to use
      */
     void copyFromWithNewBody(Message message, Object newBody);
+
+    /**
+     * Checks whether the message has a given {@link MessageTrait}
+     *
+     * @param  trait the {@link MessageTrait} to check
+     * @return       true if the message instance has the trait or false otherwise
+     */
+    boolean hasTrait(MessageTrait trait);
+
+    /**
+     * Gets the payload for the {@link MessageTrait}
+     *
+     * @param  trait the {@link MessageTrait} to obtain the payload
+     * @return       The trait payload or null if not available
+     */
+    Object getPayloadForTrait(MessageTrait trait);
+
+    /**
+     * Sets the payload for the {@link MessageTrait}
+     *
+     * @param trait  the {@link MessageTrait} to set the payload
+     * @param object the payload
+     */
+    void setPayloadForTrait(MessageTrait trait, Object object);
 
 }

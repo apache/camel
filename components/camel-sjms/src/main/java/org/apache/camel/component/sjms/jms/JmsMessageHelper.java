@@ -27,6 +27,8 @@ import jakarta.jms.Message;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.trait.message.MessageTrait;
+import org.apache.camel.trait.message.RedeliveryTraitPayload;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.util.StringHelper.removeStartingCharacters;
@@ -326,6 +328,28 @@ public final class JmsMessageHelper {
         }
 
         return null;
+    }
+
+    /**
+     * For a given message, evaluates what is the redelivery state for it and gives the appropriate {@link MessageTrait}
+     * for that redelivery state
+     *
+     * @param  message the message to evalute
+     * @return         The appropriate MessageTrait for the redelivery state (one of MessageTrait.UNDEFINED_REDELIVERY,
+     *                 MessageTrait.IS_REDELIVERY or MessageTrait.NON_REDELIVERY).
+     */
+    public static RedeliveryTraitPayload evalRedeliveryMessageTrait(Message message) {
+        final Boolean redelivered = JmsMessageHelper.getJMSRedelivered(message);
+
+        if (redelivered == null) {
+            return RedeliveryTraitPayload.UNDEFINED_REDELIVERY;
+        }
+
+        if (Boolean.TRUE.equals(redelivered)) {
+            return RedeliveryTraitPayload.IS_REDELIVERY;
+        }
+
+        return RedeliveryTraitPayload.NON_REDELIVERY;
     }
 
     /**

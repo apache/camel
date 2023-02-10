@@ -341,24 +341,9 @@ public class DefaultMessage extends MessageSupport {
     }
 
     /**
-     * A strategy for component specific messages to determine whether the message is redelivered or not.
-     * <p/>
-     * <b>Important: </b> It is not always possible to determine if the transacted is a redelivery or not, and therefore
-     * <tt>null</tt> is returned. Such an example would be a JDBC message. However JMS brokers provides details if a
-     * transacted message is redelivered.
-     *
-     * @return <tt>true</tt> if redelivered, <tt>false</tt> if not, <tt>null</tt> if not able to determine
-     */
-    protected Boolean isTransactedRedelivered() {
-        // return null by default
-        return null;
-    }
-
-    /**
      * Returns true if the headers have been mutated in some way
      */
     protected boolean hasPopulatedHeaders() {
         return headers != null;
     }
-
 }

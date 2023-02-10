@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.trait.message.MessageTrait;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,7 @@ import static org.apache.camel.support.MessageHelper.copyBody;
  */
 public class JmsMessage extends DefaultMessage {
     private static final Logger LOG = LoggerFactory.getLogger(JmsMessage.class);
+
     private Message jmsMessage;
     private Session jmsSession;
     private JmsBinding binding;
@@ -148,6 +150,7 @@ public class JmsMessage extends DefaultMessage {
             }
         }
         this.jmsMessage = jmsMessage;
+        setPayloadForTrait(MessageTrait.REDELIVERY, JmsMessageHelper.evalRedeliveryMessageTrait(jmsMessage));
     }
 
     /**
@@ -269,15 +272,6 @@ public class JmsMessage extends DefaultMessage {
         }
     }
 
-    @Override
-    protected Boolean isTransactedRedelivered() {
-        if (jmsMessage != null) {
-            return JmsMessageHelper.getJMSRedelivered(jmsMessage);
-        } else {
-            return null;
-        }
-    }
-
     private String getDestinationAsString(Destination destination) throws JMSException {
         String result = null;
         if (destination == null) {
@@ -293,5 +287,4 @@ public class JmsMessage extends DefaultMessage {
     private String getSanitizedString(Object value) {
         return value != null ? value.toString().replaceAll("[^a-zA-Z0-9\\.\\_\\-]", "_") : "";
     }
-
 }

@@ -38,6 +38,7 @@ import org.apache.camel.WrappedFile;
 import org.apache.camel.spi.DataTypeAware;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.trait.message.MessageTrait;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -620,14 +621,14 @@ public final class MessageHelper {
      */
     public static void copyBody(Message source, Message target) {
         // Preserve the DataType if both messages are DataTypeAware
-        if (source instanceof DataTypeAware && target instanceof DataTypeAware) {
-            final DataTypeAware dataTypeAwareSource = (DataTypeAware) source;
-            if (dataTypeAwareSource.hasDataType()) {
-                final DataTypeAware dataTypeAwareTarget = (DataTypeAware) target;
-                dataTypeAwareTarget.setBody(source.getBody(), dataTypeAwareSource.getDataType());
-                return;
-            }
+        if (source.hasTrait(MessageTrait.DATA_AWARE)) {
+            target.setBody(source.getBody());
+            target.setPayloadForTrait(MessageTrait.DATA_AWARE,
+                    source.getPayloadForTrait(MessageTrait.DATA_AWARE));
+
+            return;
         }
+
         target.setBody(source.getBody());
     }
 
