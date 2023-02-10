@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management.mbean;
+package org.apache.camel.spi;
 
-import java.io.Serializable;
+import java.util.Map;
 
 /**
  * Represents a traced message by the BacklogTracer.
  */
-public interface BacklogTracerEventMessage extends Serializable {
+public interface BacklogTracerEventMessage {
 
     String ROOT_TAG = "backlogTracerEventMessage";
     String TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
@@ -57,6 +57,11 @@ public interface BacklogTracerEventMessage extends Serializable {
     String getMessageAsXml();
 
     /**
+     * The content of the message as JSon (body and headers)
+     */
+    String getMessageAsJSon();
+
+    /**
      * Dumps the event message as XML using the {@link #ROOT_TAG} as root tag.
      * <p/>
      * The <tt>timestamp</tt> tag is formatted in the format defined by {@link #TIMESTAMP_FORMAT}
@@ -65,5 +70,18 @@ public interface BacklogTracerEventMessage extends Serializable {
      * @return        xml representation of this event
      */
     String toXml(int indent);
+
+    /**
+     * Dumps the event message as JSon.
+     *
+     * @param  indent number of spaces to indent
+     * @return        JSon representation of this event
+     */
+    String toJSon(int indent);
+
+    /**
+     * The event message as an org.apache.camel.util.json.JsonObject object.
+     */
+    Map<String, Object> asJSon();
 
 }

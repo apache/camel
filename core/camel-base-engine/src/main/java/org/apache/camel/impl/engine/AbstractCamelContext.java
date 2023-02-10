@@ -484,7 +484,16 @@ public abstract class AbstractCamelContext extends BaseService
         if (type.isInstance(this)) {
             return type.cast(this);
         }
+        // lookup by direct implementatiin
         Object extension = extensions.get(type);
+        if (extension == null) {
+            // fallback and lookup via interfaces
+            for (Object e : extensions.values()) {
+                if (type.isInstance(e)) {
+                    return type.cast(e);
+                }
+            }
+        }
         if (extension instanceof Supplier) {
             extension = ((Supplier) extension).get();
             setExtension(type, (T) extension);
