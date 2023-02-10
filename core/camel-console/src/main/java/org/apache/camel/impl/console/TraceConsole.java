@@ -16,9 +16,12 @@
  */
 package org.apache.camel.impl.console;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.spi.BacklogTracer;
+import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
@@ -28,25 +31,44 @@ import org.apache.camel.util.json.JsonObject;
 @Configurer(bootstrap = true)
 public class TraceConsole extends AbstractDevConsole {
 
-    private BacklogTracer tracer;
-
     public TraceConsole() {
         super("camel", "trace", "Camel Tracing", "Trace routed messages");
     }
 
-    @Override
-    protected void doBuild() throws Exception {
-        tracer = getCamelContext().getExtension(BacklogTracer.class);
-    }
-
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
+
+        BacklogTracer tracer = getCamelContext().getExtension(BacklogTracer.class);
+        if (tracer != null) {
+            for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
+                String xml = t.toXml(0);
+                sb.append(xml).append("\n");
+            }
+        }
 
         return sb.toString();
     }
 
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
+
+        BacklogTracer tracer = getCamelContext().getExtension(BacklogTracer.class);
+        if (tracer != null) {
+            List<JsonObject> arr = new ArrayList<>();
+            root.put("traces", arr);
+            for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
+                JsonObject jo = new JsonObject();
+                jo.put("uid", t.getUid());
+                jo.put("exchangeId", t.getExchangeId());
+                jo.put("routeId", t.getRouteId());
+                jo.put("nodeId", t.getToNode());
+                if (t.getTimestamp() > 0) {
+                    jo.put("timestamp", t.getTimestamp());
+                }
+                // TODO: message body/headers as json
+                arr.add(jo);
+            }
+        }
 
         return root;
     }
