@@ -26,6 +26,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 @DevConsole("trace")
 @Configurer(bootstrap = true)
@@ -59,13 +60,22 @@ public class TraceConsole extends AbstractDevConsole {
             for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
                 JsonObject jo = new JsonObject();
                 jo.put("uid", t.getUid());
-                jo.put("exchangeId", t.getExchangeId());
-                jo.put("routeId", t.getRouteId());
-                jo.put("nodeId", t.getToNode());
+                if (t.getRouteId() != null) {
+                    jo.put("routeId", t.getRouteId());
+                }
+                if (t.getToNode() != null) {
+                    jo.put("nodeId", t.getToNode());
+                }
                 if (t.getTimestamp() > 0) {
                     jo.put("timestamp", t.getTimestamp());
                 }
-                // TODO: message body/headers as json
+                try {
+                    // parse back to json object and avoid double message root
+                    JsonObject msg = (JsonObject) Jsoner.deserialize(t.getMessageAsJSon());
+                    jo.put("message", msg.get("message"));
+                } catch (Exception e) {
+                    // ignore
+                }
                 arr.add(jo);
             }
         }

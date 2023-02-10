@@ -55,6 +55,11 @@ public interface BacklogTracerEventMessage {
     String getMessageAsXml();
 
     /**
+     * The content of the message as JSon (body and headers)
+     */
+    String getMessageAsJSon();
+
+    /**
      * Dumps the event message as XML using the {@link #ROOT_TAG} as root tag.
      * <p/>
      * The <tt>timestamp</tt> tag is formatted in the format defined by {@link #TIMESTAMP_FORMAT}

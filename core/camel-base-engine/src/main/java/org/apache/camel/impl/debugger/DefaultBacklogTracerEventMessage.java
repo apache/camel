@@ -25,23 +25,23 @@ import org.apache.camel.spi.BacklogTracerEventMessage;
  */
 public final class DefaultBacklogTracerEventMessage implements BacklogTracerEventMessage {
 
-    private static final long serialVersionUID = 1L;
-
     private final long uid;
     private final long timestamp;
     private final String routeId;
     private final String toNode;
     private final String exchangeId;
     private final String messageAsXml;
+    private final String messageAsJSon;
 
     public DefaultBacklogTracerEventMessage(long uid, long timestamp, String routeId, String toNode, String exchangeId,
-                                            String messageAsXml) {
+                                            String messageAsXml, String messageAsJSon) {
         this.uid = uid;
         this.timestamp = timestamp;
         this.routeId = routeId;
         this.toNode = toNode;
         this.exchangeId = exchangeId;
         this.messageAsXml = messageAsXml;
+        this.messageAsJSon = messageAsJSon;
     }
 
     @Override
@@ -72,6 +72,11 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     @Override
     public String getMessageAsXml() {
         return messageAsXml;
+    }
+
+    @Override
+    public String getMessageAsJSon() {
+        return messageAsJSon;
     }
 
     @Override

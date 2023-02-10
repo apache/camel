@@ -41,6 +41,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * Some helper methods when working with {@link org.apache.camel.Message}.
@@ -731,6 +734,105 @@ public final class MessageHelper {
                     "---------------------------------------------------------------------------------------------------------------------------------------");
         }
         return sb.toString();
+    }
+
+    /**
+     * Dumps the message as a generic JSon structure.
+     *
+     * @param  message the message
+     * @return         the JSon
+     */
+    public static String dumpAsJSon(Message message) {
+        return dumpAsJSon(message, true);
+    }
+
+    /**
+     * Dumps the message as a generic JSon structure.
+     *
+     * @param  message     the message
+     * @param  includeBody whether or not to include the message body
+     * @return             the JSon
+     */
+    public static String dumpAsJSon(Message message, boolean includeBody) {
+        return dumpAsJSon(message, includeBody, 0);
+    }
+
+    /**
+     * Dumps the message as a generic JSon structure.
+     *
+     * @param  message     the message
+     * @param  includeBody whether or not to include the message body
+     * @param  indent      number of spaces to indent
+     * @return             the JSon
+     */
+    public static String dumpAsJSon(Message message, boolean includeBody, int indent) {
+        return dumpAsJSon(message, includeBody, indent, false, true, 128 * 1024);
+    }
+
+    /**
+     * Dumps the message as a generic JSon structure.
+     *
+     * @param  message      the message
+     * @param  includeBody  whether or not to include the message body
+     * @param  indent       number of spaces to indent
+     * @param  allowStreams whether to include message body if they are stream based
+     * @param  allowFiles   whether to include message body if they are file based
+     * @param  maxChars     clip body after maximum chars (to avoid very big messages). Use 0 or negative value to not
+     *                      limit at all.
+     * @return              the JSon
+     */
+    public static String dumpAsJSon(
+            Message message, boolean includeBody, int indent, boolean allowStreams, boolean allowFiles, int maxChars) {
+
+        JsonObject root = new JsonObject();
+        JsonObject jo = new JsonObject();
+        root.put("message", jo);
+        jo.put("exchangeId", message.getExchange().getExchangeId());
+
+        // headers
+        if (message.hasHeaders()) {
+            JsonArray arr = new JsonArray();
+            jo.put("headers", arr);
+            // sort the headers so they are listed A..Z
+            Map<String, Object> headers = new TreeMap<>(message.getHeaders());
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                Object value = entry.getValue();
+                String type = ObjectHelper.classCanonicalName(value);
+                JsonObject jh = new JsonObject();
+                jh.put("key", entry.getKey());
+                if (type != null) {
+                    jh.put("type", type);
+                }
+                // dump header value as JSon, use Camel type converter to convert to String
+                if (value != null) {
+                    try {
+                        String data = message.getExchange().getContext().getTypeConverter().tryConvertTo(String.class,
+                                message.getExchange(), value);
+                        if (data != null) {
+                            jh.put("value", Jsoner.unescape(data));
+                        }
+                    } catch (Throwable e) {
+                        // ignore as the body is for logging purpose
+                    }
+                }
+            }
+        }
+
+        if (includeBody) {
+            JsonObject jb = new JsonObject();
+            jo.put("body", jb);
+            String type = ObjectHelper.classCanonicalName(message.getBody());
+            if (type != null) {
+                jb.put("type", type);
+            }
+
+            String data = extractBodyForLogging(message, null, allowStreams, allowFiles, maxChars);
+            if (data != null) {
+                jb.put("value", Jsoner.unescape(data));
+            }
+        }
+
+        return root.toJson();
     }
 
 }

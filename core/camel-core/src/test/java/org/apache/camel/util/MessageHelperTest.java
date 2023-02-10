@@ -243,4 +243,39 @@ public class MessageHelperTest {
         assertTrue(out.contains("Hello World"));
     }
 
+    @Test
+    public void testMessageDumpBodyJSon() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        message = new DefaultExchange(context).getIn();
+
+        // xml message body
+        message.setBody("Hello World");
+        message.setHeader("foo", 123);
+
+        String out = MessageHelper.dumpAsJSon(message, true);
+        assertNotNull(out);
+        assertTrue(out.contains("Hello World"));
+    }
+
+    @Test
+    public void testDumpAsXmlBodyJSon() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        message = new DefaultExchange(context).getIn();
+
+        // xml message body
+        message.setBody("<?xml version=\"1.0\"?><hi>Hello World</hi>");
+        message.setHeader("foo", 123);
+
+        String out = MessageHelper.dumpAsJSon(message);
+        // xml is escaped in json output
+        assertTrue(out.contains("<?xml version=\\\"1.0\\\"?><hi>Hello World<\\/hi>"));
+        assertTrue(out.contains(message.getExchange().getExchangeId()), "Should contain exchangeId");
+
+        context.stop();
+    }
+
 }

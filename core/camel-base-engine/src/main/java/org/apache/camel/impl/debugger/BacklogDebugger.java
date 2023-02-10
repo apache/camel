@@ -610,7 +610,8 @@ public final class BacklogDebugger extends ServiceSupport {
                 (nId, message) -> new DefaultBacklogTracerEventMessage(
                         message.getUid(), message.getTimestamp(), message.getRouteId(), message.getToNode(),
                         message.getExchangeId(),
-                        dumpAsXml(suspendedExchange.getExchange())));
+                        dumpAsXml(suspendedExchange.getExchange()),
+                        dumpAsJSon(suspendedExchange.getExchange())));
     }
 
     /**
@@ -621,6 +622,17 @@ public final class BacklogDebugger extends ServiceSupport {
      */
     private String dumpAsXml(Exchange exchange) {
         return MessageHelper.dumpAsXml(exchange.getIn(), true, 2, isBodyIncludeStreams(), isBodyIncludeFiles(),
+                getBodyMaxChars());
+    }
+
+    /**
+     * Dumps the message as a generic JSon structure.
+     *
+     * @param  exchange the exchange to dump as JSon
+     * @return          the JSon
+     */
+    private String dumpAsJSon(Exchange exchange) {
+        return MessageHelper.dumpAsJSon(exchange.getIn(), true, 2, isBodyIncludeStreams(), isBodyIncludeFiles(),
                 getBodyMaxChars());
     }
 
@@ -653,10 +665,11 @@ public final class BacklogDebugger extends ServiceSupport {
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
             String messageAsXml = dumpAsXml(exchange);
+            String messageAsJSon = dumpAsJSon(exchange);
             long uid = debugCounter.incrementAndGet();
 
             BacklogTracerEventMessage msg
-                    = new DefaultBacklogTracerEventMessage(uid, timestamp, routeId, toNode, exchangeId, messageAsXml);
+                    = new DefaultBacklogTracerEventMessage(uid, timestamp, routeId, toNode, exchangeId, messageAsXml, messageAsJSon);
             suspendedBreakpointMessages.put(nodeId, msg);
 
             // suspend at this breakpoint
@@ -719,10 +732,11 @@ public final class BacklogDebugger extends ServiceSupport {
             String routeId = CamelContextHelper.getRouteId(definition);
             String exchangeId = exchange.getExchangeId();
             String messageAsXml = dumpAsXml(exchange);
+            String messageAsJSon = dumpAsJSon(exchange);
             long uid = debugCounter.incrementAndGet();
 
             BacklogTracerEventMessage msg
-                    = new DefaultBacklogTracerEventMessage(uid, timestamp, routeId, toNode, exchangeId, messageAsXml);
+                    = new DefaultBacklogTracerEventMessage(uid, timestamp, routeId, toNode, exchangeId, messageAsXml, messageAsJSon);
             suspendedBreakpointMessages.put(toNode, msg);
 
             // suspend at this breakpoint
