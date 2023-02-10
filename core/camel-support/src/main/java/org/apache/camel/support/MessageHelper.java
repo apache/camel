@@ -766,7 +766,7 @@ public final class MessageHelper {
      * @return             the JSon
      */
     public static String dumpAsJSon(Message message, boolean includeBody, int indent) {
-        return dumpAsJSon(message, includeBody, indent, false, true, 128 * 1024);
+        return dumpAsJSon(message, includeBody, indent, false, true, 128 * 1024, true);
     }
 
     /**
@@ -782,7 +782,8 @@ public final class MessageHelper {
      * @return              the JSon
      */
     public static String dumpAsJSon(
-            Message message, boolean includeBody, int indent, boolean allowStreams, boolean allowFiles, int maxChars) {
+            Message message, boolean includeBody, int indent, boolean allowStreams, boolean allowFiles, int maxChars,
+            boolean pretty) {
 
         JsonObject root = new JsonObject();
         JsonObject jo = new JsonObject();
@@ -832,7 +833,15 @@ public final class MessageHelper {
             }
         }
 
-        return root.toJson();
+        String answer = root.toJson();
+        if (pretty) {
+            if (indent > 0) {
+                answer = Jsoner.prettyPrint(answer, indent);
+            } else {
+                answer = Jsoner.prettyPrint(answer);
+            }
+        }
+        return answer;
     }
 
 }

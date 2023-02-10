@@ -135,9 +135,19 @@ public interface BacklogTracer {
     void resetTraceCounter();
 
     /**
+     * Dumps all tracing data
+     */
+    List<BacklogTracerEventMessage> dumpAllTracedMessages();
+
+    /**
      * Dumps tracing data for the given route id / node id
      */
     List<BacklogTracerEventMessage> dumpTracedMessages(String nodeId);
+
+    /**
+     * Dumps all tracing data as XML
+     */
+    String dumpAllTracedMessagesAsXml();
 
     /**
      * Dumps tracing data for the given route id / node id as XML
@@ -145,14 +155,14 @@ public interface BacklogTracer {
     String dumpTracedMessagesAsXml(String nodeId);
 
     /**
-     * Dumps all tracing data
+     * Dumps all tracing data as JSon
      */
-    List<BacklogTracerEventMessage> dumpAllTracedMessages();
+    String dumpAllTracedMessagesAsJSon();
 
     /**
-     * Dumps all tracing data as XML
+     * Dumps tracing data for the given route id / node id as JSon
      */
-    String dumpAllTracedMessagesAsXml();
+    String dumpTracedMessagesAsJSon(String nodeId);
 
     /**
      * Clears the backlog of traced messages.

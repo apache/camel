@@ -26,7 +26,6 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.camel.util.json.Jsoner;
 
 @DevConsole("trace")
 @Configurer(bootstrap = true)
@@ -58,24 +57,7 @@ public class TraceConsole extends AbstractDevConsole {
             List<JsonObject> arr = new ArrayList<>();
             root.put("traces", arr);
             for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
-                JsonObject jo = new JsonObject();
-                jo.put("uid", t.getUid());
-                if (t.getRouteId() != null) {
-                    jo.put("routeId", t.getRouteId());
-                }
-                if (t.getToNode() != null) {
-                    jo.put("nodeId", t.getToNode());
-                }
-                if (t.getTimestamp() > 0) {
-                    jo.put("timestamp", t.getTimestamp());
-                }
-                try {
-                    // parse back to json object and avoid double message root
-                    JsonObject msg = (JsonObject) Jsoner.deserialize(t.getMessageAsJSon());
-                    jo.put("message", msg.get("message"));
-                } catch (Exception e) {
-                    // ignore
-                }
+                JsonObject jo = (JsonObject) t.asJSon();
                 arr.add(jo);
             }
         }

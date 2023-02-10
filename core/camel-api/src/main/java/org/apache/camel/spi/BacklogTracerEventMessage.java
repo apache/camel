@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Map;
+
 /**
  * Represents a traced message by the BacklogTracer.
  */
@@ -68,5 +70,18 @@ public interface BacklogTracerEventMessage {
      * @return        xml representation of this event
      */
     String toXml(int indent);
+
+    /**
+     * Dumps the event message as JSon.
+     *
+     * @param  indent number of spaces to indent
+     * @return        JSon representation of this event
+     */
+    String toJSon(int indent);
+
+    /**
+     * The event message as an org.apache.camel.util.json.JsonObject object.
+     */
+    Map<String, Object> asJSon();
 
 }

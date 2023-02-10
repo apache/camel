@@ -17,8 +17,12 @@
 package org.apache.camel.impl.debugger;
 
 import java.text.SimpleDateFormat;
+import java.util.Map;
 
 import org.apache.camel.spi.BacklogTracerEventMessage;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsonable;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * An event message holding the traced message by the {@link BacklogTracer}.
@@ -115,5 +119,38 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         sb.append(prefix).append(messageAsXml).append("\n");
         sb.append(prefix).append("</").append(ROOT_TAG).append(">");
         return sb.toString();
+    }
+
+    @Override
+    public String toJSon(int indent) {
+        Jsonable jo = (Jsonable) asJSon();
+        if (indent > 0) {
+            return Jsoner.prettyPrint(jo.toJson(), indent);
+        } else {
+            return Jsoner.prettyPrint(jo.toJson());
+        }
+    }
+
+    @Override
+    public Map<String, Object> asJSon() {
+        JsonObject jo = new JsonObject();
+        jo.put("uid", uid);
+        if (routeId != null) {
+            jo.put("routeId", routeId);
+        }
+        if (toNode != null) {
+            jo.put("nodeId", toNode);
+        }
+        if (timestamp > 0) {
+            jo.put("timestamp", timestamp);
+        }
+        try {
+            // parse back to json object and avoid double message root
+            JsonObject msg = (JsonObject) Jsoner.deserialize(messageAsJSon);
+            jo.put("message", msg.get("message"));
+        } catch (Exception e) {
+            // ignore
+        }
+        return jo;
     }
 }

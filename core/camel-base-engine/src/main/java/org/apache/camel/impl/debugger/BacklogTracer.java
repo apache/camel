@@ -33,6 +33,9 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * A tracer used for message tracing, storing a copy of the message details in a backlog.
@@ -301,6 +304,19 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     }
 
     @Override
+    public String dumpTracedMessagesAsJSon(String nodeId) {
+        List<BacklogTracerEventMessage> events = dumpTracedMessages(nodeId);
+
+        JsonObject root = new JsonObject();
+        JsonArray arr = new JsonArray();
+        root.put("traces", arr);
+        for (BacklogTracerEventMessage event : events) {
+            arr.add(event.asJSon());
+        }
+        return Jsoner.prettyPrint(root.toJson());
+    }
+
+    @Override
     public List<BacklogTracerEventMessage> dumpAllTracedMessages() {
         List<BacklogTracerEventMessage> answer = new ArrayList<>();
         answer.addAll(queue);
@@ -321,6 +337,19 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
         }
         sb.append("\n</").append(BacklogTracerEventMessage.ROOT_TAG).append("s>");
         return sb.toString();
+    }
+
+    @Override
+    public String dumpAllTracedMessagesAsJSon() {
+        List<BacklogTracerEventMessage> events = dumpAllTracedMessages();
+
+        JsonObject root = new JsonObject();
+        JsonArray arr = new JsonArray();
+        root.put("traces", arr);
+        for (BacklogTracerEventMessage event : events) {
+            arr.add(event.asJSon());
+        }
+        return Jsoner.prettyPrint(root.toJson());
     }
 
     @Override

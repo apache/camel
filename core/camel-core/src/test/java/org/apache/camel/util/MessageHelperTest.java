@@ -278,4 +278,20 @@ public class MessageHelperTest {
         context.stop();
     }
 
+    @Test
+    public void testMessageDumpBodyIndentJSon() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        message = new DefaultExchange(context).getIn();
+
+        // xml message body
+        message.setBody("Hello World");
+        message.setHeader("foo", 123);
+
+        String out = MessageHelper.dumpAsJSon(message, true, 4);
+        assertNotNull(out);
+        assertTrue(out.contains("Hello World"));
+    }
+
 }

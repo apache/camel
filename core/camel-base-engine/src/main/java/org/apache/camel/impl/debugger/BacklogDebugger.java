@@ -633,7 +633,7 @@ public final class BacklogDebugger extends ServiceSupport {
      */
     private String dumpAsJSon(Exchange exchange) {
         return MessageHelper.dumpAsJSon(exchange.getIn(), true, 2, isBodyIncludeStreams(), isBodyIncludeFiles(),
-                getBodyMaxChars());
+                getBodyMaxChars(), true);
     }
 
     /**
