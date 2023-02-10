@@ -177,8 +177,6 @@ public class KameletMain extends MainCommandLineSupport {
     /**
      * Optionally set the location of Maven settings.xml if it's different than {@code ~/.m2/settings.xml}. If set to
      * {@code false}, no default settings file will be used at all.
-     * 
-     * @param mavenSettings
      */
     public void setMavenSettings(String mavenSettings) {
         this.mavenSettings = mavenSettings;
@@ -191,8 +189,6 @@ public class KameletMain extends MainCommandLineSupport {
     /**
      * Optionally set the location of Maven settings-security.xml if it's different than
      * {@code ~/.m2/settings-security.xml}.
-     * 
-     * @param mavenSettingsSecurity
      */
     public void setMavenSettingsSecurity(String mavenSettingsSecurity) {
         this.mavenSettingsSecurity = mavenSettingsSecurity;
@@ -396,6 +392,11 @@ public class KameletMain extends MainCommandLineSupport {
         configure().withJmxManagementStatisticsLevel(ManagementStatisticsLevel.Extended);
         configure().withShutdownLogInflightExchangesOnTimeout(false);
         configure().withShutdownTimeout(10);
+
+        boolean tracing = "true".equals(getInitialProperties().get("camel.jbang.backlogTracing"));
+        if (tracing) {
+            configure().withBacklogTracing(true);
+        }
 
         boolean health = "true".equals(getInitialProperties().get("camel.jbang.health"));
         if (health && port == null) {
