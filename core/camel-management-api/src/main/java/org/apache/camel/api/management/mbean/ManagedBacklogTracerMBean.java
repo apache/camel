@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.spi.BacklogTracerEventMessage;
 
 public interface ManagedBacklogTracerMBean {
 

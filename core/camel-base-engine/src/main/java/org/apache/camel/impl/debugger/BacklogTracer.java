@@ -27,12 +27,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
-import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
+import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * A tracer used for message tracing, storing a copy of the message details in a backlog.
@@ -40,7 +43,7 @@ import org.apache.camel.util.StringHelper;
  * This tracer allows to store message tracers per node in the Camel routes. The tracers is stored in a backlog queue
  * (FIFO based) which allows to pull the traced messages on demand.
  */
-public final class BacklogTracer extends ServiceSupport {
+public final class BacklogTracer extends ServiceSupport implements org.apache.camel.spi.BacklogTracer {
 
     // lets limit the tracer to 10 thousand messages in total
     public static final int MAX_BACKLOG_SIZE = 10 * 1000;
@@ -142,38 +145,32 @@ public final class BacklogTracer extends ServiceSupport {
         return predicate.matches(exchange);
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
-    /**
-     * Whether the tracer is standby.
-     *
-     * If a tracer is in standby then the tracer is activated during startup and are ready to be enabled manually via
-     * JMX or calling the enabled method.
-     */
+    @Override
     public boolean isStandby() {
         return standby;
     }
 
-    /**
-     * Whether the tracer is standby.
-     *
-     * If a tracer is in standby then the tracer is activated during startup and are ready to be enabled manually via
-     * JMX or calling the enabled method.
-     */
+    @Override
     public void setStandby(boolean standby) {
         this.standby = standby;
     }
 
+    @Override
     public int getBacklogSize() {
         return backlogSize;
     }
 
+    @Override
     public void setBacklogSize(int backlogSize) {
         if (backlogSize <= 0) {
             throw new IllegalArgumentException("The backlog size must be a positive number, was: " + backlogSize);
@@ -185,42 +182,52 @@ public final class BacklogTracer extends ServiceSupport {
         this.backlogSize = backlogSize;
     }
 
+    @Override
     public boolean isRemoveOnDump() {
         return removeOnDump;
     }
 
+    @Override
     public void setRemoveOnDump(boolean removeOnDump) {
         this.removeOnDump = removeOnDump;
     }
 
+    @Override
     public int getBodyMaxChars() {
         return bodyMaxChars;
     }
 
+    @Override
     public void setBodyMaxChars(int bodyMaxChars) {
         this.bodyMaxChars = bodyMaxChars;
     }
 
+    @Override
     public boolean isBodyIncludeStreams() {
         return bodyIncludeStreams;
     }
 
+    @Override
     public void setBodyIncludeStreams(boolean bodyIncludeStreams) {
         this.bodyIncludeStreams = bodyIncludeStreams;
     }
 
+    @Override
     public boolean isBodyIncludeFiles() {
         return bodyIncludeFiles;
     }
 
+    @Override
     public void setBodyIncludeFiles(boolean bodyIncludeFiles) {
         this.bodyIncludeFiles = bodyIncludeFiles;
     }
 
+    @Override
     public String getTracePattern() {
         return tracePattern;
     }
 
+    @Override
     public void setTracePattern(String tracePattern) {
         this.tracePattern = tracePattern;
         if (tracePattern != null) {
@@ -231,10 +238,12 @@ public final class BacklogTracer extends ServiceSupport {
         }
     }
 
+    @Override
     public String getTraceFilter() {
         return traceFilter;
     }
 
+    @Override
     public void setTraceFilter(String filter) {
         this.traceFilter = filter;
         if (filter != null) {
@@ -249,14 +258,17 @@ public final class BacklogTracer extends ServiceSupport {
         }
     }
 
+    @Override
     public long getTraceCounter() {
         return traceCounter.get();
     }
 
+    @Override
     public long getQueueSize() {
         return queue.size();
     }
 
+    @Override
     public void resetTraceCounter() {
         traceCounter.set(0);
     }
@@ -278,6 +290,7 @@ public final class BacklogTracer extends ServiceSupport {
         return answer;
     }
 
+    @Override
     public String dumpTracedMessagesAsXml(String nodeId) {
         List<BacklogTracerEventMessage> events = dumpTracedMessages(nodeId);
 
@@ -290,6 +303,20 @@ public final class BacklogTracer extends ServiceSupport {
         return sb.toString();
     }
 
+    @Override
+    public String dumpTracedMessagesAsJSon(String nodeId) {
+        List<BacklogTracerEventMessage> events = dumpTracedMessages(nodeId);
+
+        JsonObject root = new JsonObject();
+        JsonArray arr = new JsonArray();
+        root.put("traces", arr);
+        for (BacklogTracerEventMessage event : events) {
+            arr.add(event.asJSon());
+        }
+        return Jsoner.prettyPrint(root.toJson());
+    }
+
+    @Override
     public List<BacklogTracerEventMessage> dumpAllTracedMessages() {
         List<BacklogTracerEventMessage> answer = new ArrayList<>();
         answer.addAll(queue);
@@ -299,6 +326,7 @@ public final class BacklogTracer extends ServiceSupport {
         return answer;
     }
 
+    @Override
     public String dumpAllTracedMessagesAsXml() {
         List<BacklogTracerEventMessage> events = dumpAllTracedMessages();
 
@@ -311,6 +339,20 @@ public final class BacklogTracer extends ServiceSupport {
         return sb.toString();
     }
 
+    @Override
+    public String dumpAllTracedMessagesAsJSon() {
+        List<BacklogTracerEventMessage> events = dumpAllTracedMessages();
+
+        JsonObject root = new JsonObject();
+        JsonArray arr = new JsonArray();
+        root.put("traces", arr);
+        for (BacklogTracerEventMessage event : events) {
+            arr.add(event.asJSon());
+        }
+        return Jsoner.prettyPrint(root.toJson());
+    }
+
+    @Override
     public void clear() {
         queue.clear();
     }

@@ -26,8 +26,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.spi.BacklogTracerEventMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
