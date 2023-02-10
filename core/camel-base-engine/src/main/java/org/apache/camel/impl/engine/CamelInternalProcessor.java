@@ -596,11 +596,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 if (first) {
                     long created = exchange.getCreated();
                     DefaultBacklogTracerEventMessage pseudo = new DefaultBacklogTracerEventMessage(
-                            backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId, messageAsXml, messageAsJSon);
+                            backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId, messageAsXml,
+                            messageAsJSon);
                     backlogTracer.traceEvent(pseudo);
                 }
                 DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
-                        backlogTracer.incrementTraceCounter(), timestamp, routeId, toNode, exchangeId, messageAsXml, messageAsJSon);
+                        backlogTracer.incrementTraceCounter(), timestamp, routeId, toNode, exchangeId, messageAsXml,
+                        messageAsJSon);
                 backlogTracer.traceEvent(event);
             }
 

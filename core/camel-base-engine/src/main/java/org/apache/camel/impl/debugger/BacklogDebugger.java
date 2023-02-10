@@ -669,7 +669,8 @@ public final class BacklogDebugger extends ServiceSupport {
             long uid = debugCounter.incrementAndGet();
 
             BacklogTracerEventMessage msg
-                    = new DefaultBacklogTracerEventMessage(uid, timestamp, routeId, toNode, exchangeId, messageAsXml, messageAsJSon);
+                    = new DefaultBacklogTracerEventMessage(
+                            uid, timestamp, routeId, toNode, exchangeId, messageAsXml, messageAsJSon);
             suspendedBreakpointMessages.put(nodeId, msg);
 
             // suspend at this breakpoint
@@ -736,7 +737,8 @@ public final class BacklogDebugger extends ServiceSupport {
             long uid = debugCounter.incrementAndGet();
 
             BacklogTracerEventMessage msg
-                    = new DefaultBacklogTracerEventMessage(uid, timestamp, routeId, toNode, exchangeId, messageAsXml, messageAsJSon);
+                    = new DefaultBacklogTracerEventMessage(
+                            uid, timestamp, routeId, toNode, exchangeId, messageAsXml, messageAsJSon);
             suspendedBreakpointMessages.put(toNode, msg);
 
             // suspend at this breakpoint
