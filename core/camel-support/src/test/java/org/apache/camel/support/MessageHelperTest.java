@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.spi.DataType;
+import org.apache.camel.trait.message.MessageTrait;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.support.MessageHelper.copyBody;
@@ -229,6 +230,21 @@ class MessageHelperTest {
 
         @Override
         public void copyFromWithNewBody(Message message, Object newBody) {
+
+        }
+
+        @Override
+        public boolean hasTrait(MessageTrait trait) {
+            return false;
+        }
+
+        @Override
+        public Object getPayloadForTrait(MessageTrait trait) {
+            return null;
+        }
+
+        @Override
+        public void setPayloadForTrait(MessageTrait trait, Object object) {
 
         }
     }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support;
 
+import java.util.Arrays;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -24,6 +26,7 @@ import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.DataTypeAware;
+import org.apache.camel.trait.message.MessageTrait;
 
 /**
  * A base class for implementation inheritance providing the core {@link Message} body handling features but letting the
@@ -33,19 +36,22 @@ import org.apache.camel.spi.DataTypeAware;
  * from {@link DefaultMessage}
  */
 public abstract class MessageSupport implements Message, CamelContextAware, DataTypeAware {
+    private static final int NUM_TRAITS = MessageTrait.values().length;
+
     CamelContext camelContext;
     TypeConverter typeConverter;
     private Exchange exchange;
     private Object body;
     private String messageId;
     private long messageTimestamp;
-    private DataType dataType;
+
+    private final Object[] traits = new Object[NUM_TRAITS];
 
     @Override
     public void reset() {
         body = null;
         messageId = null;
-        dataType = null;
+        Arrays.fill(traits, null);
     }
 
     @Override
@@ -133,7 +139,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         this.body = body;
         // set data type if in use
         if (body != null && camelContext != null && camelContext.isUseDataType()) {
-            this.dataType = new DataType(body.getClass());
+            setPayloadForTrait(MessageTrait.DATA_AWARE, new DataType(body.getClass()));
         }
     }
 
@@ -152,22 +158,23 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     @Override
     public void setBody(Object body, DataType type) {
         this.body = body;
-        this.dataType = type;
+        setPayloadForTrait(MessageTrait.DATA_AWARE, type);
     }
 
     @Override
     public DataType getDataType() {
-        return this.dataType;
+        Object payload = getPayloadForTrait(MessageTrait.DATA_AWARE);
+        return (DataType) payload;
     }
 
     @Override
     public void setDataType(DataType type) {
-        this.dataType = type;
+        setPayloadForTrait(MessageTrait.DATA_AWARE, type);
     }
 
     @Override
     public boolean hasDataType() {
-        return dataType != null;
+        return hasTrait(MessageTrait.DATA_AWARE);
     }
 
     @Override
@@ -187,11 +194,8 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
 
         copyFromWithNewBody(that, that.getBody());
         // Preserve the DataType
-        if (that instanceof DataTypeAware) {
-            final DataTypeAware dataTypeAware = (DataTypeAware) that;
-            if (dataTypeAware.hasDataType()) {
-                setDataType(dataTypeAware.getDataType());
-            }
+        if (that.hasTrait(MessageTrait.DATA_AWARE)) {
+            setPayloadForTrait(MessageTrait.DATA_AWARE, that.getPayloadForTrait(MessageTrait.DATA_AWARE));
         }
     }
 
@@ -306,4 +310,20 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
         }
     }
 
+    @Override
+    public boolean hasTrait(MessageTrait trait) {
+        Object payload = traits[trait.ordinal()];
+
+        return payload != null;
+    }
+
+    @Override
+    public Object getPayloadForTrait(MessageTrait trait) {
+        return traits[trait.ordinal()];
+    }
+
+    @Override
+    public void setPayloadForTrait(MessageTrait trait, Object object) {
+        traits[trait.ordinal()] = object;
+    }
 }

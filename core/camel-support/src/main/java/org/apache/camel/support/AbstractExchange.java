@@ -35,6 +35,8 @@ import org.apache.camel.MessageHistory;
 import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.trait.message.MessageTrait;
+import org.apache.camel.trait.message.RedeliveryTraitPayload;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.support.MessageHelper.copyBody;
@@ -64,12 +66,12 @@ class AbstractExchange implements Exchange {
     protected Exception exception;
     protected String exchangeId;
     protected ExchangePattern pattern;
-    protected Boolean externalRedelivered;
     protected boolean routeStop;
     protected boolean rollbackOnly;
     protected boolean rollbackOnlyLast;
     protected Map<String, SafeCopyProperty> safeCopyProperties;
     private final ExtendedExchangeExtension privateExtension;
+    private RedeliveryTraitPayload externalRedelivered = RedeliveryTraitPayload.UNDEFINED_REDELIVERY;
 
     public AbstractExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
@@ -635,20 +637,13 @@ class AbstractExchange implements Exchange {
 
     @Override
     public boolean isExternalRedelivered() {
-        if (externalRedelivered == null) {
-            // lets avoid adding methods to the Message API, so we use the
-            // DefaultMessage to allow component specific messages to extend
-            // and implement the isExternalRedelivered method.
-            Message msg = getIn();
-            if (msg instanceof DefaultMessage) {
-                externalRedelivered = ((DefaultMessage) msg).isTransactedRedelivered();
-            }
-            // not from a transactional resource so mark it as false by default
-            if (externalRedelivered == null) {
-                externalRedelivered = false;
-            }
+        if (externalRedelivered == RedeliveryTraitPayload.UNDEFINED_REDELIVERY) {
+            Message message = getIn();
+
+            externalRedelivered = (RedeliveryTraitPayload) message.getPayloadForTrait(MessageTrait.REDELIVERY);
         }
-        return externalRedelivered;
+
+        return externalRedelivered == RedeliveryTraitPayload.IS_REDELIVERY;
     }
 
     @Override
