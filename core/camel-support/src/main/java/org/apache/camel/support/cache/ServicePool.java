@@ -16,6 +16,7 @@
  */
 package org.apache.camel.support.cache;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,9 +29,14 @@ import java.util.function.Function;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Service;
+import org.apache.camel.StatefulService;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.support.task.BlockingTask;
+import org.apache.camel.support.task.Tasks;
+import org.apache.camel.support.task.budget.Budgets;
+import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.apache.camel.util.function.ThrowingFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,6 +128,24 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             }
         }
         return s;
+    }
+
+    private void waitForService(StatefulService service) {
+        BlockingTask task = Tasks.foregroundTask().withBudget(Budgets.iterationTimeBudget()
+                        .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
+                        .withMaxDuration(Duration.ofMillis(30000))
+                        .withInterval(Duration.ofMillis(5))
+                        .build())
+                .build();
+
+        if (!task.run(service::isStarting)) {
+            LOG.warn("The producer: {} did not finish starting in {} ms", service, 30000);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Waited {} ms for producer to finish starting: {} state: {}", task.elapsed().toMillis(), service,
+                    service.getStatus());
+        }
     }
 
     /**
@@ -237,6 +261,13 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                         S tempS = creator.apply(endpoint);
                         endpoint.getCamelContext().addService(tempS, true, true);
                         s = tempS;
+
+                        if (s instanceof StatefulService ss) {
+                            if (ss.isStarting()) {
+                                LOG.trace("Waiting for producer to finish starting: {}", s);
+                                waitForService(ss);
+                            }
+                        }
                     }
                 }
             }
@@ -349,6 +380,13 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
                 if (s == null) {
                     s = creator.apply(endpoint);
                     s.start();
+
+                    if (s instanceof StatefulService ss) {
+                        if (ss.isStarting()) {
+                            LOG.trace("Waiting for producer to finish starting: {}", s);
+                            waitForService(ss);
+                        }
+                    }
                 }
             }
             return s;
