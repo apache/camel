@@ -617,14 +617,12 @@ public final class MessageHelper {
      */
     public static void copyBody(Message source, Message target) {
         // Preserve the DataType if both messages are DataTypeAware
-        if (source instanceof DataTypeAware && target instanceof DataTypeAware) {
-            final DataTypeAware dataTypeAwareSource = (DataTypeAware) source;
-            if (dataTypeAwareSource.hasDataType()) {
-                final DataTypeAware dataTypeAwareTarget = (DataTypeAware) target;
-                dataTypeAwareTarget.setBody(source.getBody(), dataTypeAwareSource.getDataType());
-                return;
+        if (source.getMessageTraits().isDataAware() && target.getMessageTraits().isDataAware()) {
+            if (source.getMessageTraits().hasDataType()) {
+                target.getMessageTraits().setDataType(source.getMessageTraits().getDataType());
             }
         }
+
         target.setBody(source.getBody());
     }
 

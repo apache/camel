@@ -187,10 +187,9 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
 
         copyFromWithNewBody(that, that.getBody());
         // Preserve the DataType
-        if (that instanceof DataTypeAware) {
-            final DataTypeAware dataTypeAware = (DataTypeAware) that;
-            if (dataTypeAware.hasDataType()) {
-                setDataType(dataTypeAware.getDataType());
+        if (that.getMessageTraits().isDataAware()) {
+            if (that.getMessageTraits().hasDataType()) {
+                setDataType(that.getMessageTraits().getDataType());
             }
         }
     }

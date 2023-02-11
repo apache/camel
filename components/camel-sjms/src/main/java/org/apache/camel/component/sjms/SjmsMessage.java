@@ -42,16 +42,33 @@ import static org.apache.camel.support.MessageHelper.copyBody;
  * Represents a {@link org.apache.camel.Message} for working with JMS
  */
 public class SjmsMessage extends DefaultMessage {
+    private static class SjmsMessageTrait extends DefaultMessageTrait {
+        private SjmsMessage sJmsMessage;
+
+        public SjmsMessageTrait(SjmsMessage message) {
+            super(message);
+
+            this.sJmsMessage = message;
+        }
+
+        public boolean isTransactedRedelivered() {
+            return JmsMessageHelper.getJMSRedelivered(sJmsMessage.jmsMessage);
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(SjmsMessage.class);
     private Message jmsMessage;
     private Session jmsSession;
     private JmsBinding binding;
+    private SjmsMessageTrait messageTrait;
 
     public SjmsMessage(Exchange exchange, Message jmsMessage, Session jmsSession, JmsBinding binding) {
         super(exchange);
         setJmsMessage(jmsMessage);
         setJmsSession(jmsSession);
         setBinding(binding);
+
+        this.messageTrait = new SjmsMessageTrait(this);
     }
 
     public void init(Exchange exchange, Message jmsMessage, Session jmsSession, JmsBinding binding) {
@@ -289,12 +306,7 @@ public class SjmsMessage extends DefaultMessage {
 
     @Override
     public MessageTrait getMessageTraits() {
-        return new MessageTrait() {
-            @Override
-            public boolean isTransactedRedelivered() {
-                return JmsMessageHelper.getJMSRedelivered(jmsMessage);
-            }
-        };
+        return messageTrait;
     }
 
     private String getDestinationAsString(Destination destination) throws JMSException {

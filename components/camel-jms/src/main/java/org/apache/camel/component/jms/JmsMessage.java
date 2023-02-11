@@ -25,7 +25,6 @@ import jakarta.jms.Message;
 import jakarta.jms.Queue;
 import jakarta.jms.Session;
 import jakarta.jms.Topic;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.support.DefaultMessage;
@@ -40,10 +39,25 @@ import static org.apache.camel.support.MessageHelper.copyBody;
  * Represents a {@link org.apache.camel.Message} for working with JMS
  */
 public class JmsMessage extends DefaultMessage {
+    private static class JmsMessageTrait extends DefaultMessageTrait {
+        private JmsMessage jmsMessage;
+
+        public JmsMessageTrait(JmsMessage message) {
+            super(message);
+
+            this.jmsMessage = message;
+        }
+
+        public boolean isTransactedRedelivered() {
+            return JmsMessageHelper.getJMSRedelivered(jmsMessage.jmsMessage);
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(JmsMessage.class);
     private Message jmsMessage;
     private Session jmsSession;
     private JmsBinding binding;
+    private JmsMessageTrait messageTrait;
 
     public JmsMessage(Exchange exchange, Message jmsMessage, Session jmsSession, JmsBinding binding) {
         super(exchange);
@@ -271,12 +285,7 @@ public class JmsMessage extends DefaultMessage {
 
     @Override
     public MessageTrait getMessageTraits() {
-        return new MessageTrait() {
-            @Override
-            public boolean isTransactedRedelivered() {
-                return JmsMessageHelper.getJMSRedelivered(jmsMessage);
-            }
-        };
+        return messageTrait;
     }
 
     private String getDestinationAsString(Destination destination) throws JMSException {

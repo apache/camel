@@ -19,6 +19,7 @@ package org.apache.camel;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.HeadersMapFactory;
 
 /**
@@ -43,6 +44,26 @@ public interface Message {
          * @return <tt>true</tt> if redelivered otherwise returns <tt>false</tt>
          */
         boolean isTransactedRedelivered();
+
+        /**
+         * Whether the message can store a data type. Check {@link org.apache.camel.spi.DataTypeAware}.
+         * @return
+         */
+        boolean isDataAware();
+
+        /**
+         * Whether any data type has been configured
+         */
+        boolean hasDataType();
+
+
+        /**
+         * Sets the data type
+         * @param dataType
+         */
+        void setDataType(DataType dataType);
+
+        DataType getDataType();
     }
 
     /**
@@ -337,6 +358,26 @@ public interface Message {
             @Override
             public boolean isTransactedRedelivered() {
                 return false;
+            }
+
+            @Override
+            public boolean isDataAware() {
+                return false;
+            }
+
+            @Override
+            public boolean hasDataType() {
+                return false;
+            }
+
+            @Override
+            public void setDataType(DataType dataType) {
+                // NO-OP
+            }
+
+            @Override
+            public DataType getDataType() {
+                return null;
             }
         };
     }
