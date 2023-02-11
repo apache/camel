@@ -59,6 +59,7 @@ import org.apache.camel.dsl.jbang.core.commands.process.ListInflight;
 import org.apache.camel.dsl.jbang.core.commands.process.ListMetric;
 import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
 import org.apache.camel.dsl.jbang.core.commands.process.ListService;
+import org.apache.camel.dsl.jbang.core.commands.process.ListTrace;
 import org.apache.camel.dsl.jbang.core.commands.process.ListVault;
 import org.apache.camel.dsl.jbang.core.commands.process.StopProcess;
 import picocli.CommandLine;
@@ -84,6 +85,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("health", new CommandLine(new ListHealth(main)))
                         .addSubcommand("endpoint", new CommandLine(new ListEndpoint(main)))
                         .addSubcommand("event", new CommandLine(new ListEvent(main)))
+                        .addSubcommand("trace", new CommandLine(new ListTrace(main)))
                         .addSubcommand("inflight", new CommandLine(new ListInflight(main)))
                         .addSubcommand("blocked", new CommandLine(new ListBlocked(main)))
                         .addSubcommand("route-controller", new CommandLine(new RouteControllerAction(main)))
