@@ -51,6 +51,10 @@ public class ListTrace extends ProcessWatchCommand {
                         description = "Only output last message")
     boolean last;
 
+    @CommandLine.Option(names = { "--pretty" },
+                        description = "Pretty print traced message")
+    boolean pretty;
+
     public ListTrace(CamelJBangMain main) {
         super(main);
     }
@@ -165,7 +169,11 @@ public class ListTrace extends ProcessWatchCommand {
     }
 
     private String getMessage(Row r) {
-        return r.message.toJson();
+        String s = r.message.toJson();
+        if (pretty) {
+            s = Jsoner.prettyPrint(s);
+        }
+        return s;
     }
 
     protected int sortRow(Row o1, Row o2) {

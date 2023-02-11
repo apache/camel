@@ -831,7 +831,6 @@ public final class MessageHelper {
         // headers
         if (message.hasHeaders()) {
             JsonArray arr = new JsonArray();
-            jo.put("headers", arr);
             // sort the headers so they are listed A..Z
             Map<String, Object> headers = new TreeMap<>(message.getHeaders());
             for (Map.Entry<String, Object> entry : headers.entrySet()) {
@@ -854,6 +853,9 @@ public final class MessageHelper {
                         // ignore as the body is for logging purpose
                     }
                 }
+            }
+            if (!arr.isEmpty()) {
+                jo.put("headers", arr);
             }
         }
 
