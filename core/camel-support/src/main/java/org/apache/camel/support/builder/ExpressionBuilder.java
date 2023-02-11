@@ -1647,24 +1647,27 @@ public class ExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 StringBuilder buffer = new StringBuilder();
-                if (col != null) {
-                    // optimize for constant expressions so we can do this a bit faster
-                    for (Object obj : col) {
-                        if (obj instanceof Expression) {
-                            Expression expression = (Expression) obj;
+                //As the expression can be reused it can be called concurrently and need to be thread safe
+                synchronized (this) {
+                    if (col != null) {
+                        // optimize for constant expressions so we can do this a bit faster
+                        for (Object obj : col) {
+                            if (obj instanceof Expression) {
+                                Expression expression = (Expression) obj;
+                                String text = expression.evaluate(exchange, String.class);
+                                if (text != null) {
+                                    buffer.append(text);
+                                }
+                            } else {
+                                buffer.append((String) obj);
+                            }
+                        }
+                    } else {
+                        for (Expression expression : expressions) {
                             String text = expression.evaluate(exchange, String.class);
                             if (text != null) {
                                 buffer.append(text);
                             }
-                        } else {
-                            buffer.append((String) obj);
-                        }
-                    }
-                } else {
-                    for (Expression expression : expressions) {
-                        String text = expression.evaluate(exchange, String.class);
-                        if (text != null) {
-                            buffer.append(text);
                         }
                     }
                 }
@@ -1683,13 +1686,17 @@ public class ExpressionBuilder {
                     // evaluate them but use their constant value as-is directly
                     // this can be common with the simple language where you use it for templating
                     // by mixing string text and simple functions together (or via the log EIP)
-                    col = new ArrayList<>(expressions.size());
-                    for (Expression expression : expressions) {
-                        if (expression instanceof ConstantExpressionAdapter) {
-                            Object value = ((ConstantExpressionAdapter) expression).getValue();
-                            col.add(value.toString());
-                        } else {
-                            col.add(expression);
+
+                    //As the expression can be reused it can be called concurrently and need to be thread safe
+                    synchronized (this) {
+                        col = new ArrayList<>(expressions.size());
+                        for (Expression expression : expressions) {
+                            if (expression instanceof ConstantExpressionAdapter) {
+                                Object value = ((ConstantExpressionAdapter) expression).getValue();
+                                col.add(value.toString());
+                            } else {
+                                col.add(expression);
+                            }
                         }
                     }
                 }
