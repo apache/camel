@@ -25,6 +25,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -1643,12 +1646,17 @@ public class ExpressionBuilder {
         return new ExpressionAdapter() {
 
             private Collection<Object> col;
+            private ReadWriteLock lock = new ReentrantReadWriteLock();
+            private Lock writeLock = lock.writeLock();
+            private Lock readLock = lock.readLock();
+
 
             @Override
             public Object evaluate(Exchange exchange) {
                 StringBuilder buffer = new StringBuilder();
-                //As the expression can be reused it can be called concurrently and need to be thread safe
-                synchronized (this) {
+
+                try{
+                    readLock.lock();
                     if (col != null) {
                         // optimize for constant expressions so we can do this a bit faster
                         for (Object obj : col) {
@@ -1671,6 +1679,10 @@ public class ExpressionBuilder {
                         }
                     }
                 }
+                finally {
+                    readLock.unlock();
+                }
+
                 return buffer.toString();
             }
 
@@ -1688,7 +1700,8 @@ public class ExpressionBuilder {
                     // by mixing string text and simple functions together (or via the log EIP)
 
                     //As the expression can be reused it can be called concurrently and need to be thread safe
-                    synchronized (this) {
+                    try {
+                        writeLock.lock();
                         col = new ArrayList<>(expressions.size());
                         for (Expression expression : expressions) {
                             if (expression instanceof ConstantExpressionAdapter) {
@@ -1699,6 +1712,10 @@ public class ExpressionBuilder {
                             }
                         }
                     }
+                    finally {
+                        writeLock.unlock();
+                    }
+
                 }
             }
 
