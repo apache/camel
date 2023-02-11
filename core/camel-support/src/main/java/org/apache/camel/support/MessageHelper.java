@@ -471,6 +471,25 @@ public final class MessageHelper {
      */
     public static String dumpAsXml(
             Message message, boolean includeBody, int indent, boolean allowStreams, boolean allowFiles, int maxChars) {
+        return dumpAsXml(message, includeBody, indent, allowStreams, allowStreams, allowFiles, maxChars);
+    }
+
+    /**
+     * Dumps the message as a generic XML structure.
+     *
+     * @param  message      the message
+     * @param  includeBody  whether or not to include the message body
+     * @param  indent       number of spaces to indent
+     * @param  allowCachedStreams whether to include message body if they are stream cache based
+     * @param  allowStreams whether to include message body if they are stream based
+     * @param  allowFiles   whether to include message body if they are file based
+     * @param  maxChars     clip body after maximum chars (to avoid very big messages). Use 0 or negative value to not
+     *                      limit at all.
+     * @return              the XML
+     */
+    public static String dumpAsXml(
+            Message message, boolean includeBody, int indent, boolean allowCachedStreams, boolean allowStreams,
+            boolean allowFiles, int maxChars) {
         StringBuilder sb = new StringBuilder();
 
         StringBuilder prefix = new StringBuilder();
@@ -528,7 +547,7 @@ public final class MessageHelper {
             }
             sb.append(">");
 
-            String xml = extractBodyForLogging(message, null, allowStreams, allowFiles, maxChars);
+            String xml = extractBodyForLogging(message, null, allowCachedStreams, allowStreams, allowFiles, maxChars);
             if (xml != null) {
                 // must always xml encode
                 sb.append(StringHelper.xmlEncode(xml));
@@ -784,6 +803,25 @@ public final class MessageHelper {
     public static String dumpAsJSon(
             Message message, boolean includeBody, int indent, boolean allowStreams, boolean allowFiles, int maxChars,
             boolean pretty) {
+        return dumpAsJSon(message, includeBody, indent, false, allowStreams, allowFiles, maxChars, pretty);
+    }
+
+    /**
+     * Dumps the message as a generic JSon structure.
+     *
+     * @param  message      the message
+     * @param  includeBody  whether or not to include the message body
+     * @param  indent       number of spaces to indent
+     * @param  allowCachedStreams whether to include message body if they are stream cached based
+     * @param  allowStreams whether to include message body if they are stream based
+     * @param  allowFiles   whether to include message body if they are file based
+     * @param  maxChars     clip body after maximum chars (to avoid very big messages). Use 0 or negative value to not
+     *                      limit at all.
+     * @return              the JSon
+     */
+    public static String dumpAsJSon(
+            Message message, boolean includeBody, int indent, boolean allowCachedStreams, boolean allowStreams,
+            boolean allowFiles, int maxChars, boolean pretty) {
 
         JsonObject root = new JsonObject();
         JsonObject jo = new JsonObject();
@@ -827,7 +865,7 @@ public final class MessageHelper {
                 jb.put("type", type);
             }
 
-            String data = extractBodyForLogging(message, null, allowStreams, allowFiles, maxChars);
+            String data = extractBodyForLogging(message, null, allowCachedStreams, allowStreams, allowFiles, maxChars);
             if (data != null) {
                 jb.put("value", Jsoner.unescape(data));
             }

@@ -585,10 +585,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 String toNode = processorDefinition.getId();
                 String exchangeId = exchange.getExchangeId();
                 String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 4,
-                        backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
+                        true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
                         backlogTracer.getBodyMaxChars());
                 String messageAsJSon = MessageHelper.dumpAsJSon(exchange.getIn(), true, 4,
-                        backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
+                        true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
                         backlogTracer.getBodyMaxChars(), true);
 
                 // if first we should add a pseudo trace message as well, so we have a starting message (eg from the route)
