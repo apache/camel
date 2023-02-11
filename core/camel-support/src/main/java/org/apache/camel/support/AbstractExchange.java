@@ -71,6 +71,7 @@ class AbstractExchange implements Exchange {
     Endpoint fromEndpoint;
     String fromRouteId;
     List<Synchronization> onCompletions;
+    Message.MessageTrait.TransactedRedeliveryState externalRedelivered = Message.MessageTrait.TransactedRedeliveryState.UNDEFINED;
     String historyNodeId;
     String historyNodeLabel;
     String historyNodeSource;
@@ -652,8 +653,19 @@ class AbstractExchange implements Exchange {
 
     @Override
     public boolean isExternalRedelivered() {
-        Message message = getIn();
-        return message.getMessageTraits().isTransactedRedelivered();
+        if (externalRedelivered == Message.MessageTrait.TransactedRedeliveryState.UNDEFINED) {
+            Message message = getIn();
+
+            externalRedelivered = message.getMessageTraits().transactedRedeliveredState();
+
+            if (externalRedelivered == Message.MessageTrait.TransactedRedeliveryState.IS_REDELIVERY) {
+                return true;
+            }
+
+            externalRedelivered = Message.MessageTrait.TransactedRedeliveryState.NON_REDELIVERY;
+        }
+
+        return false;
     }
 
     @Override

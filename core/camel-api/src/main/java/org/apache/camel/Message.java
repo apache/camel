@@ -34,6 +34,12 @@ import org.apache.camel.spi.HeadersMapFactory;
 public interface Message {
 
     interface MessageTrait {
+        enum TransactedRedeliveryState {
+            UNDEFINED,
+            NON_REDELIVERY,
+            IS_REDELIVERY
+        }
+
         /**
          * A strategy for component-specific messages to determine whether the message is redelivered or not.
          * <p/>
@@ -43,7 +49,7 @@ public interface Message {
          *
          * @return <tt>true</tt> if redelivered otherwise returns <tt>false</tt>
          */
-        boolean isTransactedRedelivered();
+        TransactedRedeliveryState transactedRedeliveredState();
 
         /**
          * Whether the message can store a data type. Check {@link org.apache.camel.spi.DataTypeAware}.
@@ -356,8 +362,8 @@ public interface Message {
     default MessageTrait getMessageTraits() {
         return new MessageTrait() {
             @Override
-            public boolean isTransactedRedelivered() {
-                return false;
+            public TransactedRedeliveryState transactedRedeliveredState() {
+                return TransactedRedeliveryState.UNDEFINED;
             }
 
             @Override

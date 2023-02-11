@@ -25,6 +25,7 @@ import jakarta.jms.Message;
 import jakarta.jms.Queue;
 import jakarta.jms.Session;
 import jakarta.jms.Topic;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.support.DefaultMessage;
@@ -48,8 +49,18 @@ public class JmsMessage extends DefaultMessage {
             this.jmsMessage = message;
         }
 
-        public boolean isTransactedRedelivered() {
-            return JmsMessageHelper.getJMSRedelivered(jmsMessage.jmsMessage);
+        public TransactedRedeliveryState transactedRedeliveredState() {
+            final Boolean jmsRedelivered = JmsMessageHelper.getJMSRedelivered(jmsMessage.jmsMessage);
+
+            if (jmsRedelivered == null) {
+                return TransactedRedeliveryState.UNDEFINED;
+            } else {
+                if (jmsRedelivered) {
+                    return TransactedRedeliveryState.IS_REDELIVERY;
+                }
+            }
+
+            return TransactedRedeliveryState.NON_REDELIVERY;
         }
     }
 
