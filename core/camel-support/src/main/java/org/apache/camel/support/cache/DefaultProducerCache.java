@@ -16,7 +16,6 @@
  */
 package org.apache.camel.support.cache;
 
-import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.RejectedExecutionException;
 
@@ -31,7 +30,6 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.StatefulService;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.SharedInternalProcessor;
@@ -40,10 +38,6 @@ import org.apache.camel.support.DefaultEndpointUtilizationStatistics;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
-import org.apache.camel.support.task.BlockingTask;
-import org.apache.camel.support.task.Tasks;
-import org.apache.camel.support.task.budget.Budgets;
-import org.apache.camel.support.task.budget.IterationBoundedBudget;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +46,7 @@ import org.slf4j.LoggerFactory;
  * Default implementation of {@link ProducerCache}.
  */
 public class DefaultProducerCache extends ServiceSupport implements ProducerCache {
-
     private static final Logger LOG = LoggerFactory.getLogger(DefaultProducerCache.class);
-    private static final long ACQUIRE_WAIT_TIME = 30000;
 
     private final CamelContext camelContext;
     private final ProducerServicePool producers;
@@ -125,39 +117,12 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         return source;
     }
 
-    private void waitForService(StatefulService service) {
-        BlockingTask task = Tasks.foregroundTask().withBudget(Budgets.iterationTimeBudget()
-                .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
-                .withMaxDuration(Duration.ofMillis(ACQUIRE_WAIT_TIME))
-                .withInterval(Duration.ofMillis(5))
-                .build())
-                .build();
-
-        if (!task.run(service::isStarting)) {
-            LOG.warn("The producer: {} did not finish starting in {} ms", service, ACQUIRE_WAIT_TIME);
-        }
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Waited {} ms for producer to finish starting: {} state: {}", task.elapsed().toMillis(), service,
-                    service.getStatus());
-        }
-    }
-
     @Override
     public AsyncProducer acquireProducer(Endpoint endpoint) {
         try {
             AsyncProducer producer = producers.acquire(endpoint);
             if (statistics != null) {
                 statistics.onHit(endpoint.getEndpointUri());
-            }
-
-            // if producer is starting then wait for it to be ready
-            if (producer instanceof StatefulService) {
-                StatefulService ss = (StatefulService) producer;
-                if (ss.isStarting()) {
-                    LOG.trace("Waiting for producer to finish starting: {}", producer);
-                    waitForService(ss);
-                }
             }
             return producer;
         } catch (Throwable e) {
