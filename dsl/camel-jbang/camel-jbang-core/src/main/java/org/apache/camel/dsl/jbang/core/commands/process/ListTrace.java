@@ -171,7 +171,7 @@ public class ListTrace extends ProcessWatchCommand {
     private String getMessage(Row r) {
         String s = r.message.toJson();
         if (pretty) {
-            s = Jsoner.prettyPrint(s);
+            s = Jsoner.prettyPrint(s, 2);
         }
         return s;
     }
