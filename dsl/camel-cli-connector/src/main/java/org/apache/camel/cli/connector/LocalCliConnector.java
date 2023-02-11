@@ -78,6 +78,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private File statusFile;
     private File actionFile;
     private File outputFile;
+    private File traceFile;
 
     public LocalCliConnector(CliConnectorFactory cliConnectorFactory) {
         this.cliConnectorFactory = cliConnectorFactory;
@@ -136,6 +137,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             statusFile = createLockFile(lockFile.getName() + "-status.json");
             actionFile = createLockFile(lockFile.getName() + "-action.json");
             outputFile = createLockFile(lockFile.getName() + "-output.json");
+            traceFile = createLockFile(lockFile.getName() + "-trace.json");
             executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
             LOG.info("Camel CLI enabled (local)");
         } else {
@@ -286,6 +288,13 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     LOG.trace("Updating output file: {}", outputFile);
                     IOHelper.writeText(json.toJson(), outputFile);
                 }
+            } else if ("trace".equals(action)) {
+                DevConsole dc = camelContext.getExtension(DevConsoleRegistry.class).resolveById("trace");
+                if (dc != null) {
+                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
+                    LOG.trace("Updating trace file: {}", traceFile);
+                    IOHelper.writeText(json.toJson(), traceFile);
+                }
             }
 
             // action done so delete file
@@ -416,6 +425,15 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     JsonObject json = (JsonObject) dc11.call(DevConsole.MediaType.JSON);
                     if (json != null && !json.isEmpty()) {
                         root.put("fault-tolerance", json);
+                    }
+                }
+                DevConsole dc12 = dcr.resolveById("trace");
+                if (dc12 != null) {
+                    JsonObject json = (JsonObject) dc12.call(DevConsole.MediaType.JSON);
+                    if (json != null && !json.isEmpty()) {
+                        // special for trace messages which is stored in its own file
+                        LOG.trace("Updating trace file: {}", traceFile);
+                        IOHelper.writeText(json.toJson(), traceFile);
                     }
                 }
             }
@@ -599,6 +617,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
         if (outputFile != null) {
             FileUtil.deleteFile(outputFile);
+        }
+        if (traceFile != null) {
+            FileUtil.deleteFile(traceFile);
         }
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdown(executor);
