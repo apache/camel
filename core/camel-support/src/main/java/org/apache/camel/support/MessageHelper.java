@@ -477,15 +477,15 @@ public final class MessageHelper {
     /**
      * Dumps the message as a generic XML structure.
      *
-     * @param  message      the message
-     * @param  includeBody  whether or not to include the message body
-     * @param  indent       number of spaces to indent
+     * @param  message            the message
+     * @param  includeBody        whether or not to include the message body
+     * @param  indent             number of spaces to indent
      * @param  allowCachedStreams whether to include message body if they are stream cache based
-     * @param  allowStreams whether to include message body if they are stream based
-     * @param  allowFiles   whether to include message body if they are file based
-     * @param  maxChars     clip body after maximum chars (to avoid very big messages). Use 0 or negative value to not
-     *                      limit at all.
-     * @return              the XML
+     * @param  allowStreams       whether to include message body if they are stream based
+     * @param  allowFiles         whether to include message body if they are file based
+     * @param  maxChars           clip body after maximum chars (to avoid very big messages). Use 0 or negative value to
+     *                            not limit at all.
+     * @return                    the XML
      */
     public static String dumpAsXml(
             Message message, boolean includeBody, int indent, boolean allowCachedStreams, boolean allowStreams,
@@ -809,15 +809,15 @@ public final class MessageHelper {
     /**
      * Dumps the message as a generic JSon structure.
      *
-     * @param  message      the message
-     * @param  includeBody  whether or not to include the message body
-     * @param  indent       number of spaces to indent
+     * @param  message            the message
+     * @param  includeBody        whether or not to include the message body
+     * @param  indent             number of spaces to indent
      * @param  allowCachedStreams whether to include message body if they are stream cached based
-     * @param  allowStreams whether to include message body if they are stream based
-     * @param  allowFiles   whether to include message body if they are file based
-     * @param  maxChars     clip body after maximum chars (to avoid very big messages). Use 0 or negative value to not
-     *                      limit at all.
-     * @return              the JSon
+     * @param  allowStreams       whether to include message body if they are stream based
+     * @param  allowFiles         whether to include message body if they are file based
+     * @param  maxChars           clip body after maximum chars (to avoid very big messages). Use 0 or negative value to
+     *                            not limit at all.
+     * @return                    the JSon
      */
     public static String dumpAsJSon(
             Message message, boolean includeBody, int indent, boolean allowCachedStreams, boolean allowStreams,
