@@ -32,6 +32,8 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.download.MavenGav;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -50,6 +52,14 @@ public class CatalogDoc extends CamelCommand {
     @CommandLine.Parameters(description = "Name of kamelet, component, dataformat, or other Camel resource",
                             arity = "1")
     String name;
+
+    @CommandLine.Option(names = { "--camel-version" },
+                        description = "To run using a different Camel version than the default version.")
+    String camelVersion;
+
+    @CommandLine.Option(names = { "--repos" },
+                        description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
+    String repos;
 
     @CommandLine.Option(names = { "--url" },
                         description = "Prints the link to the online documentation on the Camel website",
@@ -73,14 +83,26 @@ public class CatalogDoc extends CamelCommand {
             "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.1.1")
     String kameletsVersion;
 
-    final CamelCatalog catalog = new DefaultCamelCatalog(true);
+    CamelCatalog catalog;
 
     public CatalogDoc(CamelJBangMain main) {
         super(main);
     }
 
+    CamelCatalog loadCatalog() throws Exception {
+        if (camelVersion == null) {
+            return new DefaultCamelCatalog(true);
+        } else {
+            // silent logging when download catalogs
+            RuntimeUtil.configureLog("off", false, false, false, false);
+            return CatalogLoader.loadCatalog(repos, camelVersion);
+        }
+    }
+
     @Override
     public Integer call() throws Exception {
+        this.catalog = loadCatalog();
+
         String prefix = StringHelper.before(name, ":");
         if (prefix != null) {
             name = StringHelper.after(name, ":");

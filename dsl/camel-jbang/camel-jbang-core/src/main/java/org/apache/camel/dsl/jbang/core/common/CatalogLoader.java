@@ -47,6 +47,47 @@ public final class CatalogLoader {
     private CatalogLoader() {
     }
 
+    public static CamelCatalog loadCatalog(String repos, String version) throws Exception {
+        if (version == null) {
+            CamelCatalog answer = new DefaultCamelCatalog();
+            answer.enableCache();
+            return answer;
+        }
+
+        // use kamelet-main to dynamic download dependency via maven
+        KameletMain main = new KameletMain();
+        try {
+            main.setRepos(repos);
+            // enable stub in silent mode so we do not use real components
+            main.setStub(true);
+            main.start();
+
+            // wrap downloaded catalog files in an isolated classloader
+            DependencyDownloaderClassLoader cl
+                    = new DependencyDownloaderClassLoader(null);
+
+            // download camel-catalog for that specific version
+            MavenDependencyDownloader downloader = main.getCamelContext().hasService(MavenDependencyDownloader.class);
+            MavenArtifact ma = downloader.downloadArtifact("org.apache.camel", "camel-catalog", version);
+            if (ma != null) {
+                cl.addFile(ma.getFile());
+            } else {
+                throw new IOException("Cannot download org.apache.camel:camel-catalog:" + version);
+            }
+
+            // re-create answer with the classloader to be able to load resources in this catalog
+            Class<CamelCatalog> clazz2
+                    = main.getCamelContext().getClassResolver().resolveClass(DEFAULT_CAMEL_CATALOG,
+                            CamelCatalog.class);
+            CamelCatalog answer = main.getCamelContext().getInjector().newInstance(clazz2);
+            answer.setVersionManager(new DownloadCatalogVersionManager(version, cl));
+            answer.enableCache();
+            return answer;
+        } finally {
+            main.stop();
+        }
+    }
+
     public static CamelCatalog loadSpringBootCatalog(String repos, String version) throws Exception {
         CamelCatalog answer = new DefaultCamelCatalog();
         if (version == null) {
@@ -79,7 +120,7 @@ public final class CatalogLoader {
                         "Cannot download org.apache.camel.springboot:camel-catalog-provider-springboot:" + version);
             }
 
-            answer.setVersionManager(new SpringBootCatalogVersionManager(version, cl));
+            answer.setVersionManager(new DownloadCatalogVersionManager(version, cl));
             Class<RuntimeProvider> clazz = (Class<RuntimeProvider>) cl.loadClass(SPRING_BOOT_CATALOG_PROVIDER);
             if (clazz != null) {
                 RuntimeProvider provider = main.getCamelContext().getInjector().newInstance(clazz);
@@ -161,12 +202,12 @@ public final class CatalogLoader {
         return answer;
     }
 
-    private static final class SpringBootCatalogVersionManager implements VersionManager {
+    private static final class DownloadCatalogVersionManager implements VersionManager {
 
         private ClassLoader classLoader;
         private final String version;
 
-        public SpringBootCatalogVersionManager(String version, ClassLoader classLoader) {
+        public DownloadCatalogVersionManager(String version, ClassLoader classLoader) {
             this.version = version;
             this.classLoader = classLoader;
         }
