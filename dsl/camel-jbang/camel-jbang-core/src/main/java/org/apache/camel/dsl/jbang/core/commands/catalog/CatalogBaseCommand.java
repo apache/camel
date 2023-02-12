@@ -28,12 +28,22 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.download.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
 import picocli.CommandLine;
 
 public abstract class CatalogBaseCommand extends CamelCommand {
+
+    @CommandLine.Option(names = { "--camel-version" },
+                        description = "To run using a different Camel version than the default version.")
+    String camelVersion;
+
+    @CommandLine.Option(names = { "--repos" },
+                        description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
+    String repos;
 
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by name, support-level, or description", defaultValue = "name")
@@ -55,7 +65,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                         description = "Filter by version more recent (inclusive)")
     String sinceAfter;
 
-    final CamelCatalog catalog = new DefaultCamelCatalog(true);
+    CamelCatalog catalog;
 
     public CatalogBaseCommand(CamelJBangMain main) {
         super(main);
@@ -67,8 +77,19 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         return model.getGroupId() + ":" + model.getArtifactId() + ":" + model.getVersion();
     }
 
+    CamelCatalog loadCatalog() throws Exception {
+        if (camelVersion == null) {
+            return new DefaultCamelCatalog(true);
+        } else {
+            // silent logging when download catalogs
+            RuntimeUtil.configureLog("off", false, false, false, false);
+            return CatalogLoader.loadCatalog(repos, camelVersion);
+        }
+    }
+
     @Override
     public Integer call() throws Exception {
+        this.catalog = loadCatalog();
         List<Row> rows = collectRows();
 
         if (filterName != null) {
