@@ -29,14 +29,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.catalog.RuntimeProvider;
-import org.apache.camel.catalog.VersionManager;
+import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
-import org.apache.camel.main.KameletMain;
-import org.apache.camel.main.download.DependencyDownloaderClassLoader;
-import org.apache.camel.main.download.MavenArtifact;
-import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.CamelCaseOrderedProperties;
@@ -47,7 +41,6 @@ import org.apache.commons.io.FileUtils;
 class ExportSpringBoot extends Export {
 
     private static final String DEFAULT_CAMEL_CATALOG = "org.apache.camel.catalog.DefaultCamelCatalog";
-    private static final String SPRING_BOOT_CATALOG_PROVIDER = "org.apache.camel.springboot.catalog.SpringBootRuntimeProvider";
 
     public ExportSpringBoot(CamelJBangMain main) {
         super(main);
@@ -152,7 +145,7 @@ class ExportSpringBoot extends Export {
         RuntimeUtil.loadProperties(prop, settings);
         String repos = getMavenRepos(prop, camelSpringBootVersion);
 
-        CamelCatalog catalog = loadSpringBootCatalog(repos, camelSpringBootVersion);
+        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, camelSpringBootVersion);
         String camelVersion = catalog.getLoadedVersion();
 
         context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
@@ -265,7 +258,7 @@ class ExportSpringBoot extends Export {
         RuntimeUtil.loadProperties(prop, settings);
         String repos = getMavenRepos(prop, camelSpringBootVersion);
 
-        CamelCatalog catalog = loadSpringBootCatalog(repos, camelSpringBootVersion);
+        CamelCatalog catalog = CatalogLoader.loadSpringBootCatalog(repos, camelSpringBootVersion);
         String camelVersion = catalog.getLoadedVersion();
 
         context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
@@ -377,101 +370,11 @@ class ExportSpringBoot extends Export {
         return super.applicationPropertyLine(key, value);
     }
 
-    private CamelCatalog loadSpringBootCatalog(String repos, String version) throws Exception {
-        CamelCatalog answer = new DefaultCamelCatalog();
-        if (version == null) {
-            version = answer.getCatalogVersion();
-        }
-
-        // use kamelet-main to dynamic download dependency via maven
-        KameletMain main = new KameletMain();
-        try {
-            main.setRepos(repos);
-            main.start();
-
-            // wrap downloaded catalog files in an isolated classloader
-            DependencyDownloaderClassLoader cl
-                    = new DependencyDownloaderClassLoader(main.getCamelContext().getApplicationContextClassLoader());
-
-            // download camel-catalog for that specific version
-            MavenDependencyDownloader downloader = main.getCamelContext().hasService(MavenDependencyDownloader.class);
-            MavenArtifact ma = downloader.downloadArtifact("org.apache.camel", "camel-catalog", version);
-            if (ma != null) {
-                cl.addFile(ma.getFile());
-            } else {
-                throw new IOException("Cannot download org.apache.camel:camel-catalog:" + version);
-            }
-            ma = downloader.downloadArtifact("org.apache.camel.springboot", "camel-catalog-provider-springboot", version);
-            if (ma != null) {
-                cl.addFile(ma.getFile());
-            } else {
-                throw new IOException(
-                        "Cannot download org.apache.camel.springboot:camel-catalog-provider-springboot:" + version);
-            }
-
-            answer.setVersionManager(new SpringBootCatalogVersionManager(version, cl));
-            Class<RuntimeProvider> clazz = (Class<RuntimeProvider>) cl.loadClass(SPRING_BOOT_CATALOG_PROVIDER);
-            if (clazz != null) {
-                RuntimeProvider provider = main.getCamelContext().getInjector().newInstance(clazz);
-                if (provider != null) {
-                    answer.setRuntimeProvider(provider);
-                }
-            }
-            answer.enableCache();
-
-        } finally {
-            main.stop();
-        }
-
-        return answer;
-    }
-
     private String readResourceTemplate(String name) throws IOException {
         InputStream is = ExportSpringBoot.class.getClassLoader().getResourceAsStream(name);
         String text = IOHelper.loadText(is);
         IOHelper.close(is);
         return text;
-    }
-
-    private final class SpringBootCatalogVersionManager implements VersionManager {
-
-        private ClassLoader classLoader;
-        private final String version;
-
-        public SpringBootCatalogVersionManager(String version, ClassLoader classLoader) {
-            this.version = version;
-            this.classLoader = classLoader;
-        }
-
-        @Override
-        public void setClassLoader(ClassLoader classLoader) {
-            this.classLoader = classLoader;
-        }
-
-        @Override
-        public String getLoadedVersion() {
-            return version;
-        }
-
-        @Override
-        public boolean loadVersion(String version) {
-            return this.version.equals(version);
-        }
-
-        @Override
-        public String getRuntimeProviderLoadedVersion() {
-            return version;
-        }
-
-        @Override
-        public boolean loadRuntimeProviderVersion(String groupId, String artifactId, String version) {
-            return true;
-        }
-
-        @Override
-        public InputStream getResourceAsStream(String name) {
-            return classLoader.getResourceAsStream(name);
-        }
     }
 
 }
