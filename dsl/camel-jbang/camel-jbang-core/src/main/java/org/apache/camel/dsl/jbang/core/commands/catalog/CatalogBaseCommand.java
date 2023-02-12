@@ -41,6 +41,13 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                         description = "To run using a different Camel version than the default version.")
     String camelVersion;
 
+    @CommandLine.Option(names = { "--runtime" }, description = "Runtime (spring-boot, quarkus, or camel-main)")
+    String runtime;
+
+    @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
+                        defaultValue = "2.16.0.Final")
+    String quarkusVersion;
+
     @CommandLine.Option(names = { "--repos" },
                         description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
     String repos;
@@ -78,11 +85,17 @@ public abstract class CatalogBaseCommand extends CamelCommand {
     }
 
     CamelCatalog loadCatalog() throws Exception {
+        // silent logging when download catalogs
+        RuntimeUtil.configureLog("off", false, false, false, false);
+
+        if ("spring-boot".equals(runtime)) {
+            return CatalogLoader.loadSpringBootCatalog(repos, camelVersion);
+        } else if ("quarkus".equals(runtime)) {
+            return CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion);
+        }
         if (camelVersion == null) {
             return new DefaultCamelCatalog(true);
         } else {
-            // silent logging when download catalogs
-            RuntimeUtil.configureLog("off", false, false, false, false);
             return CatalogLoader.loadCatalog(repos, camelVersion);
         }
     }
