@@ -173,6 +173,14 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         }
     }
 
+    static String fixQuarkusSince(String since) {
+        // quarkus-catalog may have 0.1 and 0.0.1 versions that are really 1.0
+        if (since != null && since.startsWith("0")) {
+            return "1.0";
+        }
+        return since;
+    }
+
     static class Row {
         String name;
         String title;
