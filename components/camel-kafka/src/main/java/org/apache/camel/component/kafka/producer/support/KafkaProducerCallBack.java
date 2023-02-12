@@ -22,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.LongAdder;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
@@ -46,8 +47,7 @@ public final class KafkaProducerCallBack implements Callback {
         this.callback = callback;
         // The worker pool should be created for both sync and async modes, so checking it
         // is merely a safeguard
-        assert workerPool != null;
-        this.workerPool = workerPool;
+        this.workerPool = ObjectHelper.notNull(workerPool, "workerPool");
         this.record = record;
         count.increment();
 

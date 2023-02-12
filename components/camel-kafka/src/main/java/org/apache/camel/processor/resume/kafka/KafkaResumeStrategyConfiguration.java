@@ -21,6 +21,7 @@ import java.time.Duration;
 import java.util.Properties;
 
 import org.apache.camel.resume.ResumeStrategyConfiguration;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A configuration suitable for using with the {@link KafkaResumeStrategy} and any of its implementations
@@ -37,9 +38,7 @@ public class KafkaResumeStrategyConfiguration extends ResumeStrategyConfiguratio
     }
 
     void setProducerProperties(Properties producerProperties) {
-        assert producerProperties != null;
-
-        this.producerProperties = producerProperties;
+        this.producerProperties = ObjectHelper.notNull(producerProperties, "producerProperties");
     }
 
     public Properties getConsumerProperties() {
@@ -47,9 +46,7 @@ public class KafkaResumeStrategyConfiguration extends ResumeStrategyConfiguratio
     }
 
     void setConsumerProperties(Properties consumerProperties) {
-        assert consumerProperties != null;
-
-        this.consumerProperties = consumerProperties;
+        this.consumerProperties = ObjectHelper.notNull(consumerProperties, "consumerProperties");
     }
 
     public String getTopic() {
@@ -57,9 +54,7 @@ public class KafkaResumeStrategyConfiguration extends ResumeStrategyConfiguratio
     }
 
     void setTopic(String topic) {
-        assert topic != null;
-
-        this.topic = topic;
+        this.topic = ObjectHelper.notNull(topic, "topic");
     }
 
     public Duration getMaxInitializationDuration() {

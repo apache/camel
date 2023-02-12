@@ -23,6 +23,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.consumer.FileOffsetResumeAdapter;
 import org.apache.camel.component.file.consumer.FileResumeAdapter;
 import org.apache.camel.resume.Offset;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +42,7 @@ class DefaultFileOffsetResumeAdapter extends AbstractFileResumeAdapter implement
 
     @Override
     public void setResumePayload(GenericFile<File> genericFile) {
-        assert genericFile != null;
-        this.genericFile = genericFile;
+        this.genericFile = ObjectHelper.notNull(genericFile, "genericFile");
     }
 
     public boolean add(Object key, Object offset) {

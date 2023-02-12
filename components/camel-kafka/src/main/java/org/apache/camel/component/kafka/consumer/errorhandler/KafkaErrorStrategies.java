@@ -22,6 +22,7 @@ import org.apache.camel.component.kafka.KafkaEndpoint;
 import org.apache.camel.component.kafka.KafkaFetchRecords;
 import org.apache.camel.component.kafka.PollExceptionStrategy;
 import org.apache.camel.component.kafka.PollOnError;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.kafka.clients.consumer.Consumer;
 
 public final class KafkaErrorStrategies {
@@ -32,7 +33,7 @@ public final class KafkaErrorStrategies {
 
     public static PollExceptionStrategy strategies(
             KafkaFetchRecords recordFetcher, KafkaEndpoint endpoint, Consumer<?, ?> consumer) {
-        assert consumer != null;
+        ObjectHelper.notNull(consumer, "consumer");
 
         PollExceptionStrategy strategy = endpoint.getComponent().getPollExceptionStrategy();
         if (strategy != null) {

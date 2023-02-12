@@ -26,6 +26,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.xslt.XsltUriResolver;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -55,7 +56,7 @@ public class XsltUriResolverTest {
 
     private static String readFileFromClasspathAsString(String path) throws IOException {
         try (InputStream is = XsltUriResolverTest.class.getClassLoader().getResourceAsStream(path)) {
-            assert is != null;
+            ObjectHelper.notNull(is, "is");
             return new String(is.readAllBytes(), StandardCharsets.UTF_8);
         }
     }

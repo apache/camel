@@ -26,6 +26,7 @@ import org.apache.camel.resume.OffsetKey;
 import org.apache.camel.resume.ResumeAdapter;
 import org.apache.camel.resume.cache.ResumeCache;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.services.kinesis.model.GetShardIteratorRequest;
@@ -46,8 +47,8 @@ public class KinesisDefaultResumeAdapter implements KinesisResumeAdapter, Cachea
 
     @Override
     public void resume() {
-        assert streamName != null;
-        assert resumable != null;
+        ObjectHelper.notNull(streamName, "streamName");
+        ObjectHelper.notNull(resumable, "resumable");
 
         KinesisOffset offset = cache.get(streamName, KinesisOffset.class);
 

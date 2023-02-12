@@ -34,6 +34,7 @@ import org.apache.camel.test.infra.aws2.clients.AWSSDKClientUtils;
 import org.apache.camel.test.infra.aws2.services.AWSServiceFactory;
 import org.apache.camel.test.infra.common.TestUtils;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -127,7 +128,7 @@ public class KinesisConsumerIT extends CamelTestSupport {
 
         assertEquals(messageCount, receivedMessages.size());
         for (KinesisData data : receivedMessages) {
-            assert data != null; // should never happen
+            ObjectHelper.notNull(data, "data");
             assertNotNull(data.body, "The body should not be null");
             assertNotNull(data.partition, "The partition should not be null");
             /*

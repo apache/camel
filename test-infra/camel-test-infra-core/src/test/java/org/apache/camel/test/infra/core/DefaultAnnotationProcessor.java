@@ -32,6 +32,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,13 +152,12 @@ public class DefaultAnnotationProcessor implements AnnotationProcessor {
                 if (field.getType() == MockEndpoint.class) {
                     final MockEndpoint mockEndpoint = contextExtension.getMockEndpoint(uri);
 
-                    assert mockEndpoint != null;
-
+                    ObjectHelper.notNull(mockEndpoint, "mockEndpoint");
                     field.set(instance, mockEndpoint);
                 } else {
                     final Endpoint endpoint = context.getEndpoint(uri);
 
-                    assert endpoint != null;
+                    ObjectHelper.notNull(endpoint, "endpoint");
                     field.set(instance, endpoint);
                 }
 

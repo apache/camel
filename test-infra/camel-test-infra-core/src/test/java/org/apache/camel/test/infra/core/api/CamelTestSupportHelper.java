@@ -20,6 +20,7 @@ package org.apache.camel.test.infra.core.api;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Helper interface for simplifying the conversion from the older CamelTestSupport to the new extension
@@ -30,7 +31,7 @@ public interface CamelTestSupportHelper {
 
     default <T extends Endpoint> T getMandatoryEndpoint(String uri, Class<T> type) {
         T endpoint = getCamelContextExtension().getContext().getEndpoint(uri, type);
-        assert endpoint != null : "No endpoint found for uri: " + uri;
+        ObjectHelper.notNull(endpoint, "No endpoint found for uri: " + uri);
 
         return endpoint;
     }

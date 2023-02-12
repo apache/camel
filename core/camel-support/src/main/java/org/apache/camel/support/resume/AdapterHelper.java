@@ -29,6 +29,7 @@ import org.apache.camel.resume.ResumeStrategy;
 import org.apache.camel.resume.ResumeStrategyConfiguration;
 import org.apache.camel.resume.cache.ResumeCache;
 import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,9 +42,9 @@ public final class AdapterHelper {
     }
 
     public static ResumeAdapter eval(CamelContext context, ResumeAware resumeAware, ResumeStrategy resumeStrategy) {
-        assert context != null;
-        assert resumeAware != null;
-        assert resumeStrategy != null;
+        ObjectHelper.notNull(context, "context");
+        ObjectHelper.notNull(resumeAware, "resumeAware");
+        ObjectHelper.notNull(resumeStrategy, "resumeStrategy");
 
         LOG.debug("Using the factory finder to search for the resume adapter");
         final FactoryFinder factoryFinder
