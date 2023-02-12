@@ -193,6 +193,10 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         }
     }
 
+    String nativeSupported(Row r) {
+        return r.nativeSupported ? "x" : "";
+    }
+
     static String fixQuarkusSince(String since) {
         // quarkus-catalog may have 0.1 and 0.0.1 versions that are really 1.0
         if (since != null && since.startsWith("0")) {
@@ -201,11 +205,19 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         return since;
     }
 
+    static List<String> findComponentNames(CamelCatalog catalog) {
+        List<String> answer = catalog.findComponentNames();
+        // remove empty (spring boot catalog has a bug)
+        answer.removeIf(String::isBlank);
+        return answer;
+    }
+
     static class Row {
         String name;
         String title;
         String level;
         String since;
+        boolean nativeSupported;
         String description;
         String label;
         String gav;

@@ -45,6 +45,8 @@ import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
+import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseCommand.findComponentNames;
+
 @CommandLine.Command(name = "doc",
                      description = "Shows documentation for kamelet, component, and other Camel resources")
 public class CatalogDoc extends CamelCommand {
@@ -172,7 +174,7 @@ public class CatalogDoc extends CamelCommand {
                 suggestions = SuggestSimilarHelper.didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion), name);
             } else {
                 // assume its a component
-                suggestions = SuggestSimilarHelper.didYouMean(catalog.findComponentNames(), name);
+                suggestions = SuggestSimilarHelper.didYouMean(findComponentNames(catalog), name);
             }
             if (suggestions != null) {
                 String type = kamelet ? "kamelet" : "component";
@@ -185,7 +187,7 @@ public class CatalogDoc extends CamelCommand {
             if ("kamelet".equals(prefix)) {
                 suggestions = SuggestSimilarHelper.didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion), name);
             } else if ("component".equals(prefix)) {
-                suggestions = SuggestSimilarHelper.didYouMean(catalog.findComponentNames(), name);
+                suggestions = SuggestSimilarHelper.didYouMean(findComponentNames(catalog), name);
             } else if ("dataformat".equals(prefix)) {
                 suggestions = SuggestSimilarHelper.didYouMean(catalog.findDataFormatNames(), name);
             } else if ("language".equals(prefix)) {
