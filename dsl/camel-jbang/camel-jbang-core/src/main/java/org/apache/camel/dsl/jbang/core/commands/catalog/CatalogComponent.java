@@ -40,7 +40,7 @@ public class CatalogComponent extends CatalogBaseCommand {
             row.name = model.getScheme();
             row.title = model.getTitle();
             row.level = model.getSupportLevel().name();
-            row.since = model.getFirstVersionShort();
+            row.since = fixQuarkusSince(model.getFirstVersionShort());
             row.description = model.getDescription();
             row.label = model.getLabel() != null ? model.getLabel() : "";
             row.deprecated = model.isDeprecated();
