@@ -44,6 +44,7 @@ public class CatalogDataFormat extends CatalogBaseCommand {
             row.description = model.getDescription();
             row.label = model.getLabel() != null ? model.getLabel() : "";
             row.deprecated = model.isDeprecated();
+            row.nativeSupported = model.isNativeSupported();
             row.gav = getGAV(model);
             rows.add(row);
         }

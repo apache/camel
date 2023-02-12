@@ -133,6 +133,8 @@ public abstract class CatalogBaseCommand extends CamelCommand {
                     new Column().header("NAME").visible(!gav).dataAlign(HorizontalAlign.LEFT).maxWidth(30).with(r -> r.name),
                     new Column().header("ARTIFACT-ID").visible(gav).dataAlign(HorizontalAlign.LEFT).with(this::shortGav),
                     new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
+                    new Column().header("NATIVE").dataAlign(HorizontalAlign.CENTER)
+                            .visible("quarkus".equals(runtime)).with(this::nativeSupported),
                     new Column().header("SINCE").dataAlign(HorizontalAlign.RIGHT).with(r -> r.since),
                     new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::shortDescription))));
         }
@@ -173,6 +175,10 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         }
     }
 
+    String nativeSupported(Row r) {
+        return r.nativeSupported ? "x" : "";
+    }
+
     static String fixQuarkusSince(String since) {
         // quarkus-catalog may have 0.1 and 0.0.1 versions that are really 1.0
         if (since != null && since.startsWith("0")) {
@@ -181,11 +187,19 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         return since;
     }
 
+    static List<String> findComponentNames(CamelCatalog catalog) {
+        List<String> answer = catalog.findComponentNames();
+        // remove empty (spring boot catalog has a bug)
+        answer.removeIf(String::isBlank);
+        return answer;
+    }
+
     static class Row {
         String name;
         String title;
         String level;
         String since;
+        boolean nativeSupported;
         String description;
         String label;
         String gav;

@@ -34,7 +34,7 @@ public class CatalogComponent extends CatalogBaseCommand {
     @Override
     List<CatalogBaseCommand.Row> collectRows() {
         List<Row> rows = new ArrayList<>();
-        for (String name : catalog.findComponentNames()) {
+        for (String name : findComponentNames(catalog)) {
             ComponentModel model = catalog.componentModel(name);
             Row row = new Row();
             row.name = model.getScheme();
@@ -44,6 +44,7 @@ public class CatalogComponent extends CatalogBaseCommand {
             row.description = model.getDescription();
             row.label = model.getLabel() != null ? model.getLabel() : "";
             row.deprecated = model.isDeprecated();
+            row.nativeSupported = model.isNativeSupported();
             row.gav = getGAV(model);
             rows.add(row);
         }
