@@ -224,14 +224,9 @@ The optional provider identifier for the provider used to create the
 KeyStores represented by this object's configuration. If omitted, the
 default look-up behavior is used.
 resource::
-This optional property represents the location of the key store resource
-to load the key store from. In some cases, the resource is omitted as
-the key store content is provided by other means. The loading of the
-resource, if provided, is attempted by treating the resource as a file
-path, a class path resource, and a URL in that order. An exception is
-thrown if the resource cannot be resolved to readable input stream using
-any of the above methods.
-
+Optional property to load the key store resource from a uri. By default the class path is used, otherwise 
+the uri needs to be specified. For example to use file path as a resource, the prefix file is needed (file:/path/to/keystore). 
+In some cases, the resource is omitted as the key store is provided by other means. 
 
 === FilterParameters
 
@@ -344,7 +339,7 @@ SSLContext.
 [source,java]
 -------------------------------------------------------------------
 KeyStoreParameters ksp = new KeyStoreParameters();
-ksp.setResource("/users/home/server/keystore.jks");
+ksp.setResource("file:/users/home/server/keystore.jks");
 ksp.setPassword("keystorePassword");
 
 KeyManagersParameters kmp = new KeyManagersParameters();
@@ -377,7 +372,7 @@ exclude any cipher suites that match the patterns:
 [source,java]
 -------------------------------------------------------------------
 KeyStoreParameters ksp = new KeyStoreParameters();
-ksp.setResource("/users/home/server/keystore.jks");
+ksp.setResource("file:/users/home/server/keystore.jks");
 ksp.setPassword("keystorePassword");
 
 KeyManagersParameters kmp = new KeyManagersParameters();
