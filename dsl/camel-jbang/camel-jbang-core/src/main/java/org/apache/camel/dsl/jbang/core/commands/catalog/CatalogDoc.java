@@ -359,7 +359,7 @@ public class CatalogDoc extends CamelCommand {
         } else {
             System.out.printf("Component Name: %s%n", cm.getName());
         }
-        System.out.printf("Since: %s%n", cm.getFirstVersionShort());
+        System.out.printf("Since: %s%n", fixQuarkusSince(cm.getFirstVersionShort()));
         System.out.println("");
         if (cm.isProducerOnly()) {
             System.out.println("Only producer is supported");
@@ -456,7 +456,7 @@ public class CatalogDoc extends CamelCommand {
         } else {
             System.out.printf("Dataformat Name: %s%n", dm.getName());
         }
-        System.out.printf("Since: %s%n", dm.getFirstVersionShort());
+        System.out.printf("Since: %s%n", fixQuarkusSince(dm.getFirstVersionShort()));
         System.out.println("");
         System.out.printf("%s%n", dm.getDescription());
         System.out.println("");
@@ -513,7 +513,7 @@ public class CatalogDoc extends CamelCommand {
         } else {
             System.out.printf("Language Name: %s%n", lm.getName());
         }
-        System.out.printf("Since: %s%n", lm.getFirstVersionShort());
+        System.out.printf("Since: %s%n", fixQuarkusSince(lm.getFirstVersionShort()));
         System.out.println("");
         System.out.printf("%s%n", lm.getDescription());
         System.out.println("");
@@ -570,7 +570,7 @@ public class CatalogDoc extends CamelCommand {
         } else {
             System.out.printf("Miscellaneous Name: %s%n", om.getName());
         }
-        System.out.printf("Since: %s%n", om.getFirstVersionShort());
+        System.out.printf("Since: %s%n", fixQuarkusSince(om.getFirstVersionShort()));
         System.out.println("");
         System.out.printf("%s%n", om.getDescription());
         System.out.println("");
@@ -678,6 +678,14 @@ public class CatalogDoc extends CamelCommand {
                         || r.getDescription().toLowerCase(Locale.ROOT).contains(target)
                         || r.getShortGroup() != null && r.getShortGroup().toLowerCase(Locale.ROOT).contains(target))
                 .collect(Collectors.toList());
+    }
+
+    static String fixQuarkusSince(String since) {
+        // quarkus-catalog may have 0.1 and 0.0.1 versions that are really 1.0
+        if (since != null && since.startsWith("0")) {
+            return "1.0";
+        }
+        return since;
     }
 
 }
