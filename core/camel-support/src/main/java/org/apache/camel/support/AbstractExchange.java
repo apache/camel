@@ -30,6 +30,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeExtension;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedCamelContext;
@@ -54,7 +55,6 @@ import static org.apache.camel.support.MessageHelper.copyBody;
  * @see DefaultExchange
  */
 class AbstractExchange implements ExtendedExchange {
-
     // number of elements in array
     static final int INTERNAL_LENGTH = ExchangePropertyKey.values().length;
     // empty array for reset
@@ -90,17 +90,19 @@ class AbstractExchange implements ExtendedExchange {
     Boolean errorHandlerHandled;
     AsyncCallback defaultConsumerCallback; // optimize (do not reset)
     Map<String, SafeCopyProperty> safeCopyProperties;
+    private final ExtendedExchangeExtension privateExtension;
+
 
     public AbstractExchange(CamelContext context) {
-        this.context = context;
-        this.pattern = ExchangePattern.InOnly;
-        this.created = System.currentTimeMillis();
+        this(context, ExchangePattern.InOnly);
     }
 
     public AbstractExchange(CamelContext context, ExchangePattern pattern) {
         this.context = context;
         this.pattern = pattern;
         this.created = System.currentTimeMillis();
+
+        privateExtension = new ExtendedExchangeExtension(this);
     }
 
     public AbstractExchange(Exchange parent) {
@@ -110,6 +112,8 @@ class AbstractExchange implements ExtendedExchange {
         this.fromEndpoint = parent.getFromEndpoint();
         this.fromRouteId = parent.getFromRouteId();
         this.unitOfWork = parent.getUnitOfWork();
+
+        privateExtension = new ExtendedExchangeExtension(this);
     }
 
     public AbstractExchange(Endpoint fromEndpoint) {
@@ -117,6 +121,8 @@ class AbstractExchange implements ExtendedExchange {
         this.pattern = fromEndpoint.getExchangePattern();
         this.created = System.currentTimeMillis();
         this.fromEndpoint = fromEndpoint;
+
+        privateExtension = new ExtendedExchangeExtension(this);
     }
 
     public AbstractExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
@@ -124,6 +130,8 @@ class AbstractExchange implements ExtendedExchange {
         this.pattern = pattern;
         this.created = System.currentTimeMillis();
         this.fromEndpoint = fromEndpoint;
+
+        privateExtension = new ExtendedExchangeExtension(this);
     }
 
     @Override
@@ -969,5 +977,11 @@ class AbstractExchange implements ExtendedExchange {
 
         return ExchangeHelper.convertToType(this, type, value);
     }
+
+
+    public ExtendedExchangeExtension getExchangeExtension() {
+        return privateExtension;
+    }
+
 
 }

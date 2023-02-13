@@ -19,10 +19,10 @@ package org.apache.camel;
 /**
  * An interface that allows safe copy (deep clone) of property value object when creating copy of Exchange objects.
  * Classes implementing this interface can be set as key value pair on exchange object via
- * {@link ExtendedExchange#setSafeCopyProperty(String, SafeCopyProperty)}.
+ * {@link ExchangeExtension#setSafeCopyProperty(String, SafeCopyProperty)}.
  *
  * When exchange object is copied it will invoke {@link SafeCopyProperty#safeCopy()} method on properties set using
- * {@link ExtendedExchange#setSafeCopyProperty(String, SafeCopyProperty)}. This allows the property value object to
+ * {@link ExchangeExtension#setSafeCopyProperty(String, SafeCopyProperty)}. This allows the property value object to
  * return a copy object to be set on the target exchange object instead of the original value object. This protects the
  * properties from unintended mutation when using parallelProcessing in Multicast or RecipientList EIP
  */
