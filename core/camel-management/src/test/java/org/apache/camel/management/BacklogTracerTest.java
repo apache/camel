@@ -151,7 +151,11 @@ public class BacklogTracerTest extends ManagementTestSupport {
                 = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
 
         assertNotNull(events);
-        assertEquals(6, events.size());
+        assertEquals(8, events.size());
+
+        // first and last events
+        assertTrue(events.get(0).isFirst());
+        assertTrue(events.get(7).isLast());
 
         BacklogTracerEventMessage event0 = events.get(0);
         assertEquals("route1", event0.getRouteId());
@@ -177,7 +181,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
                      + "    </message>",
                 event2.getMessageAsXml());
 
-        BacklogTracerEventMessage event3 = events.get(3);
+        BacklogTracerEventMessage event3 = events.get(4);
         assertEquals("route1", event3.getRouteId());
         assertEquals(null, event3.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(1).getExchangeId() + "\">\n"
@@ -185,7 +189,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
                      + "    </message>",
                 event3.getMessageAsXml());
 
-        BacklogTracerEventMessage event4 = events.get(4);
+        BacklogTracerEventMessage event4 = events.get(5);
         assertEquals("route1", event4.getRouteId());
         assertEquals("foo", event4.getToNode());
         assertEquals("    <message exchangeId=\"" + fooExchanges.get(1).getExchangeId() + "\">\n"
@@ -193,7 +197,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
                      + "    </message>",
                 event3.getMessageAsXml());
 
-        BacklogTracerEventMessage event5 = events.get(5);
+        BacklogTracerEventMessage event5 = events.get(6);
         assertEquals("route1", event5.getRouteId());
         assertEquals("bar", event5.getToNode());
         assertEquals("    <message exchangeId=\"" + barExchanges.get(1).getExchangeId() + "\">\n"
@@ -231,7 +235,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         assertNotNull(dom);
 
         NodeList list = dom.getElementsByTagName("backlogTracerEventMessage");
-        assertEquals(6, list.getLength());
+        assertEquals(8, list.getLength());
     }
 
     @SuppressWarnings("unchecked")
@@ -263,12 +267,12 @@ public class BacklogTracerTest extends ManagementTestSupport {
                 = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
 
         assertNotNull(events);
-        assertEquals(6, events.size());
+        assertEquals(8, events.size());
 
         // and if we get again they are still there
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
         assertNotNull(events);
-        assertEquals(6, events.size());
+        assertEquals(8, events.size());
 
         // send in another message
         resetMocks();
@@ -280,10 +284,10 @@ public class BacklogTracerTest extends ManagementTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // and now we should have 3 more messages
+        // and now we should have 4 more messages
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
         assertNotNull(events);
-        assertEquals(9, events.size());
+        assertEquals(12, events.size());
     }
 
     @SuppressWarnings("unchecked")
@@ -380,12 +384,12 @@ public class BacklogTracerTest extends ManagementTestSupport {
 
         List<BacklogTracerEventMessage> events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
                 new Object[] { "foo" }, new String[] { "java.lang.String" });
-        assertEquals(10, events.size());
+        assertEquals(7, events.size());
 
-        // the first should be 0 and the last 9
+        // the first should be 3 and the last 9
         String xml = events.get(0).getMessageAsXml();
-        assertTrue(xml.contains("###0###"));
-        xml = events.get(9).getMessageAsXml();
+        assertTrue(xml.contains("###3###"));
+        xml = events.get(6).getMessageAsXml();
         assertTrue(xml.contains("###9###"));
 
         // send in another message
@@ -393,12 +397,12 @@ public class BacklogTracerTest extends ManagementTestSupport {
 
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
                 new Object[] { "foo" }, new String[] { "java.lang.String" });
-        assertEquals(10, events.size());
+        assertEquals(7, events.size());
 
         // and we are shifted one now
         xml = events.get(0).getMessageAsXml();
-        assertTrue(xml.contains("###1###"));
-        xml = events.get(9).getMessageAsXml();
+        assertTrue(xml.contains("###4###"));
+        xml = events.get(6).getMessageAsXml();
         assertTrue(xml.contains("###10###"));
 
         // send in 4 messages
@@ -409,12 +413,12 @@ public class BacklogTracerTest extends ManagementTestSupport {
 
         events = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpTracedMessages",
                 new Object[] { "foo" }, new String[] { "java.lang.String" });
-        assertEquals(10, events.size());
+        assertEquals(7, events.size());
 
         // and we are shifted +4 now
         xml = events.get(0).getMessageAsXml();
-        assertTrue(xml.contains("###5###"));
-        xml = events.get(9).getMessageAsXml();
+        assertTrue(xml.contains("###8###"));
+        xml = events.get(6).getMessageAsXml();
         assertTrue(xml.contains("###14###"));
     }
 

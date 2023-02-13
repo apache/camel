@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Map;
 
 import org.apache.camel.spi.BacklogTracerEventMessage;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsonable;
 import org.apache.camel.util.json.Jsoner;
@@ -29,6 +30,9 @@ import org.apache.camel.util.json.Jsoner;
  */
 public final class DefaultBacklogTracerEventMessage implements BacklogTracerEventMessage {
 
+    private final StopWatch watch;
+    private final boolean first;
+    private final boolean last;
     private final long uid;
     private final long timestamp;
     private final String routeId;
@@ -36,9 +40,18 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final String exchangeId;
     private final String messageAsXml;
     private final String messageAsJSon;
+    private String exceptionAsXml;
+    private String exceptionAsJSon;
+    private long duration;
+    private boolean done;
+    private boolean failed;
 
-    public DefaultBacklogTracerEventMessage(long uid, long timestamp, String routeId, String toNode, String exchangeId,
+    public DefaultBacklogTracerEventMessage(boolean first, boolean last, long uid, long timestamp,
+                                            String routeId, String toNode, String exchangeId,
                                             String messageAsXml, String messageAsJSon) {
+        this.watch = new StopWatch();
+        this.first = first;
+        this.last = last;
         this.uid = uid;
         this.timestamp = timestamp;
         this.routeId = routeId;
@@ -48,9 +61,27 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         this.messageAsJSon = messageAsJSon;
     }
 
+    /**
+     * Callback when the message has been processed at the given node
+     */
+    public void doneProcessing() {
+        done = true;
+        duration = watch.taken();
+    }
+
     @Override
     public long getUid() {
         return uid;
+    }
+
+    @Override
+    public boolean isFirst() {
+        return first;
+    }
+
+    @Override
+    public boolean isLast() {
+        return last;
     }
 
     @Override
@@ -84,6 +115,43 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     }
 
     @Override
+    public long getElapsed() {
+        return done ? duration : watch.taken();
+    }
+
+    @Override
+    public boolean isDone() {
+        return done;
+    }
+
+    public boolean isFailed() {
+        return hasException();
+    }
+
+    @Override
+    public boolean hasException() {
+        return exceptionAsXml != null || exceptionAsJSon != null;
+    }
+
+    @Override
+    public String getExceptionAsXml() {
+        return exceptionAsXml;
+    }
+
+    public void setExceptionAsXml(String exceptionAsXml) {
+        this.exceptionAsXml = exceptionAsXml;
+    }
+
+    @Override
+    public String getExceptionAsJSon() {
+        return exceptionAsJSon;
+    }
+
+    public void setExceptionAsJSon(String exceptionAsJSon) {
+        this.exceptionAsJSon = exceptionAsJSon;
+    }
+
+    @Override
     public String toString() {
         return "DefaultBacklogTracerEventMessage[" + exchangeId + " at " + toNode + "]";
     }
@@ -105,8 +173,13 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         StringBuilder sb = new StringBuilder();
         sb.append(prefix).append("<").append(ROOT_TAG).append(">\n");
         sb.append(prefix).append("  <uid>").append(uid).append("</uid>\n");
+        sb.append(prefix).append("  <first>").append(first).append("</first>\n");
+        sb.append(prefix).append("  <last>").append(last).append("</last>\n");
         String ts = new SimpleDateFormat(TIMESTAMP_FORMAT).format(timestamp);
         sb.append(prefix).append("  <timestamp>").append(ts).append("</timestamp>\n");
+        sb.append(prefix).append("  <elapsed>").append(getElapsed()).append("</elapsed>\n");
+        sb.append(prefix).append("  <done>").append(isDone()).append("</done>\n");
+        sb.append(prefix).append("  <failed>").append(isFailed()).append("</failed>\n");
         // route id is optional and we then use an empty value for no route id
         sb.append(prefix).append("  <routeId>").append(routeId != null ? routeId : "").append("</routeId>\n");
         if (toNode != null) {
@@ -117,6 +190,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         }
         sb.append(prefix).append("  <exchangeId>").append(exchangeId).append("</exchangeId>\n");
         sb.append(prefix).append(messageAsXml).append("\n");
+        if (exceptionAsXml != null) {
+            sb.append(prefix).append(exceptionAsXml).append("\n");
+        }
         sb.append(prefix).append("</").append(ROOT_TAG).append(">");
         return sb.toString();
     }
@@ -135,6 +211,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     public Map<String, Object> asJSon() {
         JsonObject jo = new JsonObject();
         jo.put("uid", uid);
+        jo.put("first", first);
+        jo.put("last", last);
         if (routeId != null) {
             jo.put("routeId", routeId);
         }
@@ -144,12 +222,24 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         if (timestamp > 0) {
             jo.put("timestamp", timestamp);
         }
+        jo.put("elapsed", getElapsed());
+        jo.put("done", isDone());
+        jo.put("failed", isFailed());
         try {
             // parse back to json object and avoid double message root
             JsonObject msg = (JsonObject) Jsoner.deserialize(messageAsJSon);
             jo.put("message", msg.get("message"));
         } catch (Exception e) {
             // ignore
+        }
+        if (exceptionAsJSon != null) {
+            try {
+                // parse back to json object and avoid double message root
+                JsonObject msg = (JsonObject) Jsoner.deserialize(exceptionAsJSon);
+                jo.put("exception", msg.get("exception"));
+            } catch (Exception e) {
+                // ignore
+            }
         }
         return jo;
     }

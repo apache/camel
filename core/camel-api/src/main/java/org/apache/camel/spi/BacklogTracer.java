@@ -110,6 +110,16 @@ public interface BacklogTracer {
     void setIncludeExchangeProperties(boolean includeExchangeProperties);
 
     /**
+     * Trace messages to include exception if the message failed
+     */
+    boolean isIncludeException();
+
+    /**
+     * Trace messages to include exception if the message failed
+     */
+    void setIncludeException(boolean includeException);
+
+    /**
      * Filter for tracing by route or node id
      */
     String getTracePattern();

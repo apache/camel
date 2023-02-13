@@ -61,6 +61,7 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     private boolean bodyIncludeStreams;
     private boolean bodyIncludeFiles = true;
     private boolean includeExchangeProperties = true;
+    private boolean includeException = true;
     // a pattern to filter tracing nodes
     private String tracePattern;
     private String[] patterns;
@@ -231,6 +232,16 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
     @Override
     public void setIncludeExchangeProperties(boolean includeExchangeProperties) {
         this.includeExchangeProperties = includeExchangeProperties;
+    }
+
+    @Override
+    public boolean isIncludeException() {
+        return includeException;
+    }
+
+    @Override
+    public void setIncludeException(boolean includeException) {
+        this.includeException = includeException;
     }
 
     @Override

@@ -70,7 +70,7 @@ public class BacklogTracerFilterTest extends ManagementTestSupport {
                 = (List<BacklogTracerEventMessage>) mbeanServer.invoke(on, "dumpAllTracedMessages", null, null);
 
         assertNotNull(events);
-        assertEquals(3, events.size());
+        assertEquals(4, events.size());
 
         BacklogTracerEventMessage event = events.get(0);
         assertEquals(null, event.getToNode());

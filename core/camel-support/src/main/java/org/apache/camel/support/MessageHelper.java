@@ -20,7 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
@@ -854,6 +856,7 @@ public final class MessageHelper {
      * @param  allowFiles                whether to include message body if they are file based
      * @param  maxChars                  clip body after maximum chars (to avoid very big messages). Use 0 or negative
      *                                   value to not limit at all.
+     * @param  pretty                    whether to pretty print JSon
      * @return                           the JSon
      */
     public static String dumpAsJSon(
@@ -941,6 +944,85 @@ public final class MessageHelper {
             }
         }
 
+        String answer = root.toJson();
+        if (pretty) {
+            if (indent > 0) {
+                answer = Jsoner.prettyPrint(answer, indent);
+            } else {
+                answer = Jsoner.prettyPrint(answer);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Dumps the exception as a generic XML structure.
+     *
+     * @param  indent number of spaces to indent
+     * @return        the XML
+     */
+    public static String dumpExceptionAsXML(Throwable exception, int indent) {
+        StringBuilder prefix = new StringBuilder();
+        for (int i = 0; i < indent; i++) {
+            prefix.append(" ");
+        }
+
+        StringBuilder sb = new StringBuilder();
+        try {
+            sb.append(prefix).append("<exception");
+            String type = ObjectHelper.classCanonicalName(exception);
+            if (type != null) {
+                sb.append(" type=\"").append(type).append("\"");
+            }
+            String msg = exception.getMessage();
+            if (msg != null) {
+                msg = StringHelper.xmlEncode(msg);
+                sb.append(" message=\"").append(msg).append("\"");
+            }
+            sb.append(">\n");
+            StringWriter sw = new StringWriter();
+            exception.printStackTrace(new PrintWriter(sw));
+            String trace = sw.toString();
+            // must always xml encode
+            sb.append(StringHelper.xmlEncode(trace));
+            sb.append(prefix).append("</exception>");
+        } catch (Throwable e) {
+            // ignore
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Dumps the exception as a generic JSon structure.
+     *
+     * @param  indent number of spaces to indent
+     * @param  pretty whether to pretty print JSon
+     * @return        the JSon
+     */
+    public static String dumpExceptionAsJSon(Throwable exception, int indent, boolean pretty) {
+        JsonObject root = new JsonObject();
+        JsonObject jo = new JsonObject();
+        root.put("exception", jo);
+
+        String type = ObjectHelper.classCanonicalName(exception);
+        if (type != null) {
+            jo.put("type", type);
+        }
+        String msg = exception.getMessage();
+        if (msg != null) {
+            jo.put("message", type);
+        } else {
+            jo.put("message", "[null]");
+        }
+        StringWriter sw = new StringWriter();
+        exception.printStackTrace(new PrintWriter(sw));
+        String trace = sw.toString();
+        try {
+            jo.put("stackTrace", Jsoner.unescape(trace));
+        } catch (Throwable e) {
+            // ignore as the body is for logging purpose
+        }
         String answer = root.toJson();
         if (pretty) {
             if (indent > 0) {

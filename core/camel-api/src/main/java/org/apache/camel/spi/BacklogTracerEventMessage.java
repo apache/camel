@@ -32,6 +32,16 @@ public interface BacklogTracerEventMessage {
     long getUid();
 
     /**
+     * Whether this is a new incoming message and this is the first trace.
+     */
+    boolean isFirst();
+
+    /**
+     * Whether this is the last trace of the message (its complete).
+     */
+    boolean isLast();
+
+    /**
      * Timestamp of the traced event
      */
     long getTimestamp();
@@ -60,6 +70,36 @@ public interface BacklogTracerEventMessage {
      * The content of the message as JSon (body and headers)
      */
     String getMessageAsJSon();
+
+    /**
+     * Time elapsed for processing the given node (in millis).
+     */
+    long getElapsed();
+
+    /**
+     * Whether the message is done processing the given node
+     */
+    boolean isDone();
+
+    /**
+     * Did the message fail during processing (i.e. was an exception thrown)
+     */
+    boolean isFailed();
+
+    /**
+     * Was there an exception thrown during processing
+     */
+    boolean hasException();
+
+    /**
+     * The exception as XML (exception type, message and stacktrace)
+     */
+    String getExceptionAsXml();
+
+    /**
+     * The exception as JSon (exception type, message and stacktrace)
+     */
+    String getExceptionAsJSon();
 
     /**
      * Dumps the event message as XML using the {@link #ROOT_TAG} as root tag.

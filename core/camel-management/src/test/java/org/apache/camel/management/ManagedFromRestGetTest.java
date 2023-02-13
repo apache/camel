@@ -65,9 +65,9 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         assertTrue(xml.contains("</rests>"));
 
         assertTrue(xml.contains("<param defaultValue=\"1\" dataType=\"integer\" name=\"header_count\""
-                + " description=\"header param description1\" type=\"header\" required=\"true\">"));
+                                + " description=\"header param description1\" type=\"header\" required=\"true\">"));
         assertTrue(xml.contains("<param defaultValue=\"b\" dataType=\"string\" name=\"header_letter\""
-                + " description=\"header param description2\" type=\"query\" collectionFormat=\"multi\" required=\"false\">"));
+                                + " description=\"header param description2\" type=\"query\" collectionFormat=\"multi\" required=\"false\">"));
         assertTrue(xml.contains("<value>1</value>"));
         assertTrue(xml.contains("<value>a</value>"));
 

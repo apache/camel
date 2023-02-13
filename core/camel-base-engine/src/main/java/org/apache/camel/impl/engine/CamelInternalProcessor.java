@@ -563,7 +563,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
     /**
      * Advice to execute the {@link BacklogTracer} if enabled.
      */
-    public static final class BacklogTracerAdvice implements CamelInternalProcessorAdvice, Ordered {
+    public static final class BacklogTracerAdvice
+            implements CamelInternalProcessorAdvice<DefaultBacklogTracerEventMessage>, Ordered {
 
         private final BacklogTracer backlogTracer;
         private final NamedNode processorDefinition;
@@ -579,7 +580,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         }
 
         @Override
-        public Object before(Exchange exchange) throws Exception {
+        public DefaultBacklogTracerEventMessage before(Exchange exchange) throws Exception {
             if (backlogTracer.shouldTrace(processorDefinition, exchange)) {
                 long timestamp = System.currentTimeMillis();
                 String toNode = processorDefinition.getId();
@@ -596,28 +597,72 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 String routeId = routeDefinition != null ? routeDefinition.getRouteId() : null;
                 if (first) {
                     long created = exchange.getCreated();
-                    DefaultBacklogTracerEventMessage pseudo = new DefaultBacklogTracerEventMessage(
-                            backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId, messageAsXml,
+                    DefaultBacklogTracerEventMessage pseudoFirst = new DefaultBacklogTracerEventMessage(
+                            true, false, backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId,
+                            messageAsXml,
                             messageAsJSon);
-                    backlogTracer.traceEvent(pseudo);
+                    backlogTracer.traceEvent(pseudoFirst);
+                    exchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+                        @Override
+                        public void onDone(Exchange exchange) {
+                            // create pseudo last
+                            String routeId = routeDefinition != null ? routeDefinition.getRouteId() : null;
+                            String exchangeId = exchange.getExchangeId();
+                            boolean includeExchangeProperties = backlogTracer.isIncludeExchangeProperties();
+                            long created = exchange.getCreated();
+                            String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), includeExchangeProperties, true, 4,
+                                    true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
+                                    backlogTracer.getBodyMaxChars());
+                            String messageAsJSon
+                                    = MessageHelper.dumpAsJSon(exchange.getIn(), includeExchangeProperties, true, 4,
+                                            true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
+                                            backlogTracer.getBodyMaxChars(), true);
+                            DefaultBacklogTracerEventMessage pseudoLast = new DefaultBacklogTracerEventMessage(
+                                    false, true, backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId,
+                                    messageAsXml,
+                                    messageAsJSon);
+                            backlogTracer.traceEvent(pseudoLast);
+                            doneProcessing(exchange, pseudoLast);
+                            doneProcessing(exchange, pseudoFirst);
+                        }
+                    });
                 }
                 DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
-                        backlogTracer.incrementTraceCounter(), timestamp, routeId, toNode, exchangeId, messageAsXml,
+                        false, false, backlogTracer.incrementTraceCounter(), timestamp, routeId, toNode, exchangeId,
+                        messageAsXml,
                         messageAsJSon);
                 backlogTracer.traceEvent(event);
+
+                return event;
             }
 
             return null;
         }
 
         @Override
-        public void after(Exchange exchange, Object data) throws Exception {
-            // noop
+        public void after(Exchange exchange, DefaultBacklogTracerEventMessage data) throws Exception {
+            doneProcessing(exchange, data);
+        }
+
+        private void doneProcessing(Exchange exchange, DefaultBacklogTracerEventMessage data) {
+            if (data != null) {
+                data.doneProcessing();
+                if (!data.isFirst()) {
+                    // we want to capture if there was an exception
+                    Throwable e = exchange.getException();
+                    if (e != null) {
+                        String xml = MessageHelper.dumpExceptionAsXML(e, 4);
+                        data.setExceptionAsXml(xml);
+                        String json = MessageHelper.dumpExceptionAsJSon(e, 4, true);
+                        data.setExceptionAsJSon(json);
+                    }
+                }
+            }
         }
 
         @Override
         public boolean hasState() {
-            return false;
+            return true;
         }
 
         @Override
