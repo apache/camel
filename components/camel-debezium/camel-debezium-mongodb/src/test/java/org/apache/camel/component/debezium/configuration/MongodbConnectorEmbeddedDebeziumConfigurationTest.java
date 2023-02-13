@@ -53,9 +53,9 @@ public class MongodbConnectorEmbeddedDebeziumConfigurationTest {
 
         configuration.setName("test_config");
         configuration.setMongodbUser("test_db");
-        configuration.setMongodbName("test_server");
+        configuration.setTopicPrefix("test_server");
         configuration.setOffsetStorageFileName("/offset/file");
-        configuration.setDatabaseHistoryFileFilename("/database_history/file");
+        configuration.setSchemaHistoryInternalFileFilename("/database_history/file");
 
         assertFalse(configuration.validateConfiguration().isValid());
 
@@ -72,9 +72,9 @@ public class MongodbConnectorEmbeddedDebeziumConfigurationTest {
         configuration.setMongodbUser("test_db");
         configuration.setMongodbHosts("localhost");
         configuration.setMongodbPassword("test_pwd");
-        configuration.setMongodbName("test_server");
+        configuration.setTopicPrefix("test_server");
         configuration.setOffsetStorageFileName("/offset/file");
-        configuration.setDatabaseHistoryFileFilename("/database_history/file");
+        configuration.setSchemaHistoryInternalFileFilename("/database_history/file");
 
         final ConfigurationValidation validation = configuration.validateConfiguration();
         assertTrue(validation.isValid());
@@ -83,9 +83,9 @@ public class MongodbConnectorEmbeddedDebeziumConfigurationTest {
         assertEquals("test_db", configuration.getMongodbUser());
         assertEquals("localhost", configuration.getMongodbHosts());
         assertEquals("test_pwd", configuration.getMongodbPassword());
-        assertEquals("test_server", configuration.getMongodbName());
+        assertEquals("test_server", configuration.getTopicPrefix());
         assertEquals("/offset/file", configuration.getOffsetStorageFileName());
-        assertEquals("/database_history/file", configuration.getDatabaseHistoryFileFilename());
+        assertEquals("/database_history/file", configuration.getSchemaHistoryInternalFileFilename());
     }
 
 }
