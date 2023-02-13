@@ -63,6 +63,10 @@ The old behavior can be archived by setting `backlogTracingStandby=true`.
 Move the following class from `org.apache.camel.api.management.mbean.BacklogTracerEventMessage` in `camel-management-api` JAR
 to `org.apache.camel.spi.BacklogTracerEventMessage` in `camel-api` JAR.
 
+The `org.apache.camel.impl.debugger.DefaultBacklogTracerEventMessage` has been refactored into an interface `org.apache.camel.spi.BacklogTracerEventMessage`
+with some additional details about traced messages. For example Camel now captures a _first_ and _last_ trace
+that contains the input and outgoing (if `InOut`) messages.
+
 == XML serialization
 
 The default xml serialization using `ModelToXMLDumper` has been improved and now uses a generated xml
