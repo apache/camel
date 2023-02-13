@@ -61,6 +61,7 @@ public enum ExchangePropertyKey {
     ON_COMPLETION(Exchange.ON_COMPLETION),
     ON_COMPLETION_ROUTE_IDS(Exchange.ON_COMPLETION_ROUTE_IDS),
     PARENT_UNIT_OF_WORK(Exchange.PARENT_UNIT_OF_WORK),
+    RECEIVED_TIMESTAMP(Exchange.RECEIVED_TIMESTAMP),
     RECIPIENT_LIST_ENDPOINT(Exchange.RECIPIENT_LIST_ENDPOINT),
     SLIP_ENDPOINT(Exchange.SLIP_ENDPOINT),
     SLIP_PRODUCER(Exchange.SLIP_PRODUCER),
@@ -162,6 +163,8 @@ public enum ExchangePropertyKey {
                 return ON_COMPLETION_ROUTE_IDS;
             case Exchange.PARENT_UNIT_OF_WORK:
                 return PARENT_UNIT_OF_WORK;
+            case Exchange.RECEIVED_TIMESTAMP:
+                return RECEIVED_TIMESTAMP;
             case Exchange.RECIPIENT_LIST_ENDPOINT:
                 return RECIPIENT_LIST_ENDPOINT;
             case Exchange.SLIP_ENDPOINT:
