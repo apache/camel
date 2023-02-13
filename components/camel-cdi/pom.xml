@@ -37,6 +37,17 @@
         <label>java</label>
         <title>CDI</title>
         <supportLevel>Preview</supportLevel>
+
+        <camel.osgi.activator>org.apache.camel.cdi.osgi.Activator</camel.osgi.activator>
+        <camel.osgi.import.additional>
+            org.apache.camel.processor;${camel.osgi.import.camel.version},
+            org.apache.camel.support.service;${camel.osgi.import.camel.version}
+        </camel.osgi.import.additional>
+        <camel.osgi.provide.capability>
+            osgi.cdi.extension;osgi.cdi.extension=org.apache.camel.cdi;version:Version="${camel.osgi.version.clean}";uses:=javax.enterprise.inject.spi,
+            osgi.service;objectClass:List&lt;String&gt;=javax.enterprise.inject.spi.Extension
+        </camel.osgi.provide.capability>
+        <camel.osgi.require.capability>osgi.implementation;filter:="(&amp;(osgi.implementation=osgi.cdi)(version>=1.0)(!(version>=2.0)))"</camel.osgi.require.capability>
     </properties>
 
     <dependencyManagement>
@@ -59,7 +70,7 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-            
+
         </dependencies>
     </dependencyManagement>
 
@@ -83,6 +94,18 @@
             <artifactId>camel-mock</artifactId>
             <scope>provided</scope>
             <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.core</artifactId>
+            <version>7.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.service.cdi</artifactId>
+            <version>1.0.1</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- test dependencies -->
