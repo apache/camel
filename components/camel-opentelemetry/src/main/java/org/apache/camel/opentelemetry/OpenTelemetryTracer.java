@@ -19,7 +19,6 @@ package org.apache.camel.opentelemetry;
 import java.util.Set;
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
-import io.opentelemetry.api.OpenTelemetry;
 import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanBuilder;
@@ -89,14 +88,13 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
         }
 
         if (tracer == null) {
+            // GlobalOpenTelemetry.get() is always NotNull, falls back to OpenTelemetry.noop()
             tracer = GlobalOpenTelemetry.get().getTracer(instrumentationName);
         }
+    }
 
-        if (tracer == null) {
-            // No tracer is available, so setup NoopTracer
-            tracer = OpenTelemetry.noop().getTracer(instrumentationName);
-        }
-
+    @Override
+    protected void initContextPropagators() {
         if (contextPropagators == null) {
             Set<ContextPropagators> contextPropagatorsSet
                     = getCamelContext().getRegistry().findByType(ContextPropagators.class);
@@ -106,12 +104,8 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
         }
 
         if (contextPropagators == null) {
+            // GlobalOpenTelemetry.get() is always NotNull, falls back to OpenTelemetry.noop()
             contextPropagators = GlobalOpenTelemetry.get().getPropagators();
-        }
-
-        if (contextPropagators == null) {
-            // No contextPropagators is available, so setup NoopTracer
-            contextPropagators = OpenTelemetry.noop().getPropagators();
         }
     }
 
