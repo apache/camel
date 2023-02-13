@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
@@ -97,6 +98,7 @@ public class ListTrace extends ProcessWatchCommand {
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),
+                    new Column().header("EXCHANGE-ID").dataAlign(HorizontalAlign.LEFT).with(r -> r.exchangeId),
                     new Column().header("UID").headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT)
                             .maxWidth(6).with(this::getUid),
                     new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
@@ -112,6 +114,10 @@ public class ListTrace extends ProcessWatchCommand {
             // mix column and message (master/detail) mode
             for (int i = 0; i < rows.size(); i++) {
                 String s = arr[i + 1];
+                if (i > 0 && pretty) {
+                    // print header per trace in pretty mode
+                    System.out.println(arr[0]);
+                }
                 System.out.println(s);
                 String json = getMessage(rows.get(i));
                 // pad with 8 spaces to indent json data
@@ -151,14 +157,16 @@ public class ListTrace extends ProcessWatchCommand {
                     row.done = jo.getBoolean("done");
                     row.message = jo.getMap("message");
                     row.exception = jo.getMap("exception");
-                    lastId = getExchangeId(row);
+                    row.exchangeId = row.message.getString("exchangeId");
+                    row.message.remove("exchangeId");
+                    lastId = row.exchangeId;
                     local.add(row);
                 }
             }
             if (latest && lastId != null) {
                 // filter out all that does not match last exchange id
                 final String target = lastId;
-                local.removeIf(r -> !target.equals(getExchangeId(r)));
+                local.removeIf(r -> !Objects.equals(target, r.exchangeId));
             }
             if (brief) {
                 local.removeIf(r -> !r.first && !r.last);
@@ -217,10 +225,6 @@ public class ListTrace extends ProcessWatchCommand {
         }
     }
 
-    private String getExchangeId(Row r) {
-        return r.message.getString("exchangeId");
-    }
-
     private String getMessage(Row r) {
         String s = r.message.toJson();
         if (pretty) {
@@ -254,6 +258,7 @@ public class ListTrace extends ProcessWatchCommand {
         boolean first;
         boolean last;
         long uid;
+        String exchangeId;
         String routeId;
         String nodeId;
         long timestamp;
