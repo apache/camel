@@ -23,10 +23,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelEvent;
-import org.apache.camel.spi.CamelEvent.ExchangeCompletedEvent;
-import org.apache.camel.spi.CamelEvent.ExchangeCreatedEvent;
-import org.apache.camel.spi.CamelEvent.ExchangeFailedEvent;
-import org.apache.camel.spi.CamelEvent.RouteReloadedEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -78,15 +74,13 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
         }
     }
 
-    protected void doNotify(CamelEvent event) throws Exception {
+    protected void doNotify(CamelEvent event) {
         // ignore any event that is received if shutdown is in process
         if (!shutdownStrategy.isRunAllowed()) {
             return;
         }
 
-        boolean begin = event instanceof ExchangeCreatedEvent;
-        boolean complete = event instanceof ExchangeCompletedEvent || event instanceof ExchangeFailedEvent;
-        boolean reloaded = event instanceof RouteReloadedEvent;
+        final boolean reloaded = event.getType() == CamelEvent.Type.RouteReloaded;
 
         if (reloaded) {
             if (restartDuration) {
@@ -100,7 +94,10 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
             return;
         }
 
-        if (maxMessages > 0 && complete) {
+        boolean complete = false;
+        if (maxMessages > 0) {
+            complete = event.getType() == CamelEvent.Type.ExchangeCompleted || event.getType() == CamelEvent.Type.ExchangeFailed;
+
             boolean result = doneMessages.incrementAndGet() >= maxMessages;
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Duration max messages check {} >= {} -> {}", doneMessages.get(), maxMessages, result);
@@ -120,19 +117,24 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
             }
         }
 
+
         // idle reacts on both incoming and complete messages
-        if (maxIdleSeconds > 0 && (begin || complete)) {
-            if (watch != null) {
-                LOG.trace("Message activity so restarting stop watch");
-                watch.restart();
+        if (maxIdleSeconds > 0) {
+            final boolean begin = event.getType() == CamelEvent.Type.ExchangeCreated;
+
+            if (begin || complete) {
+                if (watch != null) {
+                    LOG.trace("Message activity so restarting stop watch");
+                    watch.restart();
+                }
             }
         }
     }
 
     @Override
     public boolean isEnabled(CamelEvent event) {
-        return event instanceof ExchangeCreatedEvent || event instanceof ExchangeCompletedEvent
-                || event instanceof ExchangeFailedEvent || event instanceof RouteReloadedEvent;
+        return event.getType() == CamelEvent.Type.ExchangeCreated || event.getType() == CamelEvent.Type.ExchangeCreated
+                || event.getType() == CamelEvent.Type.ExchangeFailed || event.getType() == CamelEvent.Type.RouteReloaded;
     }
 
     @Override
