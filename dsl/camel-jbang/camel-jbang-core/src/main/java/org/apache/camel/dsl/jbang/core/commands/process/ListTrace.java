@@ -47,9 +47,13 @@ public class ListTrace extends ProcessWatchCommand {
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--last" },
-                        description = "Only output last message")
-    boolean last;
+    @CommandLine.Option(names = { "--latest" },
+                        description = "Only output traces of latest message")
+    boolean latest;
+
+    @CommandLine.Option(names = { "--brief" },
+                        description = "Brief mode to only show traces of input and output (no intermediate processing steps)")
+    boolean brief;
 
     @CommandLine.Option(names = { "--pretty" },
                         description = "Pretty print traced message")
@@ -97,7 +101,7 @@ public class ListTrace extends ProcessWatchCommand {
                     new Column().header("ROUTE").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.routeId),
                     new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
-                            .with(r -> r.nodeId),
+                            .with(this::getId),
                     new Column().header("AGE").dataAlign(HorizontalAlign.RIGHT).with(this::getTimestamp),
                     new Column().header("MESSAGE").dataAlign(HorizontalAlign.LEFT).maxWidth(110, OverflowBehaviour.NEWLINE)
                             .with(this::getMessage))));
@@ -118,21 +122,30 @@ public class ListTrace extends ProcessWatchCommand {
                     row = row.copy();
                     JsonObject jo = (JsonObject) o;
                     row.uid = jo.getLong("uid");
+                    row.first = jo.getBoolean("first");
+                    row.last = jo.getBoolean("last");
                     row.routeId = jo.getString("routeId");
                     row.nodeId = jo.getString("nodeId");
                     Long ts = jo.getLong("timestamp");
                     if (ts != null) {
                         row.timestamp = ts;
                     }
+                    row.elapsed = jo.getLong("elapsed");
+                    row.failed = jo.getBoolean("failed");
+                    row.done = jo.getBoolean("done");
                     row.message = jo.getMap("message");
+                    row.exception = jo.getMap("exception");
                     lastId = getExchangeId(row);
                     local.add(row);
                 }
             }
-            if (last && lastId != null) {
+            if (latest && lastId != null) {
                 // filter out all that does not match last exchange id
                 final String target = lastId;
                 local.removeIf(r -> !target.equals(getExchangeId(r)));
+            }
+            if (brief) {
+                local.removeIf(r -> !r.first && !r.last);
             }
             rows.addAll(local);
         }
@@ -162,6 +175,16 @@ public class ListTrace extends ProcessWatchCommand {
 
     private String getUid(Row r) {
         return "" + r.uid;
+    }
+
+    private String getId(Row r) {
+        if (r.first) {
+            return "*-->";
+        } else if (r.last) {
+            return "*<--";
+        } else {
+            return "" + r.nodeId;
+        }
     }
 
     private String getExchangeId(Row r) {
@@ -198,11 +221,17 @@ public class ListTrace extends ProcessWatchCommand {
     private static class Row implements Cloneable {
         String pid;
         String name;
+        boolean first;
+        boolean last;
         long uid;
         String routeId;
         String nodeId;
         long timestamp;
+        long elapsed;
+        boolean done;
+        boolean failed;
         JsonObject message;
+        JsonObject exception;
 
         Row copy() {
             try {
