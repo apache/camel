@@ -26,6 +26,7 @@ import io.opentelemetry.api.trace.SpanBuilder;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Context;
+import io.opentelemetry.context.propagation.ContextPropagators;
 import org.apache.camel.Exchange;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.opentelemetry.propagators.OpenTelemetryGetter;
@@ -41,6 +42,7 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
 
     private Tracer tracer;
     private String instrumentationName = "camel";
+    private ContextPropagators contextPropagators;
 
     public Tracer getTracer() {
         return tracer;
@@ -52,6 +54,14 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
 
     public void setInstrumentationName(String instrumentationName) {
         this.instrumentationName = instrumentationName;
+    }
+
+    public ContextPropagators getContextPropagators() {
+        return contextPropagators;
+    }
+
+    public void setContextPropagators(ContextPropagators contextPropagators) {
+        this.contextPropagators = contextPropagators;
     }
 
     private SpanKind mapToSpanKind(org.apache.camel.tracing.SpanKind kind) {
@@ -86,6 +96,23 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
             // No tracer is available, so setup NoopTracer
             tracer = OpenTelemetry.noop().getTracer(instrumentationName);
         }
+
+        if (contextPropagators == null) {
+            Set<ContextPropagators> contextPropagatorsSet
+                    = getCamelContext().getRegistry().findByType(ContextPropagators.class);
+            if (contextPropagatorsSet.size() == 1) {
+                contextPropagators = contextPropagatorsSet.iterator().next();
+            }
+        }
+
+        if (contextPropagators == null) {
+            contextPropagators = GlobalOpenTelemetry.get().getPropagators();
+        }
+
+        if (contextPropagators == null) {
+            // No contextPropagators is available, so setup NoopTracer
+            contextPropagators = OpenTelemetry.noop().getPropagators();
+        }
     }
 
     @Override
@@ -114,7 +141,7 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
             baggage = spanFromExchange.getBaggage();
         } else {
             ExtractAdapter adapter = sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding);
-            Context ctx = GlobalOpenTelemetry.get().getPropagators().getTextMapPropagator().extract(Context.current(), adapter,
+            Context ctx = contextPropagators.getTextMapPropagator().extract(Context.current(), adapter,
                     new OpenTelemetryGetter(adapter));
             Span span = Span.fromContext(ctx);
             baggage = Baggage.fromContext(ctx);
@@ -144,7 +171,7 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
         } else {
             ctx = Context.current().with(otelSpan);
         }
-        GlobalOpenTelemetry.get().getPropagators().getTextMapPropagator().inject(ctx, adapter, new OpenTelemetrySetter());
+        contextPropagators.getTextMapPropagator().inject(ctx, adapter, new OpenTelemetrySetter());
     }
 
 }
