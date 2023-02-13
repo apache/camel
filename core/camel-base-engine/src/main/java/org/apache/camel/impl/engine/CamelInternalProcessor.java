@@ -584,10 +584,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 long timestamp = System.currentTimeMillis();
                 String toNode = processorDefinition.getId();
                 String exchangeId = exchange.getExchangeId();
-                String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), true, 4,
+                boolean includeExchangeProperties = backlogTracer.isIncludeExchangeProperties();
+                String messageAsXml = MessageHelper.dumpAsXml(exchange.getIn(), includeExchangeProperties, true, 4,
                         true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
                         backlogTracer.getBodyMaxChars());
-                String messageAsJSon = MessageHelper.dumpAsJSon(exchange.getIn(), true, 4,
+                String messageAsJSon = MessageHelper.dumpAsJSon(exchange.getIn(), includeExchangeProperties, true, 4,
                         true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
                         backlogTracer.getBodyMaxChars(), true);
 

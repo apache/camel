@@ -100,6 +100,16 @@ public interface BacklogTracer {
     void setBodyIncludeFiles(boolean bodyIncludeFiles);
 
     /**
+     * Trace messages to include exchange properties
+     */
+    boolean isIncludeExchangeProperties();
+
+    /**
+     * Trace messages to include exchange properties
+     */
+    void setIncludeExchangeProperties(boolean includeExchangeProperties);
+
+    /**
      * Filter for tracing by route or node id
      */
     String getTracePattern();

@@ -90,6 +90,12 @@ public interface ManagedBacklogTracerMBean {
     @ManagedAttribute(description = "Whether to include file based message body in the trace message.")
     void setBodyIncludeFiles(boolean bodyIncludeFiles);
 
+    @ManagedAttribute(description = "Whether to include exchange properties in the trace message.")
+    boolean isIncludeExchangeProperties();
+
+    @ManagedAttribute(description = "Whether to include exchange properties in the trace message.")
+    void setIncludeExchangeProperties(boolean includeExchangeProperties);
+
     @ManagedOperation(description = "Dumps the traced messages for the given node or route")
     List<BacklogTracerEventMessage> dumpTracedMessages(String nodeOrRouteId);
 

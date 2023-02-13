@@ -162,6 +162,16 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
     }
 
     @Override
+    public boolean isIncludeExchangeProperties() {
+        return backlogTracer.isIncludeExchangeProperties();
+    }
+
+    @Override
+    public void setIncludeExchangeProperties(boolean includeExchangeProperties) {
+        backlogTracer.setIncludeExchangeProperties(includeExchangeProperties);
+    }
+
+    @Override
     public List<BacklogTracerEventMessage> dumpTracedMessages(String nodeOrRouteId) {
         return backlogTracer.dumpTracedMessages(nodeOrRouteId);
     }
