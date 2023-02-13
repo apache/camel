@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.camel.util.json.Yytoken;
 import org.fusesource.jansi.Ansi;
@@ -40,7 +41,11 @@ public final class JSonHelper {
                         s = Ansi.ansi().fg(Ansi.Color.WHITE).bold().a(s).reset().toString();
                     case VALUE -> {
                         if (Yytoken.Types.COLON == prev) {
-                            s = Ansi.ansi().fg(Ansi.Color.GREEN).a(s).reset().toString();
+                            if (StringHelper.isQuoted(s)) {
+                                s = Ansi.ansi().fg(Ansi.Color.GREEN).a(s).reset().toString();
+                            } else {
+                                s = Ansi.ansi().fg(Ansi.Color.WHITE).a(s).reset().toString();
+                            }
                         } else {
                             s = Ansi.ansi().fgBright(Ansi.Color.BLUE).a(s).reset().toString();
                         }

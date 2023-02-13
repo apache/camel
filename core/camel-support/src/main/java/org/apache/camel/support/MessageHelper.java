@@ -881,17 +881,21 @@ public final class MessageHelper {
                 if (type != null) {
                     jh.put("type", type);
                 }
-                // dump property value as JSon, use Camel type converter to convert to String
                 if (value != null) {
-                    try {
-                        String data = message.getExchange().getContext().getTypeConverter().tryConvertTo(String.class,
-                                message.getExchange(), value);
-                        if (data != null) {
-                            jh.put("value", Jsoner.unescape(data));
+                    Object s = Jsoner.trySerialize(value);
+                    if (s == null) {
+                        // cannot JSon serialize out of the box, so we need to use string value
+                        try {
+                            s = message.getExchange().getContext().getTypeConverter().tryConvertTo(String.class,
+                                    message.getExchange(), value);
+                        } catch (Throwable e) {
+                            // ignore
                         }
-                    } catch (Throwable e) {
-                        // ignore as the body is for logging purpose
+                    } else {
+                        // use the value as-is because it can be serialized in json
+                        s = value;
                     }
+                    jh.put("value", s);
                 }
                 arr.add(jh);
             }
@@ -914,15 +918,20 @@ public final class MessageHelper {
                 }
                 // dump header value as JSon, use Camel type converter to convert to String
                 if (value != null) {
-                    try {
-                        String data = message.getExchange().getContext().getTypeConverter().tryConvertTo(String.class,
-                                message.getExchange(), value);
-                        if (data != null) {
-                            jh.put("value", Jsoner.unescape(data));
+                    Object s = Jsoner.trySerialize(value);
+                    if (s == null) {
+                        // cannot JSon serialize out of the box, so we need to use string value
+                        try {
+                            s = message.getExchange().getContext().getTypeConverter().tryConvertTo(String.class,
+                                    message.getExchange(), value);
+                        } catch (Throwable e) {
+                            // ignore
                         }
-                    } catch (Throwable e) {
-                        // ignore as the body is for logging purpose
+                    } else {
+                        // use the value as-is because it can be serialized in json
+                        s = value;
                     }
+                    jh.put("value", s);
                 }
                 arr.add(jh);
             }

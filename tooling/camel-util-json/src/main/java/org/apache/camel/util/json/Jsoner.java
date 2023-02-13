@@ -73,6 +73,12 @@ public final class Jsoner {
          */
         ALLOW_INVALIDS,
         /**
+         * Instead of aborting serialization on non-JSON values it will do nothing and continue serialization by
+         * serializing the non-JSON value directly into the now invalid JSON. Be mindful that invalid JSON will not
+         * successfully deserialize.
+         */
+        ALLOW_INVALIDS_NOOP,
+        /**
          * Instead of aborting serialization on non-JSON values that implement Jsonable it will continue serialization
          * by deferring serialization to the Jsonable.
          *
@@ -863,6 +869,32 @@ public final class Jsoner {
     }
 
     /**
+     * A convenience method that assumes a StringWriter.
+     *
+     * @param  jsonSerializable         represents the object that should be serialized as a string in JSON format.
+     * @return                          a string, in JSON format, that represents the object provided, or <tt>null</tt>
+     *                                  if not possible to serialize.
+     * @throws IllegalArgumentException if the jsonSerializable isn't serializable in JSON.
+     * @see                             Jsoner#serialize(Object, Writer)
+     * @see                             StringWriter
+     */
+    public static String trySerialize(final Object jsonSerializable) {
+        final StringWriter writableDestination = new StringWriter();
+        try {
+            Jsoner.serialize(jsonSerializable, writableDestination,
+                    EnumSet.of(SerializationOptions.ALLOW_JSONABLES, SerializationOptions.ALLOW_FULLY_QUALIFIED_ENUMERATIONS,
+                            SerializationOptions.ALLOW_INVALIDS_NOOP));
+        } catch (final IOException caught) {
+            /* See StringWriter. */
+        }
+        String answer = writableDestination.toString();
+        if ("SerializationOptions.ALLOW_INVALIDS_NOOP".equals(answer)) {
+            answer = null;
+        }
+        return answer;
+    }
+
+    /**
      * Serializes values according to the RFC 4627 JSON specification. It will also trust the serialization provided by
      * any Jsonables it serializes and serializes Enums that don't implement Jsonable as a string of their fully
      * qualified name.
@@ -1116,7 +1148,10 @@ public final class Jsoner {
              * It cannot by any measure be safely serialized according to
              * specification.
              */
-            if (flags.contains(SerializationOptions.ALLOW_INVALIDS)) {
+            if (flags.contains(SerializationOptions.ALLOW_INVALIDS_NOOP)) {
+                // noop marker
+                writableDestination.write("SerializationOptions.ALLOW_INVALIDS_NOOP");
+            } else if (flags.contains(SerializationOptions.ALLOW_INVALIDS)) {
                 /* Can be helpful for debugging how it isn't valid. */
                 writableDestination.write(jsonSerializable.toString());
             } else {
