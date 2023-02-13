@@ -79,6 +79,7 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>postgresql</artifactId>
             <version>${testcontainers-version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
