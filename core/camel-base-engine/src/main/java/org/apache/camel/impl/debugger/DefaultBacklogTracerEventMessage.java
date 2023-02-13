@@ -65,8 +65,8 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
      * Callback when the message has been processed at the given node
      */
     public void doneProcessing() {
-        done = true;
-        duration = watch.taken();
+        this.done = true;
+        this.duration = watch.taken();
     }
 
     @Override
@@ -117,6 +117,10 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     @Override
     public long getElapsed() {
         return done ? duration : watch.taken();
+    }
+
+    public void setElapsed(long elapsed) {
+        this.duration = elapsed;
     }
 
     @Override

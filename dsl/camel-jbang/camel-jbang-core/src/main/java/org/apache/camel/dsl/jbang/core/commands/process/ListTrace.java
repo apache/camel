@@ -107,7 +107,7 @@ public class ListTrace extends ProcessWatchCommand {
                             .with(this::getId),
                     new Column().header("AGE").dataAlign(HorizontalAlign.RIGHT).with(this::getTimestamp),
                     new Column().header("ELAPSED").dataAlign(HorizontalAlign.RIGHT).with(this::getElapsed),
-                    new Column().header("FAILED").dataAlign(HorizontalAlign.RIGHT).with(this::getFailed)));
+                    new Column().header("STATUS").dataAlign(HorizontalAlign.RIGHT).with(this::getFailed)));
             String[] arr = data.split(System.lineSeparator());
             // print header
             System.out.println(arr[0]);
@@ -198,17 +198,17 @@ public class ListTrace extends ProcessWatchCommand {
     }
 
     private String getElapsed(Row r) {
-        if (r.elapsed > 0) {
+        if (!r.first && r.elapsed > 0) {
             return TimeUtils.printDuration(r.elapsed, true);
         }
         return "";
     }
 
     private String getFailed(Row r) {
-        if (r.failed) {
-            return "1";
+        if (!r.first) {
+            return r.failed ? "Failure" : "Success";
         }
-        return "0";
+        return "";
     }
 
     private String getUid(Row r) {

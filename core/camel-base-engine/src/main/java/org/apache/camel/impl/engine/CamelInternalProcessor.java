@@ -624,6 +624,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                             backlogTracer.traceEvent(pseudoLast);
                             doneProcessing(exchange, pseudoLast);
                             doneProcessing(exchange, pseudoFirst);
+                            // to not be confused then lets store duration on first/last as (first = 0, last = total time to process)
+                            pseudoLast.setElapsed(pseudoFirst.getElapsed());
+                            pseudoFirst.setElapsed(0);
                         }
                     });
                 }
