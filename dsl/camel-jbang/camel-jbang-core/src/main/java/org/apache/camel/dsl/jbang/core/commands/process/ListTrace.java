@@ -27,6 +27,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.JSonHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.TimeUtils;
@@ -92,7 +93,7 @@ public class ListTrace extends ProcessWatchCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+            String data = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                     new Column().header("PID").headerAlign(HorizontalAlign.CENTER).with(r -> r.pid),
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(30, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),
@@ -103,8 +104,23 @@ public class ListTrace extends ProcessWatchCommand {
                     new Column().header("ID").dataAlign(HorizontalAlign.LEFT).maxWidth(25, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(this::getId),
                     new Column().header("AGE").dataAlign(HorizontalAlign.RIGHT).with(this::getTimestamp),
-                    new Column().header("MESSAGE").dataAlign(HorizontalAlign.LEFT).maxWidth(110, OverflowBehaviour.NEWLINE)
-                            .with(this::getMessage))));
+                    new Column().header("ELAPSED").dataAlign(HorizontalAlign.RIGHT).with(this::getElapsed),
+                    new Column().header("FAILED").dataAlign(HorizontalAlign.RIGHT).with(this::getFailed)));
+            String[] arr = data.split(System.lineSeparator());
+            // print header
+            System.out.println(arr[0]);
+            // mix column and message (master/detail) mode
+            for (int i = 0; i < rows.size(); i++) {
+                String s = arr[i + 1];
+                System.out.println(s);
+                String json = getMessage(rows.get(i));
+                // pad with 8 spaces to indent json data
+                String[] lines = json.split(System.lineSeparator());
+                for (String line : lines) {
+                    System.out.print("        ");
+                    System.out.println(line);
+                }
+            }
         }
 
         return 0;
@@ -173,6 +189,20 @@ public class ListTrace extends ProcessWatchCommand {
         return "";
     }
 
+    private String getElapsed(Row r) {
+        if (r.elapsed > 0) {
+            return TimeUtils.printDuration(r.elapsed, true);
+        }
+        return "";
+    }
+
+    private String getFailed(Row r) {
+        if (r.failed) {
+            return "1";
+        }
+        return "0";
+    }
+
     private String getUid(Row r) {
         return "" + r.uid;
     }
@@ -194,7 +224,7 @@ public class ListTrace extends ProcessWatchCommand {
     private String getMessage(Row r) {
         String s = r.message.toJson();
         if (pretty) {
-            s = Jsoner.prettyPrint(s, 2);
+            s = JSonHelper.colorPrint(s, 2);
         }
         return s;
     }

@@ -732,6 +732,117 @@ public final class Jsoner {
         return returnable.toString();
     }
 
+    @FunctionalInterface
+    public interface ColorPrintElement {
+        String color(Yytoken.Types type, Object value);
+    }
+
+    public static String colorPrint(final String printable, final ColorPrintElement color) {
+        return Jsoner.colorPrint(printable, "\t", Integer.MAX_VALUE, color);
+    }
+
+    public static String colorPrint(final String printable, final int spaces, final ColorPrintElement color) {
+        if (spaces > 10 || spaces < 2) {
+            throw new IllegalArgumentException("Indentation with spaces must be between 2 and 10.");
+        }
+        final StringBuilder indentation = new StringBuilder("");
+        for (int i = 0; i < spaces; i++) {
+            indentation.append(" ");
+        }
+        return Jsoner.colorPrint(printable, indentation.toString(), Integer.MAX_VALUE, color);
+    }
+
+    public static String colorPrint(
+            final String printable, final String indentation, final int depth, ColorPrintElement color) {
+        final Yylex lexer = new Yylex(new StringReader(printable));
+        Yytoken lexed;
+        final StringBuilder returnable = new StringBuilder();
+        int level = 0;
+        try {
+            do {
+                lexed = Jsoner.lexNextToken(lexer);
+                switch (lexed.getType()) {
+                    case COLON:
+                        returnable.append(color.color(Yytoken.Types.COLON, ":")).append(" ");
+                        break;
+                    case COMMA:
+                        returnable.append(color.color(Yytoken.Types.COMMA, lexed.getValue()));
+                        if (level <= depth) {
+                            returnable.append("\n");
+                            for (int i = 0; i < level; i++) {
+                                returnable.append(indentation);
+                            }
+                        } else {
+                            returnable.append(" ");
+                        }
+                        break;
+                    case END:
+                        returnable.append("\n");
+                        break;
+                    case LEFT_BRACE:
+                        returnable.append(color.color(Yytoken.Types.LEFT_BRACE, lexed.getValue()));
+                        if (++level <= depth) {
+                            returnable.append("\n");
+                            for (int i = 0; i < level; i++) {
+                                returnable.append(indentation);
+                            }
+                        } else {
+                            returnable.append(" ");
+                        }
+                        break;
+                    case LEFT_SQUARE:
+                        returnable.append(color.color(Yytoken.Types.LEFT_SQUARE, lexed.getValue()));
+                        if (++level <= depth) {
+                            returnable.append("\n");
+                            for (int i = 0; i < level; i++) {
+                                returnable.append(indentation);
+                            }
+                        } else {
+                            returnable.append(" ");
+                        }
+                        break;
+                    case RIGHT_BRACE:
+                        if (level-- <= depth) {
+                            returnable.append("\n");
+                            for (int i = 0; i < level; i++) {
+                                returnable.append(indentation);
+                            }
+                        } else {
+                            returnable.append(" ");
+                        }
+                        returnable.append(color.color(Yytoken.Types.RIGHT_BRACE, lexed.getValue()));
+                        break;
+                    case RIGHT_SQUARE:
+                        if (level-- <= depth) {
+                            returnable.append("\n");
+                            for (int i = 0; i < level; i++) {
+                                returnable.append(indentation);
+                            }
+                        } else {
+                            returnable.append(" ");
+                        }
+                        returnable.append(color.color(Yytoken.Types.RIGHT_SQUARE, lexed.getValue()));
+                        break;
+                    default:
+                        if (lexed.getValue() instanceof String) {
+                            String s = "\"" + Jsoner.escape((String) lexed.getValue()) + "\"";
+                            returnable.append(color.color(Yytoken.Types.VALUE, s));
+                        } else {
+                            returnable.append(color.color(Yytoken.Types.VALUE, lexed.getValue()));
+                        }
+                        break;
+                }
+            } while (!lexed.getType().equals(Yytoken.Types.END));
+        } catch (final DeserializationException caught) {
+            /* This is according to the method's contract. */
+            return null;
+        } catch (final IOException caught) {
+            /* See StringReader. */
+            return null;
+        }
+        return returnable.toString();
+    }
+
     /**
      * A convenience method that assumes a StringWriter.
      *
