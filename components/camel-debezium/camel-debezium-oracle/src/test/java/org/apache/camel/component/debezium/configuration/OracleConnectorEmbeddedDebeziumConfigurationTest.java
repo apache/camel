@@ -56,9 +56,9 @@ public class OracleConnectorEmbeddedDebeziumConfigurationTest {
 
         configuration.setName("test_config");
         configuration.setDatabaseUser("test_db");
-        configuration.setDatabaseServerName("test_server");
+        configuration.setTopicPrefix("test_server");
         configuration.setOffsetStorageFileName("/offset/file");
-        configuration.setDatabaseHistoryFileFilename("/database_history/file");
+        configuration.setSchemaHistoryInternalFileFilename("/database_history/file");
 
         assertFalse(configuration.validateConfiguration().isValid());
 
@@ -76,9 +76,9 @@ public class OracleConnectorEmbeddedDebeziumConfigurationTest {
         configuration.setDatabaseUser("test_db");
         configuration.setDatabaseHostname("localhost");
         configuration.setDatabasePassword("test_pwd");
-        configuration.setDatabaseServerName("test_server");
+        configuration.setTopicPrefix("test_server");
         configuration.setOffsetStorageFileName("/offset/file");
-        configuration.setDatabaseHistoryFileFilename("/database_history/file");
+        configuration.setSchemaHistoryInternalFileFilename("/database_history/file");
 
         final ConfigurationValidation validation = configuration.validateConfiguration();
         assertTrue(validation.isValid());
@@ -87,9 +87,9 @@ public class OracleConnectorEmbeddedDebeziumConfigurationTest {
         assertEquals("test_db", configuration.getDatabaseUser());
         assertEquals("localhost", configuration.getDatabaseHostname());
         assertEquals("test_pwd", configuration.getDatabasePassword());
-        assertEquals("test_server", configuration.getDatabaseServerName());
+        assertEquals("test_server", configuration.getTopicPrefix());
         assertEquals("/offset/file", configuration.getOffsetStorageFileName());
-        assertEquals("/database_history/file", configuration.getDatabaseHistoryFileFilename());
+        assertEquals("/database_history/file", configuration.getSchemaHistoryInternalFileFilename());
     }
 
 }
