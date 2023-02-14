@@ -785,7 +785,8 @@ public class MulticastProcessor extends AsyncProcessorSupport
         // also we would need to know if any error handler has attempted redelivery and exhausted
         boolean stoppedOnException = false;
         boolean exception = false;
-        boolean exhaust = forceExhaust || subExchange != null && (subExchange.getException() != null || subExchange.getExchangeExtension().isRedeliveryExhausted());
+        boolean exhaust = forceExhaust || subExchange != null
+                && (subExchange.getException() != null || subExchange.getExchangeExtension().isRedeliveryExhausted());
         if (original.getException() != null || subExchange != null && subExchange.getException() != null) {
             // there was an exception and we stopped
             stoppedOnException = isStopOnException();

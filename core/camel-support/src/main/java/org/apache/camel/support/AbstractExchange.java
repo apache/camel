@@ -90,7 +90,6 @@ class AbstractExchange implements Exchange {
     Map<String, SafeCopyProperty> safeCopyProperties;
     private final ExtendedExchangeExtension privateExtension;
 
-
     public AbstractExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
     }
@@ -860,7 +859,6 @@ class AbstractExchange implements Exchange {
 
         return ExchangeHelper.convertToType(this, type, value);
     }
-
 
     public ExtendedExchangeExtension getExchangeExtension() {
         return privateExtension;
