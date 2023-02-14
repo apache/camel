@@ -122,6 +122,7 @@
         <module>camel-datasonnet</module>
         <module>camel-debug</module>
         <module>camel-debezium</module>
+        <module>camel-dhis2</module>
         <module>camel-digitalocean</module>
         <module>camel-disruptor</module>
         <module>camel-djl</module>
