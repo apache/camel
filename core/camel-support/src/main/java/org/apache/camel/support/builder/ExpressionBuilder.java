@@ -837,7 +837,7 @@ public class ExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 if (enabled) {
-                    UnitOfWork uow = exchange.adapt(Exchange.class).getUnitOfWork();
+                    UnitOfWork uow = exchange.getUnitOfWork();
                     if (uow != null) {
                         Message msg = uow.getOriginalInMessage();
                         if (msg != null) {
