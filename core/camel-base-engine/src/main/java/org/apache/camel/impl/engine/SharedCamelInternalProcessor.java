@@ -263,19 +263,7 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
 
             // we should call after in reverse order
             try {
-                for (int i = advices != null ? advices.size() - 1 : -1, j = states.length - 1; i >= 0; i--) {
-                    CamelInternalProcessorAdvice task = advices.get(i);
-                    Object state = null;
-                    if (task.hasState()) {
-                        state = states[j--];
-                    }
-                    try {
-                        task.after(exchange, state);
-                    } catch (Throwable e) {
-                        exchange.setException(e);
-                        // allow all advices to complete even if there was an exception
-                    }
-                }
+                AdviceIterator.runAfterTasks(advices, states, exchange);
             } finally {
                 // ----------------------------------------------------------
                 // CAMEL END USER - DEBUG ME HERE +++ START +++
