@@ -29,9 +29,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,8 +39,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @Tag("not-parallel")
-@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
-                          disabledReason = "Apache CI nodes are too resource constrained for this test")
+@Disabled("Disabled due to CAMEL-18998")
 class FromFileToFtpSplitParallelIT extends FtpServerTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(FromFileToFtpSplitParallelIT.class);
 
