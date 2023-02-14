@@ -245,19 +245,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
         @SuppressWarnings("unchecked")
         public void done(boolean doneSync) {
             try {
-                for (int i = advices.size() - 1, j = states.length - 1; i >= 0; i--) {
-                    CamelInternalProcessorAdvice task = advices.get(i);
-                    Object state = null;
-                    if (task.hasState()) {
-                        state = states[j--];
-                    }
-                    try {
-                        task.after(exchange, state);
-                    } catch (Throwable e) {
-                        exchange.setException(e);
-                        // allow all advices to complete even if there was an exception
-                    }
-                }
+                AdviceIterator.runAfterTasks(advices, states, exchange);
             } finally {
                 // ----------------------------------------------------------
                 // CAMEL END USER - DEBUG ME HERE +++ START +++
@@ -813,10 +801,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 UnitOfWorkHelper.doneUow(uow, exchange);
             }
 
-            // after UoW is done lets pop the route context which must be done on every existing UoW
             if (route != null && existing != null) {
                 existing.popRoute();
             }
+            // after UoW is done lets pop the route context which must be done on every existing UoW
         }
 
         protected UnitOfWork createUnitOfWork(Exchange exchange) {
