@@ -291,12 +291,10 @@ public class ListTrace extends ProcessWatchCommand {
 
     private String getDataAsJSon(Row r) {
         String s = r.message.toJson();
-        if (pretty) {
-            if (loggingColor) {
-                s = JSonHelper.colorPrint(s, 2);
-            } else {
-                s = JSonHelper.prettyPrint(s, 2);
-            }
+        if (loggingColor) {
+            s = JSonHelper.colorPrint(s, 2, pretty);
+        } else if (pretty) {
+            s = JSonHelper.prettyPrint(s, 2);
         }
         String st = null;
         if (r.exception != null) {

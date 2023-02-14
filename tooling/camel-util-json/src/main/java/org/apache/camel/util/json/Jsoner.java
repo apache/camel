@@ -744,10 +744,15 @@ public final class Jsoner {
     }
 
     public static String colorPrint(final String printable, final ColorPrintElement color) {
-        return Jsoner.colorPrint(printable, "\t", Integer.MAX_VALUE, color);
+        return Jsoner.colorPrint(printable, "\t", Integer.MAX_VALUE, true, color);
     }
 
     public static String colorPrint(final String printable, final int spaces, final ColorPrintElement color) {
+        return colorPrint(printable, spaces, true, color);
+    }
+
+    public static String colorPrint(
+            final String printable, final int spaces, final boolean pretty, final ColorPrintElement color) {
         if (spaces > 10 || spaces < 2) {
             throw new IllegalArgumentException("Indentation with spaces must be between 2 and 10.");
         }
@@ -755,11 +760,11 @@ public final class Jsoner {
         for (int i = 0; i < spaces; i++) {
             indentation.append(" ");
         }
-        return Jsoner.colorPrint(printable, indentation.toString(), Integer.MAX_VALUE, color);
+        return Jsoner.colorPrint(printable, indentation.toString(), Integer.MAX_VALUE, pretty, color);
     }
 
     public static String colorPrint(
-            final String printable, final String indentation, final int depth, ColorPrintElement color) {
+            final String printable, final String indentation, final int depth, final boolean pretty, ColorPrintElement color) {
         final Yylex lexer = new Yylex(new StringReader(printable));
         Yytoken lexed;
         final StringBuilder returnable = new StringBuilder();
@@ -769,63 +774,88 @@ public final class Jsoner {
                 lexed = Jsoner.lexNextToken(lexer);
                 switch (lexed.getType()) {
                     case COLON:
-                        returnable.append(color.color(Yytoken.Types.COLON, ":")).append(" ");
+                        returnable.append(color.color(Yytoken.Types.COLON, ":"));
+                        if (pretty) {
+                            returnable.append(" ");
+                        }
                         break;
                     case COMMA:
                         returnable.append(color.color(Yytoken.Types.COMMA, lexed.getValue()));
                         if (level <= depth) {
-                            returnable.append("\n");
-                            for (int i = 0; i < level; i++) {
-                                returnable.append(indentation);
+                            if (pretty) {
+                                returnable.append("\n");
+                                for (int i = 0; i < level; i++) {
+                                    returnable.append(indentation);
+                                }
                             }
                         } else {
-                            returnable.append(" ");
+                            if (pretty) {
+                                returnable.append(" ");
+                            }
                         }
                         break;
                     case END:
-                        returnable.append("\n");
+                        if (pretty) {
+                            returnable.append("\n");
+                        }
                         break;
                     case LEFT_BRACE:
                         returnable.append(color.color(Yytoken.Types.LEFT_BRACE, lexed.getValue()));
                         if (++level <= depth) {
-                            returnable.append("\n");
-                            for (int i = 0; i < level; i++) {
-                                returnable.append(indentation);
+                            if (pretty) {
+                                returnable.append("\n");
+                                for (int i = 0; i < level; i++) {
+                                    returnable.append(indentation);
+                                }
                             }
                         } else {
-                            returnable.append(" ");
+                            if (pretty) {
+                                returnable.append(" ");
+                            }
                         }
                         break;
                     case LEFT_SQUARE:
                         returnable.append(color.color(Yytoken.Types.LEFT_SQUARE, lexed.getValue()));
                         if (++level <= depth) {
-                            returnable.append("\n");
-                            for (int i = 0; i < level; i++) {
-                                returnable.append(indentation);
+                            if (pretty) {
+                                returnable.append("\n");
+                                for (int i = 0; i < level; i++) {
+                                    returnable.append(indentation);
+                                }
                             }
                         } else {
-                            returnable.append(" ");
+                            if (pretty) {
+                                returnable.append(" ");
+                            }
                         }
                         break;
                     case RIGHT_BRACE:
                         if (level-- <= depth) {
-                            returnable.append("\n");
-                            for (int i = 0; i < level; i++) {
-                                returnable.append(indentation);
+                            if (pretty) {
+                                returnable.append("\n");
+                                for (int i = 0; i < level; i++) {
+                                    returnable.append(indentation);
+                                }
                             }
                         } else {
-                            returnable.append(" ");
+                            if (pretty) {
+                                returnable.append(" ");
+                            }
                         }
                         returnable.append(color.color(Yytoken.Types.RIGHT_BRACE, lexed.getValue()));
                         break;
                     case RIGHT_SQUARE:
                         if (level-- <= depth) {
-                            returnable.append("\n");
-                            for (int i = 0; i < level; i++) {
-                                returnable.append(indentation);
+                            if (pretty) {
+                                returnable.append("\n");
+                                for (int i = 0; i < level; i++) {
+                                    returnable.append(indentation);
+                                }
                             }
                         } else {
-                            returnable.append(" ");
+                            if (pretty) {
+                                returnable.append(" ");
+                            }
                         }
                         returnable.append(color.color(Yytoken.Types.RIGHT_SQUARE, lexed.getValue()));
                         break;

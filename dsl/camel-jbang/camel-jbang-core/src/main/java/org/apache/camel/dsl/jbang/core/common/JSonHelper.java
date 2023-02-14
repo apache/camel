@@ -34,10 +34,10 @@ public final class JSonHelper {
     }
 
     /**
-     * Prints the JSon in pretty mode with ANSi color (similar to jq)
+     * Prints the JSon with ANSi color (similar to jq)
      */
-    public static String colorPrint(String json, int spaces) {
-        return Jsoner.colorPrint(json, spaces, new Jsoner.ColorPrintElement() {
+    public static String colorPrint(String json, int spaces, boolean pretty) {
+        return Jsoner.colorPrint(json, spaces, pretty, new Jsoner.ColorPrintElement() {
             Yytoken.Types prev;
 
             @Override
