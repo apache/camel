@@ -92,7 +92,7 @@
         <jta-api-1.2-version>1.2</jta-api-1.2-version>
         <cglib-version>3.2.12</cglib-version>
         <chunk-templates-version>3.6.2</chunk-templates-version>
-        <classgraph-version>4.8.151</classgraph-version>
+        <classgraph-version>4.8.154</classgraph-version>
         <cometd-java-client-version>7.0.9</cometd-java-client-version>
         <cometd-java-server-version>7.0.9</cometd-java-server-version>
         <commons-beanutils-version>1.9.4</commons-beanutils-version>
