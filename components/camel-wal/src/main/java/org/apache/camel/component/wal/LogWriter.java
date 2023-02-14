@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -240,7 +239,7 @@ public final class LogWriter implements AutoCloseable {
 
          Trying to update a persisted entry here is not acceptable
          */
-        ObjectHelper.notNull(layerInfo, "layerInfo");
+        assert layerInfo != null;
 
         final LogEntry logEntry = transactionLog.update(layerInfo, state);
 
