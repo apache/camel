@@ -32,8 +32,8 @@ public interface ExchangeExtension {
     /**
      * If there is an existing inbound message of the given type then return it as-is, otherwise return null.
      *
-     * @param type the given type
-     * @return the message if exists with the given type, otherwise null.
+     * @param  type the given type
+     * @return      the message if exists with the given type, otherwise null.
      */
     <T> T getInOrNull(Class<T> type);
 
@@ -125,9 +125,9 @@ public interface ExchangeExtension {
     /**
      * Checks if the passed {@link Synchronization} instance is already contained on this exchange.
      *
-     * @param onCompletion the callback instance that is being checked for
-     * @return <tt>true</tt>, if callback instance is already contained on this exchange, else
-     * <tt>false</tt>
+     * @param  onCompletion the callback instance that is being checked for
+     * @return              <tt>true</tt>, if callback instance is already contained on this exchange, else
+     *                      <tt>false</tt>
      */
     boolean containsOnCompletion(Synchronization onCompletion);
 
