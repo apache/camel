@@ -232,7 +232,15 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         try {
             // parse back to json object and avoid double message root
             JsonObject msg = (JsonObject) Jsoner.deserialize(messageAsJSon);
-            jo.put("message", msg.get("message"));
+            msg = msg.getMap("message");
+            jo.put("message", msg);
+
+            // [Body is null] -> null
+            msg = msg.getMap("body");
+            Object body = msg.get("value");
+            if ("[Body is null]".equals(body)) {
+                msg.replace("value", null);
+            }
         } catch (Exception e) {
             // ignore
         }

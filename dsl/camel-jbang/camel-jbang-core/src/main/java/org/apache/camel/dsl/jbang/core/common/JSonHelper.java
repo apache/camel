@@ -42,16 +42,16 @@ public final class JSonHelper {
 
             @Override
             public String color(Yytoken.Types type, Object value) {
-                String s = value.toString();
+                String s = value != null ? value.toString() : "null";
                 switch (type) {
                     case COLON, COMMA, LEFT_SQUARE, RIGHT_SQUARE, LEFT_BRACE, RIGHT_BRACE ->
-                        s = Ansi.ansi().fg(Ansi.Color.WHITE).bold().a(s).reset().toString();
+                        s = Ansi.ansi().bgDefault().bold().a(s).reset().toString();
                     case VALUE -> {
                         if (Yytoken.Types.COLON == prev) {
                             if (StringHelper.isQuoted(s)) {
                                 s = Ansi.ansi().fg(Ansi.Color.GREEN).a(s).reset().toString();
                             } else {
-                                s = Ansi.ansi().fg(Ansi.Color.WHITE).a(s).reset().toString();
+                                s = Ansi.ansi().bgDefault().a(s).reset().toString();
                             }
                         } else {
                             s = Ansi.ansi().fgBright(Ansi.Color.BLUE).a(s).reset().toString();

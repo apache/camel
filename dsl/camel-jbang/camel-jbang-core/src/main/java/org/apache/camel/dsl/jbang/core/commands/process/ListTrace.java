@@ -132,7 +132,7 @@ public class ListTrace extends ProcessWatchCommand {
             String[] arr = data.split(System.lineSeparator());
             String header = arr[0];
             if (loggingColor) {
-                header = Ansi.ansi().fg(Ansi.Color.WHITE).bold().a(header).reset().toString();
+                header = Ansi.ansi().bgDefault().bold().a(header).reset().toString();
             }
             System.out.println(header);
             // mix column and message (master/detail) mode
@@ -256,7 +256,7 @@ public class ListTrace extends ProcessWatchCommand {
         }
         if (!r.done) {
             if (loggingColor) {
-                return Ansi.ansi().fg(Ansi.Color.YELLOW).bold().a("Processing").reset().toString();
+                return Ansi.ansi().fg(Ansi.Color.BLUE).bold().a("Processing").reset().toString();
             } else {
                 return "Processing";
             }
