@@ -27,7 +27,14 @@ public final class JSonHelper {
     }
 
     /**
-     * Prints the JSon in ANSi color (similar to jq)
+     * Prints the JSon in pretty mode with no color
+     */
+    public static String prettyPrint(String json, int spaces) {
+        return Jsoner.prettyPrint(json, spaces);
+    }
+
+    /**
+     * Prints the JSon in pretty mode with ANSi color (similar to jq)
      */
     public static String colorPrint(String json, int spaces) {
         return Jsoner.colorPrint(json, spaces, new Jsoner.ColorPrintElement() {

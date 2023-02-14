@@ -35,6 +35,7 @@ import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
+import org.fusesource.jansi.Ansi;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -49,17 +50,36 @@ public class ListTrace extends ProcessWatchCommand {
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
-    @CommandLine.Option(names = { "--latest" },
+    @CommandLine.Option(names = { "--latest" }, defaultValue = "false",
                         description = "Only output traces of latest message")
     boolean latest;
 
-    @CommandLine.Option(names = { "--brief" },
+    @CommandLine.Option(names = { "--brief" }, defaultValue = "false",
                         description = "Brief mode to only show traces of input and output (no intermediate processing steps)")
     boolean brief;
 
-    @CommandLine.Option(names = { "--pretty" },
+    @CommandLine.Option(names = { "--pretty" }, defaultValue = "false",
                         description = "Pretty print traced message")
     boolean pretty;
+
+    @CommandLine.Option(names = { "--show-exchange-properties", "showExchangeProperties" }, defaultValue = "false",
+                        description = "Show exchange properties in traced messages")
+    boolean showExchangeProperties;
+
+    @CommandLine.Option(names = { "--show-message-headers", "showMessageHeaders" }, defaultValue = "true",
+                        description = "Show message headers in traced messages")
+    boolean showMessageHeaders = true;
+
+    @CommandLine.Option(names = { "--show-message-body", "showMessageBody" }, defaultValue = "true",
+                        description = "Show message body in traced messages")
+    boolean showMessageBody = true;
+
+    @CommandLine.Option(names = { "--show-exception", "showException" }, defaultValue = "true",
+                        description = "Show exception and stacktrace for failed messages")
+    boolean showException = true;
+
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    boolean loggingColor = true;
 
     public ListTrace(CamelJBangMain main) {
         super(main);
@@ -107,19 +127,23 @@ public class ListTrace extends ProcessWatchCommand {
                             .with(this::getId),
                     new Column().header("AGE").dataAlign(HorizontalAlign.RIGHT).with(this::getTimestamp),
                     new Column().header("ELAPSED").dataAlign(HorizontalAlign.RIGHT).with(this::getElapsed),
-                    new Column().header("STATUS").dataAlign(HorizontalAlign.RIGHT).with(this::getFailed)));
+                    new Column().header("STATUS").dataAlign(HorizontalAlign.LEFT).with(this::getStatus)));
+
             String[] arr = data.split(System.lineSeparator());
-            // print header
-            System.out.println(arr[0]);
+            String header = arr[0];
+            if (loggingColor) {
+                header = Ansi.ansi().fg(Ansi.Color.WHITE).bold().a(header).reset().toString();
+            }
+            System.out.println(header);
             // mix column and message (master/detail) mode
             for (int i = 0; i < rows.size(); i++) {
                 String s = arr[i + 1];
                 if (i > 0 && pretty) {
                     // print header per trace in pretty mode
-                    System.out.println(arr[0]);
+                    System.out.println(header);
                 }
                 System.out.println(s);
-                String json = getMessage(rows.get(i));
+                String json = getDataAsJSon(rows.get(i));
                 // pad with 8 spaces to indent json data
                 String[] lines = json.split(System.lineSeparator());
                 for (String line : lines) {
@@ -159,6 +183,18 @@ public class ListTrace extends ProcessWatchCommand {
                     row.exception = jo.getMap("exception");
                     row.exchangeId = row.message.getString("exchangeId");
                     row.message.remove("exchangeId");
+                    if (!showExchangeProperties) {
+                        row.message.remove("exchangeProperties");
+                    }
+                    if (!showMessageHeaders) {
+                        row.message.remove("headers");
+                    }
+                    if (!showMessageBody) {
+                        row.message.remove("body");
+                    }
+                    if (!showException) {
+                        row.exception = null;
+                    }
                     lastId = row.exchangeId;
                     local.add(row);
                 }
@@ -198,17 +234,45 @@ public class ListTrace extends ProcessWatchCommand {
     }
 
     private String getElapsed(Row r) {
-        if (!r.first && r.elapsed > 0) {
+        if (!r.first) {
             return TimeUtils.printDuration(r.elapsed, true);
         }
         return "";
     }
 
-    private String getFailed(Row r) {
-        if (!r.first) {
-            return r.failed ? "Failure" : "Success";
+    private String getStatus(Row r) {
+        if (r.first) {
+            if (loggingColor) {
+                return Ansi.ansi().fg(Ansi.Color.GREEN).bold().a("Input").reset().toString();
+            } else {
+                return "Input";
+            }
+        } else if (r.last) {
+            if (loggingColor) {
+                return Ansi.ansi().fg(r.failed ? Ansi.Color.RED : Ansi.Color.GREEN).bold().a("Output").reset().toString();
+            } else {
+                return "Output";
+            }
         }
-        return "";
+        if (!r.done) {
+            if (loggingColor) {
+                return Ansi.ansi().fg(Ansi.Color.YELLOW).bold().a("Processing").reset().toString();
+            } else {
+                return "Processing";
+            }
+        } else if (r.failed) {
+            if (loggingColor) {
+                return Ansi.ansi().fg(Ansi.Color.RED).bold().a("Failed").reset().toString();
+            } else {
+                return "Failed";
+            }
+        } else {
+            if (loggingColor) {
+                return Ansi.ansi().fg(Ansi.Color.GREEN).bold().a("Success").reset().toString();
+            } else {
+                return "Success";
+            }
+        }
     }
 
     private String getUid(Row r) {
@@ -225,12 +289,28 @@ public class ListTrace extends ProcessWatchCommand {
         }
     }
 
-    private String getMessage(Row r) {
+    private String getDataAsJSon(Row r) {
         String s = r.message.toJson();
         if (pretty) {
-            s = JSonHelper.colorPrint(s, 2);
+            if (loggingColor) {
+                s = JSonHelper.colorPrint(s, 2);
+            } else {
+                s = JSonHelper.prettyPrint(s, 2);
+            }
         }
-        return s;
+        String st = null;
+        if (r.exception != null) {
+            // include stacktrace
+            st = Jsoner.unescape(r.exception.getString("stackTrace"));
+            if (loggingColor) {
+                st = Ansi.ansi().fg(Ansi.Color.RED).bold().a(st).reset().toString();
+            }
+        }
+        if (st != null) {
+            return s + System.lineSeparator() + st;
+        } else {
+            return s;
+        }
     }
 
     protected int sortRow(Row o1, Row o2) {

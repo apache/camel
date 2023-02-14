@@ -1020,9 +1020,9 @@ public final class MessageHelper {
         }
         String msg = exception.getMessage();
         if (msg != null) {
-            jo.put("message", type);
+            jo.put("message", msg);
         } else {
-            jo.put("message", "[null]");
+            jo.put("message", null);
         }
         StringWriter sw = new StringWriter();
         exception.printStackTrace(new PrintWriter(sw));
