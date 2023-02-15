@@ -53,9 +53,6 @@ import picocli.CommandLine;
 public class CamelTraceAction extends ActionBaseCommand {
 
     // TODO: message dump in json or not (option)
-    // TODO: filter on status
-    // TODO: Output and internal Output
-    // TODO: filter on exchangeId
     // TODO: --last-only
 
     private static final int NAME_MAX_WIDTH = 25;
@@ -63,9 +60,6 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     @CommandLine.Parameters(description = "Name or pid of running Camel integration. (default selects all)", arity = "0..1")
     String name = "*";
-
-    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
-    boolean loggingColor = true;
 
     @CommandLine.Option(names = { "--timestamp" }, defaultValue = "true",
                         description = "Print timestamp.")
@@ -82,6 +76,10 @@ public class CamelTraceAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--prefix" }, defaultValue = "true",
                         description = "Print prefix with running Camel integration name.")
     boolean prefix = true;
+
+    @CommandLine.Option(names = { "--level" }, defaultValue = "0",
+                        description = "Detail level of tracing. 0=all events (default), 1=input+output")
+    int level = 0;
 
     @CommandLine.Option(names = { "--tail" },
                         description = "The number of traces from the end of the trace to show. Defaults to showing all traces.")
@@ -115,11 +113,20 @@ public class CamelTraceAction extends ActionBaseCommand {
                         description = "Show exception and stacktrace for failed messages")
     boolean showException = true;
 
+    @CommandLine.Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")
+    boolean loggingColor = true;
+
+    @CommandLine.Option(names = { "--compact" }, defaultValue = "true",
+                        description = "Compact output (no empty line separating traced messages)")
+    boolean compact = true;
+
     String findAnsi;
 
     private int nameMaxWidth;
 
-    private final Map<String, Ansi.Color> colors = new HashMap<>();
+    private final Map<String, Ansi.Color> nameColors = new HashMap<>();
+    private final Map<String, Ansi.Color> exchangeIdColors = new HashMap<>();
+    private int exchangeIdColorsIndex;
 
     public CamelTraceAction(CamelJBangMain main) {
         super(main);
@@ -433,19 +440,19 @@ public class CamelTraceAction extends ActionBaseCommand {
         }
 
         String json = getDataAsJSon(row);
-        boolean valid = isValidSince(limit, row.timestamp) && isValidGrep(json);
+        boolean valid = filterLevel(row) && isValidSince(limit, row.timestamp) && isValidGrep(json);
         if (!valid) {
             return;
         }
 
         if (name != null) {
             if (loggingColor) {
-                Ansi.Color color = colors.get(name);
+                Ansi.Color color = nameColors.get(name);
                 if (color == null) {
                     // grab a new color
-                    int idx = (colors.size() % 6) + 1;
+                    int idx = (nameColors.size() % 6) + 1;
                     color = Ansi.Color.values()[idx];
-                    colors.put(name, color);
+                    nameColors.put(name, color);
                 }
                 String n = String.format("%-" + nameMaxWidth + "s", name);
                 AnsiConsole.out().print(Ansi.ansi().fg(color).a(n).a("| ").reset());
@@ -477,7 +484,17 @@ public class CamelTraceAction extends ActionBaseCommand {
         // exchange id
         String eid = row.exchangeId;
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(eid).reset());
+            Ansi.Color color = exchangeIdColors.get(eid);
+            if (color == null) {
+                // grab a new color
+                exchangeIdColorsIndex++;
+                if (exchangeIdColorsIndex > 6) {
+                    exchangeIdColorsIndex = 1;
+                }
+                color = Ansi.Color.values()[exchangeIdColorsIndex];
+                exchangeIdColors.put(eid, color);
+            }
+            AnsiConsole.out().print(Ansi.ansi().fg(color).a(eid).reset());
         } else {
             System.out.print(eid);
         }
@@ -539,8 +556,23 @@ public class CamelTraceAction extends ActionBaseCommand {
                 }
                 System.out.println(line);
             }
-            System.out.println();
+            if (!compact) {
+                System.out.println();
+            }
         }
+
+        if (row.last) {
+            exchangeIdColors.remove(eid);
+        }
+    }
+
+    private boolean filterLevel(Row row) {
+        if (level == 1) {
+            // only input or output
+            return row.first || row.last;
+        }
+
+        return true;
     }
 
     private String getDataAsJSon(Row r) {
