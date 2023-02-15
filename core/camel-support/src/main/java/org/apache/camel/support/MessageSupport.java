@@ -173,8 +173,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     @Override
     public Message copy() {
         Message answer = newInstance();
-        // must copy over CamelContext
-        CamelContextAware.trySetCamelContext(answer, camelContext);
+
         answer.copyFrom(this);
         return answer;
     }
@@ -182,15 +181,8 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     @Override
     public void copyFrom(Message that) {
         if (that == this) {
-            // the same instance so do not need to copy
+            // it's the same instance, so do not need to copy
             return;
-        }
-
-        // must copy over CamelContext
-        CamelContextAware.trySetCamelContext(that, camelContext);
-        // cover over exchange if none has been assigned
-        if (getExchange() == null) {
-            setExchange(that.getExchange());
         }
 
         copyFromWithNewBody(that, that.getBody());
@@ -206,7 +198,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     @Override
     public void copyFromWithNewBody(Message that, Object newBody) {
         if (that == this) {
-            // the same instance so do not need to copy
+            // it's the same instance, so do not need to copy
             return;
         }
 
