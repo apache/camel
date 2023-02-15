@@ -13,6 +13,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     private static final String LABEL_NAME = "consumer,mongodb";
     @UriParam(label = LABEL_NAME)
+    private String mongodbConnectionString;
+    @UriParam(label = LABEL_NAME)
     @Metadata(required = true)
     private String mongodbPassword;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
@@ -47,8 +49,6 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private boolean sanitizeFieldNames = false;
     @UriParam(label = LABEL_NAME)
     private String mongodbUser;
-    @UriParam(label = LABEL_NAME, defaultValue = "v2")
-    private String sourceStructVersion = "v2";
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private int heartbeatIntervalMs = 0;
     @UriParam(label = LABEL_NAME)
@@ -59,8 +59,10 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private String databaseExcludeList;
     @UriParam(label = LABEL_NAME, defaultValue = "2048")
     private int maxBatchSize = 2048;
-    @UriParam(label = LABEL_NAME)
-    private String skippedOperations;
+    @UriParam(label = LABEL_NAME, defaultValue = "t")
+    private String skippedOperations = "t";
+    @UriParam(label = LABEL_NAME, defaultValue = "io.debezium.schema.SchemaTopicNamingStrategy")
+    private String topicNamingStrategy = "io.debezium.schema.SchemaTopicNamingStrategy";
     @UriParam(label = LABEL_NAME, defaultValue = "initial")
     private String snapshotMode = "initial";
     @UriParam(label = LABEL_NAME, defaultValue = "8192")
@@ -75,8 +77,13 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private long snapshotDelayMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean provideTransactionMetadata = false;
+    @UriParam(label = LABEL_NAME)
+    private String schemaHistoryInternalFileFilename;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean tombstonesOnDelete = false;
+    @UriParam(label = LABEL_NAME)
+    @Metadata(required = true)
+    private String topicPrefix;
     @UriParam(label = LABEL_NAME, defaultValue = "admin")
     private String mongodbAuthsource = "admin";
     @UriParam(label = LABEL_NAME, defaultValue = "1s", javaType = "java.time.Duration")
@@ -85,31 +92,37 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     private String collectionExcludeList;
     @UriParam(label = LABEL_NAME)
     private String snapshotIncludeCollectionList;
-    @UriParam(label = LABEL_NAME)
-    private String databaseHistoryFileFilename;
     @UriParam(label = LABEL_NAME, defaultValue = "16")
     private int connectMaxAttempts = 16;
     @UriParam(label = LABEL_NAME, defaultValue = "0")
     private long maxQueueSizeInBytes = 0;
-    @UriParam(label = LABEL_NAME, defaultValue = "${database.server.name}.transaction")
-    private String transactionTopic = "${database.server.name}.transaction";
     @UriParam(label = LABEL_NAME, defaultValue = "0ms", javaType = "java.time.Duration")
     private int mongodbSocketTimeoutMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "fail")
     private String eventProcessingFailureHandlingMode = "fail";
-    @UriParam(label = LABEL_NAME)
-    @Metadata(required = true)
-    private String mongodbName;
     @UriParam(label = LABEL_NAME, defaultValue = "1")
     private int snapshotMaxThreads = 1;
     @UriParam(label = LABEL_NAME, defaultValue = "2m", javaType = "java.time.Duration")
     private long connectBackoffMaxDelayMs = 120000;
-    @UriParam(label = LABEL_NAME, defaultValue = "avro")
-    private String schemaNameAdjustmentMode = "avro";
+    @UriParam(label = LABEL_NAME, defaultValue = "none")
+    private String schemaNameAdjustmentMode = "none";
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean mongodbSslInvalidHostnameAllowed = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "10s", javaType = "java.time.Duration")
+    private int mongodbHeartbeatFrequencyMs = 10000;
     @UriParam(label = LABEL_NAME)
     private String databaseIncludeList;
+
+    /**
+     * Database connection string.
+     */
+    public void setMongodbConnectionString(String mongodbConnectionString) {
+        this.mongodbConnectionString = mongodbConnectionString;
+    }
+
+    public String getMongodbConnectionString() {
+        return mongodbConnectionString;
+    }
 
     /**
      * Password to be used when connecting to MongoDB, if necessary.
@@ -124,7 +137,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The maximum number of records that should be loaded into memory while
-     * streaming.  A value of `0` uses the default JDBC fetch size.
+     * streaming. A value of '0' uses the default JDBC fetch size.
      */
     public void setQueryFetchSize(int queryFetchSize) {
         this.queryFetchSize = queryFetchSize;
@@ -276,7 +289,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The maximum number of records that should be loaded into memory while
-     * performing a snapshot
+     * performing a snapshot.
      */
     public void setSnapshotFetchSize(int snapshotFetchSize) {
         this.snapshotFetchSize = snapshotFetchSize;
@@ -288,7 +301,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Interval for looking for new, removed, or changed replica sets, given in
-     * milliseconds.  Defaults to 30 seconds (30,000 ms).
+     * milliseconds. Defaults to 30 seconds (30,000 ms).
      */
     public void setMongodbPollIntervalMs(long mongodbPollIntervalMs) {
         this.mongodbPollIntervalMs = mongodbPollIntervalMs;
@@ -318,18 +331,6 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public String getMongodbUser() {
         return mongodbUser;
-    }
-
-    /**
-     * A version of the format of the publicly visible source part in the
-     * message
-     */
-    public void setSourceStructVersion(String sourceStructVersion) {
-        this.sourceStructVersion = sourceStructVersion;
-    }
-
-    public String getSourceStructVersion() {
-        return sourceStructVersion;
     }
 
     /**
@@ -399,8 +400,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     /**
      * The comma-separated list of operations to skip during streaming, defined
      * as: 'c' for inserts/create; 'u' for updates; 'd' for deletes, 't' for
-     * truncates, and 'none' to indicate nothing skipped. By default, no
-     * operations will be skipped.
+     * truncates, and 'none' to indicate nothing skipped. By default, only
+     * truncate operations will be skipped.
      */
     public void setSkippedOperations(String skippedOperations) {
         this.skippedOperations = skippedOperations;
@@ -408,6 +409,19 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public String getSkippedOperations() {
         return skippedOperations;
+    }
+
+    /**
+     * The name of the TopicNamingStrategy class that should be used to
+     * determine the topic name for data change, schema change, transaction,
+     * heartbeat event etc.
+     */
+    public void setTopicNamingStrategy(String topicNamingStrategy) {
+        this.topicNamingStrategy = topicNamingStrategy;
+    }
+
+    public String getTopicNamingStrategy() {
+        return topicNamingStrategy;
     }
 
     /**
@@ -464,10 +478,10 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * The method used to capture changes from MongoDB server. Options include:
-     * 'oplog' to capture changes from the oplog; 'change_streams' to capture
-     * changes via MongoDB Change Streams, update events do not contain full
-     * documents; 'change_streams_update_full' (the default) to capture changes
-     * via MongoDB Change Streams, update events contain full documents
+     * 'change_streams' to capture changes via MongoDB Change Streams, update
+     * events do not contain full documents; 'change_streams_update_full' (the
+     * default) to capture changes via MongoDB Change Streams, update events
+     * contain full documents
      */
     public void setCaptureMode(String captureMode) {
         this.captureMode = captureMode;
@@ -501,8 +515,21 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The path to the file that will be used to record the database schema
+     * history
+     */
+    public void setSchemaHistoryInternalFileFilename(
+            String schemaHistoryInternalFileFilename) {
+        this.schemaHistoryInternalFileFilename = schemaHistoryInternalFileFilename;
+    }
+
+    public String getSchemaHistoryInternalFileFilename() {
+        return schemaHistoryInternalFileFilename;
+    }
+
+    /**
      * Whether delete operations should be represented by a delete event and a
-     * subsquenttombstone event (true) or only by a delete event (false).
+     * subsequent tombstone event (true) or only by a delete event (false).
      * Emitting the tombstone event (the default behavior) allows Kafka to
      * completely delete all events pertaining to the given key once the source
      * record got deleted.
@@ -513,6 +540,21 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public boolean isTombstonesOnDelete() {
         return tombstonesOnDelete;
+    }
+
+    /**
+     * Topic prefix that identifies and provides a namespace for the particular
+     * database server/cluster is capturing changes. The topic prefix should be
+     * unique across all other connectors, since it is used as a prefix for all
+     * Kafka topic names that receive events emitted by this connector. Only
+     * alphanumeric characters, hyphens, dots and underscores must be accepted.
+     */
+    public void setTopicPrefix(String topicPrefix) {
+        this.topicPrefix = topicPrefix;
+    }
+
+    public String getTopicPrefix() {
+        return topicPrefix;
     }
 
     /**
@@ -553,7 +595,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * this setting must be set to specify a list of tables/collections whose
+     * This setting must be set to specify a list of tables/collections whose
      * snapshot must be taken on creating or restarting the connector.
      */
     public void setSnapshotIncludeCollectionList(
@@ -563,18 +605,6 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     public String getSnapshotIncludeCollectionList() {
         return snapshotIncludeCollectionList;
-    }
-
-    /**
-     * The path to the file that will be used to record the database history
-     */
-    public void setDatabaseHistoryFileFilename(
-            String databaseHistoryFileFilename) {
-        this.databaseHistoryFileFilename = databaseHistoryFileFilename;
-    }
-
-    public String getDatabaseHistoryFileFilename() {
-        return databaseHistoryFileFilename;
     }
 
     /**
@@ -606,19 +636,6 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * The name of the transaction metadata topic. The placeholder
-     * ${database.server.name} can be used for referring to the connector's
-     * logical name; defaults to ${database.server.name}.transaction.
-     */
-    public void setTransactionTopic(String transactionTopic) {
-        this.transactionTopic = transactionTopic;
-    }
-
-    public String getTransactionTopic() {
-        return transactionTopic;
-    }
-
-    /**
      * The socket timeout, given in milliseconds. Defaults to 0 ms.
      */
     public void setMongodbSocketTimeoutMs(int mongodbSocketTimeoutMs) {
@@ -631,10 +648,10 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Specify how failures during processing of events (i.e. when encountering
-     * a corrupted event) should be handled, including:'fail' (the default) an
+     * a corrupted event) should be handled, including: 'fail' (the default) an
      * exception indicating the problematic event and its position is raised,
      * causing the connector to be stopped; 'warn' the problematic event and its
-     * position will be logged and the event will be skipped;'ignore' the
+     * position will be logged and the event will be skipped; 'ignore' the
      * problematic event will be skipped.
      */
     public void setEventProcessingFailureHandlingMode(
@@ -647,21 +664,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Unique name that identifies the MongoDB replica set or cluster and all
-     * recorded offsets, and that is used as a prefix for all schemas and
-     * topics. Each distinct MongoDB installation should have a separate
-     * namespace and monitored by at most one Debezium connector.
-     */
-    public void setMongodbName(String mongodbName) {
-        this.mongodbName = mongodbName;
-    }
-
-    public String getMongodbName() {
-        return mongodbName;
-    }
-
-    /**
-     * The maximum number of threads used to perform the snapshot.  Defaults to
+     * The maximum number of threads used to perform the snapshot. Defaults to
      * 1.
      */
     public void setSnapshotMaxThreads(int snapshotMaxThreads) {
@@ -687,9 +690,9 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Specify how schema names should be adjusted for compatibility with the
-     * message converter used by the connector, including:'avro' replaces the
-     * characters that cannot be used in the Avro type name with underscore
-     * (default)'none' does not apply any adjustment
+     * message converter used by the connector, including: 'avro' replaces the
+     * characters that cannot be used in the Avro type name with underscore;
+     * 'none' does not apply any adjustment (default)
      */
     public void setSchemaNameAdjustmentMode(String schemaNameAdjustmentMode) {
         this.schemaNameAdjustmentMode = schemaNameAdjustmentMode;
@@ -713,6 +716,18 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
+     * The frequency that the cluster monitor attempts to reach each server.
+     * Defaults to 10 seconds (10,000 ms).
+     */
+    public void setMongodbHeartbeatFrequencyMs(int mongodbHeartbeatFrequencyMs) {
+        this.mongodbHeartbeatFrequencyMs = mongodbHeartbeatFrequencyMs;
+    }
+
+    public int getMongodbHeartbeatFrequencyMs() {
+        return mongodbHeartbeatFrequencyMs;
+    }
+
+    /**
      * A comma-separated list of regular expressions that match the database
      * names for which changes are to be captured
      */
@@ -728,6 +743,7 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
     protected Configuration createConnectorConfiguration() {
         final Configuration.Builder configBuilder = Configuration.create();
         
+        addPropertyIfNotNull(configBuilder, "mongodb.connection.string", mongodbConnectionString);
         addPropertyIfNotNull(configBuilder, "mongodb.password", mongodbPassword);
         addPropertyIfNotNull(configBuilder, "query.fetch.size", queryFetchSize);
         addPropertyIfNotNull(configBuilder, "mongodb.ssl.enabled", mongodbSslEnabled);
@@ -745,13 +761,13 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "mongodb.poll.interval.ms", mongodbPollIntervalMs);
         addPropertyIfNotNull(configBuilder, "sanitize.field.names", sanitizeFieldNames);
         addPropertyIfNotNull(configBuilder, "mongodb.user", mongodbUser);
-        addPropertyIfNotNull(configBuilder, "source.struct.version", sourceStructVersion);
         addPropertyIfNotNull(configBuilder, "heartbeat.interval.ms", heartbeatIntervalMs);
         addPropertyIfNotNull(configBuilder, "snapshot.collection.filter.overrides", snapshotCollectionFilterOverrides);
         addPropertyIfNotNull(configBuilder, "field.exclude.list", fieldExcludeList);
         addPropertyIfNotNull(configBuilder, "database.exclude.list", databaseExcludeList);
         addPropertyIfNotNull(configBuilder, "max.batch.size", maxBatchSize);
         addPropertyIfNotNull(configBuilder, "skipped.operations", skippedOperations);
+        addPropertyIfNotNull(configBuilder, "topic.naming.strategy", topicNamingStrategy);
         addPropertyIfNotNull(configBuilder, "snapshot.mode", snapshotMode);
         addPropertyIfNotNull(configBuilder, "max.queue.size", maxQueueSize);
         addPropertyIfNotNull(configBuilder, "collection.include.list", collectionIncludeList);
@@ -759,22 +775,22 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "capture.mode", captureMode);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
+        addPropertyIfNotNull(configBuilder, "schema.history.internal.file.filename", schemaHistoryInternalFileFilename);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);
+        addPropertyIfNotNull(configBuilder, "topic.prefix", topicPrefix);
         addPropertyIfNotNull(configBuilder, "mongodb.authsource", mongodbAuthsource);
         addPropertyIfNotNull(configBuilder, "connect.backoff.initial.delay.ms", connectBackoffInitialDelayMs);
         addPropertyIfNotNull(configBuilder, "collection.exclude.list", collectionExcludeList);
         addPropertyIfNotNull(configBuilder, "snapshot.include.collection.list", snapshotIncludeCollectionList);
-        addPropertyIfNotNull(configBuilder, "database.history.file.filename", databaseHistoryFileFilename);
         addPropertyIfNotNull(configBuilder, "connect.max.attempts", connectMaxAttempts);
         addPropertyIfNotNull(configBuilder, "max.queue.size.in.bytes", maxQueueSizeInBytes);
-        addPropertyIfNotNull(configBuilder, "transaction.topic", transactionTopic);
         addPropertyIfNotNull(configBuilder, "mongodb.socket.timeout.ms", mongodbSocketTimeoutMs);
         addPropertyIfNotNull(configBuilder, "event.processing.failure.handling.mode", eventProcessingFailureHandlingMode);
-        addPropertyIfNotNull(configBuilder, "mongodb.name", mongodbName);
         addPropertyIfNotNull(configBuilder, "snapshot.max.threads", snapshotMaxThreads);
         addPropertyIfNotNull(configBuilder, "connect.backoff.max.delay.ms", connectBackoffMaxDelayMs);
         addPropertyIfNotNull(configBuilder, "schema.name.adjustment.mode", schemaNameAdjustmentMode);
         addPropertyIfNotNull(configBuilder, "mongodb.ssl.invalid.hostname.allowed", mongodbSslInvalidHostnameAllowed);
+        addPropertyIfNotNull(configBuilder, "mongodb.heartbeat.frequency.ms", mongodbHeartbeatFrequencyMs);
         addPropertyIfNotNull(configBuilder, "database.include.list", databaseIncludeList);
         
         return configBuilder.build();
@@ -790,8 +806,8 @@ public class MongoDbConnectorEmbeddedDebeziumConfiguration
         if (isFieldValueNotSet(mongodbPassword)) {
         	return ConfigurationValidation.notValid("Required field 'mongodbPassword' must be set.");
         }
-        if (isFieldValueNotSet(mongodbName)) {
-        	return ConfigurationValidation.notValid("Required field 'mongodbName' must be set.");
+        if (isFieldValueNotSet(topicPrefix)) {
+        	return ConfigurationValidation.notValid("Required field 'topicPrefix' must be set.");
         }
         return ConfigurationValidation.valid();
     }

@@ -83,7 +83,7 @@
                     </fields>
                     <requiredFields>
                         <field>database.password</field>
-                        <field>database.server.name</field>
+                        <field>topic.prefix</field>
                     </requiredFields>
                     <generatedSrcDir>${project.basedir}/src/generated/java</generatedSrcDir>
                 </configuration>

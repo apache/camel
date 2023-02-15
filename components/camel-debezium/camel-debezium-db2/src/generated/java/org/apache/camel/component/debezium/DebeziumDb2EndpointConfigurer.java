@@ -25,47 +25,21 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "additionalProperties": target.getConfiguration().setAdditionalProperties(property(camelContext, java.util.Map.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "columnblacklist":
-        case "columnBlacklist": target.getConfiguration().setColumnBlacklist(property(camelContext, java.lang.String.class, value)); return true;
         case "columnexcludelist":
         case "columnExcludeList": target.getConfiguration().setColumnExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "columnincludelist":
         case "columnIncludeList": target.getConfiguration().setColumnIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "columnpropagatesourcetype":
         case "columnPropagateSourceType": target.getConfiguration().setColumnPropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
-        case "columnwhitelist":
-        case "columnWhitelist": target.getConfiguration().setColumnWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "converters": target.getConfiguration().setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "databasedbname":
         case "databaseDbname": target.getConfiguration().setDatabaseDbname(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasehistory":
-        case "databaseHistory": target.getConfiguration().setDatabaseHistory(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasehistoryfilefilename":
-        case "databaseHistoryFileFilename": target.getConfiguration().setDatabaseHistoryFileFilename(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasehistorykafkabootstrapservers":
-        case "databaseHistoryKafkaBootstrapServers": target.getConfiguration().setDatabaseHistoryKafkaBootstrapServers(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasehistorykafkaquerytimeoutms":
-        case "databaseHistoryKafkaQueryTimeoutMs": target.getConfiguration().setDatabaseHistoryKafkaQueryTimeoutMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "databasehistorykafkarecoveryattempts":
-        case "databaseHistoryKafkaRecoveryAttempts": target.getConfiguration().setDatabaseHistoryKafkaRecoveryAttempts(property(camelContext, int.class, value)); return true;
-        case "databasehistorykafkarecoverypollintervalms":
-        case "databaseHistoryKafkaRecoveryPollIntervalMs": target.getConfiguration().setDatabaseHistoryKafkaRecoveryPollIntervalMs(property(camelContext, int.class, value)); return true;
-        case "databasehistorykafkatopic":
-        case "databaseHistoryKafkaTopic": target.getConfiguration().setDatabaseHistoryKafkaTopic(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasehistoryskipunparseableddl":
-        case "databaseHistorySkipUnparseableDdl": target.getConfiguration().setDatabaseHistorySkipUnparseableDdl(property(camelContext, boolean.class, value)); return true;
-        case "databasehistorystoreonlycapturedtablesddl":
-        case "databaseHistoryStoreOnlyCapturedTablesDdl": target.getConfiguration().setDatabaseHistoryStoreOnlyCapturedTablesDdl(property(camelContext, boolean.class, value)); return true;
-        case "databasehistorystoreonlymonitoredtablesddl":
-        case "databaseHistoryStoreOnlyMonitoredTablesDdl": target.getConfiguration().setDatabaseHistoryStoreOnlyMonitoredTablesDdl(property(camelContext, boolean.class, value)); return true;
         case "databasehostname":
         case "databaseHostname": target.getConfiguration().setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "databasepassword":
         case "databasePassword": target.getConfiguration().setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseport":
         case "databasePort": target.getConfiguration().setDatabasePort(property(camelContext, int.class, value)); return true;
-        case "databaseservername":
-        case "databaseServerName": target.getConfiguration().setDatabaseServerName(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseuser":
         case "databaseUser": target.getConfiguration().setDatabaseUser(property(camelContext, java.lang.String.class, value)); return true;
         case "datatypepropagatesourcetype":
@@ -124,6 +98,14 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "retriableRestartConnectorWaitMs": target.getConfiguration().setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sanitizefieldnames":
         case "sanitizeFieldNames": target.getConfiguration().setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
+        case "schemahistoryinternal":
+        case "schemaHistoryInternal": target.getConfiguration().setSchemaHistoryInternal(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemahistoryinternalfilefilename":
+        case "schemaHistoryInternalFileFilename": target.getConfiguration().setSchemaHistoryInternalFileFilename(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemahistoryinternalskipunparseableddl":
+        case "schemaHistoryInternalSkipUnparseableDdl": target.getConfiguration().setSchemaHistoryInternalSkipUnparseableDdl(property(camelContext, boolean.class, value)); return true;
+        case "schemahistoryinternalstoreonlycapturedtablesddl":
+        case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": target.getConfiguration().setSchemaHistoryInternalStoreOnlyCapturedTablesDdl(property(camelContext, boolean.class, value)); return true;
         case "schemanameadjustmentmode":
         case "schemaNameAdjustmentMode": target.getConfiguration().setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "signaldatacollection":
@@ -142,24 +124,20 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "snapshotMode": target.getConfiguration().setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": target.getConfiguration().setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
-        case "sourcestructversion":
-        case "sourceStructVersion": target.getConfiguration().setSourceStructVersion(property(camelContext, java.lang.String.class, value)); return true;
-        case "tableblacklist":
-        case "tableBlacklist": target.getConfiguration().setTableBlacklist(property(camelContext, java.lang.String.class, value)); return true;
         case "tableexcludelist":
         case "tableExcludeList": target.getConfiguration().setTableExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tableignorebuiltin":
         case "tableIgnoreBuiltin": target.getConfiguration().setTableIgnoreBuiltin(property(camelContext, boolean.class, value)); return true;
         case "tableincludelist":
         case "tableIncludeList": target.getConfiguration().setTableIncludeList(property(camelContext, java.lang.String.class, value)); return true;
-        case "tablewhitelist":
-        case "tableWhitelist": target.getConfiguration().setTableWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "timeprecisionmode":
         case "timePrecisionMode": target.getConfiguration().setTimePrecisionMode(property(camelContext, java.lang.String.class, value)); return true;
         case "tombstonesondelete":
         case "tombstonesOnDelete": target.getConfiguration().setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
-        case "transactiontopic":
-        case "transactionTopic": target.getConfiguration().setTransactionTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "topicnamingstrategy":
+        case "topicNamingStrategy": target.getConfiguration().setTopicNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "topicprefix":
+        case "topicPrefix": target.getConfiguration().setTopicPrefix(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
         }
     }
@@ -171,47 +149,21 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "additionalProperties": return java.util.Map.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "columnblacklist":
-        case "columnBlacklist": return java.lang.String.class;
         case "columnexcludelist":
         case "columnExcludeList": return java.lang.String.class;
         case "columnincludelist":
         case "columnIncludeList": return java.lang.String.class;
         case "columnpropagatesourcetype":
         case "columnPropagateSourceType": return java.lang.String.class;
-        case "columnwhitelist":
-        case "columnWhitelist": return java.lang.String.class;
         case "converters": return java.lang.String.class;
         case "databasedbname":
         case "databaseDbname": return java.lang.String.class;
-        case "databasehistory":
-        case "databaseHistory": return java.lang.String.class;
-        case "databasehistoryfilefilename":
-        case "databaseHistoryFileFilename": return java.lang.String.class;
-        case "databasehistorykafkabootstrapservers":
-        case "databaseHistoryKafkaBootstrapServers": return java.lang.String.class;
-        case "databasehistorykafkaquerytimeoutms":
-        case "databaseHistoryKafkaQueryTimeoutMs": return long.class;
-        case "databasehistorykafkarecoveryattempts":
-        case "databaseHistoryKafkaRecoveryAttempts": return int.class;
-        case "databasehistorykafkarecoverypollintervalms":
-        case "databaseHistoryKafkaRecoveryPollIntervalMs": return int.class;
-        case "databasehistorykafkatopic":
-        case "databaseHistoryKafkaTopic": return java.lang.String.class;
-        case "databasehistoryskipunparseableddl":
-        case "databaseHistorySkipUnparseableDdl": return boolean.class;
-        case "databasehistorystoreonlycapturedtablesddl":
-        case "databaseHistoryStoreOnlyCapturedTablesDdl": return boolean.class;
-        case "databasehistorystoreonlymonitoredtablesddl":
-        case "databaseHistoryStoreOnlyMonitoredTablesDdl": return boolean.class;
         case "databasehostname":
         case "databaseHostname": return java.lang.String.class;
         case "databasepassword":
         case "databasePassword": return java.lang.String.class;
         case "databaseport":
         case "databasePort": return int.class;
-        case "databaseservername":
-        case "databaseServerName": return java.lang.String.class;
         case "databaseuser":
         case "databaseUser": return java.lang.String.class;
         case "datatypepropagatesourcetype":
@@ -270,6 +222,14 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "retriableRestartConnectorWaitMs": return long.class;
         case "sanitizefieldnames":
         case "sanitizeFieldNames": return boolean.class;
+        case "schemahistoryinternal":
+        case "schemaHistoryInternal": return java.lang.String.class;
+        case "schemahistoryinternalfilefilename":
+        case "schemaHistoryInternalFileFilename": return java.lang.String.class;
+        case "schemahistoryinternalskipunparseableddl":
+        case "schemaHistoryInternalSkipUnparseableDdl": return boolean.class;
+        case "schemahistoryinternalstoreonlycapturedtablesddl":
+        case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": return boolean.class;
         case "schemanameadjustmentmode":
         case "schemaNameAdjustmentMode": return java.lang.String.class;
         case "signaldatacollection":
@@ -288,24 +248,20 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "snapshotMode": return java.lang.String.class;
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": return java.lang.String.class;
-        case "sourcestructversion":
-        case "sourceStructVersion": return java.lang.String.class;
-        case "tableblacklist":
-        case "tableBlacklist": return java.lang.String.class;
         case "tableexcludelist":
         case "tableExcludeList": return java.lang.String.class;
         case "tableignorebuiltin":
         case "tableIgnoreBuiltin": return boolean.class;
         case "tableincludelist":
         case "tableIncludeList": return java.lang.String.class;
-        case "tablewhitelist":
-        case "tableWhitelist": return java.lang.String.class;
         case "timeprecisionmode":
         case "timePrecisionMode": return java.lang.String.class;
         case "tombstonesondelete":
         case "tombstonesOnDelete": return boolean.class;
-        case "transactiontopic":
-        case "transactionTopic": return java.lang.String.class;
+        case "topicnamingstrategy":
+        case "topicNamingStrategy": return java.lang.String.class;
+        case "topicprefix":
+        case "topicPrefix": return java.lang.String.class;
         default: return null;
         }
     }
@@ -318,47 +274,21 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "additionalProperties": return target.getConfiguration().getAdditionalProperties();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "columnblacklist":
-        case "columnBlacklist": return target.getConfiguration().getColumnBlacklist();
         case "columnexcludelist":
         case "columnExcludeList": return target.getConfiguration().getColumnExcludeList();
         case "columnincludelist":
         case "columnIncludeList": return target.getConfiguration().getColumnIncludeList();
         case "columnpropagatesourcetype":
         case "columnPropagateSourceType": return target.getConfiguration().getColumnPropagateSourceType();
-        case "columnwhitelist":
-        case "columnWhitelist": return target.getConfiguration().getColumnWhitelist();
         case "converters": return target.getConfiguration().getConverters();
         case "databasedbname":
         case "databaseDbname": return target.getConfiguration().getDatabaseDbname();
-        case "databasehistory":
-        case "databaseHistory": return target.getConfiguration().getDatabaseHistory();
-        case "databasehistoryfilefilename":
-        case "databaseHistoryFileFilename": return target.getConfiguration().getDatabaseHistoryFileFilename();
-        case "databasehistorykafkabootstrapservers":
-        case "databaseHistoryKafkaBootstrapServers": return target.getConfiguration().getDatabaseHistoryKafkaBootstrapServers();
-        case "databasehistorykafkaquerytimeoutms":
-        case "databaseHistoryKafkaQueryTimeoutMs": return target.getConfiguration().getDatabaseHistoryKafkaQueryTimeoutMs();
-        case "databasehistorykafkarecoveryattempts":
-        case "databaseHistoryKafkaRecoveryAttempts": return target.getConfiguration().getDatabaseHistoryKafkaRecoveryAttempts();
-        case "databasehistorykafkarecoverypollintervalms":
-        case "databaseHistoryKafkaRecoveryPollIntervalMs": return target.getConfiguration().getDatabaseHistoryKafkaRecoveryPollIntervalMs();
-        case "databasehistorykafkatopic":
-        case "databaseHistoryKafkaTopic": return target.getConfiguration().getDatabaseHistoryKafkaTopic();
-        case "databasehistoryskipunparseableddl":
-        case "databaseHistorySkipUnparseableDdl": return target.getConfiguration().isDatabaseHistorySkipUnparseableDdl();
-        case "databasehistorystoreonlycapturedtablesddl":
-        case "databaseHistoryStoreOnlyCapturedTablesDdl": return target.getConfiguration().isDatabaseHistoryStoreOnlyCapturedTablesDdl();
-        case "databasehistorystoreonlymonitoredtablesddl":
-        case "databaseHistoryStoreOnlyMonitoredTablesDdl": return target.getConfiguration().isDatabaseHistoryStoreOnlyMonitoredTablesDdl();
         case "databasehostname":
         case "databaseHostname": return target.getConfiguration().getDatabaseHostname();
         case "databasepassword":
         case "databasePassword": return target.getConfiguration().getDatabasePassword();
         case "databaseport":
         case "databasePort": return target.getConfiguration().getDatabasePort();
-        case "databaseservername":
-        case "databaseServerName": return target.getConfiguration().getDatabaseServerName();
         case "databaseuser":
         case "databaseUser": return target.getConfiguration().getDatabaseUser();
         case "datatypepropagatesourcetype":
@@ -417,6 +347,14 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "retriableRestartConnectorWaitMs": return target.getConfiguration().getRetriableRestartConnectorWaitMs();
         case "sanitizefieldnames":
         case "sanitizeFieldNames": return target.getConfiguration().isSanitizeFieldNames();
+        case "schemahistoryinternal":
+        case "schemaHistoryInternal": return target.getConfiguration().getSchemaHistoryInternal();
+        case "schemahistoryinternalfilefilename":
+        case "schemaHistoryInternalFileFilename": return target.getConfiguration().getSchemaHistoryInternalFileFilename();
+        case "schemahistoryinternalskipunparseableddl":
+        case "schemaHistoryInternalSkipUnparseableDdl": return target.getConfiguration().isSchemaHistoryInternalSkipUnparseableDdl();
+        case "schemahistoryinternalstoreonlycapturedtablesddl":
+        case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": return target.getConfiguration().isSchemaHistoryInternalStoreOnlyCapturedTablesDdl();
         case "schemanameadjustmentmode":
         case "schemaNameAdjustmentMode": return target.getConfiguration().getSchemaNameAdjustmentMode();
         case "signaldatacollection":
@@ -435,24 +373,20 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "snapshotMode": return target.getConfiguration().getSnapshotMode();
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": return target.getConfiguration().getSnapshotSelectStatementOverrides();
-        case "sourcestructversion":
-        case "sourceStructVersion": return target.getConfiguration().getSourceStructVersion();
-        case "tableblacklist":
-        case "tableBlacklist": return target.getConfiguration().getTableBlacklist();
         case "tableexcludelist":
         case "tableExcludeList": return target.getConfiguration().getTableExcludeList();
         case "tableignorebuiltin":
         case "tableIgnoreBuiltin": return target.getConfiguration().isTableIgnoreBuiltin();
         case "tableincludelist":
         case "tableIncludeList": return target.getConfiguration().getTableIncludeList();
-        case "tablewhitelist":
-        case "tableWhitelist": return target.getConfiguration().getTableWhitelist();
         case "timeprecisionmode":
         case "timePrecisionMode": return target.getConfiguration().getTimePrecisionMode();
         case "tombstonesondelete":
         case "tombstonesOnDelete": return target.getConfiguration().isTombstonesOnDelete();
-        case "transactiontopic":
-        case "transactionTopic": return target.getConfiguration().getTransactionTopic();
+        case "topicnamingstrategy":
+        case "topicNamingStrategy": return target.getConfiguration().getTopicNamingStrategy();
+        case "topicprefix":
+        case "topicPrefix": return target.getConfiguration().getTopicPrefix();
         default: return null;
         }
     }
