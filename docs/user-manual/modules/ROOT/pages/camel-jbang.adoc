@@ -836,6 +836,28 @@ camel log chuck --grep=error --follow=false
 
 This will grep the logs for log lines with matches text `error` and output only these logs, and exit.
 
+==== Tracing messages
+
+The `trace` command is used for showing how messages are routed in Camel. The command has similar output as the `log`
+command but only display message tracing information. This allows you to see every _step_ a message is routed in Camel.
+
+The `trace` command has many options and can be used to _filter_, _grep_ or output on different detail _levels`.
+The _exchange id_ is logged (and grouped by colour), so you can use that to correlate the events, when traces are interleaved.
+
+For example if an existing integration is running named chuck, you can trace it as follows:
+
+[source,bash]
+----
+camel trace chuck
+----
+
+You can also trace all running integrations
+
+[source,bash]
+----
+camel trace
+----
+
 ==== Running Camel integrations in background
 
 The `run` command allows to run Camel in the background with the `--background` option.
