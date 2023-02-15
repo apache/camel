@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -200,7 +201,7 @@ public class MessageHelperTest {
 
         String out = MessageHelper.dumpAsXml(message, false);
 
-        assertEquals("<message exchangeId=\"" + message.getExchange().getExchangeId() + "\">"
+        assertEquals("<message exchangeId=\"" + message.getExchange().getExchangeId() + "\" exchangePattern=\"InOnly\">"
                      + "\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>",
                 out);
 
@@ -212,7 +213,7 @@ public class MessageHelperTest {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        message = new DefaultExchange(context).getIn();
+        message = new DefaultExchange(context, ExchangePattern.InOut).getIn();
 
         // xml message body
         message.setBody("Hello World");
@@ -220,7 +221,7 @@ public class MessageHelperTest {
 
         String out = MessageHelper.dumpAsXml(message, false, 2);
 
-        assertEquals("  <message exchangeId=\"" + message.getExchange().getExchangeId() + "\">"
+        assertEquals("  <message exchangeId=\"" + message.getExchange().getExchangeId() + "\" exchangePattern=\"InOut\">"
                      + "\n    <headers>\n      <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n    </headers>\n  </message>",
                 out);
 

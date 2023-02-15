@@ -502,7 +502,7 @@ public final class MessageHelper {
         // include exchangeId/exchangePattern as attribute on the <message> tag
         sb.append(prefix);
         sb.append("<message exchangeId=\"").append(message.getExchange().getExchangeId())
-                .append(" exchangePattern=\"").append(message.getExchange().getPattern().name()).append("\">\n");
+                .append("\" exchangePattern=\"").append(message.getExchange().getPattern().name()).append("\">\n");
 
         // exchange properties
         if (includeExchangeProperties && message.getExchange().hasProperties()) {
