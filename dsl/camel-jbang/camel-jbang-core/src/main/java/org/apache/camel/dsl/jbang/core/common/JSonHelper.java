@@ -57,6 +57,7 @@ public final class JSonHelper {
                             s = Ansi.ansi().fgBright(Ansi.Color.BLUE).a(s).reset().toString();
                         }
                     }
+                    default -> {}
                 }
                 prev = type;
                 return s;
