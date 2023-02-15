@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands.catalog;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -33,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.download.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
 public abstract class CatalogBaseCommand extends CamelCommand {
@@ -71,6 +73,10 @@ public abstract class CatalogBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--since-after" },
                         description = "Filter by version more recent (inclusive)")
     String sinceAfter;
+
+    @CommandLine.Option(names = { "--json" },
+                        description = "Output in JSON Format")
+    boolean jsonOutput;
 
     CamelCatalog catalog;
 
@@ -131,12 +137,24 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         rows.sort(this::sortRow);
 
         if (!rows.isEmpty()) {
-            System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                    new Column().header("NAME").visible(!gav).dataAlign(HorizontalAlign.LEFT).maxWidth(30).with(r -> r.name),
-                    new Column().header("ARTIFACT-ID").visible(gav).dataAlign(HorizontalAlign.LEFT).with(this::shortGav),
-                    new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
-                    new Column().header("SINCE").dataAlign(HorizontalAlign.RIGHT).with(r -> r.since),
-                    new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::shortDescription))));
+            if (jsonOutput) {
+                System.out.println(
+                        Jsoner.serialize(
+                                rows.stream().map(row -> Map.of(
+                                        "name", row.name,
+                                        "level", row.level,
+                                        "native", row.nativeSupported)).collect(Collectors.toList())));
+            } else {
+                System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                        new Column().header("NAME").visible(!gav).dataAlign(HorizontalAlign.LEFT).maxWidth(30)
+                                .with(r -> r.name),
+                        new Column().header("ARTIFACT-ID").visible(gav).dataAlign(HorizontalAlign.LEFT).with(this::shortGav),
+                        new Column().header("LEVEL").dataAlign(HorizontalAlign.LEFT).with(r -> r.level),
+                        new Column().header("NATIVE").dataAlign(HorizontalAlign.CENTER)
+                                .visible("quarkus".equals(runtime)).with(this::nativeSupported),
+                        new Column().header("SINCE").dataAlign(HorizontalAlign.RIGHT).with(r -> r.since),
+                        new Column().header("DESCRIPTION").dataAlign(HorizontalAlign.LEFT).with(this::shortDescription))));
+            }
         }
 
         return 0;
