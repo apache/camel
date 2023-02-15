@@ -25,6 +25,7 @@ import java.util.function.Function;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.apache.camel.resume.cache.ResumeCache;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * This is a simple cache implementation that uses Caffeine to store the resume offsets
@@ -57,7 +58,7 @@ public class CaffeineCache<K> implements ResumeCache<K> {
 
     @Override
     public boolean contains(K key, Object entry) {
-        assert key != null;
+        ObjectHelper.notNull(key, "key");
         Object cachedEntry = cache.getIfPresent(key);
 
         return entry.equals(cachedEntry);

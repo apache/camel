@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -103,7 +104,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                     // add method name alias
                     String alias = matcher.replaceAll(aliasEntry.getValue());
                     // convert first character to lowercase
-                    assert alias.length() > 1;
+                    ObjectHelper.isNotEmpty(alias);
                     final char firstChar = alias.charAt(0);
                     if (!Character.isLowerCase(firstChar)) {
                         final StringBuilder builder = new StringBuilder();
