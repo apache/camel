@@ -53,7 +53,6 @@ import picocli.CommandLine;
 public class CamelTraceAction extends ActionBaseCommand {
 
     // TODO: message dump in json or not (option)
-    // TODO: --last-only
 
     private static final int NAME_MAX_WIDTH = 25;
     private static final int NAME_MIN_WIDTH = 10;
@@ -81,8 +80,8 @@ public class CamelTraceAction extends ActionBaseCommand {
                         description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
-    @CommandLine.Option(names = { "--level" }, defaultValue = "0",
-                        description = "Detail level of tracing. 0=all events (default), 1=input+output")
+    @CommandLine.Option(names = { "--level" }, defaultValue = "9",
+                        description = "Detail level of tracing. 9=all events (default), 1=input+output (outermost), 2=input+output (incl sub routes)")
     int level;
 
     @CommandLine.Option(names = { "--tail" },
@@ -105,13 +104,13 @@ public class CamelTraceAction extends ActionBaseCommand {
                         description = "Show exchange properties in traced messages")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-message-headers" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-headers" }, defaultValue = "true",
                         description = "Show message headers in traced messages")
-    boolean showMessageHeaders = true;
+    boolean showHeaders = true;
 
-    @CommandLine.Option(names = { "--show-message-body" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-body" }, defaultValue = "true",
                         description = "Show message body in traced messages")
-    boolean showMessageBody = true;
+    boolean showBody = true;
 
     @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
                         description = "Show exception and stacktrace for failed messages")
@@ -321,7 +320,7 @@ public class CamelTraceAction extends ActionBaseCommand {
             JsonArray arr = root.getCollection("traces");
             if (arr != null) {
                 for (Object o : arr) {
-                    Row row = new Row();
+                    Row row = new Row(pid);
                     row.pid = pid.pid;
                     row.name = pid.name;
                     JsonObject jo = (JsonObject) o;
@@ -347,10 +346,10 @@ public class CamelTraceAction extends ActionBaseCommand {
                     if (!showExchangeProperties) {
                         row.message.remove("exchangeProperties");
                     }
-                    if (!showMessageHeaders) {
+                    if (!showHeaders) {
                         row.message.remove("headers");
                     }
-                    if (!showMessageBody) {
+                    if (!showBody) {
                         row.message.remove("body");
                     }
                     if (!showException) {
@@ -443,6 +442,12 @@ public class CamelTraceAction extends ActionBaseCommand {
     protected void printTrace(String name, Row row, Date limit) {
         if (!prefix) {
             name = null;
+        }
+
+        if (row.first) {
+            row.parent.depth++;
+        } else if (row.last) {
+            row.parent.depth--;
         }
 
         String json = getDataAsJSon(row);
@@ -575,15 +580,18 @@ public class CamelTraceAction extends ActionBaseCommand {
             }
         }
 
-        if (row.last) {
+        if (row.parent.depth <= 0 && row.last) {
             exchangeIdColors.remove(eid);
         }
     }
 
     private boolean filterLevel(Row row) {
         if (level == 1) {
-            // only input or output
-            return row.first || row.last;
+            // only input or output outer level
+            return row.parent.depth == 1 && row.first || row.parent.depth == 0 && row.last;
+        } else if (level == 2) {
+            // only input or output (all levels)
+            return (row.first || row.last);
         }
 
         return true;
@@ -620,16 +628,18 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     private String getStatus(Row r) {
         if (r.first) {
+            String s = r.parent.depth == 1 ? "Input" : "Routing to " + r.routeId;
             if (loggingColor) {
-                return Ansi.ansi().fg(Ansi.Color.GREEN).a("Input").reset().toString();
+                return Ansi.ansi().fg(Ansi.Color.GREEN).a(s).reset().toString();
             } else {
                 return "Input";
             }
         } else if (r.last) {
+            String s = r.parent.depth == 0 ? "Output" : "Returning from " + r.routeId;
             if (loggingColor) {
-                return Ansi.ansi().fg(r.failed ? Ansi.Color.RED : Ansi.Color.GREEN).a("Output").reset().toString();
+                return Ansi.ansi().fg(r.failed ? Ansi.Color.RED : Ansi.Color.GREEN).a(s).reset().toString();
             } else {
-                return "Output";
+                return s;
             }
         }
         if (!r.done) {
@@ -646,7 +656,7 @@ public class CamelTraceAction extends ActionBaseCommand {
             }
         } else {
             if (loggingColor) {
-                return Ansi.ansi().fg(Ansi.Color.GREEN).a("Success").reset().toString();
+                return Ansi.ansi().fg(Ansi.Color.GREEN).a("Processed").reset().toString();
             } else {
                 return "Success";
             }
@@ -667,10 +677,12 @@ public class CamelTraceAction extends ActionBaseCommand {
         String pid;
         String name;
         Queue<String> fifo;
+        int depth;
         LineNumberReader reader;
     }
 
     private static class Row implements Cloneable {
+        Pid parent;
         String pid;
         String name;
         boolean first;
@@ -688,13 +700,10 @@ public class CamelTraceAction extends ActionBaseCommand {
         JsonObject message;
         JsonObject exception;
 
-        Row copy() {
-            try {
-                return (Row) clone();
-            } catch (CloneNotSupportedException e) {
-                return null;
-            }
+        Row(Pid parent) {
+            this.parent = parent;
         }
+
     }
 
 }
