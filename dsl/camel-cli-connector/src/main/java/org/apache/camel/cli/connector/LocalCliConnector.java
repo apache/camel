@@ -436,7 +436,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     if (!arr.isEmpty()) {
                         // store traces in a special file
                         LOG.trace("Updating trace file: {}", traceFile);
-                        IOHelper.appendText(json.toJson(), traceFile);
+                        String data = json.toJson() + System.lineSeparator();
+                        IOHelper.appendText(data, traceFile);
                         json = arr.getMap(arr.size() - 1);
                         traceFilePos = json.getLong("uid");
                     }

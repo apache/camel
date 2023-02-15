@@ -34,10 +34,12 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.regex.Pattern;
 
+import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.JSonHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -51,7 +53,6 @@ import picocli.CommandLine;
 public class CamelTraceAction extends ActionBaseCommand {
 
     // TODO: message dump in json or not (option)
-    // TODO: since
 
     private static final int NAME_MAX_WIDTH = 25;
     private static final int NAME_MIN_WIDTH = 10;
@@ -127,7 +128,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         // find new pids
         updatePids(pids);
         if (!pids.isEmpty()) {
-            // read existing trace files (skip by tail)
+            // read existing trace files (skip by tail/since)
             if (find != null) {
                 findAnsi = Ansi.ansi().fg(Ansi.Color.BLACK).bg(Ansi.Color.YELLOW).a("$0").reset().toString();
                 for (int i = 0; i < find.length; i++) {
@@ -144,9 +145,20 @@ public class CamelTraceAction extends ActionBaseCommand {
                     grep[i] = f;
                 }
             }
+            Date limit = null;
+            if (since != null) {
+                long millis;
+                if (StringHelper.isDigit(since)) {
+                    // is in seconds by default
+                    millis = TimePatternConverter.toMilliSeconds(since) * 1000;
+                } else {
+                    millis = TimePatternConverter.toMilliSeconds(since);
+                }
+                limit = new Date(System.currentTimeMillis() - millis);
+            }
             // dump existing traces
             tailTraceFiles(pids, tail);
-            dumpTraceFiles(pids, tail);
+            dumpTraceFiles(pids, tail, limit);
         }
 
         if (follow) {
@@ -169,7 +181,7 @@ public class CamelTraceAction extends ActionBaseCommand {
                     }
                     int lines = readTraceFiles(pids);
                     if (lines > 0) {
-                        dumpTraceFiles(pids, 0);
+                        dumpTraceFiles(pids, 0, null);
                     } else {
                         Thread.sleep(100);
                     }
@@ -335,7 +347,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         return null;
     }
 
-    private void dumpTraceFiles(Map<Long, Pid> pids, int tail) {
+    private void dumpTraceFiles(Map<Long, Pid> pids, int tail, Date limit) {
         Set<String> names = new HashSet<>();
         List<Row> rows = new ArrayList<>();
         for (Pid pid : pids.values()) {
@@ -386,7 +398,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         }
 
         rows.forEach(r -> {
-            printTrace(r.name, r);
+            printTrace(r.name, r, limit);
         });
     }
 
@@ -403,13 +415,21 @@ public class CamelTraceAction extends ActionBaseCommand {
         return false;
     }
 
-    protected void printTrace(String name, Row row) {
+    private boolean isValidSince(Date limit, long timestamp) {
+        if (limit == null || timestamp == 0) {
+            return true;
+        }
+        Date row = new Date(timestamp);
+        return row.compareTo(limit) >= 0;
+    }
+
+    protected void printTrace(String name, Row row, Date limit) {
         if (!prefix) {
             name = null;
         }
 
         String json = getDataAsJSon(row);
-        boolean valid = isValidGrep(json);
+        boolean valid = isValidSince(limit, row.timestamp) && isValidGrep(json);
         if (!valid) {
             return;
         }
