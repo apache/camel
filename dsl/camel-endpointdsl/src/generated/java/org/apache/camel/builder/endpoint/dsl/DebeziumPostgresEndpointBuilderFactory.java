@@ -331,9 +331,11 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Specify how binary (blob, binary, etc.) columns should be represented
-         * in change events, including:'bytes' represents binary data as byte
-         * array (default)'base64' represents binary data as base64-encoded
-         * string'hex' represents binary data as hex-encoded (base16) string.
+         * in change events, including: 'bytes' represents binary data as byte
+         * array (default); 'base64' represents binary data as base64-encoded
+         * string; 'base64-url-safe' represents binary data as
+         * base64-url-safe-encoded string; 'hex' represents binary data as
+         * hex-encoded (base16) string.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -346,22 +348,6 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder binaryHandlingMode(
                 String binaryHandlingMode) {
             doSetProperty("binaryHandlingMode", binaryHandlingMode);
-            return this;
-        }
-        /**
-         * Regular expressions matching columns to exclude from change events
-         * (deprecated, use column.exclude.list instead).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: postgres
-         * 
-         * @param columnBlacklist the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresEndpointBuilder columnBlacklist(
-                String columnBlacklist) {
-            doSetProperty("columnBlacklist", columnBlacklist);
             return this;
         }
         /**
@@ -413,22 +399,6 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Regular expressions matching columns to include in change events
-         * (deprecated, use column.include.list instead).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: postgres
-         * 
-         * @param columnWhitelist the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresEndpointBuilder columnWhitelist(
-                String columnWhitelist) {
-            doSetProperty("columnWhitelist", columnWhitelist);
-            return this;
-        }
-        /**
          * Optional list of custom converters that would be used instead of
          * default ones. The converters are defined using '.type' config option
          * and configured using options '.'.
@@ -461,22 +431,6 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The path to the file that will be used to record the database
-         * history.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: postgres
-         * 
-         * @param databaseHistoryFileFilename the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresEndpointBuilder databaseHistoryFileFilename(
-                String databaseHistoryFileFilename) {
-            doSetProperty("databaseHistoryFileFilename", databaseHistoryFileFilename);
-            return this;
-        }
-        /**
          * Resolvable hostname or IP address of the database server.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -495,7 +449,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * A semicolon separated list of SQL statements to be executed when a
          * JDBC connection to the database is established. Note that the
          * connector may establish JDBC connections at its own discretion, so
-         * this should typically be used for configurationof session parameters
+         * this should typically be used for configuration of session parameters
          * only, but not for executing DML statements. Use doubled semicolon
          * (';;') to use a semicolon as a character and not as a delimiter.
          * 
@@ -559,25 +513,6 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Unique name that identifies the database server and all recorded
-         * offsets, and that is used as a prefix for all schemas and topics.
-         * Each distinct installation should have a separate namespace and be
-         * monitored by at most one Debezium connector.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Required: true
-         * Group: postgres
-         * 
-         * @param databaseServerName the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresEndpointBuilder databaseServerName(
-                String databaseServerName) {
-            doSetProperty("databaseServerName", databaseServerName);
-            return this;
-        }
-        /**
          * File containing the SSL Certificate for the client. See the Postgres
          * SSL docs for further information.
          * 
@@ -627,15 +562,15 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * Whether to use an encrypted connection to Postgres. Options
-         * include'disable' (the default) to use an unencrypted connection;
-         * 'require' to use a secure (encrypted) connection, and fail if one
-         * cannot be established; 'verify-ca' like 'required' but additionally
-         * verify the server TLS certificate against the configured Certificate
-         * Authority (CA) certificates, or fail if no valid matching CA
-         * certificates are found; or'verify-full' like 'verify-ca' but
-         * additionally verify that the server certificate matches the host to
-         * which the connection is attempted.
+         * Whether to use an encrypted connection to Postgres. Options include:
+         * 'disable' (the default) to use an unencrypted connection; 'require'
+         * to use a secure (encrypted) connection, and fail if one cannot be
+         * established; 'verify-ca' like 'required' but additionally verify the
+         * server TLS certificate against the configured Certificate Authority
+         * (CA) certificates, or fail if no valid matching CA certificates are
+         * found; or 'verify-full' like 'verify-ca' but additionally verify that
+         * the server certificate matches the host to which the connection is
+         * attempted.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -751,7 +686,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Specify how DECIMAL and NUMERIC columns should be represented in
-         * change events, including:'precise' (the default) uses
+         * change events, including: 'precise' (the default) uses
          * java.math.BigDecimal to represent values, which are encoded in the
          * change events using a binary representation and Kafka Connect's
          * 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to
@@ -774,11 +709,11 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Specify how failures during processing of events (i.e. when
-         * encountering a corrupted event) should be handled, including:'fail'
+         * encountering a corrupted event) should be handled, including: 'fail'
          * (the default) an exception indicating the problematic event and its
          * position is raised, causing the connector to be stopped; 'warn' the
          * problematic event and its position will be logged and the event will
-         * be skipped;'ignore' the problematic event will be skipped.
+         * be skipped; 'ignore' the problematic event will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -791,6 +726,43 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder eventProcessingFailureHandlingMode(
                 String eventProcessingFailureHandlingMode) {
             doSetProperty("eventProcessingFailureHandlingMode", eventProcessingFailureHandlingMode);
+            return this;
+        }
+        /**
+         * Boolean to determine if Debezium should flush LSN in the source
+         * postgres database. If set to false, user will have to flush the LSN
+         * manually outside Debezium.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: postgres
+         * 
+         * @param flushLsnSource the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder flushLsnSource(
+                boolean flushLsnSource) {
+            doSetProperty("flushLsnSource", flushLsnSource);
+            return this;
+        }
+        /**
+         * Boolean to determine if Debezium should flush LSN in the source
+         * postgres database. If set to false, user will have to flush the LSN
+         * manually outside Debezium.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: postgres
+         * 
+         * @param flushLsnSource the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder flushLsnSource(
+                String flushLsnSource) {
+            doSetProperty("flushLsnSource", flushLsnSource);
             return this;
         }
         /**
@@ -863,8 +835,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Specify how HSTORE columns should be represented in change events,
-         * including:'json' represents values as string-ified JSON
-         * (default)'map' represents values as a key/value map.
+         * including: 'json' represents values as string-ified JSON (default);
+         * 'map' represents values as a key/value map.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -881,11 +853,11 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Whether the connector parse table and column's comment to metadata
-         * object.Note: Enable this option will bring the implications on memory
-         * usage. The number and size of ColumnImpl objects is what largely
-         * impacts how much memory is consumed by the Debezium connectors, and
-         * adding a String to each of them can potentially be quite heavy. The
-         * default is 'false'.
+         * object. Note: Enable this option will bring the implications on
+         * memory usage. The number and size of ColumnImpl objects is what
+         * largely impacts how much memory is consumed by the Debezium
+         * connectors, and adding a String to each of them can potentially be
+         * quite heavy. The default is 'false'.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -902,11 +874,11 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Whether the connector parse table and column's comment to metadata
-         * object.Note: Enable this option will bring the implications on memory
-         * usage. The number and size of ColumnImpl objects is what largely
-         * impacts how much memory is consumed by the Debezium connectors, and
-         * adding a String to each of them can potentially be quite heavy. The
-         * default is 'false'.
+         * object. Note: Enable this option will bring the implications on
+         * memory usage. The number and size of ColumnImpl objects is what
+         * largely impacts how much memory is consumed by the Debezium
+         * connectors, and adding a String to each of them can potentially be
+         * quite heavy. The default is 'false'.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -924,7 +896,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Specify whether the fields of data type not supported by Debezium
-         * should be processed:'false' (the default) omits the fields; 'true'
+         * should be processed: 'false' (the default) omits the fields; 'true'
          * converts the field into an implementation dependent binary
          * representation.
          * 
@@ -943,7 +915,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Specify whether the fields of data type not supported by Debezium
-         * should be processed:'false' (the default) omits the fields; 'true'
+         * should be processed: 'false' (the default) omits the fields; 'true'
          * converts the field into an implementation dependent binary
          * representation.
          * 
@@ -995,8 +967,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Specify how INTERVAL columns should be represented in change events,
-         * including:'string' represents values as an exact ISO formatted
-         * string'numeric' (default) represents values using the inexact
+         * including: 'string' represents values as an exact ISO formatted
+         * string; 'numeric' (default) represents values using the inexact
          * conversion into microseconds.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1115,12 +1087,12 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * A semicolon-separated list of expressions that match fully-qualified
          * tables and column(s) to be used as message key. Each expression must
-         * match the pattern ':',where the table names could be defined as
+         * match the pattern ':', where the table names could be defined as
          * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the
-         * specific connector,and the key columns are a comma-separated list of
+         * specific connector, and the key columns are a comma-separated list of
          * columns representing the custom key. For any table without an
          * explicit key configuration the table's primary key column(s) will be
-         * used as message key.Example:
+         * used as message key. Example:
          * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1283,7 +1255,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * The name of the Postgres 10 publication used for streaming changes
-         * from a plugin.Defaults to 'dbz_publication'.
+         * from a plugin. Defaults to 'dbz_publication'.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1300,7 +1272,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * The maximum number of records that should be loaded into memory while
-         * streaming. A value of 0 uses the default JDBC fetch size.
+         * streaming. A value of '0' uses the default JDBC fetch size.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1317,7 +1289,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * The maximum number of records that should be loaded into memory while
-         * streaming. A value of 0 uses the default JDBC fetch size.
+         * streaming. A value of '0' uses the default JDBC fetch size.
          * 
          * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1400,22 +1372,6 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The schemas for which events must not be captured (deprecated, use
-         * schema.exclude.list instead).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: postgres
-         * 
-         * @param schemaBlacklist the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresEndpointBuilder schemaBlacklist(
-                String schemaBlacklist) {
-            doSetProperty("schemaBlacklist", schemaBlacklist);
-            return this;
-        }
-        /**
          * The schemas for which events must not be captured.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1428,6 +1384,22 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder schemaExcludeList(
                 String schemaExcludeList) {
             doSetProperty("schemaExcludeList", schemaExcludeList);
+            return this;
+        }
+        /**
+         * The path to the file that will be used to record the database schema
+         * history.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: postgres
+         * 
+         * @param schemaHistoryInternalFileFilename the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder schemaHistoryInternalFileFilename(
+                String schemaHistoryInternalFileFilename) {
+            doSetProperty("schemaHistoryInternalFileFilename", schemaHistoryInternalFileFilename);
             return this;
         }
         /**
@@ -1447,13 +1419,13 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Specify how schema names should be adjusted for compatibility with
-         * the message converter used by the connector, including:'avro'
+         * the message converter used by the connector, including: 'avro'
          * replaces the characters that cannot be used in the Avro type name
-         * with underscore (default)'none' does not apply any adjustment.
+         * with underscore; 'none' does not apply any adjustment (default).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: avro
+         * Default: none
          * Group: postgres
          * 
          * @param schemaNameAdjustmentMode the value to set
@@ -1492,22 +1464,6 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The schemas for which events should be captured (deprecated, use
-         * schema.include.list instead).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: postgres
-         * 
-         * @param schemaWhitelist the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresEndpointBuilder schemaWhitelist(
-                String schemaWhitelist) {
-            doSetProperty("schemaWhitelist", schemaWhitelist);
-            return this;
-        }
-        /**
          * The name of the data collection that is used to send signals/commands
          * to Debezium. Signaling is disabled when not set.
          * 
@@ -1527,7 +1483,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * The comma-separated list of operations to skip during streaming,
          * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes,
          * 't' for truncates, and 'none' to indicate nothing skipped. By
-         * default, no operations will be skipped.
+         * default, only truncate operations will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1544,8 +1500,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Whether or not to drop the logical replication slot when the
-         * connector finishes orderlyBy default the replication is kept so that
-         * on restart progress can resume from the last recorded location.
+         * connector finishes orderly. By default the replication is kept so
+         * that on restart progress can resume from the last recorded location.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1562,8 +1518,8 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Whether or not to drop the logical replication slot when the
-         * connector finishes orderlyBy default the replication is kept so that
-         * on restart progress can resume from the last recorded location.
+         * connector finishes orderly. By default the replication is kept so
+         * that on restart progress can resume from the last recorded location.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -1615,7 +1571,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * The name of the Postgres logical decoding slot created for streaming
-         * changes from a plugin.Defaults to 'debezium.
+         * changes from a plugin. Defaults to 'debezium.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1685,7 +1641,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * When 'snapshot.mode' is set as custom, this setting must be set to
          * specify a fully qualified class name to load (via the default class
-         * loader).This class must implement the 'Snapshotter' interface and is
+         * loader). This class must implement the 'Snapshotter' interface and is
          * called on each app boot to determine whether to do a snapshot and how
          * to build queries.
          * 
@@ -1768,7 +1724,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * this setting must be set to specify a list of tables/collections
+         * This setting must be set to specify a list of tables/collections
          * whose snapshot must be taken on creating or restarting the connector.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1882,7 +1838,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         /**
          * This property contains a comma-separated list of fully-qualified
          * tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on
-         * thespecific connectors. Select statements for the individual tables
+         * the specific connectors. Select statements for the individual tables
          * are specified in further configuration properties, one for each
          * table, identified by the id
          * 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or
@@ -1903,23 +1859,6 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder snapshotSelectStatementOverrides(
                 String snapshotSelectStatementOverrides) {
             doSetProperty("snapshotSelectStatementOverrides", snapshotSelectStatementOverrides);
-            return this;
-        }
-        /**
-         * A version of the format of the publicly visible source part in the
-         * message.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: v2
-         * Group: postgres
-         * 
-         * @param sourceStructVersion the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresEndpointBuilder sourceStructVersion(
-                String sourceStructVersion) {
-            doSetProperty("sourceStructVersion", sourceStructVersion);
             return this;
         }
         /**
@@ -1954,23 +1893,6 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         default DebeziumPostgresEndpointBuilder statusUpdateIntervalMs(
                 String statusUpdateIntervalMs) {
             doSetProperty("statusUpdateIntervalMs", statusUpdateIntervalMs);
-            return this;
-        }
-        /**
-         * A comma-separated list of regular expressions that match the
-         * fully-qualified names of tables to be excluded from monitoring
-         * (deprecated, use table.exclude.list instead).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: postgres
-         * 
-         * @param tableBlacklist the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresEndpointBuilder tableBlacklist(
-                String tableBlacklist) {
-            doSetProperty("tableBlacklist", tableBlacklist);
             return this;
         }
         /**
@@ -2038,30 +1960,14 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The tables for which changes are to be captured (deprecated, use
-         * table.include.list instead).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: postgres
-         * 
-         * @param tableWhitelist the value to set
-         * @return the dsl builder
-         */
-        default DebeziumPostgresEndpointBuilder tableWhitelist(
-                String tableWhitelist) {
-            doSetProperty("tableWhitelist", tableWhitelist);
-            return this;
-        }
-        /**
          * Time, date, and timestamps can be represented with different kinds of
-         * precisions, including:'adaptive' (the default) bases the precision of
-         * time, date, and timestamp values on the database column's precision;
-         * 'adaptive_time_microseconds' like 'adaptive' mode, but TIME fields
-         * always use microseconds precision;'connect' always represents time,
-         * date, and timestamp values using Kafka Connect's built-in
-         * representations for Time, Date, and Timestamp, which uses millisecond
-         * precision regardless of the database columns' precision .
+         * precisions, including: 'adaptive' (the default) bases the precision
+         * of time, date, and timestamp values on the database column's
+         * precision; 'adaptive_time_microseconds' like 'adaptive' mode, but
+         * TIME fields always use microseconds precision; 'connect' always
+         * represents time, date, and timestamp values using Kafka Connect's
+         * built-in representations for Time, Date, and Timestamp, which uses
+         * millisecond precision regardless of the database columns' precision.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -2078,10 +1984,10 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Whether delete operations should be represented by a delete event and
-         * a subsquenttombstone event (true) or only by a delete event (false).
-         * Emitting the tombstone event (the default behavior) allows Kafka to
-         * completely delete all events pertaining to the given key once the
-         * source record got deleted.
+         * a subsequent tombstone event (true) or only by a delete event
+         * (false). Emitting the tombstone event (the default behavior) allows
+         * Kafka to completely delete all events pertaining to the given key
+         * once the source record got deleted.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -2098,10 +2004,10 @@ public interface DebeziumPostgresEndpointBuilderFactory {
         }
         /**
          * Whether delete operations should be represented by a delete event and
-         * a subsquenttombstone event (true) or only by a delete event (false).
-         * Emitting the tombstone event (the default behavior) allows Kafka to
-         * completely delete all events pertaining to the given key once the
-         * source record got deleted.
+         * a subsequent tombstone event (true) or only by a delete event
+         * (false). Emitting the tombstone event (the default behavior) allows
+         * Kafka to completely delete all events pertaining to the given key
+         * once the source record got deleted.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.
@@ -2118,21 +2024,41 @@ public interface DebeziumPostgresEndpointBuilderFactory {
             return this;
         }
         /**
-         * The name of the transaction metadata topic. The placeholder
-         * ${database.server.name} can be used for referring to the connector's
-         * logical name; defaults to ${database.server.name}.transaction.
+         * The name of the TopicNamingStrategy class that should be used to
+         * determine the topic name for data change, schema change, transaction,
+         * heartbeat event etc.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: ${database.server.name}.transaction
+         * Default: io.debezium.schema.SchemaTopicNamingStrategy
          * Group: postgres
          * 
-         * @param transactionTopic the value to set
+         * @param topicNamingStrategy the value to set
          * @return the dsl builder
          */
-        default DebeziumPostgresEndpointBuilder transactionTopic(
-                String transactionTopic) {
-            doSetProperty("transactionTopic", transactionTopic);
+        default DebeziumPostgresEndpointBuilder topicNamingStrategy(
+                String topicNamingStrategy) {
+            doSetProperty("topicNamingStrategy", topicNamingStrategy);
+            return this;
+        }
+        /**
+         * Topic prefix that identifies and provides a namespace for the
+         * particular database server/cluster is capturing changes. The topic
+         * prefix should be unique across all other connectors, since it is used
+         * as a prefix for all Kafka topic names that receive events emitted by
+         * this connector. Only alphanumeric characters, hyphens, dots and
+         * underscores must be accepted.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Required: true
+         * Group: postgres
+         * 
+         * @param topicPrefix the value to set
+         * @return the dsl builder
+         */
+        default DebeziumPostgresEndpointBuilder topicPrefix(String topicPrefix) {
+            doSetProperty("topicPrefix", topicPrefix);
             return this;
         }
         /**
