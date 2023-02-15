@@ -424,8 +424,6 @@
         <qpid-jms-client-version>2.2.0</qpid-jms-client-version>
         <quartz-version>2.3.2</quartz-version>
         <quickfixj-version>2.3.1</quickfixj-version>
-        <rdf4j-rio-version>4.2.2</rdf4j-rio-version>
-        <rdf4j-model-version>4.2.2</rdf4j-model-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
         <reactor-version>3.5.2</reactor-version>
         <reactor-netty-version>1.1.1</reactor-netty-version>
@@ -3461,19 +3459,6 @@
                 <groupId>org.codehaus.jettison</groupId>
                 <artifactId>jettison</artifactId>
                 <version>${jettison-version}</version>
-            </dependency>
-
-            <!-- optional RDF4J -->
-            <dependency>
-                <groupId>org.eclipse.rdf4j</groupId>
-                <artifactId>rdf4j-model</artifactId>
-                <version>${rdf4j-model-version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.eclipse.rdf4j</groupId>
-                <artifactId>rdf4j-rio-api</artifactId>
-                <version>${rdf4j-rio-version}</version>
             </dependency>
 
             <!-- optional Axiom -->
