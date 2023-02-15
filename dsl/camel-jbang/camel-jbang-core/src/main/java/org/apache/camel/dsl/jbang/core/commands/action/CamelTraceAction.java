@@ -77,9 +77,13 @@ public class CamelTraceAction extends ActionBaseCommand {
                         description = "Print prefix with running Camel integration name.")
     boolean prefix = true;
 
+    @CommandLine.Option(names = { "--source" },
+                        description = "Prefer to display source filename/code instead of IDs")
+    boolean source;
+
     @CommandLine.Option(names = { "--level" }, defaultValue = "0",
                         description = "Detail level of tracing. 0=all events (default), 1=input+output")
-    int level = 0;
+    int level;
 
     @CommandLine.Option(names = { "--tail" },
                         description = "The number of traces from the end of the trace to show. Defaults to showing all traces.")
@@ -334,10 +338,12 @@ public class CamelTraceAction extends ActionBaseCommand {
                     row.elapsed = jo.getLong("elapsed");
                     row.failed = jo.getBoolean("failed");
                     row.done = jo.getBoolean("done");
+                    row.threadName = jo.getString("threadName");
                     row.message = jo.getMap("message");
                     row.exception = jo.getMap("exception");
                     row.exchangeId = row.message.getString("exchangeId");
-                    row.message.remove("exchangeId");
+
+                    row.message.remove("exchangeId"); // we should exchange id elsewhere
                     if (!showExchangeProperties) {
                         row.message.remove("exchangeProperties");
                     }
@@ -466,7 +472,7 @@ public class CamelTraceAction extends ActionBaseCommand {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
             String ts = sdf.format(new Date(row.timestamp));
             if (loggingColor) {
-                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(ts).reset());
+                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
             } else {
                 System.out.print(ts);
             }
@@ -476,7 +482,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         String p = String.format("%5.5s", row.pid);
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgMagenta().a(p).reset());
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" --- ").reset());
+            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(" --- ").reset());
         } else {
             System.out.print(p);
             System.out.print(" --- ");
@@ -499,27 +505,35 @@ public class CamelTraceAction extends ActionBaseCommand {
             System.out.print(eid);
         }
         System.out.print(" ");
-        // route/node id
-        String ids = row.routeId + "/" + getId(row);
+        // thread name
+        String tn = row.threadName;
+        if (tn.length() > 25) {
+            tn = tn.substring(tn.length() - 25);
+        }
+        tn = String.format("[%25.25s]", tn);
+        if (loggingColor) {
+            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(tn).reset());
+        } else {
+            System.out.print(tn);
+        }
+        System.out.print(" ");
+        // node ids or source location
+        String ids;
+        if (source) {
+            ids = row.location;
+        } else {
+            ids = row.routeId + "/" + getId(row);
+        }
         if (ids.length() > 25) {
             ids = ids.substring(ids.length() - 25);
         }
-        ids = String.format("[%25.25s]", ids);
+        ids = String.format("%-25.25s", ids);
         if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(ids).reset());
+            AnsiConsole.out().print(Ansi.ansi().fgCyan().a(ids).reset());
         } else {
             System.out.print(ids);
         }
-        System.out.print(" ");
-        // source location
-        String code = String.format("%-35.35s", row.location != null ? row.location : "");
-        if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgCyan().a(code).reset());
-            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" : ").reset());
-        } else {
-            System.out.print(code);
-            System.out.print(" : ");
-        }
+        System.out.print(" : ");
         // uuid
         String u = String.format("%5.5s", row.uid);
         if (loggingColor) {
@@ -663,6 +677,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         boolean last;
         long uid;
         String exchangeId;
+        String threadName;
         String location;
         String routeId;
         String nodeId;

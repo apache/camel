@@ -67,6 +67,11 @@ public interface BacklogTracerEventMessage {
     String getExchangeId();
 
     /**
+     * The name of the thread that is processing the message, when this event was captured.
+     */
+    String getProcessingThreadName();
+
+    /**
      * The content of the message as XML (body and headers)
      */
     String getMessageAsXml();

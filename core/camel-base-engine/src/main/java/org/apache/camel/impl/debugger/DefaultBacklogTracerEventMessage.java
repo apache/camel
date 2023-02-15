@@ -35,10 +35,11 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final boolean last;
     private final long uid;
     private final long timestamp;
-    private String location;
+    private final String location;
     private final String routeId;
     private final String toNode;
     private final String exchangeId;
+    private final String threadName;
     private final String messageAsXml;
     private final String messageAsJSon;
     private String exceptionAsXml;
@@ -60,6 +61,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         this.exchangeId = exchangeId;
         this.messageAsXml = messageAsXml;
         this.messageAsJSon = messageAsJSon;
+        this.threadName = Thread.currentThread().getName();
     }
 
     /**
@@ -108,6 +110,11 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     @Override
     public String getExchangeId() {
         return exchangeId;
+    }
+
+    @Override
+    public String getProcessingThreadName() {
+        return threadName;
     }
 
     @Override
@@ -188,6 +195,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         String ts = new SimpleDateFormat(TIMESTAMP_FORMAT).format(timestamp);
         sb.append(prefix).append("  <timestamp>").append(ts).append("</timestamp>\n");
         sb.append(prefix).append("  <elapsed>").append(getElapsed()).append("</elapsed>\n");
+        sb.append(prefix).append("  <threadName>").append(getProcessingThreadName()).append("</threadName>\n");
         sb.append(prefix).append("  <done>").append(isDone()).append("</done>\n");
         sb.append(prefix).append("  <failed>").append(isFailed()).append("</failed>\n");
         if (getLocation() != null) {
@@ -239,6 +247,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
             jo.put("timestamp", timestamp);
         }
         jo.put("elapsed", getElapsed());
+        jo.put("threadName", getProcessingThreadName());
         jo.put("done", isDone());
         jo.put("failed", isFailed());
         try {
