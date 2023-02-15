@@ -53,6 +53,10 @@ import picocli.CommandLine;
 public class CamelTraceAction extends ActionBaseCommand {
 
     // TODO: message dump in json or not (option)
+    // TODO: filter on status
+    // TODO: Output and internal Output
+    // TODO: filter on exchangeId
+    // TODO: --last-only
 
     private static final int NAME_MAX_WIDTH = 25;
     private static final int NAME_MIN_WIDTH = 10;
