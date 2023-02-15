@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
-import io.vertx.core.json.Json;
 import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
@@ -35,6 +34,7 @@ import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.download.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
+import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;
 
 public abstract class CatalogBaseCommand extends CamelCommand {
@@ -137,7 +137,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
         if (!rows.isEmpty()) {
             if (jsonOutput) {
                 System.out.println(
-                        Json.encodePrettily(
+                        Jsoner.serialize(
                                 rows.stream().map(row -> Map.of(
                                         "name", row.name,
                                         "level", row.level,
