@@ -102,18 +102,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
         this.exchange = exchange;
 
         if (allowUseOriginalMessage) {
-            // special for JmsMessage as it can cause it to loose headers later.
-            if (exchange.getIn().getClass().getName().equals("org.apache.camel.component.jms.JmsMessage")) {
-                this.originalInMessage = new DefaultMessage(context);
-                this.originalInMessage.setBody(exchange.getIn().getBody());
-                this.originalInMessage.getHeaders().putAll(exchange.getIn().getHeaders());
-            } else {
-                this.originalInMessage = exchange.getIn().copy();
-            }
-            // must preserve exchange on the original in message
-            if (this.originalInMessage instanceof MessageSupport) {
-                ((MessageSupport) this.originalInMessage).setExchange(exchange);
-            }
+            this.originalInMessage = exchange.getIn().copy();
         }
 
         // inject breadcrumb header if enabled
