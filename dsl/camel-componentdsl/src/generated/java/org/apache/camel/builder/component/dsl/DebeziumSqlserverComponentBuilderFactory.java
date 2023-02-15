@@ -301,9 +301,11 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
         /**
          * Specify how binary (blob, binary, etc.) columns should be represented
-         * in change events, including:'bytes' represents binary data as byte
-         * array (default)'base64' represents binary data as base64-encoded
-         * string'hex' represents binary data as hex-encoded (base16) string.
+         * in change events, including: 'bytes' represents binary data as byte
+         * array (default); 'base64' represents binary data as base64-encoded
+         * string; 'base64-url-safe' represents binary data as
+         * base64-url-safe-encoded string; 'hex' represents binary data as
+         * hex-encoded (base16) string.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -316,22 +318,6 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         default DebeziumSqlserverComponentBuilder binaryHandlingMode(
                 java.lang.String binaryHandlingMode) {
             doSetProperty("binaryHandlingMode", binaryHandlingMode);
-            return this;
-        }
-        /**
-         * Regular expressions matching columns to exclude from change events
-         * (deprecated, use column.exclude.list instead).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: sqlserver
-         * 
-         * @param columnBlacklist the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder columnBlacklist(
-                java.lang.String columnBlacklist) {
-            doSetProperty("columnBlacklist", columnBlacklist);
             return this;
         }
         /**
@@ -383,22 +369,6 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
-         * Regular expressions matching columns to include in change events
-         * (deprecated, use column.include.list instead).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: sqlserver
-         * 
-         * @param columnWhitelist the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder columnWhitelist(
-                java.lang.String columnWhitelist) {
-            doSetProperty("columnWhitelist", columnWhitelist);
-            return this;
-        }
-        /**
          * Optional list of custom converters that would be used instead of
          * default ones. The converters are defined using '.type' config option
          * and configured using options '.'.
@@ -413,201 +383,6 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         default DebeziumSqlserverComponentBuilder converters(
                 java.lang.String converters) {
             doSetProperty("converters", converters);
-            return this;
-        }
-        /**
-         * The name of the database from which the connector should capture
-         * changes.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: sqlserver
-         * 
-         * @param databaseDbname the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder databaseDbname(
-                java.lang.String databaseDbname) {
-            doSetProperty("databaseDbname", databaseDbname);
-            return this;
-        }
-        /**
-         * The name of the DatabaseHistory class that should be used to store
-         * and recover database schema changes. The configuration properties for
-         * the history are prefixed with the 'database.history.' string.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: io.debezium.relational.history.FileDatabaseHistory
-         * Group: sqlserver
-         * 
-         * @param databaseHistory the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder databaseHistory(
-                java.lang.String databaseHistory) {
-            doSetProperty("databaseHistory", databaseHistory);
-            return this;
-        }
-        /**
-         * The path to the file that will be used to record the database
-         * history.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: sqlserver
-         * 
-         * @param databaseHistoryFileFilename the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder databaseHistoryFileFilename(
-                java.lang.String databaseHistoryFileFilename) {
-            doSetProperty("databaseHistoryFileFilename", databaseHistoryFileFilename);
-            return this;
-        }
-        /**
-         * A list of host/port pairs that the connector will use for
-         * establishing the initial connection to the Kafka cluster for
-         * retrieving database schema history previously stored by the
-         * connector. This should point to the same Kafka cluster used by the
-         * Kafka Connect process.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: sqlserver
-         * 
-         * @param databaseHistoryKafkaBootstrapServers the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder databaseHistoryKafkaBootstrapServers(
-                java.lang.String databaseHistoryKafkaBootstrapServers) {
-            doSetProperty("databaseHistoryKafkaBootstrapServers", databaseHistoryKafkaBootstrapServers);
-            return this;
-        }
-        /**
-         * The number of milliseconds to wait while fetching cluster information
-         * using Kafka admin client.
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 3s
-         * Group: sqlserver
-         * 
-         * @param databaseHistoryKafkaQueryTimeoutMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder databaseHistoryKafkaQueryTimeoutMs(
-                long databaseHistoryKafkaQueryTimeoutMs) {
-            doSetProperty("databaseHistoryKafkaQueryTimeoutMs", databaseHistoryKafkaQueryTimeoutMs);
-            return this;
-        }
-        /**
-         * The number of attempts in a row that no data are returned from Kafka
-         * before recover completes. The maximum amount of time to wait after
-         * receiving no data is (recovery.attempts) x
-         * (recovery.poll.interval.ms).
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 100
-         * Group: sqlserver
-         * 
-         * @param databaseHistoryKafkaRecoveryAttempts the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder databaseHistoryKafkaRecoveryAttempts(
-                int databaseHistoryKafkaRecoveryAttempts) {
-            doSetProperty("databaseHistoryKafkaRecoveryAttempts", databaseHistoryKafkaRecoveryAttempts);
-            return this;
-        }
-        /**
-         * The number of milliseconds to wait while polling for persisted data
-         * during recovery.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 100ms
-         * Group: sqlserver
-         * 
-         * @param databaseHistoryKafkaRecoveryPollIntervalMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
-                int databaseHistoryKafkaRecoveryPollIntervalMs) {
-            doSetProperty("databaseHistoryKafkaRecoveryPollIntervalMs", databaseHistoryKafkaRecoveryPollIntervalMs);
-            return this;
-        }
-        /**
-         * The name of the topic for the database schema history.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: sqlserver
-         * 
-         * @param databaseHistoryKafkaTopic the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder databaseHistoryKafkaTopic(
-                java.lang.String databaseHistoryKafkaTopic) {
-            doSetProperty("databaseHistoryKafkaTopic", databaseHistoryKafkaTopic);
-            return this;
-        }
-        /**
-         * Controls the action Debezium will take when it meets a DDL statement
-         * in binlog, that it cannot parse.By default the connector will stop
-         * operating but by changing the setting it can ignore the statements
-         * which it cannot parse. If skipping is enabled then Debezium can miss
-         * metadata changes.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: sqlserver
-         * 
-         * @param databaseHistorySkipUnparseableDdl the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder databaseHistorySkipUnparseableDdl(
-                boolean databaseHistorySkipUnparseableDdl) {
-            doSetProperty("databaseHistorySkipUnparseableDdl", databaseHistorySkipUnparseableDdl);
-            return this;
-        }
-        /**
-         * Controls what DDL will Debezium store in database history. By default
-         * (false) Debezium will store all incoming DDL statements. If set to
-         * true, then only DDL that manipulates a captured table will be stored.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: sqlserver
-         * 
-         * @param databaseHistoryStoreOnlyCapturedTablesDdl the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder databaseHistoryStoreOnlyCapturedTablesDdl(
-                boolean databaseHistoryStoreOnlyCapturedTablesDdl) {
-            doSetProperty("databaseHistoryStoreOnlyCapturedTablesDdl", databaseHistoryStoreOnlyCapturedTablesDdl);
-            return this;
-        }
-        /**
-         * Controls what DDL will Debezium store in database history. By default
-         * (false) Debezium will store all incoming DDL statements. If set to
-         * true, then only DDL that manipulates a monitored table will be stored
-         * (deprecated, use database.history.store.only.captured.tables.ddl
-         * instead).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: sqlserver
-         * 
-         * @param databaseHistoryStoreOnlyMonitoredTablesDdl the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder databaseHistoryStoreOnlyMonitoredTablesDdl(
-                boolean databaseHistoryStoreOnlyMonitoredTablesDdl) {
-            doSetProperty("databaseHistoryStoreOnlyMonitoredTablesDdl", databaseHistoryStoreOnlyMonitoredTablesDdl);
             return this;
         }
         /**
@@ -688,24 +463,6 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
-         * Unique name that identifies the database server and all recorded
-         * offsets, and that is used as a prefix for all schemas and topics.
-         * Each distinct installation should have a separate namespace and be
-         * monitored by at most one Debezium connector.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: sqlserver
-         * 
-         * @param databaseServerName the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder databaseServerName(
-                java.lang.String databaseServerName) {
-            doSetProperty("databaseServerName", databaseServerName);
-            return this;
-        }
-        /**
          * Name of the database user to be used when connecting to the database.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -740,7 +497,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
         /**
          * Specify how DECIMAL and NUMERIC columns should be represented in
-         * change events, including:'precise' (the default) uses
+         * change events, including: 'precise' (the default) uses
          * java.math.BigDecimal to represent values, which are encoded in the
          * change events using a binary representation and Kafka Connect's
          * 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to
@@ -763,11 +520,11 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
         /**
          * Specify how failures during processing of events (i.e. when
-         * encountering a corrupted event) should be handled, including:'fail'
+         * encountering a corrupted event) should be handled, including: 'fail'
          * (the default) an exception indicating the problematic event and its
          * position is raised, causing the connector to be stopped; 'warn' the
          * problematic event and its position will be logged and the event will
-         * be skipped;'ignore' the problematic event will be skipped.
+         * be skipped; 'ignore' the problematic event will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -837,8 +594,9 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * to a Kafka topic with the same name as the database server ID. Each
          * schema change will be recorded using a key that contains the database
          * name and whose value include logical description of the new schema
-         * and optionally the DDL statement(s).The default is 'true'. This is
-         * independent of how the connector internally records database history.
+         * and optionally the DDL statement(s). The default is 'true'. This is
+         * independent of how the connector internally records database schema
+         * history.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -855,11 +613,11 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
         /**
          * Whether the connector parse table and column's comment to metadata
-         * object.Note: Enable this option will bring the implications on memory
-         * usage. The number and size of ColumnImpl objects is what largely
-         * impacts how much memory is consumed by the Debezium connectors, and
-         * adding a String to each of them can potentially be quite heavy. The
-         * default is 'false'.
+         * object. Note: Enable this option will bring the implications on
+         * memory usage. The number and size of ColumnImpl objects is what
+         * largely impacts how much memory is consumed by the Debezium
+         * connectors, and adding a String to each of them can potentially be
+         * quite heavy. The default is 'false'.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1002,12 +760,12 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         /**
          * A semicolon-separated list of expressions that match fully-qualified
          * tables and column(s) to be used as message key. Each expression must
-         * match the pattern ':',where the table names could be defined as
+         * match the pattern ':', where the table names could be defined as
          * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the
-         * specific connector,and the key columns are a comma-separated list of
+         * specific connector, and the key columns are a comma-separated list of
          * columns representing the custom key. For any table without an
          * explicit key configuration the table's primary key column(s) will be
-         * used as message key.Example:
+         * used as message key. Example:
          * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1057,7 +815,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
         /**
          * The maximum number of records that should be loaded into memory while
-         * streaming. A value of 0 uses the default JDBC fetch size.
+         * streaming. A value of '0' uses the default JDBC fetch size.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1106,14 +864,88 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
-         * Specify how schema names should be adjusted for compatibility with
-         * the message converter used by the connector, including:'avro'
-         * replaces the characters that cannot be used in the Avro type name
-         * with underscore (default)'none' does not apply any adjustment.
+         * The name of the SchemaHistory class that should be used to store and
+         * recover database schema changes. The configuration properties for the
+         * history are prefixed with the 'schema.history.internal.' string.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: avro
+         * Default: io.debezium.storage.kafka.history.KafkaSchemaHistory
+         * Group: sqlserver
+         * 
+         * @param schemaHistoryInternal the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder schemaHistoryInternal(
+                java.lang.String schemaHistoryInternal) {
+            doSetProperty("schemaHistoryInternal", schemaHistoryInternal);
+            return this;
+        }
+        /**
+         * The path to the file that will be used to record the database schema
+         * history.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param schemaHistoryInternalFileFilename the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder schemaHistoryInternalFileFilename(
+                java.lang.String schemaHistoryInternalFileFilename) {
+            doSetProperty("schemaHistoryInternalFileFilename", schemaHistoryInternalFileFilename);
+            return this;
+        }
+        /**
+         * Controls the action Debezium will take when it meets a DDL statement
+         * in binlog, that it cannot parse.By default the connector will stop
+         * operating but by changing the setting it can ignore the statements
+         * which it cannot parse. If skipping is enabled then Debezium can miss
+         * metadata changes.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param schemaHistoryInternalSkipUnparseableDdl the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder schemaHistoryInternalSkipUnparseableDdl(
+                boolean schemaHistoryInternalSkipUnparseableDdl) {
+            doSetProperty("schemaHistoryInternalSkipUnparseableDdl", schemaHistoryInternalSkipUnparseableDdl);
+            return this;
+        }
+        /**
+         * Controls what DDL will Debezium store in database schema history. By
+         * default (false) Debezium will store all incoming DDL statements. If
+         * set to true, then only DDL that manipulates a captured table will be
+         * stored.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: sqlserver
+         * 
+         * @param schemaHistoryInternalStoreOnlyCapturedTablesDdl the value to
+         * set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder schemaHistoryInternalStoreOnlyCapturedTablesDdl(
+                boolean schemaHistoryInternalStoreOnlyCapturedTablesDdl) {
+            doSetProperty("schemaHistoryInternalStoreOnlyCapturedTablesDdl", schemaHistoryInternalStoreOnlyCapturedTablesDdl);
+            return this;
+        }
+        /**
+         * Specify how schema names should be adjusted for compatibility with
+         * the message converter used by the connector, including: 'avro'
+         * replaces the characters that cannot be used in the Avro type name
+         * with underscore; 'none' does not apply any adjustment (default).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: none
          * Group: sqlserver
          * 
          * @param schemaNameAdjustmentMode the value to set
@@ -1144,10 +976,11 @@ public interface DebeziumSqlserverComponentBuilderFactory {
          * The comma-separated list of operations to skip during streaming,
          * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes,
          * 't' for truncates, and 'none' to indicate nothing skipped. By
-         * default, no operations will be skipped.
+         * default, only truncate operations will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Default: t
          * Group: sqlserver
          * 
          * @param skippedOperations the value to set
@@ -1192,7 +1025,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
-         * this setting must be set to specify a list of tables/collections
+         * This setting must be set to specify a list of tables/collections
          * whose snapshot must be taken on creating or restarting the connector.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1209,12 +1042,12 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
         /**
          * Controls which transaction isolation level is used and how long the
-         * connector locks the monitored tables. The default is
+         * connector locks the captured tables. The default is
          * 'repeatable_read', which means that repeatable read isolation level
          * is used. In addition, exclusive locks are taken only during schema
          * snapshot. Using a value of 'exclusive' ensures that the connector
          * holds the exclusive lock (and thus prevents any reads and updates)
-         * for all monitored tables during the entire snapshot duration. When
+         * for all captured tables during the entire snapshot duration. When
          * 'snapshot' is specified, connector runs the initial snapshot in
          * SNAPSHOT isolation level, which guarantees snapshot consistency. In
          * addition, neither table nor row-level locks are held. When
@@ -1297,7 +1130,7 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         /**
          * This property contains a comma-separated list of fully-qualified
          * tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on
-         * thespecific connectors. Select statements for the individual tables
+         * the specific connectors. Select statements for the individual tables
          * are specified in further configuration properties, one for each
          * table, identified by the id
          * 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or
@@ -1318,60 +1151,6 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         default DebeziumSqlserverComponentBuilder snapshotSelectStatementOverrides(
                 java.lang.String snapshotSelectStatementOverrides) {
             doSetProperty("snapshotSelectStatementOverrides", snapshotSelectStatementOverrides);
-            return this;
-        }
-        /**
-         * A version of the format of the publicly visible source part in the
-         * message.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: v2
-         * Group: sqlserver
-         * 
-         * @param sourceStructVersion the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder sourceStructVersion(
-                java.lang.String sourceStructVersion) {
-            doSetProperty("sourceStructVersion", sourceStructVersion);
-            return this;
-        }
-        /**
-         * Configures the criteria of the attached timestamp within the source
-         * record (ts_ms).Options include:'commit', (default) the source
-         * timestamp is set to the instant where the record was committed in the
-         * database'processing', (deprecated) the source timestamp is set to the
-         * instant where the record was processed by Debezium.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: commit
-         * Group: sqlserver
-         * 
-         * @param sourceTimestampMode the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder sourceTimestampMode(
-                java.lang.String sourceTimestampMode) {
-            doSetProperty("sourceTimestampMode", sourceTimestampMode);
-            return this;
-        }
-        /**
-         * A comma-separated list of regular expressions that match the
-         * fully-qualified names of tables to be excluded from monitoring
-         * (deprecated, use table.exclude.list instead).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: sqlserver
-         * 
-         * @param tableBlacklist the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder tableBlacklist(
-                java.lang.String tableBlacklist) {
-            doSetProperty("tableBlacklist", tableBlacklist);
             return this;
         }
         /**
@@ -1422,30 +1201,14 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
-         * The tables for which changes are to be captured (deprecated, use
-         * table.include.list instead).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: sqlserver
-         * 
-         * @param tableWhitelist the value to set
-         * @return the dsl builder
-         */
-        default DebeziumSqlserverComponentBuilder tableWhitelist(
-                java.lang.String tableWhitelist) {
-            doSetProperty("tableWhitelist", tableWhitelist);
-            return this;
-        }
-        /**
          * Time, date, and timestamps can be represented with different kinds of
-         * precisions, including:'adaptive' (the default) bases the precision of
-         * time, date, and timestamp values on the database column's precision;
-         * 'adaptive_time_microseconds' like 'adaptive' mode, but TIME fields
-         * always use microseconds precision;'connect' always represents time,
-         * date, and timestamp values using Kafka Connect's built-in
-         * representations for Time, Date, and Timestamp, which uses millisecond
-         * precision regardless of the database columns' precision .
+         * precisions, including: 'adaptive' (the default) bases the precision
+         * of time, date, and timestamp values on the database column's
+         * precision; 'adaptive_time_microseconds' like 'adaptive' mode, but
+         * TIME fields always use microseconds precision; 'connect' always
+         * represents time, date, and timestamp values using Kafka Connect's
+         * built-in representations for Time, Date, and Timestamp, which uses
+         * millisecond precision regardless of the database columns' precision.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1462,10 +1225,10 @@ public interface DebeziumSqlserverComponentBuilderFactory {
         }
         /**
          * Whether delete operations should be represented by a delete event and
-         * a subsquenttombstone event (true) or only by a delete event (false).
-         * Emitting the tombstone event (the default behavior) allows Kafka to
-         * completely delete all events pertaining to the given key once the
-         * source record got deleted.
+         * a subsequent tombstone event (true) or only by a delete event
+         * (false). Emitting the tombstone event (the default behavior) allows
+         * Kafka to completely delete all events pertaining to the given key
+         * once the source record got deleted.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1481,21 +1244,41 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             return this;
         }
         /**
-         * The name of the transaction metadata topic. The placeholder
-         * ${database.server.name} can be used for referring to the connector's
-         * logical name; defaults to ${database.server.name}.transaction.
+         * The name of the TopicNamingStrategy class that should be used to
+         * determine the topic name for data change, schema change, transaction,
+         * heartbeat event etc.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: ${database.server.name}.transaction
+         * Default: io.debezium.schema.SchemaTopicNamingStrategy
          * Group: sqlserver
          * 
-         * @param transactionTopic the value to set
+         * @param topicNamingStrategy the value to set
          * @return the dsl builder
          */
-        default DebeziumSqlserverComponentBuilder transactionTopic(
-                java.lang.String transactionTopic) {
-            doSetProperty("transactionTopic", transactionTopic);
+        default DebeziumSqlserverComponentBuilder topicNamingStrategy(
+                java.lang.String topicNamingStrategy) {
+            doSetProperty("topicNamingStrategy", topicNamingStrategy);
+            return this;
+        }
+        /**
+         * Topic prefix that identifies and provides a namespace for the
+         * particular database server/cluster is capturing changes. The topic
+         * prefix should be unique across all other connectors, since it is used
+         * as a prefix for all Kafka topic names that receive events emitted by
+         * this connector. Only alphanumeric characters, hyphens, dots and
+         * underscores must be accepted.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: sqlserver
+         * 
+         * @param topicPrefix the value to set
+         * @return the dsl builder
+         */
+        default DebeziumSqlserverComponentBuilder topicPrefix(
+                java.lang.String topicPrefix) {
+            doSetProperty("topicPrefix", topicPrefix);
             return this;
         }
     }
@@ -1537,29 +1320,15 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "offsetStorageTopic": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setOffsetStorageTopic((java.lang.String) value); return true;
             case "autowiredEnabled": ((DebeziumSqlserverComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "binaryHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setBinaryHandlingMode((java.lang.String) value); return true;
-            case "columnBlacklist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnBlacklist((java.lang.String) value); return true;
             case "columnExcludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnExcludeList((java.lang.String) value); return true;
             case "columnIncludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnIncludeList((java.lang.String) value); return true;
             case "columnPropagateSourceType": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnPropagateSourceType((java.lang.String) value); return true;
-            case "columnWhitelist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setColumnWhitelist((java.lang.String) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setConverters((java.lang.String) value); return true;
-            case "databaseDbname": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseDbname((java.lang.String) value); return true;
-            case "databaseHistory": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistory((java.lang.String) value); return true;
-            case "databaseHistoryFileFilename": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryFileFilename((java.lang.String) value); return true;
-            case "databaseHistoryKafkaBootstrapServers": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryKafkaBootstrapServers((java.lang.String) value); return true;
-            case "databaseHistoryKafkaQueryTimeoutMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryKafkaQueryTimeoutMs((long) value); return true;
-            case "databaseHistoryKafkaRecoveryAttempts": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryKafkaRecoveryAttempts((int) value); return true;
-            case "databaseHistoryKafkaRecoveryPollIntervalMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryKafkaRecoveryPollIntervalMs((int) value); return true;
-            case "databaseHistoryKafkaTopic": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryKafkaTopic((java.lang.String) value); return true;
-            case "databaseHistorySkipUnparseableDdl": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistorySkipUnparseableDdl((boolean) value); return true;
-            case "databaseHistoryStoreOnlyCapturedTablesDdl": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryStoreOnlyCapturedTablesDdl((boolean) value); return true;
-            case "databaseHistoryStoreOnlyMonitoredTablesDdl": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHistoryStoreOnlyMonitoredTablesDdl((boolean) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseHostname((java.lang.String) value); return true;
             case "databaseInstance": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseInstance((java.lang.String) value); return true;
             case "databaseNames": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseNames((java.lang.String) value); return true;
             case "databasePassword": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabasePassword((java.lang.String) value); return true;
             case "databasePort": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabasePort((int) value); return true;
-            case "databaseServerName": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseServerName((java.lang.String) value); return true;
             case "databaseUser": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatabaseUser((java.lang.String) value); return true;
             case "datatypePropagateSourceType": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDatatypePropagateSourceType((java.lang.String) value); return true;
             case "decimalHandlingMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setDecimalHandlingMode((java.lang.String) value); return true;
@@ -1582,6 +1351,10 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "queryFetchSize": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setQueryFetchSize((int) value); return true;
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "sanitizeFieldNames": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSanitizeFieldNames((boolean) value); return true;
+            case "schemaHistoryInternal": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSchemaHistoryInternal((java.lang.String) value); return true;
+            case "schemaHistoryInternalFileFilename": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSchemaHistoryInternalFileFilename((java.lang.String) value); return true;
+            case "schemaHistoryInternalSkipUnparseableDdl": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSchemaHistoryInternalSkipUnparseableDdl((boolean) value); return true;
+            case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSchemaHistoryInternalStoreOnlyCapturedTablesDdl((boolean) value); return true;
             case "schemaNameAdjustmentMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSchemaNameAdjustmentMode((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSignalDataCollection((java.lang.String) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSkippedOperations((java.lang.String) value); return true;
@@ -1593,16 +1366,13 @@ public interface DebeziumSqlserverComponentBuilderFactory {
             case "snapshotMaxThreads": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotMaxThreads((int) value); return true;
             case "snapshotMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotMode((java.lang.String) value); return true;
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
-            case "sourceStructVersion": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSourceStructVersion((java.lang.String) value); return true;
-            case "sourceTimestampMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setSourceTimestampMode((java.lang.String) value); return true;
-            case "tableBlacklist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableBlacklist((java.lang.String) value); return true;
             case "tableExcludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableExcludeList((java.lang.String) value); return true;
             case "tableIgnoreBuiltin": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableIgnoreBuiltin((boolean) value); return true;
             case "tableIncludeList": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableIncludeList((java.lang.String) value); return true;
-            case "tableWhitelist": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTableWhitelist((java.lang.String) value); return true;
             case "timePrecisionMode": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTimePrecisionMode((java.lang.String) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTombstonesOnDelete((boolean) value); return true;
-            case "transactionTopic": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTransactionTopic((java.lang.String) value); return true;
+            case "topicNamingStrategy": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTopicNamingStrategy((java.lang.String) value); return true;
+            case "topicPrefix": getOrCreateConfiguration((DebeziumSqlserverComponent) component).setTopicPrefix((java.lang.String) value); return true;
             default: return false;
             }
         }
