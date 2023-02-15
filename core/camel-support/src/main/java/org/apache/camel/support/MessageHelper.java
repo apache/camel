@@ -499,9 +499,10 @@ public final class MessageHelper {
             prefix.append(" ");
         }
 
-        // include exchangeId as attribute on the <message> tag
+        // include exchangeId/exchangePattern as attribute on the <message> tag
         sb.append(prefix);
-        sb.append("<message exchangeId=\"").append(message.getExchange().getExchangeId()).append("\">\n");
+        sb.append("<message exchangeId=\"").append(message.getExchange().getExchangeId())
+                .append(" exchangePattern=\"").append(message.getExchange().getPattern().name()).append("\">\n");
 
         // exchange properties
         if (includeExchangeProperties && message.getExchange().hasProperties()) {
@@ -866,6 +867,7 @@ public final class MessageHelper {
         JsonObject jo = new JsonObject();
         root.put("message", jo);
         jo.put("exchangeId", message.getExchange().getExchangeId());
+        jo.put("exchangePattern", message.getExchange().getPattern().name());
 
         // exchange properties
         if (includeExchangeProperties && message.getExchange().hasProperties()) {

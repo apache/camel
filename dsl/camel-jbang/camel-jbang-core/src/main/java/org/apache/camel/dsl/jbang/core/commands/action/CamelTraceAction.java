@@ -341,8 +341,10 @@ public class CamelTraceAction extends ActionBaseCommand {
                     row.message = jo.getMap("message");
                     row.exception = jo.getMap("exception");
                     row.exchangeId = row.message.getString("exchangeId");
-
-                    row.message.remove("exchangeId"); // we should exchange id elsewhere
+                    row.exchangePattern = row.message.getString("exchangePattern");
+                    // we should exchangeId/pattern elsewhere
+                    row.message.remove("exchangeId");
+                    row.message.remove("exchangePattern");
                     if (!showExchangeProperties) {
                         row.message.remove("exchangeProperties");
                     }
@@ -546,6 +548,14 @@ public class CamelTraceAction extends ActionBaseCommand {
         } else {
             System.out.print(u);
         }
+        System.out.print(" ");
+        // MEP
+        String mep = String.format("%6.6s", row.exchangePattern);
+        if (loggingColor) {
+            AnsiConsole.out().print(Ansi.ansi().fgBrightMagenta().a(Ansi.Attribute.INTENSITY_FAINT).a(mep).reset());
+        } else {
+            System.out.print(mep);
+        }
         System.out.print(" - ");
         // status
         System.out.print(getStatus(row));
@@ -628,14 +638,14 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     private String getStatus(Row r) {
         if (r.first) {
-            String s = r.parent.depth == 1 ? "Input" : "Routing to " + r.routeId;
+            String s = r.parent.depth == 1 ? "Created" : "Routing to " + r.routeId;
             if (loggingColor) {
                 return Ansi.ansi().fg(Ansi.Color.GREEN).a(s).reset().toString();
             } else {
                 return "Input";
             }
         } else if (r.last) {
-            String s = r.parent.depth == 0 ? "Output" : "Returning from " + r.routeId;
+            String s = r.parent.depth == 0 ? "Completed" : "Returning from " + r.routeId;
             if (loggingColor) {
                 return Ansi.ansi().fg(r.failed ? Ansi.Color.RED : Ansi.Color.GREEN).a(s).reset().toString();
             } else {
@@ -658,7 +668,7 @@ public class CamelTraceAction extends ActionBaseCommand {
             if (loggingColor) {
                 return Ansi.ansi().fg(Ansi.Color.GREEN).a("Processed").reset().toString();
             } else {
-                return "Success";
+                return "Processed";
             }
         }
     }
@@ -689,6 +699,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         boolean last;
         long uid;
         String exchangeId;
+        String exchangePattern;
         String threadName;
         String location;
         String routeId;
