@@ -57,15 +57,18 @@ The following guides can help you discover ways to manipulate the data:
 * Data Transformation
 ** xref:manual::data-format.adoc[Data Format]
 
+== Exchanges
+
+The exchange is a core concept of Apache Camel and is used to abstract different patterns of communication within Camel. Read the following guides to have a better understanding of it:
+
+* Exchange
+** xref:manual::exchange.adoc[Exchange]
+
 == Other Guides
 
 Learn about additional ways to customize your integrations. Explore alternatives to consume and produce data as well as writing and defining routes.
 
-* Exchange
-** xref:manual::exchange.adoc[Exchange]
-** xref:manual::exchange-pattern.adoc[Exchange Pattern]
-** xref:manual::exchange-pooling.adoc[Exchange Pooling]
-** xref:manual::using-exchange-pattern-annotations.adoc[Using Exchange Pattern Annotations]
+
 * Context
 ** xref:manual::camelcontext.adoc[Camel Context]
 ** xref:manual::camelcontext-autoconfigure.adoc[Camel Context Auto Configuration]
