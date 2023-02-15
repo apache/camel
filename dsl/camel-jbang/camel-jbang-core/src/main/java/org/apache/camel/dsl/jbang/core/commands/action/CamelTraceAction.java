@@ -72,7 +72,7 @@ public class CamelTraceAction extends ActionBaseCommand {
     boolean pretty;
 
     @CommandLine.Option(names = { "--follow" }, defaultValue = "true",
-                        description = "Keep following and outputting new log lines (use ctrl + c to exit).")
+                        description = "Keep following and outputting new traces (use ctrl + c to exit).")
     boolean follow = true;
 
     @CommandLine.Option(names = { "--prefix" }, defaultValue = "true",
@@ -95,19 +95,19 @@ public class CamelTraceAction extends ActionBaseCommand {
                         description = "Filter traces to only output trace matching text (ignore case).", arity = "0..*")
     String[] grep;
 
-    @CommandLine.Option(names = { "--show-exchange-properties", "showExchangeProperties" }, defaultValue = "false",
+    @CommandLine.Option(names = { "--show-exchange-properties" }, defaultValue = "false",
                         description = "Show exchange properties in traced messages")
     boolean showExchangeProperties;
 
-    @CommandLine.Option(names = { "--show-message-headers", "showMessageHeaders" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-message-headers" }, defaultValue = "true",
                         description = "Show message headers in traced messages")
     boolean showMessageHeaders = true;
 
-    @CommandLine.Option(names = { "--show-message-body", "showMessageBody" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-message-body" }, defaultValue = "true",
                         description = "Show message body in traced messages")
     boolean showMessageBody = true;
 
-    @CommandLine.Option(names = { "--show-exception", "showException" }, defaultValue = "true",
+    @CommandLine.Option(names = { "--show-exception" }, defaultValue = "true",
                         description = "Show exception and stacktrace for failed messages")
     boolean showException = true;
 
@@ -194,9 +194,9 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     private void tailTraceFiles(Map<Long, Pid> pids, int tail) throws Exception {
         for (Pid pid : pids.values()) {
-            File log = getTraceFile(pid.pid);
-            if (log.exists()) {
-                pid.reader = new LineNumberReader(new FileReader(log));
+            File file = getTraceFile(pid.pid);
+            if (file.exists()) {
+                pid.reader = new LineNumberReader(new FileReader(file));
                 String line;
                 if (tail == 0) {
                     pid.fifo = new ArrayDeque<>();
@@ -277,7 +277,7 @@ public class CamelTraceAction extends ActionBaseCommand {
                         line = pid.reader.readLine();
                         if (line != null) {
                             lines++;
-                            // switch fifo to be unlimited as we use it for new log lines
+                            // switch fifo to be unlimited as we use it for new traces
                             if (pid.fifo == null || pid.fifo instanceof ArrayBlockingQueue) {
                                 pid.fifo = new ArrayDeque<>();
                             }
@@ -470,8 +470,20 @@ public class CamelTraceAction extends ActionBaseCommand {
             System.out.print(p);
             System.out.print(" --- ");
         }
+        // exchange id
+        String eid = row.exchangeId;
+        if (loggingColor) {
+            AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(eid).reset());
+        } else {
+            System.out.print(eid);
+        }
+        System.out.print(" ");
         // route/node id
-        String ids = String.format("[%25.25s]", row.routeId + "/" + getId(row));
+        String ids = row.routeId + "/" + getId(row);
+        if (ids.length() > 25) {
+            ids = ids.substring(ids.length() - 25);
+        }
+        ids = String.format("[%25.25s]", ids);
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(ids).reset());
         } else {
@@ -479,7 +491,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         }
         System.out.print(" ");
         // source location
-        String code = String.format("%-25.25s", row.location != null ? row.location : "");
+        String code = String.format("%-35.35s", row.location != null ? row.location : "");
         if (loggingColor) {
             AnsiConsole.out().print(Ansi.ansi().fgCyan().a(code).reset());
             AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" : ").reset());
