@@ -81,7 +81,7 @@ public class CamelTraceAction extends ActionBaseCommand {
     boolean source;
 
     @CommandLine.Option(names = { "--level" }, defaultValue = "9",
-                        description = "Detail level of tracing. 9=all events (default), 1=input+output (outermost), 2=input+output (incl sub routes)")
+                        description = "Detail level of tracing. 0 = Created+Completed. 1=All events on 1st level, 2=All events on 1st+2nd level, and so on. 9 = all events on every level.")
     int level;
 
     @CommandLine.Option(names = { "--tail" },
@@ -596,15 +596,14 @@ public class CamelTraceAction extends ActionBaseCommand {
     }
 
     private boolean filterLevel(Row row) {
-        if (level == 1) {
+        if (level >= 9) {
+            return true;
+        }
+        if (level == 0) {
             // only input or output outer level
             return row.parent.depth == 1 && row.first || row.parent.depth == 0 && row.last;
-        } else if (level == 2) {
-            // only input or output (all levels)
-            return (row.first || row.last);
         }
-
-        return true;
+        return row.parent.depth <= level;
     }
 
     private String getDataAsJSon(Row r) {
