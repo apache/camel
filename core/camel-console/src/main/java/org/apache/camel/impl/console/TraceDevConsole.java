@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl.console;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -28,6 +26,7 @@ import org.apache.camel.spi.Configurer;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.console.AbstractDevConsole;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 
 @DevConsole("trace")
@@ -97,7 +96,7 @@ public class TraceDevConsole extends AbstractDevConsole {
                 addMessage(t);
             }
 
-            List<JsonObject> arr = new ArrayList<>();
+            JsonArray arr = new JsonArray();
             root.put("traces", arr);
             for (BacklogTracerEventMessage t : queue) {
                 JsonObject jo = (JsonObject) t.asJSon();

@@ -30,6 +30,7 @@ import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStopAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelSourceAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelSourceTop;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelThreadDump;
+import org.apache.camel.dsl.jbang.core.commands.action.CamelTraceAction;
 import org.apache.camel.dsl.jbang.core.commands.action.LoggerAction;
 import org.apache.camel.dsl.jbang.core.commands.action.RouteControllerAction;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogCommand;
@@ -59,7 +60,6 @@ import org.apache.camel.dsl.jbang.core.commands.process.ListInflight;
 import org.apache.camel.dsl.jbang.core.commands.process.ListMetric;
 import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
 import org.apache.camel.dsl.jbang.core.commands.process.ListService;
-import org.apache.camel.dsl.jbang.core.commands.process.ListTrace;
 import org.apache.camel.dsl.jbang.core.commands.process.ListVault;
 import org.apache.camel.dsl.jbang.core.commands.process.StopProcess;
 import picocli.CommandLine;
@@ -77,6 +77,7 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("log", new CommandLine(new CamelLogAction(main)))
                 .addSubcommand("ps", new CommandLine(new ListProcess(main)))
                 .addSubcommand("stop", new CommandLine(new StopProcess(main)))
+                .addSubcommand("trace", new CommandLine(new CamelTraceAction(main)))
                 .addSubcommand("get", new CommandLine(new CamelStatus(main))
                         .addSubcommand("context", new CommandLine(new CamelContextStatus(main)))
                         .addSubcommand("route", new CommandLine(new CamelRouteStatus(main)))
@@ -85,7 +86,6 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("health", new CommandLine(new ListHealth(main)))
                         .addSubcommand("endpoint", new CommandLine(new ListEndpoint(main)))
                         .addSubcommand("event", new CommandLine(new ListEvent(main)))
-                        .addSubcommand("trace", new CommandLine(new ListTrace(main)))
                         .addSubcommand("inflight", new CommandLine(new ListInflight(main)))
                         .addSubcommand("blocked", new CommandLine(new ListBlocked(main)))
                         .addSubcommand("route-controller", new CommandLine(new RouteControllerAction(main)))

@@ -42,6 +42,7 @@ import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.support.BreakpointSupport;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -608,7 +609,8 @@ public final class BacklogDebugger extends ServiceSupport {
         suspendedBreakpointMessages.computeIfPresent(
                 nodeId,
                 (nId, message) -> new DefaultBacklogTracerEventMessage(
-                        false, false, message.getUid(), message.getTimestamp(), message.getRouteId(), message.getToNode(),
+                        false, false, message.getUid(), message.getTimestamp(), message.getLocation(), message.getRouteId(),
+                        message.getToNode(),
                         message.getExchangeId(),
                         dumpAsXml(suspendedExchange.getExchange()),
                         dumpAsJSon(suspendedExchange.getExchange())));
@@ -667,10 +669,11 @@ public final class BacklogDebugger extends ServiceSupport {
             String messageAsXml = dumpAsXml(exchange);
             String messageAsJSon = dumpAsJSon(exchange);
             long uid = debugCounter.incrementAndGet();
+            String source = LoggerHelper.getLineNumberLoggerName(definition);
 
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
-                            false, false, uid, timestamp, routeId, toNode, exchangeId, messageAsXml, messageAsJSon);
+                            false, false, uid, timestamp, source, routeId, toNode, exchangeId, messageAsXml, messageAsJSon);
             suspendedBreakpointMessages.put(nodeId, msg);
 
             // suspend at this breakpoint
@@ -735,10 +738,11 @@ public final class BacklogDebugger extends ServiceSupport {
             String messageAsXml = dumpAsXml(exchange);
             String messageAsJSon = dumpAsJSon(exchange);
             long uid = debugCounter.incrementAndGet();
+            String source = LoggerHelper.getLineNumberLoggerName(definition);
 
             BacklogTracerEventMessage msg
                     = new DefaultBacklogTracerEventMessage(
-                            false, false, uid, timestamp, routeId, toNode, exchangeId, messageAsXml, messageAsJSon);
+                            false, false, uid, timestamp, source, routeId, toNode, exchangeId, messageAsXml, messageAsJSon);
             suspendedBreakpointMessages.put(toNode, msg);
 
             // suspend at this breakpoint

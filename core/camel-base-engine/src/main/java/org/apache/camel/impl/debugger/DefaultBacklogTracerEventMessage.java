@@ -35,6 +35,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private final boolean last;
     private final long uid;
     private final long timestamp;
+    private String location;
     private final String routeId;
     private final String toNode;
     private final String exchangeId;
@@ -44,16 +45,16 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     private String exceptionAsJSon;
     private long duration;
     private boolean done;
-    private boolean failed;
 
     public DefaultBacklogTracerEventMessage(boolean first, boolean last, long uid, long timestamp,
-                                            String routeId, String toNode, String exchangeId,
+                                            String location, String routeId, String toNode, String exchangeId,
                                             String messageAsXml, String messageAsJSon) {
         this.watch = new StopWatch();
         this.first = first;
         this.last = last;
         this.uid = uid;
         this.timestamp = timestamp;
+        this.location = location;
         this.routeId = routeId;
         this.toNode = toNode;
         this.exchangeId = exchangeId;
@@ -87,6 +88,11 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     @Override
     public long getTimestamp() {
         return timestamp;
+    }
+
+    @Override
+    public String getLocation() {
+        return location;
     }
 
     @Override
@@ -184,6 +190,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         sb.append(prefix).append("  <elapsed>").append(getElapsed()).append("</elapsed>\n");
         sb.append(prefix).append("  <done>").append(isDone()).append("</done>\n");
         sb.append(prefix).append("  <failed>").append(isFailed()).append("</failed>\n");
+        if (getLocation() != null) {
+            sb.append(prefix).append("  <location>").append(getLocation()).append("</location>\n");
+        }
         // route id is optional and we then use an empty value for no route id
         sb.append(prefix).append("  <routeId>").append(routeId != null ? routeId : "").append("</routeId>\n");
         if (toNode != null) {
@@ -217,6 +226,9 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         jo.put("uid", uid);
         jo.put("first", first);
         jo.put("last", last);
+        if (location != null) {
+            jo.put("location", location);
+        }
         if (routeId != null) {
             jo.put("routeId", routeId);
         }

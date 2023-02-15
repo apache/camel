@@ -47,6 +47,11 @@ public interface BacklogTracerEventMessage {
     long getTimestamp();
 
     /**
+     * The location of the trace (source code name:line) if possible.
+     */
+    String getLocation();
+
+    /**
      * Route id
      */
     String getRouteId();

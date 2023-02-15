@@ -594,10 +594,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
                 // if first we should add a pseudo trace message as well, so we have a starting message (eg from the route)
                 String routeId = routeDefinition != null ? routeDefinition.getRouteId() : null;
+                String source = LoggerHelper.getLineNumberLoggerName(processorDefinition);
                 if (first) {
                     long created = exchange.getCreated();
                     DefaultBacklogTracerEventMessage pseudoFirst = new DefaultBacklogTracerEventMessage(
-                            true, false, backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId,
+                            true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, null, exchangeId,
                             messageAsXml,
                             messageAsJSon);
                     backlogTracer.traceEvent(pseudoFirst);
@@ -617,7 +618,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                                             true, backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(),
                                             backlogTracer.getBodyMaxChars(), true);
                             DefaultBacklogTracerEventMessage pseudoLast = new DefaultBacklogTracerEventMessage(
-                                    false, true, backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId,
+                                    false, true, backlogTracer.incrementTraceCounter(), created, source, routeId, null,
+                                    exchangeId,
                                     messageAsXml,
                                     messageAsJSon);
                             backlogTracer.traceEvent(pseudoLast);
@@ -630,7 +632,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                     });
                 }
                 DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
-                        false, false, backlogTracer.incrementTraceCounter(), timestamp, routeId, toNode, exchangeId,
+                        false, false, backlogTracer.incrementTraceCounter(), timestamp, source, routeId, toNode, exchangeId,
                         messageAsXml,
                         messageAsJSon);
                 backlogTracer.traceEvent(event);

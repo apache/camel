@@ -53,6 +53,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.concurrent.ThreadHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
@@ -79,6 +80,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private File actionFile;
     private File outputFile;
     private File traceFile;
+    private long traceFilePos; // keep track of trace offset
 
     public LocalCliConnector(CliConnectorFactory cliConnectorFactory) {
         this.cliConnectorFactory = cliConnectorFactory;
@@ -288,13 +290,6 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     LOG.trace("Updating output file: {}", outputFile);
                     IOHelper.writeText(json.toJson(), outputFile);
                 }
-            } else if ("trace".equals(action)) {
-                DevConsole dc = camelContext.getExtension(DevConsoleRegistry.class).resolveById("trace");
-                if (dc != null) {
-                    JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON);
-                    LOG.trace("Updating trace file: {}", traceFile);
-                    IOHelper.writeText(json.toJson(), traceFile);
-                }
             }
 
             // action done so delete file
@@ -427,13 +422,23 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("fault-tolerance", json);
                     }
                 }
-                DevConsole dc12 = dcr.resolveById("trace");
+                DevConsole dc12 = camelContext.getExtension(DevConsoleRegistry.class).resolveById("trace");
                 if (dc12 != null) {
                     JsonObject json = (JsonObject) dc12.call(DevConsole.MediaType.JSON);
-                    if (json != null && !json.isEmpty()) {
-                        // special for trace messages which is stored in its own file
+                    JsonArray arr = json.getCollection("traces");
+                    // filter based on last uid
+                    if (traceFilePos > 0) {
+                        arr.removeIf(r -> {
+                            JsonObject jo = (JsonObject) r;
+                            return jo.getLong("uid") <= traceFilePos;
+                        });
+                    }
+                    if (!arr.isEmpty()) {
+                        // store traces in a special file
                         LOG.trace("Updating trace file: {}", traceFile);
-                        IOHelper.writeText(json.toJson(), traceFile);
+                        IOHelper.appendText(json.toJson(), traceFile);
+                        json = arr.getMap(arr.size() - 1);
+                        traceFilePos = json.getLong("uid");
                     }
                 }
             }
