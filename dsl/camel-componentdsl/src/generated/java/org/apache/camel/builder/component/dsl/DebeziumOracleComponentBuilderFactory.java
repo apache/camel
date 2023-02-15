@@ -301,9 +301,11 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
         /**
          * Specify how binary (blob, binary, etc.) columns should be represented
-         * in change events, including:'bytes' represents binary data as byte
-         * array (default)'base64' represents binary data as base64-encoded
-         * string'hex' represents binary data as hex-encoded (base16) string.
+         * in change events, including: 'bytes' represents binary data as byte
+         * array (default); 'base64' represents binary data as base64-encoded
+         * string; 'base64-url-safe' represents binary data as
+         * base64-url-safe-encoded string; 'hex' represents binary data as
+         * hex-encoded (base16) string.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -316,22 +318,6 @@ public interface DebeziumOracleComponentBuilderFactory {
         default DebeziumOracleComponentBuilder binaryHandlingMode(
                 java.lang.String binaryHandlingMode) {
             doSetProperty("binaryHandlingMode", binaryHandlingMode);
-            return this;
-        }
-        /**
-         * Regular expressions matching columns to exclude from change events
-         * (deprecated, use column.exclude.list instead).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: oracle
-         * 
-         * @param columnBlacklist the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder columnBlacklist(
-                java.lang.String columnBlacklist) {
-            doSetProperty("columnBlacklist", columnBlacklist);
             return this;
         }
         /**
@@ -383,22 +369,6 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
-         * Regular expressions matching columns to include in change events
-         * (deprecated, use column.include.list instead).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: oracle
-         * 
-         * @param columnWhitelist the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder columnWhitelist(
-                java.lang.String columnWhitelist) {
-            doSetProperty("columnWhitelist", columnWhitelist);
-            return this;
-        }
-        /**
          * Optional list of custom converters that would be used instead of
          * default ones. The converters are defined using '.type' config option
          * and configured using options '.'.
@@ -447,185 +417,6 @@ public interface DebeziumOracleComponentBuilderFactory {
         default DebeziumOracleComponentBuilder databaseDbname(
                 java.lang.String databaseDbname) {
             doSetProperty("databaseDbname", databaseDbname);
-            return this;
-        }
-        /**
-         * The name of the DatabaseHistory class that should be used to store
-         * and recover database schema changes. The configuration properties for
-         * the history are prefixed with the 'database.history.' string.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: io.debezium.relational.history.KafkaDatabaseHistory
-         * Group: oracle
-         * 
-         * @param databaseHistory the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder databaseHistory(
-                java.lang.String databaseHistory) {
-            doSetProperty("databaseHistory", databaseHistory);
-            return this;
-        }
-        /**
-         * The path to the file that will be used to record the database
-         * history.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: oracle
-         * 
-         * @param databaseHistoryFileFilename the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder databaseHistoryFileFilename(
-                java.lang.String databaseHistoryFileFilename) {
-            doSetProperty("databaseHistoryFileFilename", databaseHistoryFileFilename);
-            return this;
-        }
-        /**
-         * A list of host/port pairs that the connector will use for
-         * establishing the initial connection to the Kafka cluster for
-         * retrieving database schema history previously stored by the
-         * connector. This should point to the same Kafka cluster used by the
-         * Kafka Connect process.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: oracle
-         * 
-         * @param databaseHistoryKafkaBootstrapServers the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder databaseHistoryKafkaBootstrapServers(
-                java.lang.String databaseHistoryKafkaBootstrapServers) {
-            doSetProperty("databaseHistoryKafkaBootstrapServers", databaseHistoryKafkaBootstrapServers);
-            return this;
-        }
-        /**
-         * The number of milliseconds to wait while fetching cluster information
-         * using Kafka admin client.
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 3s
-         * Group: oracle
-         * 
-         * @param databaseHistoryKafkaQueryTimeoutMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder databaseHistoryKafkaQueryTimeoutMs(
-                long databaseHistoryKafkaQueryTimeoutMs) {
-            doSetProperty("databaseHistoryKafkaQueryTimeoutMs", databaseHistoryKafkaQueryTimeoutMs);
-            return this;
-        }
-        /**
-         * The number of attempts in a row that no data are returned from Kafka
-         * before recover completes. The maximum amount of time to wait after
-         * receiving no data is (recovery.attempts) x
-         * (recovery.poll.interval.ms).
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 100
-         * Group: oracle
-         * 
-         * @param databaseHistoryKafkaRecoveryAttempts the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder databaseHistoryKafkaRecoveryAttempts(
-                int databaseHistoryKafkaRecoveryAttempts) {
-            doSetProperty("databaseHistoryKafkaRecoveryAttempts", databaseHistoryKafkaRecoveryAttempts);
-            return this;
-        }
-        /**
-         * The number of milliseconds to wait while polling for persisted data
-         * during recovery.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 100ms
-         * Group: oracle
-         * 
-         * @param databaseHistoryKafkaRecoveryPollIntervalMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
-                int databaseHistoryKafkaRecoveryPollIntervalMs) {
-            doSetProperty("databaseHistoryKafkaRecoveryPollIntervalMs", databaseHistoryKafkaRecoveryPollIntervalMs);
-            return this;
-        }
-        /**
-         * The name of the topic for the database schema history.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: oracle
-         * 
-         * @param databaseHistoryKafkaTopic the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder databaseHistoryKafkaTopic(
-                java.lang.String databaseHistoryKafkaTopic) {
-            doSetProperty("databaseHistoryKafkaTopic", databaseHistoryKafkaTopic);
-            return this;
-        }
-        /**
-         * Controls the action Debezium will take when it meets a DDL statement
-         * in binlog, that it cannot parse.By default the connector will stop
-         * operating but by changing the setting it can ignore the statements
-         * which it cannot parse. If skipping is enabled then Debezium can miss
-         * metadata changes.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: oracle
-         * 
-         * @param databaseHistorySkipUnparseableDdl the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder databaseHistorySkipUnparseableDdl(
-                boolean databaseHistorySkipUnparseableDdl) {
-            doSetProperty("databaseHistorySkipUnparseableDdl", databaseHistorySkipUnparseableDdl);
-            return this;
-        }
-        /**
-         * Controls what DDL will Debezium store in database history. By default
-         * (false) Debezium will store all incoming DDL statements. If set to
-         * true, then only DDL that manipulates a captured table will be stored.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: oracle
-         * 
-         * @param databaseHistoryStoreOnlyCapturedTablesDdl the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder databaseHistoryStoreOnlyCapturedTablesDdl(
-                boolean databaseHistoryStoreOnlyCapturedTablesDdl) {
-            doSetProperty("databaseHistoryStoreOnlyCapturedTablesDdl", databaseHistoryStoreOnlyCapturedTablesDdl);
-            return this;
-        }
-        /**
-         * Controls what DDL will Debezium store in database history. By default
-         * (false) Debezium will store all incoming DDL statements. If set to
-         * true, then only DDL that manipulates a monitored table will be stored
-         * (deprecated, use database.history.store.only.captured.tables.ddl
-         * instead).
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: oracle
-         * 
-         * @param databaseHistoryStoreOnlyMonitoredTablesDdl the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder databaseHistoryStoreOnlyMonitoredTablesDdl(
-                boolean databaseHistoryStoreOnlyMonitoredTablesDdl) {
-            doSetProperty("databaseHistoryStoreOnlyMonitoredTablesDdl", databaseHistoryStoreOnlyMonitoredTablesDdl);
             return this;
         }
         /**
@@ -706,24 +497,6 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
-         * Unique name that identifies the database server and all recorded
-         * offsets, and that is used as a prefix for all schemas and topics.
-         * Each distinct installation should have a separate namespace and be
-         * monitored by at most one Debezium connector.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: oracle
-         * 
-         * @param databaseServerName the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder databaseServerName(
-                java.lang.String databaseServerName) {
-            doSetProperty("databaseServerName", databaseServerName);
-            return this;
-        }
-        /**
          * Complete JDBC URL as an alternative to specifying hostname, port and
          * database provided as a way to support alternative connection
          * scenarios.
@@ -775,7 +548,7 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
         /**
          * Specify how DECIMAL and NUMERIC columns should be represented in
-         * change events, including:'precise' (the default) uses
+         * change events, including: 'precise' (the default) uses
          * java.math.BigDecimal to represent values, which are encoded in the
          * change events using a binary representation and Kafka Connect's
          * 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to
@@ -798,11 +571,11 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
         /**
          * Specify how failures during processing of events (i.e. when
-         * encountering a corrupted event) should be handled, including:'fail'
+         * encountering a corrupted event) should be handled, including: 'fail'
          * (the default) an exception indicating the problematic event and its
          * position is raised, causing the connector to be stopped; 'warn' the
          * problematic event and its position will be logged and the event will
-         * be skipped;'ignore' the problematic event will be skipped.
+         * be skipped; 'ignore' the problematic event will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -872,8 +645,9 @@ public interface DebeziumOracleComponentBuilderFactory {
          * to a Kafka topic with the same name as the database server ID. Each
          * schema change will be recorded using a key that contains the database
          * name and whose value include logical description of the new schema
-         * and optionally the DDL statement(s).The default is 'true'. This is
-         * independent of how the connector internally records database history.
+         * and optionally the DDL statement(s). The default is 'true'. This is
+         * independent of how the connector internally records database schema
+         * history.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -890,11 +664,11 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
         /**
          * Whether the connector parse table and column's comment to metadata
-         * object.Note: Enable this option will bring the implications on memory
-         * usage. The number and size of ColumnImpl objects is what largely
-         * impacts how much memory is consumed by the Debezium connectors, and
-         * adding a String to each of them can potentially be quite heavy. The
-         * default is 'false'.
+         * object. Note: Enable this option will bring the implications on
+         * memory usage. The number and size of ColumnImpl objects is what
+         * largely impacts how much memory is consumed by the Debezium
+         * connectors, and adding a String to each of them can potentially be
+         * quite heavy. The default is 'false'.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -911,8 +685,8 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
         /**
          * Specify how INTERVAL columns should be represented in change events,
-         * including:'string' represents values as an exact ISO formatted
-         * string'numeric' (default) represents values using the inexact
+         * including: 'string' represents values as an exact ISO formatted
+         * string; 'numeric' (default) represents values using the inexact
          * conversion into microseconds.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -929,9 +703,9 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
-         * When set to false, the default, LOB fields will not be captured nor
-         * emitted. When set to true, the connector will capture LOB fields and
-         * emit changes for those fields like any other column type.
+         * When set to 'false', the default, LOB fields will not be captured nor
+         * emitted. When set to 'true', the connector will capture LOB fields
+         * and emit changes for those fields like any other column type.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -980,11 +754,11 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
-         * When set to false, the default, the connector will mine both archive
-         * log and redo logs to emit change events. When set to true, the
-         * connector will only mine archive logs. There are circumstances where
-         * its advantageous to only mine archive logs and accept latency in
-         * event emission due to frequent revolving redo logs.
+         * When set to 'false', the default, the connector will mine both
+         * archive log and redo logs to emit change events. When set to 'true',
+         * the connector will only mine archive logs. There are circumstances
+         * where its advantageous to only mine archive logs and accept latency
+         * in event emission due to frequent revolving redo logs.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1149,6 +923,26 @@ public interface DebeziumOracleComponentBuilderFactory {
         default DebeziumOracleComponentBuilder logMiningBufferInfinispanCacheTransactions(
                 java.lang.String logMiningBufferInfinispanCacheTransactions) {
             doSetProperty("logMiningBufferInfinispanCacheTransactions", logMiningBufferInfinispanCacheTransactions);
+            return this;
+        }
+        /**
+         * The number of events a transaction can include before the transaction
+         * is discarded. This is useful for managing buffer memory and/or space
+         * when dealing with very large transactions. Defaults to 0, meaning
+         * that no threshold is applied and transactions can have unlimited
+         * events.
+         * 
+         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: oracle
+         * 
+         * @param logMiningBufferTransactionEventsThreshold the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder logMiningBufferTransactionEventsThreshold(
+                long logMiningBufferTransactionEventsThreshold) {
+            doSetProperty("logMiningBufferTransactionEventsThreshold", logMiningBufferTransactionEventsThreshold);
             return this;
         }
         /**
@@ -1405,12 +1199,12 @@ public interface DebeziumOracleComponentBuilderFactory {
         /**
          * A semicolon-separated list of expressions that match fully-qualified
          * tables and column(s) to be used as message key. Each expression must
-         * match the pattern ':',where the table names could be defined as
+         * match the pattern ':', where the table names could be defined as
          * (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the
-         * specific connector,and the key columns are a comma-separated list of
+         * specific connector, and the key columns are a comma-separated list of
          * columns representing the custom key. For any table without an
          * explicit key configuration the table's primary key column(s) will be
-         * used as message key.Example:
+         * used as message key. Example:
          * dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1460,7 +1254,7 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
         /**
          * The maximum number of records that should be loaded into memory while
-         * streaming. A value of 0 uses the default JDBC fetch size.
+         * streaming. A value of '0' uses the default JDBC fetch size.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -1523,14 +1317,88 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
-         * Specify how schema names should be adjusted for compatibility with
-         * the message converter used by the connector, including:'avro'
-         * replaces the characters that cannot be used in the Avro type name
-         * with underscore (default)'none' does not apply any adjustment.
+         * The name of the SchemaHistory class that should be used to store and
+         * recover database schema changes. The configuration properties for the
+         * history are prefixed with the 'schema.history.internal.' string.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: avro
+         * Default: io.debezium.storage.kafka.history.KafkaSchemaHistory
+         * Group: oracle
+         * 
+         * @param schemaHistoryInternal the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder schemaHistoryInternal(
+                java.lang.String schemaHistoryInternal) {
+            doSetProperty("schemaHistoryInternal", schemaHistoryInternal);
+            return this;
+        }
+        /**
+         * The path to the file that will be used to record the database schema
+         * history.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param schemaHistoryInternalFileFilename the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder schemaHistoryInternalFileFilename(
+                java.lang.String schemaHistoryInternalFileFilename) {
+            doSetProperty("schemaHistoryInternalFileFilename", schemaHistoryInternalFileFilename);
+            return this;
+        }
+        /**
+         * Controls the action Debezium will take when it meets a DDL statement
+         * in binlog, that it cannot parse.By default the connector will stop
+         * operating but by changing the setting it can ignore the statements
+         * which it cannot parse. If skipping is enabled then Debezium can miss
+         * metadata changes.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param schemaHistoryInternalSkipUnparseableDdl the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder schemaHistoryInternalSkipUnparseableDdl(
+                boolean schemaHistoryInternalSkipUnparseableDdl) {
+            doSetProperty("schemaHistoryInternalSkipUnparseableDdl", schemaHistoryInternalSkipUnparseableDdl);
+            return this;
+        }
+        /**
+         * Controls what DDL will Debezium store in database schema history. By
+         * default (false) Debezium will store all incoming DDL statements. If
+         * set to true, then only DDL that manipulates a captured table will be
+         * stored.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: oracle
+         * 
+         * @param schemaHistoryInternalStoreOnlyCapturedTablesDdl the value to
+         * set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder schemaHistoryInternalStoreOnlyCapturedTablesDdl(
+                boolean schemaHistoryInternalStoreOnlyCapturedTablesDdl) {
+            doSetProperty("schemaHistoryInternalStoreOnlyCapturedTablesDdl", schemaHistoryInternalStoreOnlyCapturedTablesDdl);
+            return this;
+        }
+        /**
+         * Specify how schema names should be adjusted for compatibility with
+         * the message converter used by the connector, including: 'avro'
+         * replaces the characters that cannot be used in the Avro type name
+         * with underscore; 'none' does not apply any adjustment (default).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: none
          * Group: oracle
          * 
          * @param schemaNameAdjustmentMode the value to set
@@ -1561,10 +1429,11 @@ public interface DebeziumOracleComponentBuilderFactory {
          * The comma-separated list of operations to skip during streaming,
          * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes,
          * 't' for truncates, and 'none' to indicate nothing skipped. By
-         * default, no operations will be skipped.
+         * default, only truncate operations will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Default: t
          * Group: oracle
          * 
          * @param skippedOperations the value to set
@@ -1624,7 +1493,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
-         * this setting must be set to specify a list of tables/collections
+         * This setting must be set to specify a list of tables/collections
          * whose snapshot must be taken on creating or restarting the connector.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1723,7 +1592,7 @@ public interface DebeziumOracleComponentBuilderFactory {
         /**
          * This property contains a comma-separated list of fully-qualified
          * tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on
-         * thespecific connectors. Select statements for the individual tables
+         * the specific connectors. Select statements for the individual tables
          * are specified in further configuration properties, one for each
          * table, identified by the id
          * 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or
@@ -1744,40 +1613,6 @@ public interface DebeziumOracleComponentBuilderFactory {
         default DebeziumOracleComponentBuilder snapshotSelectStatementOverrides(
                 java.lang.String snapshotSelectStatementOverrides) {
             doSetProperty("snapshotSelectStatementOverrides", snapshotSelectStatementOverrides);
-            return this;
-        }
-        /**
-         * A version of the format of the publicly visible source part in the
-         * message.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: v2
-         * Group: oracle
-         * 
-         * @param sourceStructVersion the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder sourceStructVersion(
-                java.lang.String sourceStructVersion) {
-            doSetProperty("sourceStructVersion", sourceStructVersion);
-            return this;
-        }
-        /**
-         * A comma-separated list of regular expressions that match the
-         * fully-qualified names of tables to be excluded from monitoring
-         * (deprecated, use table.exclude.list instead).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: oracle
-         * 
-         * @param tableBlacklist the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder tableBlacklist(
-                java.lang.String tableBlacklist) {
-            doSetProperty("tableBlacklist", tableBlacklist);
             return this;
         }
         /**
@@ -1812,30 +1647,14 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
-         * The tables for which changes are to be captured (deprecated, use
-         * table.include.list instead).
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: oracle
-         * 
-         * @param tableWhitelist the value to set
-         * @return the dsl builder
-         */
-        default DebeziumOracleComponentBuilder tableWhitelist(
-                java.lang.String tableWhitelist) {
-            doSetProperty("tableWhitelist", tableWhitelist);
-            return this;
-        }
-        /**
          * Time, date, and timestamps can be represented with different kinds of
-         * precisions, including:'adaptive' (the default) bases the precision of
-         * time, date, and timestamp values on the database column's precision;
-         * 'adaptive_time_microseconds' like 'adaptive' mode, but TIME fields
-         * always use microseconds precision;'connect' always represents time,
-         * date, and timestamp values using Kafka Connect's built-in
-         * representations for Time, Date, and Timestamp, which uses millisecond
-         * precision regardless of the database columns' precision .
+         * precisions, including: 'adaptive' (the default) bases the precision
+         * of time, date, and timestamp values on the database column's
+         * precision; 'adaptive_time_microseconds' like 'adaptive' mode, but
+         * TIME fields always use microseconds precision; 'connect' always
+         * represents time, date, and timestamp values using Kafka Connect's
+         * built-in representations for Time, Date, and Timestamp, which uses
+         * millisecond precision regardless of the database columns' precision.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1852,10 +1671,10 @@ public interface DebeziumOracleComponentBuilderFactory {
         }
         /**
          * Whether delete operations should be represented by a delete event and
-         * a subsquenttombstone event (true) or only by a delete event (false).
-         * Emitting the tombstone event (the default behavior) allows Kafka to
-         * completely delete all events pertaining to the given key once the
-         * source record got deleted.
+         * a subsequent tombstone event (true) or only by a delete event
+         * (false). Emitting the tombstone event (the default behavior) allows
+         * Kafka to completely delete all events pertaining to the given key
+         * once the source record got deleted.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1871,21 +1690,41 @@ public interface DebeziumOracleComponentBuilderFactory {
             return this;
         }
         /**
-         * The name of the transaction metadata topic. The placeholder
-         * ${database.server.name} can be used for referring to the connector's
-         * logical name; defaults to ${database.server.name}.transaction.
+         * The name of the TopicNamingStrategy class that should be used to
+         * determine the topic name for data change, schema change, transaction,
+         * heartbeat event etc.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: ${database.server.name}.transaction
+         * Default: io.debezium.schema.SchemaTopicNamingStrategy
          * Group: oracle
          * 
-         * @param transactionTopic the value to set
+         * @param topicNamingStrategy the value to set
          * @return the dsl builder
          */
-        default DebeziumOracleComponentBuilder transactionTopic(
-                java.lang.String transactionTopic) {
-            doSetProperty("transactionTopic", transactionTopic);
+        default DebeziumOracleComponentBuilder topicNamingStrategy(
+                java.lang.String topicNamingStrategy) {
+            doSetProperty("topicNamingStrategy", topicNamingStrategy);
+            return this;
+        }
+        /**
+         * Topic prefix that identifies and provides a namespace for the
+         * particular database server/cluster is capturing changes. The topic
+         * prefix should be unique across all other connectors, since it is used
+         * as a prefix for all Kafka topic names that receive events emitted by
+         * this connector. Only alphanumeric characters, hyphens, dots and
+         * underscores must be accepted.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: oracle
+         * 
+         * @param topicPrefix the value to set
+         * @return the dsl builder
+         */
+        default DebeziumOracleComponentBuilder topicPrefix(
+                java.lang.String topicPrefix) {
+            doSetProperty("topicPrefix", topicPrefix);
             return this;
         }
         /**
@@ -1945,30 +1784,17 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "offsetStorageTopic": getOrCreateConfiguration((DebeziumOracleComponent) component).setOffsetStorageTopic((java.lang.String) value); return true;
             case "autowiredEnabled": ((DebeziumOracleComponent) component).setAutowiredEnabled((boolean) value); return true;
             case "binaryHandlingMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setBinaryHandlingMode((java.lang.String) value); return true;
-            case "columnBlacklist": getOrCreateConfiguration((DebeziumOracleComponent) component).setColumnBlacklist((java.lang.String) value); return true;
             case "columnExcludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setColumnExcludeList((java.lang.String) value); return true;
             case "columnIncludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setColumnIncludeList((java.lang.String) value); return true;
             case "columnPropagateSourceType": getOrCreateConfiguration((DebeziumOracleComponent) component).setColumnPropagateSourceType((java.lang.String) value); return true;
-            case "columnWhitelist": getOrCreateConfiguration((DebeziumOracleComponent) component).setColumnWhitelist((java.lang.String) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumOracleComponent) component).setConverters((java.lang.String) value); return true;
             case "databaseConnectionAdapter": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseConnectionAdapter((java.lang.String) value); return true;
             case "databaseDbname": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseDbname((java.lang.String) value); return true;
-            case "databaseHistory": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistory((java.lang.String) value); return true;
-            case "databaseHistoryFileFilename": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistoryFileFilename((java.lang.String) value); return true;
-            case "databaseHistoryKafkaBootstrapServers": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistoryKafkaBootstrapServers((java.lang.String) value); return true;
-            case "databaseHistoryKafkaQueryTimeoutMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistoryKafkaQueryTimeoutMs((long) value); return true;
-            case "databaseHistoryKafkaRecoveryAttempts": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistoryKafkaRecoveryAttempts((int) value); return true;
-            case "databaseHistoryKafkaRecoveryPollIntervalMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistoryKafkaRecoveryPollIntervalMs((int) value); return true;
-            case "databaseHistoryKafkaTopic": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistoryKafkaTopic((java.lang.String) value); return true;
-            case "databaseHistorySkipUnparseableDdl": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistorySkipUnparseableDdl((boolean) value); return true;
-            case "databaseHistoryStoreOnlyCapturedTablesDdl": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistoryStoreOnlyCapturedTablesDdl((boolean) value); return true;
-            case "databaseHistoryStoreOnlyMonitoredTablesDdl": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHistoryStoreOnlyMonitoredTablesDdl((boolean) value); return true;
             case "databaseHostname": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseHostname((java.lang.String) value); return true;
             case "databaseOutServerName": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseOutServerName((java.lang.String) value); return true;
             case "databasePassword": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabasePassword((java.lang.String) value); return true;
             case "databasePdbName": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabasePdbName((java.lang.String) value); return true;
             case "databasePort": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabasePort((int) value); return true;
-            case "databaseServerName": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseServerName((java.lang.String) value); return true;
             case "databaseUrl": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseUrl((java.lang.String) value); return true;
             case "databaseUser": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatabaseUser((java.lang.String) value); return true;
             case "datatypePropagateSourceType": getOrCreateConfiguration((DebeziumOracleComponent) component).setDatatypePropagateSourceType((java.lang.String) value); return true;
@@ -1993,6 +1819,7 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "logMiningBufferInfinispanCacheProcessedTransactions": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheProcessedTransactions((java.lang.String) value); return true;
             case "logMiningBufferInfinispanCacheSchemaChanges": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheSchemaChanges((java.lang.String) value); return true;
             case "logMiningBufferInfinispanCacheTransactions": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferInfinispanCacheTransactions((java.lang.String) value); return true;
+            case "logMiningBufferTransactionEventsThreshold": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferTransactionEventsThreshold((long) value); return true;
             case "logMiningBufferType": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningBufferType((java.lang.String) value); return true;
             case "logMiningScnGapDetectionGapSizeMin": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningScnGapDetectionGapSizeMin((long) value); return true;
             case "logMiningScnGapDetectionTimeIntervalMaxMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setLogMiningScnGapDetectionTimeIntervalMaxMs((long) value); return true;
@@ -2014,6 +1841,10 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "racNodes": getOrCreateConfiguration((DebeziumOracleComponent) component).setRacNodes((java.lang.String) value); return true;
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumOracleComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "sanitizeFieldNames": getOrCreateConfiguration((DebeziumOracleComponent) component).setSanitizeFieldNames((boolean) value); return true;
+            case "schemaHistoryInternal": getOrCreateConfiguration((DebeziumOracleComponent) component).setSchemaHistoryInternal((java.lang.String) value); return true;
+            case "schemaHistoryInternalFileFilename": getOrCreateConfiguration((DebeziumOracleComponent) component).setSchemaHistoryInternalFileFilename((java.lang.String) value); return true;
+            case "schemaHistoryInternalSkipUnparseableDdl": getOrCreateConfiguration((DebeziumOracleComponent) component).setSchemaHistoryInternalSkipUnparseableDdl((boolean) value); return true;
+            case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": getOrCreateConfiguration((DebeziumOracleComponent) component).setSchemaHistoryInternalStoreOnlyCapturedTablesDdl((boolean) value); return true;
             case "schemaNameAdjustmentMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setSchemaNameAdjustmentMode((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumOracleComponent) component).setSignalDataCollection((java.lang.String) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumOracleComponent) component).setSkippedOperations((java.lang.String) value); return true;
@@ -2026,14 +1857,12 @@ public interface DebeziumOracleComponentBuilderFactory {
             case "snapshotMaxThreads": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotMaxThreads((int) value); return true;
             case "snapshotMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotMode((java.lang.String) value); return true;
             case "snapshotSelectStatementOverrides": getOrCreateConfiguration((DebeziumOracleComponent) component).setSnapshotSelectStatementOverrides((java.lang.String) value); return true;
-            case "sourceStructVersion": getOrCreateConfiguration((DebeziumOracleComponent) component).setSourceStructVersion((java.lang.String) value); return true;
-            case "tableBlacklist": getOrCreateConfiguration((DebeziumOracleComponent) component).setTableBlacklist((java.lang.String) value); return true;
             case "tableExcludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setTableExcludeList((java.lang.String) value); return true;
             case "tableIncludeList": getOrCreateConfiguration((DebeziumOracleComponent) component).setTableIncludeList((java.lang.String) value); return true;
-            case "tableWhitelist": getOrCreateConfiguration((DebeziumOracleComponent) component).setTableWhitelist((java.lang.String) value); return true;
             case "timePrecisionMode": getOrCreateConfiguration((DebeziumOracleComponent) component).setTimePrecisionMode((java.lang.String) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumOracleComponent) component).setTombstonesOnDelete((boolean) value); return true;
-            case "transactionTopic": getOrCreateConfiguration((DebeziumOracleComponent) component).setTransactionTopic((java.lang.String) value); return true;
+            case "topicNamingStrategy": getOrCreateConfiguration((DebeziumOracleComponent) component).setTopicNamingStrategy((java.lang.String) value); return true;
+            case "topicPrefix": getOrCreateConfiguration((DebeziumOracleComponent) component).setTopicPrefix((java.lang.String) value); return true;
             case "unavailableValuePlaceholder": getOrCreateConfiguration((DebeziumOracleComponent) component).setUnavailableValuePlaceholder((java.lang.String) value); return true;
             default: return false;
             }
