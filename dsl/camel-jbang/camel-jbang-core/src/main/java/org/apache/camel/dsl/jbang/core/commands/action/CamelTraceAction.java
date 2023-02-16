@@ -699,7 +699,7 @@ public class CamelTraceAction extends ActionBaseCommand {
                 new Column().dataAlign(HorizontalAlign.LEFT)
                         .minWidth(showExchangeProperties ? 10 : 8).with(TableRow::kindAsString),
                 new Column().dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(40, OverflowBehaviour.NEWLINE).with(TableRow::typeAsString),
+                        .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(TableRow::typeAsString),
                 new Column().dataAlign(HorizontalAlign.RIGHT)
                         .maxWidth(40, OverflowBehaviour.NEWLINE).with(TableRow::keyAsString),
                 new Column().dataAlign(HorizontalAlign.LEFT)
