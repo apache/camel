@@ -70,9 +70,9 @@ public class CamelLogAction extends ActionBaseCommand {
                         description = "Print prefix with running Camel integration name.")
     boolean prefix = true;
 
-    @CommandLine.Option(names = { "--tail" },
-                        description = "The number of lines from the end of the logs to show. Defaults to showing all logs.")
-    int tail;
+    @CommandLine.Option(names = { "--tail" }, defaultValue = "-1",
+                        description = "The number of lines from the end of the logs to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all logs from beginning.")
+    int tail = -1;
 
     @CommandLine.Option(names = { "--since" },
                         description = "Return logs newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified.")
@@ -131,10 +131,11 @@ public class CamelLogAction extends ActionBaseCommand {
                 }
                 limit = new Date(System.currentTimeMillis() - millis);
             }
-
-            // dump existing log lines
-            tailLogFiles(rows, tail, limit);
-            dumpLogFiles(rows, tail);
+            if (tail != 0) {
+                // dump existing log lines
+                tailLogFiles(rows, tail, limit);
+                dumpLogFiles(rows, tail);
+            }
         }
 
         if (follow) {
@@ -218,9 +219,14 @@ public class CamelLogAction extends ActionBaseCommand {
 
         for (Row row : rows.values()) {
             if (row.reader == null) {
-                File log = logFile(row.pid);
-                if (log.exists()) {
-                    row.reader = new LineNumberReader(new FileReader(log));
+                File file = logFile(row.pid);
+                if (file.exists()) {
+                    row.reader = new LineNumberReader(new FileReader(file));
+                    if (tail == 0) {
+                        // only read new lines so forward to end of reader
+                        long size = file.length();
+                        row.reader.skip(size);
+                    }
                 }
             }
             if (row.reader != null) {
@@ -380,7 +386,7 @@ public class CamelLogAction extends ActionBaseCommand {
             if (log.exists()) {
                 row.reader = new LineNumberReader(new FileReader(log));
                 String line;
-                if (tail == 0) {
+                if (tail <= 0) {
                     row.fifo = new ArrayDeque<>();
                 } else {
                     row.fifo = new ArrayBlockingQueue<>(tail);

@@ -84,9 +84,9 @@ public class CamelTraceAction extends ActionBaseCommand {
                         description = "Detail level of tracing. 0 = Created+Completed. 1=All events on 1st level, 2=All events on 1st+2nd level, and so on. 9 = all events on every level.")
     int level;
 
-    @CommandLine.Option(names = { "--tail" },
-                        description = "The number of traces from the end of the trace to show. Defaults to showing all traces.")
-    int tail;
+    @CommandLine.Option(names = { "--tail" }, defaultValue = "-1",
+                        description = "The number of traces from the end of the trace to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all traces from beginning.")
+    int tail = -1;
 
     @CommandLine.Option(names = { "--since" },
                         description = "Return traces newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified.")
@@ -171,8 +171,10 @@ public class CamelTraceAction extends ActionBaseCommand {
                 limit = new Date(System.currentTimeMillis() - millis);
             }
             // dump existing traces
-            tailTraceFiles(pids, tail);
-            dumpTraceFiles(pids, tail, limit);
+            if (tail != 0) {
+                tailTraceFiles(pids, tail);
+                dumpTraceFiles(pids, tail, limit);
+            }
         }
 
         if (follow) {
@@ -212,7 +214,7 @@ public class CamelTraceAction extends ActionBaseCommand {
             if (file.exists()) {
                 pid.reader = new LineNumberReader(new FileReader(file));
                 String line;
-                if (tail == 0) {
+                if (tail <= 0) {
                     pid.fifo = new ArrayDeque<>();
                 } else {
                     pid.fifo = new ArrayBlockingQueue<>(tail);
@@ -282,6 +284,11 @@ public class CamelTraceAction extends ActionBaseCommand {
                 File file = getTraceFile(pid.pid);
                 if (file.exists()) {
                     pid.reader = new LineNumberReader(new FileReader(file));
+                    if (tail == 0) {
+                        // only read new lines so forward to end of reader
+                        long size = file.length();
+                        pid.reader.skip(size);
+                    }
                 }
             }
             if (pid.reader != null) {
