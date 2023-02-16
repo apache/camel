@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -69,14 +70,14 @@ public class BeanInfo {
     private static final String CGLIB_METHOD_MARKER = "CGLIB$";
     private static final String BYTE_BUDDY_CLASS_SEPARATOR = "$ByteBuddy$";
     private static final String BYTE_BUDDY_METHOD_MARKER = "$accessor$";
-    private static final String ARIES_PROXY_CLASS_PREFIX = "Proxy";
     private static final String CLIENT_PROXY_SUFFIX = "_ClientProxy";
     private static final String SUBCLASS_SUFFIX = "_Subclass";
     private static final String[] EXCLUDED_METHOD_NAMES = new String[] {
             "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "wait", // java.lang.Object
             "getInvocationHandler", "getProxyClass", "isProxyClass", "newProxyInstance" // java.lang.Proxy
     };
-
+    private static final Pattern ARIES_PROXY_CLASS_PATTERN
+            = Pattern.compile("^Proxy[0-9a-fA-F]{8}_[0-9a-fA-F]{4}_[0-9a-fA-F]{4}_[0-9a-fA-F]{4}_[0-9a-fA-F]{12}$");
     private static final Set<String> KNOWN_PROXY_INTERFACES = Collections.unmodifiableSet(Stream.of(
             "org.apache.aries.proxy.weaving.WovenProxy").collect(Collectors.toSet()));
 
@@ -1159,7 +1160,7 @@ public class BeanInfo {
                 && (clazz.getName().contains(CGLIB_CLASS_SEPARATOR) || clazz.getName().endsWith(CLIENT_PROXY_SUFFIX)
                         || clazz.getName().endsWith(SUBCLASS_SUFFIX)
                         || clazz.getName().contains(BYTE_BUDDY_CLASS_SEPARATOR)
-                        || clazz.getName().startsWith(ARIES_PROXY_CLASS_PREFIX))) {
+                        || ARIES_PROXY_CLASS_PATTERN.matcher(clazz.getName()).matches())) {
             Class<?> superClass = clazz.getSuperclass();
             if (superClass != null && !Object.class.equals(superClass)) {
                 return superClass;
