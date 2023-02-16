@@ -80,9 +80,9 @@ public class CamelTraceAction extends ActionBaseCommand {
                         description = "Prefer to display source filename/code instead of IDs")
     boolean source;
 
-    @CommandLine.Option(names = { "--level" }, defaultValue = "9",
-                        description = "Detail level of tracing. 0 = Created+Completed. 1=All events on 1st level, 2=All events on 1st+2nd level, and so on. 9 = all events on every level.")
-    int level;
+    @CommandLine.Option(names = { "--depth" }, defaultValue = "9",
+                        description = "Depth of tracing. 0=Created+Completed. 1=All events on 1st route, 2=All events on 1st+2nd depth, and so on. 9 = all events on every depth.")
+    int depth;
 
     @CommandLine.Option(names = { "--tail" }, defaultValue = "-1",
                         description = "The number of traces from the end of the trace to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all traces from beginning.")
@@ -123,6 +123,10 @@ public class CamelTraceAction extends ActionBaseCommand {
                         description = "Compact output (no empty line separating traced messages)")
     boolean compact = true;
 
+    @CommandLine.Option(names = { "--latest" },
+                        description = "Only output traces from the latest (follow if necessary until complete and exit)")
+    boolean latest;
+
     String findAnsi;
 
     private int nameMaxWidth;
@@ -138,6 +142,12 @@ public class CamelTraceAction extends ActionBaseCommand {
     @Override
     public Integer call() throws Exception {
         Map<Long, Pid> pids = new LinkedHashMap<>();
+
+        if (latest) {
+            // turn of tail/since when in latest mode
+            tail = 0;
+            since = null;
+        }
 
         // find new pids
         updatePids(pids);
@@ -174,12 +184,16 @@ public class CamelTraceAction extends ActionBaseCommand {
             if (tail != 0) {
                 tailTraceFiles(pids, tail);
                 dumpTraceFiles(pids, tail, limit);
+            } else if (latest) {
+                // position until latest start and let follow dump
+                positionTraceLatest(pids);
             }
         }
 
         if (follow) {
             boolean waitMessage = true;
             StopWatch watch = new StopWatch();
+            boolean more = true;
             do {
                 if (pids.isEmpty()) {
                     if (waitMessage) {
@@ -197,15 +211,39 @@ public class CamelTraceAction extends ActionBaseCommand {
                     }
                     int lines = readTraceFiles(pids);
                     if (lines > 0) {
-                        dumpTraceFiles(pids, 0, null);
-                    } else {
+                        more = dumpTraceFiles(pids, 0, null);
+                    } else if (lines == 0) {
                         Thread.sleep(100);
+                    } else {
+                        break;
                     }
                 }
-            } while (true);
+            } while (more);
         }
 
         return 0;
+    }
+
+    private void positionTraceLatest(Map<Long, Pid> pids) throws Exception {
+        for (Pid pid : pids.values()) {
+            File file = getTraceFile(pid.pid);
+            if (file.exists()) {
+                pid.reader = new LineNumberReader(new FileReader(file));
+                String line;
+                do {
+                    line = pid.reader.readLine();
+                    if (line != null) {
+                        List<Row> rows = parseTraceLine(pid, line);
+                        for (Row r : rows) {
+                            if (r.first) {
+                                pid.reader.mark(8192);
+                            }
+                        }
+                    }
+                } while (line != null);
+            }
+            pid.reader.reset();
+        }
     }
 
     private void tailTraceFiles(Map<Long, Pid> pids, int tail) throws Exception {
@@ -372,7 +410,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         return null;
     }
 
-    private void dumpTraceFiles(Map<Long, Pid> pids, int tail, Date limit) {
+    private boolean dumpTraceFiles(Map<Long, Pid> pids, int tail, Date limit) {
         Set<String> names = new HashSet<>();
         List<Row> rows = new ArrayList<>();
         for (Pid pid : pids.values()) {
@@ -422,9 +460,20 @@ public class CamelTraceAction extends ActionBaseCommand {
             }
         }
 
-        rows.forEach(r -> {
+        int doneTraces = 0;
+        for (Row r : rows) {
             printTrace(r.name, r, limit);
-        });
+            if (r.done) {
+                doneTraces++;
+            }
+        }
+
+        if (latest) {
+            // in latest mode we continue until we have first done
+            return doneTraces == 0;
+        } else {
+            return true;
+        }
     }
 
     private boolean isValidGrep(String line) {
@@ -460,7 +509,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         }
 
         String json = getDataAsJSon(row);
-        boolean valid = filterLevel(row) && isValidSince(limit, row.timestamp) && isValidGrep(json);
+        boolean valid = filterDepth(row) && isValidSince(limit, row.timestamp) && isValidGrep(json);
         if (!valid) {
             return;
         }
@@ -602,15 +651,15 @@ public class CamelTraceAction extends ActionBaseCommand {
         }
     }
 
-    private boolean filterLevel(Row row) {
-        if (level >= 9) {
+    private boolean filterDepth(Row row) {
+        if (depth >= 9) {
             return true;
         }
-        if (level == 0) {
-            // only input or output outer level
+        if (depth == 0) {
+            // special with only created/completed
             return row.parent.depth == 1 && row.first || row.parent.depth == 0 && row.last;
         }
-        return row.parent.depth <= level;
+        return row.parent.depth <= depth;
     }
 
     private String getDataAsJSon(Row r) {
