@@ -64,6 +64,10 @@ public class CamelTraceAction extends ActionBaseCommand {
                         description = "Print timestamp.")
     boolean timestamp = true;
 
+    @CommandLine.Option(names = { "--ago" },
+                        description = "Use ago instead of yyyy-MM-dd HH:mm:ss in timestamp.")
+    boolean ago;
+
     @CommandLine.Option(names = { "--pretty" }, defaultValue = "false",
                         description = "Pretty print traced message")
     boolean pretty;
@@ -532,8 +536,13 @@ public class CamelTraceAction extends ActionBaseCommand {
             }
         }
         if (timestamp) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-            String ts = sdf.format(new Date(row.timestamp));
+            String ts;
+            if (ago) {
+                ts = String.format("%12s", TimeUtils.printSince(row.timestamp) + " ago");
+            } else {
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+                ts = sdf.format(new Date(row.timestamp));
+            }
             if (loggingColor) {
                 AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(ts).reset());
             } else {
