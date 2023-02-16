@@ -2695,11 +2695,6 @@
                 <artifactId>jackson-jr-objects</artifactId>
                 <version>${jackson2-version}</version>
             </dependency>
-            <dependency>
-              <groupId>com.github.jasminb</groupId>
-              <artifactId>jsonapi-converter</artifactId>
-              <version>${jasminb-jsonapi-version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>com.alibaba</groupId>
