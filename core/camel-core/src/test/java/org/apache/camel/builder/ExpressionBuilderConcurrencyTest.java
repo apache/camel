@@ -100,7 +100,6 @@ public class ExpressionBuilderConcurrencyTest extends ContextTestSupport {
         var simpleExpression = new SimpleExpression();
         simpleExpression.setExpression(template);
         return simpleExpression.evaluate(exchange, String.class);
-
     }
 
 }

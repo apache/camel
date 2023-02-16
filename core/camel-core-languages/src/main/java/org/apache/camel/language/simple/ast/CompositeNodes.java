@@ -64,7 +64,7 @@ public class CompositeNodes extends BaseSimpleNode {
             for (SimpleNode child : children) {
                 answer.add(child.createExpression(camelContext, expression));
             }
-            return ExpressionBuilder.concatExpression(answer);
+            return ExpressionBuilder.concatExpression(camelContext, answer);
         }
     }
 

@@ -121,7 +121,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
             return expressions.get(0);
         } else {
             // concat expressions as evaluating an expression is like a template language
-            return ExpressionBuilder.concatExpression(expressions, expression);
+            return ExpressionBuilder.concatExpression(camelContext, expressions, expression);
         }
     }
 
