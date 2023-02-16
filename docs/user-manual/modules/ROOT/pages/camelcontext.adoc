@@ -103,13 +103,10 @@ your own custom code. The figure below shows the flow between processors.
 
 image::images/message_flow_in_route.png[image]
 
-A route first starts with a consumer (i.e. `from` in the DSL) that populates the initial
-xref:exchange.adoc[exchange]. At each processor step, the out message from the previous step is the in
-message of the next. In many cases, processors don’t set an out message, so in this case
-the in message is reused. At the end of a route, the xref:exchange-pattern.adoc[MEP] of the exchange determines
-whether a reply needs to be sent back to the caller of the route. If the xref:exchange-pattern.adoc[MEP] is InOnly,
-no reply will be sent back. If it’s InOut, Camel will take the out message from the last
-step and return it.
+A route starts with a consumer (i.e., `from` in the DSL) that populates the initial xref:exchange.adoc[exchange]. At each processor step, the output (out) message
+from the previous step is the input (in) message of the next. In many cases, processors don’t set an out message, so in this case the in message
+is reused. The xref:exchange-pattern.adoc[exchange pattern] of the exchange determines, at the end of a route, whether a reply needs to be sent back to the caller of the route.
+If the exchange pattern (MEP) is InOnly, no reply will be sent back. If it’s InOut, Camel will take the out message from the last step and return it.
 
 === Component
 
