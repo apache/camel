@@ -63,7 +63,9 @@ public class BeanInfo {
     private static final Logger LOG = LoggerFactory.getLogger(BeanInfo.class);
     private static final String CGLIB_CLASS_SEPARATOR = "$$";
     private static final String CGLIB_METHOD_MARKER = "CGLIB$";
+    private static final String BYTE_BUDDY_CLASS_SEPARATOR = "$ByteBuddy$";
     private static final String BYTE_BUDDY_METHOD_MARKER = "$accessor$";
+    private static final String ARIES_PROXY_CLASS_PREFIX = "Proxy";
     private static final String CLIENT_PROXY_SUFFIX = "_ClientProxy";
     private static final String SUBCLASS_SUFFIX = "_Subclass";
     private static final String[] EXCLUDED_METHOD_NAMES = new String[] {
@@ -1147,7 +1149,9 @@ public class BeanInfo {
     private static Class<?> getTargetClass(Class<?> clazz) {
         if (clazz != null
                 && (clazz.getName().contains(CGLIB_CLASS_SEPARATOR) || clazz.getName().endsWith(CLIENT_PROXY_SUFFIX)
-                        || clazz.getName().endsWith(SUBCLASS_SUFFIX))) {
+                        || clazz.getName().endsWith(SUBCLASS_SUFFIX)
+                        || clazz.getName().contains(BYTE_BUDDY_CLASS_SEPARATOR)
+                        || clazz.getName().startsWith(ARIES_PROXY_CLASS_PREFIX))) {
             Class<?> superClass = clazz.getSuperclass();
             if (superClass != null && !Object.class.equals(superClass)) {
                 return superClass;

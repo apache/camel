@@ -25,7 +25,9 @@ import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
+import org.apache.camel.Message;
 import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,7 +38,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static net.bytebuddy.matcher.ElementMatchers.named;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.lenient;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class BeanInfoTest {
@@ -74,6 +78,14 @@ public class BeanInfoTest {
     }
 
     @Test
+    public void testInvocationOnSyntheticProxy() {
+        Object proxy = buildProxyObject(MyDerivedClass.class);
+
+        BeanInfo info = new BeanInfo(context, proxy.getClass());
+        info.createInvocation(info, createMockExchange());
+    }
+
+    @Test
     public void testHandlerOnDerived() {
         BeanInfo info = new BeanInfo(context, MyDerivedClass.class);
         assertFalse(info.hasAnyMethodHandlerAnnotation());
@@ -108,10 +120,22 @@ public class BeanInfoTest {
         assertTrue(info.hasAnyMethodHandlerAnnotation());
     }
 
+    private Exchange createMockExchange() {
+        Exchange exchange = mock(Exchange.class);
+        Message message = mock(Message.class);
+        when(exchange.getIn()).thenReturn(message);
+        when(message.getHeader(eq(Exchange.BEAN_METHOD_NAME), eq(String.class))).thenReturn("myMethod");
+        return exchange;
+    }
+
     private Object buildProxyObject() {
+        return buildProxyObject(MyClass.class);
+    }
+
+    private Object buildProxyObject(Class<?> clazz) {
         try {
             return new ByteBuddy()
-                    .subclass(MyClass.class)
+                    .subclass(clazz)
                     .modifiers(SyntheticState.SYNTHETIC, Visibility.PUBLIC, Ownership.STATIC)
                     .method(named("myMethod"))
                     .intercept(MethodDelegation.to(
