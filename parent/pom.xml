@@ -2632,11 +2632,6 @@
             </dependency>
 
             <dependency>
-                <groupId>com.datastax.oss</groupId>
-                <artifactId>java-driver-query-builder</artifactId>
-                <version>${cassandra-driver-version}</version>
-            </dependency>
-            <dependency>
                 <groupId>net.thisptr</groupId>
                 <artifactId>jackson-jq</artifactId>
                 <version>${jackson-jq-version}</version>
