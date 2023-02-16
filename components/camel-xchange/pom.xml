@@ -42,6 +42,7 @@
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-core</artifactId>
+            <version>${xchange-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.code.findbugs</groupId>

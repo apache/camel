@@ -2696,12 +2696,6 @@
                 <version>${jackson2-version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.knowm.xchange</groupId>
-                <artifactId>xchange-core</artifactId>
-                <version>${xchange-version}</version>
-            </dependency>
-
             <!-- abdera dependencies-->
             <dependency>
                 <groupId>org.apache.abdera</groupId>
