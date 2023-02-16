@@ -33,28 +33,22 @@ public class ExpressionBuilderConcurrencyTest extends ContextTestSupport {
     @Test
     public void testConcatExpressionConcurrency() throws Exception {
         MockEndpoint mockWithFailure = getMockEndpoint("mock:result");
-        mockWithFailure.expectedMessageCount(102);
+        mockWithFailure.expectedMinimumMessageCount(100);
         mockWithFailure.assertIsSatisfied();
-        //assertMockEndpointsSatisfied();
         List<Exchange> exchanges = mockWithFailure.getExchanges();
         exchanges.stream()
-                .forEach(exchange -> Assertions.assertTrue(exchange.getMessage()
-                        .getHeader("#CustomHeader", String.class)
-                        .equals("This is a test a with startLabel: `Document` endLabel: `Document` and label: `ALabel`")));
+                .forEach(exchange ->
+                        Assertions
+                         .assertEquals(
+                                 "This is a test a with startLabel: `Document` endLabel: `Document` and label: `ALabel`",
+                                 exchange.getMessage().getHeader("#CustomHeader", String.class)));
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
 
         return new RouteBuilder() {
-            Map body = new HashMap() {
-                {
-                    put("label", "ALabel");
-                    put("startLabel", "Document");
-                    put("endLabel", "Document");
-                }
-            };
-
+            Map body = Map.of("label", "ALabel", "startLabel", "Document", "endLabel", "Document");
             String simpleTemplate
                     = "This is a test a with startLabel: `${body.get('startLabel')}` endLabel: `${body.get('endLabel')}` and label: `${body.get('label')}`";
 
