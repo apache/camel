@@ -77,6 +77,7 @@ public class CamelTraceAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--prefix" }, defaultValue = "true",
                         description = "Print prefix with running Camel integration name.")
     boolean prefix = true;
+    // TODO: true|false|auto (same for log)
 
     @CommandLine.Option(names = { "--source" },
                         description = "Prefer to display source filename/code instead of IDs")
