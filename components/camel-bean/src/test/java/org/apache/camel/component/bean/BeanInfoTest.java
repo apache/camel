@@ -24,6 +24,8 @@ import net.bytebuddy.description.modifier.SyntheticState;
 import net.bytebuddy.description.modifier.Visibility;
 import net.bytebuddy.implementation.MethodDelegation;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
+import org.apache.aries.proxy.UnableToProxyException;
+import org.apache.aries.proxy.impl.AsmProxyManager;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
@@ -78,8 +80,24 @@ public class BeanInfoTest {
     }
 
     @Test
+    public void testHandlerOnSyntheticProxyWithInterface() {
+        Object proxy = buildProxyObject(MyHandlerInterface.class);
+
+        BeanInfo info = new BeanInfo(context, proxy.getClass());
+        assertTrue(info.hasAnyMethodHandlerAnnotation());
+    }
+
+    @Test
     public void testInvocationOnSyntheticProxy() {
         Object proxy = buildProxyObject(MyDerivedClass.class);
+
+        BeanInfo info = new BeanInfo(context, proxy.getClass());
+        info.createInvocation(info, createMockExchange());
+    }
+
+    @Test
+    public void testInvocationOnSyntheticProxyWithInterface() throws UnableToProxyException {
+        Object proxy = new AsmProxyManager().createNewProxy(null, Collections.singleton(MyInterface.class), () -> null, null);
 
         BeanInfo info = new BeanInfo(context, proxy.getClass());
         info.createInvocation(info, createMockExchange());
@@ -175,6 +193,12 @@ public class BeanInfoTest {
     public interface MyHandlerInterface {
         @Handler
         String myMethod();
+    }
+
+    public interface MyInterface {
+
+        void myMethod();
+
     }
 
 }

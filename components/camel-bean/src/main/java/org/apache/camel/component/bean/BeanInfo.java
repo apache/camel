@@ -29,6 +29,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
@@ -53,6 +56,7 @@ import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toList;
 import static org.apache.camel.component.bean.ParameterMappingStrategyHelper.createParameterMappingStrategy;
 
 /**
@@ -72,6 +76,10 @@ public class BeanInfo {
             "equals", "finalize", "getClass", "hashCode", "notify", "notifyAll", "wait", // java.lang.Object
             "getInvocationHandler", "getProxyClass", "isProxyClass", "newProxyInstance" // java.lang.Proxy
     };
+
+    private static final Set<String> KNOWN_PROXY_INTERFACES = Collections.unmodifiableSet(Stream.of(
+            "org.apache.aries.proxy.weaving.WovenProxy").collect(Collectors.toSet()));
+
     private final CamelContext camelContext;
     private final BeanComponent component;
     private final Class<?> type;
@@ -1155,6 +1163,12 @@ public class BeanInfo {
             Class<?> superClass = clazz.getSuperclass();
             if (superClass != null && !Object.class.equals(superClass)) {
                 return superClass;
+            }
+            List<Class<?>> interfaces = Arrays.stream(clazz.getInterfaces())
+                    .filter(i -> !KNOWN_PROXY_INTERFACES.contains(i.getName()))
+                    .collect(toList());
+            if (interfaces.size() == 1) {
+                return interfaces.get(0);
             }
         }
         return clazz;
