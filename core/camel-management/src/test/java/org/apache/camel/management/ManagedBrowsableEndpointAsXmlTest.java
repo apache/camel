@@ -66,24 +66,24 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         assertNotNull(out);
         log.info(out);
 
-        assertEquals("<message exchangeId=\"" + exchanges.get(0).getExchangeId()
-                     + "\">\n  <body type=\"java.lang.String\">&lt;foo&gt;Camel &amp;gt; Donkey&lt;/foo&gt;</body>\n</message>",
+        assertEquals("<message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\" exchangePattern=\"InOnly\""
+                     + ">\n  <body type=\"java.lang.String\">&lt;foo&gt;Camel &amp;gt; Donkey&lt;/foo&gt;</body>\n</message>",
                 out);
 
         out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[] { 1, true },
                 new String[] { "java.lang.Integer", "java.lang.Boolean" });
         assertNotNull(out);
         log.info(out);
-        assertEquals("<message exchangeId=\"" + exchanges.get(1).getExchangeId()
-                     + "\">\n  <body type=\"java.lang.String\">Camel &gt; Donkey</body>\n</message>",
+        assertEquals("<message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\" exchangePattern=\"InOnly\""
+                     + ">\n  <body type=\"java.lang.String\">Camel &gt; Donkey</body>\n</message>",
                 out);
 
         out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[] { 2, true },
                 new String[] { "java.lang.Integer", "java.lang.Boolean" });
         assertNotNull(out);
         log.info(out);
-        assertEquals("<message exchangeId=\"" + exchanges.get(2).getExchangeId()
-                     + "\">\n  <headers>\n    <header key=\"name\" type=\"java.lang.String\">Me &amp; You</header>\n  </headers>\n"
+        assertEquals("<message exchangeId=\"" + exchanges.get(2).getExchangeId() + "\" exchangePattern=\"InOnly\""
+                     + ">\n  <headers>\n    <header key=\"name\" type=\"java.lang.String\">Me &amp; You</header>\n  </headers>\n"
                      + "  <body type=\"java.lang.String\">&lt;foo&gt;Camel &amp;gt; Donkey&lt;/foo&gt;</body>\n</message>",
                 out);
 
@@ -91,7 +91,8 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
                 new String[] { "java.lang.Integer", "java.lang.Boolean" });
         assertNotNull(out);
         log.info(out);
-        assertEquals("<message exchangeId=\"" + exchanges.get(3).getExchangeId() + "\">\n  <headers>\n"
+        assertEquals(
+                "<message exchangeId=\"" + exchanges.get(3).getExchangeId() + "\" exchangePattern=\"InOnly\">\n  <headers>\n"
                      + "    <header key=\"title\" type=\"java.lang.String\">&lt;title&gt;Me &amp;amp; You&lt;/title&gt;</header>\n  </headers>\n"
                      + "  <body type=\"java.lang.String\">&lt;foo&gt;Camel &amp;gt; Donkey&lt;/foo&gt;</body>\n</message>",
                 out);
@@ -100,8 +101,8 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
                 new String[] { "java.lang.Integer", "java.lang.Boolean" });
         assertNotNull(out);
         log.info(out);
-        assertEquals("<message exchangeId=\"" + exchanges.get(4).getExchangeId()
-                     + "\">\n  <headers>\n    <header key=\"name\" type=\"java.lang.String\">Me &amp; You</header>\n  </headers>\n"
+        assertEquals("<message exchangeId=\"" + exchanges.get(4).getExchangeId() + "\" exchangePattern=\"InOnly\""
+                     + ">\n  <headers>\n    <header key=\"name\" type=\"java.lang.String\">Me &amp; You</header>\n  </headers>\n"
                      + "  <body type=\"java.lang.String\">Camel &gt; Donkey</body>\n</message>",
                 out);
 
@@ -109,8 +110,8 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
                 new String[] { "java.lang.Integer", "java.lang.Boolean" });
         assertNotNull(out);
         log.info(out);
-        assertEquals("<message exchangeId=\"" + exchanges.get(5).getExchangeId()
-                     + "\">\n  <headers>\n    <header key=\"user\" type=\"java.lang.Boolean\">true</header>\n  </headers>\n"
+        assertEquals("<message exchangeId=\"" + exchanges.get(5).getExchangeId() + "\" exchangePattern=\"InOnly\""
+                     + ">\n  <headers>\n    <header key=\"user\" type=\"java.lang.Boolean\">true</header>\n  </headers>\n"
                      + "  <body type=\"java.lang.Integer\">123</body>\n</message>",
                 out);
 
@@ -118,8 +119,8 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
                 new String[] { "java.lang.Integer", "java.lang.Boolean" });
         assertNotNull(out);
         log.info(out);
-        assertEquals("<message exchangeId=\"" + exchanges.get(6).getExchangeId()
-                     + "\">\n  <headers>\n    <header key=\"title\" type=\"java.lang.String\">Camel rocks</header>\n"
+        assertEquals("<message exchangeId=\"" + exchanges.get(6).getExchangeId() + "\" exchangePattern=\"InOnly\""
+                     + ">\n  <headers>\n    <header key=\"title\" type=\"java.lang.String\">Camel rocks</header>\n"
                      + "    <header key=\"uid\" type=\"java.lang.Integer\">123</header>\n"
                      + "    <header key=\"user\" type=\"java.lang.Boolean\">false</header>\n  </headers>\n"
                      + "  <body type=\"java.lang.String\">&lt;animal&gt;&lt;name&gt;Donkey&lt;/name&gt;&lt;age&gt;17&lt;/age&gt;&lt;/animal&gt;</body>\n</message>",
@@ -146,16 +147,16 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         assertNotNull(out);
         log.info(out);
 
-        assertEquals("<message exchangeId=\"" + exchanges.get(0).getExchangeId()
-                     + "\">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>",
+        assertEquals("<message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\" exchangePattern=\"InOnly\""
+                     + ">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>",
                 out);
 
         out = (String) mbeanServer.invoke(name, "browseMessageAsXml", new Object[] { 1, false },
                 new String[] { "java.lang.Integer", "java.lang.Boolean" });
         assertNotNull(out);
         log.info(out);
-        assertEquals("<message exchangeId=\"" + exchanges.get(1).getExchangeId()
-                     + "\">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n</message>",
+        assertEquals("<message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\" exchangePattern=\"InOnly\""
+                     + ">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n</message>",
                 out);
     }
 
@@ -179,10 +180,10 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         assertNotNull(out);
         log.info(out);
 
-        assertEquals("<messages>\n<message exchangeId=\"" + exchanges.get(0).getExchangeId()
-                     + "\">\n  <body type=\"java.lang.String\">Hello World</body>\n</message>\n"
-                     + "<message exchangeId=\"" + exchanges.get(1).getExchangeId()
-                     + "\">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n"
+        assertEquals("<messages>\n<message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\" exchangePattern=\"InOnly\""
+                     + ">\n  <body type=\"java.lang.String\">Hello World</body>\n</message>\n"
+                     + "<message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\" exchangePattern=\"InOnly\""
+                     + ">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n"
                      + "  <body type=\"java.lang.String\">Bye World</body>\n</message>\n</messages>",
                 out);
     }
@@ -207,10 +208,11 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         assertNotNull(out);
         log.info(out);
 
-        assertEquals("<messages>\n<message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\">\n  <headers>\n"
+        assertEquals("<messages>\n<message exchangeId=\"" + exchanges.get(0).getExchangeId()
+                     + "\" exchangePattern=\"InOnly\">\n  <headers>\n"
                      + "    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>\n"
-                     + "<message exchangeId=\"" + exchanges.get(1).getExchangeId()
-                     + "\">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n"
+                     + "<message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\" exchangePattern=\"InOnly\""
+                     + ">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n"
                      + "</message>\n</messages>",
                 out);
     }
@@ -236,10 +238,10 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         assertNotNull(out);
         log.info(out);
 
-        assertEquals("<messages>\n<message exchangeId=\"" + exchanges.get(0).getExchangeId()
-                     + "\">\n  <body type=\"java.lang.String\">Hello World</body>\n</message>\n"
-                     + "<message exchangeId=\"" + exchanges.get(1).getExchangeId()
-                     + "\">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n"
+        assertEquals("<messages>\n<message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\" exchangePattern=\"InOnly\""
+                     + ">\n  <body type=\"java.lang.String\">Hello World</body>\n</message>\n"
+                     + "<message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\" exchangePattern=\"InOnly\""
+                     + ">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n"
                      + "  <body type=\"java.lang.String\">Bye World</body>\n</message>\n</messages>",
                 out);
     }
@@ -265,10 +267,10 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         assertNotNull(out);
         log.info(out);
 
-        assertEquals("<messages>\n<message exchangeId=\"" + exchanges.get(0).getExchangeId()
-                     + "\">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>\n"
-                     + "<message exchangeId=\"" + exchanges.get(1).getExchangeId()
-                     + "\">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n"
+        assertEquals("<messages>\n<message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\" exchangePattern=\"InOnly\""
+                     + ">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>\n"
+                     + "<message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\" exchangePattern=\"InOnly\""
+                     + ">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n"
                      + "</message>\n</messages>",
                 out);
     }

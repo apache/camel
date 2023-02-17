@@ -75,14 +75,14 @@ public class BacklogTracerTest extends ManagementTestSupport {
 
         BacklogTracerEventMessage event1 = events.get(0);
         assertEquals("foo", event1.getToNode());
-        assertEquals("    <message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\">\n"
+        assertEquals("    <message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\" exchangePattern=\"InOnly\">\n"
                      + "      <body type=\"java.lang.String\">Hello World</body>\n"
                      + "    </message>",
                 event1.getMessageAsXml());
 
         BacklogTracerEventMessage event2 = events.get(1);
         assertEquals("foo", event2.getToNode());
-        assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\">\n"
+        assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\" exchangePattern=\"InOnly\">\n"
                      + "      <body type=\"java.lang.String\">Bye World</body>\n"
                      + "    </message>",
                 event2.getMessageAsXml());
@@ -160,7 +160,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         BacklogTracerEventMessage event0 = events.get(0);
         assertEquals("route1", event0.getRouteId());
         assertEquals(null, event0.getToNode());
-        assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId() + "\">\n"
+        assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId() + "\" exchangePattern=\"InOnly\">\n"
                      + "      <body type=\"java.lang.String\">Hello World</body>\n"
                      + "    </message>",
                 event0.getMessageAsXml());
@@ -168,7 +168,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         BacklogTracerEventMessage event1 = events.get(1);
         assertEquals("route1", event1.getRouteId());
         assertEquals("foo", event1.getToNode());
-        assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId() + "\">\n"
+        assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId() + "\" exchangePattern=\"InOnly\">\n"
                      + "      <body type=\"java.lang.String\">Hello World</body>\n"
                      + "    </message>",
                 event1.getMessageAsXml());
@@ -176,7 +176,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         BacklogTracerEventMessage event2 = events.get(2);
         assertEquals("route1", event2.getRouteId());
         assertEquals("bar", event2.getToNode());
-        assertEquals("    <message exchangeId=\"" + barExchanges.get(0).getExchangeId() + "\">\n"
+        assertEquals("    <message exchangeId=\"" + barExchanges.get(0).getExchangeId() + "\" exchangePattern=\"InOnly\">\n"
                      + "      <body type=\"java.lang.String\">Hello World</body>\n"
                      + "    </message>",
                 event2.getMessageAsXml());
@@ -184,7 +184,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         BacklogTracerEventMessage event3 = events.get(4);
         assertEquals("route1", event3.getRouteId());
         assertEquals(null, event3.getToNode());
-        assertEquals("    <message exchangeId=\"" + fooExchanges.get(1).getExchangeId() + "\">\n"
+        assertEquals("    <message exchangeId=\"" + fooExchanges.get(1).getExchangeId() + "\" exchangePattern=\"InOnly\">\n"
                      + "      <body type=\"java.lang.String\">Bye World</body>\n"
                      + "    </message>",
                 event3.getMessageAsXml());
@@ -192,7 +192,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         BacklogTracerEventMessage event4 = events.get(5);
         assertEquals("route1", event4.getRouteId());
         assertEquals("foo", event4.getToNode());
-        assertEquals("    <message exchangeId=\"" + fooExchanges.get(1).getExchangeId() + "\">\n"
+        assertEquals("    <message exchangeId=\"" + fooExchanges.get(1).getExchangeId() + "\" exchangePattern=\"InOnly\">\n"
                      + "      <body type=\"java.lang.String\">Bye World</body>\n"
                      + "    </message>",
                 event3.getMessageAsXml());
@@ -200,7 +200,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         BacklogTracerEventMessage event5 = events.get(6);
         assertEquals("route1", event5.getRouteId());
         assertEquals("bar", event5.getToNode());
-        assertEquals("    <message exchangeId=\"" + barExchanges.get(1).getExchangeId() + "\">\n"
+        assertEquals("    <message exchangeId=\"" + barExchanges.get(1).getExchangeId() + "\" exchangePattern=\"InOnly\">\n"
                      + "      <body type=\"java.lang.String\">Bye World</body>\n"
                      + "    </message>",
                 event4.getMessageAsXml());
