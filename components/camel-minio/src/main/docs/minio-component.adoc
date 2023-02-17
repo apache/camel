@@ -202,6 +202,7 @@ This operation will return an MinioObject instance related to the camelKey objec
   .to("minio://mycamelbucket?minioClient=#minioClient&operation=getObjectRange")
   .to("mock:result");
 --------------------------------------------------------------------------------
+This operation will return an MinioObject instance related to the camelKey object in mycamelbucket bucket, containing bytes from 0 to 9.
 
 - createDownloadLink: this operation will return a presigned url through which a file can be downloaded using GET method
 
@@ -235,8 +236,7 @@ This operation will return an MinioObject instance related to the camelKey objec
   .to("mock:result");
 --------------------------------------------------------------------------------
 
-
-This operation will return an MinioObject instance related to the camelKey object in mycamelbucket bucket, containing bytes from 0 to 9.
+createDownLink and createUploadLink have a default expiry of 3600s which can be overridden by setting the header MinioConstants.PRESIGNED_URL_EXPIRATION_TIME (value in seconds)
 
 == Bucket Autocreation
 
