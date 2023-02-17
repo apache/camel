@@ -2985,6 +2985,20 @@ public interface MinioEndpointBuilderFactory {
         public String minioLength() {
             return "MinioLength";
         }
+
+        /**
+         * Expiration of minio presigned url in Seconds.
+         * 
+         * The option is a: {@code int} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * MinioPresignedURLExpirationTime}.
+         */
+        public String minioPresignedURLExpirationTime() {
+            return "MinioPresignedURLExpirationTime";
+        }
     }
     static MinioEndpointBuilder endpointBuilder(
             String componentName,
