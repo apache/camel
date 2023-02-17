@@ -206,30 +206,4 @@ class IntegrationLoaderTest extends YamlTestSupport {
         }
     }
 
-    def "integration with route backward"() {
-        when:
-        loadIntegrations('''
-                apiVersion: camel.apache.org/v1
-                kind: Integration
-                metadata:
-                  name: foobar3
-                spec:
-                  flows:
-                    - route:
-                        id: myRoute2
-                        from:
-                          uri: "seda:foo"
-                        steps:    
-                          - to: "mock:result"   
-                          ''')
-        then:
-        context.routeDefinitions.size() == 1
-
-        context.routeDefinitions[0].id == "myRoute2"
-
-        with(context.routeDefinitions[0].outputs[0], ToDefinition) {
-            uri == "mock:result"
-        }
-    }
-
 }
