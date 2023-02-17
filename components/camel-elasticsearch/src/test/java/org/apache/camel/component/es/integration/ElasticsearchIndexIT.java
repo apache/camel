@@ -24,12 +24,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.es.ElasticsearchConstants;
 import org.apache.camel.component.es.ElasticsearchOperation;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+        disabledReason = "Disabled due to CAMEL-19070: Apache CI nodes may not have resources to run this test")
 class ElasticsearchIndexIT extends ElasticsearchTestSupport {
 
     @Test

@@ -24,7 +24,10 @@ import co.elastic.clients.elasticsearch.core.search.HitsMetadata;
 import org.apache.camel.builder.RouteBuilder;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+        disabledReason = "Disabled due to CAMEL-19070: Apache CI nodes may not have resources to run this test")
 class ElasticsearchSizeLimitIT extends ElasticsearchTestSupport {
 
     @Test

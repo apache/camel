@@ -27,11 +27,14 @@ import org.apache.camel.component.es.ElasticsearchOperation;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.elasticsearch.client.Request;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.apache.camel.test.junit5.TestSupport.assertStringContains;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+        disabledReason = "Disabled due to CAMEL-19070: Apache CI nodes may not have resources to run this test")
 class ElasticsearchClusterIndexIT extends ElasticsearchTestSupport {
     @Test
     void indexWithIpAndPort() throws Exception {

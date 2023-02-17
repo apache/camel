@@ -36,6 +36,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
 import static org.apache.camel.component.es.ElasticsearchConstants.PARAM_SCROLL;
 import static org.apache.camel.component.es.ElasticsearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS;
@@ -44,6 +45,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@DisabledIfSystemProperty(named = "ci.env.name", matches = "apache.org",
+        disabledReason = "Disabled due to CAMEL-19070: Apache CI nodes may not have resources to run this test")
 class ElasticsearchScrollSearchIT extends ElasticsearchTestSupport {
 
     private static final String TWITTER_ES_INDEX_NAME = "twitter";
