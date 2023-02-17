@@ -69,7 +69,7 @@ public class ElasticsearchTestSupport extends CamelTestSupport {
 
     private static ElasticSearchLocalContainerService createElasticSearchService() {
         ElasticSearchLocalContainerService ret
-                = new ElasticSearchLocalContainerService("docker.elastic.co/elasticsearch/elasticsearch:8.4.1") {
+                = new ElasticSearchLocalContainerService("docker.elastic.co/elasticsearch/elasticsearch:8.6.2") {
                     @Override
                     public void registerProperties() {
                         super.registerProperties();
