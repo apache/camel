@@ -1746,6 +1746,9 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.dependencies`
 |Additional dependencies (Use commas to separate multiple dependencies). See more details at xref:_adding_custom_jars[].
 
+|`camel.jbang.classpathFiles`
+|Additional files to add to classpath (Use commas to separate multiple files). See more details at xref:_adding_custom_jars[].
+
 |`camel.jbang.javaVersion`
 |Java version (11 or 17)
 
@@ -1790,6 +1793,16 @@ The follow options related to _exporting_, can be configured in `application.pro
 
 |`camel.jbang.exportDir`
 |Directory where the project will be exported
+
+|`camel.jbang.platform-http.port`
+| HTTP server port to use when running standalone Camel, such as when `--console` is enabled (port 8080 by default).
+
+|`camel.jbang.console`
+| Developer console at /q/dev on local HTTP server (port 8080 by default) when running standalone Camel
+
+|`camel.jbang.health`
+| Health check at /q/health on local HTTP server (port 8080 by default) when running standalone Camel
+
 |===
 
 NOTE: These are options from the export command, so you can see mor details and default values using `camel export --help`.
