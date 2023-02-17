@@ -335,7 +335,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             recipient = ((String) recipient).trim();
         }
         if (recipient != null) {
-            ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
+            CamelContext ecc = exchange.getContext();
             String uri;
             if (recipient instanceof String) {
                 uri = (String) recipient;
@@ -344,7 +344,7 @@ public class RecipientListProcessor extends MulticastProcessor {
                 uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
             }
             // optimize and normalize endpoint
-            return ecc.normalizeUri(uri);
+            return ((ExtendedCamelContext) ecc).normalizeUri(uri);
         }
         return null;
     }

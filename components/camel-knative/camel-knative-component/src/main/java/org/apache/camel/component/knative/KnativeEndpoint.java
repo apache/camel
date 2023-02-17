@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExtendedCamelContext;
@@ -115,8 +116,8 @@ public class KnativeEndpoint extends DefaultEndpoint {
         if (replyProcessor != null) {
             list.add(replyProcessor);
         }
-        ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
-        Processor pipeline = ecc.getProcessorFactory().createProcessor(ecc, "Pipeline", new Object[] { list });
+        CamelContext ecc = getCamelContext();
+        Processor pipeline = ((ExtendedCamelContext) ecc).getProcessorFactory().createProcessor(ecc, "Pipeline", new Object[] { list });
 
         Consumer consumer = getComponent().getConsumerFactory().createConsumer(this,
                 createTransportConfiguration(service), service, pipeline);

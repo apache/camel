@@ -26,6 +26,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
@@ -54,7 +55,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
     final boolean allowUseOriginalMessage;
     final boolean useBreadcrumb;
 
-    private final ExtendedCamelContext context;
+    private final CamelContext context;
     private final Deque<Route> routes = new ArrayDeque<>(8);
     private Logger log;
     private Exchange exchange;
@@ -78,7 +79,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
         this.log = LOG;
         this.allowUseOriginalMessage = allowUseOriginalMessage;
         this.useBreadcrumb = useBreadcrumb;
-        this.context = (ExtendedCamelContext) exchange.getContext();
+        this.context = exchange.getContext();
         this.inflightRepository = inflightRepository;
         doOnPrepare(exchange);
     }
@@ -128,7 +129,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
         }
 
         // fire event
-        if (context.isEventNotificationApplicable()) {
+        if (((ExtendedCamelContext) context).isEventNotificationApplicable()) {
             try {
                 EventHelper.notifyExchangeCreated(context, exchange);
             } catch (Throwable e) {
@@ -238,7 +239,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
         // unregister from inflight registry, before signalling we are done
         inflightRepository.remove(exchange);
 
-        if (context.isEventNotificationApplicable()) {
+        if (((ExtendedCamelContext) context).isEventNotificationApplicable()) {
             // then fire event to signal the exchange is done
             try {
                 if (failed) {

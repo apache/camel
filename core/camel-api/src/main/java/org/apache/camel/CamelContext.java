@@ -91,7 +91,8 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * @param  type the type to adapt to
      * @return      this {@link org.apache.camel.CamelContext} adapted to the given type
      */
-    <T extends CamelContext> T adapt(Class<T> type);
+    @Deprecated
+    <T extends ExtendedCamelContext> T adapt(Class<T> type);
 
     /**
      * Gets the extension of the given type.

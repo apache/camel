@@ -51,7 +51,7 @@ public final class MainSupportModelConfigurer {
             OrderedLocationProperties faultToleranceProperties)
             throws Exception {
 
-        ModelCamelContext model = camelContext.adapt(ModelCamelContext.class);
+        ModelCamelContext model = (ModelCamelContext) camelContext;
 
         if (!resilience4jProperties.isEmpty() || mainConfigurationProperties.hasResilience4jConfiguration()) {
             Resilience4jConfigurationProperties resilience4j = mainConfigurationProperties.resilience4j();

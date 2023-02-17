@@ -92,7 +92,7 @@ public class JmsInOnlyPooledExchangeTest extends AbstractJMSTest {
         ecc.getExchangeFactory().setStatisticsEnabled(true);
         ecc.getProcessorExchangeFactory().setStatisticsEnabled(true);
 
-        return ecc;
+        return (CamelContext) ecc;
     }
 
     @Override

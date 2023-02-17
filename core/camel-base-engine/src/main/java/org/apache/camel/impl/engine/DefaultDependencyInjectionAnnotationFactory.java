@@ -28,10 +28,10 @@ import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 public class DefaultDependencyInjectionAnnotationFactory
         implements CamelDependencyInjectionAnnotationFactory, CamelContextAware {
 
-    private ExtendedCamelContext camelContext;
+    private CamelContext camelContext;
 
     public DefaultDependencyInjectionAnnotationFactory(CamelContext camelContext) {
-        this.camelContext = camelContext.adapt(ExtendedCamelContext.class);
+        this.camelContext = camelContext;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class DefaultDependencyInjectionAnnotationFactory
 
     @Override
     public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext.adapt(ExtendedCamelContext.class);
+        this.camelContext = camelContext;
     }
 
     @Override
@@ -49,9 +49,9 @@ public class DefaultDependencyInjectionAnnotationFactory
         return () -> {
             if (beanPostProcess) {
                 try {
-                    camelContext.getBeanPostProcessor()
+                    ((ExtendedCamelContext) camelContext).getBeanPostProcessor()
                             .postProcessBeforeInitialization(bean, beanName);
-                    camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor()
+                    ((ExtendedCamelContext) camelContext).getBeanPostProcessor()
                             .postProcessAfterInitialization(bean, beanName);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);

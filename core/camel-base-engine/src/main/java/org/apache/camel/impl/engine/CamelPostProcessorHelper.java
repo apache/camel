@@ -352,7 +352,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     }
 
     public Object getInjectionBeanConfigValue(Class<?> type, String name) {
-        ExtendedCamelContext ecc = (ExtendedCamelContext) getCamelContext();
+        CamelContext ecc = getCamelContext();
 
         // is it a map or properties
         boolean mapType = false;
@@ -419,7 +419,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         String[] names = new String[] {
                 type.getName() + "-configurer", type.getSimpleName() + "-configurer", rootKey + "-configurer" };
         for (String n : names) {
-            configurer = ecc.getConfigurerResolver().resolvePropertyConfigurer(n, ecc);
+            configurer = ((ExtendedCamelContext) ecc).getConfigurerResolver().resolvePropertyConfigurer(n, ecc);
             if (configurer != null) {
                 break;
             }

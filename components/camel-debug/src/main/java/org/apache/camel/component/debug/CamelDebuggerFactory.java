@@ -17,7 +17,6 @@
 package org.apache.camel.component.debug;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.debugger.BacklogDebugger;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DebuggerFactory;
@@ -36,7 +35,7 @@ public class CamelDebuggerFactory implements DebuggerFactory {
 
         BacklogDebugger backlog = BacklogDebugger.createDebugger(camelContext);
         // we need to enable debugger after context is started
-        camelContext.adapt(ExtendedCamelContext.class).addLifecycleStrategy(new LifecycleStrategySupport() {
+        camelContext.addLifecycleStrategy(new LifecycleStrategySupport() {
             @Override
             public void onContextStarted(CamelContext context) {
                 backlog.enableDebugger();

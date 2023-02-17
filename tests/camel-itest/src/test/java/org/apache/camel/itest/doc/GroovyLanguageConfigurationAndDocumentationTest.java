@@ -41,7 +41,7 @@ public class GroovyLanguageConfigurationAndDocumentationTest extends CamelTestSu
     @Test
     void testLanguageJsonSchema() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            String json = context.adapt(CatalogCamelContext.class).getLanguageParameterJsonSchema("groovy");
+            String json = ((CatalogCamelContext) context).getLanguageParameterJsonSchema("groovy");
             assertNotNull(json, "Should have found some auto-generated JSON");
             LOG.info(json);
 

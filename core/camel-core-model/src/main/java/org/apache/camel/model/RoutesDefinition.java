@@ -253,7 +253,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         List<OnCompletionDefinition> oc = new ArrayList<>(onCompletions);
         if (getCamelContext() != null) {
             List<RouteConfigurationDefinition> globalConfigurations
-                    = getCamelContext().adapt(ModelCamelContext.class).getRouteConfigurationDefinitions();
+                    = ((ModelCamelContext) getCamelContext()).getRouteConfigurationDefinitions();
             if (globalConfigurations != null) {
                 String[] ids;
                 if (route.getRouteConfigurationId() != null) {

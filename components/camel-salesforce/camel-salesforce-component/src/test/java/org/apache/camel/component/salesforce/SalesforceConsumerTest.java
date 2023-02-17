@@ -89,7 +89,8 @@ public class SalesforceConsumerTest {
     ExchangeExtension exchangeExtension = mock(ExchangeExtension.class);
     org.apache.camel.Message in = mock(org.apache.camel.Message.class);
     AsyncProcessor processor = mock(AsyncProcessor.class);
-    ExtendedCamelContext context = mock(ExtendedCamelContext.class);
+    CamelContext context = mock(CamelContext.class);
+    ExtendedCamelContext ecc = mock(ExtendedCamelContext.class);
     ExchangeFactory exchangeFactory = mock(ExchangeFactory.class);
     Message pushTopicMessage;
 
@@ -106,8 +107,8 @@ public class SalesforceConsumerTest {
     public void setupMocks() {
         when(endpoint.getConfiguration()).thenReturn(configuration);
         when(endpoint.getCamelContext()).thenReturn(context);
-        when(context.adapt(ExtendedCamelContext.class)).thenReturn(context);
-        when(context.getExchangeFactory()).thenReturn(exchangeFactory);
+        when(context.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        when(ecc.getExchangeFactory()).thenReturn(exchangeFactory);
         when(exchangeFactory.newExchangeFactory(any())).thenReturn(exchangeFactory);
         when(exchangeFactory.create(endpoint, true)).thenReturn(exchange);
         when(exchange.getExchangeExtension()).thenReturn(exchangeExtension);

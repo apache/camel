@@ -74,7 +74,10 @@ public class DynamicRouterTestSupport extends CamelTestSupport {
     public static final String TEST_PREDICATE = "testPredicate";
 
     @Mock
-    protected ExtendedCamelContext context;
+    protected CamelContext context;
+
+    @Mock
+    protected ExtendedCamelContext ecc;
 
     @Mock
     protected ExchangeFactory exchangeFactory;
@@ -169,8 +172,8 @@ public class DynamicRouterTestSupport extends CamelTestSupport {
         lenient().when(endpoint.getDynamicRouterComponent()).thenReturn(component);
         lenient().when(endpoint.getConfiguration()).thenReturn(configuration);
 
-        lenient().when(context.adapt(ExtendedCamelContext.class)).thenReturn(context);
-        lenient().when(context.getExchangeFactory()).thenReturn(exchangeFactory);
+        lenient().when(context.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        lenient().when(ecc.getExchangeFactory()).thenReturn(exchangeFactory);
         lenient().when(context.resolveLanguage("simple")).thenReturn(simpleLanguage);
         lenient().when(context.getExecutorServiceManager()).thenReturn(executorServiceManager);
 

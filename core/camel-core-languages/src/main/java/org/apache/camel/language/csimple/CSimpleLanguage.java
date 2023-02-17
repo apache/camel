@@ -246,8 +246,8 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
             loadConfiguration();
 
             // detect custom compiler (camel-csimple-joor)
-            ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
-            Optional<Class<?>> clazz = ecc.getBootstrapFactoryFinder().findClass(CSimpleCompiler.FACTORY);
+            CamelContext ecc = getCamelContext();
+            Optional<Class<?>> clazz = ((ExtendedCamelContext) ecc).getBootstrapFactoryFinder().findClass(CSimpleCompiler.FACTORY);
             if (clazz.isPresent()) {
                 compiler = (CSimpleCompiler) ecc.getInjector().newInstance(clazz.get(), false);
                 if (compiler != null) {
@@ -282,7 +282,7 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
         }
 
         private void loadPreCompiled() {
-            ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
+            CamelContext ecc = getCamelContext();
             InputStream is = ecc.getClassResolver().loadResourceAsStream(PRE_COMPILED_FILE);
             if (is != null) {
                 try {

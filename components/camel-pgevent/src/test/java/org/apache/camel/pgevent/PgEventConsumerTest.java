@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 
 import com.impossibl.postgres.api.jdbc.PGConnection;
 import com.impossibl.postgres.jdbc.PGDataSource;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeExtension;
 import org.apache.camel.ExtendedCamelContext;
@@ -48,11 +49,12 @@ public class PgEventConsumerTest {
         PreparedStatement statement = mock(PreparedStatement.class);
         PgEventEndpoint endpoint = mock(PgEventEndpoint.class);
         Processor processor = mock(Processor.class);
+        CamelContext camelContext = mock(CamelContext.class);
         ExtendedCamelContext ecc = mock(ExtendedCamelContext.class);
         ExchangeFactory ef = mock(ExchangeFactory.class);
 
-        when(endpoint.getCamelContext()).thenReturn(ecc);
-        when(ecc.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        when(endpoint.getCamelContext()).thenReturn(camelContext);
+        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
         when(ecc.getExchangeFactory()).thenReturn(ef);
         when(ef.newExchangeFactory(any())).thenReturn(ef);
         when(endpoint.getDatasource()).thenReturn(dataSource);
@@ -74,11 +76,12 @@ public class PgEventConsumerTest {
         PreparedStatement statement = mock(PreparedStatement.class);
         PgEventEndpoint endpoint = mock(PgEventEndpoint.class);
         Processor processor = mock(Processor.class);
+        CamelContext camelContext = mock(CamelContext.class);
         ExtendedCamelContext ecc = mock(ExtendedCamelContext.class);
         ExchangeFactory ef = mock(ExchangeFactory.class);
 
-        when(endpoint.getCamelContext()).thenReturn(ecc);
-        when(ecc.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        when(endpoint.getCamelContext()).thenReturn(camelContext);
+        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
         when(ecc.getExchangeFactory()).thenReturn(ef);
         when(ef.newExchangeFactory(any())).thenReturn(ef);
         when(endpoint.getDatasource()).thenReturn(dataSource);
@@ -103,11 +106,12 @@ public class PgEventConsumerTest {
         Exchange exchange = mock(Exchange.class);
         ExchangeExtension exchangeExtension = mock(ExchangeExtension.class);
         Message message = mock(Message.class);
+        CamelContext camelContext = mock(CamelContext.class);
         ExtendedCamelContext ecc = mock(ExtendedCamelContext.class);
         ExchangeFactory ef = mock(ExchangeFactory.class);
 
-        when(endpoint.getCamelContext()).thenReturn(ecc);
-        when(ecc.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        when(endpoint.getCamelContext()).thenReturn(camelContext);
+        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
         when(ecc.getExchangeFactory()).thenReturn(ef);
         when(ef.newExchangeFactory(any())).thenReturn(ef);
         when(ef.create(endpoint, false)).thenReturn(exchange);

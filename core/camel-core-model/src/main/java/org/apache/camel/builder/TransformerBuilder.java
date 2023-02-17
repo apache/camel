@@ -181,6 +181,6 @@ public class TransformerBuilder {
         // force init of transformer registry
         camelContext.getTransformerRegistry();
 
-        camelContext.adapt(ModelCamelContext.class).registerTransformer(transformer);
+        ((ModelCamelContext) camelContext).registerTransformer(transformer);
     }
 }

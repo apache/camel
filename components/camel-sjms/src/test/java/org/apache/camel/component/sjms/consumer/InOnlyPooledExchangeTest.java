@@ -45,7 +45,7 @@ public class InOnlyPooledExchangeTest extends JmsTestSupport {
         ecc.getExchangeFactory().setStatisticsEnabled(true);
         ecc.getProcessorExchangeFactory().setStatisticsEnabled(true);
 
-        return ecc;
+        return (CamelContext) ecc;
     }
 
     @Test

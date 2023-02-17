@@ -761,7 +761,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         ErrorHandlerFactory builder = route.getErrorHandlerFactory();
 
         // create error handler
-        Processor errorHandler = camelContext.adapt(ModelCamelContext.class).getModelReifierFactory().createErrorHandler(route,
+        Processor errorHandler = ((ModelCamelContext) camelContext).getModelReifierFactory().createErrorHandler(route,
                 builder, output);
 
         if (output instanceof ErrorHandlerAware) {

@@ -48,8 +48,8 @@ class MainTemplatedRouteTest {
         main.start();
 
         CamelContext context = main.getCamelContext();
-        assertEquals(1, context.adapt(ModelCamelContext.class).getRouteDefinitions().size());
-        assertEquals("my-route", context.adapt(ModelCamelContext.class).getRouteDefinitions().get(0).getId());
+        assertEquals(1, ((ModelCamelContext) context).getRouteDefinitions().size());
+        assertEquals("my-route", ((ModelCamelContext) context).getRouteDefinitions().get(0).getId());
 
         MockEndpoint mock = context.getEndpoint("mock:barVal", MockEndpoint.class);
         mock.expectedBodiesReceived("Hello Camel");

@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
@@ -40,8 +41,8 @@ public class KnativeProducer extends DefaultAsyncProducer {
         elements.add(processor);
         Collections.addAll(elements, processors);
 
-        ExtendedCamelContext ecc = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class);
-        Processor pipeline = ecc.getProcessorFactory().createProcessor(ecc, "Pipeline", new Object[] { elements });
+        CamelContext ecc = getEndpoint().getCamelContext();
+        Processor pipeline = ((ExtendedCamelContext) ecc).getProcessorFactory().createProcessor(ecc, "Pipeline", new Object[] { elements });
 
         this.processor = AsyncProcessorConverterHelper.convert(pipeline);
     }

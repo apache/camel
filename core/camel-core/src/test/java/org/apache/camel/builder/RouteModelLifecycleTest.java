@@ -33,7 +33,7 @@ public class RouteModelLifecycleTest extends ContextTestSupport {
     @Test
     public void testModelLifecycle() throws Exception {
         // add lifecycle before we add routes
-        context.adapt(ModelCamelContext.class).addModelLifecycleStrategy(new ModelLifecycleStrategySupport() {
+        context.addModelLifecycleStrategy(new ModelLifecycleStrategySupport() {
             @Override
             public void onAddRouteDefinition(RouteDefinition route) {
                 // lets mutate the template a bit

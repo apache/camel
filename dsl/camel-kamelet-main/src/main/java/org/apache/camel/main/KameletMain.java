@@ -321,7 +321,7 @@ public class KameletMain extends MainCommandLineSupport {
 
             // register as extension
             try {
-                answer.adapt(ExtendedCamelContext.class).addService(downloader);
+                answer.addService(downloader);
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }

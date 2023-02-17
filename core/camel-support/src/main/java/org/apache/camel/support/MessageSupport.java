@@ -19,7 +19,6 @@ package org.apache.camel.support;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
@@ -34,7 +33,7 @@ import org.apache.camel.spi.DataTypeAware;
  * from {@link DefaultMessage}
  */
 public abstract class MessageSupport implements Message, CamelContextAware, DataTypeAware {
-    ExtendedCamelContext camelContext;
+    CamelContext camelContext;
     TypeConverter typeConverter;
     private Exchange exchange;
     private Object body;
@@ -258,7 +257,7 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
 
     @Override
     public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = (ExtendedCamelContext) camelContext;
+        this.camelContext = camelContext;
         this.typeConverter = camelContext.getTypeConverter();
     }
 

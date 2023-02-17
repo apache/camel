@@ -41,7 +41,7 @@ public class StringDataFormatConfigurationAndDocumentationTest extends CamelTest
     @Test
     void testDataFormatJsonSchema() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            String json = context.adapt(CatalogCamelContext.class).getDataFormatParameterJsonSchema("string");
+            String json = ((CatalogCamelContext) context).getDataFormatParameterJsonSchema("string");
             assertNotNull(json, "Should have found some auto-generated JSON");
             LOG.info(json);
 

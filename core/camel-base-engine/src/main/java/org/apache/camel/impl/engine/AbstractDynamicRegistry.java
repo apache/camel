@@ -43,14 +43,14 @@ import org.apache.camel.support.service.ServiceHelper;
  */
 public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements StaticService {
 
-    protected final ExtendedCamelContext context;
+    protected final CamelContext context;
     protected final RouteController routeController;
     protected final int maxCacheSize;
     protected final Map<K, V> dynamicMap;
     protected final Map<K, V> staticMap;
 
     public AbstractDynamicRegistry(CamelContext context, int maxCacheSize) {
-        this.context = (ExtendedCamelContext) context;
+        this.context = context;
         this.routeController = context.getRouteController();
         this.maxCacheSize = maxCacheSize;
         // do not stop on eviction, as the endpoint or transformer may still be in use
@@ -96,7 +96,7 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
 
         // we want endpoint or transformer to be static if they are part of
         // starting up camel, or if new routes are being setup/added or routes started later
-        if (!context.isStarted() || context.isSetupRoutes() || routeController.isStartingRoutes()) {
+        if (!context.isStarted() || ((ExtendedCamelContext) context).isSetupRoutes() || routeController.isStartingRoutes()) {
             answer = staticMap.put(key, obj);
         } else {
             answer = dynamicMap.put(key, obj);

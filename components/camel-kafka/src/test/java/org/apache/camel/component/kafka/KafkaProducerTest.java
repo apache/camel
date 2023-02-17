@@ -70,7 +70,8 @@ public class KafkaProducerTest {
     private TypeConverter converter = Mockito.mock(TypeConverter.class);
     private CamelContext context = Mockito.mock(CamelContext.class);
     private Exchange exchange = Mockito.mock(Exchange.class);
-    private ExtendedCamelContext camelContext = Mockito.mock(ExtendedCamelContext.class);
+    private CamelContext camelContext = Mockito.mock(CamelContext.class);
+    private ExtendedCamelContext ecc = Mockito.mock(ExtendedCamelContext.class);
     private Message in = new DefaultMessage(camelContext);
     private AsyncCallback callback = Mockito.mock(AsyncCallback.class);
 
@@ -100,7 +101,7 @@ public class KafkaProducerTest {
         Mockito.when(exchange.getContext()).thenReturn(context);
         Mockito.when(context.getTypeConverter()).thenReturn(converter);
         Mockito.when(converter.tryConvertTo(String.class, exchange, null)).thenReturn(null);
-        Mockito.when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(camelContext);
+        Mockito.when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
         Mockito.when(camelContext.adapt(ExtendedCamelContext.class).getHeadersMapFactory())
                 .thenReturn(new DefaultHeadersMapFactory());
         Mockito.when(camelContext.getTypeConverter()).thenReturn(converter);

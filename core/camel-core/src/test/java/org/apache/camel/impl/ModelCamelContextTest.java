@@ -27,7 +27,7 @@ public class ModelCamelContextTest extends ContextTestSupport {
 
     @Test
     public void testAdapt() throws Exception {
-        ModelCamelContext mcc = context.adapt(ModelCamelContext.class);
+        ModelCamelContext mcc = context;
         assertNotNull(mcc);
         assertSame(context, mcc);
 

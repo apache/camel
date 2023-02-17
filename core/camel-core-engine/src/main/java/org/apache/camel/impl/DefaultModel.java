@@ -246,7 +246,7 @@ public class DefaultModel implements Model {
         }
 
         if (shouldStartRoutes()) {
-            getCamelContext().adapt(ModelCamelContext.class).startRouteDefinitions(list);
+            ((ModelCamelContext) getCamelContext()).startRouteDefinitions(list);
         }
     }
 

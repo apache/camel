@@ -227,7 +227,7 @@ public class KameletComponent extends DefaultComponent {
             // Add a custom converter to convert a RouteTemplateDefinition to a RouteDefinition
             // and make sure consumer URIs are unique.
             //
-            getCamelContext().adapt(ModelCamelContext.class).addRouteTemplateDefinitionConverter(
+            ((ModelCamelContext) getCamelContext()).addRouteTemplateDefinitionConverter(
                     templateId,
                     Kamelet::templateToRoute);
         }
@@ -393,7 +393,7 @@ public class KameletComponent extends DefaultComponent {
         }
 
         public void createRouteForEndpoint(KameletEndpoint endpoint) throws Exception {
-            final ModelCamelContext context = getCamelContext().adapt(ModelCamelContext.class);
+            final ModelCamelContext context = (ModelCamelContext) getCamelContext();
             final String templateId = endpoint.getTemplateId();
             final String routeId = endpoint.getRouteId();
             final String loc = endpoint.getLocation() != null ? endpoint.getLocation() : getLocation();

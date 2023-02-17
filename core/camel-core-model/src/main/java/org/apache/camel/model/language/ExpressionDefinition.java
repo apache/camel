@@ -219,11 +219,11 @@ public class ExpressionDefinition
 
     @Override
     public Expression createExpression(CamelContext camelContext) {
-        return camelContext.adapt(ModelCamelContext.class).createExpression(this);
+        return ((ModelCamelContext) camelContext).createExpression(this);
     }
 
     public Predicate createPredicate(CamelContext camelContext) {
-        return camelContext.adapt(ModelCamelContext.class).createPredicate(this);
+        return ((ModelCamelContext) camelContext).createPredicate(this);
     }
 
     //

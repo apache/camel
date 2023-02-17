@@ -35,10 +35,10 @@ class DefaultAutowiredLifecycleStrategy extends LifecycleStrategySupport impleme
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultAutowiredLifecycleStrategy.class);
 
-    private final ExtendedCamelContext camelContext;
+    private final CamelContext camelContext;
 
     public DefaultAutowiredLifecycleStrategy(CamelContext camelContext) {
-        this.camelContext = (ExtendedCamelContext) camelContext;
+        this.camelContext = camelContext;
     }
 
     @Override
@@ -87,7 +87,7 @@ class DefaultAutowiredLifecycleStrategy extends LifecycleStrategySupport impleme
     }
 
     private void autwire(String name, String kind, Object target) {
-        PropertyConfigurer pc = camelContext.getConfigurerResolver().resolvePropertyConfigurer(name + "-" + kind, camelContext);
+        PropertyConfigurer pc = ((ExtendedCamelContext) camelContext).getConfigurerResolver().resolvePropertyConfigurer(name + "-" + kind, camelContext);
         if (pc instanceof PropertyConfigurerGetter) {
             PropertyConfigurerGetter getter = (PropertyConfigurerGetter) pc;
             String[] names = getter.getAutowiredNames();
