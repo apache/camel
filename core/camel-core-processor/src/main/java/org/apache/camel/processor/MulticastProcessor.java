@@ -800,7 +800,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
                 original.setException(subExchange.getException());
             } else {
                 // copy the current result to original, so it will contain this result of this eip
+                Object correlationId = subExchange.removeProperty(ExchangePropertyKey.CORRELATION_ID);
                 ExchangeHelper.copyResults(original, subExchange);
+                subExchange.setProperty(ExchangePropertyKey.CORRELATION_ID, correlationId);
             }
         }
 
