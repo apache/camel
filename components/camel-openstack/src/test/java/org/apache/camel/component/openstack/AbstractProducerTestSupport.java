@@ -40,7 +40,7 @@ public abstract class AbstractProducerTestSupport {
     @Mock
     protected Exchange exchange;
 
-    @Mock
+    @Mock(extraInterfaces = ExtendedCamelContext.class)
     protected CamelContext camelContext;
 
     @Mock
