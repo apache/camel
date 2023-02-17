@@ -90,7 +90,7 @@ public class OpenTelemetryTracer extends org.apache.camel.tracing.Tracer {
 
     @Override
     protected SpanAdapter startSendingEventSpan(
-            String operationName, org.apache.camel.tracing.SpanKind kind, SpanAdapter parent) {
+            String operationName, org.apache.camel.tracing.SpanKind kind, SpanAdapter parent, Exchange exchange, InjectAdapter injectAdapter) {
         Baggage baggage = null;
         SpanBuilder builder = tracer.spanBuilder(operationName).setSpanKind(mapToSpanKind(kind));
         if (parent != null) {
