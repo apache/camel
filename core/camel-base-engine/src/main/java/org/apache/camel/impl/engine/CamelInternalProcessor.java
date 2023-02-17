@@ -594,8 +594,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
                 // if first we should add a pseudo trace message as well, so we have a starting message (eg from the route)
                 String routeId = routeDefinition != null ? routeDefinition.getRouteId() : null;
-                String source = LoggerHelper.getLineNumberLoggerName(processorDefinition);
                 if (first) {
+                    // use route as pseudo source when first
+                    String source = LoggerHelper.getLineNumberLoggerName(routeDefinition);
                     long created = exchange.getCreated();
                     DefaultBacklogTracerEventMessage pseudoFirst = new DefaultBacklogTracerEventMessage(
                             true, false, backlogTracer.incrementTraceCounter(), created, source, routeId, null, exchangeId,
@@ -631,6 +632,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                         }
                     });
                 }
+                String source = LoggerHelper.getLineNumberLoggerName(processorDefinition);
                 DefaultBacklogTracerEventMessage event = new DefaultBacklogTracerEventMessage(
                         false, false, backlogTracer.incrementTraceCounter(), timestamp, source, routeId, toNode, exchangeId,
                         messageAsXml,
