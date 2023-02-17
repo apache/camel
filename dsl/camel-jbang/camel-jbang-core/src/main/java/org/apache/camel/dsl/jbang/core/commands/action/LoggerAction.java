@@ -74,6 +74,9 @@ public class LoggerAction extends ActionBaseCommand {
     }
 
     protected Integer callChangeLoggingLevel() throws Exception {
+        // configure logging first
+        configureLoggingOff();
+
         List<Long> pids = findPids(name);
 
         for (long pid : pids) {

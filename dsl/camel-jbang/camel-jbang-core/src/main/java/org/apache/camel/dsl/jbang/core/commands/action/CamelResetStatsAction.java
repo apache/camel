@@ -37,6 +37,9 @@ public class CamelResetStatsAction extends ActionBaseCommand {
 
     @Override
     public Integer call() throws Exception {
+        // configure logging first
+        configureLoggingOff();
+
         List<Long> pids = findPids(name);
         for (long pid : pids) {
             JsonObject root = new JsonObject();

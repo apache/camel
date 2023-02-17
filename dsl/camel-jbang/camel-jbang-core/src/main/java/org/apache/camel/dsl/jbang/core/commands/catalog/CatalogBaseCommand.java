@@ -30,7 +30,6 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
-import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.download.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
@@ -91,8 +90,8 @@ public abstract class CatalogBaseCommand extends CamelCommand {
     }
 
     CamelCatalog loadCatalog() throws Exception {
-        // silent logging when download catalogs
-        RuntimeUtil.configureLog("off", false, false, false, false);
+        // configure logging first
+        configureLoggingOff();
 
         if ("spring-boot".equals(runtime)) {
             return CatalogLoader.loadSpringBootCatalog(repos, camelVersion);

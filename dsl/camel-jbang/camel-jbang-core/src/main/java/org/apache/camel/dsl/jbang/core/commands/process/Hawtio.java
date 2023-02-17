@@ -58,6 +58,9 @@ public class Hawtio extends CamelCommand {
 
     @Override
     public Integer call() throws Exception {
+        // configure logging first
+        configureLoggingOff();
+
         int exit;
         if (name == null) {
             exit = callHawtio();
