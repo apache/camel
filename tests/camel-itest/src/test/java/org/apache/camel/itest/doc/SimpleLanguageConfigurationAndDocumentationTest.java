@@ -41,7 +41,7 @@ public class SimpleLanguageConfigurationAndDocumentationTest extends CamelTestSu
     @Test
     void testLanguageJsonSchema() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            String json = context.adapt(CatalogCamelContext.class).getLanguageParameterJsonSchema("simple");
+            String json = ((CatalogCamelContext) context).getLanguageParameterJsonSchema("simple");
             assertNotNull(json, "Should have found some auto-generated JSON");
             LOG.info(json);
 

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.smpp;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExchangeFactory;
@@ -43,7 +44,8 @@ import static org.mockito.Mockito.when;
 public class SmppConsumerTest {
 
     private ExchangeFactory exchangeFactory;
-    private ExtendedCamelContext context;
+    private CamelContext context;
+    private ExtendedCamelContext ecc;
     private SmppConsumer consumer;
     private SmppEndpoint endpoint;
     private SmppConfiguration configuration;
@@ -56,15 +58,16 @@ public class SmppConsumerTest {
         configuration.setServiceType("CMT");
         configuration.setSystemType("cp");
         configuration.setPassword("password");
-        context = mock(ExtendedCamelContext.class);
+        context = mock(CamelContext.class);
+        ecc = mock(ExtendedCamelContext.class);
         exchangeFactory = mock(ExchangeFactory.class);
         endpoint = mock(SmppEndpoint.class);
         processor = mock(Processor.class);
         session = mock(SMPPSession.class);
 
         when(endpoint.getCamelContext()).thenReturn(context);
-        when(context.adapt(ExtendedCamelContext.class)).thenReturn(context);
-        when(context.getExchangeFactory()).thenReturn(exchangeFactory);
+        when(context.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        when(ecc.getExchangeFactory()).thenReturn(exchangeFactory);
         when(exchangeFactory.newExchangeFactory(any())).thenReturn(exchangeFactory);
 
         // the construction of SmppConsumer will trigger the getCamelContext call

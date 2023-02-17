@@ -163,6 +163,6 @@ public class ValidatorBuilder {
         camelContext.getValidatorRegistry();
 
         validator.setType(type);
-        camelContext.adapt(ModelCamelContext.class).registerValidator(validator);
+        ((ModelCamelContext) camelContext).registerValidator(validator);
     }
 }

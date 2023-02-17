@@ -44,11 +44,11 @@ public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport imp
     private final Map<String, Component> autowrieComponents = new HashMap<>();
     private final Map<String, DataFormat> autowrieDataFormats = new HashMap<>();
     private final Map<String, Language> autowrieLanguages = new HashMap<>();
-    private final ExtendedCamelContext camelContext;
+    private final CamelContext camelContext;
     private volatile boolean initializing;
 
     public MainAutowiredLifecycleStrategy(CamelContext camelContext) {
-        this.camelContext = (ExtendedCamelContext) camelContext;
+        this.camelContext = camelContext;
     }
 
     @Override
@@ -129,7 +129,7 @@ public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport imp
     }
 
     private void autwire(String name, String kind, Object target) {
-        PropertyConfigurer pc = camelContext.getConfigurerResolver().resolvePropertyConfigurer(name + "-" + kind, camelContext);
+        PropertyConfigurer pc = ((ExtendedCamelContext) camelContext).getConfigurerResolver().resolvePropertyConfigurer(name + "-" + kind, camelContext);
         if (pc instanceof PropertyConfigurerGetter) {
             PropertyConfigurerGetter getter = (PropertyConfigurerGetter) pc;
             String[] names = getter.getAutowiredNames();

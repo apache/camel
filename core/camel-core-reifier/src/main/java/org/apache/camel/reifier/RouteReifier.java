@@ -339,7 +339,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // this needs to be done here at the end because the route may be transactional and have a transaction error handler
         // automatic be configured which some EIPs like Multicast/RecipientList needs to be using for special fine-grained error handling
         ErrorHandlerFactory builder = route.getErrorHandlerFactory();
-        Processor errorHandler = camelContext.adapt(ModelCamelContext.class).getModelReifierFactory().createErrorHandler(route,
+        Processor errorHandler = ((ModelCamelContext) camelContext).getModelReifierFactory().createErrorHandler(route,
                 builder, null);
         prepareErrorHandlerAware(route, errorHandler);
 

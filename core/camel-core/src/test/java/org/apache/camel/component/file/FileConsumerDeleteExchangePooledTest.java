@@ -43,7 +43,7 @@ public class FileConsumerDeleteExchangePooledTest extends ContextTestSupport {
 
         context.getExchangeFactory().setStatisticsEnabled(true);
         context.getProcessorExchangeFactory().setStatisticsEnabled(true);
-        return context;
+        return (CamelContext) context;
     }
 
     @Test

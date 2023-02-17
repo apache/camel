@@ -36,7 +36,7 @@ public class DirectComponentConfigurationAndDocumentationTest extends CamelTestS
     @Test
     void testComponentJsonSchema() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            String json = context.adapt(CatalogCamelContext.class).getComponentParameterJsonSchema("direct");
+            String json = ((CatalogCamelContext) context).getComponentParameterJsonSchema("direct");
             assertNotNull(json, "Should have found some auto-generated JSON");
         }
     }

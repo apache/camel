@@ -163,7 +163,7 @@ public final class RouteDefinitionHelper {
         }
 
         // also include already existing on camel context
-        for (final RouteDefinition def : context.adapt(ModelCamelContext.class).getRouteDefinitions()) {
+        for (final RouteDefinition def : ((ModelCamelContext) context).getRouteDefinitions()) {
             if (def.getId() != null) {
                 customIds.add(def.getId());
             }

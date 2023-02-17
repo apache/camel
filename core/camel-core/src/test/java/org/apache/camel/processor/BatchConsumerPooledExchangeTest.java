@@ -51,7 +51,7 @@ public class BatchConsumerPooledExchangeTest extends ContextTestSupport {
         ecc.getExchangeFactory().setStatisticsEnabled(true);
         ecc.getProcessorExchangeFactory().setStatisticsEnabled(true);
 
-        return ecc;
+        return (CamelContext) ecc;
     }
 
     @Override

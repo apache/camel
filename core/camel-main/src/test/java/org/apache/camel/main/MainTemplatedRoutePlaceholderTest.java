@@ -51,7 +51,7 @@ class MainTemplatedRoutePlaceholderTest {
         main.start();
 
         CamelContext context = main.getCamelContext();
-        assertEquals(1, context.adapt(ModelCamelContext.class).getRouteDefinitions().size());
+        assertEquals(1, ((ModelCamelContext) context).getRouteDefinitions().size());
 
         MockEndpoint mock = context.getEndpoint("mock:out", MockEndpoint.class);
         mock.expectedBodiesReceived("Hello-appendvalue");

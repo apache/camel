@@ -57,7 +57,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     private static final Logger LOG = LoggerFactory.getLogger(DefaultProducerCache.class);
     private static final long ACQUIRE_WAIT_TIME = 30000;
 
-    private final ExtendedCamelContext camelContext;
+    private final CamelContext camelContext;
     private final ProducerServicePool producers;
     private final Object source;
     private final SharedInternalProcessor sharedInternalProcessor;
@@ -69,7 +69,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
     public DefaultProducerCache(Object source, CamelContext camelContext, int cacheSize) {
         this.source = source;
-        this.camelContext = (ExtendedCamelContext) camelContext;
+        this.camelContext = camelContext;
         this.maxCacheSize = cacheSize <= 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
         if (cacheSize >= 0) {
             this.producers = createServicePool(camelContext, maxCacheSize);
@@ -88,7 +88,8 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
         // internal processor used for sending
         sharedInternalProcessor
-                = this.camelContext.getInternalProcessorFactory().createSharedCamelInternalProcessor(this.camelContext);
+                = this.camelContext.adapt(ExtendedCamelContext.class)
+                    .getInternalProcessorFactory().createSharedCamelInternalProcessor(camelContext);
     }
 
     protected ProducerServicePool createServicePool(CamelContext camelContext, int cacheSize) {
@@ -188,7 +189,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
             // send the exchange using the processor
             StopWatch watch = null;
             try {
-                if (eventNotifierEnabled && camelContext.isEventNotificationApplicable()) {
+                if (eventNotifierEnabled && ((ExtendedCamelContext) camelContext).isEventNotificationApplicable()) {
                     boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
                     if (sending) {
                         watch = new StopWatch();
@@ -312,7 +313,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         try {
             // record timing for sending the exchange using the producer
             StopWatch watch;
-            if (eventNotifierEnabled && camelContext.isEventNotificationApplicable()) {
+            if (eventNotifierEnabled && ((ExtendedCamelContext) camelContext).isEventNotificationApplicable()) {
                 boolean sending = EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
                 if (sending) {
                     watch = new StopWatch();
@@ -359,7 +360,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
         // send the exchange using the processor
         try {
-            if (eventNotifierEnabled && camelContext.isEventNotificationApplicable()) {
+            if (eventNotifierEnabled && ((ExtendedCamelContext) camelContext).isEventNotificationApplicable()) {
                 callback = new EventNotifierCallback(callback, exchange, endpoint);
             }
             // invoke the asynchronous method

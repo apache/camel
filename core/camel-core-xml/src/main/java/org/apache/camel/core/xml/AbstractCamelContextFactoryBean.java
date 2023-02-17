@@ -364,7 +364,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (modelLifecycleStrategies != null && !modelLifecycleStrategies.isEmpty()) {
             for (Entry<String, ModelLifecycleStrategy> entry : modelLifecycleStrategies.entrySet()) {
                 ModelLifecycleStrategy strategy = entry.getValue();
-                ModelCamelContext mcc = getContext().adapt(ModelCamelContext.class);
+                ModelCamelContext mcc = getContext();
                 if (!mcc.getModelLifecycleStrategies().contains(strategy)) {
                     LOG.info("Using custom ModelLifecycleStrategy with id: {} and implementation: {}", entry.getKey(), strategy);
                     mcc.addModelLifecycleStrategy(strategy);
@@ -610,7 +610,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             List<OnCompletionDefinition> oc = new ArrayList<>(getOnCompletions());
             if (getContext() != null) {
                 List<RouteConfigurationDefinition> globalConfigurations
-                        = getContext().adapt(ModelCamelContext.class).getRouteConfigurationDefinitions();
+                        = getContext().getRouteConfigurationDefinitions();
                 if (globalConfigurations != null) {
                     // if there are multiple ids configured then we should apply in that same order
                     String[] ids = route.getRouteConfigurationId() != null

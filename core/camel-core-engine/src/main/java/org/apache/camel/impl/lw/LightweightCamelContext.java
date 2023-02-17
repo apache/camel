@@ -156,7 +156,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.vault.VaultConfiguration;
 
 @Experimental
-public class LightweightCamelContext implements ExtendedCamelContext, CatalogCamelContext, ModelCamelContext {
+public class LightweightCamelContext implements CamelContext, ExtendedCamelContext, CatalogCamelContext, ModelCamelContext {
 
     protected volatile CamelContext delegate;
 
@@ -275,7 +275,7 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    public <T extends CamelContext> T adapt(Class<T> type) {
+    public <T extends ExtendedCamelContext> T adapt(Class<T> type) {
         T res = delegate.adapt(type);
         if (res == delegate) {
             return type.cast(this);
@@ -1817,7 +1817,7 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     //
 
     protected CatalogCamelContext getCatalogCamelContext() {
-        return delegate.adapt(CatalogCamelContext.class);
+        return (CatalogCamelContext) delegate;
     }
 
     @Override
@@ -1845,7 +1845,7 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     //
 
     protected ModelCamelContext getModelCamelContext() {
-        return delegate.adapt(ModelCamelContext.class);
+        return (ModelCamelContext) delegate;
     }
 
     @Override

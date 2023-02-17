@@ -34,7 +34,7 @@ public class CamelContextJSonSchemaResolver implements JSonSchemaResolver {
     private final CatalogCamelContext camelContext;
 
     public CamelContextJSonSchemaResolver(CamelContext camelContext) {
-        this.camelContext = camelContext.adapt(CatalogCamelContext.class);
+        this.camelContext = (CatalogCamelContext) camelContext;
     }
 
     @Override

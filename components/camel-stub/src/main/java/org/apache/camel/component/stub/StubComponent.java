@@ -95,7 +95,7 @@ public class StubComponent extends VmComponent {
         super.doInit();
 
         if (shadow) {
-            final EndpointRegistry registry = getCamelContext().adapt(ExtendedCamelContext.class).getEndpointRegistry();
+            final EndpointRegistry registry = getCamelContext().getEndpointRegistry();
             getCamelContext().adapt(ExtendedCamelContext.class).registerEndpointCallback((uri, endpoint) -> {
                 String shadowUri = resolveShadowUri(uri);
                 if (!uri.equals(shadowUri)) {

@@ -26,12 +26,12 @@ import org.apache.camel.support.service.ServiceHelper;
 public class EmptyProducerCache extends DefaultProducerCache {
 
     private final Object source;
-    private final ExtendedCamelContext ecc;
+    private final CamelContext ecc;
 
     public EmptyProducerCache(Object source, CamelContext camelContext) {
         super(source, camelContext, -1);
         this.source = source;
-        this.ecc = camelContext.adapt(ExtendedCamelContext.class);
+        this.ecc = camelContext;
         setExtendedStatistics(false);
     }
 
@@ -41,7 +41,7 @@ public class EmptyProducerCache extends DefaultProducerCache {
         AsyncProducer answer;
         try {
             answer = endpoint.createAsyncProducer();
-            boolean startingRoutes = ecc.isSetupRoutes() || ecc.getRouteController().isStartingRoutes();
+            boolean startingRoutes = ((ExtendedCamelContext) ecc).isSetupRoutes() || ecc.getRouteController().isStartingRoutes();
             if (startingRoutes && answer.isSingleton()) {
                 // if we are currently starting a route, then add as service and enlist in JMX
                 // - but do not enlist non-singletons in JMX

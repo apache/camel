@@ -160,7 +160,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Experimental
-public class LightweightRuntimeCamelContext implements ExtendedCamelContext, CatalogCamelContext {
+public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCamelContext, CatalogCamelContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(LightweightRuntimeCamelContext.class);
 
@@ -263,7 +263,7 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         injector = context.getInjector();
         classResolver = context.getClassResolver();
         name = context.getName();
-        description = context.adapt(ExtendedCamelContext.class).getDescription();
+        description = context.getDescription();
         eventNotificationApplicable = context.adapt(ExtendedCamelContext.class).isEventNotificationApplicable();
         useDataType = context.isUseDataType();
         useBreadcrumb = context.isUseBreadcrumb();
@@ -631,10 +631,11 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public <T extends CamelContext> T adapt(Class<T> type) {
+    public <T extends ExtendedCamelContext> T adapt(Class<T> type) {
         if (type.isInstance(this)) {
             return type.cast(this);
         }
+
         throw new UnsupportedOperationException();
     }
 

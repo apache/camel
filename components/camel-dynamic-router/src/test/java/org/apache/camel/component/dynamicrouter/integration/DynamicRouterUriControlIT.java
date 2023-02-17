@@ -187,7 +187,7 @@ public class DynamicRouterUriControlIT extends CamelTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        ExtendedCamelContext context = super.createCamelContext().adapt(ExtendedCamelContext.class);
+        CamelContext context = super.createCamelContext();
         context.addComponent(COMPONENT_SCHEME, new DynamicRouterComponent());
         return context;
     }

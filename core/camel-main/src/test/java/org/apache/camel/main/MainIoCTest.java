@@ -52,7 +52,7 @@ public class MainIoCTest {
         // and now its created
         assertNotNull(main.getCamelContext());
         // should be 1 route model
-        assertEquals(1, main.getCamelContext().adapt(ModelCamelContext.class).getRouteDefinitions().size());
+        assertEquals(1, ((ModelCamelContext) main.getCamelContext()).getRouteDefinitions().size());
         // and the configuration should have registered beans
         assertNotNull(main.getCamelContext().getRegistry().lookupByName("MyCoolBean"));
         assertEquals("Tiger", main.getCamelContext().getRegistry().lookupByName("coolStuff"));

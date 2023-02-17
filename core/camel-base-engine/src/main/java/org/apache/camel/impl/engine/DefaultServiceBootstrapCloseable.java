@@ -58,7 +58,7 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
                     ((BootstrapCloseable) service).close();
                 }
                 // service is no longer needed as it was only intended during bootstrap
-                camelContext.removeService(service);
+                ((CamelContext) camelContext).removeService(service);
             } catch (Exception e) {
                 LOG.warn("Error during closing bootstrap service. This exception is ignored", e);
             }

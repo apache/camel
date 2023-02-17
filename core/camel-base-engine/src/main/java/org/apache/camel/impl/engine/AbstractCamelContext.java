@@ -202,7 +202,7 @@ import static org.apache.camel.spi.UnitOfWork.MDC_CAMEL_CONTEXT_ID;
  * Represents the context used to configure routes and the policies to use.
  */
 public abstract class AbstractCamelContext extends BaseService
-        implements ExtendedCamelContext, CatalogCamelContext, Suspendable {
+        implements CamelContext, ExtendedCamelContext, CatalogCamelContext, Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContext.class);
 
@@ -466,7 +466,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
-    public <T extends CamelContext> T adapt(Class<T> type) {
+    public <T extends ExtendedCamelContext> T adapt(Class<T> type) {
         return type.cast(this);
     }
 

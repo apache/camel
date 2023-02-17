@@ -137,7 +137,7 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             Route route, Processor processor, ErrorHandlerFactory builder) {
         TransactionErrorHandler answer;
         try {
-            ModelCamelContext mcc = route.getCamelContext().adapt(ModelCamelContext.class);
+            ModelCamelContext mcc = (ModelCamelContext) route.getCamelContext();
             answer = (TransactionErrorHandler) mcc.getModelReifierFactory().createErrorHandler(route, builder, processor);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);

@@ -79,7 +79,7 @@ import org.apache.camel.spi.UriFactoryResolver;
  * Extended {@link CamelContext} which contains the methods and APIs that are not primary intended for Camel end users
  * but for SPI, custom components, or more advanced used-cases with Camel.
  */
-public interface ExtendedCamelContext extends CamelContext {
+public interface ExtendedCamelContext {
 
     /**
      * Sets the name (id) of this context.
@@ -91,10 +91,18 @@ public interface ExtendedCamelContext extends CamelContext {
      */
     void setName(String name);
 
+    default String getName() {
+        return null;
+    }
+
     /**
      * Sets the description of this Camel application.
      */
     void setDescription(String description);
+
+    default String getDescription() {
+        return null;
+    }
 
     /**
      * Sets the registry Camel should use for looking up beans by name or type.
@@ -105,6 +113,10 @@ public interface ExtendedCamelContext extends CamelContext {
      * @param registry the registry such as DefaultRegistry or
      */
     void setRegistry(Registry registry);
+
+    default Registry getRegistry() {
+        return null;
+    }
 
     /**
      * Method to signal to {@link CamelContext} that the process to initialize setup routes is in progress.

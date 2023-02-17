@@ -76,8 +76,7 @@ public final class YamlSupport {
 
         if (configurer == null) {
             // see if there is a configurer for it
-            configurer = context.adapt(ExtendedCamelContext.class)
-                    .getConfigurerResolver()
+            configurer = ((ExtendedCamelContext) context).getConfigurerResolver()
                     .resolvePropertyConfigurer(target.getClass().getSimpleName(), context);
         }
 
@@ -150,7 +149,7 @@ public final class YamlSupport {
         }
 
         final String scheme = uri.contains(":") ? StringHelper.before(uri, ":") : uri;
-        final EndpointUriFactory factory = context.adapt(ExtendedCamelContext.class).getEndpointUriFactory(scheme);
+        final EndpointUriFactory factory = ((ExtendedCamelContext) context).getEndpointUriFactory(scheme);
 
         try {
             if (factory != null && factory.isEnabled(scheme)) {

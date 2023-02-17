@@ -90,7 +90,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             private void addConfigurations(RouteConfigurationsDefinition configurations) {
                 CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
                 for (RouteConfigurationDefinition config : configurations.getRouteConfigurations()) {
-                    getCamelContext().adapt(ModelCamelContext.class).addRouteConfiguration(config);
+                    ((ModelCamelContext) getCamelContext()).addRouteConfiguration(config);
                 }
             }
         };

@@ -711,7 +711,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             // loop the routes, and append the node ids (via processor)
             for (ManagedRouteMBean route : routes) {
                 // grab route consumer
-                RouteDefinition rd = context.adapt(ModelCamelContext.class).getRouteDefinition(route.getRouteId());
+                RouteDefinition rd = ((ModelCamelContext) context).getRouteDefinition(route.getRouteId());
                 if (rd != null) {
                     String id = rd.getRouteId();
                     int line = rd.getInput().getLineNumber();

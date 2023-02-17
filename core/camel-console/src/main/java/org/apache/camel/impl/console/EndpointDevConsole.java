@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.annotations.DevConsole;
@@ -43,7 +42,7 @@ public class EndpointDevConsole extends AbstractDevConsole {
 
         // runtime registry is optional but if enabled we have additional statistics to use in output
         List<RuntimeEndpointRegistry.Statistic> stats = null;
-        RuntimeEndpointRegistry runtimeReg = getCamelContext().adapt(ExtendedCamelContext.class).getRuntimeEndpointRegistry();
+        RuntimeEndpointRegistry runtimeReg = getCamelContext().getRuntimeEndpointRegistry();
         if (runtimeReg != null) {
             stats = runtimeReg.getEndpointStatistics();
         }
@@ -74,7 +73,7 @@ public class EndpointDevConsole extends AbstractDevConsole {
 
         // runtime registry is optional but if enabled we have additional statistics to use in output
         List<RuntimeEndpointRegistry.Statistic> stats = null;
-        RuntimeEndpointRegistry runtimeReg = getCamelContext().adapt(ExtendedCamelContext.class).getRuntimeEndpointRegistry();
+        RuntimeEndpointRegistry runtimeReg = getCamelContext().getRuntimeEndpointRegistry();
         if (runtimeReg != null) {
             stats = runtimeReg.getEndpointStatistics();
         }

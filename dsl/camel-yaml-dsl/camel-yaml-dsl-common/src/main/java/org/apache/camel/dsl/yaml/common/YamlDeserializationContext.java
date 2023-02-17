@@ -28,7 +28,6 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.Service;
 import org.apache.camel.dsl.yaml.common.exception.DuplicateKeyException;
@@ -48,7 +47,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
 
     private final Set<YamlDeserializerResolver> resolvers;
     private final Map<String, ConstructNode> constructors;
-    private ExtendedCamelContext camelContext;
+    private CamelContext camelContext;
     private Resource resource;
 
     public YamlDeserializationContext(LoadSettings settings) {
@@ -84,7 +83,7 @@ public class YamlDeserializationContext extends StandardConstructor implements C
 
     @Override
     public void setCamelContext(CamelContext camelContext) {
-        this.camelContext = camelContext.adapt(ExtendedCamelContext.class);
+        this.camelContext = camelContext;
     }
 
     @Override

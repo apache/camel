@@ -290,7 +290,7 @@ public final class AdviceWith {
     }
 
     private static RouteDefinition findRouteDefinition(CamelContext camelContext, Object routeId) {
-        ModelCamelContext mcc = camelContext.adapt(ModelCamelContext.class);
+        ModelCamelContext mcc = (ModelCamelContext) camelContext;
         if (mcc.getRouteDefinitions().isEmpty()) {
             throw new IllegalArgumentException("Cannot advice route as there are no routes");
         }

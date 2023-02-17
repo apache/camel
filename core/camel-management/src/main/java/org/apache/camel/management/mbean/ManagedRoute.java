@@ -588,7 +588,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             processors.sort(new OrderProcessorMBeans());
 
             // grab route consumer
-            RouteDefinition rd = context.adapt(ModelCamelContext.class).getRouteDefinition(route.getRouteId());
+            RouteDefinition rd = ((ModelCamelContext) context).getRouteDefinition(route.getRouteId());
             if (rd != null) {
                 String id = rd.getRouteId();
                 int line = rd.getInput().getLineNumber();

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.openstack;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
@@ -40,7 +41,10 @@ public abstract class AbstractProducerTestSupport {
     protected Exchange exchange;
 
     @Mock
-    protected ExtendedCamelContext camelContext;
+    protected CamelContext camelContext;
+
+    @Mock
+    protected ExtendedCamelContext ecc;
 
     protected Message msg;
 
@@ -50,7 +54,7 @@ public abstract class AbstractProducerTestSupport {
     public void before() {
         msg = new DefaultMessage(camelContext);
         when(exchange.getIn()).thenReturn(msg);
-        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(camelContext);
+        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
         when(camelContext.adapt(ExtendedCamelContext.class).getHeadersMapFactory()).thenReturn(new DefaultHeadersMapFactory());
     }
 }

@@ -164,8 +164,8 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
      * @return        a {@link RoutesBuilderLoader} or <code>null</code> if none found.
      */
     private ResourceResolver resolveService(String scheme) {
-        final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
-        final FactoryFinder finder = ecc.getBootstrapFactoryFinder(ResourceResolver.FACTORY_PATH);
+        final CamelContext ecc = getCamelContext();
+        final FactoryFinder finder = ((ExtendedCamelContext) ecc).getBootstrapFactoryFinder(ResourceResolver.FACTORY_PATH);
 
         ResourceResolver rr = ResolverHelper.resolveService(ecc, finder, scheme, ResourceResolver.class).orElse(null);
         if (rr != null) {

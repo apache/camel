@@ -44,7 +44,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
     @Test
     void testFlatpackDefaultValue() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("flatpack");
+            String json = ((CatalogCamelContext) context).getEipParameterJsonSchema("flatpack");
             assertNotNull(json);
 
             DataFormatModel model = JsonMapper.generateDataFormatModel(json);
@@ -70,7 +70,7 @@ public class DataFormatComponentConfigurationAndDocumentationTest extends CamelT
     @Test
     void testUniVocityTsvEscapeChar() throws Exception {
         try (CamelContext context = new DefaultCamelContext()) {
-            String json = context.adapt(CatalogCamelContext.class).getEipParameterJsonSchema("univocity-tsv");
+            String json = ((CatalogCamelContext) context).getEipParameterJsonSchema("univocity-tsv");
             assertNotNull(json);
 
             DataFormatModel model = JsonMapper.generateDataFormatModel(json);
