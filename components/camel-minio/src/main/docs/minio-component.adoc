@@ -83,6 +83,8 @@ Camel-Minio component provides the following operation on the producer side:
 - listObjects
 - getObject (this will return a MinioObject instance)
 - getObjectRange (this will return a MinioObject instance)
+- createDownloadLink (this will return a Presigned download Url)
+- createUploadLink (this will return a Presigned upload url)
 
 === Advanced Minio configuration
 
@@ -201,6 +203,39 @@ This operation will return an MinioObject instance related to the camelKey objec
   .to("mock:result");
 --------------------------------------------------------------------------------
 
+- createDownloadLink: this operation will return a presigned url through which a file can be downloaded using GET method
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
+          exchange.getIn().setHeader(MinioConstants.PRESIGNED_URL_EXPIRATION_TIME, 60 * 60);
+      }
+  })
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=createDownloadLink")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+- createUploadLink: this operation will return a presigned url through which a file can be uploaded using PUT method
+
+[source,java]
+--------------------------------------------------------------------------------
+  from("direct:start").process(new Processor() {
+
+      @Override
+      public void process(Exchange exchange) throws Exception {
+          exchange.getIn().setHeader(MinioConstants.OBJECT_NAME, "camelKey");
+          exchange.getIn().setHeader(MinioConstants.PRESIGNED_URL_EXPIRATION_TIME, 60 * 60);
+      }
+  })
+  .to("minio://mycamelbucket?minioClient=#minioClient&operation=createUploadLink")
+  .to("mock:result");
+--------------------------------------------------------------------------------
+
+
 This operation will return an MinioObject instance related to the camelKey object in mycamelbucket bucket, containing bytes from 0 to 9.
 
 == Bucket Autocreation
@@ -268,3 +303,4 @@ where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
 include::spring-boot:partial$starter.adoc[]
+
