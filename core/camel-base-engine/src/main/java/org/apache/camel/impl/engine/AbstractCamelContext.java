@@ -3136,15 +3136,15 @@ public abstract class AbstractCamelContext extends BaseService
         }
         bootstraps.clear();
 
-        if (adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled()) {
+        if (getExchangeFactory().isPooled()) {
             LOG.info(
                     "Pooled mode enabled. Camel pools and reuses objects to reduce JVM object allocations. The pool capacity is: {} elements.",
-                    adapt(ExtendedCamelContext.class).getExchangeFactory().getCapacity());
+                    getExchangeFactory().getCapacity());
         }
         if (isLightweight()) {
             LOG.info("Lightweight mode enabled. Performing optimizations and memory reduction.");
             ReifierStrategy.clearReifiers();
-            adapt(ExtendedCamelContext.class).disposeModel();
+            disposeModel();
         }
     }
 
@@ -3279,7 +3279,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected void doStartCamel() throws Exception {
-        if (!adapt(ExtendedCamelContext.class).getBeanPostProcessor().isEnabled()) {
+        if (!getBeanPostProcessor().isEnabled()) {
             LOG.info("BeanPostProcessor is disabled. Dependency injection of Camel annotations in beans is not supported.");
         }
         if (LOG.isDebugEnabled()) {
