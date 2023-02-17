@@ -727,9 +727,35 @@ public class CamelTraceAction extends ActionBaseCommand {
                     new Column().dataAlign(HorizontalAlign.LEFT).maxWidth(160, OverflowBehaviour.NEWLINE)
                             .with(TableRow::valueAsString)));
         }
+        String tab4 = null;
+        jo = r.exception;
+        if (jo != null) {
+            TableRow eRow = new TableRow("Exception", jo.getString("type"), null, jo.get("message"));
+            tab4 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
+                    new Column().dataAlign(HorizontalAlign.LEFT)
+                            .minWidth(showExchangeProperties ? 10 : 8).with(TableRow::kindAsStringRed),
+                    new Column().dataAlign(HorizontalAlign.LEFT)
+                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(TableRow::typeAsString),
+                    new Column().dataAlign(HorizontalAlign.LEFT)
+                            .maxWidth(80, OverflowBehaviour.NEWLINE).with(TableRow::valueAsStringRed)));
+        }
+        // stacktrace only (span)
+        String tab5 = null;
+        if (jo != null) {
+            TableRow eRow = new TableRow("Stacktrace", null, null, jo.get("stackTrace"));
+            tab5 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
+                    new Column().dataAlign(HorizontalAlign.LEFT).maxWidth(160, OverflowBehaviour.NEWLINE)
+                            .with(TableRow::valueAsStringRed)));
+        }
         String answer = tab1 + System.lineSeparator() + tab2;
         if (tab3 != null) {
             answer = answer + System.lineSeparator() + tab3;
+        }
+        if (tab4 != null) {
+            answer = answer + System.lineSeparator() + tab4;
+        }
+        if (tab5 != null) {
+            answer = answer + System.lineSeparator() + tab5;
         }
         return answer;
     }
@@ -750,7 +776,8 @@ public class CamelTraceAction extends ActionBaseCommand {
                 return "Input";
             }
         } else if (r.last) {
-            String s = r.parent.depth == 0 ? "Completed" : "Returning from " + r.routeId;
+            String done = r.exception != null ? "Completed (exception)" : "Completed (success)";
+            String s = r.parent.depth == 0 ? done : "Returning from " + r.routeId;
             if (loggingColor) {
                 return Ansi.ansi().fg(r.failed ? Ansi.Color.RED : Ansi.Color.GREEN).a(s).reset().toString();
             } else {
@@ -764,10 +791,11 @@ public class CamelTraceAction extends ActionBaseCommand {
                 return "Processing";
             }
         } else if (r.failed) {
+            String fail = r.exception != null ? "Exception" : "Failed";
             if (loggingColor) {
-                return Ansi.ansi().fg(Ansi.Color.RED).a("Failed").reset().toString();
+                return Ansi.ansi().fg(Ansi.Color.RED).a(fail).reset().toString();
             } else {
-                return "Failed";
+                return fail;
             }
         } else {
             if (loggingColor) {
@@ -839,6 +867,17 @@ public class CamelTraceAction extends ActionBaseCommand {
             return value != null ? value.toString() : "null";
         }
 
+        String valueAsStringRed() {
+            if (value != null) {
+                if (loggingColor) {
+                    return Ansi.ansi().fgRed().a(value).reset().toString();
+                } else {
+                    return value.toString();
+                }
+            }
+            return "";
+        }
+
         String keyAsString() {
             if (key == null) {
                 return "";
@@ -848,6 +887,14 @@ public class CamelTraceAction extends ActionBaseCommand {
 
         String kindAsString() {
             return kind;
+        }
+
+        String kindAsStringRed() {
+            if (loggingColor) {
+                return Ansi.ansi().fgRed().a(kind).reset().toString();
+            } else {
+                return kind;
+            }
         }
 
         String typeAsString() {
