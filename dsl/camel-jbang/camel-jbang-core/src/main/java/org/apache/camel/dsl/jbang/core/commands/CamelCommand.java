@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.Stack;
 import java.util.concurrent.Callable;
 
+import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import picocli.CommandLine;
 import picocli.CommandLine.IParameterConsumer;
 import picocli.CommandLine.Model.ArgSpec;
@@ -45,6 +46,10 @@ public abstract class CamelCommand implements Callable<Integer> {
 
     public CamelJBangMain getMain() {
         return main;
+    }
+
+    protected void configureLoggingOff() {
+        RuntimeUtil.configureLog("off", false, false, false, false);
     }
 
     public File getStatusFile(String pid) {

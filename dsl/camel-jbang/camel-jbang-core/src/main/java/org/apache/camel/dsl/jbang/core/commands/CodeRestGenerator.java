@@ -68,6 +68,9 @@ public class CodeRestGenerator extends CamelCommand {
 
     @Override
     public Integer call() throws Exception {
+        // configure logging first
+        configureLoggingOff();
+
         final JsonNode node = input.endsWith("json") ? readNodeFromJson() : readNodeFromYaml();
         OasDocument document = (OasDocument) Library.readDocument(node);
         Configurator.setRootLevel(Level.OFF);

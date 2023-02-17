@@ -73,6 +73,8 @@ class Init extends CamelCommand {
 
     @Override
     public Integer call() throws Exception {
+        // configure logging first
+        configureLoggingOff();
 
         // is the file referring to an existing file on github/gist
         // then we should download the file to local for use

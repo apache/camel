@@ -81,6 +81,9 @@ public class CatalogDoc extends CamelCommand {
 
     @Override
     public Integer call() throws Exception {
+        // configure logging first
+        configureLoggingOff();
+
         String prefix = StringHelper.before(name, ":");
         if (prefix != null) {
             name = StringHelper.after(name, ":");

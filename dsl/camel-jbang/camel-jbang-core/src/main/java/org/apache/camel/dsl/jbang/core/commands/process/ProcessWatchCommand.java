@@ -36,6 +36,9 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
 
     @Override
     public Integer call() throws Exception {
+        // configure logging first
+        configureLoggingOff();
+
         int exit;
         if (watch) {
             do {
