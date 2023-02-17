@@ -66,9 +66,9 @@ public class CamelLogAction extends ActionBaseCommand {
                         description = "Keep following and outputting new log lines (use ctrl + c to exit).")
     boolean follow = true;
 
-    @CommandLine.Option(names = { "--prefix" }, defaultValue = "true",
-                        description = "Print prefix with running Camel integration name.")
-    boolean prefix = true;
+    @CommandLine.Option(names = { "--prefix" }, defaultValue = "auto",
+                        description = "Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off.")
+    String prefix = "auto";
 
     @CommandLine.Option(names = { "--tail" }, defaultValue = "-1",
                         description = "The number of lines from the end of the logs to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all logs from beginning.")
@@ -89,6 +89,7 @@ public class CamelLogAction extends ActionBaseCommand {
     String findAnsi;
 
     private int nameMaxWidth;
+    private boolean prefixShown;
 
     private final Map<String, Ansi.Color> colors = new HashMap<>();
 
@@ -319,14 +320,19 @@ public class CamelLogAction extends ActionBaseCommand {
         lines.forEach(l -> {
             String name = StringHelper.before(l, "| ");
             String line = StringHelper.after(l, "| ");
-            printLine(name, line);
+            printLine(name, rows.size(), line);
         });
     }
 
-    protected void printLine(String name, String line) {
-        if (!prefix) {
-            name = null;
+    protected void printLine(String name, int pids, String line) {
+        if (!prefixShown) {
+            // compute whether to show prefix or not
+            if ("false".equals(prefix) || "auto".equals(prefix) && pids <= 1) {
+                name = null;
+            }
         }
+        prefixShown = name != null;
+
         if (!timestamp) {
             // after timestamp is after 2 sine-space
             int pos = line.indexOf(' ');

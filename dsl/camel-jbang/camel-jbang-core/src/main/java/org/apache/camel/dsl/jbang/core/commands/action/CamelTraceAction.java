@@ -74,10 +74,9 @@ public class CamelTraceAction extends ActionBaseCommand {
                         description = "Keep following and outputting new traces (use ctrl + c to exit).")
     boolean follow = true;
 
-    @CommandLine.Option(names = { "--prefix" }, defaultValue = "true",
-                        description = "Print prefix with running Camel integration name.")
-    boolean prefix = true;
-    // TODO: true|false|auto (same for log)
+    @CommandLine.Option(names = { "--prefix" }, defaultValue = "auto",
+                        description = "Print prefix with running Camel integration name. auto=only prefix when running multiple integrations. true=always prefix. false=prefix off.")
+    String prefix = "auto";
 
     @CommandLine.Option(names = { "--source" },
                         description = "Prefer to display source filename/code instead of IDs")
@@ -133,6 +132,7 @@ public class CamelTraceAction extends ActionBaseCommand {
     String findAnsi;
 
     private int nameMaxWidth;
+    private boolean prefixShown;
 
     private final Map<String, Ansi.Color> nameColors = new HashMap<>();
     private final Map<String, Ansi.Color> exchangeIdColors = new HashMap<>();
@@ -472,7 +472,7 @@ public class CamelTraceAction extends ActionBaseCommand {
 
         int doneTraces = 0;
         for (Row r : rows) {
-            printTrace(r.name, r, limit);
+            printTrace(r.name, pids.size(), r, limit);
             if (r.done) {
                 doneTraces++;
             }
@@ -507,10 +507,14 @@ public class CamelTraceAction extends ActionBaseCommand {
         return row.compareTo(limit) >= 0;
     }
 
-    protected void printTrace(String name, Row row, Date limit) {
-        if (!prefix) {
-            name = null;
+    protected void printTrace(String name, int pids, Row row, Date limit) {
+        if (!prefixShown) {
+            // compute whether to show prefix or not
+            if ("false".equals(prefix) || "auto".equals(prefix) && pids <= 1) {
+                name = null;
+            }
         }
+        prefixShown = name != null;
 
         if (row.first) {
             row.parent.depth++;
