@@ -116,4 +116,6 @@ public interface MinioConstants {
     String OFFSET = "CamelMinioOffset";
     @Metadata(label = "producer", description = "The length", javaType = "String")
     String LENGTH = "CamelMinioLength";
+    @Metadata(label = "producer", description = "Expiration of minio presigned url in Seconds", javaType = "int")
+    String PRESIGNED_URL_EXPIRATION_TIME = "CamelMinioPresignedURLExpirationTime";
 }
