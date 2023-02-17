@@ -19,6 +19,7 @@ package org.apache.camel.component.es.integration;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +45,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testcontainers.containers.wait.strategy.LogMessageWaitStrategy;
 import org.testcontainers.utility.Base58;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -88,7 +90,13 @@ public class ElasticsearchTestSupport extends CamelTestSupport {
         ret.getContainer()
                 .withNetworkAliases("elasticsearch-" + Base58.randomString(6))
                 .withPassword(PASSWORD)
-                .withExposedPorts(ELASTICSEARCH_DEFAULT_PORT, ELASTICSEARCH_DEFAULT_TCP_PORT);
+                .withExposedPorts(ELASTICSEARCH_DEFAULT_PORT, ELASTICSEARCH_DEFAULT_TCP_PORT)
+                // Increase the timeout from 60 seconds to 90 seconds to ensure that it will be long enough
+                // on the build pipeline
+                .setWaitStrategy(
+                        new LogMessageWaitStrategy()
+                                .withRegEx(".*(\"message\":\\s?\"started[\\s?|\"].*|] started\n$)")
+                                .withStartupTimeout(Duration.ofSeconds(90)));
 
         return ret;
     }
