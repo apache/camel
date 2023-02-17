@@ -112,7 +112,7 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
 
         BacklogTracerEventMessage event1 = events.get(0);
         assertEquals(to2.getId(), event1.getToNode());
-        assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId() + "\">\n"
+        assertEquals("    <message exchangeId=\"" + fooExchanges.get(0).getExchangeId() + "\" exchangePattern=\"InOnly\">\n"
                      + "      <body type=\"java.lang.String\">Hello World</body>\n"
                      + "    </message>",
                 event1.getMessageAsXml());
@@ -125,7 +125,7 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
 
         event1 = events.get(0);
         assertEquals("camel", event1.getToNode());
-        assertEquals("    <message exchangeId=\"" + camelExchanges.get(0).getExchangeId() + "\">\n"
+        assertEquals("    <message exchangeId=\"" + camelExchanges.get(0).getExchangeId() + "\" exchangePattern=\"InOnly\">\n"
                      + "      <body type=\"java.lang.String\">Hello Camel</body>\n"
                      + "    </message>",
                 event1.getMessageAsXml());

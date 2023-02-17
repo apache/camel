@@ -74,14 +74,14 @@ public class BacklogTracerPatternTest extends ManagementTestSupport {
 
         BacklogTracerEventMessage event1 = events.get(0);
         assertEquals("foo", event1.getToNode());
-        assertEquals("    <message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\">\n"
+        assertEquals("    <message exchangeId=\"" + exchanges.get(0).getExchangeId() + "\" exchangePattern=\"InOnly\">\n"
                      + "      <body type=\"java.lang.String\">Hello World</body>\n"
                      + "    </message>",
                 event1.getMessageAsXml());
 
         BacklogTracerEventMessage event2 = events.get(1);
         assertEquals("foo", event2.getToNode());
-        assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\">\n"
+        assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\" exchangePattern=\"InOnly\">\n"
                      + "      <body type=\"java.lang.String\">Bye World</body>\n"
                      + "    </message>",
                 event2.getMessageAsXml());
