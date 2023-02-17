@@ -55,12 +55,6 @@
         <apache-drill-version>1.20.2</apache-drill-version>
         <apicurio-version>1.1.26</apicurio-version>
         <arangodb-java-version>6.20.0</arangodb-java-version>
-        <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
-        <aries-blueprint-cm-version>1.3.2</aries-blueprint-cm-version>
-        <aries-blueprint-core-version>1.10.3</aries-blueprint-core-version>
-        <aries-blueprint-proxy-version>1.1.12</aries-blueprint-proxy-version>
-        <aries-spifly-version>1.3.5</aries-spifly-version>
-        <aries-util-version>1.1.3</aries-util-version>
         <as2-lib-version>4.11.0</as2-lib-version>
         <ascii-table-version>1.8.0</ascii-table-version>
         <asm-version>8.0.1</asm-version>
@@ -3521,23 +3515,6 @@
                 <artifactId>nitrite</artifactId>
                 <version>${nitrite-version}</version>
             </dependency>
-            <!-- blueprint -->
-            <dependency>
-                <groupId>org.apache.aries.blueprint</groupId>
-                <artifactId>org.apache.aries.blueprint.api</artifactId>
-                <version>${aries-blueprint-api-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.aries.blueprint</groupId>
-                <artifactId>org.apache.aries.blueprint.core</artifactId>
-                <version>${aries-blueprint-core-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.aries.blueprint</groupId>
-                <artifactId>org.apache.aries.blueprint.cm</artifactId>
-                <version>${aries-blueprint-cm-version}</version>
-            </dependency>
-
             <!-- need this to use the new 'maven-archetype' packaging type -->
             <dependency>
                 <groupId>org.apache.maven.archetype</groupId>
