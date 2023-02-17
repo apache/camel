@@ -144,6 +144,9 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     @Override
     public Integer call() throws Exception {
+        // configure logging first
+        configureLoggingOff();
+
         Map<Long, Pid> pids = new LinkedHashMap<>();
 
         if (latest) {

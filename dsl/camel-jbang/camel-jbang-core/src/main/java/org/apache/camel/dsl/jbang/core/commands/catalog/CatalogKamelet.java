@@ -61,6 +61,9 @@ public class CatalogKamelet extends CamelCommand {
 
     @Override
     public Integer call() throws Exception {
+        // configure logging first
+        configureLoggingOff();
+
         List<KameletModel> rows = new ArrayList<>();
 
         Map<String, Object> kamelets;
