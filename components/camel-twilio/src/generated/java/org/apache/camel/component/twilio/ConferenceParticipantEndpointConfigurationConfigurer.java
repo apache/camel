@@ -21,12 +21,12 @@ public class ConferenceParticipantEndpointConfigurationConfigurer extends org.ap
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("ApiName", org.apache.camel.component.twilio.internal.TwilioApiName.class);
-        map.put("From", com.twilio.type.PhoneNumber.class);
+        map.put("From", com.twilio.type.Endpoint.class);
         map.put("MethodName", java.lang.String.class);
         map.put("PathAccountSid", java.lang.String.class);
         map.put("PathCallSid", java.lang.String.class);
         map.put("PathConferenceSid", java.lang.String.class);
-        map.put("To", com.twilio.type.PhoneNumber.class);
+        map.put("To", com.twilio.type.Endpoint.class);
         ALL_OPTIONS = map;
     }
 
@@ -37,7 +37,7 @@ public class ConferenceParticipantEndpointConfigurationConfigurer extends org.ap
         case "apiname":
         case "ApiName": target.setApiName(property(camelContext, org.apache.camel.component.twilio.internal.TwilioApiName.class, value)); return true;
         case "from":
-        case "From": target.setFrom(property(camelContext, com.twilio.type.PhoneNumber.class, value)); return true;
+        case "From": target.setFrom(property(camelContext, com.twilio.type.Endpoint.class, value)); return true;
         case "methodname":
         case "MethodName": target.setMethodName(property(camelContext, java.lang.String.class, value)); return true;
         case "pathaccountsid":
@@ -47,7 +47,7 @@ public class ConferenceParticipantEndpointConfigurationConfigurer extends org.ap
         case "pathconferencesid":
         case "PathConferenceSid": target.setPathConferenceSid(property(camelContext, java.lang.String.class, value)); return true;
         case "to":
-        case "To": target.setTo(property(camelContext, com.twilio.type.PhoneNumber.class, value)); return true;
+        case "To": target.setTo(property(camelContext, com.twilio.type.Endpoint.class, value)); return true;
         default: return false;
         }
     }
@@ -63,7 +63,7 @@ public class ConferenceParticipantEndpointConfigurationConfigurer extends org.ap
         case "apiname":
         case "ApiName": return org.apache.camel.component.twilio.internal.TwilioApiName.class;
         case "from":
-        case "From": return com.twilio.type.PhoneNumber.class;
+        case "From": return com.twilio.type.Endpoint.class;
         case "methodname":
         case "MethodName": return java.lang.String.class;
         case "pathaccountsid":
@@ -73,7 +73,7 @@ public class ConferenceParticipantEndpointConfigurationConfigurer extends org.ap
         case "pathconferencesid":
         case "PathConferenceSid": return java.lang.String.class;
         case "to":
-        case "To": return com.twilio.type.PhoneNumber.class;
+        case "To": return com.twilio.type.Endpoint.class;
         default: return null;
         }
     }

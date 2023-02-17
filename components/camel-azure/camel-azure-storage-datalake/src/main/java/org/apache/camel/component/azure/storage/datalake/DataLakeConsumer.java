@@ -28,7 +28,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.azure.storage.datalake.client.DataLakeFileClientWrapper;
 import org.apache.camel.component.azure.storage.datalake.client.DataLakeFileSystemClientWrapper;
@@ -138,7 +137,7 @@ public class DataLakeConsumer extends ScheduledBatchPollingConsumer {
 
             pendingExchanges = total - i - 1;
 
-            exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+            exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
                 @Override
                 public void onComplete(Exchange exchange) {
                     LOG.trace("Processing all exchanges completed");

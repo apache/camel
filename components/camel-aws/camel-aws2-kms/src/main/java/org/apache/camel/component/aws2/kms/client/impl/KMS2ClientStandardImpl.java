@@ -52,7 +52,7 @@ public class KMS2ClientStandardImpl implements KMS2InternalClient {
 
     /**
      * Getting the KMS AWS client that is used.
-     * 
+     *
      * @return Amazon KMS Client.
      */
     @Override

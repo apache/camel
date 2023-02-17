@@ -114,8 +114,8 @@ public class JndiContext implements Context, Serializable {
      * (the names are suitably extended by the segment originally lopped off).
      */
     protected Map<String, Object> internalBind(String name, Object value) throws NamingException {
-        assert name != null && name.length() > 0;
-        assert !frozen;
+        org.apache.camel.util.ObjectHelper.isNotEmpty(name);
+        org.apache.camel.util.ObjectHelper.notNull(frozen, "frozen");
 
         Map<String, Object> newBindings = new HashMap<>();
         int pos = name.indexOf('/');
@@ -127,8 +127,7 @@ public class JndiContext implements Context, Serializable {
             newBindings.put(name, value);
         } else {
             String segment = name.substring(0, pos);
-            assert segment != null;
-            assert !segment.equals("");
+            org.apache.camel.util.ObjectHelper.isNotEmpty(segment);
             Object o = treeBindings.get(segment);
             if (o == null) {
                 o = newContext();

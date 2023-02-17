@@ -1462,9 +1462,6 @@
       "org.apache.camel.model.MarshalDefinition" : {
         "type" : "object",
         "properties" : {
-          "any23" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Any23DataFormat"
-          },
           "asn1" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ASN1DataFormat"
           },
@@ -3439,9 +3436,6 @@
           "allow-null-body" : {
             "type" : "boolean"
           },
-          "any23" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Any23DataFormat"
-          },
           "asn1" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ASN1DataFormat"
           },
@@ -4393,37 +4387,6 @@
           }
         } ]
       },
-      "org.apache.camel.model.dataformat.Any23DataFormat" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "base-uri" : {
-              "type" : "string"
-            },
-            "configuration" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/items/definitions/org.apache.camel.model.PropertyDefinition"
-              }
-            },
-            "extractors" : {
-              "type" : "array",
-              "items" : {
-                "type" : "string"
-              }
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "output-format" : {
-              "type" : "string",
-              "enum" : [ "NTRIPLES", "TURTLE", "NQUADS", "RDFXML", "JSONLD", "RDFJSON", "RDF4JMODEL" ]
-            }
-          }
-        } ]
-      },
       "org.apache.camel.model.dataformat.AvroDataFormat" : {
         "oneOf" : [ {
           "type" : "string"
@@ -4755,9 +4718,6 @@
       "org.apache.camel.model.dataformat.DataFormatsDefinition" : {
         "type" : "object",
         "properties" : {
-          "any23" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Any23DataFormat"
-          },
           "asn1" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ASN1DataFormat"
           },
@@ -5247,11 +5207,11 @@
           "content-type-header" : {
             "type" : "boolean"
           },
-          "disable-features" : {
+          "date-format-pattern" : {
             "type" : "string"
           },
-          "drop-root-node" : {
-            "type" : "boolean"
+          "disable-features" : {
+            "type" : "string"
           },
           "enable-features" : {
             "type" : "string"
@@ -5267,7 +5227,7 @@
           },
           "library" : {
             "type" : "string",
-            "enum" : [ "Fastjson", "Gson", "Jackson", "Johnzon", "Jsonb", "XStream" ]
+            "enum" : [ "Fastjson", "Gson", "Jackson", "Johnzon", "Jsonb" ]
           },
           "module-class-names" : {
             "type" : "string"
@@ -5279,9 +5239,6 @@
             "type" : "string"
           },
           "object-mapper" : {
-            "type" : "string"
-          },
-          "permissions" : {
             "type" : "string"
           },
           "pretty-print" : {
@@ -7948,9 +7905,6 @@
       "org.apache.camel.model.transformer.DataFormatTransformerDefinition" : {
         "type" : "object",
         "properties" : {
-          "any23" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.Any23DataFormat"
-          },
           "asn1" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.dataformat.ASN1DataFormat"
           },

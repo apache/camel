@@ -15100,6 +15100,57 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.XsltSaxonEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Zeebe (camel-zeebe)
+     * Zeebe component which does integrage with Camunda Zeebe to interact with
+     * the API.
+     * 
+     * Category: process
+     * Since: 3.21
+     * Maven coordinates: org.apache.camel:camel-zeebe
+     * 
+     * Syntax: <code>zeebe:operationName</code>
+     * 
+     * Path parameter: operationName (required)
+     * The operation to use
+     * There are 9 enums and the value can be one of: startProcess,
+     * cancelProcess, publishMessage, completeJob, failJob, updateJobRetries,
+     * worker, throwError, deployResource
+     * 
+     * @param path operationName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ZeebeEndpointBuilderFactory.ZeebeEndpointBuilder zeebe(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ZeebeEndpointBuilderFactory.endpointBuilder("zeebe", path);
+    }
+    /**
+     * Zeebe (camel-zeebe)
+     * Zeebe component which does integrage with Camunda Zeebe to interact with
+     * the API.
+     * 
+     * Category: process
+     * Since: 3.21
+     * Maven coordinates: org.apache.camel:camel-zeebe
+     * 
+     * Syntax: <code>zeebe:operationName</code>
+     * 
+     * Path parameter: operationName (required)
+     * The operation to use
+     * There are 9 enums and the value can be one of: startProcess,
+     * cancelProcess, publishMessage, completeJob, failJob, updateJobRetries,
+     * worker, throwError, deployResource
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path operationName
+     * @return the dsl builder
+     */
+    public static org.apache.camel.builder.endpoint.dsl.ZeebeEndpointBuilderFactory.ZeebeEndpointBuilder zeebe(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ZeebeEndpointBuilderFactory.endpointBuilder(componentName, path);
+    }
+    /**
      * Zendesk (camel-zendesk)
      * Manage Zendesk tickets, users, organizations, etc.
      * 

@@ -21,7 +21,7 @@ public class CassandraEndpointUriFactory extends org.apache.camel.support.compon
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(34);
+        Set<String> props = new HashSet<>(35);
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
         props.add("backoffMultiplier");
@@ -34,6 +34,7 @@ public class CassandraEndpointUriFactory extends org.apache.camel.support.compon
         props.add("delay");
         props.add("exceptionHandler");
         props.add("exchangePattern");
+        props.add("extraTypeCodecs");
         props.add("greedy");
         props.add("hosts");
         props.add("initialDelay");

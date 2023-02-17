@@ -59,6 +59,7 @@ public class WebsocketConsumer extends ServletConsumer {
         initializer.configureFramework(config, false, false, AtmosphereFramework.class);
         this.framework = initializer.framework();
         this.framework.setUseNativeImplementation(false);
+        this.framework.addInitParameter(ApplicationConfig.JSR356_MAPPING_PATH, this.getEndpoint().getHttpUri().getPath());
         this.framework.addInitParameter(ApplicationConfig.ANALYTICS, "false");
         this.framework.addInitParameter(ApplicationConfig.WEBSOCKET_SUPPORT, "true");
         this.framework.addInitParameter(ApplicationConfig.WEBSOCKET_PROTOCOL,

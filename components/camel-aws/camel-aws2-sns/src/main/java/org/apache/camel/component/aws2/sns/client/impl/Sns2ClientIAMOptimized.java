@@ -50,7 +50,7 @@ public class Sns2ClientIAMOptimized implements Sns2InternalClient {
 
     /**
      * Getting the SNS AWS client that is used.
-     * 
+     *
      * @return Amazon SNS Client.
      */
     @Override

@@ -53,7 +53,7 @@ public class MockitoSpyForClassTest extends ContextTestSupport {
         };
     }
 
-    public class MyService {
+    public static class MyService {
         public String doSomething(String body) {
             return "real answer";
         }

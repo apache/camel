@@ -27,7 +27,7 @@ public interface Task {
 
     /**
      * How long it took to run the task
-     * 
+     *
      * @return The duration to execute the task
      */
     Duration elapsed();

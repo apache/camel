@@ -48,7 +48,7 @@ public class LogRouteTest extends ContextTestSupport {
                 () -> template.sendBody("log:org.apache.camel.TEST?level=noSuchLevel", "<level>noSuchLevel</level>"),
                 "Should have failed!");
 
-        LOG.debug("Caught expected exception: " + ex.getMessage(), ex);
+        LOG.debug("Caught expected exception: {}", ex.getMessage(), ex);
     }
 
 }

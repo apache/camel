@@ -22,6 +22,7 @@ import java.util.Objects;
 import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.Metadata;
@@ -32,7 +33,12 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.plc4x.java.PlcDriverManager;
 import org.apache.plc4x.java.api.PlcConnection;
 import org.apache.plc4x.java.api.exceptions.PlcConnectionException;
+import org.apache.plc4x.java.api.exceptions.PlcIncompatibleDatatypeException;
+import org.apache.plc4x.java.api.messages.PlcReadRequest;
+import org.apache.plc4x.java.api.messages.PlcWriteRequest;
 import org.apache.plc4x.java.utils.connectionpool.PooledPlcDriverManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Read and write to PLC devices
@@ -40,6 +46,10 @@ import org.apache.plc4x.java.utils.connectionpool.PooledPlcDriverManager;
 @UriEndpoint(scheme = "plc4x", firstVersion = "3.20.0", title = "PLC4X",
              syntax = "plc4x:driver", category = Category.IOT)
 public class Plc4XEndpoint extends DefaultEndpoint {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XEndpoint.class);
+
+    protected PlcDriverManager plcDriverManager;
+    protected PlcConnection connection;
 
     @UriPath
     @Metadata(required = true, description = "PLC4X connection string for the connection to the target")
@@ -58,8 +68,6 @@ public class Plc4XEndpoint extends DefaultEndpoint {
     @Metadata(description = "Whether to reconnect when no connection is present upon doing a request")
     private boolean autoReconnect;
 
-    private PlcDriverManager plcDriverManager;
-    private PlcConnection connection;
     private String uri;
 
     public Plc4XEndpoint(String endpointUri, Component component) {
@@ -97,15 +105,63 @@ public class Plc4XEndpoint extends DefaultEndpoint {
         return autoReconnect;
     }
 
-    public PlcConnection getConnection() throws PlcConnectionException {
-        if (this.connection == null) {
-            this.connection = plcDriverManager.getConnection(this.uri);
+    /**
+     * Set up the connection.
+     * <p>
+     *
+     * @throws PlcConnectionException if no connection could be established and auto-reconnect is turned off
+     */
+    public void setupConnection() throws PlcConnectionException {
+        try {
+            connection = plcDriverManager.getConnection(this.uri);
+            if (!connection.isConnected()) {
+                reconnectIfNeeded();
+            }
+        } catch (PlcConnectionException e) {
+            if (isAutoReconnect()) {
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.warn("Could not connect during setup, retrying on next request", e);
+                } else {
+                    LOGGER.warn("Could not connect during setup, retrying on next request");
+                }
+            } else {
+                LOGGER.warn("Could not connect during setup and auto reconnect is turned off");
+                throw e;
+            }
         }
-        return connection;
     }
 
-    public void reconnect() throws PlcConnectionException {
-        connection.connect();
+    /**
+     * Reconnects if needed. If connection is lost and auto-reconnect is turned off, endpoint will be shutdown.
+     * <p>
+     *
+     * @throws PlcConnectionException If reconnect failed and auto-reconnect is turned on
+     */
+    public void reconnectIfNeeded() throws PlcConnectionException {
+        if (connection != null && connection.isConnected()) {
+            LOGGER.trace("No reconnect needed, already connected");
+        } else if (autoReconnect && connection == null) {
+            connection = plcDriverManager.getConnection(uri);
+            LOGGER.debug("Successfully reconnected");
+        } else if (autoReconnect && !connection.isConnected()) {
+            connection.connect();
+            // If reconnection fails without Exception, reset connection
+            if (!connection.isConnected()) {
+                LOGGER.debug("No connection established after connect, resetting connection");
+                connection = plcDriverManager.getConnection(uri);
+            }
+            LOGGER.debug("Successfully reconnected");
+        } else {
+            LOGGER.warn("Connection lost and auto-reconnect is turned off, shutting down Plc4XEndpoint");
+            stop();
+        }
+    }
+
+    /**
+     * @return true if connection supports writing, else false
+     */
+    public boolean canWrite() {
+        return connection.getMetadata().canWrite();
     }
 
     @Override
@@ -118,6 +174,51 @@ public class Plc4XEndpoint extends DefaultEndpoint {
         Plc4XConsumer consumer = new Plc4XConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
+    }
+
+    @Override
+    public PollingConsumer createPollingConsumer() {
+        LOGGER.debug("Creating Plc4XPollingConsumer");
+        return new Plc4XPollingConsumer(this);
+    }
+
+    /**
+     * Build a {@link PlcReadRequest} using the tags specified in the endpoint.
+     * <p>
+     *
+     * @return {@link PlcReadRequest}
+     */
+    public PlcReadRequest buildPlcReadRequest() {
+        PlcReadRequest.Builder builder = connection.readRequestBuilder();
+        for (Map.Entry<String, Object> tag : tags.entrySet()) {
+            try {
+                builder.addItem(tag.getKey(), (String) tag.getValue());
+            } catch (PlcIncompatibleDatatypeException e) {
+                LOGGER.error("For consumer, please use Map<String,String>, currently using {}",
+                        tags.getClass().getSimpleName());
+            }
+        }
+        return builder.build();
+    }
+
+    /**
+     * Build a {@link PlcWriteRequest}.
+     * <p>
+     *
+     * @param  tags tags to add to write request
+     * @return      {@link PlcWriteRequest}
+     */
+    public PlcWriteRequest buildPlcWriteRequest(Map<String, Map<String, Object>> tags) {
+        PlcWriteRequest.Builder builder = connection.writeRequestBuilder();
+
+        for (Map.Entry<String, Map<String, Object>> entry : tags.entrySet()) {
+            //Tags are stored like this --> Map<Tagname,Map<Query,Value>> for writing
+            String name = entry.getKey();
+            String query = entry.getValue().keySet().iterator().next();
+            Object value = entry.getValue().get(query);
+            builder.addItem(name, query, value);
+        }
+        return builder.build();
     }
 
     public PlcDriverManager getPlcDriverManager() {

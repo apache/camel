@@ -20,7 +20,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +30,6 @@ import java.util.TreeMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.Route;
@@ -41,6 +42,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.json.JsonArray;
+import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * Some helper methods when working with {@link org.apache.camel.Message}.
@@ -60,7 +64,7 @@ public final class MessageHelper {
      * Extracts the given body and returns it as a String, that can be used for logging etc.
      * <p/>
      * Will handle stream based bodies wrapped in StreamCache.
-     * 
+     *
      * @param  message the message with the body
      * @return         the body as String, can return <tt>null</null> if no body
      */
@@ -99,7 +103,7 @@ public final class MessageHelper {
      * Gets the given body class type name as a String.
      * <p/>
      * Will skip java.lang. for the build in Java types.
-     * 
+     *
      * @param  message the message with the body
      * @return         the body type name as String, can return <tt>null</null> if no body
      */
@@ -116,7 +120,7 @@ public final class MessageHelper {
 
     /**
      * If the message body contains a {@link StreamCache} instance, reset the cache to enable reading from it again.
-     * 
+     *
      * @param message the message for which to reset the body
      */
     public static void resetStreamCache(Message message) {
@@ -152,7 +156,7 @@ public final class MessageHelper {
      * Extracts the body for logging purpose.
      * <p/>
      * Will clip the body if its too big for logging. Will prepend the message with <tt>Message: </tt>
-     * 
+     *
      * @see            org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
      * @see            org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      * @param  message the message
@@ -250,7 +254,7 @@ public final class MessageHelper {
      * Extracts the body for logging purpose.
      * <p/>
      * Will clip the body if its too big for logging.
-     * 
+     *
      * @see                 org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      * @param  message      the message
      * @param  prepend      a message to prepend (optional)
@@ -423,7 +427,7 @@ public final class MessageHelper {
 
     /**
      * Dumps the message as a generic XML structure.
-     * 
+     *
      * @param  message the message
      * @return         the XML
      */
@@ -433,7 +437,7 @@ public final class MessageHelper {
 
     /**
      * Dumps the message as a generic XML structure.
-     * 
+     *
      * @param  message     the message
      * @param  includeBody whether or not to include the message body
      * @return             the XML
@@ -468,6 +472,26 @@ public final class MessageHelper {
      */
     public static String dumpAsXml(
             Message message, boolean includeBody, int indent, boolean allowStreams, boolean allowFiles, int maxChars) {
+        return dumpAsXml(message, false, includeBody, indent, allowStreams, allowStreams, allowFiles, maxChars);
+    }
+
+    /**
+     * Dumps the message as a generic XML structure.
+     *
+     * @param  message                   the message
+     * @param  includeBody               whether or not to include the message body
+     * @param  includeExchangeProperties whether or not to include exchange properties
+     * @param  indent                    number of spaces to indent
+     * @param  allowCachedStreams        whether to include message body if they are stream cache based
+     * @param  allowStreams              whether to include message body if they are stream based
+     * @param  allowFiles                whether to include message body if they are file based
+     * @param  maxChars                  clip body after maximum chars (to avoid very big messages). Use 0 or negative
+     *                                   value to not limit at all.
+     * @return                           the XML
+     */
+    public static String dumpAsXml(
+            Message message, boolean includeExchangeProperties, boolean includeBody, int indent,
+            boolean allowCachedStreams, boolean allowStreams, boolean allowFiles, int maxChars) {
         StringBuilder sb = new StringBuilder();
 
         StringBuilder prefix = new StringBuilder();
@@ -475,10 +499,47 @@ public final class MessageHelper {
             prefix.append(" ");
         }
 
-        // include exchangeId as attribute on the <message> tag
+        // include exchangeId/exchangePattern as attribute on the <message> tag
         sb.append(prefix);
-        sb.append("<message exchangeId=\"").append(message.getExchange().getExchangeId()).append("\">\n");
+        sb.append("<message exchangeId=\"").append(message.getExchange().getExchangeId())
+                .append("\" exchangePattern=\"").append(message.getExchange().getPattern().name()).append("\">\n");
 
+        // exchange properties
+        if (includeExchangeProperties && message.getExchange().hasProperties()) {
+            sb.append(prefix);
+            sb.append("  <exchangeProperties>\n");
+            // sort the exchange properties so they are listed A..Z
+            Map<String, Object> properties = new TreeMap<>(message.getExchange().getProperties());
+            for (Map.Entry<String, Object> entry : properties.entrySet()) {
+                Object value = entry.getValue();
+                String type = ObjectHelper.classCanonicalName(value);
+                sb.append(prefix);
+                sb.append("    <exchangeProperty key=\"").append(entry.getKey()).append("\"");
+                if (type != null) {
+                    sb.append(" type=\"").append(type).append("\"");
+                }
+                sb.append(">");
+
+                // dump header value as XML, use Camel type converter to convert
+                // to String
+                if (value != null) {
+                    try {
+                        String xml = message.getExchange().getContext().getTypeConverter().tryConvertTo(String.class,
+                                message.getExchange(), value);
+                        if (xml != null) {
+                            // must always xml encode
+                            sb.append(StringHelper.xmlEncode(xml));
+                        }
+                    } catch (Throwable e) {
+                        // ignore as the body is for logging purpose
+                    }
+                }
+
+                sb.append("</exchangeProperty>\n");
+            }
+            sb.append(prefix);
+            sb.append("  </exchangeProperties>\n");
+        }
         // headers
         if (message.hasHeaders()) {
             sb.append(prefix);
@@ -515,7 +576,6 @@ public final class MessageHelper {
             sb.append(prefix);
             sb.append("  </headers>\n");
         }
-
         if (includeBody) {
             sb.append(prefix);
             sb.append("  <body");
@@ -525,7 +585,7 @@ public final class MessageHelper {
             }
             sb.append(">");
 
-            String xml = extractBodyForLogging(message, null, allowStreams, allowFiles, maxChars);
+            String xml = extractBodyForLogging(message, null, allowCachedStreams, allowStreams, allowFiles, maxChars);
             if (xml != null) {
                 // must always xml encode
                 sb.append(StringHelper.xmlEncode(xml));
@@ -561,7 +621,7 @@ public final class MessageHelper {
 
     /**
      * Copies the headers from the source to the target message.
-     * 
+     *
      * @param source   the source message
      * @param target   the target message
      * @param override whether to override existing headers
@@ -572,7 +632,7 @@ public final class MessageHelper {
 
     /**
      * Copies the headers from the source to the target message.
-     * 
+     *
      * @param source   the source message
      * @param target   the target message
      * @param strategy the header filter strategy which could help us to filter the protocol message headers
@@ -668,9 +728,9 @@ public final class MessageHelper {
         if (list == null || list.isEmpty()) {
             // message history is not enabled but we can show the last processed
             // instead
-            id = exchange.adapt(ExtendedExchange.class).getHistoryNodeId();
+            id = exchange.getExchangeExtension().getHistoryNodeId();
             if (id != null) {
-                loc = exchange.adapt(ExtendedExchange.class).getHistoryNodeSource();
+                loc = exchange.getExchangeExtension().getHistoryNodeSource();
                 if (loc == null) {
                     loc = "";
                 }
@@ -678,7 +738,7 @@ public final class MessageHelper {
                 if (rid != null) {
                     routeId = rid;
                 }
-                label = exchange.adapt(ExtendedExchange.class).getHistoryNodeLabel();
+                label = exchange.getExchangeExtension().getHistoryNodeLabel();
                 // we need to avoid leak the sensible information here
                 // the sanitizeUri takes a very long time for very long string
                 // and the format cuts this to
@@ -731,6 +791,257 @@ public final class MessageHelper {
                     "---------------------------------------------------------------------------------------------------------------------------------------");
         }
         return sb.toString();
+    }
+
+    /**
+     * Dumps the message as a generic JSon structure.
+     *
+     * @param  message the message
+     * @return         the JSon
+     */
+    public static String dumpAsJSon(Message message) {
+        return dumpAsJSon(message, true);
+    }
+
+    /**
+     * Dumps the message as a generic JSon structure.
+     *
+     * @param  message     the message
+     * @param  includeBody whether or not to include the message body
+     * @return             the JSon
+     */
+    public static String dumpAsJSon(Message message, boolean includeBody) {
+        return dumpAsJSon(message, includeBody, 0);
+    }
+
+    /**
+     * Dumps the message as a generic JSon structure.
+     *
+     * @param  message     the message
+     * @param  includeBody whether or not to include the message body
+     * @param  indent      number of spaces to indent
+     * @return             the JSon
+     */
+    public static String dumpAsJSon(Message message, boolean includeBody, int indent) {
+        return dumpAsJSon(message, includeBody, indent, false, true, 128 * 1024, true);
+    }
+
+    /**
+     * Dumps the message as a generic JSon structure.
+     *
+     * @param  message      the message
+     * @param  includeBody  whether or not to include the message body
+     * @param  indent       number of spaces to indent
+     * @param  allowStreams whether to include message body if they are stream based
+     * @param  allowFiles   whether to include message body if they are file based
+     * @param  maxChars     clip body after maximum chars (to avoid very big messages). Use 0 or negative value to not
+     *                      limit at all.
+     * @return              the JSon
+     */
+    public static String dumpAsJSon(
+            Message message, boolean includeBody, int indent, boolean allowStreams, boolean allowFiles, int maxChars,
+            boolean pretty) {
+        return dumpAsJSon(message, false, includeBody, indent, false, allowStreams, allowFiles, maxChars, pretty);
+    }
+
+    /**
+     * Dumps the message as a generic JSon structure.
+     *
+     * @param  message                   the message
+     * @param  includeExchangeProperties whether or not to include exchange properties
+     * @param  includeBody               whether or not to include the message body
+     * @param  indent                    number of spaces to indent
+     * @param  allowCachedStreams        whether to include message body if they are stream cached based
+     * @param  allowStreams              whether to include message body if they are stream based
+     * @param  allowFiles                whether to include message body if they are file based
+     * @param  maxChars                  clip body after maximum chars (to avoid very big messages). Use 0 or negative
+     *                                   value to not limit at all.
+     * @param  pretty                    whether to pretty print JSon
+     * @return                           the JSon
+     */
+    public static String dumpAsJSon(
+            Message message, boolean includeExchangeProperties, boolean includeBody, int indent,
+            boolean allowCachedStreams, boolean allowStreams, boolean allowFiles, int maxChars, boolean pretty) {
+
+        JsonObject root = new JsonObject();
+        JsonObject jo = new JsonObject();
+        root.put("message", jo);
+        jo.put("exchangeId", message.getExchange().getExchangeId());
+        jo.put("exchangePattern", message.getExchange().getPattern().name());
+
+        // exchange properties
+        if (includeExchangeProperties && message.getExchange().hasProperties()) {
+            JsonArray arr = new JsonArray();
+            // sort the exchange properties so they are listed A..Z
+            Map<String, Object> properties = new TreeMap<>(message.getExchange().getProperties());
+            for (Map.Entry<String, Object> entry : properties.entrySet()) {
+                Object value = entry.getValue();
+                String type = ObjectHelper.classCanonicalName(value);
+                JsonObject jh = new JsonObject();
+                jh.put("key", entry.getKey());
+                if (type != null) {
+                    jh.put("type", type);
+                }
+                if (value != null) {
+                    Object s = Jsoner.trySerialize(value);
+                    if (s == null) {
+                        // cannot JSon serialize out of the box, so we need to use string value
+                        try {
+                            s = message.getExchange().getContext().getTypeConverter().tryConvertTo(String.class,
+                                    message.getExchange(), value);
+                        } catch (Throwable e) {
+                            // ignore
+                        }
+                    } else {
+                        // use the value as-is because it can be serialized in json
+                        s = value;
+                    }
+                    jh.put("value", s);
+                }
+                arr.add(jh);
+            }
+            if (!arr.isEmpty()) {
+                jo.put("exchangeProperties", arr);
+            }
+        }
+        // headers
+        if (message.hasHeaders()) {
+            JsonArray arr = new JsonArray();
+            // sort the headers so they are listed A..Z
+            Map<String, Object> headers = new TreeMap<>(message.getHeaders());
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                Object value = entry.getValue();
+                String type = ObjectHelper.classCanonicalName(value);
+                JsonObject jh = new JsonObject();
+                jh.put("key", entry.getKey());
+                if (type != null) {
+                    jh.put("type", type);
+                }
+                // dump header value as JSon, use Camel type converter to convert to String
+                if (value != null) {
+                    Object s = Jsoner.trySerialize(value);
+                    if (s == null) {
+                        // cannot JSon serialize out of the box, so we need to use string value
+                        try {
+                            s = message.getExchange().getContext().getTypeConverter().tryConvertTo(String.class,
+                                    message.getExchange(), value);
+                        } catch (Throwable e) {
+                            // ignore
+                        }
+                    } else {
+                        // use the value as-is because it can be serialized in json
+                        s = value;
+                    }
+                    jh.put("value", s);
+                }
+                arr.add(jh);
+            }
+            if (!arr.isEmpty()) {
+                jo.put("headers", arr);
+            }
+        }
+        if (includeBody) {
+            JsonObject jb = new JsonObject();
+            jo.put("body", jb);
+            String type = ObjectHelper.classCanonicalName(message.getBody());
+            if (type != null) {
+                jb.put("type", type);
+            }
+
+            String data = extractBodyForLogging(message, null, allowCachedStreams, allowStreams, allowFiles, maxChars);
+            if (data != null) {
+                jb.put("value", Jsoner.unescape(data));
+            }
+        }
+
+        String answer = root.toJson();
+        if (pretty) {
+            if (indent > 0) {
+                answer = Jsoner.prettyPrint(answer, indent);
+            } else {
+                answer = Jsoner.prettyPrint(answer);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Dumps the exception as a generic XML structure.
+     *
+     * @param  indent number of spaces to indent
+     * @return        the XML
+     */
+    public static String dumpExceptionAsXML(Throwable exception, int indent) {
+        StringBuilder prefix = new StringBuilder();
+        for (int i = 0; i < indent; i++) {
+            prefix.append(" ");
+        }
+
+        StringBuilder sb = new StringBuilder();
+        try {
+            sb.append(prefix).append("<exception");
+            String type = ObjectHelper.classCanonicalName(exception);
+            if (type != null) {
+                sb.append(" type=\"").append(type).append("\"");
+            }
+            String msg = exception.getMessage();
+            if (msg != null) {
+                msg = StringHelper.xmlEncode(msg);
+                sb.append(" message=\"").append(msg).append("\"");
+            }
+            sb.append(">\n");
+            StringWriter sw = new StringWriter();
+            exception.printStackTrace(new PrintWriter(sw));
+            String trace = sw.toString();
+            // must always xml encode
+            sb.append(StringHelper.xmlEncode(trace));
+            sb.append(prefix).append("</exception>");
+        } catch (Throwable e) {
+            // ignore
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Dumps the exception as a generic JSon structure.
+     *
+     * @param  indent number of spaces to indent
+     * @param  pretty whether to pretty print JSon
+     * @return        the JSon
+     */
+    public static String dumpExceptionAsJSon(Throwable exception, int indent, boolean pretty) {
+        JsonObject root = new JsonObject();
+        JsonObject jo = new JsonObject();
+        root.put("exception", jo);
+
+        String type = ObjectHelper.classCanonicalName(exception);
+        if (type != null) {
+            jo.put("type", type);
+        }
+        String msg = exception.getMessage();
+        if (msg != null) {
+            jo.put("message", msg);
+        } else {
+            jo.put("message", null);
+        }
+        StringWriter sw = new StringWriter();
+        exception.printStackTrace(new PrintWriter(sw));
+        String trace = sw.toString();
+        try {
+            jo.put("stackTrace", Jsoner.unescape(trace));
+        } catch (Throwable e) {
+            // ignore as the body is for logging purpose
+        }
+        String answer = root.toJson();
+        if (pretty) {
+            if (indent > 0) {
+                answer = Jsoner.prettyPrint(answer, indent);
+            } else {
+                answer = Jsoner.prettyPrint(answer);
+            }
+        }
+        return answer;
     }
 
 }

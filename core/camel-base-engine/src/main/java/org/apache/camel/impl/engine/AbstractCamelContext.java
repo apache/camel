@@ -174,7 +174,6 @@ import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
-import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
@@ -261,6 +260,7 @@ public abstract class AbstractCamelContext extends BaseService
     private Initialization initialization = Initialization.Default;
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean backlogTrace = Boolean.FALSE;
+    private Boolean backlogTraceStandby = Boolean.FALSE;
     private Boolean trace = Boolean.FALSE;
     private Boolean traceStandby = Boolean.FALSE;
     private String tracePattern;
@@ -322,7 +322,6 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile CliConnectorFactory cliConnectorFactory;
     private volatile BeanProxyFactory beanProxyFactory;
     private volatile BeanProcessorFactory beanProcessorFactory;
-    private volatile XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader;
     private volatile RoutesLoader routesLoader;
     private volatile ResourceLoader resourceLoader;
     private volatile ModelToXMLDumper modelToXMLDumper;
@@ -483,7 +482,16 @@ public abstract class AbstractCamelContext extends BaseService
         if (type.isInstance(this)) {
             return type.cast(this);
         }
+        // lookup by direct implementatiin
         Object extension = extensions.get(type);
+        if (extension == null) {
+            // fallback and lookup via interfaces
+            for (Object e : extensions.values()) {
+                if (type.isInstance(e)) {
+                    return type.cast(e);
+                }
+            }
+        }
         if (extension instanceof Supplier) {
             extension = ((Supplier) extension).get();
             setExtension(type, (T) extension);
@@ -2325,6 +2333,14 @@ public abstract class AbstractCamelContext extends BaseService
         this.backlogTrace = backlogTrace;
     }
 
+    public Boolean getBacklogTraceStandby() {
+        return backlogTraceStandby;
+    }
+
+    public void setBacklogTraceStandby(Boolean backlogTraceStandby) {
+        this.backlogTraceStandby = backlogTraceStandby;
+    }
+
     @Override
     public void setDebugging(Boolean debug) {
         this.debug = debug;
@@ -3946,7 +3962,6 @@ public abstract class AbstractCamelContext extends BaseService
         getReactiveExecutor();
         getBeanIntrospection();
         getUriFactoryResolver();
-        getXMLRoutesDefinitionLoader();
         getModelToXMLDumper();
         getNodeIdFactory();
         getModelJAXBContextFactory();
@@ -4890,6 +4905,16 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     @Override
+    public void setBacklogTracingStandby(boolean backlogTracingStandby) {
+        this.backlogTraceStandby = backlogTracingStandby;
+    }
+
+    @Override
+    public boolean isBacklogTracingStandby() {
+        return backlogTraceStandby != null && backlogTraceStandby;
+    }
+
+    @Override
     public UuidGenerator getUuidGenerator() {
         if (uuidGenerator == null) {
             synchronized (lock) {
@@ -5048,23 +5073,6 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setHeadersMapFactory(HeadersMapFactory headersMapFactory) {
         this.headersMapFactory = doAddService(headersMapFactory);
-    }
-
-    @Override
-    public XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader() {
-        if (xmlRoutesDefinitionLoader == null) {
-            synchronized (lock) {
-                if (xmlRoutesDefinitionLoader == null) {
-                    setXMLRoutesDefinitionLoader(createXMLRoutesDefinitionLoader());
-                }
-            }
-        }
-        return xmlRoutesDefinitionLoader;
-    }
-
-    @Override
-    public void setXMLRoutesDefinitionLoader(XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader) {
-        this.xmlRoutesDefinitionLoader = doAddService(xmlRoutesDefinitionLoader);
     }
 
     @Override
@@ -5417,8 +5425,6 @@ public abstract class AbstractCamelContext extends BaseService
     protected abstract BeanProcessorFactory createBeanProcessorFactory();
 
     protected abstract BeanIntrospection createBeanIntrospection();
-
-    protected abstract XMLRoutesDefinitionLoader createXMLRoutesDefinitionLoader();
 
     protected abstract RoutesLoader createRoutesLoader();
 

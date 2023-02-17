@@ -347,6 +347,9 @@ public abstract class CamelTestSupport
         LOG.info("Testing: {} ({})", currentTestName, getClass().getName());
         LOG.info("********************************************************************************");
 
+        doSpringBootCheck();
+        doQuarkusCheck();
+
         if (isCreateCamelContextPerClass()) {
             INSTANCE.set(this);
             AtomicInteger v = TESTS.get();
@@ -370,8 +373,6 @@ public abstract class CamelTestSupport
             }
         } else {
             // test is per test so always setup
-            doSpringBootCheck();
-            doQuarkusCheck();
             setupResources();
             doPreSetup();
             doSetUp();

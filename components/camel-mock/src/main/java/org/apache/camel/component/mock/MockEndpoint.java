@@ -369,7 +369,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     /**
      * Set the expression which value will be set to the message body
-     * 
+     *
      * @param expression which is use to set the message body
      */
     public void returnReplyBody(Expression expression) {
@@ -390,7 +390,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     /**
      * Set the expression which value will be set to the message header
-     * 
+     *
      * @param headerName that will be set value
      * @param expression which is use to set the message header
      */
@@ -503,7 +503,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     /**
      * Validates that the assertions fail on this endpoint
-     * 
+     *
      * @param timeoutForEmptyEndpoints the timeout in milliseconds that we should wait for the test to be true
      */
     public void assertIsNotSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {

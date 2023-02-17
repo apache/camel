@@ -38,6 +38,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.utils.cassandra.CassandraExtraCodecs;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 
 /**
@@ -78,6 +80,8 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
     private String loadBalancingPolicyClass;
     @UriParam
     private ResultSetConversionStrategy resultSetConversionStrategy = ResultSetConversionStrategies.all();
+    @UriParam
+    private String extraTypeCodecs;
 
     public CassandraEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -157,6 +161,16 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
         ClassLoader classLoader = getCamelContext().getApplicationContextClassLoader();
         if (classLoader != null) {
             sessionBuilder.withClassLoader(classLoader);
+        }
+
+        if (extraTypeCodecs != null) {
+            String[] c = extraTypeCodecs.split(",");
+            System.err.println(c.toString());
+            for (String codec : c) {
+                if (ObjectHelper.isNotEmpty(CassandraExtraCodecs.valueOf(codec))) {
+                    sessionBuilder.addTypeCodecs(CassandraExtraCodecs.valueOf(codec).codec());
+                }
+            }
         }
 
         return sessionBuilder;
@@ -355,4 +369,18 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
         this.loadBalancingPolicyClass = loadBalancingPolicyClass;
     }
 
+    /**
+     * To use a specific comma separated list of Extra Type codecs. Possible values are: BLOB_TO_ARRAY,
+     * BOOLEAN_LIST_TO_ARRAY, BYTE_LIST_TO_ARRAY, SHORT_LIST_TO_ARRAY, INT_LIST_TO_ARRAY, LONG_LIST_TO_ARRAY,
+     * FLOAT_LIST_TO_ARRAY, DOUBLE_LIST_TO_ARRAY, TIMESTAMP_UTC, TIMESTAMP_MILLIS_SYSTEM, TIMESTAMP_MILLIS_UTC,
+     * ZONED_TIMESTAMP_SYSTEM, ZONED_TIMESTAMP_UTC, ZONED_TIMESTAMP_PERSISTED, LOCAL_TIMESTAMP_SYSTEM and
+     * LOCAL_TIMESTAMP_UTC
+     */
+    public String getExtraTypeCodecs() {
+        return extraTypeCodecs;
+    }
+
+    public void setExtraTypeCodecs(String extraTypeCodecs) {
+        this.extraTypeCodecs = extraTypeCodecs;
+    }
 }

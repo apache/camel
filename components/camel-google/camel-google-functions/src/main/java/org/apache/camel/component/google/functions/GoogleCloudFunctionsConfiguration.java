@@ -56,7 +56,7 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable {
 
     /**
      * Set the function name
-     * 
+     *
      * @param functionName
      */
     public void setFunctionName(String functionName) {
@@ -69,7 +69,7 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable {
 
     /**
      * Service account key
-     * 
+     *
      * @param serviceAccountKey
      */
     public void setServiceAccountKey(String serviceAccountKey) {
@@ -82,7 +82,7 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable {
 
     /**
      * The project to work with.
-     * 
+     *
      * @param project
      */
     public void setProject(String project) {
@@ -95,7 +95,7 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable {
 
     /**
      * The target location.
-     * 
+     *
      * @param location
      */
     public void setLocation(String location) {
@@ -130,7 +130,7 @@ public class GoogleCloudFunctionsConfiguration implements Cloneable {
 
     /**
      * Configure the input type. If true the message will be POJO type.
-     * 
+     *
      * @param pojoRequest
      */
     public void setPojoRequest(boolean pojoRequest) {

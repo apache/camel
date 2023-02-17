@@ -186,7 +186,7 @@ public final class HttpHelper {
     /**
      * In the endpoint the user may have defined rest {} placeholders. This helper method map those placeholders with
      * data from the incoming request context path
-     * 
+     *
      * @param headersMap   a Map instance containing the headers
      * @param path         the URL path
      * @param consumerPath the consumer path
@@ -198,7 +198,7 @@ public final class HttpHelper {
     /**
      * In the endpoint the user may have defined rest {} placeholders. This helper method map those placeholders with
      * data from the incoming request context path
-     * 
+     *
      * @param keyPairConsumer a consumer for the placeholder key pair
      * @param path            the URL path
      * @param consumerPath    the consumer path

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,12 +32,6 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
         Registry jndi = super.createRegistry();
         jndi.bind("orderService", service);
         return jndi;
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-        return context;
     }
 
     @Test

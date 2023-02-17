@@ -30,8 +30,6 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowdefaultcodec":
         case "allowDefaultCodec": getOrCreateConfiguration(target).setAllowDefaultCodec(property(camelContext, boolean.class, value)); return true;
-        case "autostarttls":
-        case "autoStartTls": getOrCreateConfiguration(target).setAutoStartTls(property(camelContext, boolean.class, value)); return true;
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
@@ -85,8 +83,6 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowdefaultcodec":
         case "allowDefaultCodec": return boolean.class;
-        case "autostarttls":
-        case "autoStartTls": return boolean.class;
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
@@ -141,8 +137,6 @@ public class MinaComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "allowdefaultcodec":
         case "allowDefaultCodec": return getOrCreateConfiguration(target).isAllowDefaultCodec();
-        case "autostarttls":
-        case "autoStartTls": return getOrCreateConfiguration(target).isAutoStartTls();
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":

@@ -61,7 +61,7 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
 
     /**
      * Construct a {@code CamelMainContext} with the given Camel context.
-     * 
+     *
      * @param camelContext the Camel context used for the test.
      */
     private CamelMainContext(ModelCamelContext camelContext) {
@@ -116,7 +116,7 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
 
         /**
          * Construct a {@code Builder} with the given extension context.
-         * 
+         *
          * @param context the extension context from which all the data needed to create an instance of
          *                {@code CamelMainContext} is extracted
          */
@@ -354,7 +354,7 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
         /**
          * For all methods or fields annotated with {@link ReplaceInRegistry}, replace in the registry the beans
          * corresponding to their name and type.
-         * 
+         *
          * @throws RuntimeCamelException if an annotated method could not be invoked or an annotated field cannot be
          *                               accessed, or if the annotated method has parameters.
          */
@@ -394,7 +394,7 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
         /**
          * Invoke all methods annotated with {@link Configure} that have one parameter of type
          * {@link MainConfigurationProperties}.
-         * 
+         *
          * @throws RuntimeCamelException if an annotated method could not be invoked or has invalid parameters.
          */
         private void invokeConfigureMethods(MainForTest main, Object instance) {

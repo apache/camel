@@ -17,6 +17,7 @@
 package org.apache.camel.test.infra.arangodb.services;
 
 import org.apache.camel.test.infra.arangodb.common.ArangoDBProperties;
+import org.apache.camel.test.infra.common.services.ContainerEnvironmentUtil;
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +62,8 @@ public class ArangoDBLocalContainerService implements ArangoDBService, Container
     @Override
     public void initialize() {
         LOG.info("Trying to start the ArangoDB container");
+        ContainerEnvironmentUtil.configureContainerStartup(container, ArangoDBProperties.ARANGODB_CONTAINER, 2);
+
         container.start();
 
         registerProperties();

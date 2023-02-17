@@ -55,7 +55,7 @@ public class IdempotentConsumerRepoExceptionTest extends ContextTestSupport {
         };
     }
 
-    private class MyRepo extends MemoryIdempotentRepository {
+    private static class MyRepo extends MemoryIdempotentRepository {
         @Override
         public boolean add(String key) {
             if ("999".equals(key)) {

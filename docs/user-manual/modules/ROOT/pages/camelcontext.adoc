@@ -1,15 +1,14 @@
 = CamelContext
 
-The https://www.javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/CamelContext.html[CamelContext]
-is the container that is the runtime Camel. The `CamelContext` is the runtime system, which
-holds everything together as depicted in the figure below.
+The https://www.javadoc.io/doc/org.apache.camel/camel-api/latest/org/apache/camel/CamelContext.html[CamelContext] is the runtime system, which holds together all the fundamental concepts of Apache Camel (routes, endpoints, components, etc).
+
+This context object represents the Camel runtime system. Typically, you have one _CamelContext_ instance in an application.
 
 image::images/camel-context.png[image]
 
-The `CamelContext` provides access to many useful services, the most notable
-being components, type converters, a registry, endpoints, routes, data formats, and languages.
+The `CamelContext` provides access to many features and services, the most notable being components, type converters, a registry, endpoints, routes, data formats, and languages.
 
-The following table lists the most common services provided by `CamelContext`:
+The following table lists the most common services provided by the `CamelContext`:
 
 [width="100%",cols="50%,50%",options="header",]
 |=======================================================================
@@ -25,33 +24,26 @@ The following table lists the most common services provided by `CamelContext`:
 
 == CamelContext 101
 
-To better understand Apache Camel then lets talk a bit more about what is inside the `CamelContext`.
+To give you a better understanding of Apache Camel, we'll discuss what is inside the `CamelContext`.
 
 === Routing Engine
 
-Camel’s routing engine is what moves messages under the hood. This engine isn’t
-exposed to the developer, but you should be aware that it’s there and that it does all the
-heavy lifting, ensuring that messages are routed properly.
+Camel's routing engine moves messages under the hood and does all the heavy lifting to ensure that messages are routed properly. It is not exposed to the developer, but you should be aware that it's there.
 
 === Routes
 
-xref:routes.adoc[Routes] are a core abstraction for Camel. The simplest way to define a route is
-as a chain of xref:processor.adoc[Processors]. There are many reasons for using routers in messaging applications.
-By decoupling clients from servers, and producers from consumers, routes can
-for example do the following:
+xref:routes.adoc[Routes] are a core abstraction for Camel. The simplest way to define a route is as a chain of xref:processor.adoc[Processors]. There are many reasons for using routers in messaging applications.
+By decoupling clients from servers, and producers from consumers, routes can, for example, do the following:
 
 * Decide dynamically what server a client will invoke
 * Provide a flexible way to add extra processing
-* Allow for clients and servers to be developed independently
-* Foster better design practices by connecting disparate systems that do one
-thing well
+* Allow independent development for clients and servers
+* Foster better design practices by connecting disparate systems that do one thing well
 * Allow for clients of servers to be stubbed out (using xref:components::mock-component.adoc[mocks]) for testing purposes
 
-Each route in Camel has a unique identifier that’s used for logging, debugging, monitoring,
-and starting and stopping routes.
+Each route in Camel has a unique identifier. You can use the identifier to log, debug, monitor, and start and stop routes.
 
-Routes also have exactly one input source for messages,
-so they’re effectively tied to an input xref:endpoint.adoc[endpoint].
+Routes have one and only one input source for messages. They are effectively tied to an input endpoint.
 
 === Domain Specific Language (DSL)
 
@@ -69,12 +61,9 @@ from("file:data/inbox")
 ----
 
 Here, in a single Java statement, you define a route that consumes files from a xref:components::file-component.adoc[file] endpoint.
-Messages are then routed to the xref:components:eips:filter-eip.adoc[Filter] EIP, which will use an XPath predicate to
-test whether the message is not a test order. If a message passes the test, it’s forwarded
-to the xref:components::jms-component.adoc[JMS] endpoint. Messages failing the filter test are skipped.
+Camel uses the xref:components:eips:filter-eip.adoc[Filter EIP] to route the messages using an XPath predicate to test whether the message is not a test order. If a message passes the test, Camel forwards it to the xref:components::jms-component.adoc[JMS] endpoint. Messages failing the filter test are skipped.
 
-Camel provides multiple DSL languages, so you could define the same route by using
-the XML DSL, like this:
+Camel provides multiple DSL languages. You could define the same route using the XML DSL:
 
 [source,xml]
 ----
@@ -100,8 +89,7 @@ And in YAML:
             - to: "jms:queue:order"
 ----
 
-The DSLs provide a nice abstraction for Camel users to build applications with. Under
-the hood, though, a route is composed of a graph of processors.
+The DSLs provide a nice abstraction for Camel users to build applications. Under the hood, though, a route is composed of a graph of processors.
 
 === Processors
 
@@ -115,13 +103,10 @@ your own custom code. The figure below shows the flow between processors.
 
 image::images/message_flow_in_route.png[image]
 
-A route first starts with a consumer (i.e. `from` in the DSL) that populates the initial
-xref:exchange.adoc[exchange]. At each processor step, the out message from the previous step is the in
-message of the next. In many cases, processors don’t set an out message, so in this case
-the in message is reused. At the end of a route, the xref:exchange-pattern.adoc[MEP] of the exchange determines
-whether a reply needs to be sent back to the caller of the route. If the xref:exchange-pattern.adoc[MEP] is InOnly,
-no reply will be sent back. If it’s InOut, Camel will take the out message from the last
-step and return it.
+A route starts with a consumer (i.e., `from` in the DSL) that populates the initial xref:exchange.adoc[exchange]. At each processor step, the output (out) message
+from the previous step is the input (in) message of the next. In many cases, processors don’t set an out message, so in this case the in message
+is reused. The xref:exchange-pattern.adoc[exchange pattern] of the exchange determines, at the end of a route, whether a reply needs to be sent back to the caller of the route.
+If the exchange pattern (MEP) is InOnly, no reply will be sent back. If it’s InOut, Camel will take the out message from the last step and return it.
 
 === Component
 

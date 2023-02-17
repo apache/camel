@@ -823,7 +823,7 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         return "simple";
     }
 
-    public class MyFileNameGenerator {
+    public static class MyFileNameGenerator {
         public String generateFilename(Exchange exchange) {
             return "abc";
         }

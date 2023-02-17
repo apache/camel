@@ -340,7 +340,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         assertTrue(foo.getBar().isGoldCustomer());
         // a new class was created so its empty
         assertEquals(0, foo.getBar().getWork().getId());
-        assertEquals(null, foo.getBar().getWork().getName());
+        assertNull(foo.getBar().getWork().getName());
     }
 
     @Test
@@ -437,7 +437,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         assertEquals("James", foo.getName());
         assertEquals("Tony Tiger", foo.getAnimal().getName());
-        assertEquals(true, foo.getAnimal().isDangerous());
+        assertTrue(foo.getAnimal().isDangerous());
     }
 
     @Test
@@ -450,7 +450,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         assertEquals("James", foo.getName());
         assertEquals("Acme", foo.getAnimal().getName());
-        assertEquals(false, foo.getAnimal().isDangerous());
+        assertFalse(foo.getAnimal().isDangerous());
     }
 
     @Test
@@ -463,7 +463,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         assertEquals("James", foo.getName());
         assertEquals("Donald Duck", foo.getAnimal().getName());
-        assertEquals(false, foo.getAnimal().isDangerous());
+        assertFalse(foo.getAnimal().isDangerous());
     }
 
     @Test
@@ -476,7 +476,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         assertEquals("James", foo.getName());
         assertEquals("Tiger", foo.getAnimal().getName());
-        assertEquals(true, foo.getAnimal().isDangerous());
+        assertTrue(foo.getAnimal().isDangerous());
     }
 
     @Test
@@ -489,7 +489,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         assertEquals("James", foo.getName());
         assertEquals("Donald Duck", foo.getAnimal().getName());
-        assertEquals(false, foo.getAnimal().isDangerous());
+        assertFalse(foo.getAnimal().isDangerous());
     }
 
     @Test
@@ -502,7 +502,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
 
         assertEquals("James", foo.getName());
         assertEquals("Acme", foo.getAnimal().getName());
-        assertEquals(false, foo.getAnimal().isDangerous());
+        assertFalse(foo.getAnimal().isDangerous());
     }
 
     @Test

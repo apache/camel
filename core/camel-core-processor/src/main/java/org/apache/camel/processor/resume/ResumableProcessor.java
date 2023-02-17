@@ -25,7 +25,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
@@ -81,7 +80,7 @@ public class ResumableProcessor extends AsyncProcessorSupport
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final Synchronization onCompletion = new ResumableCompletion(resumeStrategy, loggingLevel, intermittent);
 
-        exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
+        exchange.getExchangeExtension().addOnCompletion(onCompletion);
 
         return processor.process(exchange, callback);
     }

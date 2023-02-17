@@ -177,7 +177,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
 
     /**
      * Sets the rejectOld flag to throw an error when a message older than the last delivered message is processed
-     * 
+     *
      * @return the builder
      */
     public ResequenceDefinition rejectOld() {
@@ -190,7 +190,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
 
     /**
      * Sets the in batch size for number of exchanges received
-     * 
+     *
      * @param  batchSize the batch size
      * @return           the builder
      */
@@ -223,7 +223,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
 
     /**
      * Enables duplicates for the batch resequencer mode
-     * 
+     *
      * @return the builder
      */
     public ResequenceDefinition allowDuplicates() {

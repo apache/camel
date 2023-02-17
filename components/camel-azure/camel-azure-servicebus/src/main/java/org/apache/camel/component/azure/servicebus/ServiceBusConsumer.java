@@ -23,7 +23,6 @@ import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceiverAsyncClient;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -141,7 +140,7 @@ public class ServiceBusConsumer extends DefaultConsumer {
         final Exchange exchange = createServiceBusExchange(message);
 
         // add exchange callback
-        exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
+        exchange.getExchangeExtension().addOnCompletion(onCompletion);
         // use default consumer callback
         AsyncCallback cb = defaultConsumerCallback(exchange, true);
         getAsyncProcessor().process(exchange, cb);

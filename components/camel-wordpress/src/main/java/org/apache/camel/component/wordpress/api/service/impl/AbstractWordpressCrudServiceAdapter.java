@@ -26,7 +26,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Base service adapter implementation with CRUD commons operations.
- * 
+ *
  * @param <A>
  * @param <T>
  */

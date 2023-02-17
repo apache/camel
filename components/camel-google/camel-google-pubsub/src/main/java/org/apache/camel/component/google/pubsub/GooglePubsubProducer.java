@@ -19,9 +19,9 @@ package org.apache.camel.component.google.pubsub;
 import java.util.List;
 import java.util.Map;
 
-import com.google.api.client.util.Strings;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.pubsub.v1.Publisher;
+import com.google.common.base.Strings;
 import com.google.protobuf.ByteString;
 import com.google.pubsub.v1.PubsubMessage;
 import org.apache.camel.Exchange;

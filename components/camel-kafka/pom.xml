@@ -70,6 +70,14 @@
 
         <dependency>
             <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-core</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-infra-kafka</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>
@@ -95,6 +103,10 @@
             <scope>test</scope>
         </dependency>
 
+        <!--
+        It does not really have a dependency on camel-test-junit5, but it brings a lot of dependencies that are needed for
+        running the tests
+        -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
@@ -130,6 +142,8 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
+                    <skipITs>${skipTests}</skipITs>
+                    <skipTests>${skipTests}</skipTests>
                     <reuseForks>true</reuseForks>
                 </configuration>
             </plugin>
@@ -137,6 +151,14 @@
     </build>
 
     <profiles>
+        <!-- Ensures camel-kafka does not run any tests during the release -->
+        <profile>
+            <id>release</id>
+            <properties>
+                <skipITs>true</skipITs>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
         <profile>
             <id>arm</id>
             <activation>
@@ -151,13 +173,14 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
+                            <skipITs>${skipTests}</skipITs>
                             <reuseForks>true</reuseForks>
                         </configuration>
                         <executions>
                             <execution>
                                 <id>kafka-2</id>
                                 <configuration>
-                                    <skipITs>${isKafkaCompatible}</skipITs>
+                                    <skipITs>${skipTests}</skipITs>
                                     <systemPropertyVariables>
                                         <kafka.instance.type>local-kafka2-container</kafka.instance.type>
                                     </systemPropertyVariables>

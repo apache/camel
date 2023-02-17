@@ -95,6 +95,41 @@ public interface VertxWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
+         * Whether the server consumer will create a message exchange when a new
+         * WebSocket peer connects or disconnects.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param fireWebSocketConnectionEvents the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointConsumerBuilder fireWebSocketConnectionEvents(
+                boolean fireWebSocketConnectionEvents) {
+            doSetProperty("fireWebSocketConnectionEvents", fireWebSocketConnectionEvents);
+            return this;
+        }
+        /**
+         * Whether the server consumer will create a message exchange when a new
+         * WebSocket peer connects or disconnects.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param fireWebSocketConnectionEvents the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointConsumerBuilder fireWebSocketConnectionEvents(
+                String fireWebSocketConnectionEvents) {
+            doSetProperty("fireWebSocketConnectionEvents", fireWebSocketConnectionEvents);
+            return this;
+        }
+        /**
          * When consumeAsClient is set to true this sets the maximum number of
          * allowed reconnection attempts to a previously closed WebSocket. A
          * value of 0 (the default) will attempt to reconnect indefinitely.
@@ -800,6 +835,20 @@ public interface VertxWebsocketEndpointBuilderFactory {
          */
         public String vertxwebsocketRemoteaddress() {
             return "VertxWebsocket.remoteAddress";
+        }
+
+        /**
+         * The WebSocket event that triggered the message exchange.
+         * 
+         * The option is a: {@code
+         * org.apache.camel.component.vertx.websocket.VertxWebsocketEvent} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code VertxWebsocket.event}.
+         */
+        public String vertxwebsocketEvent() {
+            return "VertxWebsocket.event";
         }
     }
     static VertxWebsocketEndpointBuilder endpointBuilder(

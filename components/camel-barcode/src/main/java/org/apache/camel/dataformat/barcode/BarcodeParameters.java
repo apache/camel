@@ -65,7 +65,7 @@ public class BarcodeParameters {
 
     /**
      * Default Constructor (creates a bean with default parameters).
-     * 
+     *
      * <ul>
      * <li>image type: PNG</li>
      * <li>image width: 100px</li>
@@ -79,7 +79,7 @@ public class BarcodeParameters {
 
     /**
      * Constructor with parameters.
-     * 
+     *
      * @param type
      * @param width
      * @param height

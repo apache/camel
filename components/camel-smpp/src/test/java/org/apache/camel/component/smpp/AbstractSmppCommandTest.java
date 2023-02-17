@@ -64,7 +64,7 @@ public class AbstractSmppCommandTest {
           NOTE: in this test it's important to call the methods in this order:
           1. command.getResponseMessage
           2. inOutExchange.getMessage
-        
+
           This is so, because the empty out Message object is created by the getOut messaged called by
           command.getResponseMessage. Calling in the inverse order causes the hasOut check on getMessage()
           to return false, which, in turns, causes it to return the in message. Thus failing the test.

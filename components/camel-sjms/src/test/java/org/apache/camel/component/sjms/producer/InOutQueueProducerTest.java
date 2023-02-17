@@ -101,9 +101,9 @@ public class InOutQueueProducerTest extends JmsTestSupport {
 
     /*
      * @see org.apache.camel.test.junit5.CamelTestSupport#createRouteBuilder()
-     * 
+     *
      * @return
-     * 
+     *
      * @throws Exception
      */
     @Override

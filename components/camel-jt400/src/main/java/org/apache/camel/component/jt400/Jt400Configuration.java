@@ -424,7 +424,7 @@ public class Jt400Configuration {
     /**
      * Obtains an {@code AS400} object that connects to this endpoint. Since these objects represent limited resources,
      * clients have the responsibility of {@link #releaseConnection(AS400) releasing them} when done.
-     * 
+     *
      * @return an {@code AS400} object that connects to this endpoint
      */
     public AS400 getConnection() {
@@ -462,7 +462,7 @@ public class Jt400Configuration {
 
     /**
      * Releases a previously obtained {@code AS400} object from use.
-     * 
+     *
      * @param connection a previously obtained {@code AS400} object to release
      */
     public void releaseConnection(AS400 connection) {

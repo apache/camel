@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import java.util.List;
 import java.util.Map;
 
 import org.w3c.dom.Node;
@@ -24,8 +23,6 @@ import org.w3c.dom.Node;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
-import org.apache.camel.model.dataformat.Any23DataFormat;
-import org.apache.camel.model.dataformat.Any23Type;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.AvroLibrary;
 import org.apache.camel.model.dataformat.Base64DataFormat;
@@ -84,25 +81,6 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     public DataFormatClause(T processorType, Operation operation) {
         this.processorType = processorType;
         this.operation = operation;
-    }
-
-    /**
-     * Uses the Any23 data format
-     */
-    public T any23(String baseuri) {
-        return dataFormat(new Any23DataFormat(baseuri));
-    }
-
-    public T any23(String baseuri, Any23Type outputformat) {
-        return dataFormat(new Any23DataFormat(baseuri, outputformat));
-    }
-
-    public T any23(String baseuri, Any23Type outputformat, Map<String, String> configurations) {
-        return dataFormat(new Any23DataFormat(baseuri, outputformat, configurations));
-    }
-
-    public T any23(String baseuri, Any23Type outputformat, Map<String, String> configurations, List<String> extractors) {
-        return dataFormat(new Any23DataFormat(baseuri, outputformat, configurations, extractors));
     }
 
     /**

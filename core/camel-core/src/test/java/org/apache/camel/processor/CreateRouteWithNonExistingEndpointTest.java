@@ -38,7 +38,7 @@ public class CreateRouteWithNonExistingEndpointTest extends ContextTestSupport {
             super.setUp();
             fail("Should have failed to create this route!");
         } catch (Exception e) {
-            log.debug("Caught expected exception: " + e, e);
+            log.debug("Caught expected exception: {}", e.getMessage(), e);
             NoSuchEndpointException nse = assertIsInstanceOf(NoSuchEndpointException.class, e.getCause());
             assertEquals("thisUriDoesNotExist", nse.getUri(), "uri");
         }

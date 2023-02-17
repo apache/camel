@@ -39,7 +39,7 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         // create file with many lines
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < size; i++) {
-            sb.append("Line " + i + LS);
+            sb.append("Line ").append(i).append(LS);
         }
 
         template.sendBodyAndHeader(fileUri(), sb.toString(), Exchange.FILE_NAME, "input.txt");

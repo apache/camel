@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.Suspendable;
@@ -221,9 +220,8 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
      */
     protected Exchange prepareExchange(Exchange exchange) {
         // this consumer grabbed the exchange so mark its from this route/endpoint
-        ExtendedExchange ee = exchange.adapt(ExtendedExchange.class);
-        ee.setFromEndpoint(getEndpoint());
-        ee.setFromRouteId(getRouteId());
+        exchange.getExchangeExtension().setFromEndpoint(getEndpoint());
+        exchange.getExchangeExtension().setFromRouteId(getRouteId());
         return exchange;
     }
 
@@ -234,7 +232,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
      * exchange in parallel to the multiple consumers.
      * <p/>
      * If there is only a single consumer then its dispatched directly to it using same thread.
-     * 
+     *
      * @param  exchange  the exchange
      * @throws Exception can be thrown if processing of the exchange failed
      */
@@ -253,7 +251,7 @@ public class SedaConsumer extends DefaultConsumer implements Runnable, ShutdownA
             }
 
             // handover completions, as we need to done this when the multicast is done
-            final List<Synchronization> completions = exchange.adapt(ExtendedExchange.class).handoverCompletions();
+            final List<Synchronization> completions = exchange.getExchangeExtension().handoverCompletions();
 
             // use a multicast processor to process it
             AsyncProcessor mp = getEndpoint().getConsumerMulticastProcessor();

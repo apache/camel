@@ -47,7 +47,7 @@ public class PojoProxyHelperRequestReplyTest extends ContextTestSupport {
         };
     }
 
-    public final class PersonReceiver implements PersonHandler {
+    public static final class PersonReceiver implements PersonHandler {
         @Override
         public Person onPerson(Person person) {
             return new Person(person.getName() + "1");

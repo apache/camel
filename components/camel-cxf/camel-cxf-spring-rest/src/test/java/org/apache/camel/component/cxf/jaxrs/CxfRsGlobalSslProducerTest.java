@@ -66,7 +66,7 @@ public class CxfRsGlobalSslProducerTest extends CamelSpringTestSupport {
     public void testCorrectTrustStore() {
         Exchange exchange = template.send("direct://trust", new CxfRsGlobalSslProducerTest.MyProcessor());
 
-        // get the response message 
+        // get the response message
         Customer response = (Customer) exchange.getMessage().getBody();
 
         assertNotNull(response, "The response should not be null");

@@ -25,7 +25,7 @@ import org.apache.camel.resume.OffsetKey;
 public final class OffsetKeys {
     /**
      * For creating anonymous offset keys
-     * 
+     *
      * @param <T> the type of the offset key
      */
     private static class AnonymousOffsetKey<T> implements OffsetKey<T> {
@@ -51,7 +51,7 @@ public final class OffsetKeys {
 
     /**
      * For creating unmodifiable offset keys
-     * 
+     *
      * @param <T> the type of the offset key
      */
     private static class UnmodifiableOffsetKey<T> implements OffsetKey<T> {
@@ -77,7 +77,7 @@ public final class OffsetKeys {
 
     /**
      * Creates a new offset key wrapping the given object
-     * 
+     *
      * @param  object the object to wrap in the offset key
      * @return        a new OffsetKey object that wraps the given object
      * @param  <T>    the type of the object being wrapped
@@ -88,7 +88,7 @@ public final class OffsetKeys {
 
     /**
      * Creates a new unmodifiable offset key wrapping the given object
-     * 
+     *
      * @param  object the object to wrap in the offset key
      * @return        a new OffsetKey object that wraps the given object. The offset key of this object cannot be
      *                updated.
@@ -100,7 +100,7 @@ public final class OffsetKeys {
 
     /**
      * Creates new empty OffsetKey object
-     * 
+     *
      * @return an empty OffsetKey object
      */
     public static OffsetKey<?> empty() {

@@ -41,7 +41,7 @@ public interface Cacheable {
 
     /**
      * Adds an offset key and value to the cache
-     * 
+     *
      * @param  key    the key to add
      * @param  offset the offset to add
      * @return        true if added successfully (i.e.: the cache is not full) or false otherwise
@@ -50,14 +50,14 @@ public interface Cacheable {
 
     /**
      * Sets the cache in resume adapters and objects that cache their data
-     * 
+     *
      * @param cache A resume cache instance
      */
     void setCache(ResumeCache<?> cache);
 
     /**
      * Gets the cache in resume adapters and objects that cache their data
-     * 
+     *
      * @return A resume cache instance
      */
     ResumeCache<?> getCache();

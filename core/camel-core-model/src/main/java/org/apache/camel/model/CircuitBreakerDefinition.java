@@ -113,7 +113,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         }
     }
 
-    public Resilience4jConfigurationCommon getResilience4jConfiguration() {
+    public Resilience4jConfigurationDefinition getResilience4jConfiguration() {
         return resilience4jConfiguration;
     }
 

@@ -30,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Create a helper to work with a {@link ApiMethod}, using optional method aliases.
-     * 
+     *
      * @param apiMethodEnum     {@link ApiMethod} enumeration class
      * @param aliases           Aliases mapped to actual method names
      * @param nullableArguments names of arguments that default to null value
@@ -103,7 +104,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                     // add method name alias
                     String alias = matcher.replaceAll(aliasEntry.getValue());
                     // convert first character to lowercase
-                    assert alias.length() > 1;
+                    ObjectHelper.isNotEmpty(alias);
                     final char firstChar = alias.charAt(0);
                     if (!Character.isLowerCase(firstChar)) {
                         final StringBuilder builder = new StringBuilder();
@@ -362,7 +363,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Gets argument types and names for all overloaded methods and aliases with the given name.
-     * 
+     *
      * @param  name method name, either an exact name or an alias, exact matches are checked first
      * @return      list of arguments of the form Class type1, String name1, Class type2, String name2,...
      */
@@ -384,7 +385,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Get missing properties.
-     * 
+     *
      * @param  methodName method name
      * @param  argNames   available arguments
      * @return            Set of missing argument names
@@ -406,7 +407,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Returns alias map.
-     * 
+     *
      * @return alias names mapped to method names.
      */
     public Map<String, Set<String>> getAliases() {
@@ -415,7 +416,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Returns argument types and names used by all methods.
-     * 
+     *
      * @return map with argument names as keys, and types as values
      */
     public Map<String, Class<?>> allArguments() {
@@ -424,7 +425,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Returns argument names that can be set to null if not specified.
-     * 
+     *
      * @return list of argument names
      */
     public List<String> getNullableArguments() {
@@ -433,7 +434,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
 
     /**
      * Get the type for the given argument name.
-     * 
+     *
      * @param  argName argument name
      * @return         argument type
      */

@@ -21,26 +21,36 @@ import java.util.List;
 import java.util.Map;
 
 import com.mongodb.client.MongoIterable;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mongodb.MongoDbConstants;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.apache.commons.lang3.ObjectUtils;
 import org.bson.Document;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.component.mongodb.MongoDbConstants.MONGO_ID;
 import static org.apache.camel.test.junit5.TestSupport.assertListSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
-public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport {
+public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
+
+    @BeforeEach
+    void checkDocuments() {
+        Assumptions.assumeTrue(0 == testCollection.countDocuments(), "The collection should have no documents");
+    }
 
     @Test
     public void testFindAllDBCursor() {
-        // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
         // Repeat ten times, obtain 10 batches of 100 results each time
         int numToSkip = 0;
@@ -67,8 +77,6 @@ public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport {
 
     @Test
     public void testFindAllDocumentList() {
-        // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
         Object result = template.requestBody("direct:findAllDocumentList", ObjectUtils.NULL);
         assertTrue(result instanceof List, "Result is not of type List");
@@ -84,7 +92,7 @@ public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport {
             assertNotNull(document.get("fixedField"), "Document in returned list should contain all fields");
         }
 
-        for (Exchange resultExchange : getMockEndpoint("mock:resultFindAll").getReceivedExchanges()) {
+        for (Exchange resultExchange : contextExtension.getMockEndpoint("mock:resultFindAll").getReceivedExchanges()) {
             assertEquals(1000, resultExchange.getIn().getHeader(MongoDbConstants.RESULT_TOTAL_SIZE),
                     "Result total size header should equal 1000");
         }
@@ -92,41 +100,38 @@ public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport {
 
     @Test
     public void testInitFindWithWrongOutputType() {
-        try {
-            RouteBuilder taillableRouteBuilder = new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true&outputType=MongoIterable")
-                            .to("mock:dummy");
-                }
-            };
-            template.getCamelContext().addRoutes(taillableRouteBuilder);
-            fail("Endpoint should not be initialized with a non compatible outputType");
-        } catch (Exception exception) {
-            assertTrue(exception.getCause() instanceof IllegalArgumentException,
-                    "Exception is not of type IllegalArgumentException");
-        }
+        RouteBuilder taillableRouteBuilder = new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=findById&dynamicity=true&outputType=MongoIterable")
+                        .to("mock:dummy");
+            }
+        };
+
+        Exception ex = assertThrows(FailedToStartRouteException.class,
+                () -> template.getCamelContext().addRoutes(taillableRouteBuilder),
+                "Endpoint should not be initialized with a non compatible outputType");
+
+        assertInstanceOf(IllegalArgumentException.class, ex.getCause(),
+                "Exception is not of type IllegalArgumentException");
     }
 
     @Test
     public void testInitTailWithWrongOutputType() {
-        try {
-            RouteBuilder taillableRouteBuilder = new RouteBuilder() {
-                @Override
-                public void configure() {
-                    from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing&outputType=MongoIterable")
-                            .id("tailableCursorConsumer1").autoStartup(false).to("mock:test");
-                }
-            };
-            template.getCamelContext().addRoutes(taillableRouteBuilder);
-            fail("Endpoint should not be initialized with a non compatible outputType");
-        } catch (Exception exception) {
-            assertTrue(exception.getCause() instanceof IllegalArgumentException,
-                    "Exception is not of type IllegalArgumentException");
-        }
+        RouteBuilder taillableRouteBuilder = new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.cappedTestCollection}}&tailTrackIncreasingField=increasing&outputType=MongoIterable")
+                        .id("tailableCursorConsumer1").autoStartup(false).to("mock:test");
+            }
+        };
+        Exception ex = assertThrows(FailedToStartRouteException.class,
+                () -> template.getCamelContext().addRoutes(taillableRouteBuilder),
+                "Endpoint should not be initialized with a non compatible outputType");
+        assertInstanceOf(IllegalArgumentException.class, ex.getCause(),
+                "Exception is not of type IllegalArgumentException");
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -140,5 +145,11 @@ public class MongoDbOutputTypeIT extends AbstractMongoDbITSupport {
 
             }
         };
+    }
+
+    @RouteFixture
+    @Override
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(createRouteBuilder());
     }
 }

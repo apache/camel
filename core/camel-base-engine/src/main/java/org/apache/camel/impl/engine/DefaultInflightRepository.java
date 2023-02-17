@@ -28,7 +28,6 @@ import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.support.ExchangeHelper;
@@ -256,7 +255,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
         @Override
         @SuppressWarnings("unchecked")
         public String getNodeId() {
-            return exchange.adapt(ExtendedExchange.class).getHistoryNodeId();
+            return exchange.getExchangeExtension().getHistoryNodeId();
         }
 
         @Override

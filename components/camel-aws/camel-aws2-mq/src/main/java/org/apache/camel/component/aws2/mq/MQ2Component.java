@@ -38,8 +38,6 @@ public class MQ2Component extends DefaultComponent {
 
     public MQ2Component(CamelContext context) {
         super(context);
-
-        registerExtension(new MQ2ComponentVerifierExtension());
     }
 
     @Override

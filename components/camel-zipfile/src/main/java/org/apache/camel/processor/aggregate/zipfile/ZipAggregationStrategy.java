@@ -31,7 +31,6 @@ import java.util.Map;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.GenericFile;
@@ -99,7 +98,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Gets the prefix used when creating the ZIP file name.
-     * 
+     *
      * @return the prefix
      */
     public String getFilePrefix() {
@@ -108,7 +107,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Sets the prefix that will be used when creating the ZIP filename.
-     * 
+     *
      * @param filePrefix prefix to use on ZIP file.
      */
     public void setFilePrefix(String filePrefix) {
@@ -117,7 +116,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Gets the suffix used when creating the ZIP file name.
-     * 
+     *
      * @return the suffix
      */
     public String getFileSuffix() {
@@ -126,7 +125,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Sets the suffix that will be used when creating the ZIP filename.
-     * 
+     *
      * @param fileSuffix suffix to use on ZIP file.
      */
     public void setFileSuffix(String fileSuffix) {
@@ -170,7 +169,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
                 throw new GenericFileOperationFailedException(e.getMessage(), e);
             }
             answer = newExchange;
-            answer.adapt(ExtendedExchange.class).addOnCompletion(new DeleteZipFileOnCompletion(zipFile));
+            answer.getExchangeExtension().addOnCompletion(new DeleteZipFileOnCompletion(zipFile));
         } else {
             zipFile = oldExchange.getIn().getBody(File.class);
         }
@@ -220,7 +219,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
     public void onCompletion(Exchange exchange, Exchange inputExchange) {
         // this aggregation strategy added onCompletion which we should handover when we are complete
         if (inputExchange != null) {
-            exchange.adapt(ExtendedExchange.class).handoverCompletions(inputExchange);
+            exchange.getExchangeExtension().handoverCompletions(inputExchange);
         }
     }
 

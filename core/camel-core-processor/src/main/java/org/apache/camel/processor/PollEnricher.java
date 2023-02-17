@@ -26,7 +26,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.spi.ConsumerCache;
@@ -312,7 +311,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                     copyResultsPreservePattern(exchange, aggregatedExchange);
                     // handover any synchronization
                     if (resourceExchange != null) {
-                        resourceExchange.adapt(ExtendedExchange.class).handoverCompletions(exchange);
+                        resourceExchange.getExchangeExtension().handoverCompletions(exchange);
                     }
                 }
             }
@@ -322,7 +321,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 // restore caused exception
                 exchange.setException(cause);
                 // remove the exhausted marker as we want to be able to perform redeliveries with the error handler
-                exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
+                exchange.getExchangeExtension().setRedeliveryExhausted(false);
 
                 // preserve the redelivery stats
                 if (redeliveried != null) {

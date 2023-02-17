@@ -21,12 +21,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.activation.DataHandler;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.response.ValidatableResponse;
+import io.restassured.specification.RequestSpecification;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonObject;
@@ -40,6 +43,7 @@ import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.platform.http.HttpEndpointModel;
 import org.apache.camel.component.platform.http.PlatformHttpComponent;
+import org.apache.camel.component.platform.http.spi.Method;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.spi.RestConfiguration;
@@ -49,11 +53,13 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.emptyString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
@@ -595,6 +601,83 @@ public class VertxPlatformHttpEngineTest {
         } finally {
             context.stop();
             vertx.close();
+        }
+    }
+
+    @Test
+    public void testRequestBodyAllowed() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/echo")
+                            .setBody().simple("${body}");
+                }
+            });
+
+            context.start();
+
+            for (Method method : Method.values()) {
+                ValidatableResponse validatableResponse = given()
+                        .contentType(ContentType.JSON)
+                        .when()
+                        .body("{\"method\": \"" + method + "\"}")
+                        .request(method.name(), "/echo")
+                        .then()
+                        .statusCode(200);
+
+                Matcher<String> expectedBody;
+                if (method.equals(Method.HEAD)) {
+                    // HEAD response body is ignored
+                    validatableResponse.body(emptyString());
+                } else {
+                    validatableResponse.body("method", equalTo(method.name()));
+                }
+            }
+        } finally {
+            context.stop();
+        }
+    }
+
+    @Test
+    public void testRequestBodyAllowedFormUrlEncoded() throws Exception {
+        // Methods that are allowed a request body by Vert.x web for application/x-www-form-urlencoded
+        final List<Method> methodsWithBodyAllowed = List.of(Method.POST, Method.PUT, Method.PATCH, Method.DELETE);
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/test")
+                            .setBody().simple("Hello ${body[method]}");
+                }
+            });
+
+            context.start();
+
+            RequestSpecification request = given()
+                    .when()
+                    .contentType(ContentType.URLENC);
+
+            for (Method method : Method.values()) {
+                if (methodsWithBodyAllowed.contains(method)) {
+                    request.body("method=" + method)
+                            .request(method.name(), "/test")
+                            .then()
+                            .statusCode(200)
+                            .body(equalTo("Hello " + method));
+                } else {
+                    request.body(method)
+                            .request(method.name(), "/test")
+                            .then()
+                            .statusCode(500);
+                }
+            }
+        } finally {
+            context.stop();
         }
     }
 

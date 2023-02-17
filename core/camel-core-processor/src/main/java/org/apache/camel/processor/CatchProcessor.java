@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
@@ -98,13 +97,12 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
         }
 
         // must remember some properties which we cannot use during doCatch processing
-        ExtendedExchange ee = (ExtendedExchange) exchange;
-        final boolean stop = ee.isRouteStop();
-        ee.setRouteStop(false);
-        final boolean rollbackOnly = ee.isRollbackOnly();
-        ee.setRollbackOnly(false);
-        final boolean rollbackOnlyLast = ee.isRollbackOnlyLast();
-        ee.setRollbackOnlyLast(false);
+        final boolean stop = exchange.isRouteStop();
+        exchange.setRouteStop(false);
+        final boolean rollbackOnly = exchange.isRollbackOnly();
+        exchange.setRollbackOnly(false);
+        final boolean rollbackOnlyLast = exchange.isRollbackOnlyLast();
+        exchange.setRollbackOnlyLast(false);
 
         // store the last to endpoint as the failure endpoint
         if (exchange.getProperty(ExchangePropertyKey.FAILURE_ENDPOINT) == null) {
@@ -115,7 +113,7 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
         exchange.setProperty(ExchangePropertyKey.EXCEPTION_CAUGHT, e);
         exchange.setException(null);
         // and we should not be regarded as exhausted as we are in a try .. catch block
-        exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
+        exchange.getExchangeExtension().setRedeliveryExhausted(false);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("The exception is handled for the exception: {} caused by: {}",
@@ -131,7 +129,7 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
                 EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, false, null);
 
                 // always clear redelivery exhausted in a catch clause
-                exchange.adapt(ExtendedExchange.class).setRedeliveryExhausted(false);
+                exchange.getExchangeExtension().setRedeliveryExhausted(false);
 
                 if (rollbackOnly || rollbackOnlyLast || stop) {
                     exchange.setRouteStop(stop);

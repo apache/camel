@@ -25,15 +25,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.consumer.errorhandler.KafkaConsumerListener;
-import org.apache.camel.component.kafka.integration.AbstractKafkaTestSupport;
 import org.apache.camel.component.kafka.integration.BaseEmbeddedKafkaTestSupport;
+import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
@@ -59,46 +57,15 @@ public class KafkaPausableConsumerCircuitBreakerIT extends BaseEmbeddedKafkaTest
     private static final Logger LOG = LoggerFactory.getLogger(KafkaPausableConsumerCircuitBreakerIT.class);
 
     private static final int SIMULATED_FAILURES = 5;
-    private LongAdder count = new LongAdder();
-
-    @EndpointInject("kafka:" + SOURCE_TOPIC
-                    + "?groupId=KafkaPausableConsumerCircuitBreakerIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                    + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
-                    + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
-    private Endpoint from;
-
-    @EndpointInject("direct:intermediate")
-    private Endpoint intermediate;
-
-    @EndpointInject("mock:result")
-    private MockEndpoint to;
-
+    private static LongAdder count = new LongAdder();
+    private static ScheduledExecutorService executorService;
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
-
-    private ScheduledExecutorService executorService;
-
-    @BeforeEach
-    public void before() {
-        Properties props = AbstractKafkaTestSupport.getDefaultProperties(service);
-        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
-        MockConsumerInterceptor.recordsCaptured.clear();
-    }
-
-    @AfterEach
-    public void after() {
-        if (producer != null) {
-            producer.close();
-        }
-        // clean all test topics
-        AbstractKafkaTestSupport.createAdminClient(service)
-                .deleteTopics(Collections.singletonList(SOURCE_TOPIC)).all();
-    }
 
     /*
      * This is used by pausable to determine whether or not to pause. If returning true, processing continues. If
      * returning false, processing pauses.
      */
-    private boolean canContinue() {
+    private static boolean canContinue() {
         // First one should go through ...
         if (count.intValue() <= 1) {
             LOG.info("Count is 1, allowing processing to proceed");
@@ -115,12 +82,29 @@ public class KafkaPausableConsumerCircuitBreakerIT extends BaseEmbeddedKafkaTest
         return false;
     }
 
-    public void increment() {
+    public static void increment() {
         count.increment();
     }
 
-    public int getCount() {
+    public static int getCount() {
         return count.intValue();
+    }
+
+    @BeforeEach
+    public void before() {
+        Properties props = KafkaTestUtil.getDefaultProperties(service);
+        producer = new org.apache.kafka.clients.producer.KafkaProducer<>(props);
+        MockConsumerInterceptor.recordsCaptured.clear();
+    }
+
+    @AfterEach
+    public void after() {
+        if (producer != null) {
+            producer.close();
+        }
+        // clean all test topics
+        KafkaTestUtil.createAdminClient(service)
+                .deleteTopics(Collections.singletonList(SOURCE_TOPIC)).all();
     }
 
     @Override
@@ -159,15 +143,18 @@ public class KafkaPausableConsumerCircuitBreakerIT extends BaseEmbeddedKafkaTest
                 // Binds the configuration to the registry
                 getCamelContext().getRegistry().bind("pausableCircuit", circuitBreaker);
 
-                from(from)
+                from("kafka:" + SOURCE_TOPIC
+                        + "?groupId=KafkaPausableConsumerCircuitBreakerIT&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                        + "&valueDeserializer=org.apache.kafka.common.serialization.StringDeserializer"
+                        + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
                         .pausable(new KafkaConsumerListener(), o -> canContinue())
                         .routeId("pausable-it")
                         .process(exchange -> LOG.info("Got record from Kafka: {}", exchange.getMessage().getBody()))
                         .circuitBreaker()
                             .resilience4jConfiguration().circuitBreaker("pausableCircuit").end()
-                        .to(intermediate);
+                        .to("direct:intermediate");
 
-                from(intermediate)
+                from("direct:intermediate")
                         .process(exchange -> {
                             LOG.info("Got record on the intermediate processor: {}", exchange.getMessage().getBody());
 
@@ -175,7 +162,7 @@ public class KafkaPausableConsumerCircuitBreakerIT extends BaseEmbeddedKafkaTest
                                 throw new RuntimeCamelException("Error");
                             }
                         })
-                        .to(to)
+                        .to(KafkaTestUtil.MOCK_RESULT)
                         .end();
             }
         };
@@ -190,6 +177,8 @@ public class KafkaPausableConsumerCircuitBreakerIT extends BaseEmbeddedKafkaTest
 
         // Although all messages will be sent more than once to the exception only 5 messages should reach the final
         // destination, because sending them on the first few tries should fail
+        MockEndpoint to = contextExtension.getMockEndpoint(KafkaTestUtil.MOCK_RESULT);
+
         to.expectedMessageCount(5);
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
 

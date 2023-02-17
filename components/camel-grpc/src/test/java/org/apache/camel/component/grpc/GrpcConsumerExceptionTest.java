@@ -95,7 +95,7 @@ public class GrpcConsumerExceptionTest extends CamelTestSupport {
             public void configure() {
                 from("grpc://localhost:" + GRPC_SYNC_REQUEST_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true")
-                             .throwException(CamelException.class, "GRPC Camel exception message");
+                        .throwException(CamelException.class, "GRPC Camel exception message");
 
             }
         };

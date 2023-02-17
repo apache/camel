@@ -29,6 +29,7 @@ messages in either a POJO or XML format.
 
 |Option |Default |Description
 
+|standby | `false` |Whether the tracer is standby. If a tracer is in standby then the tracer is activated during startup and are ready to be enabled manually via JMX or calling the enabled method.
 |enabled |`false` |Flag to enable or disable this tracer
 
 |backlogSize |`1000` |Maximum number of total traced messages to keep in the backlog (FIFO
@@ -58,6 +59,11 @@ xref:stream-caching.adoc[Stream Caching].
 
 |bodyIncludeFiles |`true` |Whether to include the message body of file based messages. The overhead
 is that the file content has to be read from the file.
+
+|includeExchangeProperties |`true` |Trace messages to include exchange properties.
+
+|includeException |`true` |Trace messages to include exception if the message failed.
+
 |===
 
 [[BacklogTracer-Operations]]
@@ -70,16 +76,21 @@ is that the file content has to be read from the file.
 
 |getTraceCounter |`long` |Gets the total number of traced messages.
 
+|getQueueSize |`long` |Number of traced messages in the backlog.
+
 |resetTraceCounter |`void` |To reset the trace counter.
 
 |dumpTracedMessages(nodeOrRouteId) |`List<BacklogTracerEventMessage>` |To dump the traced messages from the give node or route id.
 
-|dumpTracedMessagesAsXml(nodeOrRouteId) |`String` |To dump the traced messages from the give node or route id in XML
-format.
+|dumpTracedMessagesAsXml(nodeOrRouteId) |`String` |To dump the traced messages from the give node or route id in XML format.
+
+|dumpTracedMessagesAsJSon(nodeOrRouteId) |`String` |To dump the traced messages from the give node or route id in JSon format.
 
 |dumpAllTracedMessages |`List<BacklogTracerEventMessage>` |To dump all the traced messages
 
 |dumpAllTracedMessagesAsXml |`String` |To dump all the traced messages in XML format.
+
+|dumpAllTracedMessagesAsJSon |`String` |To dump all the traced messages in JSon format.
 
 |===
 
@@ -99,6 +110,13 @@ And in Spring XML
 <camelContext backlogTrace="true">
   ...
 </camelContext>
+----
+
+And in Camel Main you can enable this  in the `application.properties` file:
+
+[source,properties]
+----
+camel.main.backlog-tracing = true
 ----
 
 And in Spring Boot you can enable this in the `application.properties` file:

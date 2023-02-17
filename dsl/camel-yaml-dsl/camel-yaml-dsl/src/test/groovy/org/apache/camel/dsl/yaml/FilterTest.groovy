@@ -128,23 +128,4 @@ class FilterTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "filter (flow disabled)"() {
-        setup:
-            setFlowMode(YamlDeserializationMode.CLASSIC)
-
-        when:
-            loadRoutes '''
-                - from:
-                    uri: "direct:route"
-                    steps:
-                      - filter:
-                          simple: "${body.startsWith(\\"a\\")}"
-                      - to: "mock:filter"
-            '''
-
-            context.start()
-        then:
-            def ex = thrown(FailedToCreateRouteException)
-            ex.message.contains('Failed to create route')
-    }
 }

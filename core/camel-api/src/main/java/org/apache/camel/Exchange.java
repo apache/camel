@@ -270,9 +270,12 @@ public interface Exchange {
      * <p/>
      * For example to adapt to <tt>ExtendedExchange</tt>.
      *
+     * This method is deprecated. Use the getter to {@link ExchangeExtension}.
+     *
      * @param  type the type to adapt to
      * @return      this {@link org.apache.camel.Exchange} adapted to the given type
      */
+    @Deprecated
     <T extends Exchange> T adapt(Class<T> type);
 
     /**
@@ -679,5 +682,7 @@ public interface Exchange {
      * @see Message#getMessageTimestamp()
      */
     long getCreated();
+
+    ExchangeExtension getExchangeExtension();
 
 }

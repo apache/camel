@@ -31,7 +31,7 @@ import org.apache.camel.support.service.ServiceSupport;
  * <p/>
  * <b>Important:</b> This implementation does <b>not</b> support the asynchronous routing engine. If you are
  * implementing a EIP pattern please use the {@link DelegateAsyncProcessor} instead.
- * 
+ *
  * @see DelegateAsyncProcessor
  */
 public class DelegateProcessor extends ServiceSupport

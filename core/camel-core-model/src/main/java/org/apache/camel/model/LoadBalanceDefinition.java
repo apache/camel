@@ -243,7 +243,7 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
 
     /**
      * Uses topic load balancer
-     * 
+     *
      * @return the builder
      */
     public LoadBalanceDefinition topic() {

@@ -66,7 +66,7 @@ public class RouteTemplateCustomSourceTest extends ContextTestSupport {
         };
     }
 
-    private class MyRouteTemplateParameterSource implements RouteTemplateParameterSource {
+    private static class MyRouteTemplateParameterSource implements RouteTemplateParameterSource {
 
         @Override
         public Map<String, Object> parameters(String routeId) {

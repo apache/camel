@@ -75,7 +75,7 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
             Integer count = ent.getValue();
             if (count > 1) {
                 found++;
-                log.info(ent.getKey() + " :: " + count);
+                log.info("{} :: {}", ent.getKey(), count);
             }
         }
 
@@ -108,7 +108,7 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
                 integer++;
                 duplicate.put(exchange.getExchangeId(), integer);
             }
-            log.info("Process called for-" + exchange.getExchangeId());
+            log.info("Process called for-{}", exchange.getExchangeId());
             Thread.sleep(20);
         }
 

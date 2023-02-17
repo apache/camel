@@ -344,7 +344,7 @@ public final class PGPDataFormatUtil {
 
     /**
      * Checks whether one of the signatures of the key has one of the expected key flags
-     * 
+     *
      * @param  key
      * @return     {@link Boolean#TRUE} if key has one of the expected flag, <code>null</code> if the key does not have
      *             any key flags, {@link Boolean#FALSE} if the key has none of the expected flags
@@ -377,7 +377,7 @@ public final class PGPDataFormatUtil {
     /**
      * Determines a public key from the keyring collection which has a certain key ID and which has a User ID which
      * contains at least one of the User ID parts.
-     * 
+     *
      * @param  keyId                   key ID
      * @param  userIdParts             user ID parts, can be empty, than no filter on the User ID is executed
      * @param  publicKeyringCollection keyring collection

@@ -91,7 +91,7 @@ public class BeanWithXPathInjectionTest extends ContextTestSupport {
         public void read(String body, @XPath("/soap:Envelope/soap:Body/foo/text()") String foo) {
             this.foo = foo;
             this.body = body;
-            LOG.info("read() method called on " + this);
+            LOG.info("read() method called on {}", this);
         }
     }
 }

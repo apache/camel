@@ -62,7 +62,7 @@ public class FromRestGetPolicyTest extends ContextTestSupport {
         };
     }
 
-    private class MyDummyPolicy implements Policy {
+    private static class MyDummyPolicy implements Policy {
 
         @Override
         public void beforeWrap(Route route, NamedNode definition) {

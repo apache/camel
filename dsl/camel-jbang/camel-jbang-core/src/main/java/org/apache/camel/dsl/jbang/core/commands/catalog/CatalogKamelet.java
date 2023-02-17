@@ -52,7 +52,7 @@ public class CatalogKamelet extends CamelCommand {
     String filterName;
 
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.0")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.1.1")
     String kameletsVersion;
 
     public CatalogKamelet(CamelJBangMain main) {

@@ -20,25 +20,17 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
-import org.apache.camel.catalog.RuntimeProvider;
+import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
-import org.apache.camel.dsl.jbang.core.common.XmlHelper;
-import org.apache.camel.main.KameletMain;
-import org.apache.camel.main.download.MavenArtifact;
-import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.CamelCaseOrderedProperties;
@@ -49,11 +41,7 @@ import org.apache.commons.io.FileUtils;
 
 class ExportQuarkus extends Export {
 
-    private static final String DEFAULT_CAMEL_CATALOG = "org.apache.camel.catalog.DefaultCamelCatalog";
-    private static final String QUARKUS_CATALOG_PROVIDER = "org.apache.camel.catalog.quarkus.QuarkusRuntimeProvider";
-
     private String camelVersion;
-    private String camelQuarkusVersion;
 
     public ExportQuarkus(CamelJBangMain main) {
         super(main);
@@ -143,6 +131,63 @@ class ExportQuarkus extends Export {
         return 0;
     }
 
+    @Override
+    protected void prepareApplicationProperties(Properties properties) {
+        // quarkus native compilation only works if we specify each resource explicit
+
+        StringJoiner sj = new StringJoiner(",");
+        StringJoiner sj2 = new StringJoiner(",");
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            String k = entry.getKey().toString();
+            String v = entry.getValue().toString();
+
+            if ("camel.main.routesIncludePattern".equals(k)) {
+                v = Arrays.stream(v.split(","))
+                        .map(ExportQuarkus::removeScheme) // remove scheme and routes are in camel sub-folder
+                        .map(s -> "camel/" + s)
+                        .collect(Collectors.joining(","));
+                sj.add(v);
+            }
+            // extra classpath files
+            if ("camel.jbang.classpathFiles".equals(k)) {
+                v = Arrays.stream(v.split(","))
+                        .map(ExportQuarkus::removeScheme) // remove scheme
+                        .collect(Collectors.joining(","));
+                sj2.add(v);
+            }
+        }
+
+        String routes = sj.length() > 0 ? sj.toString() : null;
+        String extra = sj2.length() > 0 ? sj2.toString() : null;
+
+        if (routes != null || extra != null) {
+            sj = new StringJoiner(",");
+            String e = properties.getProperty("quarkus.native.resources.includes");
+            if (e != null) {
+                sj.add(e);
+            }
+            if (routes != null) {
+                sj.add(routes);
+            }
+            if (extra != null) {
+                sj.add(extra);
+            }
+            if (sj.length() > 0) {
+                properties.setProperty("quarkus.native.resources.includes", sj.toString());
+            }
+            if (routes != null) {
+                properties.setProperty("camel.main.routes-include-pattern", routes);
+            }
+        }
+    }
+
+    private static String removeScheme(String s) {
+        if (s.contains(":")) {
+            return StringHelper.after(s, ":");
+        }
+        return s;
+    }
+
     private void createGradleProperties(File output) throws Exception {
         InputStream is = ExportQuarkus.class.getClassLoader().getResourceAsStream("templates/quarkus-gradle-properties.tmpl");
         String context = IOHelper.loadText(is);
@@ -181,11 +226,12 @@ class ExportQuarkus extends Export {
         // quarkus controls the camel version
         String repos = getMavenRepos(prop, quarkusVersion);
 
-        CamelCatalog catalog = loadQuarkusCatalog(repos);
+        CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion);
         if (camelVersion == null) {
             camelVersion = catalog.getCatalogVersion();
         }
         String camelVersion = catalog.getCatalogVersion();
+        String camelQuarkusVersion = catalog.otherModel("camel-core-engine").getVersion();
 
         context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
         context = context.replaceFirst("\\{\\{ \\.ArtifactId }}", ids[1]);
@@ -289,7 +335,7 @@ class ExportQuarkus extends Export {
         // quarkus controls the camel version
         String repos = getMavenRepos(prop, quarkusVersion);
 
-        CamelCatalog catalog = loadQuarkusCatalog(repos);
+        CamelCatalog catalog = CatalogLoader.loadQuarkusCatalog(repos, quarkusVersion);
         if (camelVersion == null) {
             camelVersion = catalog.getCatalogVersion();
         }
@@ -389,72 +435,6 @@ class ExportQuarkus extends Export {
         answer.removeIf(s -> s.contains("camel-core"));
         answer.removeIf(s -> s.contains("camel-platform-http"));
         answer.removeIf(s -> s.contains("camel-microprofile-health"));
-
-        return answer;
-    }
-
-    private CamelCatalog loadQuarkusCatalog(String repos) {
-        CamelCatalog answer = new DefaultCamelCatalog(true);
-
-        // use kamelet-main to dynamic download dependency via maven
-        KameletMain main = new KameletMain();
-        try {
-            main.setRepos(repos);
-            main.start();
-
-            // shrinkwrap does not return POM file as result (they are hardcoded to be filtered out)
-            // so after this we download a JAR and then use its File location to compute the file for the downloaded POM
-            MavenDependencyDownloader downloader = main.getCamelContext().hasService(MavenDependencyDownloader.class);
-            MavenArtifact ma = downloader.downloadArtifact("io.quarkus.platform", "quarkus-camel-bom:pom", quarkusVersion);
-            if (ma != null && ma.getFile() != null) {
-                String name = ma.getFile().getAbsolutePath();
-                File file = new File(name);
-                if (file.exists()) {
-                    DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
-                    DocumentBuilder db = dbf.newDocumentBuilder();
-                    Document dom = db.parse(file);
-
-                    // grab what exact camelVersion and camelQuarkusVersion we are using
-                    NodeList nl = dom.getElementsByTagName("dependency");
-                    for (int i = 0; i < nl.getLength(); i++) {
-                        Element node = (Element) nl.item(i);
-                        String g = node.getElementsByTagName("groupId").item(0).getTextContent();
-                        String a = node.getElementsByTagName("artifactId").item(0).getTextContent();
-                        if ("org.apache.camel".equals(g) && "camel-core-engine".equals(a)) {
-                            camelVersion = node.getElementsByTagName("version").item(0).getTextContent();
-                        } else if ("org.apache.camel.quarkus".equals(g) && "camel-quarkus-catalog".equals(a)) {
-                            camelQuarkusVersion = node.getElementsByTagName("version").item(0).getTextContent();
-                        }
-                    }
-                }
-            }
-
-            if (camelQuarkusVersion != null) {
-                // download camel-quarkus-catalog we use to know if we have an extension or not
-                downloader.downloadDependency("org.apache.camel.quarkus", "camel-quarkus-catalog", camelQuarkusVersion);
-
-                Class<RuntimeProvider> clazz = main.getCamelContext().getClassResolver().resolveClass(QUARKUS_CATALOG_PROVIDER,
-                        RuntimeProvider.class);
-                if (clazz != null) {
-                    RuntimeProvider provider = main.getCamelContext().getInjector().newInstance(clazz);
-                    if (provider != null) {
-                        // re-create answer with the classloader that loaded quarkus to be able to load resources in this catalog
-                        Class<CamelCatalog> clazz2
-                                = main.getCamelContext().getClassResolver().resolveClass(DEFAULT_CAMEL_CATALOG,
-                                        CamelCatalog.class);
-                        answer = main.getCamelContext().getInjector().newInstance(clazz2);
-                        answer.setRuntimeProvider(provider);
-                        // use classloader that loaded quarkus provider to ensure we can load its resources
-                        answer.getVersionManager().setClassLoader(main.getCamelContext().getApplicationContextClassLoader());
-                        answer.enableCache();
-                    }
-                }
-            }
-        } catch (Exception e) {
-            // ignore
-        } finally {
-            main.stop();
-        }
 
         return answer;
     }

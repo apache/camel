@@ -61,7 +61,7 @@ public class DefaultCamelBeanPostProcessorFieldFirstTest extends ContextTestSupp
     }
 
     @BindToRegistry
-    public class FooService {
+    public static class FooService {
 
         // should inject simple types first such as this property
         @PropertyInject("foo")

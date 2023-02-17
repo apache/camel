@@ -35,7 +35,7 @@ public interface XmlSignatureProperties {
 
     /**
      * Returns further configuration objects for the XML signature
-     * 
+     *
      * @param  input     input
      * @return           output must not be <code>null</code>
      * @throws Exception if an error occurs during creating the output
@@ -56,7 +56,7 @@ public interface XmlSignatureProperties {
         /**
          * Returns the parent node of the signature element in the case of enveloped or detached XML signature, or the
          * empty result document in the case of enveloping XML signature.
-         * 
+         *
          * @return parent node, cannot be <code>null</code>
          */
         Node getParent();
@@ -66,7 +66,7 @@ public interface XmlSignatureProperties {
 
         /**
          * XML signature factory which can be used to create Reference and XMLObject instances.
-         * 
+         *
          * @return factory
          */
         XMLSignatureFactory getSignatureFactory();
@@ -95,7 +95,7 @@ public interface XmlSignatureProperties {
 
         /**
          * Retruns the signature type.
-         * 
+         *
          * @return signature type
          */
         SignatureType getSignatureType();
@@ -154,7 +154,7 @@ public interface XmlSignatureProperties {
          * You can overwrite the value of the Id attribute of the Signature element that you get from
          * {@link Input#getSignatureId()}. Only if the provided value is not <code>null</code> and not empty, then the
          * signature Id will be overwritten.
-         * 
+         *
          * @param signatureId Id attribute value of the Signature element
          */
         public void setSignatureId(String signatureId) {

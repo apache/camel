@@ -51,7 +51,7 @@ class Jt400DataQueueService implements Service {
 
     /**
      * Creates a {@code Jt400DataQueueService} that connects to the specified endpoint.
-     * 
+     *
      * @param endpoint endpoint which this service connects to
      */
     Jt400DataQueueService(Jt400Endpoint endpoint) {
@@ -91,7 +91,7 @@ class Jt400DataQueueService implements Service {
 
     /**
      * Returns the data queue object that this service connects to. Returns {@code null} if the service is stopped.
-     * 
+     *
      * @return the data queue object that this service connects to, or {@code null} if stopped
      */
     public BaseDataQueue getDataQueue() {

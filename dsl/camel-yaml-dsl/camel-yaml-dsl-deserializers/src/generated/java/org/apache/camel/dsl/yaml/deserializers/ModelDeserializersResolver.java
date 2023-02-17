@@ -19,8 +19,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "org.apache.camel.model.dataformat.ASN1DataFormat": return new ModelDeserializers.ASN1DataFormatDeserializer();
             case "aggregate": return new ModelDeserializers.AggregateDefinitionDeserializer();
             case "org.apache.camel.model.AggregateDefinition": return new ModelDeserializers.AggregateDefinitionDeserializer();
-            case "any23": return new ModelDeserializers.Any23DataFormatDeserializer();
-            case "org.apache.camel.model.dataformat.Any23DataFormat": return new ModelDeserializers.Any23DataFormatDeserializer();
             case "api-key": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
             case "apiKey": return new ModelDeserializers.ApiKeyDefinitionDeserializer();
             case "org.apache.camel.model.rest.ApiKeyDefinition": return new ModelDeserializers.ApiKeyDefinitionDeserializer();

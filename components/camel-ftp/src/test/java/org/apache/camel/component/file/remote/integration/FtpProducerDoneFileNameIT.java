@@ -24,7 +24,6 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -39,10 +38,10 @@ public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
         template.sendBodyAndHeader(getFtpUrl() + "&doneFileName=done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = service.ftpFile("done/hello.txt").toFile();
-        assertEquals(true, file.exists(), "File should exists");
+        assertTrue(file.exists(), "File should exists");
 
         File done = service.ftpFile("done/done").toFile();
-        assertEquals(true, done.exists(), "Done file should exists");
+        assertTrue(done.exists(), "Done file should exists");
     }
 
     @Test
@@ -51,10 +50,10 @@ public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
                 "hello.txt");
 
         File file = service.ftpFile("done/hello.txt").toFile();
-        assertEquals(true, file.exists(), "File should exists");
+        assertTrue(file.exists(), "File should exists");
 
         File done = service.ftpFile("done/done-hello.txt").toFile();
-        assertEquals(true, done.exists(), "Done file should exists");
+        assertTrue(done.exists(), "Done file should exists");
     }
 
     @Test
@@ -63,10 +62,10 @@ public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
                 "hello.txt");
 
         File file = service.ftpFile("done/hello.txt").toFile();
-        assertEquals(true, file.exists(), "File should exists");
+        assertTrue(file.exists(), "File should exists");
 
         File done = service.ftpFile("done/hello.txt.done").toFile();
-        assertEquals(true, done.exists(), "Done file should exists");
+        assertTrue(done.exists(), "Done file should exists");
     }
 
     @Test
@@ -75,10 +74,10 @@ public class FtpProducerDoneFileNameIT extends FtpServerTestSupport {
                 "hello.txt");
 
         File file = service.ftpFile("done/hello.txt").toFile();
-        assertEquals(true, file.exists(), "File should exists");
+        assertTrue(file.exists(), "File should exists");
 
         File done = service.ftpFile("done/hello.done").toFile();
-        assertEquals(true, done.exists(), "Done file should exists");
+        assertTrue(done.exists(), "Done file should exists");
     }
 
     @Test

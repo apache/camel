@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Unit test for in optional out
@@ -40,26 +41,26 @@ public class RouteMEPOptionalOutTest extends ContextTestSupport {
     public void testHasNotOutForInOptionalOut() {
         // OUT is optional in the route but we should not get a response
         Object out = template.sendBody("direct:noout", ExchangePattern.InOptionalOut, "Hi");
-        assertEquals(null, out);
+        assertNull(out);
     }
 
     @Test
     public void testHasNotOutForInOut() {
         // OUT is optional in the route but we should still not get a response
         Object out = template.sendBody("direct:noout", ExchangePattern.InOut, "Hi");
-        assertEquals(null, out);
+        assertNull(out);
     }
 
     @Test
     public void testHasNotOutForInOnly() {
         Object out = template.sendBody("direct:noout", ExchangePattern.InOnly, "Hi");
-        assertEquals(null, out);
+        assertNull(out);
     }
 
     @Test
     public void testInOnly() {
         Object out = template.sendBody("direct:inonly", ExchangePattern.InOnly, "Hi");
-        assertEquals(null, out);
+        assertNull(out);
     }
 
     @Override

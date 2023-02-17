@@ -33,7 +33,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.SafeCopyProperty;
@@ -53,8 +52,7 @@ import static org.apache.camel.support.MessageHelper.copyBody;
  *
  * @see DefaultExchange
  */
-class AbstractExchange implements ExtendedExchange {
-
+class AbstractExchange implements Exchange {
     // number of elements in array
     static final int INTERNAL_LENGTH = ExchangePropertyKey.values().length;
     // empty array for reset
@@ -90,17 +88,18 @@ class AbstractExchange implements ExtendedExchange {
     Boolean errorHandlerHandled;
     AsyncCallback defaultConsumerCallback; // optimize (do not reset)
     Map<String, SafeCopyProperty> safeCopyProperties;
+    private final ExtendedExchangeExtension privateExtension;
 
     public AbstractExchange(CamelContext context) {
-        this.context = context;
-        this.pattern = ExchangePattern.InOnly;
-        this.created = System.currentTimeMillis();
+        this(context, ExchangePattern.InOnly);
     }
 
     public AbstractExchange(CamelContext context, ExchangePattern pattern) {
         this.context = context;
         this.pattern = pattern;
         this.created = System.currentTimeMillis();
+
+        privateExtension = new ExtendedExchangeExtension(this);
     }
 
     public AbstractExchange(Exchange parent) {
@@ -110,6 +109,8 @@ class AbstractExchange implements ExtendedExchange {
         this.fromEndpoint = parent.getFromEndpoint();
         this.fromRouteId = parent.getFromRouteId();
         this.unitOfWork = parent.getUnitOfWork();
+
+        privateExtension = new ExtendedExchangeExtension(this);
     }
 
     public AbstractExchange(Endpoint fromEndpoint) {
@@ -117,6 +118,8 @@ class AbstractExchange implements ExtendedExchange {
         this.pattern = fromEndpoint.getExchangePattern();
         this.created = System.currentTimeMillis();
         this.fromEndpoint = fromEndpoint;
+
+        privateExtension = new ExtendedExchangeExtension(this);
     }
 
     public AbstractExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
@@ -124,6 +127,8 @@ class AbstractExchange implements ExtendedExchange {
         this.pattern = pattern;
         this.created = System.currentTimeMillis();
         this.fromEndpoint = fromEndpoint;
+
+        privateExtension = new ExtendedExchangeExtension(this);
     }
 
     @Override
@@ -152,10 +157,10 @@ class AbstractExchange implements ExtendedExchange {
         exchange.setRouteStop(routeStop);
         exchange.setRollbackOnly(rollbackOnly);
         exchange.setRollbackOnlyLast(rollbackOnlyLast);
-        exchange.setNotifyEvent(notifyEvent);
-        exchange.setRedeliveryExhausted(redeliveryExhausted);
-        exchange.setErrorHandlerHandled(errorHandlerHandled);
-        exchange.setStreamCacheDisabled(streamCacheDisabled);
+        exchange.getExchangeExtension().setNotifyEvent(notifyEvent);
+        exchange.getExchangeExtension().setRedeliveryExhausted(redeliveryExhausted);
+        exchange.getExchangeExtension().setErrorHandlerHandled(errorHandlerHandled);
+        exchange.getExchangeExtension().setStreamCacheDisabled(streamCacheDisabled);
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
@@ -357,8 +362,7 @@ class AbstractExchange implements ExtendedExchange {
         }
     }
 
-    @Override
-    public void setProperties(Map<String, Object> properties) {
+    void setProperties(Map<String, Object> properties) {
         if (this.properties == null) {
             this.properties = new ConcurrentHashMap<>(8);
         } else {
@@ -496,8 +500,7 @@ class AbstractExchange implements ExtendedExchange {
         return context.getTypeConverter().convertTo(type, this, in);
     }
 
-    @Override
-    public <T> T getInOrNull(Class<T> type) {
+    <T> T getInOrNull(Class<T> type) {
         if (in == null) {
             return null;
         }
@@ -623,18 +626,8 @@ class AbstractExchange implements ExtendedExchange {
     }
 
     @Override
-    public void setFromEndpoint(Endpoint fromEndpoint) {
-        this.fromEndpoint = fromEndpoint;
-    }
-
-    @Override
     public String getFromRouteId() {
         return fromRouteId;
-    }
-
-    @Override
-    public void setFromRouteId(String fromRouteId) {
-        this.fromRouteId = fromRouteId;
     }
 
     @Override
@@ -658,11 +651,6 @@ class AbstractExchange implements ExtendedExchange {
     @Override
     public boolean isTransacted() {
         return transacted;
-    }
-
-    @Override
-    public void setTransacted(boolean transacted) {
-        this.transacted = transacted;
     }
 
     @Override
@@ -718,8 +706,7 @@ class AbstractExchange implements ExtendedExchange {
         return unitOfWork;
     }
 
-    @Override
-    public void setUnitOfWork(UnitOfWork unitOfWork) {
+    void setUnitOfWork(UnitOfWork unitOfWork) {
         this.unitOfWork = unitOfWork;
         if (unitOfWork != null && onCompletions != null) {
             // now an unit of work has been assigned so add the on completions
@@ -734,8 +721,7 @@ class AbstractExchange implements ExtendedExchange {
         }
     }
 
-    @Override
-    public void addOnCompletion(Synchronization onCompletion) {
+    void addOnCompletion(Synchronization onCompletion) {
         if (unitOfWork == null) {
             // unit of work not yet registered so we store the on completion temporary
             // until the unit of work is assigned to this exchange by the unit of work
@@ -748,8 +734,7 @@ class AbstractExchange implements ExtendedExchange {
         }
     }
 
-    @Override
-    public boolean containsOnCompletion(Synchronization onCompletion) {
+    boolean containsOnCompletion(Synchronization onCompletion) {
         if (unitOfWork != null) {
             // if there is an unit of work then the completions is moved there
             return unitOfWork.containsSynchronization(onCompletion);
@@ -759,11 +744,10 @@ class AbstractExchange implements ExtendedExchange {
         }
     }
 
-    @Override
-    public void handoverCompletions(Exchange target) {
+    void handoverCompletions(Exchange target) {
         if (onCompletions != null) {
             for (Synchronization onCompletion : onCompletions) {
-                target.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
+                target.getExchangeExtension().addOnCompletion(onCompletion);
             }
             // cleanup the temporary on completion list as they have been handed over
             onCompletions.clear();
@@ -774,8 +758,7 @@ class AbstractExchange implements ExtendedExchange {
         }
     }
 
-    @Override
-    public List<Synchronization> handoverCompletions() {
+    List<Synchronization> handoverCompletions() {
         List<Synchronization> answer = null;
         if (onCompletions != null) {
             answer = new ArrayList<>(onCompletions);
@@ -785,101 +768,14 @@ class AbstractExchange implements ExtendedExchange {
         return answer;
     }
 
-    @Override
-    public String getHistoryNodeId() {
-        return historyNodeId;
-    }
-
-    @Override
-    public void setHistoryNodeId(String historyNodeId) {
-        this.historyNodeId = historyNodeId;
-    }
-
-    @Override
-    public String getHistoryNodeLabel() {
-        return historyNodeLabel;
-    }
-
-    @Override
-    public void setHistoryNodeLabel(String historyNodeLabel) {
-        this.historyNodeLabel = historyNodeLabel;
-    }
-
-    @Override
-    public String getHistoryNodeSource() {
-        return historyNodeSource;
-    }
-
-    @Override
-    public void setHistoryNodeSource(String historyNodeSource) {
-        this.historyNodeSource = historyNodeSource;
-    }
-
-    @Override
-    public boolean isNotifyEvent() {
-        return notifyEvent;
-    }
-
-    @Override
-    public void setNotifyEvent(boolean notifyEvent) {
-        this.notifyEvent = notifyEvent;
-    }
-
-    @Override
-    public boolean isInterrupted() {
-        return interrupted;
-    }
-
-    @Override
-    public void setInterrupted(boolean interrupted) {
+    void setInterrupted(boolean interrupted) {
         if (interruptable) {
             this.interrupted = interrupted;
         }
     }
 
-    @Override
-    public void setInterruptable(boolean interruptable) {
-        this.interruptable = interruptable;
-    }
-
-    @Override
-    public boolean isRedeliveryExhausted() {
-        return redeliveryExhausted;
-    }
-
-    @Override
-    public void setRedeliveryExhausted(boolean redeliveryExhausted) {
-        this.redeliveryExhausted = redeliveryExhausted;
-    }
-
-    @Override
-    public Boolean getErrorHandlerHandled() {
-        return errorHandlerHandled;
-    }
-
-    @Override
-    public boolean isErrorHandlerHandledSet() {
+    boolean isErrorHandlerHandledSet() {
         return errorHandlerHandled != null;
-    }
-
-    @Override
-    public boolean isErrorHandlerHandled() {
-        return errorHandlerHandled;
-    }
-
-    @Override
-    public void setErrorHandlerHandled(Boolean errorHandlerHandled) {
-        this.errorHandlerHandled = errorHandlerHandled;
-    }
-
-    @Override
-    public boolean isStreamCacheDisabled() {
-        return streamCacheDisabled;
-    }
-
-    @Override
-    public void setStreamCacheDisabled(boolean streamCacheDisabled) {
-        this.streamCacheDisabled = streamCacheDisabled;
     }
 
     /**
@@ -893,8 +789,7 @@ class AbstractExchange implements ExtendedExchange {
         }
     }
 
-    @Override
-    public void copyInternalProperties(Exchange target) {
+    void copyInternalProperties(Exchange target) {
         AbstractExchange ae = (AbstractExchange) target;
         for (int i = 0; i < internalProperties.length; i++) {
             Object value = internalProperties[i];
@@ -904,8 +799,7 @@ class AbstractExchange implements ExtendedExchange {
         }
     }
 
-    @Override
-    public Map<String, Object> getInternalProperties() {
+    Map<String, Object> getInternalProperties() {
         Map<String, Object> map = new HashMap<>();
         for (ExchangePropertyKey key : ExchangePropertyKey.values()) {
             Object value = internalProperties[key.ordinal()];
@@ -916,12 +810,10 @@ class AbstractExchange implements ExtendedExchange {
         return map;
     }
 
-    @Override
     public AsyncCallback getDefaultConsumerCallback() {
         return defaultConsumerCallback;
     }
 
-    @Override
     public void setDefaultConsumerCallback(AsyncCallback defaultConsumerCallback) {
         this.defaultConsumerCallback = defaultConsumerCallback;
     }
@@ -940,8 +832,7 @@ class AbstractExchange implements ExtendedExchange {
         }
     }
 
-    @Override
-    public void setSafeCopyProperty(String key, SafeCopyProperty value) {
+    void setSafeCopyProperty(String key, SafeCopyProperty value) {
         if (value != null) {
             // avoid the NullPointException
             if (safeCopyProperties == null) {
@@ -956,8 +847,7 @@ class AbstractExchange implements ExtendedExchange {
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public <T> T getSafeCopyProperty(String key, Class<T> type) {
+    <T> T getSafeCopyProperty(String key, Class<T> type) {
         if (!hasSafeCopyProperties()) {
             return null;
         }
@@ -970,4 +860,7 @@ class AbstractExchange implements ExtendedExchange {
         return ExchangeHelper.convertToType(this, type, value);
     }
 
+    public ExtendedExchangeExtension getExchangeExtension() {
+        return privateExtension;
+    }
 }

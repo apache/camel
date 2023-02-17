@@ -19,6 +19,8 @@ package org.apache.camel.component.file.strategy;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.ContextTestSupport;
@@ -32,6 +34,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests the MarkerFileExclusiveReadLockStrategy in a multi-threaded scenario.
@@ -41,6 +44,7 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
     private static final Logger LOG = LoggerFactory.getLogger(MarkerFileExclusiveReadLockStrategyTest.class);
     private static final int NUMBER_OF_THREADS = 5;
     private AtomicInteger numberOfFilesProcessed = new AtomicInteger();
+    private CountDownLatch latch = new CountDownLatch(2);
 
     @Test
     public void testMultithreadedLocking() throws Exception {
@@ -65,7 +69,7 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
             assertEquals("Line " + i, lines[i]);
         }
 
-        waitUntilCompleted();
+        assertTrue(latch.await(10, TimeUnit.SECONDS), "Did not process the messages within 10 seconds");
 
         assertFileDoesNotExists(testFile("in/file1.dat.camelLock"));
         assertFileDoesNotExists(testFile("in/file2.dat.camelLock"));
@@ -84,7 +88,7 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
             for (int i = 0; i < 20; i++) {
                 fos.write(("Line " + i + LS).getBytes());
                 fos2.write(("Line " + i + LS).getBytes());
-                LOG.debug("Writing line " + i);
+                LOG.debug("Writing line {}", i);
             }
             fos.flush();
             fos2.flush();
@@ -100,20 +104,11 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 numberOfFilesProcessed.addAndGet(1);
+                                latch.countDown();
                             }
                         }).end().threads(NUMBER_OF_THREADS).to(fileUri("out"), "mock:result");
             }
         };
-    }
-
-    private void waitUntilCompleted() {
-        while (this.numberOfFilesProcessed.get() < 2) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                // ignore
-            }
-        }
     }
 
     private static void assertFileDoesNotExists(Path file) {

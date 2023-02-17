@@ -30,7 +30,7 @@ public final class KinesisFirehoseClientFactory {
 
     /**
      * Return the correct aws Kinesis Firehose client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               FirehoseClient
      */

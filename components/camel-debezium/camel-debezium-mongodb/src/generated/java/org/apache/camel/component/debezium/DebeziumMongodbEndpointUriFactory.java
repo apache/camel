@@ -21,7 +21,7 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(63);
+        Set<String> props = new HashSet<>(64);
         props.add("additionalProperties");
         props.add("bridgeErrorHandler");
         props.add("captureMode");
@@ -33,7 +33,6 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("converters");
         props.add("cursorMaxAwaitTimeMs");
         props.add("databaseExcludeList");
-        props.add("databaseHistoryFileFilename");
         props.add("databaseIncludeList");
         props.add("eventProcessingFailureHandlingMode");
         props.add("exceptionHandler");
@@ -49,9 +48,10 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("maxQueueSizeInBytes");
         props.add("mongodbAuthsource");
         props.add("mongodbConnectTimeoutMs");
+        props.add("mongodbConnectionString");
+        props.add("mongodbHeartbeatFrequencyMs");
         props.add("mongodbHosts");
         props.add("mongodbMembersAutoDiscover");
-        props.add("mongodbName");
         props.add("mongodbPassword");
         props.add("mongodbPollIntervalMs");
         props.add("mongodbServerSelectionTimeoutMs");
@@ -73,6 +73,7 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("queryFetchSize");
         props.add("retriableRestartConnectorWaitMs");
         props.add("sanitizeFieldNames");
+        props.add("schemaHistoryInternalFileFilename");
         props.add("schemaNameAdjustmentMode");
         props.add("signalDataCollection");
         props.add("skippedOperations");
@@ -82,9 +83,9 @@ public class DebeziumMongodbEndpointUriFactory extends org.apache.camel.support.
         props.add("snapshotIncludeCollectionList");
         props.add("snapshotMaxThreads");
         props.add("snapshotMode");
-        props.add("sourceStructVersion");
         props.add("tombstonesOnDelete");
-        props.add("transactionTopic");
+        props.add("topicNamingStrategy");
+        props.add("topicPrefix");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
         Set<String> prefixes = new HashSet<>(1);

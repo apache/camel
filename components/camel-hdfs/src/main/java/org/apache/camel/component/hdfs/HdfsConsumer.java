@@ -30,7 +30,6 @@ import javax.security.auth.login.Configuration;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -251,7 +250,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
 
     protected void updateNewExchange(Exchange exchange, int index, HdfsInputStream hdfsFile) {
         // do not share unit of work
-        exchange.adapt(ExtendedExchange.class).setUnitOfWork(null);
+        exchange.getExchangeExtension().setUnitOfWork(null);
 
         exchange.setProperty(ExchangePropertyKey.SPLIT_INDEX, index);
 

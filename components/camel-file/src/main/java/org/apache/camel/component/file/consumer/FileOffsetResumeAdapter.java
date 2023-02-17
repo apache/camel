@@ -28,7 +28,7 @@ public interface FileOffsetResumeAdapter {
 
     /**
      * Sets the resume payload used for the adapter
-     * 
+     *
      * @param genericFile a generic file instance
      */
     default void setResumePayload(GenericFile<File> genericFile) {

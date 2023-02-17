@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.kafka.integration.commit;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
 import org.apache.camel.component.kafka.consumer.KafkaManualCommit;
-import org.apache.camel.component.kafka.integration.BaseManualCommitTestSupport;
+import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.RepeatedTest;
 
@@ -31,11 +29,6 @@ public class KafkaConsumerSyncCommitIT extends BaseManualCommitTestSupport {
 
     public static final String TOPIC = "testManualCommitSyncTest";
 
-    @EndpointInject("kafka:" + TOPIC
-                    + "?groupId=KafkaConsumerSyncCommitIT&pollTimeoutMs=1000&autoCommitEnable=false"
-                    + "&allowManualCommit=true&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory")
-    private Endpoint from;
-
     @AfterEach
     public void after() {
         cleanupKafka(TOPIC);
@@ -43,16 +36,20 @@ public class KafkaConsumerSyncCommitIT extends BaseManualCommitTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
+        String from = "kafka:" + TOPIC
+                      + "?groupId=KafkaConsumerSyncCommitIT&pollTimeoutMs=1000&autoCommitEnable=false"
+                      + "&allowManualCommit=true&autoOffsetReset=earliest&kafkaManualCommitFactory=#class:org.apache.camel.component.kafka.consumer.DefaultKafkaManualCommitFactory";
+
         return new RouteBuilder() {
 
             @Override
             public void configure() {
-                from(from).routeId("foo").to(to).process(e -> {
+                from(from).routeId("foo").to(KafkaTestUtil.MOCK_RESULT).process(e -> {
                     KafkaManualCommit manual = e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
                     assertNotNull(manual);
                     manual.commit();
                 });
-                from(from).routeId("bar").autoStartup(false).to(toBar);
+                from(from).routeId("bar").autoStartup(false).to(KafkaTestUtil.MOCK_RESULT_BAR);
             }
         };
     }

@@ -22,7 +22,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.PooledExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -107,7 +106,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
         // if the exchange doesn't have from route id set, then set it if it originated
         // from this unit of work
         if (route != null && exchange.getFromRouteId() == null) {
-            exchange.adapt(ExtendedExchange.class).setFromRouteId(route.getId());
+            exchange.getExchangeExtension().setFromRouteId(route.getId());
         }
 
         // create uow (however for pooled exchanges then the uow is pre-created)
@@ -115,7 +114,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
         if (uow == null) {
             uow = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory()
                     .createUnitOfWork(exchange);
-            exchange.adapt(ExtendedExchange.class).setUnitOfWork(uow);
+            exchange.getExchangeExtension().setUnitOfWork(uow);
         }
         return uow;
     }
@@ -135,7 +134,8 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     public Exchange createExchange(boolean autoRelease) {
         Exchange answer = exchangeFactory.create(getEndpoint(), autoRelease);
         endpoint.configureExchange(answer);
-        answer.adapt(ExtendedExchange.class).setFromRouteId(routeId);
+
+        answer.getExchangeExtension().setFromRouteId(routeId);
         return answer;
     }
 
@@ -154,11 +154,10 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     public AsyncCallback defaultConsumerCallback(Exchange exchange, boolean autoRelease) {
         boolean pooled = exchangeFactory.isPooled();
         if (pooled) {
-            ExtendedExchange ee = exchange.adapt(ExtendedExchange.class);
-            AsyncCallback answer = ee.getDefaultConsumerCallback();
+            AsyncCallback answer = exchange.getExchangeExtension().getDefaultConsumerCallback();
             if (answer == null) {
                 answer = new DefaultConsumerCallback(this, exchange, autoRelease);
-                ee.setDefaultConsumerCallback(answer);
+                exchange.getExchangeExtension().setDefaultConsumerCallback(answer);
             }
             return answer;
         } else {

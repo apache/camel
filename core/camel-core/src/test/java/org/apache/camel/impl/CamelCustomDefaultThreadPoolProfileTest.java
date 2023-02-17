@@ -25,6 +25,7 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport {
 
@@ -55,7 +56,7 @@ public class CamelCustomDefaultThreadPoolProfileTest extends ContextTestSupport 
         assertEquals(15, profile.getMaxPoolSize().intValue());
         assertEquals(25, profile.getKeepAliveTime().longValue());
         assertEquals(250, profile.getMaxQueueSize().intValue());
-        assertEquals(true, profile.getAllowCoreThreadTimeOut().booleanValue());
+        assertTrue(profile.getAllowCoreThreadTimeOut().booleanValue());
         assertEquals(ThreadPoolRejectedPolicy.Abort, profile.getRejectedPolicy());
     }
 

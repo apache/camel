@@ -23,7 +23,7 @@ import static java.lang.String.format;
 /**
  * <code>setdataOperation</code> sets the content of a ZooKeeper node. An optional version may be specified that the
  * node must currently have for the operation to succeed.
- * 
+ *
  * @see {@link ZooKeeper#setData(String, byte[], int)}
  */
 

@@ -79,7 +79,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String javaVersion;
 
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.0")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.1.1")
     protected String kameletsVersion;
 
     @CommandLine.Option(names = { "--local-kamelet-dir" },
@@ -87,7 +87,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String localKameletDir;
 
     @CommandLine.Option(names = { "--spring-boot-version" }, description = "Spring Boot version",
-                        defaultValue = "2.7.7")
+                        defaultValue = "2.7.8")
     protected String springBootVersion;
 
     @CommandLine.Option(names = { "--camel-spring-boot-version" }, description = "Camel version to use with Spring Boot")
@@ -102,7 +102,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected String quarkusArtifactId;
 
     @CommandLine.Option(names = { "--quarkus-version" }, description = "Quarkus Platform version",
-                        defaultValue = "2.15.1.Final")
+                        defaultValue = "2.16.0.Final")
     protected String quarkusVersion;
 
     @CommandLine.Option(names = { "--maven-wrapper" }, defaultValue = "true",
@@ -370,13 +370,16 @@ abstract class ExportBaseCommand extends CamelCommand {
         if (profile.exists()) {
             RuntimeUtil.loadProperties(prop2, profile);
         }
+        prop2.putAll(prop);
+        prepareApplicationProperties(prop2);
 
         for (Map.Entry<Object, Object> entry : prop.entrySet()) {
             String key = entry.getKey().toString();
-            boolean skip = "camel.main.routesCompileDirectory".equals(key)
+            boolean skip = !key.startsWith("camel.main")
+                    || "camel.main.routesCompileDirectory".equals(key)
                     || "camel.main.routesReloadEnabled".equals(key);
-            if (!skip && key.startsWith("camel.main")) {
-                prop2.put(entry.getKey(), entry.getValue());
+            if (skip) {
+                prop2.remove(key);
             }
         }
 
@@ -398,10 +401,9 @@ abstract class ExportBaseCommand extends CamelCommand {
                 // files are now loaded in classpath
                 v = v.replaceAll("file:", "classpath:");
                 if ("camel.main.routesIncludePattern".equals(k)) {
-                    // camel.main.routesIncludePattern should remove all .java as we use spring boot
-                    // to load them
+                    // camel.main.routesIncludePattern should remove all .java as we use move them to regular src/main/java
                     // camel.main.routesIncludePattern should remove all file: classpath: as we copy
-                    // them to src/main/resources/camel where camel auto-load from
+                    // them to src/main/resources/camel where camel autoload from
                     v = Arrays.stream(v.split(","))
                             .filter(n -> !n.endsWith(".java") && !n.startsWith("file:") && !n.startsWith("classpath:"))
                             .collect(Collectors.joining(","));
@@ -415,6 +417,10 @@ abstract class ExportBaseCommand extends CamelCommand {
         } finally {
             IOHelper.close(fos);
         }
+    }
+
+    protected void prepareApplicationProperties(Properties properties) {
+        // noop
     }
 
     protected void copyMavenWrapper() throws Exception {

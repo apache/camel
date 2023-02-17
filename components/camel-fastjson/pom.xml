@@ -42,7 +42,8 @@
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
+	    <artifactId>fastjson</artifactId>
+	    <version>${fastjson-version}</version>
         </dependency>
 
         <!-- testing -->

@@ -21,7 +21,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
@@ -108,10 +107,10 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
     }
 
     protected void propagateFailure(Exchange answer, Exchange newExchange) {
-        ExtendedExchange nee = (ExtendedExchange) newExchange;
         // if new exchange failed then propagate all the error related properties to the answer
-        if (nee.isFailed() || nee.isRollbackOnly() || nee.isRollbackOnlyLast()
-                || nee.isErrorHandlerHandledSet() && nee.isErrorHandlerHandled()) {
+        if (newExchange.isFailed() || newExchange.isRollbackOnly() || newExchange.isRollbackOnlyLast()
+                || newExchange.getExchangeExtension().isErrorHandlerHandledSet()
+                        && newExchange.getExchangeExtension().isErrorHandlerHandled()) {
             if (newExchange.getException() != null) {
                 answer.setException(newExchange.getException());
             }
@@ -127,9 +126,9 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
                 answer.setProperty(ExchangePropertyKey.FAILURE_ROUTE_ID,
                         newExchange.getProperty(ExchangePropertyKey.FAILURE_ROUTE_ID));
             }
-            if (newExchange.adapt(ExtendedExchange.class).getErrorHandlerHandled() != null) {
-                answer.adapt(ExtendedExchange.class)
-                        .setErrorHandlerHandled(newExchange.adapt(ExtendedExchange.class).getErrorHandlerHandled());
+            if (newExchange.getExchangeExtension().getErrorHandlerHandled() != null) {
+                answer.getExchangeExtension()
+                        .setErrorHandlerHandled(newExchange.getExchangeExtension().getErrorHandlerHandled());
             }
             if (newExchange.getProperty(ExchangePropertyKey.FAILURE_HANDLED) != null) {
                 answer.setProperty(ExchangePropertyKey.FAILURE_HANDLED,

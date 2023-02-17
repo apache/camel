@@ -32,7 +32,7 @@ public class FileConsumerIdempotentKeyNameAndSizeTest extends FileConsumerIdempo
             public void configure() throws Exception {
                 from(fileUri(
                         "?idempotent=true&idempotentKey=${file:onlyname}-${file:size}&move=done/${file:name}&initialDelay=0&delay=10"))
-                                .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

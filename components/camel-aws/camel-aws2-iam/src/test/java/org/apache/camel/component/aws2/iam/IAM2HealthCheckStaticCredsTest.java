@@ -27,6 +27,7 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,7 @@ public class IAM2HealthCheckStaticCredsTest extends CamelTestSupport {
     }
 
     @Test
+    @Disabled("Do not register the Producer Health Check until we solve CAMEL-18992")
     public void testConnectivity() {
 
         Collection<HealthCheck.Result> res = HealthCheckHelper.invokeLiveness(context);

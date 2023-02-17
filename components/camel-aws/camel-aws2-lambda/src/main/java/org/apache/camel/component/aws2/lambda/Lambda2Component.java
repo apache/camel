@@ -38,8 +38,6 @@ public class Lambda2Component extends DefaultComponent {
 
     public Lambda2Component(CamelContext context) {
         super(context);
-
-        registerExtension(new Lambda2ComponentVerifierExtension());
     }
 
     @Override

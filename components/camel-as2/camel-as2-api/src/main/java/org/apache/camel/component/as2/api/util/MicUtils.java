@@ -21,6 +21,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 
 import org.apache.camel.component.as2.api.AS2Header;
 import org.apache.camel.component.as2.api.AS2MicAlgorithm;
@@ -79,7 +80,7 @@ public final class MicUtils {
     }
 
     public static ReceivedContentMic createReceivedContentMic(
-            HttpEntityEnclosingRequest request, PrivateKey decryptingPrivateKey)
+            HttpEntityEnclosingRequest request, Certificate[] validateSigningCertificateChain, PrivateKey decryptingPrivateKey)
             throws HttpException {
 
         String dispositionNotificationOptionsString
@@ -97,7 +98,8 @@ public final class MicUtils {
             return null;
         }
 
-        HttpEntity entity = HttpMessageUtils.extractEdiPayload(request, decryptingPrivateKey);
+        HttpEntity entity = HttpMessageUtils.extractEdiPayload(request,
+                new HttpMessageUtils.DecrpytingAndSigningInfo(validateSigningCertificateChain, decryptingPrivateKey));
 
         byte[] content = EntityUtils.getContent(entity);
 

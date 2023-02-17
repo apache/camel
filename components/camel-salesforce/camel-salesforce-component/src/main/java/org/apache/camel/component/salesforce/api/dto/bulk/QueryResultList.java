@@ -30,7 +30,7 @@ import jakarta.xml.bind.annotation.XmlType;
  * <p>
  * The following schema fragment specifies the expected content contained within this class.
  * <p/>
- * 
+ *
  * <pre>
  * &lt;complexType name="QueryResultList">
  *   &lt;complexContent>
@@ -59,7 +59,7 @@ public class QueryResultList {
      * <p/>
      * <p/>
      * For example, to add a new item, do as follows:
-     * 
+     *
      * <pre>
      * getResult().add(newItem);
      * </pre>

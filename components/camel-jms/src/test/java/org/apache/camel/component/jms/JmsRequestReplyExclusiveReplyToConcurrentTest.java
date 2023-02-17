@@ -78,7 +78,7 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends AbstractJMSTe
 
         LOG.info("Waiting to process {} messages...", size);
 
-        // if any of the assertions above fails then the latch will not get decremented 
+        // if any of the assertions above fails then the latch will not get decremented
         assertTrue(latch.await(20, TimeUnit.SECONDS), "All assertions outside the main thread above should have passed");
 
         long delta = watch.taken();

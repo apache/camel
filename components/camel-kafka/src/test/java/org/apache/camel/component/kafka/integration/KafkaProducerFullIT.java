@@ -30,10 +30,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.StreamSupport;
 
 import org.apache.camel.BindToRegistry;
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaConstants;
@@ -51,16 +48,24 @@ import org.apache.kafka.common.header.Headers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.apache.camel.component.kafka.integration.common.TestProducerUtil.sendMessagesInRoute;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
 
+    public static final String DIRECT_START_STRINGS_URI = "direct:startStrings";
+    public static final String DIRECT_START_STRINGS_2_URI = "direct:startStrings2";
+    public static final String DIRECT_START_BYTES_URI = "direct:startBytes";
+    public static final String DIRECT_START_TRACED_URI = "direct:startTraced";
+    public static final String DIRECT_PROPAGATED_HEADERS_URI = "direct:propagatedHeaders";
+    public static final String DIRECT_NO_RECORD_SPECIFIC_HEADERS_URI = "direct:noRecordSpecificHeaders";
     private static final String TOPIC_STRINGS = "test";
     private static final String TOPIC_INTERCEPTED = "test";
     private static final String TOPIC_STRINGS_IN_HEADER = "testHeader";
@@ -69,57 +74,21 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
     private static final String GROUP_BYTES = "groupStrings";
     private static final String TOPIC_PROPAGATED_HEADERS = "testPropagatedHeaders";
     private static final String TOPIC_NO_RECORD_SPECIFIC_HEADERS = "noRecordSpecificHeaders";
-
+    private static final String KAFKA_ACK_MOCK = "mock:kafkaAck";
     private static KafkaConsumer<String, String> stringsConsumerConn;
     private static KafkaConsumer<byte[], byte[]> bytesConsumerConn;
-
-    @EndpointInject("kafka:" + TOPIC_STRINGS + "?requestRequiredAcks=-1")
-    private Endpoint toStrings;
-
-    @EndpointInject("kafka:" + TOPIC_STRINGS + "?requestRequiredAcks=-1&partitionKey=0")
-    private Endpoint toStrings2;
-
-    @EndpointInject("kafka:" + TOPIC_INTERCEPTED + "?requestRequiredAcks=-1"
-                    + "&interceptorClasses=org.apache.camel.component.kafka.MockProducerInterceptor")
-    private Endpoint toStringsWithInterceptor;
-
-    @EndpointInject("mock:kafkaAck")
-    private MockEndpoint mockEndpoint;
-
-    @EndpointInject("kafka:" + TOPIC_BYTES + "?requestRequiredAcks=-1"
-                    + "&valueSerializer=org.apache.kafka.common.serialization.ByteArraySerializer&"
-                    + "keySerializer=org.apache.kafka.common.serialization.ByteArraySerializer")
-    private Endpoint toBytes;
-
-    @EndpointInject("kafka:" + TOPIC_PROPAGATED_HEADERS + "?requestRequiredAcks=-1")
-    private Endpoint toPropagatedHeaders;
-
-    @EndpointInject("kafka:" + TOPIC_NO_RECORD_SPECIFIC_HEADERS + "?requestRequiredAcks=-1")
-    private Endpoint toNoRecordSpecificHeaders;
-
-    @Produce("direct:startStrings")
     private ProducerTemplate stringsTemplate;
-
-    @Produce("direct:startStrings2")
     private ProducerTemplate stringsTemplate2;
-
-    @Produce("direct:startBytes")
     private ProducerTemplate bytesTemplate;
-
-    @Produce("direct:startTraced")
     private ProducerTemplate interceptedTemplate;
-
-    @Produce("direct:propagatedHeaders")
     private ProducerTemplate propagatedHeadersTemplate;
-
-    @Produce("direct:noRecordSpecificHeaders")
     private ProducerTemplate noRecordSpecificHeadersTemplate;
 
     @BindToRegistry("myStrategy")
-    private MyHeaderFilterStrategy strategy = new MyHeaderFilterStrategy();
+    private MyHeaderFilterStrategy headerFilterStrategy = new MyHeaderFilterStrategy();
 
     @BindToRegistry("myHeaderSerializer")
-    private MyKafkaHeadersSerializer serializer = new MyKafkaHeadersSerializer();
+    private MyKafkaHeadersSerializer headersSerializer = new MyKafkaHeadersSerializer();
 
     @BeforeAll
     public static void before() {
@@ -139,22 +108,73 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
         kafkaAdminClient.deleteTopics(topics);
     }
 
+    private static KafkaConsumer<String, String> createStringKafkaConsumer(final String groupId) {
+        Properties stringsProps = new Properties();
+
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+                "org.apache.kafka.common.serialization.StringDeserializer");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+                "org.apache.kafka.common.serialization.StringDeserializer");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+        return new KafkaConsumer<>(stringsProps);
+    }
+
+    private static KafkaConsumer<byte[], byte[]> createByteKafkaConsumer(final String groupId) {
+        Properties stringsProps = new Properties();
+
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+                "org.apache.kafka.common.serialization.ByteArrayDeserializer");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+                "org.apache.kafka.common.serialization.ByteArrayDeserializer");
+        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+
+        return new KafkaConsumer<>(stringsProps);
+    }
+
+    @BeforeEach
+    public void setupProducerTemplates() {
+        stringsTemplate = contextExtension.getProducerTemplate();
+        stringsTemplate2 = contextExtension.getProducerTemplate();
+        bytesTemplate = contextExtension.getProducerTemplate();
+        interceptedTemplate = contextExtension.getProducerTemplate();
+        propagatedHeadersTemplate = contextExtension.getProducerTemplate();
+        noRecordSpecificHeadersTemplate = contextExtension.getProducerTemplate();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:startStrings").to(toStrings).to(mockEndpoint);
+                from(DIRECT_START_STRINGS_URI).to("kafka:" + TOPIC_STRINGS + "?requestRequiredAcks=-1").to(KAFKA_ACK_MOCK);
 
-                from("direct:startStrings2").to(toStrings2).to(mockEndpoint);
+                from(DIRECT_START_STRINGS_2_URI).to("kafka:" + TOPIC_STRINGS + "?requestRequiredAcks=-1").to(KAFKA_ACK_MOCK);
 
-                from("direct:startBytes").to(toBytes).to(mockEndpoint);
+                from(DIRECT_START_BYTES_URI).to("kafka:" + TOPIC_BYTES + "?requestRequiredAcks=-1"
+                                                + "&valueSerializer=org.apache.kafka.common.serialization.ByteArraySerializer&"
+                                                + "keySerializer=org.apache.kafka.common.serialization.ByteArraySerializer")
+                        .to(KAFKA_ACK_MOCK);
 
-                from("direct:startTraced").to(toStringsWithInterceptor).to(mockEndpoint);
+                from(DIRECT_START_TRACED_URI).to("kafka:" + TOPIC_INTERCEPTED + "?requestRequiredAcks=-1"
+                                                 + "&interceptorClasses=org.apache.camel.component.kafka.MockProducerInterceptor")
+                        .to(KAFKA_ACK_MOCK);
 
-                from("direct:propagatedHeaders").to(toPropagatedHeaders).to(mockEndpoint);
+                from(DIRECT_PROPAGATED_HEADERS_URI).to("kafka:" + TOPIC_PROPAGATED_HEADERS + "?requestRequiredAcks=-1")
+                        .to(KAFKA_ACK_MOCK);
 
-                from("direct:noRecordSpecificHeaders").to(toNoRecordSpecificHeaders).to(mockEndpoint);
+                from(DIRECT_NO_RECORD_SPECIFIC_HEADERS_URI)
+                        .to("kafka:" + TOPIC_NO_RECORD_SPECIFIC_HEADERS + "?requestRequiredAcks=-1").to(KAFKA_ACK_MOCK);
             }
         };
     }
@@ -166,8 +186,10 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
 
         CountDownLatch messagesLatch = new CountDownLatch(messageInTopic + messageInOtherTopic);
 
-        sendMessagesInRoute(messageInTopic, stringsTemplate, "IT test message", KafkaConstants.PARTITION_KEY, "0");
-        sendMessagesInRoute(messageInOtherTopic, stringsTemplate, "IT test message in other topic",
+        ProducerTemplate producerTemplate = contextExtension.getProducerTemplate();
+        sendMessagesInRoute(DIRECT_START_STRINGS_URI, messageInTopic, stringsTemplate, "IT test message",
+                KafkaConstants.PARTITION_KEY, "0");
+        sendMessagesInRoute(DIRECT_START_STRINGS_URI, messageInOtherTopic, stringsTemplate, "IT test message in other topic",
                 KafkaConstants.PARTITION_KEY, "0", KafkaConstants.TOPIC,
                 TOPIC_STRINGS_IN_HEADER);
 
@@ -178,6 +200,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
         assertTrue(allMessagesReceived,
                 "Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount());
 
+        MockEndpoint mockEndpoint = contextExtension.getMockEndpoint(KAFKA_ACK_MOCK);
         List<Exchange> exchangeList = mockEndpoint.getExchanges();
         assertEquals(15, exchangeList.size(), "Fifteen Exchanges are expected");
         for (Exchange exchange : exchangeList) {
@@ -197,8 +220,8 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
 
         CountDownLatch messagesLatch = new CountDownLatch(messageInTopic + messageInOtherTopic);
 
-        sendMessagesInRoute(messageInTopic, stringsTemplate2, "IT test message", (String[]) null);
-        sendMessagesInRoute(messageInOtherTopic, stringsTemplate2, "IT test message in other topic",
+        sendMessagesInRoute(DIRECT_START_STRINGS_2_URI, messageInTopic, stringsTemplate2, "IT test message", (String[]) null);
+        sendMessagesInRoute(DIRECT_START_STRINGS_2_URI, messageInOtherTopic, stringsTemplate2, "IT test message in other topic",
                 KafkaConstants.PARTITION_KEY, "0", KafkaConstants.TOPIC,
                 TOPIC_STRINGS_IN_HEADER);
 
@@ -209,6 +232,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
         assertTrue(allMessagesReceived,
                 "Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount());
 
+        MockEndpoint mockEndpoint = contextExtension.getMockEndpoint(KAFKA_ACK_MOCK);
         List<Exchange> exchangeList = mockEndpoint.getExchanges();
         assertEquals(15, exchangeList.size(), "Fifteen Exchanges are expected");
         for (Exchange exchange : exchangeList) {
@@ -228,8 +252,9 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
 
         CountDownLatch messagesLatch = new CountDownLatch(messageInTopic + messageInOtherTopic);
 
-        sendMessagesInRoute(messageInTopic, interceptedTemplate, "IT test message", KafkaConstants.PARTITION_KEY, "0");
-        sendMessagesInRoute(messageInOtherTopic, interceptedTemplate, "IT test message in other topic",
+        sendMessagesInRoute(DIRECT_START_TRACED_URI, messageInTopic, interceptedTemplate, "IT test message",
+                KafkaConstants.PARTITION_KEY, "0");
+        sendMessagesInRoute(DIRECT_START_TRACED_URI, messageInOtherTopic, interceptedTemplate, "IT test message in other topic",
                 KafkaConstants.PARTITION_KEY, "0", KafkaConstants.TOPIC,
                 TOPIC_STRINGS_IN_HEADER);
         createKafkaMessageConsumer(stringsConsumerConn, TOPIC_INTERCEPTED, TOPIC_STRINGS_IN_HEADER, messagesLatch);
@@ -254,12 +279,13 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
             msgs.add("Message " + x);
         }
 
-        sendMessagesInRoute(1, stringsTemplate, msgs, KafkaConstants.PARTITION_KEY, "0");
+        sendMessagesInRoute(DIRECT_START_STRINGS_URI, 1, stringsTemplate, msgs, KafkaConstants.PARTITION_KEY, "0");
         msgs = new ArrayList<>();
         for (int x = 0; x < messageInOtherTopic; x++) {
             msgs.add("Other Message " + x);
         }
-        sendMessagesInRoute(1, stringsTemplate, msgs, KafkaConstants.PARTITION_KEY, "0", KafkaConstants.TOPIC,
+        sendMessagesInRoute(DIRECT_START_STRINGS_URI, 1, stringsTemplate, msgs, KafkaConstants.PARTITION_KEY, "0",
+                KafkaConstants.TOPIC,
                 TOPIC_STRINGS_IN_HEADER);
 
         createKafkaMessageConsumer(stringsConsumerConn, TOPIC_STRINGS, TOPIC_STRINGS_IN_HEADER, messagesLatch);
@@ -268,6 +294,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
 
         assertTrue(allMessagesReceived,
                 "Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount());
+        MockEndpoint mockEndpoint = contextExtension.getMockEndpoint(KAFKA_ACK_MOCK);
         List<Exchange> exchangeList = mockEndpoint.getExchanges();
         assertEquals(2, exchangeList.size(), "Two Exchanges are expected");
         Exchange e1 = exchangeList.get(0);
@@ -297,12 +324,14 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
 
         Map<String, Object> inTopicHeaders = new HashMap<>();
         inTopicHeaders.put(KafkaConstants.PARTITION_KEY, "0".getBytes());
-        sendMessagesInRoute(messageInTopic, bytesTemplate, "IT test message".getBytes(), inTopicHeaders);
+        sendMessagesInRoute(DIRECT_START_BYTES_URI, messageInTopic, bytesTemplate, "IT test message".getBytes(),
+                inTopicHeaders);
 
         Map<String, Object> otherTopicHeaders = new HashMap<>();
         otherTopicHeaders.put(KafkaConstants.PARTITION_KEY, "0".getBytes());
         otherTopicHeaders.put(KafkaConstants.TOPIC, TOPIC_BYTES_IN_HEADER);
-        sendMessagesInRoute(messageInOtherTopic, bytesTemplate, "IT test message in other topic".getBytes(), otherTopicHeaders);
+        sendMessagesInRoute(DIRECT_START_BYTES_URI, messageInOtherTopic, bytesTemplate,
+                "IT test message in other topic".getBytes(), otherTopicHeaders);
 
         createKafkaBytesMessageConsumer(bytesConsumerConn, TOPIC_BYTES, TOPIC_BYTES_IN_HEADER, messagesLatch);
 
@@ -311,6 +340,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
         assertTrue(allMessagesReceived,
                 "Not all messages were published to the kafka topics. Not received: " + messagesLatch.getCount());
 
+        MockEndpoint mockEndpoint = contextExtension.getMockEndpoint(KAFKA_ACK_MOCK);
         List<Exchange> exchangeList = mockEndpoint.getExchanges();
         assertEquals(15, exchangeList.size(), "Fifteen Exchanges are expected");
         for (Exchange exchange : exchangeList) {
@@ -356,7 +386,7 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
         camelHeaders.put("CamelFilteredHeader", "CamelFilteredHeader value");
 
         CountDownLatch messagesLatch = new CountDownLatch(1);
-        propagatedHeadersTemplate.sendBodyAndHeaders("Some test message", camelHeaders);
+        propagatedHeadersTemplate.sendBodyAndHeaders(DIRECT_PROPAGATED_HEADERS_URI, "Some test message", camelHeaders);
 
         List<ConsumerRecord<String, String>> records = pollForRecords(createStringKafkaConsumer("propagatedHeaderConsumer"),
                 TOPIC_PROPAGATED_HEADERS, messagesLatch);
@@ -397,7 +427,8 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
         camelHeaders.put(propagatedStringHeaderKey, propagatedStringHeaderValue);
 
         CountDownLatch messagesLatch = new CountDownLatch(1);
-        noRecordSpecificHeadersTemplate.sendBodyAndHeaders("Some test message", camelHeaders);
+        noRecordSpecificHeadersTemplate.sendBodyAndHeaders(DIRECT_NO_RECORD_SPECIFIC_HEADERS_URI, "Some test message",
+                camelHeaders);
 
         List<ConsumerRecord<String, String>> records = pollForRecords(
                 createStringKafkaConsumer("noRecordSpecificHeadersConsumer"), TOPIC_NO_RECORD_SPECIFIC_HEADERS, messagesLatch);
@@ -416,15 +447,16 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
     @Test
     public void headerFilterStrategyCouldBeOverridden() {
         KafkaEndpoint kafkaEndpoint
-                = context.getEndpoint("kafka:TOPIC_PROPAGATED_HEADERS?headerFilterStrategy=#myStrategy", KafkaEndpoint.class);
-        assertIsInstanceOf(MyHeaderFilterStrategy.class, kafkaEndpoint.getConfiguration().getHeaderFilterStrategy());
+                = contextExtension.getContext().getEndpoint("kafka:TOPIC_PROPAGATED_HEADERS?headerFilterStrategy=#myStrategy",
+                        KafkaEndpoint.class);
+        assertInstanceOf(MyHeaderFilterStrategy.class, kafkaEndpoint.getConfiguration().getHeaderFilterStrategy());
     }
 
     @Test
     public void headerSerializerCouldBeOverridden() {
-        KafkaEndpoint kafkaEndpoint = context
+        KafkaEndpoint kafkaEndpoint = contextExtension.getContext()
                 .getEndpoint("kafka:TOPIC_PROPAGATED_HEADERS?headerSerializer=#myHeaderSerializer", KafkaEndpoint.class);
-        assertIsInstanceOf(MyKafkaHeadersSerializer.class, kafkaEndpoint.getConfiguration().getHeaderSerializer());
+        assertInstanceOf(MyKafkaHeadersSerializer.class, kafkaEndpoint.getConfiguration().getHeaderSerializer());
     }
 
     private byte[] getHeaderValue(String headerKey, Headers headers) {
@@ -432,40 +464,6 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
                 .findFirst().orElse(null);
         assertNotNull(foundHeader, "Header should be sent");
         return foundHeader.value();
-    }
-
-    private static KafkaConsumer<String, String> createStringKafkaConsumer(final String groupId) {
-        Properties stringsProps = new Properties();
-
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
-                "org.apache.kafka.common.serialization.StringDeserializer");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-                "org.apache.kafka.common.serialization.StringDeserializer");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-
-        return new KafkaConsumer<>(stringsProps);
-    }
-
-    private static KafkaConsumer<byte[], byte[]> createByteKafkaConsumer(final String groupId) {
-        Properties stringsProps = new Properties();
-
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, getBootstrapServers());
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG, groupId);
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, "30000");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
-                "org.apache.kafka.common.serialization.ByteArrayDeserializer");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
-                "org.apache.kafka.common.serialization.ByteArrayDeserializer");
-        stringsProps.put(org.apache.kafka.clients.consumer.ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-
-        return new KafkaConsumer<>(stringsProps);
     }
 
     private List<ConsumerRecord<String, String>> pollForRecords(
@@ -520,22 +518,6 @@ public class KafkaProducerFullIT extends BaseEmbeddedKafkaTestSupport {
             }
         }
 
-    }
-
-    private void sendMessagesInRoute(int messages, ProducerTemplate template, Object bodyOther, String... headersWithValue) {
-        Map<String, Object> headerMap = new HashMap<>();
-        if (headersWithValue != null) {
-            for (int i = 0; i < headersWithValue.length; i = i + 2) {
-                headerMap.put(headersWithValue[i], headersWithValue[i + 1]);
-            }
-        }
-        sendMessagesInRoute(messages, template, bodyOther, headerMap);
-    }
-
-    private void sendMessagesInRoute(int messages, ProducerTemplate template, Object bodyOther, Map<String, Object> headerMap) {
-        for (int k = 0; k < messages; k++) {
-            template.sendBodyAndHeaders(bodyOther, headerMap);
-        }
     }
 
     private static class MyHeaderFilterStrategy extends DefaultHeaderFilterStrategy {

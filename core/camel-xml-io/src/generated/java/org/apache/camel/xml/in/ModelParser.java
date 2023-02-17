@@ -779,7 +779,7 @@ public class ModelParser extends BaseParser {
     protected PropertyDefinitions doParsePropertyDefinitions() throws IOException, XmlPullParserException {
         return doParse(new PropertyDefinitions(),
             noAttributeHandler(), (def, key) -> {
-            if ("properties".equals(key)) {
+            if ("property".equals(key)) {
                 doAdd(doParsePropertyDefinition(), def.getProperties(), def::setProperties);
                 return true;
             }
@@ -1878,23 +1878,6 @@ public class ModelParser extends BaseParser {
             return true;
         }, noElementHandler(), noValueHandler());
     }
-    protected Any23DataFormat doParseAny23DataFormat() throws IOException, XmlPullParserException {
-        return doParse(new Any23DataFormat(), (def, key, val) -> {
-            switch (key) {
-                case "baseUri": def.setBaseUri(val); break;
-                case "outputFormat": def.setOutputFormat(val); break;
-                default: return identifiedTypeAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        }, (def, key) -> {
-            switch (key) {
-                case "configuration": doAdd(doParsePropertyDefinition(), def.getConfiguration(), def::setConfiguration); break;
-                case "extractors": doAdd(doParseText(), def.getExtractors(), def::setExtractors); break;
-                default: return false;
-            }
-            return true;
-        }, noValueHandler());
-    }
     protected AvroDataFormat doParseAvroDataFormat() throws IOException, XmlPullParserException {
         return doParse(new AvroDataFormat(), (def, key, val) -> {
             switch (key) {
@@ -1950,7 +1933,7 @@ public class ModelParser extends BaseParser {
         return doParse(new BindyDataFormat(), (def, key, val) -> {
             switch (key) {
                 case "allowEmptyStream": def.setAllowEmptyStream(val); break;
-                case "classType": def.setClassType(val); break;
+                case "classType": def.setClassTypeAsString(val); break;
                 case "locale": def.setLocale(val); break;
                 case "type": def.setType(val); break;
                 case "unwrapSingleInstance": def.setUnwrapSingleInstance(val); break;
@@ -2211,8 +2194,8 @@ public class ModelParser extends BaseParser {
                 case "autoDiscoverSchemaResolver": def.setAutoDiscoverSchemaResolver(val); break;
                 case "collectionType": def.setCollectionTypeName(val); break;
                 case "contentTypeHeader": def.setContentTypeHeader(val); break;
+                case "dateFormatPattern": def.setDateFormatPattern(val); break;
                 case "disableFeatures": def.setDisableFeatures(val); break;
-                case "dropRootNode": def.setDropRootNode(val); break;
                 case "enableFeatures": def.setEnableFeatures(val); break;
                 case "include": def.setInclude(val); break;
                 case "jsonView": def.setJsonViewTypeName(val); break;
@@ -2221,7 +2204,6 @@ public class ModelParser extends BaseParser {
                 case "moduleRefs": def.setModuleRefs(val); break;
                 case "namingStrategy": def.setNamingStrategy(val); break;
                 case "objectMapper": def.setObjectMapper(val); break;
-                case "permissions": def.setPermissions(val); break;
                 case "prettyPrint": def.setPrettyPrint(val); break;
                 case "schemaResolver": def.setSchemaResolver(val); break;
                 case "timezone": def.setTimezone(val); break;
@@ -3367,7 +3349,6 @@ public class ModelParser extends BaseParser {
     protected DataFormatDefinition doParseDataFormatDefinitionRef(String key) throws IOException, XmlPullParserException {
         switch (key) {
             case "asn1": return doParseASN1DataFormat();
-            case "any23": return doParseAny23DataFormat();
             case "avro": return doParseAvroDataFormat();
             case "barcode": return doParseBarcodeDataFormat();
             case "base64": return doParseBase64DataFormat();

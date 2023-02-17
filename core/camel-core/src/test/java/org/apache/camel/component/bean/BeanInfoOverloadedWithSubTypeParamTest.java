@@ -38,9 +38,9 @@ public class BeanInfoOverloadedWithSubTypeParamTest extends ContextTestSupport {
         }
     }
 
-    class RequestB {
+    static class RequestB {
     }
 
-    class RequestC extends RequestB {
+    static class RequestC extends RequestB {
     }
 }

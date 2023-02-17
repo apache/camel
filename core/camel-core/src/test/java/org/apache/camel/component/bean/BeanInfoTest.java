@@ -139,8 +139,7 @@ public class BeanInfoTest {
     }
 
     protected BeanInfo createBeanInfo(Class<?> type) {
-        BeanInfo info = new BeanInfo(camelContext, type);
-        return info;
+        return new BeanInfo(camelContext, type);
     }
 
     protected void assertMethodPattern(BeanInfo info, String methodName, ExchangePattern expectedPattern)
@@ -209,7 +208,7 @@ public class BeanInfoTest {
     public interface ILevel1Interface extends ILevel2Interface {
     }
 
-    class PackagePrivateClassImplementingLevel2InterfaceMethod implements ILevel1Interface {
+    static class PackagePrivateClassImplementingLevel2InterfaceMethod implements ILevel1Interface {
         @Override
         public String method() {
             return "PackagePrivateClassImplementingLevel2InterfaceMethod.method() has been called";
@@ -220,13 +219,13 @@ public class BeanInfoTest {
         String method();
     }
 
-    class PackagePrivateClassDefiningMethod {
+    static class PackagePrivateClassDefiningMethod {
         public String method() {
             return "PackagePrivateClassDefiningMethod.method() has been called";
         }
     }
 
-    public class PublicClassImplementingBySuperPackagePrivateClass extends PackagePrivateClassDefiningMethod
+    public static class PublicClassImplementingBySuperPackagePrivateClass extends PackagePrivateClassDefiningMethod
             implements IMethodInterface {
     }
 

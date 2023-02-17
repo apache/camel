@@ -42,15 +42,18 @@ public class KameletComponentPropertiesTest {
 
             assertThat(
                     main.getCamelTemplate()
-                            .requestBody("kamelet:setBody/test", "", String.class)).isEqualTo("from-component-route");
+                            .requestBody("kamelet:setBody/test", "", String.class))
+                    .isEqualTo("from-component-route");
 
             assertThat(
                     main.getCamelTemplate()
-                            .requestBody("kamelet:setBody", "", String.class)).isEqualTo("from-component-template");
+                            .requestBody("kamelet:setBody", "", String.class))
+                    .isEqualTo("from-component-template");
             // uri properties have precedence over component properties.
             assertThat(
                     main.getCamelTemplate()
-                            .requestBody("kamelet:setBody?bodyValue={{bodyValue}}", "", String.class)).isEqualTo("from-uri");
+                            .requestBody("kamelet:setBody?bodyValue={{bodyValue}}", "", String.class))
+                    .isEqualTo("from-uri");
         } catch (Exception e) {
             fail(e);
         } finally {

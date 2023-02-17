@@ -30,7 +30,7 @@ public @interface FixedLengthRecord {
 
     /**
      * Name describing the record (optional)
-     * 
+     *
      * @return String
      */
     String name() default "";
@@ -39,7 +39,7 @@ public @interface FixedLengthRecord {
      * Character to be used to add a carriage return after each record (optional). Possible values: WINDOWS, UNIX, MAC,
      * or custom. This option is used only during marshalling, whereas unmarshalling uses system default JDK provided
      * line delimiter unless eol is customized.
-     * 
+     *
      * @return String
      */
     String crlf() default "WINDOWS";
@@ -49,14 +49,14 @@ public @interface FixedLengthRecord {
      * default: "", which help default JDK provided line delimiter to be used unless any other line delimiter provided)
      * This option is used only during unmarshalling, where marshalling uses system default provided line delimiter as
      * "WINDOWS" unless any other value is provided.
-     * 
+     *
      * @return String
      */
     String eol() default "";
 
     /**
      * The char to pad with.
-     * 
+     *
      * @return the char to pad with if the record is set to a fixed length;
      */
     char paddingChar() default ' ';
@@ -64,7 +64,7 @@ public @interface FixedLengthRecord {
     /**
      * The fixed length of the record (number of characters). It means that the record will always be that long padded
      * with {#paddingChar()}'s
-     * 
+     *
      * @return the length of the record.
      */
     int length() default 0;

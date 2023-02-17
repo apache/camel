@@ -86,7 +86,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTe
 
         result.reset();
         result.expectedMessageCount(1);
-        bodies = Arrays.asList("Message Four");
+        bodies = List.of("Message Four");
         result.expectedBodiesReceivedInAnyOrder(bodies);
 
         // wait long enough to have the consumer resumed
@@ -117,7 +117,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTe
         };
     }
 
-    public class AlwaysCloseHandler implements ThrottlingExceptionHalfOpenHandler {
+    public static class AlwaysCloseHandler implements ThrottlingExceptionHalfOpenHandler {
 
         @Override
         public boolean isReadyToBeClosed() {
@@ -130,7 +130,7 @@ public class ThrottlingExceptionRoutePolicyHalfOpenHandlerTest extends ContextTe
         try {
             template.sendBody(url, bodyText);
         } catch (Exception e) {
-            log.debug("Error sending:" + e.getCause().getMessage());
+            log.debug("Error sending: {}", e.getCause().getMessage());
         }
     }
 }

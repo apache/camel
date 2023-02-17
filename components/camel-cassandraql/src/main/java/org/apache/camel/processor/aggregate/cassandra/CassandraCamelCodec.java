@@ -27,7 +27,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultExchangeHolder;
 import org.apache.camel.util.ClassLoadingAwareObjectInputStream;
@@ -73,7 +72,7 @@ public class CassandraCamelCodec {
         if (fromEndpointUri != null) {
             Endpoint fromEndpoint = camelContext.hasEndpoint(fromEndpointUri);
             if (fromEndpoint != null) {
-                answer.adapt(ExtendedExchange.class).setFromEndpoint(fromEndpoint);
+                answer.getExchangeExtension().setFromEndpoint(fromEndpoint);
             }
         }
         return answer;

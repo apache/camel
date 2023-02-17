@@ -32,7 +32,7 @@ public class NonXmlFilterReader extends FilterReader {
 
     /**
      * Reads characters into a portion of an array.
-     * 
+     *
      * @exception IOException If an I/O error occurs
      */
     @Override

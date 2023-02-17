@@ -42,7 +42,7 @@ public class SoapMarshalTest extends CamelTestSupport {
 
     /**
      * Test Soap marshalling by sending a GetCustomerByName object and checking against a xml file.
-     * 
+     *
      * @throws IOException
      * @throws InterruptedException
      */
@@ -60,7 +60,7 @@ public class SoapMarshalTest extends CamelTestSupport {
     /**
      * Test Soap marshalling by sending a NoSuchCustomerException object and checking against a xml file. We expect to
      * receive a SOAP fault here that contains a NoSuchCustomer object as detail.
-     * 
+     *
      * @throws IOException
      * @throws InterruptedException
      */

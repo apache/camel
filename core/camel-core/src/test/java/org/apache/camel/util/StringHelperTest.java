@@ -18,7 +18,6 @@ package org.apache.camel.util;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
@@ -86,7 +85,7 @@ public class StringHelperTest {
     public void testRemoveQuotes() throws Exception {
         assertEquals("Hello World", StringHelper.removeQuotes("Hello World"));
         assertEquals("", StringHelper.removeQuotes(""));
-        assertEquals(null, StringHelper.removeQuotes(null));
+        assertNull(StringHelper.removeQuotes(null));
         assertEquals(" ", StringHelper.removeQuotes(" "));
         assertEquals("foo", StringHelper.removeQuotes("'foo'"));
         assertEquals("foo", StringHelper.removeQuotes("'foo"));
@@ -99,7 +98,7 @@ public class StringHelperTest {
 
     @Test
     public void testRemoveLeadingAndEndingQuotes() throws Exception {
-        assertEquals(null, StringHelper.removeLeadingAndEndingQuotes(null));
+        assertNull(StringHelper.removeLeadingAndEndingQuotes(null));
         assertEquals("", StringHelper.removeLeadingAndEndingQuotes(""));
         assertEquals(" ", StringHelper.removeLeadingAndEndingQuotes(" "));
         assertEquals("Hello World", StringHelper.removeLeadingAndEndingQuotes("Hello World"));
@@ -110,70 +109,70 @@ public class StringHelperTest {
 
     @Test
     public void testHasUpper() throws Exception {
-        assertEquals(false, StringHelper.hasUpperCase(null));
-        assertEquals(false, StringHelper.hasUpperCase(""));
-        assertEquals(false, StringHelper.hasUpperCase(" "));
-        assertEquals(false, StringHelper.hasUpperCase("com.foo"));
-        assertEquals(false, StringHelper.hasUpperCase("com.foo.123"));
+        assertFalse(StringHelper.hasUpperCase(null));
+        assertFalse(StringHelper.hasUpperCase(""));
+        assertFalse(StringHelper.hasUpperCase(" "));
+        assertFalse(StringHelper.hasUpperCase("com.foo"));
+        assertFalse(StringHelper.hasUpperCase("com.foo.123"));
 
-        assertEquals(true, StringHelper.hasUpperCase("com.foo.MyClass"));
-        assertEquals(true, StringHelper.hasUpperCase("com.foo.My"));
+        assertTrue(StringHelper.hasUpperCase("com.foo.MyClass"));
+        assertTrue(StringHelper.hasUpperCase("com.foo.My"));
 
         // Note, this is not a FQN
-        assertEquals(true, StringHelper.hasUpperCase("com.foo.subA"));
+        assertTrue(StringHelper.hasUpperCase("com.foo.subA"));
     }
 
     @Test
     public void testIsClassName() throws Exception {
-        assertEquals(false, StringHelper.isClassName(null));
-        assertEquals(false, StringHelper.isClassName(""));
-        assertEquals(false, StringHelper.isClassName(" "));
-        assertEquals(false, StringHelper.isClassName("com.foo"));
-        assertEquals(false, StringHelper.isClassName("com.foo.123"));
+        assertFalse(StringHelper.isClassName(null));
+        assertFalse(StringHelper.isClassName(""));
+        assertFalse(StringHelper.isClassName(" "));
+        assertFalse(StringHelper.isClassName("com.foo"));
+        assertFalse(StringHelper.isClassName("com.foo.123"));
 
-        assertEquals(true, StringHelper.isClassName("com.foo.MyClass"));
-        assertEquals(true, StringHelper.isClassName("com.foo.My"));
+        assertTrue(StringHelper.isClassName("com.foo.MyClass"));
+        assertTrue(StringHelper.isClassName("com.foo.My"));
 
         // Note, this is not a FQN
-        assertEquals(false, StringHelper.isClassName("com.foo.subA"));
+        assertFalse(StringHelper.isClassName("com.foo.subA"));
     }
 
     @Test
     public void testHasStartToken() throws Exception {
-        assertEquals(false, StringHelper.hasStartToken(null, null));
-        assertEquals(false, StringHelper.hasStartToken(null, "simple"));
-        assertEquals(false, StringHelper.hasStartToken("", null));
-        assertEquals(false, StringHelper.hasStartToken("", "simple"));
-        assertEquals(false, StringHelper.hasStartToken("Hello World", null));
-        assertEquals(false, StringHelper.hasStartToken("Hello World", "simple"));
+        assertFalse(StringHelper.hasStartToken(null, null));
+        assertFalse(StringHelper.hasStartToken(null, "simple"));
+        assertFalse(StringHelper.hasStartToken("", null));
+        assertFalse(StringHelper.hasStartToken("", "simple"));
+        assertFalse(StringHelper.hasStartToken("Hello World", null));
+        assertFalse(StringHelper.hasStartToken("Hello World", "simple"));
 
-        assertEquals(false, StringHelper.hasStartToken("${body}", null));
-        assertEquals(true, StringHelper.hasStartToken("${body}", "simple"));
-        assertEquals(true, StringHelper.hasStartToken("$simple{body}", "simple"));
+        assertFalse(StringHelper.hasStartToken("${body}", null));
+        assertTrue(StringHelper.hasStartToken("${body}", "simple"));
+        assertTrue(StringHelper.hasStartToken("$simple{body}", "simple"));
 
-        assertEquals(false, StringHelper.hasStartToken("${body}", null));
-        assertEquals(false, StringHelper.hasStartToken("${body}", "foo"));
+        assertFalse(StringHelper.hasStartToken("${body}", null));
+        assertFalse(StringHelper.hasStartToken("${body}", "foo"));
         // $foo{ is valid because its foo language
-        assertEquals(true, StringHelper.hasStartToken("$foo{body}", "foo"));
+        assertTrue(StringHelper.hasStartToken("$foo{body}", "foo"));
     }
 
     @Test
     public void testIsQuoted() throws Exception {
-        assertEquals(false, StringHelper.isQuoted(null));
-        assertEquals(false, StringHelper.isQuoted(""));
-        assertEquals(false, StringHelper.isQuoted(" "));
-        assertEquals(false, StringHelper.isQuoted("abc"));
-        assertEquals(false, StringHelper.isQuoted("abc'"));
-        assertEquals(false, StringHelper.isQuoted("\"abc'"));
-        assertEquals(false, StringHelper.isQuoted("abc\""));
-        assertEquals(false, StringHelper.isQuoted("'abc\""));
-        assertEquals(false, StringHelper.isQuoted("\"abc'"));
-        assertEquals(false, StringHelper.isQuoted("abc'def'"));
-        assertEquals(false, StringHelper.isQuoted("abc'def'ghi"));
-        assertEquals(false, StringHelper.isQuoted("'def'ghi"));
+        assertFalse(StringHelper.isQuoted(null));
+        assertFalse(StringHelper.isQuoted(""));
+        assertFalse(StringHelper.isQuoted(" "));
+        assertFalse(StringHelper.isQuoted("abc"));
+        assertFalse(StringHelper.isQuoted("abc'"));
+        assertFalse(StringHelper.isQuoted("\"abc'"));
+        assertFalse(StringHelper.isQuoted("abc\""));
+        assertFalse(StringHelper.isQuoted("'abc\""));
+        assertFalse(StringHelper.isQuoted("\"abc'"));
+        assertFalse(StringHelper.isQuoted("abc'def'"));
+        assertFalse(StringHelper.isQuoted("abc'def'ghi"));
+        assertFalse(StringHelper.isQuoted("'def'ghi"));
 
-        assertEquals(true, StringHelper.isQuoted("'abc'"));
-        assertEquals(true, StringHelper.isQuoted("\"abc\""));
+        assertTrue(StringHelper.isQuoted("'abc'"));
+        assertTrue(StringHelper.isQuoted("\"abc\""));
     }
 
     @Test
@@ -187,7 +186,7 @@ public class StringHelperTest {
     public void testBefore() {
         assertEquals("Hello ", StringHelper.before("Hello World", "World"));
         assertEquals("Hello ", StringHelper.before("Hello World Again", "World"));
-        assertEquals(null, StringHelper.before("Hello Again", "Foo"));
+        assertNull(StringHelper.before("Hello Again", "Foo"));
 
         assertTrue(StringHelper.before("mykey:ignore", ":", "mykey"::equals).orElse(false));
         assertFalse(StringHelper.before("ignore:ignore", ":", "mykey"::equals).orElse(false));
@@ -203,7 +202,7 @@ public class StringHelperTest {
     public void testAfter() {
         assertEquals(" World", StringHelper.after("Hello World", "Hello"));
         assertEquals(" World Again", StringHelper.after("Hello World Again", "Hello"));
-        assertEquals(null, StringHelper.after("Hello Again", "Foo"));
+        assertNull(StringHelper.after("Hello Again", "Foo"));
 
         assertTrue(StringHelper.after("ignore:mykey", ":", "mykey"::equals).orElse(false));
         assertFalse(StringHelper.after("ignore:ignore", ":", "mykey"::equals).orElse(false));
@@ -219,7 +218,7 @@ public class StringHelperTest {
     public void testBetween() {
         assertEquals("foo bar", StringHelper.between("Hello 'foo bar' how are you", "'", "'"));
         assertEquals("foo bar", StringHelper.between("Hello ${foo bar} how are you", "${", "}"));
-        assertEquals(null, StringHelper.between("Hello ${foo bar} how are you", "'", "'"));
+        assertNull(StringHelper.between("Hello ${foo bar} how are you", "'", "'"));
 
         assertTrue(StringHelper.between("begin:mykey:end", "begin:", ":end", "mykey"::equals).orElse(false));
         assertFalse(StringHelper.between("begin:ignore:end", "begin:", ":end", "mykey"::equals).orElse(false));
@@ -228,9 +227,9 @@ public class StringHelperTest {
     @Test
     public void testBetweenOuterPair() {
         assertEquals("bar(baz)123", StringHelper.betweenOuterPair("foo(bar(baz)123)", '(', ')'));
-        assertEquals(null, StringHelper.betweenOuterPair("foo(bar(baz)123))", '(', ')'));
-        assertEquals(null, StringHelper.betweenOuterPair("foo(bar(baz123", '(', ')'));
-        assertEquals(null, StringHelper.betweenOuterPair("foo)bar)baz123", '(', ')'));
+        assertNull(StringHelper.betweenOuterPair("foo(bar(baz)123))", '(', ')'));
+        assertNull(StringHelper.betweenOuterPair("foo(bar(baz123", '(', ')'));
+        assertNull(StringHelper.betweenOuterPair("foo)bar)baz123", '(', ')'));
         assertEquals("bar", StringHelper.betweenOuterPair("foo(bar)baz123", '(', ')'));
         assertEquals("'bar', 'baz()123', 123", StringHelper.betweenOuterPair("foo('bar', 'baz()123', 123)", '(', ')'));
 
@@ -240,10 +239,10 @@ public class StringHelperTest {
 
     @Test
     public void testIsJavaIdentifier() {
-        assertEquals(true, StringHelper.isJavaIdentifier("foo"));
-        assertEquals(false, StringHelper.isJavaIdentifier("foo.bar"));
-        assertEquals(false, StringHelper.isJavaIdentifier(""));
-        assertEquals(false, StringHelper.isJavaIdentifier(null));
+        assertTrue(StringHelper.isJavaIdentifier("foo"));
+        assertFalse(StringHelper.isJavaIdentifier("foo.bar"));
+        assertFalse(StringHelper.isJavaIdentifier(""));
+        assertFalse(StringHelper.isJavaIdentifier(null));
     }
 
     @Test
@@ -322,7 +321,7 @@ public class StringHelperTest {
 
     @Test
     public void testCapitalizeDash() {
-        assertEquals(null, StringHelper.dashToCamelCase(null));
+        assertNull(StringHelper.dashToCamelCase(null));
         assertEquals("", StringHelper.dashToCamelCase(""));
         assertEquals("hello", StringHelper.dashToCamelCase("hello"));
         assertEquals("helloGreat", StringHelper.dashToCamelCase("helloGreat"));
@@ -347,7 +346,7 @@ public class StringHelperTest {
 
     @Test
     public void testSplitAsStream() {
-        List<String> items = StringHelper.splitAsStream("a,b,c", ",").collect(Collectors.toList());
+        List<String> items = StringHelper.splitAsStream("a,b,c", ",").toList();
         assertTrue(items.contains("a"));
         assertTrue(items.contains("b"));
         assertTrue(items.contains("c"));

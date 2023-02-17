@@ -18,7 +18,6 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
@@ -65,8 +64,7 @@ public class UnitOfWorkHelperTest extends ContextTestSupport {
         testMessage.setBody(testFile);
 
         testExchange.setIn(testMessage);
-        ExtendedExchange extExchange = testExchange.adapt(ExtendedExchange.class);
-        extExchange.setFromEndpoint(fromEndpoint);
+        testExchange.getExchangeExtension().setFromEndpoint(fromEndpoint);
         testExchange.setProperty(FileComponent.FILE_EXCHANGE_FILE, testFile);
 
         return testExchange;

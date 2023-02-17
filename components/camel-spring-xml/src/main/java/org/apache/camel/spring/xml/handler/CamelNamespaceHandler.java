@@ -219,7 +219,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             doBeforeParse(element);
             super.doParse(element, builder);
 
-            // Note: prefer to use doParse from parent and postProcess; however, parseUsingJaxb requires 
+            // Note: prefer to use doParse from parent and postProcess; however, parseUsingJaxb requires
             // parserContext for no apparent reason.
             Binder<Node> binder;
             try {

@@ -35,7 +35,7 @@ import org.apache.camel.component.wordpress.api.model.UserOrderBy;
 
 /**
  * Describes the Users Wordpress API
- * 
+ *
  * @see   <a href= "https://developer.wordpress.org/rest-api/reference/users/">Users API Reference</a>
  * @since 0.0.1
  */

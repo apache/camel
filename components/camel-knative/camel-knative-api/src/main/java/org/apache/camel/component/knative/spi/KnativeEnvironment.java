@@ -79,7 +79,7 @@ public class KnativeEnvironment {
 
     /**
      * Construct an instance o a {@link KnativeEnvironment} from a json serialized string.
-     * 
+     *
      * <pre>
      * {@code
      * {
@@ -117,7 +117,7 @@ public class KnativeEnvironment {
 
     /**
      * Construct an instance o a {@link KnativeEnvironment} from a properties.
-     * 
+     *
      * <pre>
      * {@code
      * resources[0].name = ...
@@ -152,7 +152,7 @@ public class KnativeEnvironment {
 
     /**
      * Construct an instance o a {@link KnativeEnvironment} from a json file.
-     * 
+     *
      * <pre>
      * {@code
      * {

@@ -41,7 +41,7 @@ public class JettyJmsTwowayTest {
     private static final String URL = "http://localhost:" + port + "/JettyJmsTwowayTest";
     static {
         //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts 
+        //things to set them into the URL's in the spring contexts
         System.setProperty("JettyJmsTwowayTest.port", Integer.toString(port));
     }
 

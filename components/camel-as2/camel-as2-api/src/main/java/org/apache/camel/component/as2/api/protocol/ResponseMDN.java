@@ -83,12 +83,13 @@ public class ResponseMDN implements HttpResponseInterceptor {
     private PrivateKey signingPrivateKey;
     private PrivateKey decryptingPrivateKey;
     private String mdnMessageTemplate;
+    private Certificate[] validateSigningCertificateChain;
 
     private VelocityEngine velocityEngine;
 
     public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm,
                        Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, PrivateKey decryptingPrivateKey,
-                       String mdnMessageTemplate) {
+                       String mdnMessageTemplate, Certificate[] validateSigningCertificateChain) {
         this.as2Version = as2Version;
         this.serverFQDN = serverFQDN;
         this.signingAlgorithm = signingAlgorithm;
@@ -102,6 +103,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
         } else {
             this.mdnMessageTemplate = DEFAULT_MDN_MESSAGE_TEMPLATE;
         }
+        this.validateSigningCertificateChain = validateSigningCertificateChain;
     }
 
     @Override
@@ -145,7 +147,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             multipartReportEntity = new DispositionNotificationMultipartReportEntity(
                     httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
                     AS2DispositionType.FAILED, null, null, null, null, null, StandardCharsets.US_ASCII.name(), boundary, true,
-                    decryptingPrivateKey, mdnMessage);
+                    decryptingPrivateKey, mdnMessage, validateSigningCertificateChain);
         } else {
             String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response,
                     DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
@@ -155,7 +157,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
                     httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
                     AS2DispositionType.PROCESSED, null, null, null, null, null, StandardCharsets.US_ASCII.name(), boundary,
                     true,
-                    decryptingPrivateKey, mdnMessage);
+                    decryptingPrivateKey, mdnMessage, validateSigningCertificateChain);
         }
 
         DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser

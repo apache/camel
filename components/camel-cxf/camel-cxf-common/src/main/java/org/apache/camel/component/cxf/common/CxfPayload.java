@@ -57,7 +57,7 @@ public class CxfPayload<T> {
 
     /**
      * Get the body as a List of DOM elements. This will cause the Body to be fully read and parsed.
-     * 
+     *
      * @return
      */
     public List<Element> getBody() {
@@ -132,7 +132,7 @@ public class CxfPayload<T> {
      * Gets the body as a List of source objects. If possible, the Source objects will likely be StaxSource or similar
      * that allows streaming. If you plan to modify or use the Source, be careful that the result is still usable by the
      * Camel runtime.
-     * 
+     *
      * @return
      */
     public List<Source> getBodySources() {

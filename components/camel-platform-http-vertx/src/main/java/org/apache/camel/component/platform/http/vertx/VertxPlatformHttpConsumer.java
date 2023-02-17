@@ -40,7 +40,6 @@ import io.vertx.ext.web.impl.RouteImpl;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
@@ -184,7 +183,7 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         //
 
         if (getEndpoint().isHttpProxy()) {
-            exchange.adapt(ExtendedExchange.class).setStreamCacheDisabled(true);
+            exchange.getExchangeExtension().setStreamCacheDisabled(true);
             final MultiMap httpHeaders = ctx.request().headers();
             exchange.getMessage().setHeader(Exchange.HTTP_HOST, httpHeaders.get("Host"));
             exchange.getMessage().removeHeader("Proxy-Connection");
@@ -276,15 +275,10 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
                 populateAttachments(ctx.fileUploads(), result);
             }
         } else {
-            Method m = Method.valueOf(ctx.request().method().name());
-            if (m.canHaveBody()) {
-                final RequestBody requestBody = ctx.body();
-                final Buffer body = requestBody.buffer();
-                if (body != null) {
-                    result.setBody(body);
-                } else {
-                    result.setBody(null);
-                }
+            final RequestBody requestBody = ctx.body();
+            final Buffer body = requestBody.buffer();
+            if (body != null) {
+                result.setBody(body);
             } else {
                 result.setBody(null);
             }

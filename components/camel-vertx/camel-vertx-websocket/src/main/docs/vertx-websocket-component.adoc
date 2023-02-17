@@ -71,6 +71,28 @@ from("vertx-websocket:my.websocket.com:8080/chat?consumeAsClient=true")
     .log("Got WebSocket message ${body}");
 ----
 
+== Path & query parameters
+
+The WebSocket server consumer supports the configuration of parameterized paths. The path parameter value will be set
+as a Camel exchange header:
+
+[source,java]
+----
+from("vertx-websocket:localhost:8080/chat/{user}")
+    .log("New message from ${header.user} >>> ${body}")
+----
+
+Similarly you can retrieve any query parameter values that were used by the WebSocket client to connect to the server endpoint:
+
+[source,java]
+----
+from("direct:sendChatMessage")
+    .to("vertx-websocket:localhost:8080/chat/camel?role=admin");
+
+from("vertx-websocket:localhost:8080/chat/{user}")
+    .log("New message from ${header.user} (${header.role}) >>> ${body}")
+----
+
 == SSL
 
 By default, the `ws://` protocol is used, but secure connections with `wss://` are supported by configuring the consumer or producer

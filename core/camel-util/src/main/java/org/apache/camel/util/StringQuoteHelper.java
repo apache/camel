@@ -74,7 +74,7 @@ public final class StringQuoteHelper {
      * <p/>
      * Though this method does not support double quoting values. A quoted value must start with the same start and
      * ending quote, which is either a single quote or double quote value. \
-     * 
+     *
      * @param  input     the input
      * @param  separator the separator char to split the input, for example a comma.
      * @param  trim      whether to trim each split value
@@ -157,7 +157,7 @@ public final class StringQuoteHelper {
                     answer.add(text);
                     sb.setLength(0);
                 }
-                // we should avoid adding the separator 
+                // we should avoid adding the separator
                 continue;
             }
 

@@ -113,20 +113,19 @@
         <!-- These two are here only to prevent the versions for the Apache parent pom from leaking-->
         <maven.compiler.source>${jdk.version}</maven.compiler.source>
         <maven.compiler.target>${jdk.version}</maven.compiler.target>
+        <maven.compiler.release>${jdk.version}</maven.compiler.release>
 
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>1</project.build.outputTimestamp>
 
         <maven-compiler-plugin-version>3.10.1</maven-compiler-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
-        <!-- 3.0.0-M6 and 3.0.0-M7 seem to be causing instabilities and longer test run time: see SUREFIRE-2096 -->
-        <maven-surefire-plugin-version>3.0.0-M5</maven-surefire-plugin-version>
-        <!-- For now, use 3.0.0-M4 due to SUREFIRE-1831 affecting M5 and causing integration tests (w/ failsafe) to misbehave -->
-        <maven-failsafe-plugin-version>3.0.0-M4</maven-failsafe-plugin-version>
+        <maven-surefire-plugin-version>3.0.0-M8</maven-surefire-plugin-version>
+        <maven-failsafe-plugin-version>3.0.0-M8</maven-failsafe-plugin-version>
         <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
         <java-diff-utils-version>4.7</java-diff-utils-version>
-        <maven-enforcer-plugin-version>3.0.0</maven-enforcer-plugin-version>
+        <maven-enforcer-plugin-version>3.1.0</maven-enforcer-plugin-version>
         <maven-dependency-plugin-version>3.4.0</maven-dependency-plugin-version>
 
         <!-- eclipse plugin need the jaxb in this pom.xml file -->
@@ -140,9 +139,9 @@
         <errorprone-version>2.5</errorprone-version>
         <mycila-license-version>3.0</mycila-license-version>
         <gmavenplus-plugin-version>1.11.1</gmavenplus-plugin-version>
-        <groovy-version>3.0.14</groovy-version>
-	<cyclonedx-maven-plugin-version>2.7.4</cyclonedx-maven-plugin-version>
-	<antrun-maven-plugin-version>3.1.0</antrun-maven-plugin-version>
+        <groovy-version>3.0.15</groovy-version>
+        <cyclonedx-maven-plugin-version>2.7.4</cyclonedx-maven-plugin-version>
+        <antrun-maven-plugin-version>3.1.0</antrun-maven-plugin-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
     </properties>

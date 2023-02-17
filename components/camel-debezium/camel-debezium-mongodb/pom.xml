@@ -83,7 +83,7 @@
                     </fields>
                     <requiredFields>
                         <field>mongodb.password</field>
-                        <field>mongodb.name</field>
+                        <field>topic.prefix</field>
                     </requiredFields>
                     <generatedSrcDir>${project.basedir}/src/generated/java</generatedSrcDir>
                 </configuration>

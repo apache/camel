@@ -114,7 +114,8 @@ public class ModelParserTest {
                         "<routes>"
                                  + "  <route id='foo'>" + "    <from uri='my:bar'/>" + "    <to uri='mock:res'/>"
                                  + "  </route>"
-                                 + "</routes>")).parseRoutesDefinition().orElse(null);
+                                 + "</routes>"))
+                .parseRoutesDefinition().orElse(null);
 
         assertNotNull(routes);
     }

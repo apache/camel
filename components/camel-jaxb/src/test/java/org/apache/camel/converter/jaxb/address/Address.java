@@ -24,10 +24,10 @@ import jakarta.xml.bind.annotation.XmlType;
 /**
  * <p>
  * Java class for address complex type.
- * 
+ *
  * <p>
  * The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="address">
  *   &lt;complexContent>
@@ -40,7 +40,7 @@ import jakarta.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "address", propOrder = { "addressLine1", "addressLine2" })
@@ -52,9 +52,9 @@ public class Address {
 
     /**
      * Gets the value of the addressLine1 property.
-     * 
+     *
      * @return possible object is {@link String }
-     * 
+     *
      */
     public String getAddressLine1() {
         return addressLine1;
@@ -62,9 +62,9 @@ public class Address {
 
     /**
      * Sets the value of the addressLine1 property.
-     * 
+     *
      * @param value allowed object is {@link String }
-     * 
+     *
      */
     public void setAddressLine1(String value) {
         this.addressLine1 = value;
@@ -72,9 +72,9 @@ public class Address {
 
     /**
      * Gets the value of the addressLine2 property.
-     * 
+     *
      * @return possible object is {@link String }
-     * 
+     *
      */
     public String getAddressLine2() {
         return addressLine2;
@@ -82,9 +82,9 @@ public class Address {
 
     /**
      * Sets the value of the addressLine2 property.
-     * 
+     *
      * @param value allowed object is {@link String }
-     * 
+     *
      */
     public void setAddressLine2(String value) {
         this.addressLine2 = value;

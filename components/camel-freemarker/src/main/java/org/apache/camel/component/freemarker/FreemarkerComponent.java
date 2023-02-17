@@ -87,7 +87,7 @@ public class FreemarkerComponent extends DefaultComponent {
 
     public synchronized Configuration getConfiguration() {
         if (configuration == null) {
-            configuration = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+            configuration = new Configuration(Configuration.VERSION_2_3_32);
             configuration.setLocalizedLookup(isLocalizedLookup());
             configuration.setTemplateLoader(new URLTemplateLoader() {
                 @Override

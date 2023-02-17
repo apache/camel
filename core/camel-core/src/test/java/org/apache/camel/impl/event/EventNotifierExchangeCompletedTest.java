@@ -86,7 +86,7 @@ public class EventNotifierExchangeCompletedTest extends ContextTestSupport {
         long elapsed = now.getTime() - created;
         assertTrue(elapsed > 400, "Should be > 400, was: " + elapsed);
 
-        log.info("Elapsed time in millis: " + elapsed);
+        log.info("Elapsed time in millis: {}", elapsed);
     }
 
     @Override

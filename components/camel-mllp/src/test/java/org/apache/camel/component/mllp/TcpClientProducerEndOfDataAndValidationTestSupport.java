@@ -380,7 +380,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
     /**
      * NOTE: Set expectation variables BEFORE calling this method.
-     * 
+     *
      * @throws Exception
      */
     protected void runMissingEndOfDataByte() throws Exception {
@@ -471,7 +471,7 @@ public abstract class TcpClientProducerEndOfDataAndValidationTestSupport extends
 
     /**
      * NOTE: Set expectation variables BEFORE calling this method.
-     * 
+     *
      * @throws Exception
      */
     public void runInvalidAcknowledgementContainingEmbeddedStartOfBlock() throws Exception {

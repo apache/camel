@@ -392,7 +392,7 @@ public class Etcd3RoutePolicy extends RoutePolicySupport implements CamelContext
 
     /**
      * Renew the lease using a KeepAlive request to avoid losing the leadership.
-     * 
+     *
      * @return {@code true} if the lease could be renewed within the timeout, {@code false} otherwise.
      */
     private boolean renewLease() {
@@ -426,7 +426,7 @@ public class Etcd3RoutePolicy extends RoutePolicySupport implements CamelContext
 
     /**
      * Grants a new lease and tries to put a key-value pair corresponding to the {@code servicePath} if it is absent.
-     * 
+     *
      * @return {@code true} if the put operation is successful indicating that the leadership has been taken,
      *         {@code false} otherwise.
      */

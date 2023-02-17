@@ -511,7 +511,7 @@ public class AggregateProcessorTest extends ContextTestSupport {
         };
 
         doTestAggregateLogFailedExchange(myHandler);
-        assertEquals(true, tested.get());
+        assertTrue(tested.get());
     }
 
     private void doTestAggregateLogFailedExchange(ExceptionHandler handler) throws Exception {

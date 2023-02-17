@@ -30,7 +30,7 @@ public interface LogListener {
      * Invoked right before Log component or Log EIP logs. Note that {@link CamelLogger} holds the {@link LoggingLevel}
      * and {@link org.slf4j.Marker}. The listener can check {@link CamelLogger#getLevel()} to see in which log level
      * this is going to be logged.
-     * 
+     *
      * @param  exchange    camel exchange
      * @param  camelLogger {@link CamelLogger}
      * @param  message     log message

@@ -60,7 +60,7 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
      * XPpointer URIs.
      * <p>
      * Attention: The implementation is provider dependent!
-     * 
+     *
      * @see XMLCryptoContext#setURIDereferencer(URIDereferencer)
      */
     public void setUriDereferencer(URIDereferencer uriDereferencer) {
@@ -107,7 +107,7 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
     /**
      * Disallows that the incoming XML document contains DTD DOCTYPE declaration. The default value is
      * {@link Boolean#TRUE}.
-     * 
+     *
      * @param disallowDoctypeDecl if set to {@link Boolean#FALSE} then DOCTYPE declaration is allowed, otherwise not
      */
     public void setDisallowDoctypeDecl(Boolean disallowDoctypeDecl) {
@@ -128,7 +128,7 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
 
     /**
      * Determines if the XML signature specific headers be cleared after signing and verification. Defaults to true.
-     * 
+     *
      * @return true if the Signature headers should be unset, false otherwise
      */
     public Boolean getClearHeaders() {

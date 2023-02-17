@@ -25,6 +25,7 @@ import org.apache.cxf.bus.spring.BusWiringBeanFactoryPostProcessor;
 import org.apache.cxf.ext.logging.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
+import org.apache.cxf.jaxrs.model.ClassResourceInfo;
 import org.apache.cxf.logging.FaultListener;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
@@ -36,6 +37,7 @@ public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean
     private String beanId;
     private LoggingFeature loggingFeature;
     private int loggingSizeLimit;
+    private boolean performInvocation;
 
     public SpringJAXRSServerFactoryBean() {
     }
@@ -112,5 +114,21 @@ public class SpringJAXRSServerFactoryBean extends JAXRSServerFactoryBean
             }
             this.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
         }
+    }
+
+    @Override
+    protected boolean isValidClassResourceInfo(ClassResourceInfo cri) {
+        // CXF will consider interfaces created for managing model resources
+        // invalid - however it is fine with Camel processors if no service invocation
+        // is requested.
+        return !isPerformInvocation() || !cri.getServiceClass().isInterface();
+    }
+
+    public boolean isPerformInvocation() {
+        return performInvocation;
+    }
+
+    public void setPerformInvocation(boolean performInvocation) {
+        this.performInvocation = performInvocation;
     }
 }

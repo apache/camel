@@ -22,6 +22,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws2.eventbridge.client.EventbridgeClientFactory;
+import org.apache.camel.health.HealthCheckHelper;
+import org.apache.camel.impl.health.ComponentsHealthCheckRepository;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
@@ -41,6 +43,9 @@ import software.amazon.awssdk.services.eventbridge.EventBridgeClient;
 public class EventbridgeEndpoint extends DefaultEndpoint {
 
     private EventBridgeClient eventbridgeClient;
+
+    private ComponentsHealthCheckRepository healthCheckRepository;
+    private EventbridgeClientHealthCheck clientHealthCheck;
 
     @UriPath(description = "Event bus name or ARN")
     @Metadata(required = true)
@@ -70,10 +75,24 @@ public class EventbridgeEndpoint extends DefaultEndpoint {
         eventbridgeClient = configuration.getEventbridgeClient() != null
                 ? configuration.getEventbridgeClient()
                 : EventbridgeClientFactory.getEventbridgeClient(configuration).getEventbridgeClient();
+
+        healthCheckRepository = HealthCheckHelper.getHealthCheckRepository(getCamelContext(),
+                ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
+
+        if (healthCheckRepository != null) {
+            // Do not register the health check until we resolve CAMEL-18992
+            // clientHealthCheck = new EventbridgeClientHealthCheck(this, getId());
+            // healthCheckRepository.addHealthCheck(clientHealthCheck);
+        }
     }
 
     @Override
     public void doStop() throws Exception {
+        if (healthCheckRepository != null && clientHealthCheck != null) {
+            healthCheckRepository.removeHealthCheck(clientHealthCheck);
+            clientHealthCheck = null;
+        }
+
         if (ObjectHelper.isEmpty(configuration.getEventbridgeClient())) {
             if (eventbridgeClient != null) {
                 eventbridgeClient.close();

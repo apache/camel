@@ -38,8 +38,6 @@ public class EventbridgeComponent extends DefaultComponent {
 
     public EventbridgeComponent(CamelContext context) {
         super(context);
-
-        registerExtension(new EventbridgeComponentVerifierExtension());
     }
 
     @Override

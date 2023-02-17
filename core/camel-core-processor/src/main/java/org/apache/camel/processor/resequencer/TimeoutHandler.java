@@ -23,7 +23,7 @@ public interface TimeoutHandler {
 
     /**
      * Handles a timeout notification.
-     * 
+     *
      * @param timeout the timer task that caused this timeout notification.
      */
     void timeout(Timeout timeout);

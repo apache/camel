@@ -92,7 +92,7 @@ public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport 
         }
     }
 
-    private class MyEndpoint extends DefaultEndpoint {
+    private static class MyEndpoint extends DefaultEndpoint {
 
         public MyEndpoint(String endpointUri, Component component) {
             super(endpointUri, component);
@@ -109,7 +109,7 @@ public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport 
         }
     }
 
-    private class MyFailConsumer extends DefaultConsumer {
+    private static class MyFailConsumer extends DefaultConsumer {
 
         public MyFailConsumer(Endpoint endpoint, Processor processor) {
             super(endpoint, processor);

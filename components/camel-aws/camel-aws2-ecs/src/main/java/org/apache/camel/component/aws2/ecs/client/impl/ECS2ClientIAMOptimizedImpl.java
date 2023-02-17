@@ -50,7 +50,7 @@ public class ECS2ClientIAMOptimizedImpl implements ECS2InternalClient {
 
     /**
      * Getting the ECS aws client that is used.
-     * 
+     *
      * @return EcsClient Client.
      */
     @Override

@@ -510,6 +510,7 @@ public class AWS2S3Producer extends DefaultProducer {
                         = s3Client.getObject((GetObjectRequest) payload, ResponseTransformer.toInputStream());
                 Message message = getMessageForResponse(exchange);
                 message.setBody(res);
+                populateMetadata(res, message);
             }
         } else {
             final String bucketName = AWS2S3Utils.determineBucketName(exchange, getConfiguration());
@@ -519,6 +520,7 @@ public class AWS2S3Producer extends DefaultProducer {
 
             Message message = getMessageForResponse(exchange);
             message.setBody(res);
+            populateMetadata(res, message);
         }
     }
 
@@ -562,7 +564,18 @@ public class AWS2S3Producer extends DefaultProducer {
                 message.setBody(objectList.contents());
             }
         } else {
-            ListObjectsResponse objectList = s3Client.listObjects(ListObjectsRequest.builder().bucket(bucketName).build());
+            final String delimiter
+                    = exchange.getIn().getHeader(AWS2S3Constants.DELIMITER, getConfiguration().getDelimiter(), String.class);
+            final String prefix
+                    = exchange.getIn().getHeader(AWS2S3Constants.PREFIX, getConfiguration().getPrefix(), String.class);
+
+            final ListObjectsRequest listObjectsRequest = ListObjectsRequest
+                    .builder()
+                    .bucket(bucketName)
+                    .delimiter(delimiter)
+                    .prefix(prefix)
+                    .build();
+            ListObjectsResponse objectList = s3Client.listObjects(listObjectsRequest);
 
             Message message = getMessageForResponse(exchange);
             message.setBody(objectList.contents());
@@ -650,6 +663,21 @@ public class AWS2S3Producer extends DefaultProducer {
         }
 
         return objectMetadata;
+    }
+
+    private static void populateMetadata(ResponseInputStream<GetObjectResponse> res, Message message) {
+        message.setHeader(AWS2S3Constants.E_TAG, res.response().eTag());
+        message.setHeader(AWS2S3Constants.VERSION_ID, res.response().versionId());
+        message.setHeader(AWS2S3Constants.CONTENT_TYPE, res.response().contentType());
+        message.setHeader(AWS2S3Constants.CONTENT_LENGTH, res.response().contentLength());
+        message.setHeader(AWS2S3Constants.CONTENT_ENCODING, res.response().contentEncoding());
+        message.setHeader(AWS2S3Constants.CONTENT_DISPOSITION, res.response().contentDisposition());
+        message.setHeader(AWS2S3Constants.CACHE_CONTROL, res.response().cacheControl());
+        message.setHeader(AWS2S3Constants.SERVER_SIDE_ENCRYPTION, res.response().serverSideEncryption());
+        message.setHeader(AWS2S3Constants.EXPIRATION_TIME, res.response().expiration());
+        message.setHeader(AWS2S3Constants.REPLICATION_STATUS, res.response().replicationStatus());
+        message.setHeader(AWS2S3Constants.STORAGE_CLASS, res.response().storageClass());
+        message.setHeader(AWS2S3Constants.METADATA, res.response().metadata());
     }
 
     protected AWS2S3Configuration getConfiguration() {

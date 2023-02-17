@@ -141,7 +141,7 @@ public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
 
     /**
      * Sheets scopes
-     * 
+     *
      * @see com.google.api.services.sheets.v4.SheetsScopes
      */
     public void setScopes(Collection<String> scopes) {
@@ -154,7 +154,7 @@ public class GoogleSheetsConfiguration extends AbstractApiConfiguration {
 
     /**
      * Sets "*.json" file with credentials for Service account
-     * 
+     *
      * @param serviceAccountKey String file, classpath, or http url
      */
     public void setServiceAccountKey(String serviceAccountKey) {

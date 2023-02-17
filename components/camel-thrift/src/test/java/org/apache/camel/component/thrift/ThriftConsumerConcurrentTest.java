@@ -164,11 +164,11 @@ public class ThriftConsumerConcurrentTest extends CamelTestSupport {
 
                 from("thrift://localhost:" + THRIFT_SYNC_REQUEST_TEST_PORT
                      + "/org.apache.camel.component.thrift.generated.Calculator?synchronous=true")
-                             .setBody(simple("${body[1]}")).bean(new CalculatorMessageBuilder(), "multiply");
+                        .setBody(simple("${body[1]}")).bean(new CalculatorMessageBuilder(), "multiply");
 
                 from("thrift://localhost:" + THRIFT_ASYNC_REQUEST_TEST_PORT
                      + "/org.apache.camel.component.thrift.generated.Calculator")
-                             .setBody(simple("${body[1]}")).bean(new CalculatorMessageBuilder(), "multiply");
+                        .setBody(simple("${body[1]}")).bean(new CalculatorMessageBuilder(), "multiply");
             }
         };
     }

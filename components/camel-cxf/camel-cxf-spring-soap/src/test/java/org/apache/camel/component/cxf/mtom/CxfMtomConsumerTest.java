@@ -78,7 +78,7 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
                         photo.value = "ResponseFromCamel".getBytes("UTF-8");
                         Holder<Image> image = (Holder<Image>) parameter.get(1);
                         assertNotNull(image.value, "We should get the image here");
-                        // set the holder message back    
+                        // set the holder message back
                         exchange.getMessage().setBody(new Object[] { null, photo, image });
 
                     }

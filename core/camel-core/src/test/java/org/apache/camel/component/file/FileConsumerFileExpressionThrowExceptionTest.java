@@ -60,7 +60,7 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
             public void configure() throws Exception {
                 from(fileUri("bean"
                              + "?pollStrategy=#myPoll&initialDelay=0&delay=10&fileName=${bean:counter?method=next}.txt&delete=true"))
-                                     .to("mock:result");
+                        .to("mock:result");
                 // specify a method name that does not exists
             }
         });
@@ -77,7 +77,7 @@ public class FileConsumerFileExpressionThrowExceptionTest extends ContextTestSup
         assertEquals("Forced", e.getMessage());
     }
 
-    public class MyGuidGenerator {
+    public static class MyGuidGenerator {
         public String next() {
             throw new IllegalArgumentException("Forced");
         }

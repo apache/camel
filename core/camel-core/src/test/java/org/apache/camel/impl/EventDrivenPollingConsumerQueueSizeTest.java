@@ -105,7 +105,7 @@ public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport 
         return false;
     }
 
-    private final class MyQueueComponent extends DefaultComponent {
+    private static final class MyQueueComponent extends DefaultComponent {
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -113,7 +113,7 @@ public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport 
         }
     }
 
-    private final class MyQueueEndpoint extends DefaultEndpoint {
+    private static final class MyQueueEndpoint extends DefaultEndpoint {
 
         private EventDrivenPollingConsumer consumer;
 

@@ -62,7 +62,7 @@ public class CamelFilterWrapper implements Filter {
         Object o = config.getServletContext().getAttribute("jakarta.servlet.context.tempdir");
         if (o == null) {
             //when run in embedded mode, Jetty 8 will forget to set this property,
-            //but the MultiPartFilter requires it (will NPE if not set) so we'll 
+            //but the MultiPartFilter requires it (will NPE if not set) so we'll
             //go ahead and set it to the default tmp dir on the system.
             try {
                 File file = Files.createTempFile("camel", "").toFile();

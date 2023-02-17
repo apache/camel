@@ -23,15 +23,15 @@ public enum CallFeedbackSummaryApiMethod implements ApiMethod {
     CREATOR(
         com.twilio.rest.api.v2010.account.call.FeedbackSummaryCreator.class,
         "creator",
-        arg("startDate", org.joda.time.LocalDate.class),
-        arg("endDate", org.joda.time.LocalDate.class)),
+        arg("startDate", java.time.LocalDate.class),
+        arg("endDate", java.time.LocalDate.class)),
 
     CREATOR_1(
         com.twilio.rest.api.v2010.account.call.FeedbackSummaryCreator.class,
         "creator",
         arg("pathAccountSid", String.class),
-        arg("startDate", org.joda.time.LocalDate.class),
-        arg("endDate", org.joda.time.LocalDate.class)),
+        arg("startDate", java.time.LocalDate.class),
+        arg("endDate", java.time.LocalDate.class)),
 
     DELETER(
         com.twilio.rest.api.v2010.account.call.FeedbackSummaryDeleter.class,

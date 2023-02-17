@@ -78,6 +78,8 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
 
     protected abstract void initTracer();
 
+    protected abstract void initContextPropagators();
+
     protected abstract SpanAdapter startSendingEventSpan(String operationName, SpanKind kind, SpanAdapter parent);
 
     protected abstract SpanAdapter startExchangeBeginSpan(
@@ -179,6 +181,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
             camelContext.adapt(ExtendedCamelContext.class).addInterceptStrategy(tracingStrategy);
         }
         initTracer();
+        initContextPropagators();
         ServiceHelper.startService(eventNotifier);
     }
 

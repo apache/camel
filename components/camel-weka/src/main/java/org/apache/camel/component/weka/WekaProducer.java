@@ -98,7 +98,7 @@ public class WekaProducer extends DefaultProducer {
 
         } else {
 
-            // Not really needed here, because all commands are supported 
+            // Not really needed here, because all commands are supported
             throw new UnsupportedOperationException("Unsupported on Producer: " + cmd);
         }
     }
@@ -156,7 +156,7 @@ public class WekaProducer extends DefaultProducer {
 
         } else {
 
-            // The internal implementation of DataSink does this.. 
+            // The internal implementation of DataSink does this..
             // Instances.toString().getBytes()
             //
             // Therefore, we avoid creating yet another copy of the

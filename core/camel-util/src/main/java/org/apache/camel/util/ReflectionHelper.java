@@ -95,7 +95,7 @@ public final class ReflectionHelper {
     /**
      * Invoke the given callback on all fields in the target class, going up the class hierarchy to get all declared
      * fields.
-     * 
+     *
      * @param clazz the target class to analyze
      * @param fc    the callback to invoke for each field
      */
@@ -154,7 +154,7 @@ public final class ReflectionHelper {
      * superclasses up to {@code Object}.
      * <p>
      * Returns {@code null} if no {@link Method} can be found.
-     * 
+     *
      * @param  clazz      the class to introspect
      * @param  name       the name of the method
      * @param  paramTypes the parameter types of the method (may be {@code null} to indicate any signature)

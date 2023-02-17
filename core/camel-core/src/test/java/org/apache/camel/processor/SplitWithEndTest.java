@@ -82,7 +82,7 @@ public class SplitWithEndTest extends ContextTestSupport {
         };
     }
 
-    public class MySplitBean {
+    public static class MySplitBean {
 
         public String hi(String s) {
             return "hi " + s;

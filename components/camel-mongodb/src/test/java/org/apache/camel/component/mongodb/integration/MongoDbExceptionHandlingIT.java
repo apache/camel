@@ -17,45 +17,48 @@
 package org.apache.camel.component.mongodb.integration;
 
 import com.mongodb.DBObject;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mongodb.MongoDbConstants;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.bson.Document;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MongoDbExceptionHandlingIT extends AbstractMongoDbITSupport {
+public class MongoDbExceptionHandlingIT extends AbstractMongoDbITSupport implements ConfigurableRoute {
+
+    @BeforeEach
+    void checkDocuments() {
+        Assumptions.assumeTrue(0 == testCollection.countDocuments(), "The collection should have no documents");
+    }
 
     @Test
     public void testInduceParseException() {
-        // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
 
         // notice missing quote at the end of Einstein
-        try {
-            template.requestBody("direct:findOneByQuery", "{\"scientist\": \"Einstein}");
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            extractAndAssertCamelMongoDbException(e, null);
-        }
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:findOneByQuery", "{\"scientist\": \"Einstein}"),
+                "Should have thrown an exception");
+        extractAndAssertCamelMongoDbException(ex, null);
     }
 
     @Test
     public void testInduceParseAndThenOkException() {
-        // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
 
         // notice missing quote at the end of Einstein
-        try {
-            template.requestBody("direct:findOneByQuery", "{\"scientist\": \"Einstein}");
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            extractAndAssertCamelMongoDbException(e, null);
-        }
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.requestBody("direct:findOneByQuery", "{\"scientist\": \"Einstein}"),
+                "Should have thrown an exception");
+        extractAndAssertCamelMongoDbException(ex, null);
 
         // this one is okay
         DBObject out = template.requestBody("direct:findOneByQuery", "{\"scientist\": \"Einstein\"}", DBObject.class);
@@ -65,21 +68,16 @@ public class MongoDbExceptionHandlingIT extends AbstractMongoDbITSupport {
 
     @Test
     public void testErroneousDynamicOperation() {
-        // Test that the collection has 0 documents in it
-        assertEquals(0, testCollection.countDocuments());
         pumpDataIntoTestCollection();
 
-        try {
-            template.requestBodyAndHeader("direct:findOneByQuery", new Document("scientist", "Einstein").toJson(),
-                    MongoDbConstants.OPERATION_HEADER, "dummyOp");
-            fail("Should have thrown an exception");
-        } catch (Exception e) {
-            extractAndAssertCamelMongoDbException(e, "Operation specified on header is not supported. Value: dummyOp");
-        }
+        Exception ex = assertThrows(CamelExecutionException.class,
+                () -> template.requestBodyAndHeader("direct:findOneByQuery", new Document("scientist", "Einstein").toJson(),
+                        MongoDbConstants.OPERATION_HEADER, "dummyOp"),
+                "Should have thrown an exception");
 
+        extractAndAssertCamelMongoDbException(ex, "Operation specified on header is not supported. Value: dummyOp");
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -98,5 +96,11 @@ public class MongoDbExceptionHandlingIT extends AbstractMongoDbITSupport {
 
             }
         };
+    }
+
+    @RouteFixture
+    @Override
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        context.addRoutes(createRouteBuilder());
     }
 }

@@ -35,13 +35,8 @@ public class MongoDbVerifierExtensionIT extends AbstractMongoDbITSupport {
         super.createAuthorizationUser();
     }
 
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
-
     protected ComponentVerifierExtension getExtension() {
-        Component component = context().getComponent(SCHEME);
+        Component component = context.getComponent(SCHEME);
         ComponentVerifierExtension verifier
                 = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
@@ -136,5 +131,4 @@ public class MongoDbVerifierExtensionIT extends AbstractMongoDbITSupport {
         assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
         assertTrue(result.getErrors().get(0).getDescription().startsWith("Unable to connect"));
     }
-
 }

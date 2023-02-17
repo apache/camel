@@ -61,7 +61,7 @@ public class JmsToJmsTransactedSecurityTest extends CamelSpringTestSupport {
 
     /**
      * Used by spring xml configurations
-     * 
+     *
      * @return
      */
     public static String getServiceAddress() {

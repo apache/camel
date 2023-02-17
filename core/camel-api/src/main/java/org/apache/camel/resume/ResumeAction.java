@@ -24,7 +24,7 @@ public interface ResumeAction {
 
     /**
      * Runs an action on an resumable (entry)
-     * 
+     *
      * @param  key   the resumable key
      * @param  value the resumable value
      *

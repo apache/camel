@@ -29,7 +29,7 @@ public class XAdESEncapsulatedPKIData {
 
     /**
      * Constructor
-     * 
+     *
      * @param  base64Conent             base64 encoded content
      * @param  encoding                 , can be <code>null</code> or empty; encoding
      *                                  http://uri.etsi.org/01903/v1.2.2#DER for denoting that the original PKI data
@@ -40,7 +40,7 @@ public class XAdESEncapsulatedPKIData {
      *                                  denoting that the original PKI data were ASN.1 data encoded in PER.
      *                                  http://uri.etsi.org/01903/v1.2.2#XER for denoting that the original PKI data
      *                                  were ASN.1 data encoded in XER.
-     * 
+     *
      * @param  id                       ID for the Id attribute, can be <code>null</code>
      * @throws IllegalArgumentException if <tt>base64Conent</tt> is <code>null</code> or empty
      */

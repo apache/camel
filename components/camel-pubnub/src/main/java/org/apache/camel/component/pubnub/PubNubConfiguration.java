@@ -41,6 +41,7 @@ public class PubNubConfiguration implements Cloneable {
     @UriParam(label = "security", defaultValue = "true")
     private boolean secure = true;
     @UriParam
+    @Metadata(required = true)
     private String uuid;
     @UriParam(label = "producer", enums = "HERENOW,WHERENOW,GETSTATE,SETSTATE,GETHISTORY,PUBLISH,FIRE")
     private String operation;

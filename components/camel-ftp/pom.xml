@@ -171,7 +171,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
-                    <argLine>-XX:+ExitOnOutOfMemoryError -Xmx2G</argLine>
+                    <argLine>-XX:+ExitOnOutOfMemoryError -Xmx3G</argLine>
                 </configuration>
                 <executions>
                     <execution>

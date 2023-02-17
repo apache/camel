@@ -44,7 +44,7 @@ public class CordaConsumerVaultTrackByWithPagingSpecManualIT extends CordaConsum
                      + "&contractStateClass=#contractStateClass"
                      + "&queryCriteria=#queryCriteria"
                      + "&pageSpecification=#pageSpecification")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

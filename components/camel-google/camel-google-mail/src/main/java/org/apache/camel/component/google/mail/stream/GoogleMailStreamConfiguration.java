@@ -175,7 +175,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
 
     /**
      * Sets "*.json" file with credentials for Service account
-     * 
+     *
      * @param serviceAccountKey String file, classpath, or http url
      */
     public void setServiceAccountKey(String serviceAccountKey) {
@@ -199,7 +199,7 @@ public class GoogleMailStreamConfiguration implements Cloneable {
 
     /**
      * GMail scopes
-     * 
+     *
      * @see com.google.api.services.gmail.GmailScopes
      */
     public void setScopes(List<String> scopes) {

@@ -62,6 +62,8 @@ public class VertxWebsocketConfiguration {
     private String clientSubProtocols;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam(label = "consumer")
+    private boolean fireWebSocketConnectionEvents;
 
     /**
      * The WebSocket URI address to use.
@@ -233,5 +235,16 @@ public class VertxWebsocketConfiguration {
 
     public String getClientSubProtocols() {
         return clientSubProtocols;
+    }
+
+    /**
+     * Whether the server consumer will create a message exchange when a new WebSocket peer connects or disconnects
+     */
+    public void setFireWebSocketConnectionEvents(boolean fireWebSocketConnectionEvents) {
+        this.fireWebSocketConnectionEvents = fireWebSocketConnectionEvents;
+    }
+
+    public boolean isFireWebSocketConnectionEvents() {
+        return fireWebSocketConnectionEvents;
     }
 }

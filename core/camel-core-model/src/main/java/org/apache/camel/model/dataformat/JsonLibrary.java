@@ -30,8 +30,7 @@ public enum JsonLibrary {
     Gson("gson"),
     Jackson("jackson"),
     Johnzon("johnzon"),
-    Jsonb("jsonb"),
-    XStream("xstreamJson");
+    Jsonb("jsonb");
 
     private final String dataFormatName;
 

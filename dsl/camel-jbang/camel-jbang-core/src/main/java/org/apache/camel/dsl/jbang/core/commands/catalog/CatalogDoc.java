@@ -32,6 +32,8 @@ import org.apache.camel.catalog.CamelCatalog;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
+import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.download.MavenGav;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.model.BaseOptionModel;
@@ -43,6 +45,8 @@ import org.apache.camel.tooling.model.OtherModel;
 import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
+import static org.apache.camel.dsl.jbang.core.commands.catalog.CatalogBaseCommand.findComponentNames;
+
 @CommandLine.Command(name = "doc",
                      description = "Shows documentation for kamelet, component, and other Camel resources")
 public class CatalogDoc extends CamelCommand {
@@ -50,6 +54,17 @@ public class CatalogDoc extends CamelCommand {
     @CommandLine.Parameters(description = "Name of kamelet, component, dataformat, or other Camel resource",
                             arity = "1")
     String name;
+
+    @CommandLine.Option(names = { "--camel-version" },
+                        description = "To run using a different Camel version than the default version.")
+    String camelVersion;
+
+    @CommandLine.Option(names = { "--runtime" }, description = "Runtime (spring-boot, quarkus, or camel-main)")
+    String runtime;
+
+    @CommandLine.Option(names = { "--repos" },
+                        description = "Additional maven repositories for download on-demand (Use commas to separate multiple repositories)")
+    String repos;
 
     @CommandLine.Option(names = { "--url" },
                         description = "Prints the link to the online documentation on the Camel website",
@@ -70,17 +85,35 @@ public class CatalogDoc extends CamelCommand {
     boolean headers;
 
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.0")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.1.1")
     String kameletsVersion;
 
-    final CamelCatalog catalog = new DefaultCamelCatalog(true);
+    CamelCatalog catalog;
 
     public CatalogDoc(CamelJBangMain main) {
         super(main);
     }
 
+    CamelCatalog loadCatalog() throws Exception {
+        // silent logging when download catalogs
+        RuntimeUtil.configureLog("off", false, false, false, false);
+
+        if ("spring-boot".equals(runtime)) {
+            return CatalogLoader.loadSpringBootCatalog(repos, camelVersion);
+        } else if ("quarkus".equals(runtime)) {
+            return CatalogLoader.loadQuarkusCatalog(repos, camelVersion);
+        }
+        if (camelVersion == null) {
+            return new DefaultCamelCatalog(true);
+        } else {
+            return CatalogLoader.loadCatalog(repos, camelVersion);
+        }
+    }
+
     @Override
     public Integer call() throws Exception {
+        this.catalog = loadCatalog();
+
         String prefix = StringHelper.before(name, ":");
         if (prefix != null) {
             name = StringHelper.after(name, ":");
@@ -140,7 +173,7 @@ public class CatalogDoc extends CamelCommand {
                 suggestions = SuggestSimilarHelper.didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion), name);
             } else {
                 // assume its a component
-                suggestions = SuggestSimilarHelper.didYouMean(catalog.findComponentNames(), name);
+                suggestions = SuggestSimilarHelper.didYouMean(findComponentNames(catalog), name);
             }
             if (suggestions != null) {
                 String type = kamelet ? "kamelet" : "component";
@@ -153,7 +186,7 @@ public class CatalogDoc extends CamelCommand {
             if ("kamelet".equals(prefix)) {
                 suggestions = SuggestSimilarHelper.didYouMean(KameletCatalogHelper.findKameletNames(kameletsVersion), name);
             } else if ("component".equals(prefix)) {
-                suggestions = SuggestSimilarHelper.didYouMean(catalog.findComponentNames(), name);
+                suggestions = SuggestSimilarHelper.didYouMean(findComponentNames(catalog), name);
             } else if ("dataformat".equals(prefix)) {
                 suggestions = SuggestSimilarHelper.didYouMean(catalog.findDataFormatNames(), name);
             } else if ("language".equals(prefix)) {
@@ -328,7 +361,7 @@ public class CatalogDoc extends CamelCommand {
         } else {
             System.out.printf("Component Name: %s%n", cm.getName());
         }
-        System.out.printf("Since: %s%n", cm.getFirstVersionShort());
+        System.out.printf("Since: %s%n", fixQuarkusSince(cm.getFirstVersionShort()));
         System.out.println("");
         if (cm.isProducerOnly()) {
             System.out.println("Only producer is supported");
@@ -425,7 +458,7 @@ public class CatalogDoc extends CamelCommand {
         } else {
             System.out.printf("Dataformat Name: %s%n", dm.getName());
         }
-        System.out.printf("Since: %s%n", dm.getFirstVersionShort());
+        System.out.printf("Since: %s%n", fixQuarkusSince(dm.getFirstVersionShort()));
         System.out.println("");
         System.out.printf("%s%n", dm.getDescription());
         System.out.println("");
@@ -482,7 +515,7 @@ public class CatalogDoc extends CamelCommand {
         } else {
             System.out.printf("Language Name: %s%n", lm.getName());
         }
-        System.out.printf("Since: %s%n", lm.getFirstVersionShort());
+        System.out.printf("Since: %s%n", fixQuarkusSince(lm.getFirstVersionShort()));
         System.out.println("");
         System.out.printf("%s%n", lm.getDescription());
         System.out.println("");
@@ -539,7 +572,7 @@ public class CatalogDoc extends CamelCommand {
         } else {
             System.out.printf("Miscellaneous Name: %s%n", om.getName());
         }
-        System.out.printf("Since: %s%n", om.getFirstVersionShort());
+        System.out.printf("Since: %s%n", fixQuarkusSince(om.getFirstVersionShort()));
         System.out.println("");
         System.out.printf("%s%n", om.getDescription());
         System.out.println("");
@@ -647,6 +680,14 @@ public class CatalogDoc extends CamelCommand {
                         || r.getDescription().toLowerCase(Locale.ROOT).contains(target)
                         || r.getShortGroup() != null && r.getShortGroup().toLowerCase(Locale.ROOT).contains(target))
                 .collect(Collectors.toList());
+    }
+
+    static String fixQuarkusSince(String since) {
+        // quarkus-catalog may have 0.1 and 0.0.1 versions that are really 1.0
+        if (since != null && since.startsWith("0")) {
+            return "1.0";
+        }
+        return since;
     }
 
 }

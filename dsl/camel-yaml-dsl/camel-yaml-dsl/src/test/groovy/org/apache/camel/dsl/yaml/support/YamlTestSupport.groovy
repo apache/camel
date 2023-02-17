@@ -26,8 +26,6 @@ import org.apache.camel.FluentProducerTemplate
 import org.apache.camel.builder.RouteBuilder
 import org.apache.camel.component.mock.MockEndpoint
 import org.apache.camel.dsl.yaml.KameletRoutesBuilderLoader
-import org.apache.camel.dsl.yaml.YamlRoutesBuilderLoader
-import org.apache.camel.dsl.yaml.common.YamlDeserializationMode
 import org.apache.camel.impl.DefaultCamelContext
 import org.apache.camel.model.RouteTemplateDefinition
 import org.apache.camel.spi.HasCamelContext
@@ -191,10 +189,6 @@ class YamlTestSupport extends Specification implements HasCamelContext {
                 return location
             }
         }
-    }
-
-    def setFlowMode(YamlDeserializationMode mode) {
-        context.globalOptions[YamlRoutesBuilderLoader.DESERIALIZATION_MODE] = mode.name()
     }
 
     // ***********************************

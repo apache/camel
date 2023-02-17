@@ -31,7 +31,7 @@ public class WriteAheadResumeStrategyConfigurationBuilder
 
     /**
      * The transaction log file to use
-     * 
+     *
      * @param  logFile the file
      * @return         this instance
      */

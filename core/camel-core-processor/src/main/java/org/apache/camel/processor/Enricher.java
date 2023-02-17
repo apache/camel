@@ -26,7 +26,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProcessorExchangeFactory;
@@ -176,7 +175,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
                             copyResultsPreservePattern(exchange, aggregatedExchange);
                             // handover any synchronization (if unit of work is not shared)
                             if (resourceExchange != null && !isShareUnitOfWork()) {
-                                resourceExchange.adapt(ExtendedExchange.class).handoverCompletions(exchange);
+                                resourceExchange.getExchangeExtension().handoverCompletions(exchange);
                             }
                         }
                     } catch (Throwable e) {
@@ -210,7 +209,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         if (isShareUnitOfWork()) {
             target.setProperty(ExchangePropertyKey.PARENT_UNIT_OF_WORK, source.getUnitOfWork());
             // and then share the unit of work
-            target.adapt(ExtendedExchange.class).setUnitOfWork(source.getUnitOfWork());
+            target.getExchangeExtension().setUnitOfWork(source.getUnitOfWork());
         }
         return target;
     }

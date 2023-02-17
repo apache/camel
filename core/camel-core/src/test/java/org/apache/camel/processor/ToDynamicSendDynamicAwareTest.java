@@ -68,7 +68,7 @@ public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
         };
     }
 
-    private class BarEndpointUriFactory extends EndpointUriFactorySupport {
+    private static class BarEndpointUriFactory extends EndpointUriFactorySupport {
 
         @Override
         public boolean isEnabled(String scheme) {

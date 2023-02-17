@@ -109,7 +109,7 @@ public class TimerListenerManager extends ServiceSupport implements Runnable, Ca
      * <p/>
      * It may be important to implement {@link #equals(Object)} and {@link #hashCode()} for the listener to ensure that
      * we can remove the same listener again, when invoking remove.
-     * 
+     *
      * @param listener listener
      */
     public void addTimerListener(TimerListener listener) {

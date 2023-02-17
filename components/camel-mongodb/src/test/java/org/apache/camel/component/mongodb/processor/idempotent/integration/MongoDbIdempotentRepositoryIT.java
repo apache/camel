@@ -38,9 +38,8 @@ public class MongoDbIdempotentRepositoryIT extends AbstractMongoDbITSupport {
         testCollection.deleteMany(new Document());
     }
 
-    @Override
-    public void doPostSetup() {
-        super.doPostSetup();
+    @BeforeEach
+    public void setupIdempotentRepository() {
         repo = new MongoDbIdempotentRepository(mongo, testCollectionName, dbName);
     }
 
@@ -112,5 +111,4 @@ public class MongoDbIdempotentRepositoryIT extends AbstractMongoDbITSupport {
         found = repo.confirm(null);
         assertTrue(found, "Confirm always returns true, even with null");
     }
-
 }

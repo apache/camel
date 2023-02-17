@@ -186,9 +186,7 @@ public class MinaConsumer extends DefaultConsumer {
         setupNioSocketAcceptor(configuration, minaLogger, filters);
         if (configuration.getSslContextParameters() != null) {
             SslFilter filter = new SslFilter(
-                    configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()),
-                    configuration.isAutoStartTls());
-            filter.setUseClientMode(false);
+                    configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()));
             acceptor.getFilterChain().addFirst("sslFilter", filter);
         }
     }
@@ -230,9 +228,7 @@ public class MinaConsumer extends DefaultConsumer {
         appendIoFiltersToChain(filters, connector.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
             SslFilter filter = new SslFilter(
-                    configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()),
-                    configuration.isAutoStartTls());
-            filter.setUseClientMode(true);
+                    configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()));
             connector.getFilterChain().addFirst("sslFilter", filter);
         }
         configureCodecFactory("MinaConsumer", connector, configuration);

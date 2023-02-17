@@ -37,6 +37,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.http.base.HttpHelper;
 import org.apache.camel.http.base.HttpOperationFailedException;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -126,7 +127,7 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
         // Ensure the Content-Type header is always added if the corresponding exchange header is present
         String contentType = ExchangeHelper.getContentType(exchange);
         if (ObjectHelper.isNotEmpty(contentType)) {
-            headers.add(VertxHttpConstants.CONTENT_TYPE, contentType);
+            headers.set(VertxHttpConstants.CONTENT_TYPE, contentType);
         }
 
         // Transfer exchange headers to the HTTP request while applying the filter strategy
@@ -137,7 +138,7 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
                 Object headerValue = entry.getValue();
                 if (!strategy.applyFilterToCamelHeaders(key, headerValue, exchange)) {
                     String str = tc.convertTo(String.class, headerValue);
-                    headers.add(key, str);
+                    headers.set(key, str);
                 }
             }
         }
@@ -146,9 +147,11 @@ public class DefaultVertxHttpBinding implements VertxHttpBinding {
     @Override
     public void handleResponse(VertxHttpEndpoint endpoint, Exchange exchange, AsyncResult<HttpResponse<Buffer>> response)
             throws Exception {
+        Message message = new DefaultMessage(exchange);
+        exchange.setMessage(message);
+
         HttpResponse<Buffer> result = response.result();
         if (response.succeeded()) {
-            Message message = exchange.getMessage();
             VertxHttpConfiguration configuration = endpoint.getConfiguration();
             boolean ok = endpoint.isStatusCodeOk(result.statusCode());
             if (!configuration.isThrowExceptionOnFailure() || configuration.isThrowExceptionOnFailure() && ok) {

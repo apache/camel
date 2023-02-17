@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.spi.BacklogTracerEventMessage;
 
 public interface ManagedBacklogTracerMBean {
 
@@ -28,6 +29,9 @@ public interface ManagedBacklogTracerMBean {
 
     @ManagedAttribute(description = "Camel ManagementName")
     String getCamelManagementName();
+
+    @ManagedAttribute(description = "Is tracing standby")
+    boolean isStandby();
 
     @ManagedAttribute(description = "Is tracing enabled")
     boolean isEnabled();
@@ -65,6 +69,9 @@ public interface ManagedBacklogTracerMBean {
     @ManagedOperation(description = "Resets the trace counter")
     void resetTraceCounter();
 
+    @ManagedAttribute(description = "Number of traced messages in the backlog")
+    long getQueueSize();
+
     @ManagedAttribute(description = "Number of maximum chars in the message body in the trace message. Use zero or negative value to have unlimited size.")
     int getBodyMaxChars();
 
@@ -82,6 +89,12 @@ public interface ManagedBacklogTracerMBean {
 
     @ManagedAttribute(description = "Whether to include file based message body in the trace message.")
     void setBodyIncludeFiles(boolean bodyIncludeFiles);
+
+    @ManagedAttribute(description = "Whether to include exchange properties in the trace message.")
+    boolean isIncludeExchangeProperties();
+
+    @ManagedAttribute(description = "Whether to include exchange properties in the trace message.")
+    void setIncludeExchangeProperties(boolean includeExchangeProperties);
 
     @ManagedOperation(description = "Dumps the traced messages for the given node or route")
     List<BacklogTracerEventMessage> dumpTracedMessages(String nodeOrRouteId);

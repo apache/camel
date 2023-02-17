@@ -23,6 +23,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpHeaders;
@@ -46,6 +47,7 @@ import org.slf4j.LoggerFactory;
  */
 public class VertxWebsocketHost {
     private static final Logger LOG = LoggerFactory.getLogger(VertxWebsocketHost.class);
+    private static final Pattern PATH_PARAMETER_PATTERN = Pattern.compile("\\{([^/}]+)\\}");
 
     private final VertxWebsocketHostConfiguration hostConfiguration;
     private final VertxWebsocketHostKey hostKey;
@@ -70,9 +72,12 @@ public class VertxWebsocketHost {
         VertxWebsocketConfiguration configuration = endpoint.getConfiguration();
 
         URI websocketURI = configuration.getWebsocketURI();
-        LOG.info("Connected consumer for path {}", websocketURI.getPath());
+
+        // Transform from the Camel path param syntax /path/{key} to Vert.x web /path/:key
+        String path = PATH_PARAMETER_PATTERN.matcher(websocketURI.getPath()).replaceAll(":$1");
         Router router = hostConfiguration.getRouter();
-        Route route = router.route(websocketURI.getPath());
+        Route route = router.route(path);
+        LOG.info("Connected consumer for path {}", path);
 
         if (!ObjectHelper.isEmpty(configuration.getAllowedOriginPattern())) {
             CorsHandler corsHandler = CorsHandler.create().addRelativeOrigin(configuration.getAllowedOriginPattern());
@@ -114,18 +119,31 @@ public class VertxWebsocketHost {
                             }
                         }
 
-                        webSocket.textMessageHandler(message -> consumer.onMessage(connectionKey, message, remote));
+                        webSocket.textMessageHandler(
+                                message -> consumer.onMessage(connectionKey, message, remote, routingContext));
                         webSocket
-                                .binaryMessageHandler(message -> consumer.onMessage(connectionKey, message.getBytes(), remote));
-                        webSocket.exceptionHandler(exception -> consumer.onException(connectionKey, exception, remote));
+                                .binaryMessageHandler(
+                                        message -> consumer.onMessage(connectionKey, message.getBytes(), remote,
+                                                routingContext));
+                        webSocket.exceptionHandler(
+                                exception -> consumer.onException(connectionKey, exception, remote, routingContext));
                         webSocket.closeHandler(closeEvent -> {
                             if (LOG.isDebugEnabled()) {
                                 if (socketAddress != null) {
                                     LOG.debug("WebSocket peer {} disconnected from {}", connectionKey, socketAddress.host());
                                 }
                             }
+
+                            if (configuration.isFireWebSocketConnectionEvents()) {
+                                consumer.onClose(connectionKey, remote, routingContext);
+                            }
+
                             connectedPeers.remove(connectionKey);
                         });
+
+                        if (configuration.isFireWebSocketConnectionEvents()) {
+                            consumer.onOpen(connectionKey, remote, routingContext, webSocket);
+                        }
                     } else {
                         // the upgrade failed
                         routingContext.fail(toWebSocket.cause());

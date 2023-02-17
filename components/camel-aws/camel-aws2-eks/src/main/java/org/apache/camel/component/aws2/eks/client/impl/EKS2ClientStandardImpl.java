@@ -52,7 +52,7 @@ public class EKS2ClientStandardImpl implements EKS2InternalClient {
 
     /**
      * Getting the EKS AWS client that is used.
-     * 
+     *
      * @return Amazon EKS Client.
      */
     @Override

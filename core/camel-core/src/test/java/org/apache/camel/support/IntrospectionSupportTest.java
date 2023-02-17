@@ -89,7 +89,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("Duck", passwordBean.getNewPassword());
     }
 
-    public class MyPasswordBean {
+    public static class MyPasswordBean {
         private String oldPassword;
         private String newPassword;
 
@@ -110,7 +110,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         }
     }
 
-    public class MyOverloadedBean {
+    public static class MyOverloadedBean {
         private ExampleBean bean;
 
         public void setBean(ExampleBean bean) {
@@ -127,7 +127,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         }
     }
 
-    public class MyBuilderBean {
+    public static class MyBuilderBean {
         private String name;
 
         public String getName() {
@@ -141,7 +141,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         }
     }
 
-    public class MyOtherBuilderBean extends MyBuilderBean {
+    public static class MyOtherBuilderBean extends MyBuilderBean {
     }
 
     public class MyOtherOtherBuilderBean extends MyOtherBuilderBean {
@@ -164,7 +164,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertTrue(builderBean.isGoldCustomer());
     }
 
-    public class MyBuilderPatternWithBean {
+    public static class MyBuilderPatternWithBean {
         private String name;
         private int age;
         private boolean goldCustomer;
@@ -208,7 +208,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertTrue(builderBean.isGoldCustomer());
     }
 
-    public class MyBuilderPatternBean {
+    public static class MyBuilderPatternBean {
         private String name;
         private int age;
         private boolean goldCustomer;
@@ -294,7 +294,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         String price = map.get("price").toString();
         assertTrue(price.startsWith("10"));
 
-        assertEquals(null, map.get("id"));
+        assertNull(map.get("id"));
     }
 
     @Test
@@ -478,12 +478,12 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         ExampleBean bean = new ExampleBean();
 
         Method name = bean.getClass().getMethod("getName", (Class<?>[]) null);
-        assertEquals(true, isGetter(name));
-        assertEquals(false, isSetter(name));
+        assertTrue(isGetter(name));
+        assertFalse(isSetter(name));
 
         Method price = bean.getClass().getMethod("getPrice", (Class<?>[]) null);
-        assertEquals(true, isGetter(price));
-        assertEquals(false, isSetter(price));
+        assertTrue(isGetter(price));
+        assertFalse(isSetter(price));
     }
 
     @Test
@@ -491,12 +491,12 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         ExampleBean bean = new ExampleBean();
 
         Method name = bean.getClass().getMethod("setName", String.class);
-        assertEquals(false, isGetter(name));
-        assertEquals(true, isSetter(name));
+        assertFalse(isGetter(name));
+        assertTrue(isSetter(name));
 
         Method price = bean.getClass().getMethod("setPrice", double.class);
-        assertEquals(false, isGetter(price));
-        assertEquals(true, isSetter(price));
+        assertFalse(isGetter(price));
+        assertTrue(isSetter(price));
     }
 
     @Test
@@ -504,24 +504,24 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         OtherExampleBean bean = new OtherExampleBean();
 
         Method customerId = bean.getClass().getMethod("getCustomerId", (Class<?>[]) null);
-        assertEquals(true, isGetter(customerId));
-        assertEquals(false, isSetter(customerId));
+        assertTrue(isGetter(customerId));
+        assertFalse(isSetter(customerId));
 
         Method goldCustomer = bean.getClass().getMethod("isGoldCustomer", (Class<?>[]) null);
-        assertEquals(true, isGetter(goldCustomer));
-        assertEquals(false, isSetter(goldCustomer));
+        assertTrue(isGetter(goldCustomer));
+        assertFalse(isSetter(goldCustomer));
 
         Method silverCustomer = bean.getClass().getMethod("isSilverCustomer", (Class<?>[]) null);
-        assertEquals(true, isGetter(silverCustomer));
-        assertEquals(false, isSetter(silverCustomer));
+        assertTrue(isGetter(silverCustomer));
+        assertFalse(isSetter(silverCustomer));
 
         Method company = bean.getClass().getMethod("getCompany", (Class<?>[]) null);
-        assertEquals(true, isGetter(company));
-        assertEquals(false, isSetter(company));
+        assertTrue(isGetter(company));
+        assertFalse(isSetter(company));
 
         Method setupSomething = bean.getClass().getMethod("setupSomething", Object.class);
-        assertEquals(false, isGetter(setupSomething));
-        assertEquals(false, isSetter(setupSomething));
+        assertFalse(isGetter(setupSomething));
+        assertFalse(isSetter(setupSomething));
     }
 
     @Test
@@ -529,24 +529,24 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         OtherExampleBean bean = new OtherExampleBean();
 
         Method customerId = bean.getClass().getMethod("setCustomerId", int.class);
-        assertEquals(false, isGetter(customerId));
-        assertEquals(true, isSetter(customerId));
+        assertFalse(isGetter(customerId));
+        assertTrue(isSetter(customerId));
 
         Method goldCustomer = bean.getClass().getMethod("setGoldCustomer", boolean.class);
-        assertEquals(false, isGetter(goldCustomer));
-        assertEquals(true, isSetter(goldCustomer));
+        assertFalse(isGetter(goldCustomer));
+        assertTrue(isSetter(goldCustomer));
 
         Method silverCustomer = bean.getClass().getMethod("setSilverCustomer", Boolean.class);
-        assertEquals(false, isGetter(silverCustomer));
-        assertEquals(true, isSetter(silverCustomer));
+        assertFalse(isGetter(silverCustomer));
+        assertTrue(isSetter(silverCustomer));
 
         Method company = bean.getClass().getMethod("setCompany", String.class);
-        assertEquals(false, isGetter(company));
-        assertEquals(true, isSetter(company));
+        assertFalse(isGetter(company));
+        assertTrue(isSetter(company));
 
         Method setupSomething = bean.getClass().getMethod("setupSomething", Object.class);
-        assertEquals(false, isGetter(setupSomething));
-        assertEquals(false, isSetter(setupSomething));
+        assertFalse(isGetter(setupSomething));
+        assertFalse(isSetter(setupSomething));
     }
 
     @Test
@@ -597,7 +597,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("Andrea", target.getNames()[2]);
     }
 
-    public class MyBeanWithArray {
+    public static class MyBeanWithArray {
         private String[] names = new String[10];
 
         public String[] getNames() {

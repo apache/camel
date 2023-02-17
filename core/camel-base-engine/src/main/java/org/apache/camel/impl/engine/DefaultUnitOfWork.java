@@ -28,7 +28,6 @@ import java.util.function.Predicate;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.PooledExchange;
 import org.apache.camel.Processor;
@@ -212,7 +211,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
             if (handover && (filter == null || filter.test(synchronization))) {
                 log.trace("Handover synchronization {} to: {}", synchronization, target);
-                target.adapt(ExtendedExchange.class).addOnCompletion(synchronization);
+                target.getExchangeExtension().addOnCompletion(synchronization);
                 // Allow the synchronization to do housekeeping before transfer
                 if (veto != null) {
                     veto.beforeHandover(target);
@@ -275,8 +274,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
     protected void onDone() {
         // MUST clear and set uow to null on exchange after done
         // in case the same exchange is manually reused by Camel end users (should happen seldom)
-        ExtendedExchange ee = (ExtendedExchange) exchange;
-        ee.setUnitOfWork(null);
+        exchange.getExchangeExtension().setUnitOfWork(null);
     }
 
     @Override
@@ -321,7 +319,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
     @Override
     public void beginTransactedBy(Object key) {
-        exchange.adapt(ExtendedExchange.class).setTransacted(true);
+        exchange.getExchangeExtension().setTransacted(true);
         getTransactedBy().add(key);
     }
 
@@ -330,7 +328,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
         getTransactedBy().remove(key);
         // we may still be transacted even if we end this section of transaction
         boolean transacted = isTransacted();
-        exchange.adapt(ExtendedExchange.class).setTransacted(transacted);
+        exchange.getExchangeExtension().setTransacted(transacted);
     }
 
     @Override

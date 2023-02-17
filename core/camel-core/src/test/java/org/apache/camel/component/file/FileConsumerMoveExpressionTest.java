@@ -159,7 +159,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public class MyGuidGenerator {
+    public static class MyGuidGenerator {
         public String guid() {
             return "123";
         }

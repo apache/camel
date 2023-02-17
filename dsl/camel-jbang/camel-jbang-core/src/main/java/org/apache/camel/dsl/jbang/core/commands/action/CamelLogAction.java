@@ -70,9 +70,9 @@ public class CamelLogAction extends ActionBaseCommand {
                         description = "Print prefix with running Camel integration name.")
     boolean prefix = true;
 
-    @CommandLine.Option(names = { "--tail" },
-                        description = "The number of lines from the end of the logs to show. Defaults to showing all logs.")
-    int tail;
+    @CommandLine.Option(names = { "--tail" }, defaultValue = "-1",
+                        description = "The number of lines from the end of the logs to show. Use -1 to read from the beginning. Use 0 to read only new lines. Defaults to showing all logs from beginning.")
+    int tail = -1;
 
     @CommandLine.Option(names = { "--since" },
                         description = "Return logs newer than a relative duration like 5s, 2m, or 1h. The value is in seconds if no unit specified.")
@@ -131,10 +131,11 @@ public class CamelLogAction extends ActionBaseCommand {
                 }
                 limit = new Date(System.currentTimeMillis() - millis);
             }
-
-            // dump existing log lines
-            tailLogFiles(rows, tail, limit);
-            dumpLogFiles(rows, tail);
+            if (tail != 0) {
+                // dump existing log lines
+                tailLogFiles(rows, tail, limit);
+                dumpLogFiles(rows, tail);
+            }
         }
 
         if (follow) {
@@ -218,9 +219,14 @@ public class CamelLogAction extends ActionBaseCommand {
 
         for (Row row : rows.values()) {
             if (row.reader == null) {
-                File log = logFile(row.pid);
-                if (log.exists()) {
-                    row.reader = new LineNumberReader(new FileReader(log));
+                File file = logFile(row.pid);
+                if (file.exists()) {
+                    row.reader = new LineNumberReader(new FileReader(file));
+                    if (tail == 0) {
+                        // only read new lines so forward to end of reader
+                        long size = file.length();
+                        row.reader.skip(size);
+                    }
                 }
             }
             if (row.reader != null) {
@@ -254,18 +260,52 @@ public class CamelLogAction extends ActionBaseCommand {
     }
 
     private void dumpLogFiles(Map<Long, Row> rows, int tail) {
+        Set<String> names = new HashSet<>();
         List<String> lines = new ArrayList<>();
         for (Row row : rows.values()) {
             Queue<String> queue = row.fifo;
             if (queue != null) {
                 for (String l : queue) {
+                    names.add(row.name);
                     lines.add(row.name + "| " + l);
                 }
                 row.fifo.clear();
             }
         }
-        // sort lines
-        lines.sort(this::compareLogLine);
+
+        // only sort if there are multiple Camels running
+        if (names.size() > 1) {
+            // sort lines
+            final Map<String, String> lastTimestamp = new HashMap<>();
+            lines.sort((l1, l2) -> {
+                l1 = unescapeAnsi(l1);
+                l2 = unescapeAnsi(l2);
+
+                String n1 = StringHelper.before(l1, "| ");
+                String t1 = StringHelper.after(l1, "| ");
+                t1 = StringHelper.before(t1, "  ");
+                String n2 = StringHelper.before(l2, "| ");
+                String t2 = StringHelper.after(l2, "| ");
+                t2 = StringHelper.before(t2, "  ");
+
+                if (t1 == null) {
+                    t1 = lastTimestamp.get(n1);
+                }
+                if (t2 == null) {
+                    t2 = lastTimestamp.get(n2);
+                }
+                if (t1 == null && t2 == null) {
+                    return 0;
+                } else if (t1 == null) {
+                    return -1;
+                } else if (t2 == null) {
+                    return 1;
+                }
+                lastTimestamp.put(n1, t1);
+                lastTimestamp.put(n2, t2);
+                return t1.compareTo(t2);
+            });
+        }
         if (tail > 0) {
             // cut according to tail
             int pos = lines.size() - tail;
@@ -278,17 +318,6 @@ public class CamelLogAction extends ActionBaseCommand {
             String line = StringHelper.after(l, "| ");
             printLine(name, line);
         });
-    }
-
-    private int compareLogLine(String l1, String l2) {
-        l1 = unescapeAnsi(l1);
-        l2 = unescapeAnsi(l2);
-
-        String t1 = StringHelper.after(l1, "| ");
-        t1 = StringHelper.before(t1, "  ");
-        String t2 = StringHelper.after(l2, "| ");
-        t2 = StringHelper.before(t2, "  ");
-        return t1.compareTo(t2);
     }
 
     protected void printLine(String name, String line) {
@@ -357,7 +386,7 @@ public class CamelLogAction extends ActionBaseCommand {
             if (log.exists()) {
                 row.reader = new LineNumberReader(new FileReader(log));
                 String line;
-                if (tail == 0) {
+                if (tail <= 0) {
                     row.fifo = new ArrayDeque<>();
                 } else {
                     row.fifo = new ArrayBlockingQueue<>(tail);

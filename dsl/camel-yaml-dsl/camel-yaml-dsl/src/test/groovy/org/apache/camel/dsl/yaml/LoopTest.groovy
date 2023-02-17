@@ -85,23 +85,4 @@ class LoopTest extends YamlTestSupport {
             MockEndpoint.assertIsSatisfied(context)
     }
 
-    def "loop (flow disabled)"() {
-        setup:
-            setFlowMode(YamlDeserializationMode.CLASSIC)
-        when:
-            loadRoutes '''
-                - from:
-                    uri: "direct:route"
-                    steps:    
-                      - loop:
-                         copy: true 
-                         constant: "3"
-                      - to: "mock:result"
-            '''
-
-            context.start()
-        then:
-            def ex = thrown(FailedToCreateRouteException)
-            ex.message.contains('Failed to create route')
-    }
 }

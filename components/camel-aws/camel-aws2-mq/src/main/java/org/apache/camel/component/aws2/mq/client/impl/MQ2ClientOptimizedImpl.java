@@ -50,7 +50,7 @@ public class MQ2ClientOptimizedImpl implements MQ2InternalClient {
 
     /**
      * Getting the MQ aws client that is used.
-     * 
+     *
      * @return MQ Client.
      */
     @Override

@@ -31,6 +31,6 @@ public class PrimitiveTypeConverterIssueTest extends ContextTestSupport {
             int num = context.getTypeConverter().convertTo(int.class, "123");
             assertEquals(123, num);
         }
-        log.info("Time taken: " + watch.taken());
+        log.info("Time taken: {}", watch.taken());
     }
 }

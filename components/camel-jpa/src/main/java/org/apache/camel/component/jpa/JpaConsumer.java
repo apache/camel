@@ -343,7 +343,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     /**
      * A strategy method to lock an object with an exclusive lock so that it can be processed
-     * 
+     *
      * @param  entity        the entity to be locked
      * @param  entityManager entity manager
      * @return               true if the entity was locked

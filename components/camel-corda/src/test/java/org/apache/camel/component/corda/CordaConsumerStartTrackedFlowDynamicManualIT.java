@@ -46,7 +46,7 @@ public class CordaConsumerStartTrackedFlowDynamicManualIT extends CordaConsumerI
                 from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + START_TRACKED_FLOW_DYNAMIC
                      + "&flowLociClass=#flowLociClass"
                      + "&arguments=#arguments")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

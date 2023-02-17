@@ -57,7 +57,7 @@ public class FileMulticastDeleteTest extends ContextTestSupport {
         };
     }
 
-    public class MyFileAggregator implements AggregationStrategy {
+    public static class MyFileAggregator implements AggregationStrategy {
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {

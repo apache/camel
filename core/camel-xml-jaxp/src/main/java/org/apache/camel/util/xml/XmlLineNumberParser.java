@@ -43,7 +43,7 @@ import org.apache.camel.util.ObjectHelper;
  * An XML parser that uses SAX to include line and column number for each XML element in the parsed Document.
  * <p>
  * The line number and column number can be obtained from a Node/Element using
- * 
+ *
  * <pre>
  * String lineNumber = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER);
  * String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);

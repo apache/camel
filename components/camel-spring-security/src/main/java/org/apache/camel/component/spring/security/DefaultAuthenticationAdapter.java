@@ -31,7 +31,7 @@ public class DefaultAuthenticationAdapter implements AuthenticationAdapter {
         }
         Set<Authentication> authentications = subject.getPrincipals(Authentication.class);
         if (!authentications.isEmpty()) {
-            // just return the first one 
+            // just return the first one
             return authentications.iterator().next();
         } else {
             return convertToAuthentication(subject);

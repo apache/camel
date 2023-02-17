@@ -157,7 +157,7 @@ public final class SmppUtils {
 
     /**
      * Decides if the characters in the argument are GSM 3.38 encodeable.
-     * 
+     *
      * @param  aMessage must be a set of characters encoded in ISO-8859-1 or a compatible character set. In particular,
      *                  UTF-8 encoded text should not be passed to this method.
      * @return          true if the characters can be represented in GSM 3.38

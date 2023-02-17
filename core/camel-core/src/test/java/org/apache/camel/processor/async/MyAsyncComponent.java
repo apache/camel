@@ -36,11 +36,11 @@ public class MyAsyncComponent extends DefaultComponent {
         // to make URIs valid we make the conventions of using ':' for ' ' and
         // capitalize words
         String[] words = value.split(":");
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (String word : words) {
-            result += result.isEmpty() ? "" : " ";
-            result += word.substring(0, 1).toUpperCase(Locale.ENGLISH) + word.substring(1);
+            result.append(result.isEmpty() ? "" : " ");
+            result.append(word.substring(0, 1).toUpperCase(Locale.ENGLISH)).append(word.substring(1));
         }
-        return result;
+        return result.toString();
     }
 }

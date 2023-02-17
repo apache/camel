@@ -53,6 +53,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.concurrent.ThreadHelper;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 import org.slf4j.Logger;
@@ -78,6 +79,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private File statusFile;
     private File actionFile;
     private File outputFile;
+    private File traceFile;
+    private long traceFilePos; // keep track of trace offset
 
     public LocalCliConnector(CliConnectorFactory cliConnectorFactory) {
         this.cliConnectorFactory = cliConnectorFactory;
@@ -136,6 +139,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             statusFile = createLockFile(lockFile.getName() + "-status.json");
             actionFile = createLockFile(lockFile.getName() + "-action.json");
             outputFile = createLockFile(lockFile.getName() + "-output.json");
+            traceFile = createLockFile(lockFile.getName() + "-trace.json");
             executor.scheduleWithFixedDelay(this::task, 0, delay, TimeUnit.MILLISECONDS);
             LOG.info("Camel CLI enabled (local)");
         } else {
@@ -418,6 +422,26 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("fault-tolerance", json);
                     }
                 }
+                DevConsole dc12 = camelContext.getExtension(DevConsoleRegistry.class).resolveById("trace");
+                if (dc12 != null) {
+                    JsonObject json = (JsonObject) dc12.call(DevConsole.MediaType.JSON);
+                    JsonArray arr = json.getCollection("traces");
+                    // filter based on last uid
+                    if (traceFilePos > 0) {
+                        arr.removeIf(r -> {
+                            JsonObject jo = (JsonObject) r;
+                            return jo.getLong("uid") <= traceFilePos;
+                        });
+                    }
+                    if (!arr.isEmpty()) {
+                        // store traces in a special file
+                        LOG.trace("Updating trace file: {}", traceFile);
+                        String data = json.toJson() + System.lineSeparator();
+                        IOHelper.appendText(data, traceFile);
+                        json = arr.getMap(arr.size() - 1);
+                        traceFilePos = json.getLong("uid");
+                    }
+                }
             }
             // various details
             JsonObject services = collectServices();
@@ -599,6 +623,9 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
         }
         if (outputFile != null) {
             FileUtil.deleteFile(outputFile);
+        }
+        if (traceFile != null) {
+            FileUtil.deleteFile(traceFile);
         }
         if (executor != null) {
             camelContext.getExecutorServiceManager().shutdown(executor);

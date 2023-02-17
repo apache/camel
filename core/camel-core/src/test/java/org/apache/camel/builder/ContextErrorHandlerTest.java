@@ -33,6 +33,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ContextErrorHandlerTest extends ContextTestSupport {
 
@@ -89,7 +90,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
             Channel channel = unwrapChannel(processor);
             assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, channel.getNextProcessor());
-            log.debug("Found sendProcessor: " + sendProcessor);
+            log.debug("Found sendProcessor: {}", sendProcessor);
         }
     }
 
@@ -116,7 +117,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
 
             assertEquals(1, redeliveryPolicy.getMaximumRedeliveries(), "getMaximumRedeliveries()");
-            assertEquals(true, redeliveryPolicy.isUseExponentialBackOff(), "isUseExponentialBackOff()");
+            assertTrue(redeliveryPolicy.isUseExponentialBackOff(), "isUseExponentialBackOff()");
         }
     }
 

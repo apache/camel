@@ -34,7 +34,7 @@ public interface MessageHeaderFilter {
     /**
      * This method filters (removes) headers from the given header list. <i>Out</i> direction refers to processing
      * headers from a Camel message to an CXF message. <i>In</i> direction is the reverse direction.
-     * 
+     *
      * @param direction the direction of the processing
      * @param headers   the origin list of headers
      */

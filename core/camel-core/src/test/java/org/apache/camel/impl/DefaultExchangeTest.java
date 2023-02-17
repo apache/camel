@@ -23,7 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.ExchangeTestSupport;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -65,7 +64,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         assertEquals("<hello id='m123'>world!</hello>", exchange.getIn().getBody());
         try {
-            assertEquals(null, exchange.getIn().getBody(Integer.class));
+            assertNull(exchange.getIn().getBody(Integer.class));
             fail("Should have thrown a TypeConversionException");
         } catch (TypeConversionException e) {
             // expected
@@ -134,15 +133,15 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertTrue(exchange.hasProperties());
 
         assertEquals("apple", exchange.getProperty("fruit"));
-        assertEquals(null, exchange.getProperty("beer"));
-        assertEquals(null, exchange.getProperty("beer", String.class));
+        assertNull(exchange.getProperty("beer"));
+        assertNull(exchange.getProperty("beer", String.class));
 
         // Current TypeConverter support to turn the null value to false of
         // boolean,
         // as assertEquals needs the Object as the parameter, we have to use
         // Boolean.FALSE value in this case
         assertEquals(Boolean.FALSE, exchange.getProperty("beer", boolean.class));
-        assertEquals(null, exchange.getProperty("beer", Boolean.class));
+        assertNull(exchange.getProperty("beer", Boolean.class));
 
         assertEquals("apple", exchange.getProperty("fruit", String.class));
         assertEquals("apple", exchange.getProperty("fruit", "banana", String.class));
@@ -167,8 +166,8 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         exchange.removeProperties("fr*");
         assertTrue(exchange.hasProperties());
         assertEquals(1, exchange.getProperties().size());
-        assertEquals(null, exchange.getProperty("fruit", String.class));
-        assertEquals(null, exchange.getProperty("fruit1", String.class));
+        assertNull(exchange.getProperty("fruit", String.class));
+        assertNull(exchange.getProperty("fruit1", String.class));
         assertEquals("Africa", exchange.getProperty("zone", String.class));
     }
 
@@ -206,7 +205,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         exchange.removeProperties("fr*", "fruit1", "fruit2");
         assertTrue(exchange.hasProperties());
         assertEquals(3, exchange.getProperties().size());
-        assertEquals(null, exchange.getProperty("fruit", String.class));
+        assertNull(exchange.getProperty("fruit", String.class));
         assertEquals("banana", exchange.getProperty("fruit1", String.class));
         assertEquals("peach", exchange.getProperty("fruit2", String.class));
         assertEquals("Africa", exchange.getProperty("zone", String.class));
@@ -269,7 +268,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         exchange.setProperty(ExchangePropertyKey.CHARSET_NAME, "iso-8859-1");
 
         assertEquals(1, exchange.getProperties().size());
-        assertEquals(2, exchange.adapt(ExtendedExchange.class).getInternalProperties().size());
+        assertEquals(2, exchange.getExchangeExtension().getInternalProperties().size());
         assertEquals(3, exchange.getAllProperties().size());
     }
 
@@ -305,7 +304,7 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         DefaultExchange exchange = new DefaultExchange(context);
         SafeProperty property = new SafeProperty();
         UnsafeProperty unsafeProperty = new UnsafeProperty();
-        exchange.setSafeCopyProperty(SAFE_PROPERTY, property);
+        exchange.getExchangeExtension().setSafeCopyProperty(SAFE_PROPERTY, property);
         exchange.setProperty(UNSAFE_PROPERTY, unsafeProperty);
 
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, false);

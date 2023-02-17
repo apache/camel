@@ -77,7 +77,6 @@
 
         <!-- regular modules in alphabetic order -->
         <module>camel-amqp</module>
-        <module>camel-any23</module>
         <module>camel-arangodb</module>
         <module>camel-as2</module>
         <module>camel-asn1</module>
@@ -112,6 +111,7 @@
         <module>camel-crypto</module>
         <module>camel-csimple-joor</module>
         <module>camel-csv</module>
+        <module>camel-datasonnet</module>
         <module>camel-debug</module>
         <module>camel-debezium</module>
         <module>camel-digitalocean</module>
@@ -312,6 +312,7 @@
         <module>camel-xmlsecurity</module>
         <module>camel-xmpp</module>
         <module>camel-xslt-saxon</module>
+        <module>camel-zeebe</module>
         <module>camel-zendesk</module>
         <module>camel-zip-deflater</module>
         <module>camel-zipfile</module>

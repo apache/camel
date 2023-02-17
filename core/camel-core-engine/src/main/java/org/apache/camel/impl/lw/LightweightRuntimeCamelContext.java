@@ -147,7 +147,6 @@ import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
-import org.apache.camel.spi.XMLRoutesDefinitionLoader;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -1179,6 +1178,16 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
         return false;
     }
 
+    @Override
+    public void setBacklogTracingStandby(boolean backlogTracingStandby) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isBacklogTracingStandby() {
+        return false;
+    }
+
     //
     // ExtendedCamelContext
     //
@@ -1965,16 +1974,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
 
     @Override
     public void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public XMLRoutesDefinitionLoader getXMLRoutesDefinitionLoader() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setXMLRoutesDefinitionLoader(XMLRoutesDefinitionLoader xmlRoutesDefinitionLoader) {
         throw new UnsupportedOperationException();
     }
 

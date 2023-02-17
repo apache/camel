@@ -72,7 +72,7 @@ public class InterceptSendToEndpointMultipleRoutesTest extends ContextTestSuppor
         assertMockEndpointsSatisfied();
     }
 
-    private abstract class MyBaseRoute extends RouteBuilder {
+    private abstract static class MyBaseRoute extends RouteBuilder {
         @Override
         public void configure() throws Exception {
             // base route with common interceptors

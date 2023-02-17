@@ -1011,7 +1011,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
 
     /**
      * Gets the {@link org.apache.camel.spi.TransformerRegistry}
-     * 
+     *
      * @return the TransformerRegistry
      */
     TransformerRegistry getTransformerRegistry();
@@ -1026,7 +1026,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
 
     /**
      * Gets the {@link org.apache.camel.spi.ValidatorRegistry}
-     * 
+     *
      * @return the ValidatorRegistry
      */
     ValidatorRegistry getValidatorRegistry();
@@ -1214,6 +1214,18 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * can be enabled later at runtime via JMX or via {@link Tracer#setEnabled(boolean)}.
      */
     boolean isTracingStandby();
+
+    /**
+     * Whether to set backlog tracing on standby. If on standby then the backlog tracer is installed and made available.
+     * Then the backlog tracer can be enabled later at runtime via JMX or via Java API.
+     */
+    void setBacklogTracingStandby(boolean backlogTracingStandby);
+
+    /**
+     * Whether to set backlog tracing on standby. If on standby then the backlog tracer is installed and made available.
+     * Then the backlog tracer can be enabled later at runtime via JMX or via Java API.
+     */
+    boolean isBacklogTracingStandby();
 
     /**
      * Gets the current {@link UuidGenerator}

@@ -61,8 +61,9 @@ public class Ses2Endpoint extends DefaultEndpoint {
                 ComponentsHealthCheckRepository.REPOSITORY_ID, ComponentsHealthCheckRepository.class);
 
         if (healthCheckRepository != null) {
-            clientHealthCheck = new Ses2HealthCheck(this, getId());
-            healthCheckRepository.addHealthCheck(clientHealthCheck);
+            // Do not register the health check until we resolve CAMEL-18992
+            // clientHealthCheck = new Ses2HealthCheck(this, getId());
+            // healthCheckRepository.addHealthCheck(clientHealthCheck);
         }
     }
 

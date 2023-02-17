@@ -120,9 +120,11 @@ public class AS2Consumer extends AbstractApiConsumer<AS2ApiName, AS2Configuratio
                 apiProxy.handleMDNResponse(context, getEndpoint().getSubject(),
                         ofNullable(getEndpoint().getFrom()).orElse(getEndpoint().getConfiguration().getServer()));
             }
-
             ApplicationEDIEntity ediEntity
-                    = HttpMessageUtils.extractEdiPayload(request, as2ServerConnection.getDecryptingPrivateKey());
+                    = HttpMessageUtils.extractEdiPayload(request,
+                            new HttpMessageUtils.DecrpytingAndSigningInfo(
+                                    as2ServerConnection.getValidateSigningCertificateChain(),
+                                    as2ServerConnection.getDecryptingPrivateKey()));
 
             // Set AS2 Interchange property and EDI message into body of input message.
             Exchange exchange = createExchange(false);

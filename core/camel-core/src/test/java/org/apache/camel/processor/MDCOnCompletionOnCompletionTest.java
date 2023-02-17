@@ -18,7 +18,6 @@ package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -54,7 +53,7 @@ public class MDCOnCompletionOnCompletionTest extends ContextTestSupport {
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                exchange.adapt(ExtendedExchange.class).addOnCompletion(new MyOnCompletion());
+                                exchange.getExchangeExtension().addOnCompletion(new MyOnCompletion());
                             }
                         }).end().to("log:foo").to("direct:b");
 
@@ -72,7 +71,7 @@ public class MDCOnCompletionOnCompletionTest extends ContextTestSupport {
         };
     }
 
-    private class MyOnCompletion extends SynchronizationAdapter {
+    private static class MyOnCompletion extends SynchronizationAdapter {
 
         @Override
         public void onDone(Exchange exchange) {

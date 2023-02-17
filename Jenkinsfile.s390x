@@ -71,13 +71,13 @@ pipeline {
             }
             steps {
                 // Skip modules camel-kudu and docs as these are not supported on s390x.
-                sh "./mvnw -U $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean install -pl '!docs,!components/camel-kudu'"
+                sh "./mvnw -U $MAVEN_PARAMS -Darchetype.test.skip -Dmaven.test.skip.exec=true clean install -pl '!docs,!components/camel-kudu'"
             }
         }
 
         stage('Checks') {
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
+                sh "./mvnw $MAVEN_PARAMS -Darchetype.test.skip -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
             }
         }
 
@@ -85,7 +85,7 @@ pipeline {
             steps {
                 timeout(unit: 'HOURS', time: 7) {
                     // Skip the test case execution of modules which are either not supported on s390x or vendor images are not available for s390x.
-                    sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS $MAVEN_TEST_LIMIT_PARAMS -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -pl '!docs,!components/camel-kudu,!components/camel-djl,!components/camel-consul,!components/camel-pulsar,!components/camel-xmpp,!components/camel-google/camel-google-pubsub,!components/camel-hdfs,!components/camel-zookeeper,!components/camel-zookeeper-master'"
+                    sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS $MAVEN_TEST_LIMIT_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -pl '!docs,!components/camel-kudu,!components/camel-djl,!components/camel-consul,!components/camel-pulsar,!components/camel-xmpp,!components/camel-google/camel-google-pubsub,!components/camel-hdfs,!components/camel-zookeeper,!components/camel-zookeeper-master'"
                 }
             }
             post {

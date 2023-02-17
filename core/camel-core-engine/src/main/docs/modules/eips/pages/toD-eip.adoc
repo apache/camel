@@ -173,7 +173,6 @@ This is with among the following components, which have been optimised for `toD`
 
 A number of non-HTTP components has been optimised as well:
 
-- camel-activemq
 - camel-amqp
 - camel-file
 - camel-ftp

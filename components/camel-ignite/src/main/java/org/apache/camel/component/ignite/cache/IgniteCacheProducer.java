@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
@@ -144,7 +143,7 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
 
         out.setBody(cursor.iterator());
 
-        exchange.adapt(ExtendedExchange.class).addOnCompletion(new Synchronization() {
+        exchange.getExchangeExtension().addOnCompletion(new Synchronization() {
             @Override
             public void onFailure(Exchange exchange) {
                 cursor.close();

@@ -51,7 +51,6 @@ import org.w3c.dom.Node;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.component.cxf.common.CxfBinding;
@@ -140,7 +139,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
         DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY,
                 DataFormat.class);
-        // we should avoid adding the attachments if the data format is CXFMESSAGE, as the message stream 
+        // we should avoid adding the attachments if the data format is CXFMESSAGE, as the message stream
         // already has the attachment information
         if (!DataFormat.CXF_MESSAGE.equals(dataFormat)) {
             if (camelExchange.getIn(AttachmentMessage.class).hasAttachments()) {
@@ -223,7 +222,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
      * @param cxfExchange
      */
     private void addAttachmentFileCloseUoW(Exchange camelExchange, org.apache.cxf.message.Exchange cxfExchange) {
-        camelExchange.adapt(ExtendedExchange.class).addOnCompletion(new SynchronizationAdapter() {
+        camelExchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
             @Override
             public void onDone(org.apache.camel.Exchange exchange) {
                 Collection<Attachment> atts = cxfExchange.getInMessage().getAttachments();
@@ -328,7 +327,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             }
         }
 
-        // Propagating properties from CXF Exchange to Camel Exchange has an  
+        // Propagating properties from CXF Exchange to Camel Exchange has an
         // side effect of copying reply side stuff when the producer is retried.
         // So, we do not want to do this.
         //camelExchange.getProperties().putAll(cxfExchange);
@@ -352,7 +351,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             camelExchange.getIn().setBody(body);
         }
 
-        // propagate attachments if the data format is not POJO        
+        // propagate attachments if the data format is not POJO
         if (cxfMessage.getAttachments() != null
                 && !camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class).equals(DataFormat.POJO)) {
             for (Attachment attachment : cxfMessage.getAttachments()) {
@@ -645,7 +644,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {
                 if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(),
                         entry.getValue(), exchange)) {
-                    // We need to filter the content type with multi-part, 
+                    // We need to filter the content type with multi-part,
                     // as the multi-part stream is already consumed by AttachmentInInterceptor,
                     // it will cause some trouble when route this message to another CXF endpoint.
 

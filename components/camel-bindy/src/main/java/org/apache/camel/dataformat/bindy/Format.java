@@ -23,7 +23,7 @@ public interface Format<T> {
 
     /**
      * Formats the object into a String
-     * 
+     *
      * @param  object    the object
      * @return           formatted as a String
      * @throws Exception can be thrown
@@ -32,7 +32,7 @@ public interface Format<T> {
 
     /**
      * Parses a String into an object
-     * 
+     *
      * @param  string    the string
      * @return           T the object
      * @throws Exception can be thrown

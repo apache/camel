@@ -44,7 +44,7 @@ public class JMXNotificationFilterTest extends SimpleBeanFixture {
         assertEquals(0, mRejected.size(), "no notifications should have been filtered at this point");
 
         // we should only get 5 messages, which is 1/2 the number of times we touched the object.
-        // The 1/2 is due to the behavior of the test NotificationFilter implemented below 
+        // The 1/2 is due to the behavior of the test NotificationFilter implemented below
         getMockFixture().getMockEndpoint().setExpectedMessageCount(5);
         for (int i = 0; i < 10; i++) {
             bean.touch();

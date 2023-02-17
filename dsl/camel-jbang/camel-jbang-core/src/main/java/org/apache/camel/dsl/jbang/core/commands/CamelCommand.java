@@ -68,6 +68,13 @@ public abstract class CamelCommand implements Callable<Integer> {
         return new File(camelDir, pid + "-output.json");
     }
 
+    public File getTraceFile(String pid) {
+        if (camelDir == null) {
+            camelDir = new File(System.getProperty("user.home"), ".camel");
+        }
+        return new File(camelDir, pid + "-trace.json");
+    }
+
     protected abstract static class ParameterConsumer<T> implements IParameterConsumer {
 
         @Override

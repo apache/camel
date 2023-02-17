@@ -337,9 +337,7 @@ public class MinaProducer extends DefaultProducer {
         appendIoFiltersToChain(filters, connector.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
             SslFilter filter = new SslFilter(
-                    configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()),
-                    configuration.isAutoStartTls());
-            filter.setUseClientMode(true);
+                    configuration.getSslContextParameters().createSSLContext(getEndpoint().getCamelContext()));
             connector.getFilterChain().addFirst("sslFilter", filter);
         }
         configureCodecFactory("MinaProducer", connector);

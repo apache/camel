@@ -64,7 +64,7 @@ public class CamelBeanPostProcessorInjectorTest extends ContextTestSupport {
         }
     }
 
-    public class MyService {
+    public static class MyService {
 
         @PropertyInject(value = "myName", defaultValue = "Donald Duck")
         private String name;

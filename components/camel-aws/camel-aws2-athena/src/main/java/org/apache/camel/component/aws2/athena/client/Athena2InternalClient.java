@@ -25,7 +25,7 @@ public interface Athena2InternalClient {
 
     /**
      * Returns an Athena client after a factory method determines which one to return.
-     * 
+     *
      * @return AthenaClient AthenaClient
      */
     AthenaClient getAthenaClient();

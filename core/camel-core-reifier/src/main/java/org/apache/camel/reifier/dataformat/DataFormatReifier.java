@@ -26,7 +26,6 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
-import org.apache.camel.model.dataformat.Any23DataFormat;
 import org.apache.camel.model.dataformat.AvroDataFormat;
 import org.apache.camel.model.dataformat.BarcodeDataFormat;
 import org.apache.camel.model.dataformat.Base64DataFormat;
@@ -176,9 +175,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
     // CHECKSTYLE:OFF
     private static DataFormatReifier<? extends DataFormatDefinition> coreReifier(
             CamelContext camelContext, DataFormatDefinition definition) {
-        if (definition instanceof Any23DataFormat) {
-            return new Any23DataFormatReifier(camelContext, definition);
-        } else if (definition instanceof ASN1DataFormat) {
+        if (definition instanceof ASN1DataFormat) {
             return new ASN1DataFormatReifier(camelContext, definition);
         } else if (definition instanceof AvroDataFormat) {
             return new AvroDataFormatReifier(camelContext, definition);

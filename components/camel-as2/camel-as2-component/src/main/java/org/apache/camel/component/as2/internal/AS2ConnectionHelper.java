@@ -73,7 +73,8 @@ public final class AS2ConnectionHelper {
                         configuration.getAs2Version(), configuration.getServer(),
                         configuration.getServerFqdn(), configuration.getServerPortNumber(), configuration.getSigningAlgorithm(),
                         configuration.getSigningCertificateChain(), configuration.getSigningPrivateKey(),
-                        configuration.getDecryptingPrivateKey(), configuration.getMdnMessageTemplate());
+                        configuration.getDecryptingPrivateKey(), configuration.getMdnMessageTemplate(),
+                        configuration.getValidateSigningCertificateChain());
                 serverConnections.put(configuration.getServerPortNumber(), serverConnection);
             }
             return serverConnection;

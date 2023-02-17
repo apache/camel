@@ -28,7 +28,7 @@ public interface Predicate {
 
     /**
      * Evaluates the predicate on the message exchange and returns true if this exchange matches the predicate
-     * 
+     *
      * @param  exchange the message exchange
      * @return          true if the predicate matches
      */

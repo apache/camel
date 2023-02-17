@@ -60,7 +60,7 @@ public interface KafkaManualCommitFactory {
 
     /**
      * Creates a new instance
-     * 
+     *
      * @param camelExchangePayload the exchange-related payload from Camel
      * @param kafkaRecordPayload   the record-related payload from Kafka
      */

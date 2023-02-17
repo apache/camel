@@ -18,6 +18,7 @@ package org.apache.camel.component.as2.api.entity;
 
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
+import java.security.cert.Certificate;
 import java.util.Map;
 
 import org.apache.camel.component.as2.api.AS2Header;
@@ -51,8 +52,9 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
                                                         String boundary,
                                                         boolean isMainBody,
                                                         PrivateKey decryptingPrivateKey,
-                                                        String mdnMessage)
-                                                                           throws HttpException {
+                                                        String mdnMessage,
+                                                        Certificate[] validateSigningCertificateChain)
+                                                                                                       throws HttpException {
         super(charset, isMainBody, boundary);
         removeHeaders(AS2Header.CONTENT_TYPE);
         setContentType(getContentTypeValue(boundary));
@@ -64,7 +66,7 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
         addPart(new AS2MessageDispositionNotificationEntity(
                 request, response, dispositionMode, dispositionType,
                 dispositionModifier, failureFields, errorFields, warningFields, extensionFields, charset, false,
-                decryptingPrivateKey));
+                decryptingPrivateKey, validateSigningCertificateChain));
     }
 
     public String getMainMessageContentType() {

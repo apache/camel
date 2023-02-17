@@ -45,7 +45,8 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from(fileUri("bean"
-                             + "?initialDelay=0&delay=10&fileName=${bean:counter.next}.txt&delete=true")).to("mock:result");
+                             + "?initialDelay=0&delay=10&fileName=${bean:counter.next}.txt&delete=true"))
+                        .to("mock:result");
             }
         });
 
@@ -71,8 +72,9 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from(fileUri("date"
-                             + "?initialDelay=0&delay=10&fileName=myfile-${date:now:yyyyMMdd}.txt")).convertBodyTo(String.class)
-                                     .to("mock:result");
+                             + "?initialDelay=0&delay=10&fileName=myfile-${date:now:yyyyMMdd}.txt"))
+                        .convertBodyTo(String.class)
+                        .to("mock:result");
                 // END SNIPPET: e1
             }
         });
@@ -85,7 +87,7 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public class MyGuidGenerator {
+    public static class MyGuidGenerator {
         public String next() {
             return "123";
         }

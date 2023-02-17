@@ -119,7 +119,7 @@ class ResequencerEngineTest extends TestSupport {
         }
         millis = System.currentTimeMillis() - millis;
         log.info(sb.toString());
-        log.info("Duration = " + millis + " ms");
+        log.info("Duration = {} ms", millis);
     }
 
     @DisabledIf(value = "isIgnoreLoadTests",

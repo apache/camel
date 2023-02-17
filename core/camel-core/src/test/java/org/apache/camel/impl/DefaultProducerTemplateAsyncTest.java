@@ -432,7 +432,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         assertEquals(7, order.get());
         // no reply when in only
-        assertEquals(null, reply);
+        assertNull(reply);
     }
 
     @Test

@@ -39,7 +39,6 @@ import com.google.pubsub.v1.PullRequest;
 import com.google.pubsub.v1.PullResponse;
 import com.google.pubsub.v1.ReceivedMessage;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.google.pubsub.consumer.AcknowledgeSync;
 import org.apache.camel.component.google.pubsub.consumer.CamelMessageReceiver;
@@ -195,7 +194,7 @@ public class GooglePubsubConsumer extends DefaultConsumer {
                             //existing subscriber can not be propagated, because it will be closed at the end of this block
                             //subscriber will be created at the moment of use
                             // (see  https://issues.apache.org/jira/browse/CAMEL-18447)
-                            exchange.adapt(ExtendedExchange.class)
+                            exchange.getExchangeExtension()
                                     .addOnCompletion(new AcknowledgeSync(
                                             () -> endpoint.getComponent().getSubscriberStub(endpoint), subscriptionName));
                         }

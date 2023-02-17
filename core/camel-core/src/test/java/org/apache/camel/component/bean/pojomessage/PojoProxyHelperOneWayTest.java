@@ -58,7 +58,7 @@ public class PojoProxyHelperOneWayTest extends ContextTestSupport {
         };
     }
 
-    public final class PersonReceiver implements PersonHandler {
+    public static final class PersonReceiver implements PersonHandler {
         public List<Person> receivedPersons = new ArrayList<>();
 
         @Override

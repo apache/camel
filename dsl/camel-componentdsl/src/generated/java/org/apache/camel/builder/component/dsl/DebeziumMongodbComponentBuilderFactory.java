@@ -301,11 +301,10 @@ public interface DebeziumMongodbComponentBuilderFactory {
         }
         /**
          * The method used to capture changes from MongoDB server. Options
-         * include: 'oplog' to capture changes from the oplog; 'change_streams'
-         * to capture changes via MongoDB Change Streams, update events do not
-         * contain full documents; 'change_streams_update_full' (the default) to
-         * capture changes via MongoDB Change Streams, update events contain
-         * full documents.
+         * include: 'change_streams' to capture changes via MongoDB Change
+         * Streams, update events do not contain full documents;
+         * 'change_streams_update_full' (the default) to capture changes via
+         * MongoDB Change Streams, update events contain full documents.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -458,22 +457,6 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * The path to the file that will be used to record the database
-         * history.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: mongodb
-         * 
-         * @param databaseHistoryFileFilename the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMongodbComponentBuilder databaseHistoryFileFilename(
-                java.lang.String databaseHistoryFileFilename) {
-            doSetProperty("databaseHistoryFileFilename", databaseHistoryFileFilename);
-            return this;
-        }
-        /**
          * A comma-separated list of regular expressions that match the database
          * names for which changes are to be captured.
          * 
@@ -491,11 +474,11 @@ public interface DebeziumMongodbComponentBuilderFactory {
         }
         /**
          * Specify how failures during processing of events (i.e. when
-         * encountering a corrupted event) should be handled, including:'fail'
+         * encountering a corrupted event) should be handled, including: 'fail'
          * (the default) an exception indicating the problematic event and its
          * position is raised, causing the connector to be stopped; 'warn' the
          * problematic event and its position will be logged and the event will
-         * be skipped;'ignore' the problematic event will be skipped.
+         * be skipped; 'ignore' the problematic event will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -646,6 +629,21 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
+         * Database connection string.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param mongodbConnectionString the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder mongodbConnectionString(
+                java.lang.String mongodbConnectionString) {
+            doSetProperty("mongodbConnectionString", mongodbConnectionString);
+            return this;
+        }
+        /**
          * The connection timeout, given in milliseconds. Defaults to 10 seconds
          * (10,000 ms).
          * 
@@ -660,6 +658,23 @@ public interface DebeziumMongodbComponentBuilderFactory {
         default DebeziumMongodbComponentBuilder mongodbConnectTimeoutMs(
                 int mongodbConnectTimeoutMs) {
             doSetProperty("mongodbConnectTimeoutMs", mongodbConnectTimeoutMs);
+            return this;
+        }
+        /**
+         * The frequency that the cluster monitor attempts to reach each server.
+         * Defaults to 10 seconds (10,000 ms).
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 10s
+         * Group: mongodb
+         * 
+         * @param mongodbHeartbeatFrequencyMs the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder mongodbHeartbeatFrequencyMs(
+                int mongodbHeartbeatFrequencyMs) {
+            doSetProperty("mongodbHeartbeatFrequencyMs", mongodbHeartbeatFrequencyMs);
             return this;
         }
         /**
@@ -695,24 +710,6 @@ public interface DebeziumMongodbComponentBuilderFactory {
         default DebeziumMongodbComponentBuilder mongodbMembersAutoDiscover(
                 boolean mongodbMembersAutoDiscover) {
             doSetProperty("mongodbMembersAutoDiscover", mongodbMembersAutoDiscover);
-            return this;
-        }
-        /**
-         * Unique name that identifies the MongoDB replica set or cluster and
-         * all recorded offsets, and that is used as a prefix for all schemas
-         * and topics. Each distinct MongoDB installation should have a separate
-         * namespace and monitored by at most one Debezium connector.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: mongodb
-         * 
-         * @param mongodbName the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMongodbComponentBuilder mongodbName(
-                java.lang.String mongodbName) {
-            doSetProperty("mongodbName", mongodbName);
             return this;
         }
         /**
@@ -863,7 +860,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
         }
         /**
          * The maximum number of records that should be loaded into memory while
-         * streaming. A value of 0 uses the default JDBC fetch size.
+         * streaming. A value of '0' uses the default JDBC fetch size.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
          * 
@@ -912,14 +909,30 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * Specify how schema names should be adjusted for compatibility with
-         * the message converter used by the connector, including:'avro'
-         * replaces the characters that cannot be used in the Avro type name
-         * with underscore (default)'none' does not apply any adjustment.
+         * The path to the file that will be used to record the database schema
+         * history.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: avro
+         * Group: mongodb
+         * 
+         * @param schemaHistoryInternalFileFilename the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder schemaHistoryInternalFileFilename(
+                java.lang.String schemaHistoryInternalFileFilename) {
+            doSetProperty("schemaHistoryInternalFileFilename", schemaHistoryInternalFileFilename);
+            return this;
+        }
+        /**
+         * Specify how schema names should be adjusted for compatibility with
+         * the message converter used by the connector, including: 'avro'
+         * replaces the characters that cannot be used in the Avro type name
+         * with underscore; 'none' does not apply any adjustment (default).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: none
          * Group: mongodb
          * 
          * @param schemaNameAdjustmentMode the value to set
@@ -950,10 +963,11 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * The comma-separated list of operations to skip during streaming,
          * defined as: 'c' for inserts/create; 'u' for updates; 'd' for deletes,
          * 't' for truncates, and 'none' to indicate nothing skipped. By
-         * default, no operations will be skipped.
+         * default, only truncate operations will be skipped.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
+         * Default: t
          * Group: mongodb
          * 
          * @param skippedOperations the value to set
@@ -1016,7 +1030,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * this setting must be set to specify a list of tables/collections
+         * This setting must be set to specify a list of tables/collections
          * whose snapshot must be taken on creating or restarting the connector.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -1068,28 +1082,11 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * A version of the format of the publicly visible source part in the
-         * message.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Default: v2
-         * Group: mongodb
-         * 
-         * @param sourceStructVersion the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMongodbComponentBuilder sourceStructVersion(
-                java.lang.String sourceStructVersion) {
-            doSetProperty("sourceStructVersion", sourceStructVersion);
-            return this;
-        }
-        /**
          * Whether delete operations should be represented by a delete event and
-         * a subsquenttombstone event (true) or only by a delete event (false).
-         * Emitting the tombstone event (the default behavior) allows Kafka to
-         * completely delete all events pertaining to the given key once the
-         * source record got deleted.
+         * a subsequent tombstone event (true) or only by a delete event
+         * (false). Emitting the tombstone event (the default behavior) allows
+         * Kafka to completely delete all events pertaining to the given key
+         * once the source record got deleted.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -1105,21 +1102,41 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * The name of the transaction metadata topic. The placeholder
-         * ${database.server.name} can be used for referring to the connector's
-         * logical name; defaults to ${database.server.name}.transaction.
+         * The name of the TopicNamingStrategy class that should be used to
+         * determine the topic name for data change, schema change, transaction,
+         * heartbeat event etc.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
-         * Default: ${database.server.name}.transaction
+         * Default: io.debezium.schema.SchemaTopicNamingStrategy
          * Group: mongodb
          * 
-         * @param transactionTopic the value to set
+         * @param topicNamingStrategy the value to set
          * @return the dsl builder
          */
-        default DebeziumMongodbComponentBuilder transactionTopic(
-                java.lang.String transactionTopic) {
-            doSetProperty("transactionTopic", transactionTopic);
+        default DebeziumMongodbComponentBuilder topicNamingStrategy(
+                java.lang.String topicNamingStrategy) {
+            doSetProperty("topicNamingStrategy", topicNamingStrategy);
+            return this;
+        }
+        /**
+         * Topic prefix that identifies and provides a namespace for the
+         * particular database server/cluster is capturing changes. The topic
+         * prefix should be unique across all other connectors, since it is used
+         * as a prefix for all Kafka topic names that receive events emitted by
+         * this connector. Only alphanumeric characters, hyphens, dots and
+         * underscores must be accepted.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: mongodb
+         * 
+         * @param topicPrefix the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder topicPrefix(
+                java.lang.String topicPrefix) {
+            doSetProperty("topicPrefix", topicPrefix);
             return this;
         }
     }
@@ -1169,7 +1186,6 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "converters": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConverters((java.lang.String) value); return true;
             case "cursorMaxAwaitTimeMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCursorMaxAwaitTimeMs((int) value); return true;
             case "databaseExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseExcludeList((java.lang.String) value); return true;
-            case "databaseHistoryFileFilename": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseHistoryFileFilename((java.lang.String) value); return true;
             case "databaseIncludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseIncludeList((java.lang.String) value); return true;
             case "eventProcessingFailureHandlingMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setEventProcessingFailureHandlingMode((java.lang.String) value); return true;
             case "fieldExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setFieldExcludeList((java.lang.String) value); return true;
@@ -1180,10 +1196,11 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "maxQueueSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxQueueSize((int) value); return true;
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxQueueSizeInBytes((long) value); return true;
             case "mongodbAuthsource": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbAuthsource((java.lang.String) value); return true;
+            case "mongodbConnectionString": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbConnectionString((java.lang.String) value); return true;
             case "mongodbConnectTimeoutMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbConnectTimeoutMs((int) value); return true;
+            case "mongodbHeartbeatFrequencyMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbHeartbeatFrequencyMs((int) value); return true;
             case "mongodbHosts": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbHosts((java.lang.String) value); return true;
             case "mongodbMembersAutoDiscover": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbMembersAutoDiscover((boolean) value); return true;
-            case "mongodbName": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbName((java.lang.String) value); return true;
             case "mongodbPassword": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbPassword((java.lang.String) value); return true;
             case "mongodbPollIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbPollIntervalMs((long) value); return true;
             case "mongodbServerSelectionTimeoutMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbServerSelectionTimeoutMs((int) value); return true;
@@ -1196,6 +1213,7 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "queryFetchSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setQueryFetchSize((int) value); return true;
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
             case "sanitizeFieldNames": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSanitizeFieldNames((boolean) value); return true;
+            case "schemaHistoryInternalFileFilename": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSchemaHistoryInternalFileFilename((java.lang.String) value); return true;
             case "schemaNameAdjustmentMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSchemaNameAdjustmentMode((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSignalDataCollection((java.lang.String) value); return true;
             case "skippedOperations": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSkippedOperations((java.lang.String) value); return true;
@@ -1205,9 +1223,9 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "snapshotIncludeCollectionList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotIncludeCollectionList((java.lang.String) value); return true;
             case "snapshotMaxThreads": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotMaxThreads((int) value); return true;
             case "snapshotMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSnapshotMode((java.lang.String) value); return true;
-            case "sourceStructVersion": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSourceStructVersion((java.lang.String) value); return true;
             case "tombstonesOnDelete": getOrCreateConfiguration((DebeziumMongodbComponent) component).setTombstonesOnDelete((boolean) value); return true;
-            case "transactionTopic": getOrCreateConfiguration((DebeziumMongodbComponent) component).setTransactionTopic((java.lang.String) value); return true;
+            case "topicNamingStrategy": getOrCreateConfiguration((DebeziumMongodbComponent) component).setTopicNamingStrategy((java.lang.String) value); return true;
+            case "topicPrefix": getOrCreateConfiguration((DebeziumMongodbComponent) component).setTopicPrefix((java.lang.String) value); return true;
             default: return false;
             }
         }

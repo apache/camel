@@ -19,6 +19,7 @@ package org.apache.camel.util;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  *
@@ -27,7 +28,7 @@ public class StingQuoteHelperTest {
 
     @Test
     public void testSplitSafeQuote() throws Exception {
-        assertEquals(null, StringQuoteHelper.splitSafeQuote(null, ','));
+        assertNull(StringQuoteHelper.splitSafeQuote(null, ','));
 
         String[] out = StringQuoteHelper.splitSafeQuote("", ',');
         assertEquals(1, out.length);

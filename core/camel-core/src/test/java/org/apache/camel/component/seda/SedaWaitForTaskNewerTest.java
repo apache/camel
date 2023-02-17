@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SedaWaitForTaskNewerTest extends ContextTestSupport {
 
@@ -50,7 +51,7 @@ public class SedaWaitForTaskNewerTest extends ContextTestSupport {
         });
         // we do not wait for the response so we just get our own input back
         assertEquals("Hello World", out.getIn().getBody());
-        assertEquals(null, out.getOut().getBody());
+        assertNull(out.getOut().getBody());
 
         assertMockEndpointsSatisfied();
     }

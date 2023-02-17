@@ -36,22 +36,16 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "binaryHandlingMode": getOrCreateConfiguration(target).setBinaryHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
-        case "columnblacklist":
-        case "columnBlacklist": getOrCreateConfiguration(target).setColumnBlacklist(property(camelContext, java.lang.String.class, value)); return true;
         case "columnexcludelist":
         case "columnExcludeList": getOrCreateConfiguration(target).setColumnExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "columnincludelist":
         case "columnIncludeList": getOrCreateConfiguration(target).setColumnIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "columnpropagatesourcetype":
         case "columnPropagateSourceType": getOrCreateConfiguration(target).setColumnPropagateSourceType(property(camelContext, java.lang.String.class, value)); return true;
-        case "columnwhitelist":
-        case "columnWhitelist": getOrCreateConfiguration(target).setColumnWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
         case "converters": getOrCreateConfiguration(target).setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "databasedbname":
         case "databaseDbname": getOrCreateConfiguration(target).setDatabaseDbname(property(camelContext, java.lang.String.class, value)); return true;
-        case "databasehistoryfilefilename":
-        case "databaseHistoryFileFilename": getOrCreateConfiguration(target).setDatabaseHistoryFileFilename(property(camelContext, java.lang.String.class, value)); return true;
         case "databasehostname":
         case "databaseHostname": getOrCreateConfiguration(target).setDatabaseHostname(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseinitialstatements":
@@ -60,8 +54,6 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "databasePassword": getOrCreateConfiguration(target).setDatabasePassword(property(camelContext, java.lang.String.class, value)); return true;
         case "databaseport":
         case "databasePort": getOrCreateConfiguration(target).setDatabasePort(property(camelContext, int.class, value)); return true;
-        case "databaseservername":
-        case "databaseServerName": getOrCreateConfiguration(target).setDatabaseServerName(property(camelContext, java.lang.String.class, value)); return true;
         case "databasesslcert":
         case "databaseSslcert": getOrCreateConfiguration(target).setDatabaseSslcert(property(camelContext, java.lang.String.class, value)); return true;
         case "databasesslfactory":
@@ -84,6 +76,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "decimalHandlingMode": getOrCreateConfiguration(target).setDecimalHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": getOrCreateConfiguration(target).setEventProcessingFailureHandlingMode(property(camelContext, java.lang.String.class, value)); return true;
+        case "flushlsnsource":
+        case "flushLsnSource": getOrCreateConfiguration(target).setFlushLsnSource(property(camelContext, boolean.class, value)); return true;
         case "heartbeatactionquery":
         case "heartbeatActionQuery": getOrCreateConfiguration(target).setHeartbeatActionQuery(property(camelContext, java.lang.String.class, value)); return true;
         case "heartbeatintervalms":
@@ -148,18 +142,16 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "retriableRestartConnectorWaitMs": getOrCreateConfiguration(target).setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
         case "sanitizefieldnames":
         case "sanitizeFieldNames": getOrCreateConfiguration(target).setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
-        case "schemablacklist":
-        case "schemaBlacklist": getOrCreateConfiguration(target).setSchemaBlacklist(property(camelContext, java.lang.String.class, value)); return true;
         case "schemaexcludelist":
         case "schemaExcludeList": getOrCreateConfiguration(target).setSchemaExcludeList(property(camelContext, java.lang.String.class, value)); return true;
+        case "schemahistoryinternalfilefilename":
+        case "schemaHistoryInternalFileFilename": getOrCreateConfiguration(target).setSchemaHistoryInternalFileFilename(property(camelContext, java.lang.String.class, value)); return true;
         case "schemaincludelist":
         case "schemaIncludeList": getOrCreateConfiguration(target).setSchemaIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "schemanameadjustmentmode":
         case "schemaNameAdjustmentMode": getOrCreateConfiguration(target).setSchemaNameAdjustmentMode(property(camelContext, java.lang.String.class, value)); return true;
         case "schemarefreshmode":
         case "schemaRefreshMode": getOrCreateConfiguration(target).setSchemaRefreshMode(property(camelContext, java.lang.String.class, value)); return true;
-        case "schemawhitelist":
-        case "schemaWhitelist": getOrCreateConfiguration(target).setSchemaWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "signaldatacollection":
         case "signalDataCollection": getOrCreateConfiguration(target).setSignalDataCollection(property(camelContext, java.lang.String.class, value)); return true;
         case "skippedoperations":
@@ -190,26 +182,22 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "snapshotMode": getOrCreateConfiguration(target).setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": getOrCreateConfiguration(target).setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
-        case "sourcestructversion":
-        case "sourceStructVersion": getOrCreateConfiguration(target).setSourceStructVersion(property(camelContext, java.lang.String.class, value)); return true;
         case "statusupdateintervalms":
         case "statusUpdateIntervalMs": getOrCreateConfiguration(target).setStatusUpdateIntervalMs(property(camelContext, int.class, value)); return true;
-        case "tableblacklist":
-        case "tableBlacklist": getOrCreateConfiguration(target).setTableBlacklist(property(camelContext, java.lang.String.class, value)); return true;
         case "tableexcludelist":
         case "tableExcludeList": getOrCreateConfiguration(target).setTableExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tableignorebuiltin":
         case "tableIgnoreBuiltin": getOrCreateConfiguration(target).setTableIgnoreBuiltin(property(camelContext, boolean.class, value)); return true;
         case "tableincludelist":
         case "tableIncludeList": getOrCreateConfiguration(target).setTableIncludeList(property(camelContext, java.lang.String.class, value)); return true;
-        case "tablewhitelist":
-        case "tableWhitelist": getOrCreateConfiguration(target).setTableWhitelist(property(camelContext, java.lang.String.class, value)); return true;
         case "timeprecisionmode":
         case "timePrecisionMode": getOrCreateConfiguration(target).setTimePrecisionMode(property(camelContext, java.lang.String.class, value)); return true;
         case "tombstonesondelete":
         case "tombstonesOnDelete": getOrCreateConfiguration(target).setTombstonesOnDelete(property(camelContext, boolean.class, value)); return true;
-        case "transactiontopic":
-        case "transactionTopic": getOrCreateConfiguration(target).setTransactionTopic(property(camelContext, java.lang.String.class, value)); return true;
+        case "topicnamingstrategy":
+        case "topicNamingStrategy": getOrCreateConfiguration(target).setTopicNamingStrategy(property(camelContext, java.lang.String.class, value)); return true;
+        case "topicprefix":
+        case "topicPrefix": getOrCreateConfiguration(target).setTopicPrefix(property(camelContext, java.lang.String.class, value)); return true;
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": getOrCreateConfiguration(target).setUnavailableValuePlaceholder(property(camelContext, java.lang.String.class, value)); return true;
         case "xminfetchintervalms":
@@ -229,22 +217,16 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "binaryHandlingMode": return java.lang.String.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
-        case "columnblacklist":
-        case "columnBlacklist": return java.lang.String.class;
         case "columnexcludelist":
         case "columnExcludeList": return java.lang.String.class;
         case "columnincludelist":
         case "columnIncludeList": return java.lang.String.class;
         case "columnpropagatesourcetype":
         case "columnPropagateSourceType": return java.lang.String.class;
-        case "columnwhitelist":
-        case "columnWhitelist": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.debezium.configuration.PostgresConnectorEmbeddedDebeziumConfiguration.class;
         case "converters": return java.lang.String.class;
         case "databasedbname":
         case "databaseDbname": return java.lang.String.class;
-        case "databasehistoryfilefilename":
-        case "databaseHistoryFileFilename": return java.lang.String.class;
         case "databasehostname":
         case "databaseHostname": return java.lang.String.class;
         case "databaseinitialstatements":
@@ -253,8 +235,6 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "databasePassword": return java.lang.String.class;
         case "databaseport":
         case "databasePort": return int.class;
-        case "databaseservername":
-        case "databaseServerName": return java.lang.String.class;
         case "databasesslcert":
         case "databaseSslcert": return java.lang.String.class;
         case "databasesslfactory":
@@ -277,6 +257,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "decimalHandlingMode": return java.lang.String.class;
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return java.lang.String.class;
+        case "flushlsnsource":
+        case "flushLsnSource": return boolean.class;
         case "heartbeatactionquery":
         case "heartbeatActionQuery": return java.lang.String.class;
         case "heartbeatintervalms":
@@ -341,18 +323,16 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "retriableRestartConnectorWaitMs": return long.class;
         case "sanitizefieldnames":
         case "sanitizeFieldNames": return boolean.class;
-        case "schemablacklist":
-        case "schemaBlacklist": return java.lang.String.class;
         case "schemaexcludelist":
         case "schemaExcludeList": return java.lang.String.class;
+        case "schemahistoryinternalfilefilename":
+        case "schemaHistoryInternalFileFilename": return java.lang.String.class;
         case "schemaincludelist":
         case "schemaIncludeList": return java.lang.String.class;
         case "schemanameadjustmentmode":
         case "schemaNameAdjustmentMode": return java.lang.String.class;
         case "schemarefreshmode":
         case "schemaRefreshMode": return java.lang.String.class;
-        case "schemawhitelist":
-        case "schemaWhitelist": return java.lang.String.class;
         case "signaldatacollection":
         case "signalDataCollection": return java.lang.String.class;
         case "skippedoperations":
@@ -383,26 +363,22 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "snapshotMode": return java.lang.String.class;
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": return java.lang.String.class;
-        case "sourcestructversion":
-        case "sourceStructVersion": return java.lang.String.class;
         case "statusupdateintervalms":
         case "statusUpdateIntervalMs": return int.class;
-        case "tableblacklist":
-        case "tableBlacklist": return java.lang.String.class;
         case "tableexcludelist":
         case "tableExcludeList": return java.lang.String.class;
         case "tableignorebuiltin":
         case "tableIgnoreBuiltin": return boolean.class;
         case "tableincludelist":
         case "tableIncludeList": return java.lang.String.class;
-        case "tablewhitelist":
-        case "tableWhitelist": return java.lang.String.class;
         case "timeprecisionmode":
         case "timePrecisionMode": return java.lang.String.class;
         case "tombstonesondelete":
         case "tombstonesOnDelete": return boolean.class;
-        case "transactiontopic":
-        case "transactionTopic": return java.lang.String.class;
+        case "topicnamingstrategy":
+        case "topicNamingStrategy": return java.lang.String.class;
+        case "topicprefix":
+        case "topicPrefix": return java.lang.String.class;
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": return java.lang.String.class;
         case "xminfetchintervalms":
@@ -423,22 +399,16 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "binaryHandlingMode": return getOrCreateConfiguration(target).getBinaryHandlingMode();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
-        case "columnblacklist":
-        case "columnBlacklist": return getOrCreateConfiguration(target).getColumnBlacklist();
         case "columnexcludelist":
         case "columnExcludeList": return getOrCreateConfiguration(target).getColumnExcludeList();
         case "columnincludelist":
         case "columnIncludeList": return getOrCreateConfiguration(target).getColumnIncludeList();
         case "columnpropagatesourcetype":
         case "columnPropagateSourceType": return getOrCreateConfiguration(target).getColumnPropagateSourceType();
-        case "columnwhitelist":
-        case "columnWhitelist": return getOrCreateConfiguration(target).getColumnWhitelist();
         case "configuration": return target.getConfiguration();
         case "converters": return getOrCreateConfiguration(target).getConverters();
         case "databasedbname":
         case "databaseDbname": return getOrCreateConfiguration(target).getDatabaseDbname();
-        case "databasehistoryfilefilename":
-        case "databaseHistoryFileFilename": return getOrCreateConfiguration(target).getDatabaseHistoryFileFilename();
         case "databasehostname":
         case "databaseHostname": return getOrCreateConfiguration(target).getDatabaseHostname();
         case "databaseinitialstatements":
@@ -447,8 +417,6 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "databasePassword": return getOrCreateConfiguration(target).getDatabasePassword();
         case "databaseport":
         case "databasePort": return getOrCreateConfiguration(target).getDatabasePort();
-        case "databaseservername":
-        case "databaseServerName": return getOrCreateConfiguration(target).getDatabaseServerName();
         case "databasesslcert":
         case "databaseSslcert": return getOrCreateConfiguration(target).getDatabaseSslcert();
         case "databasesslfactory":
@@ -471,6 +439,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "decimalHandlingMode": return getOrCreateConfiguration(target).getDecimalHandlingMode();
         case "eventprocessingfailurehandlingmode":
         case "eventProcessingFailureHandlingMode": return getOrCreateConfiguration(target).getEventProcessingFailureHandlingMode();
+        case "flushlsnsource":
+        case "flushLsnSource": return getOrCreateConfiguration(target).isFlushLsnSource();
         case "heartbeatactionquery":
         case "heartbeatActionQuery": return getOrCreateConfiguration(target).getHeartbeatActionQuery();
         case "heartbeatintervalms":
@@ -535,18 +505,16 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "retriableRestartConnectorWaitMs": return getOrCreateConfiguration(target).getRetriableRestartConnectorWaitMs();
         case "sanitizefieldnames":
         case "sanitizeFieldNames": return getOrCreateConfiguration(target).isSanitizeFieldNames();
-        case "schemablacklist":
-        case "schemaBlacklist": return getOrCreateConfiguration(target).getSchemaBlacklist();
         case "schemaexcludelist":
         case "schemaExcludeList": return getOrCreateConfiguration(target).getSchemaExcludeList();
+        case "schemahistoryinternalfilefilename":
+        case "schemaHistoryInternalFileFilename": return getOrCreateConfiguration(target).getSchemaHistoryInternalFileFilename();
         case "schemaincludelist":
         case "schemaIncludeList": return getOrCreateConfiguration(target).getSchemaIncludeList();
         case "schemanameadjustmentmode":
         case "schemaNameAdjustmentMode": return getOrCreateConfiguration(target).getSchemaNameAdjustmentMode();
         case "schemarefreshmode":
         case "schemaRefreshMode": return getOrCreateConfiguration(target).getSchemaRefreshMode();
-        case "schemawhitelist":
-        case "schemaWhitelist": return getOrCreateConfiguration(target).getSchemaWhitelist();
         case "signaldatacollection":
         case "signalDataCollection": return getOrCreateConfiguration(target).getSignalDataCollection();
         case "skippedoperations":
@@ -577,26 +545,22 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "snapshotMode": return getOrCreateConfiguration(target).getSnapshotMode();
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": return getOrCreateConfiguration(target).getSnapshotSelectStatementOverrides();
-        case "sourcestructversion":
-        case "sourceStructVersion": return getOrCreateConfiguration(target).getSourceStructVersion();
         case "statusupdateintervalms":
         case "statusUpdateIntervalMs": return getOrCreateConfiguration(target).getStatusUpdateIntervalMs();
-        case "tableblacklist":
-        case "tableBlacklist": return getOrCreateConfiguration(target).getTableBlacklist();
         case "tableexcludelist":
         case "tableExcludeList": return getOrCreateConfiguration(target).getTableExcludeList();
         case "tableignorebuiltin":
         case "tableIgnoreBuiltin": return getOrCreateConfiguration(target).isTableIgnoreBuiltin();
         case "tableincludelist":
         case "tableIncludeList": return getOrCreateConfiguration(target).getTableIncludeList();
-        case "tablewhitelist":
-        case "tableWhitelist": return getOrCreateConfiguration(target).getTableWhitelist();
         case "timeprecisionmode":
         case "timePrecisionMode": return getOrCreateConfiguration(target).getTimePrecisionMode();
         case "tombstonesondelete":
         case "tombstonesOnDelete": return getOrCreateConfiguration(target).isTombstonesOnDelete();
-        case "transactiontopic":
-        case "transactionTopic": return getOrCreateConfiguration(target).getTransactionTopic();
+        case "topicnamingstrategy":
+        case "topicNamingStrategy": return getOrCreateConfiguration(target).getTopicNamingStrategy();
+        case "topicprefix":
+        case "topicPrefix": return getOrCreateConfiguration(target).getTopicPrefix();
         case "unavailablevalueplaceholder":
         case "unavailableValuePlaceholder": return getOrCreateConfiguration(target).getUnavailableValuePlaceholder();
         case "xminfetchintervalms":

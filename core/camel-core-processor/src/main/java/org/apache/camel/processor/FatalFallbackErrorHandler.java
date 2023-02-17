@@ -22,7 +22,6 @@ import java.util.Deque;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
@@ -71,7 +70,7 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
             // mark this exchange as already been error handler handled (just by having this property)
             // the false value mean the caught exception will be kept on the exchange, causing the
             // exception to be propagated back to the caller, and to break out routing
-            exchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(false);
+            exchange.getExchangeExtension().setErrorHandlerHandled(false);
             exchange.setProperty(ExchangePropertyKey.ERRORHANDLER_CIRCUIT_DETECTED, true);
             callback.done(true);
             return true;
@@ -135,12 +134,12 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                         if (deadLetterChannel) {
                             // special for dead letter channel as we want to let it determine what to do, depending how
                             // it has been configured
-                            exchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(null);
+                            exchange.getExchangeExtension().setErrorHandlerHandled(null);
                         } else {
                             // mark this exchange as already been error handler handled (just by having this property)
                             // the false value mean the caught exception will be kept on the exchange, causing the
                             // exception to be propagated back to the caller, and to break out routing
-                            exchange.adapt(ExtendedExchange.class).setErrorHandlerHandled(false);
+                            exchange.getExchangeExtension().setErrorHandlerHandled(false);
                         }
                     }
                 } finally {

@@ -17,10 +17,10 @@ Camel 4 supports Java 17. Support for Java 11 is dropped.
 The following components has been removed:
 
 - camel-activemq
+- camel-any23
 - camel-atmos
 - camel-caffeine-lrucache
 - camel-cdi
-- camel-datasonnet
 - camel-elasticsearch-rest
 - camel-gora
 - camel-hbase
@@ -54,8 +54,30 @@ Camel 4 has upgraded logging facade API `slf4j-api` from 1.7 to 2.0.
 
 All the `camel-test` modules that were JUnit 4.x based has been removed. All test modules now use JUnit 5.
 
+== Backlog Tracing
+
+The option `backlogTracing=true` now automatic enabled the tracer on startup. The previous behavior
+was _surprisingly_ that the tracer was only made available, and had to be manually enabled afterwards.
+The old behavior can be archived by setting `backlogTracingStandby=true`.
+
+Move the following class from `org.apache.camel.api.management.mbean.BacklogTracerEventMessage` in `camel-management-api` JAR
+to `org.apache.camel.spi.BacklogTracerEventMessage` in `camel-api` JAR.
+
+The `org.apache.camel.impl.debugger.DefaultBacklogTracerEventMessage` has been refactored into an interface `org.apache.camel.spi.BacklogTracerEventMessage`
+with some additional details about traced messages. For example Camel now captures a _first_ and _last_ trace
+that contains the input and outgoing (if `InOut`) messages.
+
+== XML serialization
+
+The default xml serialization using `ModelToXMLDumper` has been improved and now uses a generated xml
+serializer located in the `camel-xml-io` module instead of the JAXB based one from `camel-jaxb`.
+
 == Component changes
 
 === camel-caffeine
 
 The `keyType` parameter has been removed. The Key for the cache will now be only `String` type. More information in CAMEL-18877.
+
+=== camel-fhir
+
+The underlying `hapi-fhir` library has been upgraded from 4.2.0 to 6.2.4. Only the `Delete` API method has changed and now returns `ca.uhn.fhir.rest.api.MethodOutcome` instead of `org.hl7.fhir.instance.model.api.IBaseOperationOutcome`. See https://hapifhir.io/hapi-fhir/blog/ for a more detailed list of underlying changes (only the hapi-fhir client is used in Camel).

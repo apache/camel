@@ -35,6 +35,7 @@ import javax.xml.stream.XMLStreamReader;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * XML Json bridge. Explicitly using XMLStreamReader and not XMLEventReader because saxon wants that.
@@ -78,7 +79,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
 
     /**
      * Creates a new JsonXmlStreamReader instance
-     * 
+     *
      * @param jsonParser the {@link JsonParser} to use to read the json document.
      */
     public JsonXmlStreamReader(JsonParser jsonParser) {
@@ -110,7 +111,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
                                 removeStackElement(previousElement.jsonToken);
                                 removeStackElement(JsonToken.FIELD_NAME);
 
-                                assert tokenStack.peek() != null;
+                                ObjectHelper.notNull(tokenStack.peek(), "tokenStack.peek()");
                                 tokenStack.peek().xmlEvent = XMLStreamConstants.END_ELEMENT;
                                 return XMLStreamConstants.END_ELEMENT;
                             default:
@@ -441,7 +442,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
         final StackElement stackElement = tokenStack.peek();
 
         try {
-            assert stackElement != null;
+            ObjectHelper.notNull(stackElement, "stackElement");
             setXmlText(stackElement, jsonParser);
             return stackElement.value.length;
         } catch (IOException e) {

@@ -71,7 +71,7 @@ public class BodyTypesIT extends PubsubTestSupport {
         try {
             createTopicSubscriptionPair(TOPIC_NAME, SUBSCRIPTION_NAME);
         } catch (Exception e) {
-            // May be ignored because it could have been created. 
+            // May be ignored because it could have been created.
             LOG.warn("Failed to create the subscription pair {}", e.getMessage());
         }
     }

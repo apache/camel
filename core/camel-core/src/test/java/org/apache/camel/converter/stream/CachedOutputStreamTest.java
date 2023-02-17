@@ -28,7 +28,6 @@ import java.util.StringJoiner;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.engine.DefaultUnitOfWork;
@@ -66,7 +65,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
 
         exchange = new DefaultExchange(context);
         UnitOfWork uow = new DefaultUnitOfWork(exchange);
-        exchange.adapt(ExtendedExchange.class).setUnitOfWork(uow);
+        exchange.getExchangeExtension().setUnitOfWork(uow);
     }
 
     @Override

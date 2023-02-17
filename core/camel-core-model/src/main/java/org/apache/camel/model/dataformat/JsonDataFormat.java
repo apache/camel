@@ -16,8 +16,6 @@
  */
 package org.apache.camel.model.dataformat;
 
-import java.util.StringJoiner;
-
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -85,17 +83,11 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
     @Metadata(label = "advanced")
     private String disableFeatures;
     @XmlAttribute
-    @Metadata(label = "advanced")
-    private String permissions;
-    @XmlAttribute
     @Metadata(javaType = "java.lang.Boolean")
     private String allowUnmarshallType;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String timezone;
-    @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Boolean", defaultValue = "false")
-    private String dropRootNode;
     @XmlAttribute
     @Metadata(label = "advanced")
     private String schemaResolver;
@@ -111,6 +103,9 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
               description = "Whether the data format should set the Content-Type header with the type from the data format."
                             + " For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON")
     private String contentTypeHeader;
+    @XmlAttribute
+    @Metadata(description = "To configure the date format while marshall or unmarshall Date fields in JSON using Gson")
+    private String dateFormatPattern;
 
     public JsonDataFormat() {
         super("json");
@@ -141,14 +136,13 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         this.moduleRefs = builder.moduleRefs;
         this.enableFeatures = builder.enableFeatures;
         this.disableFeatures = builder.disableFeatures;
-        this.permissions = builder.permissions;
         this.allowUnmarshallType = builder.allowUnmarshallType;
         this.timezone = builder.timezone;
-        this.dropRootNode = builder.dropRootNode;
         this.schemaResolver = builder.schemaResolver;
         this.autoDiscoverSchemaResolver = builder.autoDiscoverSchemaResolver;
         this.namingStrategy = builder.namingStrategy;
         this.contentTypeHeader = builder.contentTypeHeader;
+        this.dateFormatPattern = builder.dateFormatPattern;
     }
 
     @Override
@@ -163,6 +157,14 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
 
     public void setContentTypeHeader(String contentTypeHeader) {
         this.contentTypeHeader = contentTypeHeader;
+    }
+
+    public String getDateFormatPattern() {
+        return dateFormatPattern;
+    }
+
+    public void setDateFormatPattern(String dateFormatPattern) {
+        this.dateFormatPattern = dateFormatPattern;
     }
 
     public String getObjectMapper() {
@@ -371,45 +373,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         this.disableFeatures = disableFeatures;
     }
 
-    public String getPermissions() {
-        return permissions;
-    }
-
-    /**
-     * Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal from
-     * xml/json to Java beans.
-     * <p/>
-     * A permission must be configured either here or globally using a JVM system property. The permission can be
-     * specified in a syntax where a plus sign is allow, and minus sign is deny. <br/>
-     * Wildcards is supported by using <tt>.*</tt> as prefix. For example to allow <tt>com.foo</tt> and all subpackages
-     * then specfy <tt>+com.foo.*</tt>. Multiple permissions can be configured separated by comma, such as
-     * <tt>+com.foo.*,-com.foo.bar.MySecretBean</tt>. <br/>
-     * The following default permission is always included: <tt>"-*,java.lang.*,java.util.*"</tt> unless its overridden
-     * by specifying a JVM system property with they key <tt>org.apache.camel.xstream.permissions</tt>.
-     */
-    public void setPermissions(String permissions) {
-        this.permissions = permissions;
-    }
-
-    /**
-     * To add permission for the given pojo classes.
-     *
-     * @param type the pojo class(es) xstream should use as allowed permission
-     * @see        #setPermissions(String)
-     */
-    public void setPermissions(Class<?>... type) {
-        setPermissions(toString(type));
-    }
-
-    private static String toString(Class<?>[] type) {
-        StringJoiner permissionsBuilder = new StringJoiner(",");
-        for (Class<?> clazz : type) {
-            permissionsBuilder.add("+");
-            permissionsBuilder.add(clazz.getName());
-        }
-        return permissionsBuilder.toString();
-    }
-
     public String getAllowUnmarshallType() {
         return allowUnmarshallType;
     }
@@ -430,7 +393,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
 
     /**
      * If set then Jackson will use the Timezone when marshalling/unmarshalling. This option will have no effect on the
-     * others Json DataFormat, like gson, fastjson and xstream.
+     * others Json DataFormat, like gson and fastjson.
      */
     public void setTimezone(String timezone) {
         this.timezone = timezone;
@@ -445,19 +408,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
      */
     public void setAutoDiscoverObjectMapper(String autoDiscoverObjectMapper) {
         this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
-    }
-
-    public String getDropRootNode() {
-        return dropRootNode;
-    }
-
-    /**
-     * Whether XStream will drop the root node in the generated JSon. You may want to enable this when using POJOs; as
-     * then the written object will include the class name as root node, which is often not intended to be written in
-     * the JSON output.
-     */
-    public void setDropRootNode(String dropRootNode) {
-        this.dropRootNode = dropRootNode;
     }
 
     /**
@@ -594,11 +544,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         return this;
     }
 
-    public JsonDataFormat permissions(String permissions) {
-        this.permissions = permissions;
-        return this;
-    }
-
     public JsonDataFormat allowUnmarshallType(boolean allowUnmarshallType) {
         return allowUnmarshallType(Boolean.toString(allowUnmarshallType));
     }
@@ -619,15 +564,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
 
     public JsonDataFormat autoDiscoverObjectMapper(String autoDiscoverObjectMapper) {
         this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
-        return this;
-    }
-
-    public JsonDataFormat dropRootNode(boolean dropRootNode) {
-        return dropRootNode(Boolean.toString(dropRootNode));
-    }
-
-    public JsonDataFormat dropRootNode(String dropRootNode) {
-        this.dropRootNode = dropRootNode;
         return this;
     }
 
@@ -660,22 +596,37 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         private String moduleRefs;
         private String enableFeatures;
         private String disableFeatures;
-        private String permissions;
         private String allowUnmarshallType;
         private String timezone;
-        private String dropRootNode;
         private String schemaResolver;
         private String autoDiscoverSchemaResolver;
         private String namingStrategy;
         private String contentTypeHeader;
+        private String dateFormatPattern;
 
+        /**
+         * Whether the data format should set the Content-Type header with the type from the data format. For example
+         * application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON
+         */
         public Builder contentTypeHeader(String contentTypeHeader) {
             this.contentTypeHeader = contentTypeHeader;
             return this;
         }
 
+        /**
+         * Whether the data format should set the Content-Type header with the type from the data format. For example
+         * application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSON
+         */
         public Builder contentTypeHeader(boolean contentTypeHeader) {
             this.contentTypeHeader = Boolean.toString(contentTypeHeader);
+            return this;
+        }
+
+        /**
+         * To configure the date format while marshall or unmarshall Date fields in JSON using Gson.
+         */
+        public Builder dateFormatPattern(String dateFormatPattern) {
+            this.dateFormatPattern = dateFormatPattern;
             return this;
         }
 
@@ -872,33 +823,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
         }
 
         /**
-         * Adds permissions that controls which Java packages and classes XStream is allowed to use during unmarshal
-         * from xml/json to Java beans.
-         * <p/>
-         * A permission must be configured either here or globally using a JVM system property. The permission can be
-         * specified in a syntax where a plus sign is allow, and minus sign is deny. <br/>
-         * Wildcards is supported by using <tt>.*</tt> as prefix. For example to allow <tt>com.foo</tt> and all
-         * subpackages then specfy <tt>+com.foo.*</tt>. Multiple permissions can be configured separated by comma, such
-         * as <tt>+com.foo.*,-com.foo.bar.MySecretBean</tt>. <br/>
-         * The following default permission is always included: <tt>"-*,java.lang.*,java.util.*"</tt> unless its
-         * overridden by specifying a JVM system property with they key <tt>org.apache.camel.xstream.permissions</tt>.
-         */
-        public Builder permissions(String permissions) {
-            this.permissions = permissions;
-            return this;
-        }
-
-        /**
-         * To add permission for the given pojo classes.
-         *
-         * @param type the pojo class(es) xstream should use as allowed permission
-         * @see        #setPermissions(String)
-         */
-        public Builder permissions(Class<?>... type) {
-            return permissions(JsonDataFormat.toString(type));
-        }
-
-        /**
          * If enabled then Jackson is allowed to attempt to use the CamelJacksonUnmarshalType header during the
          * unmarshalling.
          * <p/>
@@ -922,7 +846,7 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
 
         /**
          * If set then Jackson will use the Timezone when marshalling/unmarshalling. This option will have no effect on
-         * the others Json DataFormat, like gson, fastjson and xstream.
+         * the others Json DataFormat, like gson and fastjson.
          */
         public Builder timezone(String timezone) {
             this.timezone = timezone;
@@ -942,26 +866,6 @@ public class JsonDataFormat extends DataFormatDefinition implements ContentTypeH
          */
         public Builder autoDiscoverObjectMapper(boolean autoDiscoverObjectMapper) {
             this.autoDiscoverObjectMapper = Boolean.toString(autoDiscoverObjectMapper);
-            return this;
-        }
-
-        /**
-         * Whether XStream will drop the root node in the generated JSon. You may want to enable this when using POJOs;
-         * as then the written object will include the class name as root node, which is often not intended to be
-         * written in the JSON output.
-         */
-        public Builder dropRootNode(String dropRootNode) {
-            this.dropRootNode = dropRootNode;
-            return this;
-        }
-
-        /**
-         * Whether XStream will drop the root node in the generated JSon. You may want to enable this when using POJOs;
-         * as then the written object will include the class name as root node, which is often not intended to be
-         * written in the JSON output.
-         */
-        public Builder dropRootNode(boolean dropRootNode) {
-            this.dropRootNode = Boolean.toString(dropRootNode);
             return this;
         }
 

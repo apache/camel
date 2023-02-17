@@ -84,19 +84,19 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 Message inMessage = exchange.getIn();
-                // set the operation name 
+                // set the operation name
                 inMessage.setHeader(CxfConstants.OPERATION_NAME, "getCustomer");
                 // using the proxy client API
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.FALSE);
                 // set a customer header
                 inMessage.setHeader("key", "value");
-                // set the parameters , if you just have one parameter 
+                // set the parameters , if you just have one parameter
                 // camel will put this object into an Object[] itself
                 inMessage.setBody("123");
             }
         });
 
-        // get the response message 
+        // get the response message
         Customer response = (Customer) exchange.getMessage().getBody();
 
         assertNotNull(response, "The response should not be null");
@@ -104,7 +104,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         assertEquals("John", response.getName(), "Get a wrong customer name");
         assertEquals(200, exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong response code");
         assertEquals("value", exchange.getMessage().getHeader("key"), "Get a wrong header value");
-        // END SNIPPET: ProxyExample     
+        // END SNIPPET: ProxyExample
     }
 
     @Test
@@ -112,7 +112,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
         Exchange exchange = template.send("direct://proxy", newExchange -> {
             newExchange.setPattern(ExchangePattern.InOut);
             Message inMessage = newExchange.getIn();
-            // set the operation name 
+            // set the operation name
             inMessage.setHeader(CxfConstants.OPERATION_NAME, "getCustomers");
             // using the proxy client API
             inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.FALSE);
@@ -120,7 +120,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
             inMessage.setBody(null);
         });
 
-        // get the response message 
+        // get the response message
         List<Customer> response = CastUtils.cast((List<?>) exchange.getMessage().getBody());
 
         assertNotNull(response, "The response should not be null");
@@ -136,11 +136,11 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
             Message inMessage = newExchange.getIn();
             // set the Http method
             inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
-            // set the relative path 
+            // set the relative path
             inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/");
             // using the proxy client API
             inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.TRUE);
-            // set the headers 
+            // set the headers
             inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, List.class);
             inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE,
                     new ParameterizedCollectionType(Customer.class));
@@ -148,7 +148,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
             inMessage.setBody(null);
         });
 
-        // get the response message 
+        // get the response message
         List<Customer> response = CastUtils.cast((List<?>) exchange.getMessage().getBody());
 
         assertNotNull(response, "The response should not be null");
@@ -168,7 +168,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
             inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
             // set the relative path
             inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");
-            // Specify the response class , cxfrs will use InputStream as the response object type 
+            // Specify the response class , cxfrs will use InputStream as the response object type
             inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
             // set a customer header
             inMessage.setHeader("key", "value");
@@ -176,7 +176,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
             inMessage.setBody(null);
         });
 
-        // get the response message 
+        // get the response message
         Customer response = (Customer) exchange.getMessage().getBody();
 
         assertNotNull(response, "The response should not be null");
@@ -205,7 +205,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
                             message.setBody(customer);
                         });
 
-        // we should get the exception here 
+        // we should get the exception here
         assertNull(exchange.getException(), "Don't expect the exception here");
         Message result = exchange.getMessage();
         assertEquals(406, result.getHeader(Exchange.HTTP_RESPONSE_CODE), "Get a wrong http status code.");
@@ -231,7 +231,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
                             message.setBody(customer);
                         });
 
-        // we should get the exception here 
+        // we should get the exception here
         assertNotNull(exchange.getException(), "Expect the exception here");
         CxfOperationException exception = (CxfOperationException) exchange.getException();
 
@@ -251,13 +251,13 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
                             inMessage.setHeader(Exchange.HTTP_METHOD, "GET");
                             // set the relative path
                             inMessage.setHeader(Exchange.HTTP_PATH, "/customerservice/customers/123");
-                            // Specify the response class , cxfrs will use InputStream as the response object type 
+                            // Specify the response class , cxfrs will use InputStream as the response object type
                             inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Customer.class);
                             // since we use the Get method, so we don't need to set the message body
                             inMessage.setBody(null);
                         });
 
-        // get the response message 
+        // get the response message
         Customer response = (Customer) exchange.getMessage().getBody();
         assertNotNull(response, "The response should not be null");
         assertEquals(123, response.getId(), "Get a wrong customer id");
@@ -311,7 +311,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
                             inMessage.setBody(customer);
                         });
 
-        // get the response message 
+        // get the response message
         Response response = (Response) exchange.getMessage().getBody();
         assertNotNull(response, "The response should not be null");
         assertNotNull(response.getEntity(), "The response entity should not be null");
@@ -327,11 +327,11 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
                 Message inMessage = exchange.getIn();
-                // set the operation name 
+                // set the operation name
                 inMessage.setHeader(CxfConstants.OPERATION_NAME, "addCustomerUniqueResponseCode");
                 // using the proxy client API
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.FALSE);
-                // set the parameters , if you just have one parameter 
+                // set the parameters , if you just have one parameter
                 // camel will put this object into an Object[] itself
                 Customer customer = new Customer();
                 customer.setId(8888);
@@ -340,7 +340,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
             }
         });
 
-        // get the response message 
+        // get the response message
         Response response = (Response) exchange.getMessage().getBody();
         assertNotNull(response, "The response should not be null");
         assertNotNull(response.getEntity(), "The response entity should not be null");
@@ -373,7 +373,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
                             }
                         });
 
-        // get the response message 
+        // get the response message
         Customer response = (Customer) exchange.getMessage().getBody();
         assertNotNull(response, "The response should not be null");
         assertNotEquals(8888, response.getId(), "Get a wrong customer id");
@@ -394,7 +394,7 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
                     inMessage.setBody(null);
                 });
 
-        // get the response message 
+        // get the response message
         String response = exchange.getMessage().getBody(String.class);
         assertNotNull(response, "The response should not be null");
         assertEquals("q1=12&q2=13", response, "The response value is wrong");
@@ -416,11 +416,11 @@ public class CxfRsAsyncProducerTest extends CamelSpringTestSupport {
                     queryMap.put("q1", "new");
                     queryMap.put("q2", "world");
                     inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, queryMap);
-                    // END SNIPPET: QueryMapExample 
+                    // END SNIPPET: QueryMapExample
                     inMessage.setBody(null);
                 });
 
-        // get the response message 
+        // get the response message
         String response = exchange.getMessage().getBody(String.class);
         assertNotNull(response, "The response should not be null");
         assertEquals("q1=new&q2=world", response, "The response value is wrong");

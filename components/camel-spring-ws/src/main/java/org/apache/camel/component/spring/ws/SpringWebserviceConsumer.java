@@ -28,7 +28,6 @@ import javax.xml.transform.Source;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.DefaultAttachmentMessage;
@@ -107,8 +106,8 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
                 if (mimeHeaders != null) {
                     String[] breadcrumbIdHeaderValues = mimeHeaders.getHeader(SpringWebserviceConstants.BREADCRUMB_ID);
                     // expected to get one token
-                    // if more than one token expected, 
-                    // presumably breadcrumb generation strategy 
+                    // if more than one token expected,
+                    // presumably breadcrumb generation strategy
                     // may be required to implement
                     if (breadcrumbIdHeaderValues != null && breadcrumbIdHeaderValues.length >= 1) {
                         exchange.getIn().setHeader(SpringWebserviceConstants.BREADCRUMB_ID, breadcrumbIdHeaderValues[0]);
@@ -134,7 +133,7 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
         // create inbound message
         WebServiceMessage request = messageContext.getRequest();
 
-        SpringWebserviceMessage swm = exchange.adapt(ExtendedExchange.class).getInOrNull(SpringWebserviceMessage.class);
+        SpringWebserviceMessage swm = exchange.getExchangeExtension().getInOrNull(SpringWebserviceMessage.class);
         if (swm == null) {
             swm = new SpringWebserviceMessage(exchange.getContext(), request);
             exchange.setIn(swm);

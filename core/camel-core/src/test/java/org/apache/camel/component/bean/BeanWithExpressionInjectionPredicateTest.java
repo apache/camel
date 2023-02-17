@@ -23,6 +23,8 @@ import org.apache.camel.spi.Registry;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BeanWithExpressionInjectionPredicateTest extends ContextTestSupport {
     protected MyBean myBean = new MyBean();
@@ -32,7 +34,7 @@ public class BeanWithExpressionInjectionPredicateTest extends ContextTestSupport
         template.sendBody("direct:in", "Hello");
 
         assertEquals("Hello", myBean.body);
-        assertEquals(false, myBean.foo);
+        assertFalse(myBean.foo);
     }
 
     @Test
@@ -40,7 +42,7 @@ public class BeanWithExpressionInjectionPredicateTest extends ContextTestSupport
         template.sendBodyAndHeader("direct:in", "Hello", "foo", 123);
 
         assertEquals("Hello", myBean.body);
-        assertEquals(true, myBean.foo);
+        assertTrue(myBean.foo);
     }
 
     @Override
