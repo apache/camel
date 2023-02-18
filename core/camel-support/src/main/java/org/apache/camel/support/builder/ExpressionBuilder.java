@@ -1679,15 +1679,11 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
-                for (Expression expression : expressions) {
-                    expression.init(context);
-                }
-
                 if(col == null) {
                     Collection<Object> preprocessedExpression = new ArrayList<>(expressions.size());
                     for (Expression expression : expressions) {
+                        expression.init(context);
                         if (expression instanceof ConstantExpressionAdapter) {
-                            expression.init(context);
                             Object value = ((ConstantExpressionAdapter) expression).getValue();
                             preprocessedExpression.add(value.toString());
                         } else {
@@ -1695,6 +1691,11 @@ public class ExpressionBuilder {
                         }
                     }
                     col = Collections.unmodifiableCollection(preprocessedExpression);
+                }
+                else{
+                    for (Expression expression : expressions) {
+                        expression.init(context);
+                    }
                 }
 
             }
