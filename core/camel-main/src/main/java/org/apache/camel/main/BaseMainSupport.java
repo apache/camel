@@ -488,6 +488,8 @@ public abstract class BaseMainSupport extends BaseService {
         if (mainConfigurationProperties.isAutoConfigurationEnabled()) {
             autoConfigurationFromProperties(camelContext, autoConfiguredProperties);
             autowireWildcardProperties(camelContext);
+            // register properties reloader so we can auto-update if updated
+            camelContext.addService(new MainPropertiesReload(this));
         }
 
         // log summary of configurations
@@ -1622,8 +1624,78 @@ public abstract class BaseMainSupport extends BaseService {
             prop.remove(key);
         }
 
+        doAutoConfigurationFromProperties(camelContext, prop, properties, false, autoConfiguredProperties);
+    }
+
+    protected void autoConfigurationFromReloadedProperties(
+            CamelContext camelContext, OrderedLocationProperties reloadedProperties)
+            throws Exception {
+
+        Map<PropertyOptionKey, OrderedLocationProperties> properties = new LinkedHashMap<>();
+
+        // filter out wildcard properties
+        for (String key : reloadedProperties.stringPropertyNames()) {
+            if (key.contains("*")) {
+                String loc = reloadedProperties.getLocation(key);
+                wildcardProperties.put(loc, key, reloadedProperties.getProperty(key));
+            }
+        }
+        // and remove wildcards
+        for (String key : wildcardProperties.stringPropertyNames()) {
+            reloadedProperties.remove(key);
+        }
+
+        OrderedLocationProperties autoConfiguredProperties = new OrderedLocationProperties();
+        doAutoConfigurationFromProperties(camelContext, reloadedProperties, properties, true, autoConfiguredProperties);
+
+        // log summary of configurations
+        if (mainConfigurationProperties.isAutoConfigurationLogSummary() && !autoConfiguredProperties.isEmpty()) {
+            boolean header = false;
+            for (var entry : autoConfiguredProperties.entrySet()) {
+                String k = entry.getKey().toString();
+                Object v = entry.getValue();
+                String loc = locationSummary(autoConfiguredProperties, k);
+
+                // tone down logging noise for our own internal configurations
+                boolean debug = loc.contains("[camel-main]");
+                if (debug && !LOG.isDebugEnabled()) {
+                    continue;
+                }
+
+                if (!header) {
+                    LOG.info("Auto-configuration summary");
+                    header = true;
+                }
+
+                if (SensitiveUtils.containsSensitive(k)) {
+                    if (debug) {
+                        LOG.debug("    {} {}=xxxxxx", loc, k);
+                    } else {
+                        LOG.info("    {} {}=xxxxxx", loc, k);
+                    }
+                } else {
+                    if (debug) {
+                        LOG.debug("    {} {}={}", loc, k, v);
+                    } else {
+                        LOG.info("    {} {}={}", loc, k, v);
+                    }
+                }
+            }
+        }
+    }
+
+    protected void doAutoConfigurationFromProperties(
+            CamelContext camelContext, OrderedLocationProperties prop,
+            Map<PropertyOptionKey, OrderedLocationProperties> properties, boolean reload,
+            OrderedLocationProperties autoConfiguredProperties)
+            throws Exception {
+
         for (String key : prop.stringPropertyNames()) {
             computeProperties("camel.component.", key, prop, properties, name -> {
+                if (reload) {
+                    // force re-creating component on reload
+                    camelContext.removeComponent(name);
+                }
                 // its an existing component name
                 Component target = camelContext.getComponent(name);
                 if (target == null) {
@@ -1706,6 +1778,9 @@ public abstract class BaseMainSupport extends BaseService {
                 doAutowireWildcardProperties(name, component);
             }
         });
+
+        // clear in case we reload later
+        wildcardProperties.clear();
     }
 
     protected void doAutowireWildcardProperties(String name, Component component) {
