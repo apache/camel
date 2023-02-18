@@ -950,7 +950,7 @@ public final class MessageHelper {
 
             String data = extractBodyForLogging(message, null, allowCachedStreams, allowStreams, allowFiles, maxChars);
             if (data != null) {
-                jb.put("value", Jsoner.unescape(data));
+                jb.put("value", Jsoner.escape(data));
             }
         }
 
@@ -1029,7 +1029,7 @@ public final class MessageHelper {
         exception.printStackTrace(new PrintWriter(sw));
         String trace = sw.toString();
         try {
-            jo.put("stackTrace", Jsoner.unescape(trace));
+            jo.put("stackTrace", Jsoner.escape(trace));
         } catch (Throwable e) {
             // ignore as the body is for logging purpose
         }
