@@ -1578,32 +1578,30 @@ public class ExpressionBuilder {
      * Returns an expression which returns the string concatenation value of the various
      * expressions
      *
-     * @param context the Camel context
      * @param expressions the expression to be concatenated dynamically
      * @return an expression which when evaluated will return the concatenated values
      */
-    public static Expression concatExpression(final CamelContext context, final Collection<Expression> expressions) {
-        return concatExpression(context, expressions, null);
+    public static Expression concatExpression(final Collection<Expression> expressions) {
+        return concatExpression(expressions, null);
     }
 
     /**
      * Returns an expression which returns the string concatenation value of the various
      * expressions
      *
-     * @param context the Camel context
      * @param expressions the expression to be concatenated dynamically
      * @param description the text description of the expression
      * @return an expression which when evaluated will return the concatenated values
      */
-    public static Expression concatExpression(final CamelContext context, final Collection<Expression> expressions, final String description) {
+    public static Expression concatExpression(final Collection<Expression> expressions, final String description) {
 
         for (Expression expression : expressions) {
             if(expression instanceof ConstantExpressionAdapter){
-                return concatExpressionOptimized(context, expressions, description);
+                return concatExpressionOptimized(expressions, description);
             }
         }
 
-        return concatExpression(expressions,description);
+        return concatExpressionUnoptimized(expressions,description);
     }
 
     /**
@@ -1614,7 +1612,7 @@ public class ExpressionBuilder {
      * @param description the text description of the expression
      * @return an expression which when evaluated will return the concatenated values
      */
-    private static Expression concatExpression(final Collection<Expression> expressions, final String description) {
+    private static Expression concatExpressionUnoptimized(final Collection<Expression> expressions, final String description) {
         return new ExpressionAdapter() {
 
             @Override
@@ -1631,7 +1629,6 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
-                boolean constant = false;
                 for (Expression expression : expressions) {
                     expression.init(context);
                 }
@@ -1652,26 +1649,16 @@ public class ExpressionBuilder {
      * Returns an optimized expression which returns the string concatenation value of the various.
      * expressions
      *
-     * @param context the Camel context
      * @param expressions the expression to be concatenated dynamically
      * @param description the text description of the expression
      * @return an expression which when evaluated will return the concatenated values
      */
-    private static Expression concatExpressionOptimized(final CamelContext context, final Collection<Expression> expressions, final String description) {
-        Collection<Object> preprocessedExpression = new ArrayList<>(expressions.size());
-        for (Expression expression : expressions) {
-            if (expression instanceof ConstantExpressionAdapter) {
-                expression.init(context);
-                Object value = ((ConstantExpressionAdapter) expression).getValue();
-                preprocessedExpression.add(value.toString());
-            } else {
-                preprocessedExpression.add(expression);
-            }
-        }
+    private static Expression concatExpressionOptimized(final Collection<Expression> expressions, final String description) {
+
 
         return new ExpressionAdapter() {
 
-            private final Collection<Object> col = Collections.unmodifiableCollection(preprocessedExpression);
+            private Collection<Object> col;
 
             @Override
             public Object evaluate(Exchange exchange) {
@@ -1695,6 +1682,21 @@ public class ExpressionBuilder {
                 for (Expression expression : expressions) {
                     expression.init(context);
                 }
+
+                if(col == null) {
+                    Collection<Object> preprocessedExpression = new ArrayList<>(expressions.size());
+                    for (Expression expression : expressions) {
+                        if (expression instanceof ConstantExpressionAdapter) {
+                            expression.init(context);
+                            Object value = ((ConstantExpressionAdapter) expression).getValue();
+                            preprocessedExpression.add(value.toString());
+                        } else {
+                            preprocessedExpression.add(expression);
+                        }
+                    }
+                    col = Collections.unmodifiableCollection(preprocessedExpression);
+                }
+
             }
 
             @Override

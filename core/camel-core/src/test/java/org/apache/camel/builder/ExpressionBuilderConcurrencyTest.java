@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,11 +36,10 @@ public class ExpressionBuilderConcurrencyTest extends ContextTestSupport {
         mockWithFailure.assertIsSatisfied();
         List<Exchange> exchanges = mockWithFailure.getExchanges();
         exchanges.stream()
-                .forEach(exchange ->
-                        Assertions
-                         .assertEquals(
-                                 "This is a test a with startLabel: `Document` endLabel: `Document` and label: `ALabel`",
-                                 exchange.getMessage().getHeader("#CustomHeader", String.class)));
+                .forEach(exchange -> Assertions
+                        .assertEquals(
+                                "This is a test a with startLabel: `Document` endLabel: `Document` and label: `ALabel`",
+                                exchange.getMessage().getHeader("#CustomHeader", String.class)));
     }
 
     @Override
