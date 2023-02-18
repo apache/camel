@@ -31,7 +31,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteFromTemplateException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PropertyBindingException;
@@ -163,7 +162,7 @@ public class DefaultModel implements Model {
     @Override
     public synchronized RouteConfigurationDefinition getRouteConfigurationDefinition(String id) {
         for (RouteConfigurationDefinition def : routesConfigurations) {
-            if (def.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory()).equals(id)) {
+            if (def.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory()).equals(id)) {
                 return def;
             }
         }
@@ -295,7 +294,7 @@ public class DefaultModel implements Model {
     @Override
     public synchronized RouteDefinition getRouteDefinition(String id) {
         for (RouteDefinition route : routeDefinitions) {
-            if (route.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory()).equals(id)) {
+            if (route.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory()).equals(id)) {
                 return route;
             }
         }
@@ -310,7 +309,7 @@ public class DefaultModel implements Model {
     @Override
     public RouteTemplateDefinition getRouteTemplateDefinition(String id) {
         for (RouteTemplateDefinition route : routeTemplateDefinitions) {
-            if (route.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory()).equals(id)) {
+            if (route.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory()).equals(id)) {
                 return route;
             }
         }
@@ -586,7 +585,7 @@ public class DefaultModel implements Model {
                 // and memorize so the script is only evaluated once and the local bean is the same
                 // if a route template refers to the local bean multiple times
                 routeTemplateContext.bind(beanFactory.getName(), clazz, Suppliers.memorize(() -> {
-                    ExchangeFactory ef = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory();
+                    ExchangeFactory ef = camelContext.getCamelContextExtension().getExchangeFactory();
                     Exchange dummy = ef.create(false);
                     try {
                         String text = ScriptHelper.resolveOptionalExternalScript(camelContext, dummy, script);
@@ -720,7 +719,7 @@ public class DefaultModel implements Model {
 
         if (configurer == null) {
             // see if there is a configurer for it
-            configurer = context.adapt(ExtendedCamelContext.class)
+            configurer = context.getCamelContextExtension()
                     .getConfigurerResolver()
                     .resolvePropertyConfigurer(target.getClass().getSimpleName(), context);
         }

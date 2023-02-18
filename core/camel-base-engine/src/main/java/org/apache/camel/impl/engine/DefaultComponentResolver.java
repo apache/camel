@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.FactoryFinder;
@@ -71,7 +70,7 @@ public class DefaultComponentResolver implements ComponentResolver {
 
     private Class<?> findComponent(String name, CamelContext context) throws IOException {
         if (factoryFinder == null) {
-            factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+            factoryFinder = context.getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
         }
         return factoryFinder.findClass(name).orElse(null);
     }

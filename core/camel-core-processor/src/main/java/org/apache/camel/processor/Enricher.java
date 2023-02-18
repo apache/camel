@@ -25,7 +25,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProcessorExchangeFactory;
@@ -239,7 +238,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         this.sendDynamicProcessor.setAllowOptimisedComponents(allowOptimisedComponents);
 
         // create a per processor exchange factory
-        this.processorExchangeFactory = getCamelContext().adapt(ExtendedCamelContext.class)
+        this.processorExchangeFactory = getCamelContext().getCamelContextExtension()
                 .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
         this.processorExchangeFactory.setRouteId(getRouteId());
         this.processorExchangeFactory.setId(getId());

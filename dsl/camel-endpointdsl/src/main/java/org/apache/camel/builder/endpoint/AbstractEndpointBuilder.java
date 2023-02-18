@@ -79,7 +79,7 @@ public class AbstractEndpointBuilder {
             Object value = entry.getValue();
             if (value instanceof String) {
                 String text = (String) value;
-                String changed = context.adapt(ExtendedCamelContext.class).resolvePropertyPlaceholders(text, true);
+                String changed = context.getCamelContextExtension().resolvePropertyPlaceholders(text, true);
                 if (changed.startsWith(PropertiesComponent.PREFIX_OPTIONAL_TOKEN)) {
                     // unresolved then remove it
                     toRemove.add(entry.getKey());

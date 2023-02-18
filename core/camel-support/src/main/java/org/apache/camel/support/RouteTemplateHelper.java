@@ -54,7 +54,7 @@ public final class RouteTemplateHelper {
             throw new IllegalArgumentException("Location is empty");
         }
 
-        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
         boolean found = false;
         for (String path : location.split(",")) {
             // using dot as current dir must be expanded into absolute path

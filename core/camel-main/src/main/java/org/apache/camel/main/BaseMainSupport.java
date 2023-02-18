@@ -38,7 +38,6 @@ import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Configuration;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.RuntimeCamelException;
@@ -266,9 +265,9 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected void loadConfigurations(CamelContext camelContext) throws Exception {
         // auto-detect camel configurations via base package scanning
-        String basePackage = camelContext.adapt(ExtendedCamelContext.class).getBasePackageScan();
+        String basePackage = camelContext.getCamelContextExtension().getBasePackageScan();
         if (basePackage != null) {
-            PackageScanClassResolver pscr = camelContext.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
+            PackageScanClassResolver pscr = camelContext.getCamelContextExtension().getPackageScanClassResolver();
             Set<Class<?>> found1 = pscr.findImplementations(CamelConfiguration.class, basePackage);
             Set<Class<?>> found2 = pscr.findAnnotated(Configuration.class, basePackage);
             Set<Class<?>> found = new LinkedHashSet<>();
@@ -308,7 +307,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         // lets use Camel's bean post processor on any existing configuration classes
         // so the instance has some support for dependency injection
-        CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+        CamelBeanPostProcessor postProcessor = camelContext.getCamelContextExtension().getBeanPostProcessor();
 
         // discover configurations from the registry
         Set<CamelConfiguration> registryConfigurations = camelContext.getRegistry().findByType(CamelConfiguration.class);
@@ -398,7 +397,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         if (vc.aws().isRefreshEnabled()) {
-            Optional<Runnable> task = camelContext.adapt(ExtendedCamelContext.class)
+            Optional<Runnable> task = camelContext.getCamelContextExtension()
                     .getPeriodTaskResolver().newInstance("aws-secret-refresh", Runnable.class);
             if (task.isPresent()) {
                 long period = vc.aws().getRefreshPeriod();
@@ -411,13 +410,13 @@ public abstract class BaseMainSupport extends BaseService {
                     ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
                     camelContext.addService(reloader);
                 }
-                PeriodTaskScheduler scheduler = getCamelContext().adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
+                PeriodTaskScheduler scheduler = getCamelContext().getCamelContextExtension().getPeriodTaskScheduler();
                 scheduler.schedulePeriodTask(r, period);
             }
         }
 
         if (vc.gcp().isRefreshEnabled()) {
-            Optional<Runnable> task = camelContext.adapt(ExtendedCamelContext.class)
+            Optional<Runnable> task = camelContext.getCamelContextExtension()
                     .getPeriodTaskResolver().newInstance("gcp-secret-refresh", Runnable.class);
             if (task.isPresent()) {
                 long period = vc.gcp().getRefreshPeriod();
@@ -430,13 +429,13 @@ public abstract class BaseMainSupport extends BaseService {
                     ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
                     camelContext.addService(reloader);
                 }
-                PeriodTaskScheduler scheduler = getCamelContext().adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
+                PeriodTaskScheduler scheduler = getCamelContext().getCamelContextExtension().getPeriodTaskScheduler();
                 scheduler.schedulePeriodTask(r, period);
             }
         }
 
         if (vc.azure().isRefreshEnabled()) {
-            Optional<Runnable> task = camelContext.adapt(ExtendedCamelContext.class)
+            Optional<Runnable> task = camelContext.getCamelContextExtension()
                     .getPeriodTaskResolver().newInstance("azure-secret-refresh", Runnable.class);
             if (task.isPresent()) {
                 long period = vc.azure().getRefreshPeriod();
@@ -449,7 +448,7 @@ public abstract class BaseMainSupport extends BaseService {
                     ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
                     camelContext.addService(reloader);
                 }
-                PeriodTaskScheduler scheduler = getCamelContext().adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
+                PeriodTaskScheduler scheduler = getCamelContext().getCamelContextExtension().getPeriodTaskScheduler();
                 scheduler.schedulePeriodTask(r, period);
             }
         }
@@ -564,14 +563,14 @@ public abstract class BaseMainSupport extends BaseService {
 
         if ("off".equals(mainConfigurationProperties.getStartupRecorder())
                 || "false".equals(mainConfigurationProperties.getStartupRecorder())) {
-            camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder().setEnabled(false);
+            camelContext.getCamelContextExtension().getStartupStepRecorder().setEnabled(false);
         } else if ("logging".equals(mainConfigurationProperties.getStartupRecorder())) {
-            camelContext.adapt(ExtendedCamelContext.class).setStartupStepRecorder(new LoggingStartupStepRecorder());
+            camelContext.getCamelContextExtension().setStartupStepRecorder(new LoggingStartupStepRecorder());
         } else if ("jfr".equals(mainConfigurationProperties.getStartupRecorder())
                 || "java-flight-recorder".equals(mainConfigurationProperties.getStartupRecorder())
                 || mainConfigurationProperties.getStartupRecorder() == null) {
             // try to auto discover camel-jfr to use
-            StartupStepRecorder fr = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
+            StartupStepRecorder fr = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
                     .newInstance(StartupStepRecorder.FACTORY, StartupStepRecorder.class).orElse(null);
             if (fr != null) {
                 LOG.debug("Discovered startup recorder: {} from classpath", fr);
@@ -579,7 +578,7 @@ public abstract class BaseMainSupport extends BaseService {
                 fr.setStartupRecorderDuration(mainConfigurationProperties.getStartupRecorderDuration());
                 fr.setRecordingProfile(mainConfigurationProperties.getStartupRecorderProfile());
                 fr.setMaxDepth(mainConfigurationProperties.getStartupRecorderMaxDepth());
-                camelContext.adapt(ExtendedCamelContext.class).setStartupStepRecorder(fr);
+                camelContext.getCamelContextExtension().setStartupStepRecorder(fr);
             }
         }
     }
@@ -588,9 +587,9 @@ public abstract class BaseMainSupport extends BaseService {
         if (mainConfigurationProperties.isBasePackageScanEnabled()) {
             // only set the base package if enabled
             String base = mainConfigurationProperties.getBasePackageScan();
-            String current = camelContext.adapt(ExtendedCamelContext.class).getBasePackageScan();
+            String current = camelContext.getCamelContextExtension().getBasePackageScan();
             if (base != null && !base.equals(current)) {
-                camelContext.adapt(ExtendedCamelContext.class).setBasePackageScan(base);
+                camelContext.getCamelContextExtension().setBasePackageScan(base);
                 LOG.info("Classpath scanning enabled from base package: {}", base);
             }
         }
@@ -598,7 +597,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected void configureRoutesLoader(CamelContext camelContext) {
         // use main based routes loader
-        camelContext.adapt(ExtendedCamelContext.class).setRoutesLoader(new DefaultRoutesLoader());
+        camelContext.getCamelContextExtension().setRoutesLoader(new DefaultRoutesLoader());
     }
 
     protected void modelineRoutes(CamelContext camelContext) throws Exception {
@@ -609,7 +608,7 @@ public abstract class BaseMainSupport extends BaseService {
             configurer.setRoutesCollector(routesCollector);
         }
 
-        configurer.setBeanPostProcessor(camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor());
+        configurer.setBeanPostProcessor(camelContext.getCamelContextExtension().getBeanPostProcessor());
         configurer.setRoutesBuilders(mainConfigurationProperties.getRoutesBuilders());
         configurer.setRoutesBuilderClasses(mainConfigurationProperties.getRoutesBuilderClasses());
         if (mainConfigurationProperties.isBasePackageScanEnabled()) {
@@ -632,7 +631,7 @@ public abstract class BaseMainSupport extends BaseService {
             configurer.setRoutesCollector(routesCollector);
         }
 
-        configurer.setBeanPostProcessor(camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor());
+        configurer.setBeanPostProcessor(camelContext.getCamelContextExtension().getBeanPostProcessor());
         configurer.setRoutesBuilders(mainConfigurationProperties.getRoutesBuilders());
         configurer.setRoutesBuilderClasses(mainConfigurationProperties.getRoutesBuilderClasses());
         if (mainConfigurationProperties.isBasePackageScanEnabled()) {
@@ -680,7 +679,7 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         // we want to capture startup events for import tasks during main bootstrap
-        StartupStepRecorder recorder = camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder();
+        StartupStepRecorder recorder = camelContext.getCamelContextExtension().getStartupStepRecorder();
         StartupStep step;
 
         if (standalone) {
@@ -1849,7 +1848,7 @@ public abstract class BaseMainSupport extends BaseService {
         // lookup in service registry first
         CamelSagaService answer = camelContext.getRegistry().findSingleByType(CamelSagaService.class);
         if (answer == null) {
-            answer = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder()
+            answer = camelContext.getCamelContextExtension().getBootstrapFactoryFinder()
                     .newInstance("lra-saga-service", CamelSagaService.class)
                     .orElseThrow(() -> new IllegalArgumentException(
                             "Cannot find LRASagaService on classpath. Add camel-lra to classpath."));

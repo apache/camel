@@ -100,7 +100,7 @@ public class KafkaProducerTest {
         Mockito.when(exchange.getContext()).thenReturn(context);
         Mockito.when(context.getTypeConverter()).thenReturn(converter);
         Mockito.when(converter.tryConvertTo(String.class, exchange, null)).thenReturn(null);
-        Mockito.when(context.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        Mockito.when(context.getCamelContextExtension()).thenReturn(ecc);
         Mockito.when(ecc.getHeadersMapFactory())
                 .thenReturn(new DefaultHeadersMapFactory());
         Mockito.when(context.getTypeConverter()).thenReturn(converter);

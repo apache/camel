@@ -45,8 +45,8 @@ public class WebhookRoutePolicyTest {
         });
 
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            context.getRegistry().bind("dummy", testComponent);
-            context.getRegistry().bind("webhook", webhookComponent);
+            context.getCamelContextExtension().getRegistry().bind("dummy", testComponent);
+            context.getCamelContextExtension().getRegistry().bind("webhook", webhookComponent);
             context.addRoutePolicyFactory(new WebhookRoutePolicyFactory(action));
 
             await().atMost(10, TimeUnit.SECONDS).until(() -> counters.get(action).get() == 0);

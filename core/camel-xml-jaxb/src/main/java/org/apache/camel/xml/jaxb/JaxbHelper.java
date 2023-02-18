@@ -35,7 +35,6 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
@@ -65,7 +64,7 @@ public final class JaxbHelper {
     }
 
     public static JAXBContext getJAXBContext(CamelContext context) throws Exception {
-        return (JAXBContext) context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory().newJAXBContext();
+        return (JAXBContext) context.getCamelContextExtension().getModelJAXBContextFactory().newJAXBContext();
     }
 
     /**

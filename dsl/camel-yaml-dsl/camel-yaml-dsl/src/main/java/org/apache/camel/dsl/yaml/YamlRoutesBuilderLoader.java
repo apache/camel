@@ -30,7 +30,6 @@ import java.util.Set;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
@@ -508,7 +507,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     @Override
                     public void configure(CamelContext camelContext) {
                         try {
-                            camelContext.adapt(ExtendedCamelContext.class)
+                            camelContext.getCamelContextExtension()
                                     .getRoutesLoader().loadRoutes(res);
                         } catch (Exception e) {
                             throw new RuntimeCamelException(

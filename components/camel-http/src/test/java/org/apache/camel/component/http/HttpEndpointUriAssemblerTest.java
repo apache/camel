@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.junit.jupiter.api.Test;
@@ -44,7 +43,7 @@ public class HttpEndpointUriAssemblerTest {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
-        EndpointUriFactory assembler = context.adapt(ExtendedCamelContext.class).getEndpointUriFactory("https");
+        EndpointUriFactory assembler = context.getCamelContextExtension().getEndpointUriFactory("https");
 
         assertNotNull(assembler);
         assertTrue(assembler instanceof HttpEndpointUriFactory);

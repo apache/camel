@@ -72,7 +72,7 @@ public class MailConsumerAuthenticatorTest {
         Session session = Session.getDefaultInstance(props, authenticator);
 
         when(sender.getSession()).thenReturn(session);
-        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        when(camelContext.getCamelContextExtension()).thenReturn(ecc);
         when(ecc.getExchangeFactory()).thenReturn(ef);
         when(ef.newExchangeFactory(any())).thenReturn(ef);
 

@@ -88,7 +88,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
         // internal processor used for sending
         sharedInternalProcessor
-                = this.camelContext.adapt(ExtendedCamelContext.class)
+                = this.camelContext.getCamelContextExtension()
                     .getInternalProcessorFactory().createSharedCamelInternalProcessor(camelContext);
     }
 

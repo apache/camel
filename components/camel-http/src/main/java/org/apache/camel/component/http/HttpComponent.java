@@ -28,7 +28,6 @@ import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.SSLContextParametersAware;
@@ -386,7 +385,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // configure the endpoint with the common configuration from the component
         if (getHttpConfiguration() != null) {
             Map<String, Object> properties = new HashMap<>();
-            BeanIntrospection beanIntrospection = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
+            BeanIntrospection beanIntrospection = getCamelContext().getCamelContextExtension().getBeanIntrospection();
             beanIntrospection.getProperties(getHttpConfiguration(), properties, null);
             setProperties(endpoint, properties);
         }

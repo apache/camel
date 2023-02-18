@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -36,7 +35,7 @@ public class LogEndpointUriAssemblerTest extends ContextTestSupport {
         params.put("logMask", true);
 
         // should find the source code generated assembler via classpath
-        EndpointUriFactory assembler = context.adapt(ExtendedCamelContext.class).getEndpointUriFactory("log");
+        EndpointUriFactory assembler = context.getCamelContextExtension().getEndpointUriFactory("log");
         Assertions.assertNotNull(assembler);
         boolean generated = assembler instanceof LogEndpointUriFactory;
         Assertions.assertTrue(generated);

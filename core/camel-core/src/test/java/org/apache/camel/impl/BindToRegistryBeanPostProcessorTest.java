@@ -20,7 +20,6 @@ import org.apache.camel.BeanInject;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +41,7 @@ public class BindToRegistryBeanPostProcessorTest extends ContextTestSupport {
     @Test
     public void testPostProcessor() throws Exception {
         // bean post processing dont run on ContextTestSupport
-        CamelBeanPostProcessor cbpp = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+        CamelBeanPostProcessor cbpp = context.getCamelContextExtension().getBeanPostProcessor();
         cbpp.postProcessBeforeInitialization(this, "this");
         cbpp.postProcessAfterInitialization(this, "this");
 

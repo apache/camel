@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.support.service.ServiceSupport;
@@ -67,7 +66,7 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
     protected void doInit() throws Exception {
         if (knownProperties == null || knownPrefixes == null) {
             // optimize to eager load the list of known properties/prefixes
-            EndpointUriFactory factory = getCamelContext().adapt(ExtendedCamelContext.class).getEndpointUriFactory(getScheme());
+            EndpointUriFactory factory = getCamelContext().getCamelContextExtension().getEndpointUriFactory(getScheme());
             if (factory == null) {
                 throw new IllegalStateException("Cannot find EndpointUriFactory for component: " + getScheme());
             }

@@ -24,7 +24,6 @@ import java.util.Map;
 import com.twilio.http.TwilioRestClient;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
@@ -107,7 +106,7 @@ public class TwilioEndpoint extends AbstractApiEndpoint<TwilioApiName, TwilioCon
         }
         String methodName = EXECUTOR_METHOD_MAP.get(method.getName());
         try {
-            BeanIntrospection beanIntrospection = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
+            BeanIntrospection beanIntrospection = getCamelContext().getCamelContextExtension().getBeanIntrospection();
             for (Map.Entry<String, Object> p : properties.entrySet()) {
                 beanIntrospection.setProperty(getCamelContext(), executor, p.getKey(), p.getValue());
             }

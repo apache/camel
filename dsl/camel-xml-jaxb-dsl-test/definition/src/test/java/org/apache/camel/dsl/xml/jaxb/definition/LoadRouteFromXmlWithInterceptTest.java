@@ -33,7 +33,7 @@ public class LoadRouteFromXmlWithInterceptTest extends ContextTestSupport {
 
     @Test
     public void testLoadRouteFromXmlWithIntercept() throws Exception {
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         Resource resource
                 = ecc.getResourceLoader().resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barInterceptorRoute.xml");
         ecc.getRoutesLoader().loadRoutes(resource);

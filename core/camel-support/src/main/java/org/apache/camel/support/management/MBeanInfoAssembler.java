@@ -65,7 +65,7 @@ public class MBeanInfoAssembler implements Service {
     private Map<Class<?>, MBeanAttributesAndOperations> cache;
 
     public MBeanInfoAssembler(CamelContext camelContext) {
-        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
         this.beanIntrospection = ecc.getBeanIntrospection();
     }
 

@@ -109,7 +109,9 @@ public class AbstractCamelContextFactoryBeanTest {
         final DefaultCamelContext context = mock(DefaultCamelContext.class,
                 withSettings().invocationListeners(i -> invocations.add((Invocation) i.getInvocation())));
 
-        when(context.adapt(ExtendedCamelContext.class)).thenReturn(context);
+        final ExtendedCamelContext extendedCamelContext = mock(ExtendedCamelContext.class);
+
+        when(context.getCamelContextExtension()).thenReturn(extendedCamelContext);
 
         // program the property resolution in context mock
         when(context.resolvePropertyPlaceholders(anyString())).thenAnswer(invocation -> {

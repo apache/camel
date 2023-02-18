@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
@@ -341,7 +340,7 @@ public class KameletMain extends MainCommandLineSupport {
             LOG.info(info);
         }
 
-        answer.setRegistry(registry);
+        answer.getCamelContextExtension().setRegistry(registry);
         // load camel component and custom health-checks
         answer.setLoadHealthChecks(true);
         // annotation based dependency injection for camel/spring/quarkus annotations in DSLs and Java beans
@@ -430,8 +429,8 @@ public class KameletMain extends MainCommandLineSupport {
             known.loadKnownDependencies();
             DependencyDownloaderPropertyBindingListener listener
                     = new DependencyDownloaderPropertyBindingListener(answer, known);
-            answer.getRegistry().bind(DependencyDownloaderPropertyBindingListener.class.getSimpleName(), listener);
-            answer.getRegistry().bind(DependencyDownloaderStrategy.class.getSimpleName(),
+            answer.getCamelContextExtension().getRegistry().bind(DependencyDownloaderPropertyBindingListener.class.getSimpleName(), listener);
+            answer.getCamelContextExtension().getRegistry().bind(DependencyDownloaderStrategy.class.getSimpleName(),
                     new DependencyDownloaderStrategy(answer));
             answer.setClassResolver(new DependencyDownloaderClassResolver(answer, known));
             answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer, stub));
@@ -441,7 +440,7 @@ public class KameletMain extends MainCommandLineSupport {
             answer.setResourceLoader(new DependencyDownloaderResourceLoader(answer));
             answer.setInjector(new KameletMainInjector(answer.getInjector(), stub));
             answer.addService(new DependencyDownloaderKamelet(answer));
-            answer.getRegistry().bind(DownloadModelineParser.class.getSimpleName(), new DownloadModelineParser(answer));
+            answer.getCamelContextExtension().getRegistry().bind(DownloadModelineParser.class.getSimpleName(), new DownloadModelineParser(answer));
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
@@ -488,7 +487,7 @@ public class KameletMain extends MainCommandLineSupport {
     protected void configureRoutesLoader(CamelContext camelContext) {
         if (download) {
             // use resolvers that can auto downloaded
-            camelContext.adapt(ExtendedCamelContext.class)
+            camelContext.getCamelContextExtension()
                     .setRoutesLoader(new DependencyDownloaderRoutesLoader(camelContext));
         } else {
             super.configureRoutesLoader(camelContext);

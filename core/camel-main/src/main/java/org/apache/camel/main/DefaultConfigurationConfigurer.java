@@ -112,7 +112,7 @@ public final class DefaultConfigurationConfigurer {
      * @param config       the configuration
      */
     public static void configure(CamelContext camelContext, DefaultConfigurationProperties<?> config) throws Exception {
-        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
 
         if (config.getStartupRecorder() != null) {
             if ("false".equals(config.getStartupRecorder())) {
@@ -485,9 +485,9 @@ public final class DefaultConfigurationConfigurer {
         registerPropertiesForBeanTypesWithCondition(registry, EventNotifier.class, containsEventNotifier.negate(),
                 managementStrategy::addEventNotifier);
         final Predicate<InterceptStrategy> containsInterceptStrategy
-                = camelContext.adapt(ExtendedCamelContext.class).getInterceptStrategies()::contains;
+                = camelContext.getCamelContextExtension().getInterceptStrategies()::contains;
         registerPropertiesForBeanTypesWithCondition(registry, InterceptStrategy.class, containsInterceptStrategy.negate(),
-                camelContext.adapt(ExtendedCamelContext.class)::addInterceptStrategy);
+                camelContext.getCamelContextExtension()::addInterceptStrategy);
         final Predicate<LifecycleStrategy> containsLifecycleStrategy = camelContext.getLifecycleStrategies()::contains;
         registerPropertiesForBeanTypesWithCondition(registry, LifecycleStrategy.class, containsLifecycleStrategy.negate(),
                 camelContext::addLifecycleStrategy);

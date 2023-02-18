@@ -20,7 +20,6 @@ import java.util.Map;
 
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -36,7 +35,7 @@ public class KubernetesClientConfigureTest {
 
         ConfigBuilder config = new ConfigBuilder();
 
-        PropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver()
+        PropertyConfigurer configurer = context.getCamelContextExtension().getConfigurerResolver()
                 .resolvePropertyConfigurer(ConfigBuilder.class.getName(), context);
         Assertions.assertNotNull(configurer, "Cannot find generated configurer");
 

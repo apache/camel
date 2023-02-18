@@ -197,7 +197,7 @@ public final class AdviceWith {
         ObjectHelper.notNull(builder, "RouteBuilder");
 
         LOG.debug("AdviceWith route before: {}", definition);
-        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
         Model model = camelContext.getExtension(Model.class);
 
         // inject this route into the advice route builder so it can access this route

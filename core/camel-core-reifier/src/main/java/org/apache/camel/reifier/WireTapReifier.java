@@ -22,7 +22,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -86,7 +85,7 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         Processor childProcessor = wrapInErrorHandler(producer);
 
         // and wrap in unit of work
-        AsyncProcessor target = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+        AsyncProcessor target = camelContext.getCamelContextExtension().getInternalProcessorFactory()
                 .addUnitOfWorkProcessorAdvice(camelContext, childProcessor, route);
 
         // is true by default

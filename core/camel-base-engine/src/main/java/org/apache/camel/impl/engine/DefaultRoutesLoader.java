@@ -91,7 +91,7 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
 
         // first we need to parse for modeline to gather all the configurations
         if (camelContext.isModeline()) {
-            ModelineFactory factory = camelContext.adapt(ExtendedCamelContext.class).getModelineFactory();
+            ModelineFactory factory = camelContext.getCamelContextExtension().getModelineFactory();
             for (Resource resource : resources) {
                 RoutesBuilderLoader loader = resolveRoutesBuilderLoader(resource);
                 // gather resources for modeline

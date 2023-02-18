@@ -30,7 +30,6 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.DataFormat;
@@ -305,7 +304,7 @@ public class RestProducer extends DefaultAsyncProducer {
 
         if (json != null) {
             // lookup configurer
-            PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
+            PropertyConfigurer configurer = camelContext.getCamelContextExtension().getConfigurerResolver()
                     .resolvePropertyConfigurer(name + "-dataformat-configurer", camelContext);
             if (configurer == null) {
                 throw new IllegalStateException("Cannot find configurer for dataformat: " + name);
@@ -359,7 +358,7 @@ public class RestProducer extends DefaultAsyncProducer {
 
         if (jaxb != null) {
             // to setup JAXB we need to use camel-jaxb
-            camelContext.adapt(ExtendedCamelContext.class).getRestBindingJaxbDataFormatFactory()
+            camelContext.getCamelContextExtension().getRestBindingJaxbDataFormatFactory()
                     .setupJaxb(camelContext, configuration, type, null, outType, null, jaxb, outJaxb);
         }
 

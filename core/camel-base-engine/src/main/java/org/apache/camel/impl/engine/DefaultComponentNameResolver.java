@@ -21,7 +21,6 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.Resource;
@@ -33,7 +32,7 @@ public class DefaultComponentNameResolver implements ComponentNameResolver {
     @Override
     public Set<String> resolveNames(CamelContext camelContext) {
         try {
-            return camelContext.adapt(ExtendedCamelContext.class)
+            return camelContext.getCamelContextExtension()
                     .getPackageScanResourceResolver()
                     .findResources(RESOURCE_PATH)
                     .stream()

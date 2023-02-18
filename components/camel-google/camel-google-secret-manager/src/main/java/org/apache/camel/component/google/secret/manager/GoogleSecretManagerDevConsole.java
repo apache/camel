@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.google.secret.manager.vault.PubsubReloadTriggerTask;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesFunction;
@@ -55,7 +54,7 @@ public class GoogleSecretManagerDevConsole extends AbstractDevConsole {
         }
         GcpVaultConfiguration gcp = getCamelContext().getVaultConfiguration().getGcpVaultConfiguration();
         if (gcp != null && gcp.isRefreshEnabled()) {
-            PeriodTaskScheduler scheduler = getCamelContext().adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
+            PeriodTaskScheduler scheduler = getCamelContext().getCamelContextExtension().getPeriodTaskScheduler();
             secretsRefreshTask = scheduler.getTaskByType(PubsubReloadTriggerTask.class);
         }
     }

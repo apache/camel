@@ -24,7 +24,6 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
@@ -53,7 +52,7 @@ public class ManagedPooledExchangeTest extends ManagementTestSupport {
         PooledExchangeFactory pef = new PooledExchangeFactory();
         pef.setStatisticsEnabled(true);
         pef.setCapacity(123);
-        context.adapt(ExtendedCamelContext.class).setExchangeFactory(pef);
+        context.getCamelContextExtension().setExchangeFactory(pef);
 
         return context;
     }

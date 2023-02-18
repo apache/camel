@@ -52,7 +52,7 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
         foo.assertIsSatisfied();
 
         // load rest from XML and add them to the existing camel context
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         Resource resource = ecc.getResourceLoader().resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barRest.xml");
         ecc.getRoutesLoader().loadRoutes(resource);
 

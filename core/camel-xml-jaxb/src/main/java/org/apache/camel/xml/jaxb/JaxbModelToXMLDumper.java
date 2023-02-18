@@ -228,7 +228,7 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             // replaced so re-create the model
             if (changed.get()) {
                 xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
-                ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+                ExtendedCamelContext ecc = context.getCamelContextExtension();
                 NamedNode copy = modelToXml(context, xml, NamedNode.class);
                 xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, copy);
             }

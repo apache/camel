@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedPerformanceCounterMBean;
@@ -108,7 +107,7 @@ public class TopDevConsole extends AbstractDevConsole {
                         int line = mpb.getSourceLineNumber();
                         try {
                             loc = LoggerHelper.stripSourceLocationLineNumber(loc);
-                            Resource resource = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader()
+                            Resource resource = getCamelContext().getCamelContextExtension().getResourceLoader()
                                     .resolveResource(loc);
                             if (resource != null) {
                                 LineNumberReader reader = new LineNumberReader(resource.getReader());
@@ -211,7 +210,7 @@ public class TopDevConsole extends AbstractDevConsole {
                         int line = mpb.getSourceLineNumber();
                         try {
                             loc = LoggerHelper.stripSourceLocationLineNumber(loc);
-                            Resource resource = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader()
+                            Resource resource = getCamelContext().getCamelContextExtension().getResourceLoader()
                                     .resolveResource(loc);
                             if (resource != null) {
                                 LineNumberReader reader = new LineNumberReader(resource.getReader());

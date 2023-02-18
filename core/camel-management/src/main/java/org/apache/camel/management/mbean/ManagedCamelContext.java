@@ -182,7 +182,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public String getPackageScanClassResolver() {
-        return context.adapt(ExtendedCamelContext.class).getPackageScanClassResolver().getClass().getName();
+        return context.getCamelContextExtension().getPackageScanClassResolver().getClass().getName();
     }
 
     @Override
@@ -196,7 +196,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public String getHeadersMapFactoryClassName() {
-        return context.adapt(ExtendedCamelContext.class).getHeadersMapFactory().getClass().getName();
+        return context.getCamelContextExtension().getHeadersMapFactory().getClass().getName();
     }
 
     @Override
@@ -466,7 +466,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
 
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         return ecc.getModelToXMLDumper().dumpModelAsXml(context, def, resolvePlaceholders, false);
     }
 
@@ -491,7 +491,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(routes);
 
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         return ecc.getModelToXMLDumper().dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
     }
 
@@ -506,7 +506,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RouteTemplatesDefinition def = new RouteTemplatesDefinition();
         def.setRouteTemplates(templates);
 
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         return ecc.getModelToXMLDumper().dumpModelAsXml(context, def);
     }
 

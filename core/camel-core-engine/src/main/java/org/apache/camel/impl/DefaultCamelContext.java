@@ -27,7 +27,6 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
@@ -137,7 +136,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
      */
     public DefaultCamelContext(Registry registry) {
         this();
-        setRegistry(registry);
+        getCamelContextExtension().setRegistry(registry);
     }
 
     public DefaultCamelContext(boolean init) {
@@ -932,7 +931,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                     }
 
                     StartupStepRecorder recorder
-                            = getCamelContextReference().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
+                            = getCamelContextReference().getCamelContextExtension().getStartupStepRecorder();
                     StartupStep step = recorder.beginStep(Route.class, routeDefinition.getRouteId(), "Create Route");
                     Route route = model.getModelReifierFactory().createRoute(this, routeDefinition);
                     recorder.endStep(step);

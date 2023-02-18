@@ -23,7 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.spi.InvokeOnHeaderStrategy;
 import org.apache.camel.util.ObjectHelper;
@@ -107,7 +106,7 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
 
         String key = this.getClass().getName();
         String fqn = RESOURCE_PATH + key;
-        strategy = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder(RESOURCE_PATH)
+        strategy = camelContext.getCamelContextExtension().getBootstrapFactoryFinder(RESOURCE_PATH)
                 .newInstance(key, InvokeOnHeaderStrategy.class)
                 .orElseThrow(() -> new IllegalArgumentException("Cannot find " + fqn + " in classpath."));
 
@@ -117,7 +116,7 @@ public abstract class HeaderSelectorProducer extends DefaultAsyncProducer implem
             // some components may have a common base class they extend from (such as camel-infinispan)
             // so try to discover that (optional so return null if not present)
             String key2 = this.getClass().getSuperclass().getName();
-            parentStrategy = camelContext.adapt(ExtendedCamelContext.class).getBootstrapFactoryFinder(RESOURCE_PATH)
+            parentStrategy = camelContext.getCamelContextExtension().getBootstrapFactoryFinder(RESOURCE_PATH)
                     .newInstance(key2, InvokeOnHeaderStrategy.class)
                     .orElse(null);
         }

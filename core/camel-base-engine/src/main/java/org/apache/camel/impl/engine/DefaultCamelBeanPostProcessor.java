@@ -30,7 +30,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.spi.CamelBeanPostProcessor;
@@ -494,7 +493,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             getOrLookupCamelContext().getRegistry().unbind(name);
         }
         // use dependency injection factory to perform the task of binding the bean to registry
-        Runnable task = getOrLookupCamelContext().adapt(ExtendedCamelContext.class)
+        Runnable task = getOrLookupCamelContext().getCamelContextExtension()
                 .getDependencyInjectionAnnotationFactory().createBindToRegistryFactory(name, bean, beanName, beanPostProcess);
         task.run();
     }
@@ -510,7 +509,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
                 getOrLookupCamelContext().getRegistry().unbind(name);
             }
             // use dependency injection factory to perform the task of binding the bean to registry
-            Runnable task = getOrLookupCamelContext().adapt(ExtendedCamelContext.class)
+            Runnable task = getOrLookupCamelContext().getCamelContextExtension()
                     .getDependencyInjectionAnnotationFactory()
                     .createBindToRegistryFactory(name, value, beanName, beanPostProcess);
             task.run();
@@ -529,7 +528,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
                 getOrLookupCamelContext().getRegistry().unbind(name);
             }
             // use dependency injection factory to perform the task of binding the bean to registry
-            Runnable task = getOrLookupCamelContext().adapt(ExtendedCamelContext.class)
+            Runnable task = getOrLookupCamelContext().getCamelContextExtension()
                     .getDependencyInjectionAnnotationFactory()
                     .createBindToRegistryFactory(name, value, beanName, beanPostProcess);
             task.run();

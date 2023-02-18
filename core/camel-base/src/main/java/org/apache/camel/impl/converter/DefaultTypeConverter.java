@@ -17,7 +17,6 @@
 package org.apache.camel.impl.converter;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.AnnotationScanTypeConverters;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -122,7 +121,7 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry implements A
      * Creates the {@link TypeConverterLoader} to use for scanning for type converters such as from the classpath.
      */
     protected TypeConverterLoader createScanTypeConverterLoader() {
-        String basePackages = camelContext != null ? camelContext.adapt(ExtendedCamelContext.class).getBasePackageScan() : null;
+        String basePackages = camelContext != null ? camelContext.getCamelContextExtension().getBasePackageScan() : null;
         return new AnnotationTypeConverterLoader(resolver, basePackages);
     }
 }

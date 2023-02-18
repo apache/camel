@@ -20,7 +20,6 @@ package org.apache.camel.support.resume;
 import java.util.Optional;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.resume.Cacheable;
 import org.apache.camel.resume.ResumeAdapter;
@@ -47,7 +46,7 @@ public final class AdapterHelper {
 
         LOG.debug("Using the factory finder to search for the resume adapter");
         final FactoryFinder factoryFinder
-                = context.adapt(ExtendedCamelContext.class).getFactoryFinder(FactoryFinder.DEFAULT_PATH);
+                = context.getCamelContextExtension().getFactoryFinder(FactoryFinder.DEFAULT_PATH);
 
         LOG.debug("Creating a new resume adapter");
         Optional<ResumeAdapter> adapterOptional

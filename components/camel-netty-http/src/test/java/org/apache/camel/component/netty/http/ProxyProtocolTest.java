@@ -155,7 +155,7 @@ public class ProxyProtocolTest {
         final ShutdownStrategy shutdownStrategy = context.getShutdownStrategy();
         shutdownStrategy.setTimeout(100);
         shutdownStrategy.setTimeUnit(TimeUnit.MILLISECONDS);
-        shutdownStrategy.shutdownForced(context, context.getRouteStartupOrder());
+        shutdownStrategy.shutdownForced(context, context.getCamelContextExtension().getRouteStartupOrder());
 
         context.stop();
     }

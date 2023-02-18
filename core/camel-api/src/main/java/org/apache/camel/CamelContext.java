@@ -83,16 +83,13 @@ import org.apache.camel.vault.VaultConfiguration;
 public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguration {
 
     /**
-     * Adapts this {@link org.apache.camel.CamelContext} to the specialized type.
-     * <p/>
-     * For example to adapt to <tt>ExtendedCamelContext</tt>, <tt>ModelCamelContext</tt>, or
-     * <tt>SpringCamelContext</tt>, or <tt>CdiCamelContext</tt>, etc.
+     * Gets the {@link ExtendedCamelContext} that contains the extension points for internal
+     * context APIs.
      *
-     * @param  type the type to adapt to
-     * @return      this {@link org.apache.camel.CamelContext} adapted to the given type
+     * @return this {@link ExtendedCamelContext}
      */
-    @Deprecated
-    <T extends ExtendedCamelContext> T adapt(Class<T> type);
+    ExtendedCamelContext getCamelContextExtension();
+
 
     /**
      * Gets the extension of the given type.

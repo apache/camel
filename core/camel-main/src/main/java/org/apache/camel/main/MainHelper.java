@@ -32,7 +32,6 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
@@ -250,7 +249,7 @@ public final class MainHelper {
         if (targetConfigurer == null) {
             String name = target.getClass().getName();
             // see if there is a configurer for it
-            targetConfigurer = context.adapt(ExtendedCamelContext.class)
+            targetConfigurer = context.getCamelContextExtension()
                     .getConfigurerResolver().resolvePropertyConfigurer(name, context);
         }
 
@@ -263,7 +262,7 @@ public final class MainHelper {
         if (sourceConfigurer == null) {
             String name = source.getClass().getName();
             // see if there is a configurer for it
-            sourceConfigurer = context.adapt(ExtendedCamelContext.class)
+            sourceConfigurer = context.getCamelContextExtension()
                     .getConfigurerResolver().resolvePropertyConfigurer(name, context);
         }
 
@@ -299,7 +298,7 @@ public final class MainHelper {
         if (configurer == null) {
             String name = target.getClass().getName();
             // see if there is a configurer for it (use bootstrap)
-            configurer = context.adapt(ExtendedCamelContext.class)
+            configurer = context.getCamelContextExtension()
                     .getBootstrapConfigurerResolver().resolvePropertyConfigurer(name, context);
         }
 

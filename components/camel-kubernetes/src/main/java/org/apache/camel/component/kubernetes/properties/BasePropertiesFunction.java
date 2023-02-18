@@ -29,7 +29,6 @@ import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientBuilder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.PropertyConfigurer;
@@ -106,7 +105,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
             if (!properties.isEmpty()) {
                 ConfigBuilder config = new ConfigBuilder();
 
-                PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class)
+                PropertyConfigurer configurer = camelContext.getCamelContextExtension()
                         .getConfigurerResolver().resolvePropertyConfigurer(ConfigBuilder.class.getName(), camelContext);
 
                 // use copy to keep track of which options was configureed or not

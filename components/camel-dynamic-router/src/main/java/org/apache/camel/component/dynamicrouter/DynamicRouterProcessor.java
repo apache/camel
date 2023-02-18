@@ -140,7 +140,7 @@ public class DynamicRouterProcessor extends AsyncProcessorSupport implements Tra
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        final ExtendedCamelContext extendedCamelContext = camelContext.adapt(ExtendedCamelContext.class);
+        final ExtendedCamelContext extendedCamelContext = camelContext.getCamelContextExtension();
         this.reactiveExecutor = extendedCamelContext.getReactiveExecutor();
         this.executorService = camelContext.getExecutorServiceManager()
                 .newDefaultThreadPool(this, "dynamicRouterMulticastPool");

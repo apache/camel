@@ -60,7 +60,7 @@ public final class SpringTestHelper {
 
         SpringCamelContext context = SpringCamelContext.springCamelContext(applicationContext, false);
         for (Map.Entry<String, Object> entry : beans.entrySet()) {
-            context.getRegistry().bind(entry.getKey(), entry.getValue());
+            context.getCamelContextExtension().getRegistry().bind(entry.getKey(), entry.getValue());
         }
         if (!isNoStart) {
             context.start();

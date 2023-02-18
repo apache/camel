@@ -31,7 +31,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.spi.AsEndpointUri;
 import org.apache.camel.spi.Metadata;
@@ -264,7 +263,7 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
                         props.putAll("TemplateProperties", new HashMap<>(route.getTemplateParameters()));
                         camelContext.getPropertiesComponent().setLocalProperties(props);
                         try {
-                            ids = camelContext.adapt(ExtendedCamelContext.class)
+                            ids = camelContext.getCamelContextExtension()
                                     .resolvePropertyPlaceholders(route.getRouteConfigurationId(), true)
                                     .split(",");
                         } finally {

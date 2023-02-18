@@ -29,7 +29,7 @@ public class GistResourceResolverTest extends CamelTestSupport {
 
     @Test
     public void testGist() throws Exception {
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         Resource res = ecc.getResourceLoader().resolveResource("gist:davsclaus:123:456:beer.xml");
         assertNotNull(res);
         assertFalse(res.exists());

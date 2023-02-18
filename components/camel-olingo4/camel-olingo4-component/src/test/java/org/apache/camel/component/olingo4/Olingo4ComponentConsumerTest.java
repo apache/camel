@@ -19,7 +19,6 @@ package org.apache.camel.component.olingo4;
 import java.util.Iterator;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -57,8 +56,8 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setLoggingLevel(LoggingLevel.INFO);
-        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setExtendedStatistics(true);
+        context.getCamelContextExtension().getBeanIntrospection().setLoggingLevel(LoggingLevel.INFO);
+        context.getCamelContextExtension().getBeanIntrospection().setExtendedStatistics(true);
         return context;
     }
 
@@ -93,7 +92,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         }
 
         // should be reflection free
-        long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
+        long counter = context.getCamelContextExtension().getBeanIntrospection().getInvokedCounter();
         assertEquals(0, counter);
     }
 
@@ -277,7 +276,7 @@ public class Olingo4ComponentConsumerTest extends AbstractOlingo4TestSupport {
         assertEquals("San Francisco International Airport", nameProp.getValue().toString());
 
         // should be reflection free
-        long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
+        long counter = context.getCamelContextExtension().getBeanIntrospection().getInvokedCounter();
         assertEquals(0, counter);
     }
 

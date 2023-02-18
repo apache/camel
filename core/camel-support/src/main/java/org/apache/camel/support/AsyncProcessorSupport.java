@@ -20,7 +20,6 @@ import java.util.concurrent.CompletableFuture;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.support.service.ServiceSupport;
 
@@ -37,7 +36,7 @@ public abstract class AsyncProcessorSupport extends ServiceSupport implements As
     @Override
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorAwaitManager awaitManager
-                = exchange.getContext().adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
+                = exchange.getContext().getCamelContextExtension().getAsyncProcessorAwaitManager();
         awaitManager.process(this, exchange);
     }
 

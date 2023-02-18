@@ -42,7 +42,7 @@ public class PropertiesRouteFromTest extends ContextTestSupport {
         assertEquals("{{cool.start}}", uri);
 
         // use a routes definition to dump the routes
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("foo"));
         assertTrue(xml.contains("<from uri=\"{{cool.start}}\"/>"));
         assertThat(xml).containsPattern("\\Q<to id=\"\\Eto[0-9]+\\Q\" uri=\"{{cool.end}}\"/>\\E");

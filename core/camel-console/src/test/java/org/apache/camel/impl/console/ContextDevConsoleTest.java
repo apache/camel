@@ -17,7 +17,6 @@
 package org.apache.camel.impl.console;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.Assertions;
@@ -27,7 +26,7 @@ public class ContextDevConsoleTest extends ContextTestSupport {
 
     @Test
     public void testContextTest() throws Exception {
-        DevConsole con = context.adapt(ExtendedCamelContext.class).getDevConsoleResolver().resolveDevConsole("context");
+        DevConsole con = context.getCamelContextExtension().getDevConsoleResolver().resolveDevConsole("context");
         Assertions.assertNotNull(con);
         Assertions.assertEquals("camel", con.getGroup());
         Assertions.assertEquals("context", con.getId());
@@ -40,7 +39,7 @@ public class ContextDevConsoleTest extends ContextTestSupport {
 
     @Test
     public void testContextJson() throws Exception {
-        DevConsole con = context.adapt(ExtendedCamelContext.class).getDevConsoleResolver().resolveDevConsole("context");
+        DevConsole con = context.getCamelContextExtension().getDevConsoleResolver().resolveDevConsole("context");
         Assertions.assertNotNull(con);
         Assertions.assertEquals("camel", con.getGroup());
         Assertions.assertEquals("context", con.getId());

@@ -27,7 +27,6 @@ import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Configuration;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.slf4j.Logger;
@@ -53,7 +52,7 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
 
     @Override
     public void onDownloadedFile(File file) {
-        String basePackage = camelContext.adapt(ExtendedCamelContext.class).getBasePackageScan();
+        String basePackage = camelContext.getCamelContextExtension().getBasePackageScan();
         if (basePackage != null) {
             try {
                 basePackageScanConfiguration(basePackage, file);
@@ -66,7 +65,7 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
     protected void basePackageScanConfiguration(String basePackage, File file) throws Exception {
         Collection<CamelConfiguration> configs = new ArrayList<>();
         // we only want to scan via isolated classloader
-        PackageScanClassResolver pscr = camelContext.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
+        PackageScanClassResolver pscr = camelContext.getCamelContextExtension().getPackageScanClassResolver();
         Set<Class<?>> found1 = pscr.findImplementations(CamelConfiguration.class, basePackage);
         Set<Class<?>> found2 = pscr.findAnnotated(Configuration.class, basePackage);
         Set<Class<?>> found = new LinkedHashSet<>();
@@ -90,7 +89,7 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
             }
         }
 
-        CamelBeanPostProcessor postProcessor = camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+        CamelBeanPostProcessor postProcessor = camelContext.getCamelContextExtension().getBeanPostProcessor();
         // prepare the directly configured instances
         for (Object configuration : configs) {
             postProcessor.postProcessBeforeInitialization(configuration, configuration.getClass().getName());

@@ -43,7 +43,7 @@ public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
 
     @Test
     public void testLoadRouteFromXmlWitOnException() throws Exception {
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         Resource resource
                 = ecc.getResourceLoader().resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barOnExceptionRoute.xml");
         ecc.getRoutesLoader().loadRoutes(resource);

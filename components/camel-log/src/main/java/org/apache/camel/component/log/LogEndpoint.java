@@ -18,7 +18,6 @@ package org.apache.camel.component.log;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
@@ -288,7 +287,7 @@ public class LogEndpoint extends ProcessorEndpoint implements LineNumberAware {
         } else {
             answer = new CamelLogProcessor(
                     camelLogger, localFormatter, getMaskingFormatter(),
-                    getCamelContext().adapt(ExtendedCamelContext.class).getLogListeners());
+                    getCamelContext().getCamelContextExtension().getLogListeners());
         }
         // the logger is the processor
         setProcessor(answer);

@@ -25,7 +25,6 @@ import java.util.function.BiFunction;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Predicate;
@@ -481,7 +480,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         }
         if (processor != null) {
             // must wrap the processor in an UoW
-            processor = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+            processor = camelContext.getCamelContextExtension().getInternalProcessorFactory()
                     .addUnitOfWorkProcessorAdvice(camelContext, processor, route);
         }
         return processor;

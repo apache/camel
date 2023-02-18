@@ -21,7 +21,6 @@ import java.util.concurrent.BlockingQueue;
 
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.seda.BlockingQueueFactory;
 import org.apache.camel.component.vm.VmComponent;
 import org.apache.camel.spi.EndpointRegistry;
@@ -96,7 +95,7 @@ public class StubComponent extends VmComponent {
 
         if (shadow) {
             final EndpointRegistry registry = getCamelContext().getEndpointRegistry();
-            getCamelContext().adapt(ExtendedCamelContext.class).registerEndpointCallback((uri, endpoint) -> {
+            getCamelContext().getCamelContextExtension().registerEndpointCallback((uri, endpoint) -> {
                 String shadowUri = resolveShadowUri(uri);
                 if (!uri.equals(shadowUri)) {
                     NormalizedUri nuri = NormalizedUri.newNormalizedUri(shadowUri, false);

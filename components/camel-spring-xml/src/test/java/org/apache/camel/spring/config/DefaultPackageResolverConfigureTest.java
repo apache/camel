@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spring.config;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.jupiter.api.Test;
@@ -35,7 +34,7 @@ public class DefaultPackageResolverConfigureTest extends SpringTestSupport {
     @Test
     public void testSetAcceptableSchema() throws Exception {
         DefaultPackageScanClassResolver resolver
-                = (DefaultPackageScanClassResolver) context.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
+                = (DefaultPackageScanClassResolver) context.getCamelContextExtension().getPackageScanClassResolver();
         assertNotNull(resolver);
     }
 

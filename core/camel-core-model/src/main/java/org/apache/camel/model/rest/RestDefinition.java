@@ -33,7 +33,6 @@ import jakarta.xml.bind.annotation.XmlElementRef;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -829,7 +828,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         String from = "rest-api:" + configuration.getApiContextPath();
         String routeId = configuration.getApiContextRouteId();
         if (routeId == null) {
-            routeId = answer.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+            routeId = answer.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory());
         }
 
         // append options

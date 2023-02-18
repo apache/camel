@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertiesLookupListener;
 import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -729,7 +728,7 @@ public class PropertiesComponent extends ServiceSupport
                     LOG.debug("PropertiesComponent added custom PropertiesSource (registry): {}", source);
                 }
 
-                FactoryFinder factoryFinder = getCamelContext().adapt(ExtendedCamelContext.class)
+                FactoryFinder factoryFinder = getCamelContext().getCamelContextExtension()
                         .getBootstrapFactoryFinder();
                 Class<?> type = factoryFinder.findClass("properties-source-factory").orElse(null);
                 if (type != null) {

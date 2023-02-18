@@ -224,53 +224,53 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
         this.reference = reference;
         registry = context.getRegistry();
         typeConverter = new CoreTypeConverterRegistry(context.getTypeConverterRegistry());
-        modelJAXBContextFactory = context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory();
+        modelJAXBContextFactory = context.getCamelContextExtension().getModelJAXBContextFactory();
         routes = Collections.unmodifiableList(context.getRoutes());
         uuidGenerator = context.getUuidGenerator();
-        componentResolver = context.adapt(ExtendedCamelContext.class).getComponentResolver();
-        componentNameResolver = context.adapt(ExtendedCamelContext.class).getComponentNameResolver();
-        languageResolver = context.adapt(ExtendedCamelContext.class).getLanguageResolver();
-        dataFormatResolver = context.adapt(ExtendedCamelContext.class).getDataFormatResolver();
-        healthCheckResolver = context.adapt(ExtendedCamelContext.class).getHealthCheckResolver();
-        devConsoleResolver = context.adapt(ExtendedCamelContext.class).getDevConsoleResolver();
+        componentResolver = context.getCamelContextExtension().getComponentResolver();
+        componentNameResolver = context.getCamelContextExtension().getComponentNameResolver();
+        languageResolver = context.getCamelContextExtension().getLanguageResolver();
+        dataFormatResolver = context.getCamelContextExtension().getDataFormatResolver();
+        healthCheckResolver = context.getCamelContextExtension().getHealthCheckResolver();
+        devConsoleResolver = context.getCamelContextExtension().getDevConsoleResolver();
         endpoints = context.getEndpointRegistry();
         components = context.getComponentNames().stream().collect(Collectors.toMap(s -> s, context::hasComponent));
         languages = context.getLanguageNames().stream().collect(Collectors.toMap(s -> s, context::resolveLanguage));
         propertiesComponent = context.getPropertiesComponent();
-        beanIntrospection = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
-        beanPostProcessor = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+        beanIntrospection = context.getCamelContextExtension().getBeanIntrospection();
+        beanPostProcessor = context.getCamelContextExtension().getBeanPostProcessor();
         dependencyInjectionAnnotationFactory
-                = context.adapt(ExtendedCamelContext.class).getDependencyInjectionAnnotationFactory();
-        headersMapFactory = context.adapt(ExtendedCamelContext.class).getHeadersMapFactory();
-        cliConnectorFactory = context.adapt(ExtendedCamelContext.class).getCliConnectorFactory();
-        exchangeFactory = context.adapt(ExtendedCamelContext.class).getExchangeFactory();
-        exchangeFactoryManager = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager();
-        modelineFactory = context.adapt(ExtendedCamelContext.class).getModelineFactory();
-        processorExchangeFactory = context.adapt(ExtendedCamelContext.class).getProcessorExchangeFactory();
-        reactiveExecutor = context.adapt(ExtendedCamelContext.class).getReactiveExecutor();
-        asyncProcessorAwaitManager = context.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
+                = context.getCamelContextExtension().getDependencyInjectionAnnotationFactory();
+        headersMapFactory = context.getCamelContextExtension().getHeadersMapFactory();
+        cliConnectorFactory = context.getCamelContextExtension().getCliConnectorFactory();
+        exchangeFactory = context.getCamelContextExtension().getExchangeFactory();
+        exchangeFactoryManager = context.getCamelContextExtension().getExchangeFactoryManager();
+        modelineFactory = context.getCamelContextExtension().getModelineFactory();
+        processorExchangeFactory = context.getCamelContextExtension().getProcessorExchangeFactory();
+        reactiveExecutor = context.getCamelContextExtension().getReactiveExecutor();
+        asyncProcessorAwaitManager = context.getCamelContextExtension().getAsyncProcessorAwaitManager();
         executorServiceManager = context.getExecutorServiceManager();
         shutdownStrategy = context.getShutdownStrategy();
         applicationContextClassLoader = context.getApplicationContextClassLoader();
-        unitOfWorkFactory = context.adapt(ExtendedCamelContext.class).getUnitOfWorkFactory();
-        processorFactory = context.adapt(ExtendedCamelContext.class).getProcessorFactory();
-        internalProcessorFactory = context.adapt(ExtendedCamelContext.class).getInternalProcessorFactory();
+        unitOfWorkFactory = context.getCamelContextExtension().getUnitOfWorkFactory();
+        processorFactory = context.getCamelContextExtension().getProcessorFactory();
+        internalProcessorFactory = context.getCamelContextExtension().getInternalProcessorFactory();
         routeController = context.getRouteController();
         inflightRepository = context.getInflightRepository();
-        periodTaskResolver = context.adapt(ExtendedCamelContext.class).getPeriodTaskResolver();
-        periodTaskScheduler = context.adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
+        periodTaskResolver = context.getCamelContextExtension().getPeriodTaskResolver();
+        periodTaskScheduler = context.getCamelContextExtension().getPeriodTaskScheduler();
         globalOptions = context.getGlobalOptions();
         injector = context.getInjector();
         classResolver = context.getClassResolver();
         name = context.getName();
         description = context.getDescription();
-        eventNotificationApplicable = context.adapt(ExtendedCamelContext.class).isEventNotificationApplicable();
+        eventNotificationApplicable = context.getCamelContextExtension().isEventNotificationApplicable();
         useDataType = context.isUseDataType();
         useBreadcrumb = context.isUseBreadcrumb();
         dumpRoutes = context.isDumpRoutes();
         mdcLoggingKeysPattern = context.getMDCLoggingKeysPattern();
         useMDCLogging = context.isUseMDCLogging();
-        basePackageScan = context.adapt(ExtendedCamelContext.class).getBasePackageScan();
+        basePackageScan = context.getCamelContextExtension().getBasePackageScan();
         messageHistory = context.isMessageHistory();
         allowUseOriginalMessage = context.isAllowUseOriginalMessage();
         logExhaustedMessageBody = context.isLogExhaustedMessageBody();
@@ -304,7 +304,7 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
 
     @Override
     public byte getStatusPhase() {
-        return reference.adapt(ExtendedCamelContext.class).getStatusPhase();
+        return reference.getCamelContextExtension().getStatusPhase();
     }
 
     @Override
@@ -631,11 +631,8 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
     }
 
     @Override
-    public <T extends ExtendedCamelContext> T adapt(Class<T> type) {
-        if (type.isInstance(this)) {
-            return type.cast(this);
-        }
-
+    public ExtendedCamelContext getCamelContextExtension() {
+        // TODO: implement
         throw new UnsupportedOperationException();
     }
 

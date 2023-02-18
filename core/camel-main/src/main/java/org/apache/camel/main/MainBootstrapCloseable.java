@@ -16,7 +16,6 @@
  */
 package org.apache.camel.main;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.BootstrapCloseable;
 
 public class MainBootstrapCloseable implements BootstrapCloseable {
@@ -32,7 +31,7 @@ public class MainBootstrapCloseable implements BootstrapCloseable {
         // in lightweight mode then clear up memory after bootstrap
         boolean lightweight = true;
         if (main.getCamelContext() != null) {
-            lightweight = main.getCamelContext().adapt(ExtendedCamelContext.class).isLightweight();
+            lightweight = main.getCamelContext().getCamelContextExtension().isLightweight();
         }
 
         if (lightweight) {

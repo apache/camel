@@ -78,7 +78,7 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         document.paths.getPathItems().forEach(restDslStatement::visit);
 
         final RestsDefinition rests = emitter.result();
-        final ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        final ExtendedCamelContext ecc = context.getCamelContextExtension();
         final String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, rests);
 
         final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();

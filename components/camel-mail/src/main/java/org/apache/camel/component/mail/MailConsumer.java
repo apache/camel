@@ -38,7 +38,6 @@ import com.sun.mail.imap.IMAPStore;
 import com.sun.mail.imap.SortTerm;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.attachment.Attachment;
@@ -271,7 +270,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             try {
                 LOG.trace("Calling setPeek(true) on mail message {}", mail);
                 BeanIntrospection beanIntrospection
-                        = getEndpoint().getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
+                        = getEndpoint().getCamelContext().getCamelContextExtension().getBeanIntrospection();
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), mail, "peek", true);
             } catch (Exception e) {
                 // ignore

@@ -50,14 +50,14 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         this.processor = processor;
         this.definition = definition;
         this.nodeLevel = ProcessorDefinitionHelper.getNodeLevel(definition);
-        this.id = definition.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+        this.id = definition.idOrCreate(context.getCamelContextExtension().getNodeIdFactory());
         StepDefinition step;
         if (definition instanceof StepDefinition) {
             step = (StepDefinition) definition;
         } else {
             step = ProcessorDefinitionHelper.findFirstParentOfType(StepDefinition.class, definition, true);
         }
-        this.stepId = step != null ? step.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory()) : null;
+        this.stepId = step != null ? step.idOrCreate(context.getCamelContextExtension().getNodeIdFactory()) : null;
         this.sourceLocation = definition.getLocation();
         if (sourceLocation == null) {
             RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
@@ -192,7 +192,7 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
 
     @Override
     public String dumpProcessorAsXml() throws Exception {
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         return ecc.getModelToXMLDumper().dumpModelAsXml(context, definition);
     }
 }

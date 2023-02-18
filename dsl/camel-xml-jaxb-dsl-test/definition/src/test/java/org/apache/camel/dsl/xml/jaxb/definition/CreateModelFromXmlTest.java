@@ -90,7 +90,7 @@ public class CreateModelFromXmlTest extends ContextTestSupport {
     }
 
     private RoutesDefinition createModelFromXml(String camelContextResource, boolean fromString) throws Exception {
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
 
         InputStream inputStream = getClass().getResourceAsStream(camelContextResource);
 

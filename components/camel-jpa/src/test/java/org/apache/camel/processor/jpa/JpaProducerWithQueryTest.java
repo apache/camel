@@ -121,7 +121,7 @@ public class JpaProducerWithQueryTest {
         params.put("custName", "${body}");
         // bind the params
         registry.bind("params", params);
-        camelContext.setRegistry(registry);
+        camelContext.getCamelContextExtension().setRegistry(registry);
 
         camelContext.addRoutes(new RouteBuilder() {
             @Override

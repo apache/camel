@@ -29,7 +29,6 @@ import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.spi.Configurer;
@@ -102,7 +101,7 @@ public abstract class ServiceCallConfiguration extends IdentifiedType {
     protected Map<String, Object> getConfiguredOptions(CamelContext context, Object target) {
         Map<String, Object> answer = new HashMap<>();
 
-        PropertyConfigurer configurer = context.adapt(ExtendedCamelContext.class).getConfigurerResolver()
+        PropertyConfigurer configurer = context.getCamelContextExtension().getConfigurerResolver()
                 .resolvePropertyConfigurer(target.getClass().getName(), context);
         // use reflection free configurer (if possible)
         if (configurer instanceof ExtendedPropertyConfigurerGetter) {
@@ -117,7 +116,7 @@ public abstract class ServiceCallConfiguration extends IdentifiedType {
                 }
             }
         } else {
-            context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(target, answer,
+            context.getCamelContextExtension().getBeanIntrospection().getProperties(target, answer,
                     null, false);
         }
 

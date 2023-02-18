@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.Model;
 import org.apache.camel.model.dataformat.ASN1DataFormat;
@@ -333,7 +332,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         }
         if (configurer == null) {
             String configurerName = name + "-dataformat-configurer";
-            configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
+            configurer = camelContext.getCamelContextExtension().getConfigurerResolver()
                     .resolvePropertyConfigurer(configurerName, camelContext);
         }
         return configurer;

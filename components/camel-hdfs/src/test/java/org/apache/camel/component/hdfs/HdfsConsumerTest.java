@@ -21,7 +21,6 @@ import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.PrototypeExchangeFactory;
@@ -86,7 +85,7 @@ public class HdfsConsumerTest {
 
         context = new DefaultCamelContext();
         // this test is mocking and its easier to test with prototype scoped
-        context.adapt(ExtendedCamelContext.class).setExchangeFactory(new PrototypeExchangeFactory());
+        context.getCamelContextExtension().setExchangeFactory(new PrototypeExchangeFactory());
     }
 
     @Test

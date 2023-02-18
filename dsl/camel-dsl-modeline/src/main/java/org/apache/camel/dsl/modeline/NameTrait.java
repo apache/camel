@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.modeline;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.Resource;
 
@@ -33,7 +32,7 @@ public class NameTrait implements Trait {
         return new CamelContextCustomizer() {
             @Override
             public void configure(CamelContext camelContext) {
-                camelContext.adapt(ExtendedCamelContext.class).setName(trait);
+                camelContext.getCamelContextExtension().setName(trait);
             }
         };
     }

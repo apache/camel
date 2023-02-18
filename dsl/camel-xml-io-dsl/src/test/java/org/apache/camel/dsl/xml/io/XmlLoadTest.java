@@ -52,7 +52,7 @@ public class XmlLoadTest {
 
             // START SNIPPET: e1
             // load route from XML and add them to the existing camel context
-            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+            ExtendedCamelContext ecc = context.getCamelContextExtension();
             Resource resource = ecc.getResourceLoader().resolveResource(
                     "/org/apache/camel/dsl/xml/io/barRoute.xml");
 
@@ -76,7 +76,7 @@ public class XmlLoadTest {
             context.start();
 
             // load route from XML and add them to the existing camel context
-            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+            ExtendedCamelContext ecc = context.getCamelContextExtension();
             Resource resource = ecc.getResourceLoader().resolveResource(
                     "/org/apache/camel/dsl/xml/io/bar2.xml");
 

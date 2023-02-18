@@ -17,7 +17,6 @@
 package org.apache.camel.component.cron;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.cron.api.CamelCronService;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.CamelContextHelper;
@@ -46,7 +45,7 @@ public final class CronHelper {
         }
 
         // Fallback to factory finder
-        FactoryFinder finder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+        FactoryFinder finder = context.getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
         return finder.newInstance(FACTORY_KEY, CamelCronService.class).orElse(null);
     }
 

@@ -24,7 +24,6 @@ import java.util.concurrent.ExecutorService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LineNumberAware;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NoFactoryAvailableException;
@@ -64,7 +63,7 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
     public Processor createChildProcessor(Route route, NamedNode definition, boolean mandatory) throws Exception {
         String name = definition.getClass().getSimpleName();
         if (finder == null) {
-            finder = route.getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinderResolver()
+            finder = route.getCamelContext().getCamelContextExtension().getFactoryFinderResolver()
                     .resolveBootstrapFactoryFinder(route.getCamelContext().getClassResolver(), RESOURCE_PATH);
         }
         try {
@@ -86,7 +85,7 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
     public Processor createProcessor(Route route, NamedNode definition) throws Exception {
         String name = definition.getClass().getSimpleName();
         if (finder == null) {
-            finder = route.getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinderResolver()
+            finder = route.getCamelContext().getCamelContextExtension().getFactoryFinderResolver()
                     .resolveBootstrapFactoryFinder(route.getCamelContext().getClassResolver(), RESOURCE_PATH);
         }
         ProcessorFactory pc = finder.newInstance(name, ProcessorFactory.class).orElse(null);

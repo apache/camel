@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiCollection;
@@ -140,7 +139,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
             }
         }
         // configure on configuration first to be reflection free
-        configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
+        configurer = getCamelContext().getCamelContextExtension().getConfigurerResolver()
                 .resolvePropertyConfigurer(configuration.getClass().getName(), getCamelContext());
         if (configurer != null) {
             PropertyBindingSupport.build()

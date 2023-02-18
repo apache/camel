@@ -22,7 +22,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.apache.camel.Component;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.CatalogVerifierCustomizer;
@@ -94,7 +93,7 @@ public class RestComponentVerifierExtension extends DefaultComponentVerifierExte
                 if (extension.isPresent()) {
                     final ComponentVerifierExtension verifier = extension.get();
                     final RuntimeCamelCatalog catalog
-                            = getCamelContext().adapt(ExtendedCamelContext.class).getRuntimeCamelCatalog();
+                            = getCamelContext().getCamelContextExtension().getRuntimeCamelCatalog();
                     final String json = catalog.componentJSonSchema("rest");
                     final ComponentModel model = JsonMapper.generateComponentModel(json);
 

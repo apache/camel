@@ -191,11 +191,11 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         // 2. then the getter with Endpoint as postfix
         // 3. then if start with on then try step 1 and 2 again, but omit the on prefix
         try {
-            Object value = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection().getOrElseProperty(bean,
+            Object value = getCamelContext().getCamelContextExtension().getBeanIntrospection().getOrElseProperty(bean,
                     propertyName, null, false);
             if (value == null) {
                 // try endpoint as postfix
-                value = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection().getOrElseProperty(bean,
+                value = getCamelContext().getCamelContextExtension().getBeanIntrospection().getOrElseProperty(bean,
                         propertyName + "Endpoint", null, false);
             }
             if (value == null && propertyName.startsWith("on")) {
@@ -255,7 +255,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                     try {
                         // use proxy service
                         BeanProxyFactory factory
-                                = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getBeanProxyFactory();
+                                = endpoint.getCamelContext().getCamelContextExtension().getBeanProxyFactory();
                         return factory.createProxy(endpoint, binding, type);
                     } catch (Exception e) {
                         throw createProxyInstantiationRuntimeException(type, endpoint, e);
@@ -591,7 +591,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      */
     protected Producer createInjectionProducer(Endpoint endpoint, Object bean, String beanName) {
         try {
-            return endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getDeferServiceFactory()
+            return endpoint.getCamelContext().getCamelContextExtension().getDeferServiceFactory()
                     .createProducer(endpoint);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);

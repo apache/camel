@@ -83,7 +83,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                 findInClasspath(root, resources, subPattern);
             }
         } else {
-            final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
+            final ExtendedCamelContext ecc = getCamelContext().getCamelContextExtension();
             final ResourceLoader loader = ecc.getResourceLoader();
 
             // its a single resource so load it directly
@@ -97,7 +97,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             String subPattern)
             throws Exception {
 
-        final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
+        final ExtendedCamelContext ecc = getCamelContext().getCamelContextExtension();
         final ResourceLoader loader = ecc.getResourceLoader();
 
         for (Path path : ResourceHelper.findInFileSystem(dir.toPath(), subPattern)) {
@@ -245,7 +245,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             boolean match = PATH_MATCHER.match(subPattern, shortName);
             log.debug("Found resource: {} matching pattern: {} -> {}", shortName, subPattern, match);
             if (match) {
-                final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
+                final ExtendedCamelContext ecc = getCamelContext().getCamelContextExtension();
                 final ResourceLoader loader = ecc.getResourceLoader();
 
                 resources.add(loader.resolveResource(name));
@@ -322,7 +322,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                 boolean match = PATH_MATCHER.match(subPattern, name);
                 log.debug("Found resource: {} matching pattern: {} -> {}", name, subPattern, match);
                 if (match) {
-                    final ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
+                    final ExtendedCamelContext ecc = getCamelContext().getCamelContextExtension();
                     final ResourceLoader loader = ecc.getResourceLoader();
 
                     resources.add(loader.resolveResource("file:" + file.getPath()));

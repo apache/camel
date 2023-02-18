@@ -22,7 +22,6 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 
 import io.smallrye.faulttolerance.core.circuit.breaker.CircuitBreaker;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.CircuitBreakerDefinition;
@@ -133,7 +132,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
     FaultToleranceConfigurationDefinition buildFaultToleranceConfiguration() throws Exception {
         Map<String, Object> properties = new HashMap<>();
 
-        final PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class)
+        final PropertyConfigurer configurer = camelContext.getCamelContextExtension()
                 .getConfigurerResolver()
                 .resolvePropertyConfigurer(FaultToleranceConfigurationDefinition.class.getName(), camelContext);
 
@@ -172,7 +171,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
     }
 
     private void loadProperties(Map<String, Object> properties, Optional<?> optional, PropertyConfigurer configurer) {
-        BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        BeanIntrospection beanIntrospection = camelContext.getCamelContextExtension().getBeanIntrospection();
         optional.ifPresent(bean -> {
             if (configurer instanceof ExtendedPropertyConfigurerGetter) {
                 ExtendedPropertyConfigurerGetter getter = (ExtendedPropertyConfigurerGetter) configurer;

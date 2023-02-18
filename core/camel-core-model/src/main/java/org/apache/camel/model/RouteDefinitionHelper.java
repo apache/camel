@@ -129,7 +129,7 @@ public final class RouteDefinitionHelper {
      * @throws Exception is thrown if error force assign ids to the routes
      */
     public static void forceAssignIds(CamelContext context, List<RouteDefinition> routes) throws Exception {
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
 
         // handle custom assigned id's first, and then afterwards assign auto
         // generated ids
@@ -474,7 +474,7 @@ public final class RouteDefinitionHelper {
 
             // must clone to avoid side effects while building routes using
             // multiple RouteBuilders
-            ErrorHandlerFactory builder = context.adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
+            ErrorHandlerFactory builder = context.getCamelContextExtension().getErrorHandlerFactory();
             if (builder != null) {
                 ErrorHandlerFactory clone = builder.cloneBuilder();
                 route.setErrorHandlerFactoryIfNull(clone);
@@ -745,7 +745,7 @@ public final class RouteDefinitionHelper {
      */
     public static void forceAssignIds(CamelContext context, final ProcessorDefinition processor) {
         // force id on the child
-        processor.idOrCreate(context.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+        processor.idOrCreate(context.getCamelContextExtension().getNodeIdFactory());
 
         // if there was a custom id assigned, then make sure to support property
         // placeholders

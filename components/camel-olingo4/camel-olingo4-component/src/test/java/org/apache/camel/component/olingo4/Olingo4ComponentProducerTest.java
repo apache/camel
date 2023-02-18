@@ -24,7 +24,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -81,8 +80,8 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setLoggingLevel(LoggingLevel.INFO);
-        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setExtendedStatistics(true);
+        context.getCamelContextExtension().getBeanIntrospection().setLoggingLevel(LoggingLevel.INFO);
+        context.getCamelContextExtension().getBeanIntrospection().setExtendedStatistics(true);
         return context;
     }
 
@@ -144,7 +143,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         assertNotNull(unbFuncReturn);
 
         // should be reflection free
-        long counter = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getInvokedCounter();
+        long counter = context.getCamelContextExtension().getBeanIntrospection().getInvokedCounter();
         assertEquals(0, counter);
     }
 

@@ -144,7 +144,7 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadRegistry() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("myBean", "This is a log4j logging configuration file");
+        context.getCamelContextExtension().getRegistry().bind("myBean", "This is a log4j logging configuration file");
 
         Resource resource = context.getResourceLoader().resolveResource("ref:myBean");
 
@@ -160,7 +160,7 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadBeanDoubleColon() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("myBean", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
+        context.getCamelContextExtension().getRegistry().bind("myBean", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
 
         Resource resource = context.getResourceLoader().resolveResource("bean:myBean::get");
 
@@ -176,7 +176,7 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadBeanDoubleColonLong() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("my.company.MyClass",
+        context.getCamelContextExtension().getRegistry().bind("my.company.MyClass",
                 new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
 
         Resource resource = context.getResourceLoader().resolveResource("bean:my.company.MyClass::get");
@@ -193,7 +193,7 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadBeanDot() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        context.getRegistry().bind("myBean", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
+        context.getCamelContextExtension().getRegistry().bind("myBean", new AtomicReference<InputStream>(new ByteArrayInputStream("a".getBytes())));
 
         Resource resource = context.getResourceLoader().resolveResource("bean:myBean.get");
 

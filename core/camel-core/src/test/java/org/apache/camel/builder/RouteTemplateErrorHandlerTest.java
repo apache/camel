@@ -32,7 +32,7 @@ public class RouteTemplateErrorHandlerTest {
     @Test
     public void testDefineRouteTemplate() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            context.getRegistry().bind("myErrorHandler", new NoErrorHandlerDefinition());
+            context.getCamelContextExtension().getRegistry().bind("myErrorHandler", new NoErrorHandlerDefinition());
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {

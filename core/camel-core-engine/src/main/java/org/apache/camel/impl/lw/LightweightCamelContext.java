@@ -206,12 +206,12 @@ public class LightweightCamelContext implements CamelContext, ExtendedCamelConte
 
     @Override
     public byte getStatusPhase() {
-        return delegate.adapt(ExtendedCamelContext.class).getStatusPhase();
+        return delegate.getCamelContextExtension().getStatusPhase();
     }
 
     @Override
     public void disposeModel() {
-        delegate.adapt(ExtendedCamelContext.class).disposeModel();
+        delegate.getCamelContextExtension().disposeModel();
     }
 
     @Override
@@ -275,16 +275,6 @@ public class LightweightCamelContext implements CamelContext, ExtendedCamelConte
     }
 
     @Override
-    public <T extends ExtendedCamelContext> T adapt(Class<T> type) {
-        T res = delegate.adapt(type);
-        if (res == delegate) {
-            return type.cast(this);
-        } else {
-            return res;
-        }
-    }
-
-    @Override
     public <T> T getExtension(Class<T> type) {
         return delegate.getExtension(type);
     }
@@ -331,7 +321,7 @@ public class LightweightCamelContext implements CamelContext, ExtendedCamelConte
 
     @Override
     public void setDescription(String description) {
-        delegate.adapt(ExtendedCamelContext.class).setDescription(description);
+        delegate.getCamelContextExtension().setDescription(description);
     }
 
     @Override
@@ -1239,7 +1229,12 @@ public class LightweightCamelContext implements CamelContext, ExtendedCamelConte
     //
 
     protected ExtendedCamelContext getExtendedCamelContext() {
-        return delegate.adapt(ExtendedCamelContext.class);
+        return delegate.getCamelContextExtension();
+    }
+
+    @Override
+    public ExtendedCamelContext getCamelContextExtension() {
+        return delegate.getCamelContextExtension();
     }
 
     @Override

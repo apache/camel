@@ -41,7 +41,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Handler;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
@@ -580,7 +579,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             expectedMinimumMessageCount(1);
         }
         if (expectedHeaderValues == null) {
-            HeadersMapFactory factory = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory();
+            HeadersMapFactory factory = getCamelContext().getCamelContextExtension().getHeadersMapFactory();
             if (factory != null) {
                 expectedHeaderValues = factory.newMap();
             } else {
@@ -1675,7 +1674,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
         if (expectedHeaderValues != null) {
             if (actualHeaderValues == null) {
-                HeadersMapFactory factory = getCamelContext().adapt(ExtendedCamelContext.class).getHeadersMapFactory();
+                HeadersMapFactory factory = getCamelContext().getCamelContextExtension().getHeadersMapFactory();
                 if (factory != null) {
                     actualHeaderValues = factory.newMap();
                 } else {

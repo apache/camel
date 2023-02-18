@@ -30,7 +30,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StartupStep;
@@ -578,8 +577,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     protected Processor createChildProcessor(boolean mandatory) throws Exception {
         Processor children = null;
         // at first use custom factory
-        if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
-            children = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createChildProcessor(route,
+        if (camelContext.getCamelContextExtension().getProcessorFactory() != null) {
+            children = camelContext.getCamelContextExtension().getProcessorFactory().createChildProcessor(route,
                     definition, mandatory);
         }
         // fallback to default implementation if factory did not create the
@@ -633,13 +632,13 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     protected Channel wrapChannel(Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler)
             throws Exception {
         // put a channel in between this and each output to control the route flow logic
-        Channel channel = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+        Channel channel = camelContext.getCamelContextExtension().getInternalProcessorFactory()
                 .createChannel(camelContext);
 
         // add interceptor strategies to the channel must be in this order:
         // camel context, route context, local
         List<InterceptStrategy> interceptors = new ArrayList<>();
-        interceptors.addAll(camelContext.adapt(ExtendedCamelContext.class).getInterceptStrategies());
+        interceptors.addAll(camelContext.getCamelContextExtension().getInterceptStrategies());
         interceptors.addAll(route.getInterceptStrategies());
         interceptors.addAll(definition.getInterceptStrategies());
 
@@ -821,20 +820,20 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     protected Processor createProcessor(ProcessorDefinition<?> output) throws Exception {
         // ensure node has id assigned
-        String outputId = output.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
-        StartupStep step = camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder().beginStep(ProcessorReifier.class, outputId, "Create processor");
+        String outputId = output.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory());
+        StartupStep step = camelContext.getCamelContextExtension().getStartupStepRecorder().beginStep(ProcessorReifier.class, outputId, "Create processor");
 
         Processor processor = null;
         // at first use custom factory
-        if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
-            processor = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(route, output);
+        if (camelContext.getCamelContextExtension().getProcessorFactory() != null) {
+            processor = camelContext.getCamelContextExtension().getProcessorFactory().createProcessor(route, output);
         }
         // fallback to default implementation if factory did not create the processor
         if (processor == null) {
             processor = reifier(route, output).createProcessor();
         }
 
-        camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder().endStep(step);
+        camelContext.getCamelContextExtension().getStartupStepRecorder().endStep(step);
         return processor;
     }
 
@@ -848,8 +847,8 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         preCreateProcessor();
 
         // at first use custom factory
-        if (camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory() != null) {
-            processor = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory().createProcessor(route, definition);
+        if (camelContext.getCamelContextExtension().getProcessorFactory() != null) {
+            processor = camelContext.getCamelContextExtension().getProcessorFactory().createProcessor(route, definition);
         }
         // fallback to default implementation if factory did not create the
         // processor
@@ -890,7 +889,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     protected String getId(OptionalIdentifiedDefinition<?> def) {
-        return def.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+        return def.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory());
     }
 
     /**

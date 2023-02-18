@@ -24,7 +24,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -135,7 +134,7 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
     @Override
     public AsyncProducer createAsyncProducer() throws Exception {
         AsyncProducer producer = delegate.createAsyncProducer();
-        return camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+        return camelContext.getCamelContextExtension().getInternalProcessorFactory()
                 .createInterceptSendToEndpointProcessor(this, delegate, producer, skip);
     }
 

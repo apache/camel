@@ -19,7 +19,6 @@ package org.apache.camel.reifier;
 import java.util.Optional;
 
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -65,7 +64,7 @@ public class ResumableReifier extends ProcessorReifier<ResumableDefinition> {
                 strategy = mandatoryLookup(ref, ResumeStrategy.class);
             } else {
                 final FactoryFinder factoryFinder
-                        = camelContext.adapt(ExtendedCamelContext.class).getFactoryFinder(FactoryFinder.DEFAULT_PATH);
+                        = camelContext.getCamelContextExtension().getFactoryFinder(FactoryFinder.DEFAULT_PATH);
 
                 final ResumeStrategyConfiguration resumeStrategyConfiguration = definition.getResumeStrategyConfiguration();
                 Optional<ResumeStrategy> resumeStrategyOptional = factoryFinder.newInstance(

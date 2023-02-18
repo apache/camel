@@ -25,7 +25,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -82,8 +81,8 @@ public class SharedCamelInternalProcessor implements SharedInternalProcessor {
 
     public SharedCamelInternalProcessor(CamelContext camelContext, CamelInternalProcessorAdvice... advices) {
         this.camelContext = camelContext;
-        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
-        this.awaitManager = camelContext.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
+        this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
+        this.awaitManager = camelContext.getCamelContextExtension().getAsyncProcessorAwaitManager();
         this.shutdownStrategy = camelContext.getShutdownStrategy();
 
         if (advices != null) {

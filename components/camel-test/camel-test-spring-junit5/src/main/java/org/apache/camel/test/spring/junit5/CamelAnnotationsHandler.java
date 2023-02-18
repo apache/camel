@@ -26,7 +26,6 @@ import java.util.StringJoiner;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
@@ -275,7 +274,7 @@ public final class CamelAnnotationsHandler {
                         throws Exception {
                     LOGGER.info("Enabling auto mocking of endpoints matching pattern [{}] on CamelContext with name [{}].",
                             mockEndpoints, contextName);
-                    camelContext.adapt(ExtendedCamelContext.class)
+                    camelContext.getCamelContextExtension()
                             .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpoints));
                 }
             });
@@ -301,7 +300,7 @@ public final class CamelAnnotationsHandler {
                     LOGGER.info(
                             "Enabling auto mocking and skipping of endpoints matching pattern [{}] on CamelContext with name [{}].",
                             mockEndpointsValue, contextName);
-                    camelContext.adapt(ExtendedCamelContext.class)
+                    camelContext.getCamelContextExtension()
                             .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(mockEndpointsValue, true));
                 }
             });

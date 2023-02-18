@@ -27,7 +27,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -227,7 +226,7 @@ public final class HealthCheckHelper {
             if (check.isEmpty()) {
                 // use resolver to load from classpath if needed
                 HealthCheckResolver resolver
-                        = context.adapt(ExtendedCamelContext.class).getHealthCheckResolver();
+                        = context.getCamelContextExtension().getHealthCheckResolver();
                 HealthCheck hc = resolver.resolveHealthCheck(id);
                 if (hc != null) {
                     check = Optional.of(hc);
@@ -273,7 +272,7 @@ public final class HealthCheckHelper {
             if (repo.isEmpty()) {
                 // use resolver to load from classpath if needed
                 HealthCheckResolver resolver
-                        = context.adapt(ExtendedCamelContext.class).getHealthCheckResolver();
+                        = context.getCamelContextExtension().getHealthCheckResolver();
                 HealthCheckRepository hr = resolver.resolveHealthCheckRepository(id);
                 if (hr != null) {
                     repo = Optional.of(hr);

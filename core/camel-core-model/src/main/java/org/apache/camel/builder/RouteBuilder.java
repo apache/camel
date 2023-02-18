@@ -29,7 +29,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
@@ -708,9 +707,9 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         if (initialized.compareAndSet(false, true)) {
             // Set the CamelContext ErrorHandler here
             CamelContext camelContext = getContext();
-            if (camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory() != null) {
+            if (camelContext.getCamelContextExtension().getErrorHandlerFactory() != null) {
                 setErrorHandlerFactory(
-                        camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory());
+                        camelContext.getCamelContextExtension().getErrorHandlerFactory());
             }
 
             List<RouteBuilderLifecycleStrategy> strategies = new ArrayList<>(lifecycleInterceptors);

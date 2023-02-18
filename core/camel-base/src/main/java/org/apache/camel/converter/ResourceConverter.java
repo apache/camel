@@ -58,7 +58,7 @@ public final class ResourceConverter {
 
     @Converter(order = 5)
     public static Resource toResource(String uri, CamelContext camelContext) throws IOException {
-        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
         return ecc.getResourceLoader().resolveResource(uri);
     }
 

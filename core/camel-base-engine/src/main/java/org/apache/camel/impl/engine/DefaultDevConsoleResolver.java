@@ -20,7 +20,6 @@ import java.util.Optional;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
@@ -84,7 +83,7 @@ public class DefaultDevConsoleResolver implements DevConsoleResolver, CamelConte
 
     protected Class<?> findDevConsole(String name, CamelContext context) throws Exception {
         if (devConsoleFactory == null) {
-            devConsoleFactory = context.adapt(ExtendedCamelContext.class).getFactoryFinder(DEV_CONSOLE_RESOURCE_PATH);
+            devConsoleFactory = context.getCamelContextExtension().getFactoryFinder(DEV_CONSOLE_RESOURCE_PATH);
         }
         return devConsoleFactory.findOptionalClass(name).orElse(null);
     }

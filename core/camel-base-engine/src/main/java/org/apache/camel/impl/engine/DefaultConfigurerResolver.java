@@ -98,7 +98,7 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
 
     private Class<?> findConfigurer(String name, CamelContext context) throws IOException {
         if (factoryFinder == null) {
-            factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(ConfigurerResolver.RESOURCE_PATH);
+            factoryFinder = context.getCamelContextExtension().getFactoryFinder(ConfigurerResolver.RESOURCE_PATH);
         }
         return factoryFinder.findClass(name).orElse(null);
     }

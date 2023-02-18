@@ -396,7 +396,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         String id = route.getId();
         RouteDefinition def = context.getExtension(Model.class).getRouteDefinition(id);
         if (def != null) {
-            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+            ExtendedCamelContext ecc = context.getCamelContextExtension();
             return ecc.getModelToXMLDumper().dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
         }
 
