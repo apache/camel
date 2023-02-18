@@ -64,8 +64,8 @@ public class AbstractEndpointBuilder {
         Map<String, Object> remaining = new LinkedHashMap<>();
         // we should not bind complex objects to registry as we create the endpoint via the properties as-is
         NormalizedEndpointUri uri = computeUri(remaining, context, false, true);
-        ExtendedCamelContext ecc = (ExtendedCamelContext) context;
-        Endpoint endpoint = ecc.getEndpoint(uri, properties);
+        CamelContext ecc = context;
+        Endpoint endpoint = ecc.getCamelContextExtension().getEndpoint(uri, properties);
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri.getUri());
         }

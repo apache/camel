@@ -879,7 +879,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
             }
 
             // emmit event we are doing redelivery
-            if (((ExtendedCamelContext) camelContext).isEventNotificationApplicable()) {
+            if (camelContext.getCamelContextExtension().isEventNotificationApplicable()) {
                 EventHelper.notifyExchangeRedelivery(exchange.getContext(), exchange, redeliveryCounter);
             }
 
@@ -1181,7 +1181,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 // fire event as we had a failure processor to handle it, which there is a event for
                 final boolean deadLetterChannel = processor == deadLetter;
 
-                if (((ExtendedCamelContext) camelContext).isEventNotificationApplicable()) {
+                if (camelContext.getCamelContextExtension().isEventNotificationApplicable()) {
                     EventHelper.notifyExchangeFailureHandling(exchange.getContext(), exchange, processor, deadLetterChannel,
                             deadLetterUri);
                 }
@@ -1193,7 +1193,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     try {
                         prepareExchangeAfterFailure(exchange, isDeadLetterChannel, shouldHandle, shouldContinue);
                         // fire event as we had a failure processor to handle it, which there is a event for
-                        if (((ExtendedCamelContext) camelContext).isEventNotificationApplicable()) {
+                        if (camelContext.getCamelContextExtension().isEventNotificationApplicable()) {
                             EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor,
                                     deadLetterChannel, deadLetterUri);
                         }

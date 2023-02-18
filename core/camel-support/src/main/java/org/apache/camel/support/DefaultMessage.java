@@ -284,13 +284,13 @@ public class DefaultMessage extends MessageSupport {
 
     @Override
     public void setHeaders(Map<String, Object> headers) {
-        HeadersMapFactory factory = ((ExtendedCamelContext) camelContext).getHeadersMapFactory();
+        HeadersMapFactory factory = camelContext.getCamelContextExtension().getHeadersMapFactory();
         if (factory != null) {
             if (factory.isInstanceOf(headers)) {
                 this.headers = headers;
             } else {
                 // create a new map
-                this.headers = ((ExtendedCamelContext) camelContext).getHeadersMapFactory().newMap(headers);
+                this.headers = camelContext.getCamelContextExtension().getHeadersMapFactory().newMap(headers);
             }
         } else {
             // should not really happen but some tests rely on using camel context that is not started
@@ -321,7 +321,7 @@ public class DefaultMessage extends MessageSupport {
     protected Map<String, Object> createHeaders() {
         Map<String, Object> map;
 
-        HeadersMapFactory factory = ((ExtendedCamelContext) camelContext).getHeadersMapFactory();
+        HeadersMapFactory factory = camelContext.getCamelContextExtension().getHeadersMapFactory();
         if (factory != null) {
             map = factory.newMap();
         } else {

@@ -364,7 +364,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
                 uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
             }
             // optimize and normalize endpoint
-            return ((ExtendedCamelContext) ecc).normalizeUri(uri);
+            return ecc.getCamelContextExtension().normalizeUri(uri);
         }
         return null;
     }

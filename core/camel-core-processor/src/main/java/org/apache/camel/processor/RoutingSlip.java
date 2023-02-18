@@ -335,7 +335,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
                 uri = ecc.getTypeConverter().mandatoryConvertTo(String.class, exchange, recipient);
             }
             // optimize and normalize endpoint
-            return ((ExtendedCamelContext) ecc).normalizeUri(uri);
+            return ecc.getCamelContextExtension().normalizeUri(uri);
         }
         return null;
     }
@@ -347,8 +347,8 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         if (recipient != null) {
             if (recipient instanceof NormalizedEndpointUri) {
                 NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
-                ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
-                return ecc.hasEndpoint(nu);
+                CamelContext ecc = exchange.getContext();
+                return ecc.getCamelContextExtension().hasEndpoint(nu);
             } else {
                 String uri = recipient.toString();
                 return exchange.getContext().hasEndpoint(uri);

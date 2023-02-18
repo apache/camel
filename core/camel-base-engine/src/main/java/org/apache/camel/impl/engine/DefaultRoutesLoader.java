@@ -159,7 +159,7 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
      */
     protected RoutesBuilderLoader resolveService(String extension) {
         final CamelContext ecc = getCamelContext();
-        final FactoryFinder finder = ((ExtendedCamelContext) ecc).getBootstrapFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
+        final FactoryFinder finder = ecc.getCamelContextExtension().getBootstrapFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
 
         RoutesBuilderLoader answer
                 = ResolverHelper.resolveService(getCamelContext(), finder, extension, RoutesBuilderLoader.class).orElse(null);

@@ -73,8 +73,7 @@ public final class CamelContextHelper {
      */
     public static Endpoint getMandatoryEndpoint(CamelContext camelContext, NormalizedEndpointUri uri)
             throws NoSuchEndpointException {
-        ExtendedCamelContext ecc = (ExtendedCamelContext) camelContext;
-        Endpoint endpoint = ecc.getEndpoint(uri);
+        Endpoint endpoint = camelContext.getCamelContextExtension().getEndpoint(uri);
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri.getUri());
         } else {
@@ -88,8 +87,7 @@ public final class CamelContextHelper {
      */
     public static Endpoint getMandatoryPrototypeEndpoint(CamelContext camelContext, String uri)
             throws NoSuchEndpointException {
-        ExtendedCamelContext ecc = (ExtendedCamelContext) camelContext;
-        Endpoint endpoint = ecc.getPrototypeEndpoint(uri);
+        Endpoint endpoint = camelContext.getCamelContextExtension().getPrototypeEndpoint(uri);
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri);
         } else {
@@ -103,8 +101,7 @@ public final class CamelContextHelper {
      */
     public static Endpoint getMandatoryPrototypeEndpoint(CamelContext camelContext, NormalizedEndpointUri uri)
             throws NoSuchEndpointException {
-        ExtendedCamelContext ecc = (ExtendedCamelContext) camelContext;
-        Endpoint endpoint = ecc.getPrototypeEndpoint(uri);
+        Endpoint endpoint = camelContext.getCamelContextExtension().getPrototypeEndpoint(uri);
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri.getUri());
         } else {

@@ -140,7 +140,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
             // set property which endpoint we send to
             exchange.setProperty(ExchangePropertyKey.TO_ENDPOINT, destination.getEndpointUri());
 
-            final boolean sending = ((ExtendedCamelContext) camelContext).isEventNotificationApplicable()
+            final boolean sending = camelContext.getCamelContextExtension().isEventNotificationApplicable()
                     && EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
             // record timing for sending the exchange using the producer
             StopWatch watch;

@@ -268,7 +268,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
                 throw new ResolveEndpointFailedException(uri, "Endpoint should include scheme:path");
             }
             // optimize and normalize endpoint
-            return ((ExtendedCamelContext) ecc).normalizeUri(uri);
+            return ecc.getCamelContextExtension().normalizeUri(uri);
         }
         return null;
     }
@@ -280,8 +280,8 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
         if (recipient != null) {
             if (recipient instanceof NormalizedEndpointUri) {
                 NormalizedEndpointUri nu = (NormalizedEndpointUri) recipient;
-                ExtendedCamelContext ecc = (ExtendedCamelContext) exchange.getContext();
-                return ecc.hasEndpoint(nu);
+                CamelContext ecc = exchange.getContext();
+                return ecc.getCamelContextExtension().hasEndpoint(nu);
             } else {
                 String uri = recipient.toString();
                 return exchange.getContext().hasEndpoint(uri);

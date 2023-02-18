@@ -419,7 +419,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         String[] names = new String[] {
                 type.getName() + "-configurer", type.getSimpleName() + "-configurer", rootKey + "-configurer" };
         for (String n : names) {
-            configurer = ((ExtendedCamelContext) ecc).getConfigurerResolver().resolvePropertyConfigurer(n, ecc);
+            configurer = ecc.getCamelContextExtension().getConfigurerResolver().resolvePropertyConfigurer(n, ecc);
             if (configurer != null) {
                 break;
             }

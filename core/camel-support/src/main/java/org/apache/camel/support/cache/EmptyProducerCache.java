@@ -41,7 +41,7 @@ public class EmptyProducerCache extends DefaultProducerCache {
         AsyncProducer answer;
         try {
             answer = endpoint.createAsyncProducer();
-            boolean startingRoutes = ((ExtendedCamelContext) ecc).isSetupRoutes() || ecc.getRouteController().isStartingRoutes();
+            boolean startingRoutes = ecc.getCamelContextExtension().isSetupRoutes() || ecc.getRouteController().isStartingRoutes();
             if (startingRoutes && answer.isSingleton()) {
                 // if we are currently starting a route, then add as service and enlist in JMX
                 // - but do not enlist non-singletons in JMX

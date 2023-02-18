@@ -129,7 +129,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
         }
 
         // fire event
-        if (((ExtendedCamelContext) context).isEventNotificationApplicable()) {
+        if (context.getCamelContextExtension().isEventNotificationApplicable()) {
             try {
                 EventHelper.notifyExchangeCreated(context, exchange);
             } catch (Throwable e) {
@@ -239,7 +239,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
         // unregister from inflight registry, before signalling we are done
         inflightRepository.remove(exchange);
 
-        if (((ExtendedCamelContext) context).isEventNotificationApplicable()) {
+        if (context.getCamelContextExtension().isEventNotificationApplicable()) {
             // then fire event to signal the exchange is done
             try {
                 if (failed) {

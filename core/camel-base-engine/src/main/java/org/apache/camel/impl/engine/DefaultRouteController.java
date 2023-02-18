@@ -86,7 +86,7 @@ public class DefaultRouteController extends ServiceSupport implements RouteContr
     // ***************************************************
 
     protected RouteController getInternalRouteController() {
-        return ((ExtendedCamelContext) camelContext).getInternalRouteController();
+        return camelContext.getCamelContextExtension().getInternalRouteController();
     }
 
     @Override

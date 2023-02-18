@@ -76,7 +76,7 @@ public class DependencyDownloaderRoutesLoader extends DefaultRoutesLoader {
         if (loader == null) {
             // need to use regular factory finder as bootstrap has already marked the loader as a miss
             final CamelContext ecc = getCamelContext();
-            final FactoryFinder finder = ((ExtendedCamelContext) ecc).getFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
+            final FactoryFinder finder = ecc.getCamelContextExtension().getFactoryFinder(RoutesBuilderLoader.FACTORY_PATH);
             loader = ResolverHelper.resolveService(ecc, finder, extension, RoutesBuilderLoader.class).orElse(null);
             if (loader != null) {
                 CamelContextAware.trySetCamelContext(loader, getCamelContext());

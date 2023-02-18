@@ -34,21 +34,22 @@ public class FileConsumerDeleteExchangePooledTest extends ContextTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        ExtendedCamelContext context = (ExtendedCamelContext) super.createCamelContext();
+        CamelContext context = super.createCamelContext();
+        ExtendedCamelContext extendedCamelContext = context.getCamelContextExtension();
 
-        context.getExchangeFactoryManager().setStatisticsEnabled(true);
+        extendedCamelContext.getExchangeFactoryManager().setStatisticsEnabled(true);
 
         PooledExchangeFactory pef = new PooledExchangeFactory();
-        context.setExchangeFactory(pef);
+        extendedCamelContext.setExchangeFactory(pef);
 
-        context.getExchangeFactory().setStatisticsEnabled(true);
-        context.getProcessorExchangeFactory().setStatisticsEnabled(true);
-        return (CamelContext) context;
+        extendedCamelContext.getExchangeFactory().setStatisticsEnabled(true);
+        extendedCamelContext.getProcessorExchangeFactory().setStatisticsEnabled(true);
+        return (CamelContext) extendedCamelContext;
     }
 
     @Test
     public void testDelete() throws Exception {
-        ExtendedCamelContext ecc = (ExtendedCamelContext) context;
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         assertEquals(0, ecc.getExchangeFactoryManager().getStatistics().getReleasedCounter());
 
         MockEndpoint mock = getMockEndpoint("mock:result");
