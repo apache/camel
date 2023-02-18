@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Function;
@@ -702,6 +703,18 @@ public class PropertiesComponent extends ServiceSupport
             }
         }
         return answer;
+    }
+
+    @Override
+    public void keepOnlyChangeProperties(Properties properties) {
+        Properties loaded = loadProperties();
+        for (String key : loaded.stringPropertyNames()) {
+            Object v1 = loaded.getProperty(key);
+            Object v2 = properties.getProperty(key);
+            if (Objects.equals(v1, v2)) {
+                properties.remove(key);
+            }
+        }
     }
 
     @Override

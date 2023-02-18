@@ -278,6 +278,15 @@ public interface PropertiesComponent extends StaticService {
     boolean reloadProperties(String pattern);
 
     /**
+     * Filters the given list of properties, by removing properties that are already loaded and have same key and value.
+     *
+     * If all properties are not changed then the properties will become empty.
+     *
+     * @param properties the given properties to filter.
+     */
+    void keepOnlyChangeProperties(Properties properties);
+
+    /**
      * Adds the {@link PropertiesLookupListener}.
      */
     void addPropertiesLookupListener(PropertiesLookupListener propertiesLookupListener);
