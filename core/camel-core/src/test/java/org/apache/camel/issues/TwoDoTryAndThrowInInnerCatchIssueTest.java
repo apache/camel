@@ -33,7 +33,7 @@ public class TwoDoTryAndThrowInInnerCatchIssueTest extends ContextTestSupport {
 
     @Test
     public void testSendThatIsCaught() throws Exception {
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("myroute"));
         log.info(xml);
 

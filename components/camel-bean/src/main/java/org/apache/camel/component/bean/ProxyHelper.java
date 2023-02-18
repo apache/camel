@@ -19,7 +19,6 @@ package org.apache.camel.component.bean;
 import java.lang.reflect.Proxy;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Producer;
 
 /**
@@ -59,7 +58,7 @@ public final class ProxyHelper {
     public static <T> T createProxy(
             Endpoint endpoint, boolean binding, ClassLoader cl, Class<T>[] interfaceClasses, MethodInfoCache methodCache)
             throws Exception {
-        Producer producer = endpoint.getCamelContext().adapt(ExtendedCamelContext.class).getDeferServiceFactory()
+        Producer producer = endpoint.getCamelContext().getCamelContextExtension().getDeferServiceFactory()
                 .createProducer(endpoint);
         return createProxyObject(endpoint, binding, producer, cl, interfaceClasses, methodCache);
     }

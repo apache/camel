@@ -192,7 +192,7 @@ public final class ResourceHelper {
      * @return              the {@link Resource}. Or <tt>null</tt> if not found
      */
     public static Resource resolveResource(CamelContext camelContext, String uri) {
-        final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        final ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
         final ResourceLoader loader = ecc.getResourceLoader();
         return loader.resolveResource(uri);
     }

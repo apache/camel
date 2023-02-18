@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.annotations.DevConsole;
@@ -54,7 +53,7 @@ public class AzureKeyVaultManagerDevConsole extends AbstractDevConsole {
         }
         AzureVaultConfiguration azure = getCamelContext().getVaultConfiguration().getAzureVaultConfiguration();
         if (azure != null && azure.isRefreshEnabled()) {
-            PeriodTaskScheduler scheduler = getCamelContext().adapt(ExtendedCamelContext.class).getPeriodTaskScheduler();
+            PeriodTaskScheduler scheduler = getCamelContext().getCamelContextExtension().getPeriodTaskScheduler();
             secretsRefreshTask = scheduler.getTaskByType(EventhubsReloadTriggerTask.class);
         }
     }

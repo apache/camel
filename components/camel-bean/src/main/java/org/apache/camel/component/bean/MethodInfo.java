@@ -39,7 +39,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionEvaluationException;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.InOnly;
 import org.apache.camel.InOut;
 import org.apache.camel.Message;
@@ -133,7 +132,7 @@ public class MethodInfo {
         org.apache.camel.RoutingSlip routingSlipAnnotation
                 = (org.apache.camel.RoutingSlip) collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
         if (routingSlipAnnotation != null) {
-            routingSlip = camelContext.adapt(ExtendedCamelContext.class).getAnnotationBasedProcessorFactory()
+            routingSlip = camelContext.getCamelContextExtension().getAnnotationBasedProcessorFactory()
                     .createRoutingSlip(camelContext, routingSlipAnnotation);
             // add created routingSlip as a service so we have its lifecycle managed
             try {
@@ -146,7 +145,7 @@ public class MethodInfo {
         org.apache.camel.DynamicRouter dynamicRouterAnnotation
                 = (org.apache.camel.DynamicRouter) collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
         if (dynamicRouterAnnotation != null) {
-            dynamicRouter = camelContext.adapt(ExtendedCamelContext.class).getAnnotationBasedProcessorFactory()
+            dynamicRouter = camelContext.getCamelContextExtension().getAnnotationBasedProcessorFactory()
                     .createDynamicRouter(camelContext, dynamicRouterAnnotation);
             // add created dynamicRouter as a service so we have its lifecycle managed
             try {
@@ -159,7 +158,7 @@ public class MethodInfo {
         org.apache.camel.RecipientList recipientListAnnotation
                 = (org.apache.camel.RecipientList) collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
         if (recipientListAnnotation != null) {
-            recipientList = camelContext.adapt(ExtendedCamelContext.class).getAnnotationBasedProcessorFactory()
+            recipientList = camelContext.getCamelContextExtension().getAnnotationBasedProcessorFactory()
                     .createRecipientList(camelContext, recipientListAnnotation);
             // add created recipientList as a service so we have its lifecycle managed
             try {

@@ -80,7 +80,6 @@ import io.swagger.v3.oas.models.media.DateSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
 import io.swagger.v3.oas.models.media.PasswordSchema;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.rest.ApiKeyDefinition;
 import org.apache.camel.model.rest.BasicAuthDefinition;
 import org.apache.camel.model.rest.BearerTokenDefinition;
@@ -542,7 +541,7 @@ public class RestOpenApiReader {
             } else if (rest.getId() != null) {
                 operationId = getValue(camelContext, rest.getId());
             } else {
-                verb.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+                verb.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory());
                 operationId = verb.getId();
             }
             op.operationId = operationId;

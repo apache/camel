@@ -20,7 +20,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultUnitOfWork;
@@ -33,7 +32,7 @@ public class CustomUnitOfWorkFactoryTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.adapt(ExtendedCamelContext.class).setUnitOfWorkFactory(new MyUnitOfWorkFactory());
+        context.getCamelContextExtension().setUnitOfWorkFactory(new MyUnitOfWorkFactory());
         return context;
     }
 

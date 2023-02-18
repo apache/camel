@@ -381,7 +381,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         Registry registry = getBeanForType(Registry.class);
         if (registry != null) {
             LOG.info("Using custom Registry: {}", registry);
-            context.setRegistry(registry);
+            context.getCamelContextExtension().setRegistry(registry);
         }
     }
 

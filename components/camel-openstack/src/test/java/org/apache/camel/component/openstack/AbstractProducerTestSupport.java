@@ -54,7 +54,7 @@ public abstract class AbstractProducerTestSupport {
     public void before() {
         msg = new DefaultMessage(camelContext);
         when(exchange.getIn()).thenReturn(msg);
-        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
-        when(camelContext.adapt(ExtendedCamelContext.class).getHeadersMapFactory()).thenReturn(new DefaultHeadersMapFactory());
+        when(camelContext.getCamelContextExtension()).thenReturn(ecc);
+        when(camelContext.getCamelContextExtension().getHeadersMapFactory()).thenReturn(new DefaultHeadersMapFactory());
     }
 }

@@ -18,7 +18,6 @@ package org.apache.camel.processor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +30,7 @@ public class LogEipBodyWithSimpleTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.adapt(ExtendedCamelContext.class).addLogListener((exchange, camelLogger, message) -> {
+        context.getCamelContextExtension().addLogListener((exchange, camelLogger, message) -> {
             msg = message;
             return message;
         });

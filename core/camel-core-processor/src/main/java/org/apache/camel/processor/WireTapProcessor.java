@@ -27,7 +27,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -307,12 +306,12 @@ public class WireTapProcessor extends AsyncProcessorSupport
     @Override
     protected void doBuild() throws Exception {
         // create a per processor exchange factory
-        this.processorExchangeFactory = getCamelContext().adapt(ExtendedCamelContext.class)
+        this.processorExchangeFactory = getCamelContext().getCamelContextExtension()
                 .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
         this.processorExchangeFactory.setRouteId(getRouteId());
         this.processorExchangeFactory.setId(getId());
 
-        boolean pooled = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled();
+        boolean pooled = camelContext.getCamelContextExtension().getExchangeFactory().isPooled();
         if (pooled) {
             taskFactory = new PooledTaskFactory(getId()) {
                 @Override
@@ -320,7 +319,7 @@ public class WireTapProcessor extends AsyncProcessorSupport
                     return new WireTapTask();
                 }
             };
-            int capacity = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().getCapacity();
+            int capacity = camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
             taskFactory.setCapacity(capacity);
         } else {
             taskFactory = new PrototypeTaskFactory() {

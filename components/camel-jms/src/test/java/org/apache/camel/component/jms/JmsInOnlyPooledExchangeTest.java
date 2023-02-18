@@ -50,7 +50,7 @@ public class JmsInOnlyPooledExchangeTest extends AbstractJMSTest {
 
         Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
             PooledObjectFactory.Statistics stat
-                    = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager().getStatistics();
+                    = context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
             assertEquals(1, stat.getCreatedCounter());
             assertEquals(0, stat.getAcquiredCounter());
             assertEquals(1, stat.getReleasedCounter());
@@ -70,7 +70,7 @@ public class JmsInOnlyPooledExchangeTest extends AbstractJMSTest {
 
         Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
             PooledObjectFactory.Statistics stat
-                    = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager().getStatistics();
+                    = context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
             assertEquals(1, stat.getCreatedCounter());
             assertEquals(1, stat.getAcquiredCounter());
             assertEquals(2, stat.getReleasedCounter());

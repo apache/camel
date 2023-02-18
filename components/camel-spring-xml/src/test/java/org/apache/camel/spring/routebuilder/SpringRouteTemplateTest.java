@@ -155,7 +155,7 @@ public class SpringRouteTemplateTest extends SpringTestSupport {
 
         RouteDefinition def = context.getRouteDefinition("first");
 
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, def, true, true);
 
         assertNotNull(xml);
@@ -172,7 +172,7 @@ public class SpringRouteTemplateTest extends SpringTestSupport {
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(context.getRouteDefinitions());
 
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, def, true, true);
 
         assertNotNull(xml);

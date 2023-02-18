@@ -565,7 +565,7 @@ public final class CamelContextHelper {
      * @return              the startup order, or <tt>0</tt> if not possible to determine
      */
     public static int getRouteStartupOrder(CamelContext camelContext, String routeId) {
-        for (RouteStartupOrder order : camelContext.adapt(ExtendedCamelContext.class).getRouteStartupOrder()) {
+        for (RouteStartupOrder order : camelContext.getCamelContextExtension().getRouteStartupOrder()) {
             if (order.getRoute().getId().equals(routeId)) {
                 return order.getStartupOrder();
             }

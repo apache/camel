@@ -19,7 +19,6 @@ package org.apache.camel.impl.engine;
 import java.util.Set;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +36,7 @@ public class DefaultComponentNameResolverTest extends ContextTestSupport {
     public void testDefaultComponentNameResolver() throws Exception {
         context.start();
 
-        ComponentNameResolver resolver = context.adapt(ExtendedCamelContext.class).getComponentNameResolver();
+        ComponentNameResolver resolver = context.getCamelContextExtension().getComponentNameResolver();
         assertNotNull(resolver);
 
         Set<String> names = resolver.resolveNames(context);

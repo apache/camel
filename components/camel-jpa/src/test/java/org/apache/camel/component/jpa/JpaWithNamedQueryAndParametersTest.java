@@ -131,7 +131,7 @@ public class JpaWithNamedQueryAndParametersTest {
         params.put("custName", "Willem");
         // bind the params
         registry.bind("params", params);
-        camelContext.setRegistry(registry);
+        camelContext.getCamelContextExtension().setRegistry(registry);
 
         camelContext.start();
 

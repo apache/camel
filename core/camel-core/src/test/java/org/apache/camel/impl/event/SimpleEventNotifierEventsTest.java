@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -69,7 +68,7 @@ public class SimpleEventNotifierEventsTest {
     @Test
     public void testExchangeDone() throws Exception {
         // optimized as this does not require exchange events
-        assertFalse(context.adapt(ExtendedCamelContext.class).isEventNotificationApplicable());
+        assertFalse(context.getCamelContextExtension().isEventNotificationApplicable());
 
         MockEndpoint mock = context.getEndpoint("mock:result", MockEndpoint.class);
         mock.expectedMessageCount(1);
@@ -110,7 +109,7 @@ public class SimpleEventNotifierEventsTest {
     @Test
     public void testExchangeFailed() throws Exception {
         // optimized as this does not require exchange events
-        assertFalse(context.adapt(ExtendedCamelContext.class).isEventNotificationApplicable());
+        assertFalse(context.getCamelContextExtension().isEventNotificationApplicable());
 
         try {
             template.sendBody("direct:fail", "Hello World");
@@ -152,7 +151,7 @@ public class SimpleEventNotifierEventsTest {
     @Test
     public void testSuspendResume() throws Exception {
         // optimized as this does not require exchange events
-        assertFalse(context.adapt(ExtendedCamelContext.class).isEventNotificationApplicable());
+        assertFalse(context.getCamelContextExtension().isEventNotificationApplicable());
 
         assertEquals(12, events.size());
         assertIsInstanceOf(CamelEvent.CamelContextInitializingEvent.class, events.get(0));

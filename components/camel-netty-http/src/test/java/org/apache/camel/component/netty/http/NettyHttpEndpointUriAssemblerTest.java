@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,7 @@ public class NettyHttpEndpointUriAssemblerTest extends CamelTestSupport {
 
     @Test
     public void testAsEndpointUriNettyHttpHostnameWithDash() throws Exception {
-        EndpointUriFactory assembler = context.adapt(ExtendedCamelContext.class).getEndpointUriFactory("netty-http");
+        EndpointUriFactory assembler = context.getCamelContextExtension().getEndpointUriFactory("netty-http");
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("protocol", "http");

@@ -38,7 +38,7 @@ public class DumpModelAsXmlPlaceholdersTest extends SpringTestSupport {
     @Test
     public void testDumpModelAsXml() throws Exception {
         assertEquals("Gouda", context.getRoutes().get(0).getId());
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("Gouda"));
         assertNotNull(xml);
         log.info(xml);

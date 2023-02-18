@@ -30,7 +30,6 @@ import org.apache.camel.Channel;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToStartRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -69,7 +68,7 @@ public class RouteService extends ChildServiceSupport {
     public RouteService(Route route) {
         this.route = route;
         this.camelContext = this.route.getCamelContext();
-        this.startupStepRecorder = this.camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder();
+        this.startupStepRecorder = this.camelContext.getCamelContextExtension().getStartupStepRecorder();
     }
 
     public String getId() {
@@ -202,7 +201,7 @@ public class RouteService extends ChildServiceSupport {
             }
 
             // add routes to camel context
-            camelContext.adapt(ExtendedCamelContext.class).addRoute(route);
+            camelContext.getCamelContextExtension().addRoute(route);
 
             // add the routes to the inflight registry so they are pre-installed
             camelContext.getInflightRepository().addRoute(route.getId());
@@ -273,7 +272,7 @@ public class RouteService extends ChildServiceSupport {
             EventHelper.notifyRouteStopped(camelContext, route);
         }
         if (isRemovingRoutes()) {
-            camelContext.adapt(ExtendedCamelContext.class).removeRoute(route);
+            camelContext.getCamelContextExtension().removeRoute(route);
         }
         // need to redo if we start again after being stopped
         input = null;
@@ -317,7 +316,7 @@ public class RouteService extends ChildServiceSupport {
         camelContext.getInflightRepository().removeRoute(route.getId());
 
         // remove the routes from the collections
-        camelContext.adapt(ExtendedCamelContext.class).removeRoute(route);
+        camelContext.getCamelContextExtension().removeRoute(route);
 
         // clear inputs on shutdown
         input = null;

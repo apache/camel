@@ -206,7 +206,7 @@ public abstract class ContextTestSupport extends TestSupport {
             context = ctx;
         } else {
             DefaultCamelContext ctx = new DefaultCamelContext(true);
-            ctx.setRegistry(createRegistry());
+            ctx.getCamelContextExtension().setRegistry(createRegistry());
             context = ctx;
         }
         if (!useJmx()) {

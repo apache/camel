@@ -25,7 +25,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.component.platform.http.spi.PlatformHttpEngine;
 import org.apache.camel.spi.FactoryFinder;
@@ -236,7 +235,7 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
                         LOG.debug("Lookup platform http engine from factory");
 
                         engine = getCamelContext()
-                                .adapt(ExtendedCamelContext.class)
+                                .getCamelContextExtension()
                                 .getFactoryFinder(FactoryFinder.DEFAULT_PATH)
                                 .newInstance(PlatformHttpConstants.PLATFORM_HTTP_ENGINE_FACTORY, PlatformHttpEngine.class)
                                 .orElseThrow(() -> new IllegalStateException(

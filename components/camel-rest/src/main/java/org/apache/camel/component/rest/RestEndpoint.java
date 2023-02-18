@@ -23,7 +23,6 @@ import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
@@ -325,7 +324,7 @@ public class RestEndpoint extends DefaultEndpoint {
             LOG.debug("Discovering camel-openapi-java on classpath for using api-doc: {}", apiDoc);
             // lookup on classpath using factory finder to automatic find it (just add camel-openapi-java to classpath etc)
             try {
-                FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+                FactoryFinder finder = getCamelContext().getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
                 apiDocFactory = finder.newInstance(DEFAULT_API_COMPONENT_NAME, RestProducerFactory.class).orElse(null);
                 if (apiDocFactory == null) {
                     throw new NoFactoryAvailableException("Cannot find camel-openapi-java on classpath");

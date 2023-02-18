@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
@@ -82,7 +81,7 @@ public class CamelProduceInterfaceEventNotifierTest extends ContextTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        postProcessor = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+        postProcessor = context.getCamelContextExtension().getBeanPostProcessor();
     }
 
     interface FooService {

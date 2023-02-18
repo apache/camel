@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.health.HealthCheckRegistry;
@@ -42,7 +41,7 @@ public class HealthCheckResultStrategyTest extends ContextTestSupport {
         context.start();
 
         HealthCheck hc
-                = context.adapt(ExtendedCamelContext.class).getHealthCheckResolver().resolveHealthCheck("myfoo");
+                = context.getCamelContextExtension().getHealthCheckResolver().resolveHealthCheck("myfoo");
         Assertions.assertNotNull(hc);
 
         Assertions.assertEquals("acme", hc.getGroup());
@@ -60,7 +59,7 @@ public class HealthCheckResultStrategyTest extends ContextTestSupport {
         context.start();
 
         HealthCheck hc
-                = context.adapt(ExtendedCamelContext.class).getHealthCheckResolver().resolveHealthCheck("myfoo");
+                = context.getCamelContextExtension().getHealthCheckResolver().resolveHealthCheck("myfoo");
         Assertions.assertNotNull(hc);
 
         HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);

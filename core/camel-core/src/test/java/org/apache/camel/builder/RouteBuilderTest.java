@@ -626,7 +626,7 @@ public class RouteBuilderTest extends TestSupport {
         });
 
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            context.getRegistry().bind(UUID.randomUUID().toString(), new RouteBuilderLifecycleStrategy() {
+            context.getCamelContextExtension().getRegistry().bind(UUID.randomUUID().toString(), new RouteBuilderLifecycleStrategy() {
                 @Override
                 public void beforeConfigure(RouteBuilder builder) {
                     ordered.add("before-3");

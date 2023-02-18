@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
@@ -43,8 +42,8 @@ public class DefaultDevConsolesLoader {
 
     public DefaultDevConsolesLoader(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.resolver = camelContext.adapt(ExtendedCamelContext.class).getPackageScanResourceResolver();
-        this.devConsoleResolver = camelContext.adapt(ExtendedCamelContext.class).getDevConsoleResolver();
+        this.resolver = camelContext.getCamelContextExtension().getPackageScanResourceResolver();
+        this.devConsoleResolver = camelContext.getCamelContextExtension().getDevConsoleResolver();
     }
 
     public Collection<DevConsole> loadDevConsoles() {

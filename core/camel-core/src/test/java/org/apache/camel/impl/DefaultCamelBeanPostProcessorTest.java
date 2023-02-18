@@ -19,7 +19,6 @@ package org.apache.camel.impl;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.CamelBeanPostProcessor;
@@ -61,7 +60,7 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        postProcessor = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+        postProcessor = context.getCamelContextExtension().getBeanPostProcessor();
     }
 
     @BindToRegistry

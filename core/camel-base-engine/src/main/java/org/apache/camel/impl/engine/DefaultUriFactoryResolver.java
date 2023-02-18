@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.FactoryFinder;
@@ -100,7 +99,7 @@ public class DefaultUriFactoryResolver implements CamelContextAware, UriFactoryR
 
     private Class<?> findFactory(String name, CamelContext context) throws IOException {
         if (factoryFinder == null) {
-            factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+            factoryFinder = context.getCamelContextExtension().getFactoryFinder(RESOURCE_PATH);
         }
         return factoryFinder.findClass(name).orElse(null);
     }

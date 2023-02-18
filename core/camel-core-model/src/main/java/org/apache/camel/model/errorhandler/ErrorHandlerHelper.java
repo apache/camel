@@ -18,7 +18,6 @@ package org.apache.camel.model.errorhandler;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.support.CamelContextHelper;
@@ -89,7 +88,7 @@ public final class ErrorHandlerHelper {
     }
 
     protected static ErrorHandlerFactory lookupErrorHandlerFactory(CamelContext camelContext) {
-        ErrorHandlerFactory answer = camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerFactory();
+        ErrorHandlerFactory answer = camelContext.getCamelContextExtension().getErrorHandlerFactory();
         if (answer instanceof RefErrorHandlerDefinition) {
             RefErrorHandlerDefinition other = (RefErrorHandlerDefinition) answer;
             String otherRef = other.getRef();

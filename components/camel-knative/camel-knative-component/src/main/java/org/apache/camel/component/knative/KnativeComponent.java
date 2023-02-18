@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.knative.spi.Knative;
 import org.apache.camel.component.knative.spi.KnativeConsumerFactory;
 import org.apache.camel.component.knative.spi.KnativeEnvironment;
@@ -287,7 +286,7 @@ public class KnativeComponent extends DefaultComponent {
 
             if (this.producerFactory == null) {
                 this.producerFactory = getCamelContext()
-                        .adapt(ExtendedCamelContext.class)
+                        .getCamelContextExtension()
                         .getBootstrapFactoryFinder(Knative.KNATIVE_TRANSPORT_RESOURCE_PATH)
                         .newInstance(protocol.name() + "-producer", KnativeProducerFactory.class)
                         .orElse(null);
@@ -315,7 +314,7 @@ public class KnativeComponent extends DefaultComponent {
 
             if (this.consumerFactory == null) {
                 this.consumerFactory = getCamelContext()
-                        .adapt(ExtendedCamelContext.class)
+                        .getCamelContextExtension()
                         .getBootstrapFactoryFinder(Knative.KNATIVE_TRANSPORT_RESOURCE_PATH)
                         .newInstance(protocol.name() + "-consumer", KnativeConsumerFactory.class)
                         .orElse(null);

@@ -267,7 +267,7 @@ class InternalRouteStartupManager {
                             .getStartupOrder() + " configured which this route have as well. Please correct startupOrder to be unique among all your routes.");
         }
         // check in existing already started as well
-        for (RouteStartupOrder order : abstractCamelContext.getRouteStartupOrder()) {
+        for (RouteStartupOrder order : abstractCamelContext.getCamelContextExtension().getRouteStartupOrder()) {
             String otherId = order.getRoute().getId();
             if (answer.getRoute().getId().equals(otherId)) {
                 // its the same route id so skip clash check as its the same
@@ -419,14 +419,14 @@ class InternalRouteStartupManager {
                 // but only add if we haven't already registered it before (we
                 // dont want to double add when restarting)
                 boolean found = false;
-                for (RouteStartupOrder other : abstractCamelContext.getRouteStartupOrder()) {
+                for (RouteStartupOrder other : abstractCamelContext.getCamelContextExtension().getRouteStartupOrder()) {
                     if (other.getRoute().getId().equals(route.getId())) {
                         found = true;
                         break;
                     }
                 }
                 if (!found) {
-                    abstractCamelContext.getRouteStartupOrder().add(entry.getValue());
+                    abstractCamelContext.getCamelContextExtension().getRouteStartupOrder().add(entry.getValue());
                 }
             }
 

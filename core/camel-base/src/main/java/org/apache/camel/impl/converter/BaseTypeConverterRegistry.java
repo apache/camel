@@ -31,7 +31,6 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
@@ -287,7 +286,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
             injector = camelContext.getInjector();
         }
         if (resolver == null && camelContext != null) {
-            resolver = camelContext.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
+            resolver = camelContext.getCamelContextExtension().getPackageScanClassResolver();
         }
 
         List<FallbackTypeConverter> fallbacks = new ArrayList<>();

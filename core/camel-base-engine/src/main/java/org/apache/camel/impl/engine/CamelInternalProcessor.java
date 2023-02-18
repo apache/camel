@@ -26,7 +26,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
@@ -113,14 +112,14 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
     public CamelInternalProcessor(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
+        this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
         this.shutdownStrategy = camelContext.getShutdownStrategy();
     }
 
     public CamelInternalProcessor(CamelContext camelContext, Processor processor) {
         super(processor);
         this.camelContext = camelContext;
-        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
+        this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
         this.shutdownStrategy = camelContext.getShutdownStrategy();
     }
 
@@ -134,12 +133,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
     @Override
     protected void doBuild() throws Exception {
-        boolean pooled = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled();
+        boolean pooled = camelContext.getCamelContextExtension().getExchangeFactory().isPooled();
 
         // only create pooled task factory
         if (pooled) {
             taskFactory = new CamelInternalPooledTaskFactory();
-            int capacity = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().getCapacity();
+            int capacity = camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
             taskFactory.setCapacity(capacity);
             LOG.trace("Using TaskFactory: {}", taskFactory);
 
@@ -760,7 +759,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             if (route != null) {
                 this.routeId = route.getRouteId();
             }
-            this.uowFactory = camelContext.adapt(ExtendedCamelContext.class).getUnitOfWorkFactory();
+            this.uowFactory = camelContext.getCamelContextExtension().getUnitOfWorkFactory();
             // optimize uow factory to initialize it early and once per advice
             this.uowFactory.afterPropertiesConfigured(camelContext);
         }
@@ -824,7 +823,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             if (uowFactory != null) {
                 return uowFactory.createUnitOfWork(exchange);
             } else {
-                return exchange.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory()
+                return exchange.getContext().getCamelContextExtension().getUnitOfWorkFactory()
                         .createUnitOfWork(exchange);
             }
         }

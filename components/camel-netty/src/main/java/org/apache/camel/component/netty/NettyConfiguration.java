@@ -30,7 +30,6 @@ import io.netty.handler.codec.Delimiters;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.CharsetUtil;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Configurer;
@@ -227,7 +226,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
         // then set parameters with the help of the camel context type converters
         // and use configurer to avoid any reflection calls
-        PropertyConfigurer configurer = component.getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
+        PropertyConfigurer configurer = component.getCamelContext().getCamelContextExtension().getConfigurerResolver()
                 .resolvePropertyConfigurer(this.getClass().getName(), component.getCamelContext());
         PropertyBindingSupport.build()
                 .withCamelContext(component.getCamelContext())

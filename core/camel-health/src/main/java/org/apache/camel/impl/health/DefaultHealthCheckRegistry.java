@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.DeferredContextBinding;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
@@ -178,7 +177,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
         HealthCheck answer = checks.stream().filter(h -> h.getId().equals(id)).findFirst()
                 .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheck.class).get(id));
         if (answer == null) {
-            HealthCheckResolver resolver = camelContext.adapt(ExtendedCamelContext.class).getHealthCheckResolver();
+            HealthCheckResolver resolver = camelContext.getCamelContextExtension().getHealthCheckResolver();
             answer = resolver.resolveHealthCheck(id);
         }
 
@@ -191,7 +190,7 @@ public class DefaultHealthCheckRegistry extends ServiceSupport implements Health
                 .orElse(camelContext.getRegistry().findByTypeWithName(HealthCheckRepository.class).get(id));
         if (answer == null) {
             // discover via classpath (try first via -health-check-repository and then id as-is)
-            HealthCheckResolver resolver = camelContext.adapt(ExtendedCamelContext.class).getHealthCheckResolver();
+            HealthCheckResolver resolver = camelContext.getCamelContextExtension().getHealthCheckResolver();
             answer = resolver.resolveHealthCheckRepository(id);
         }
 

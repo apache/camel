@@ -27,7 +27,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -175,10 +174,10 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
         if (!camelContext.getRoutePolicyFactories().contains(this)) {
             camelContext.addRoutePolicyFactory(this);
         }
-        camelContext.adapt(ExtendedCamelContext.class).addLogListener(logListener);
+        camelContext.getCamelContextExtension().addLogListener(logListener);
 
         if (tracingStrategy != null) {
-            camelContext.adapt(ExtendedCamelContext.class).addInterceptStrategy(tracingStrategy);
+            camelContext.getCamelContextExtension().addInterceptStrategy(tracingStrategy);
         }
         initTracer();
         initContextPropagators();

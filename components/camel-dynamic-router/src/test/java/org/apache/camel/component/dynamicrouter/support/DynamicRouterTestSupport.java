@@ -172,7 +172,7 @@ public class DynamicRouterTestSupport extends CamelTestSupport {
         lenient().when(endpoint.getDynamicRouterComponent()).thenReturn(component);
         lenient().when(endpoint.getConfiguration()).thenReturn(configuration);
 
-        lenient().when(context.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        lenient().when(context.getCamelContextExtension()).thenReturn(ecc);
         lenient().when(ecc.getExchangeFactory()).thenReturn(exchangeFactory);
         lenient().when(context.resolveLanguage("simple")).thenReturn(simpleLanguage);
         lenient().when(context.getExecutorServiceManager()).thenReturn(executorServiceManager);

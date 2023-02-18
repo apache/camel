@@ -17,7 +17,6 @@
 package org.apache.camel.component.reactive.streams;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.engine.PrototypeExchangeFactory;
 import org.apache.camel.test.junit5.CamelTestSupport;
 
@@ -27,7 +26,7 @@ public abstract class BaseReactiveTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         // must run in prototype scope
-        context.adapt(ExtendedCamelContext.class).setExchangeFactory(new PrototypeExchangeFactory());
+        context.getCamelContextExtension().setExchangeFactory(new PrototypeExchangeFactory());
         return context;
     }
 

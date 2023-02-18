@@ -96,7 +96,7 @@ public class DefaultMapStructFinder extends ServiceSupport implements MapStructM
     protected void doInit() throws Exception {
         if (mapperPackageName != null) {
             String[] names = mapperPackageName.split(",");
-            ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+            ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
             var set = ecc.getPackageScanClassResolver()
                     .findByFilter(f -> f.getName().endsWith("Mapper"), names);
             if (!set.isEmpty()) {

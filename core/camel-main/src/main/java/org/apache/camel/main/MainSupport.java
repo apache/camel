@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelConfiguration;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.support.service.ServiceHelper;
@@ -193,7 +192,7 @@ public abstract class MainSupport extends BaseMainSupport {
     protected void registerMainBootstrap() {
         CamelContext context = getCamelContext();
         if (context != null) {
-            context.adapt(ExtendedCamelContext.class).addBootstrap(new MainBootstrapCloseable(this));
+            context.getCamelContextExtension().addBootstrap(new MainBootstrapCloseable(this));
         }
     }
 

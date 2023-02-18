@@ -43,7 +43,6 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -187,9 +186,9 @@ public class MulticastProcessor extends AsyncProcessorSupport
                               boolean parallelAggregate) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
-        this.internalProcessorFactory = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory();
+        this.internalProcessorFactory = camelContext.getCamelContextExtension().getInternalProcessorFactory();
         this.route = route;
-        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
+        this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
         this.processors = processors;
         this.aggregationStrategy = aggregationStrategy;
         this.executorService = executorService;
@@ -202,7 +201,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
         this.onPrepare = onPrepare;
         this.shareUnitOfWork = shareUnitOfWork;
         this.parallelAggregate = parallelAggregate;
-        this.processorExchangeFactory = camelContext.adapt(ExtendedCamelContext.class)
+        this.processorExchangeFactory = camelContext.getCamelContextExtension()
                 .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
     }
 
@@ -1063,7 +1062,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
             return ((ErrorHandlerSupport) errorHandler).clone(processor);
         }
         // fallback and use reifier to create the error handler
-        return camelContext.adapt(ExtendedCamelContext.class).createErrorHandler(route, processor);
+        return camelContext.getCamelContextExtension().createErrorHandler(route, processor);
     }
 
     /**

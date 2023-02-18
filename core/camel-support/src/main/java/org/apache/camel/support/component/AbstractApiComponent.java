@@ -23,7 +23,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
@@ -114,7 +113,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
         final Map<String, Object> componentProperties = new HashMap<>();
         // copy component configuration, if set
         if (configuration != null) {
-            PropertyConfigurer configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
+            PropertyConfigurer configurer = getCamelContext().getCamelContextExtension().getConfigurerResolver()
                     .resolvePropertyConfigurer(configuration.getClass().getName(), getCamelContext());
             // use reflection free configurer (if possible)
             if (configurer instanceof ExtendedPropertyConfigurerGetter) {
@@ -126,14 +125,14 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
                     }
                 }
             } else {
-                getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(configuration,
+                getCamelContext().getCamelContextExtension().getBeanIntrospection().getProperties(configuration,
                         componentProperties, null, false);
             }
         }
 
         // create endpoint configuration with component properties
         final T endpointConfiguration = collection.getEndpointConfiguration(name);
-        PropertyConfigurer configurer = getCamelContext().adapt(ExtendedCamelContext.class).getConfigurerResolver()
+        PropertyConfigurer configurer = getCamelContext().getCamelContextExtension().getConfigurerResolver()
                 .resolvePropertyConfigurer(endpointConfiguration.getClass().getName(), getCamelContext());
         PropertyBindingSupport.build()
                 .withConfigurer(configurer)

@@ -17,7 +17,6 @@
 package org.apache.camel.spring.interceptor;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.PrototypeExchangeFactory;
 import org.junit.jupiter.api.Assertions;
@@ -32,7 +31,7 @@ public class TransactedStackSizeParallelProcessingTest extends TransactionClient
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         // must use prototype scoped exchange factory
-        context.adapt(ExtendedCamelContext.class).setExchangeFactory(new PrototypeExchangeFactory());
+        context.getCamelContextExtension().setExchangeFactory(new PrototypeExchangeFactory());
         return context;
     }
 

@@ -38,7 +38,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -305,9 +304,9 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
     protected void doBuild() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
-        boolean pooled = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled();
+        boolean pooled = camelContext.getCamelContextExtension().getExchangeFactory().isPooled();
         if (pooled) {
-            int capacity = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().getCapacity();
+            int capacity = camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
             taskFactory = new PooledTaskFactory(getId()) {
                 @Override
                 public PooledExchangeTask create(Exchange exchange, AsyncCallback callback) {
@@ -338,7 +337,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
         }
 
         // create a per processor exchange factory
-        this.processorExchangeFactory = getCamelContext().adapt(ExtendedCamelContext.class)
+        this.processorExchangeFactory = getCamelContext().getCamelContextExtension()
                 .getProcessorExchangeFactory().newProcessorExchangeFactory(this);
         this.processorExchangeFactory.setRouteId(getRouteId());
         this.processorExchangeFactory.setId(getId());
@@ -443,7 +442,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
                     uow = copy.getUnitOfWork();
                 } else {
                     // prepare uow on copy
-                    uow = copy.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(copy);
+                    uow = copy.getContext().getCamelContextExtension().getUnitOfWorkFactory().createUnitOfWork(copy);
                     copy.getExchangeExtension().setUnitOfWork(uow);
                     // the copy must be starting from the route where its copied from
                     Route route = ExchangeHelper.getRoute(exchange);

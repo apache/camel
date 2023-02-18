@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
@@ -61,7 +60,7 @@ public class WordpressComponent extends DefaultComponent {
         if (configuration != null) {
             // TODO: Better to make WordpressConfiguration cloneable
             Map<String, Object> properties = new HashMap<>();
-            BeanIntrospection beanIntrospection = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
+            BeanIntrospection beanIntrospection = getCamelContext().getCamelContextExtension().getBeanIntrospection();
             beanIntrospection.getProperties(configuration, properties, null, false);
             properties.forEach(parameters::putIfAbsent);
         }

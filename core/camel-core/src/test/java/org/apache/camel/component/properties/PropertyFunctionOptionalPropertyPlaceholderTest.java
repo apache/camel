@@ -21,7 +21,6 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.PropertiesFunction;
 import org.junit.jupiter.api.Assertions;
@@ -134,7 +133,7 @@ public class PropertyFunctionOptionalPropertyPlaceholderTest extends ContextTest
 
     @Test
     public void testKeepUnresolved() throws Exception {
-        String out = context.adapt(ExtendedCamelContext.class)
+        String out = context.getCamelContextExtension()
                 .resolvePropertyPlaceholders("{{reverse:?myKey}}", true);
         Assertions.assertEquals("{{?myKey}}", out);
     }

@@ -22,7 +22,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -54,7 +53,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         Processor childProcessor = this.createChildProcessor(true);
 
         // wrap the aggregate route in a unit of work processor
-        AsyncProcessor target = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+        AsyncProcessor target = camelContext.getCamelContextExtension().getInternalProcessorFactory()
                 .addUnitOfWorkProcessorAdvice(camelContext, childProcessor, route);
 
         Expression correlation = createExpression(definition.getExpression());

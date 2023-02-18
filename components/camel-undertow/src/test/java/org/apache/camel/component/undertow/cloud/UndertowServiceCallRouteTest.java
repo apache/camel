@@ -17,7 +17,6 @@
 package org.apache.camel.component.undertow.cloud;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RoutesBuilder;
@@ -38,14 +37,14 @@ public class UndertowServiceCallRouteTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setExtendedStatistics(true);
-        context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setLoggingLevel(LoggingLevel.INFO);
+        context.getCamelContextExtension().getBeanIntrospection().setExtendedStatistics(true);
+        context.getCamelContextExtension().getBeanIntrospection().setLoggingLevel(LoggingLevel.INFO);
         return context;
     }
 
     @Test
     public void testCustomCall() {
-        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        BeanIntrospection bi = context.getCamelContextExtension().getBeanIntrospection();
 
         assertEquals("8081", template.requestBody("direct:custom", "hello", String.class));
         assertEquals("8082", template.requestBody("direct:custom", "hello", String.class));
@@ -56,7 +55,7 @@ public class UndertowServiceCallRouteTest extends CamelTestSupport {
 
     @Test
     public void testDefaultSchema() {
-        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        BeanIntrospection bi = context.getCamelContextExtension().getBeanIntrospection();
 
         try {
             assertEquals("8081", template.requestBody("direct:default", "hello", String.class));

@@ -30,7 +30,6 @@ import org.apache.camel.Category;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -255,7 +254,7 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             // create multicast processor
             multicastStarted = false;
 
-            consumerMulticastProcessor = (AsyncProcessor) getCamelContext().adapt(ExtendedCamelContext.class)
+            consumerMulticastProcessor = (AsyncProcessor) getCamelContext().getCamelContextExtension()
                     .getProcessorFactory().createProcessor(getCamelContext(), "MulticastProcessor",
                             new Object[] { processors, multicastExecutor, false });
         }

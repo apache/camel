@@ -285,7 +285,7 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                         if (accept) {
                             LOG.debug("Accepted Modified/Created file: {}", name);
                             try {
-                                ExtendedCamelContext ecc = getCamelContext().adapt(ExtendedCamelContext.class);
+                                ExtendedCamelContext ecc = getCamelContext().getCamelContextExtension();
                                 // must use file resource loader as we cannot load from classpath
                                 Resource resource = ecc.getResourceLoader().resolveResource("file:" + name);
                                 getResourceReload().onReload(name, resource);

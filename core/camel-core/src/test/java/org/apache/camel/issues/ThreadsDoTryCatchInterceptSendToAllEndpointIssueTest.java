@@ -17,7 +17,6 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.InterceptSendToMockEndpointStrategy;
 import org.junit.jupiter.api.Test;
@@ -42,7 +41,7 @@ public class ThreadsDoTryCatchInterceptSendToAllEndpointIssueTest extends Contex
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         // mock all endpoints
-        context.adapt(ExtendedCamelContext.class).registerEndpointCallback(new InterceptSendToMockEndpointStrategy("*"));
+        context.getCamelContextExtension().registerEndpointCallback(new InterceptSendToMockEndpointStrategy("*"));
 
         return new RouteBuilder() {
             @Override

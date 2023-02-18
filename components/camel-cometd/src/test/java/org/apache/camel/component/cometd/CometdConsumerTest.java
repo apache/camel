@@ -76,7 +76,7 @@ public class CometdConsumerTest {
         when(markedReferenceServerChannel.getReference()).thenReturn(serverChannel);
 
         when(endpoint.getCamelContext()).thenReturn(context);
-        when(context.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        when(context.getCamelContextExtension()).thenReturn(ecc);
         when(ecc.getExchangeFactory()).thenReturn(exchangeFactory);
         when(exchangeFactory.newExchangeFactory(any())).thenReturn(exchangeFactory);
 

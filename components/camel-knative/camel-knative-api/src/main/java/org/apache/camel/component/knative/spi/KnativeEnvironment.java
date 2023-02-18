@@ -133,7 +133,7 @@ public class KnativeEnvironment {
      * @throws IOException if an error occur while parsing the file
      */
     public static KnativeEnvironment mandatoryLoadFromProperties(CamelContext context, Map<String, Object> properties) {
-        final ExtendedCamelContext econtext = context.adapt(ExtendedCamelContext.class);
+        final ExtendedCamelContext econtext = context.getCamelContextExtension();
         final KnativeEnvironment environment = new KnativeEnvironment();
 
         PropertyBindingSupport.build()

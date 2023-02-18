@@ -26,7 +26,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
 import org.apache.camel.Processor;
@@ -224,7 +223,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             }
             if (!(wrapped instanceof WrapAwareProcessor)) {
                 // wrap the target so it becomes a service and we can manage its lifecycle
-                wrapped = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+                wrapped = camelContext.getCamelContextExtension().getInternalProcessorFactory()
                         .createWrapProcessor(wrapped, target);
             }
             target = wrapped;

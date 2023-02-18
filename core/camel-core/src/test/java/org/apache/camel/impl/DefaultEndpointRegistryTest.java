@@ -38,7 +38,7 @@ public class DefaultEndpointRegistryTest {
         ctx.removeEndpoints("direct:error");
 
         // mark we are setting up routes (done = false)
-        ctx.setupRoutes(false);
+        ctx.getCamelContextExtension().setupRoutes(false);
         ctx.getEndpoint("direct:error");
         assertTrue(reg.isStatic("direct:error"));
     }

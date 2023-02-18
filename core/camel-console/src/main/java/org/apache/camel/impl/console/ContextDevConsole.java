@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.spi.ContextReloadStrategy;
@@ -113,7 +112,7 @@ public class ContextDevConsole extends AbstractDevConsole {
         }
         root.put("version", getCamelContext().getVersion());
         root.put("state", getCamelContext().getStatus().name());
-        root.put("phase", getCamelContext().adapt(ExtendedCamelContext.class).getStatusPhase());
+        root.put("phase", getCamelContext().getCamelContextExtension().getStatusPhase());
         root.put("uptime", getCamelContext().getUptime());
 
         ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);

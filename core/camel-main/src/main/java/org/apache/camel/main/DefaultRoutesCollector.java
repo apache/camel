@@ -80,7 +80,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
                 boolean match = !"false".equals(includePattern);
 
                 // special support for testing with @ExcludeRoutes annotation with camel-test modules
-                String exclude = camelContext.adapt(ExtendedCamelContext.class).getTestExcludeRoutes();
+                String exclude = camelContext.getCamelContextExtension().getTestExcludeRoutes();
                 // exclude take precedence over include
                 if (match && ObjectHelper.isNotEmpty(exclude)) {
                     // this property is a comma separated list of FQN class names, so we need to make
@@ -138,7 +138,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
             String excludePattern,
             String includePattern) {
 
-        final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        final ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
         final List<RoutesBuilder> answer = new ArrayList<>();
         final String[] includes = includePattern != null ? includePattern.split(",") : null;
 
@@ -169,7 +169,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
             CamelContext camelContext,
             String excludePattern,
             String includePattern) {
-        final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        final ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
         final PackageScanResourceResolver resolver = ecc.getPackageScanResourceResolver();
         final String[] includes = includePattern != null ? includePattern.split(",") : null;
         final String[] excludes = excludePattern != null ? excludePattern.split(",") : null;

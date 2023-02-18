@@ -17,7 +17,6 @@
 package org.apache.camel.component.resilience4j;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -41,7 +40,7 @@ public class ResilienceRouteOkTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        bi = context.getCamelContextExtension().getBeanIntrospection();
         bi.setLoggingLevel(LoggingLevel.INFO);
         bi.resetCounters();
 

@@ -17,7 +17,6 @@
 package org.apache.camel.reifier;
 
 import org.apache.camel.BeanScope;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.model.BeanDefinition;
@@ -39,7 +38,7 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
         String beanType = parseString(definition.getBeanType());
         Class<?> beanClass = definition.getBeanClass();
 
-        BeanProcessorFactory fac = camelContext.adapt(ExtendedCamelContext.class).getBeanProcessorFactory();
+        BeanProcessorFactory fac = camelContext.getCamelContextExtension().getBeanProcessorFactory();
         // use singleton as default scope
         BeanScope scope = BeanScope.Singleton;
         if (definition.getScope() != null) {
@@ -47,7 +46,7 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
         }
         Processor answer = fac.createBeanProcessor(camelContext, bean, beanType, beanClass, ref, method, scope);
         if (answer instanceof IdAware) {
-            String id = camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory().createId(definition);
+            String id = camelContext.getCamelContextExtension().getNodeIdFactory().createId(definition);
             ((IdAware) answer).setId(id);
         }
         return answer;

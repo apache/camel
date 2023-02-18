@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedRouteMBean;
@@ -62,7 +61,7 @@ public class SourceDevConsole extends AbstractDevConsole {
                 loc = LoggerHelper.stripSourceLocationLineNumber(loc);
                 StringBuilder code = new StringBuilder();
                 try {
-                    Resource resource = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader()
+                    Resource resource = getCamelContext().getCamelContextExtension().getResourceLoader()
                             .resolveResource(loc);
                     if (resource != null) {
                         if (sb.length() > 0) {

@@ -470,12 +470,12 @@ public abstract class CamelTestSupport
         // enable auto mocking if enabled
         String pattern = isMockEndpoints();
         if (pattern != null) {
-            context.adapt(ExtendedCamelContext.class)
+            context.getCamelContextExtension()
                     .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern));
         }
         pattern = isMockEndpointsAndSkip();
         if (pattern != null) {
-            context.adapt(ExtendedCamelContext.class)
+            context.getCamelContextExtension()
                     .registerEndpointCallback(new InterceptSendToMockEndpointStrategy(pattern, true));
         }
 

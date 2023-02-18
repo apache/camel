@@ -19,7 +19,6 @@ package org.apache.camel.main;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -36,7 +35,7 @@ public class PropertyBindingSupportOptionalValueTest {
     public void testOptionalValue() throws Exception {
         CamelContext context = new DefaultCamelContext();
 
-        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        BeanIntrospection bi = context.getCamelContextExtension().getBeanIntrospection();
         bi.setExtendedStatistics(true);
 
         Properties prop = new Properties();

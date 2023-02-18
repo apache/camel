@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.StartupStep;
 import org.apache.camel.api.management.ManagedAttribute;
@@ -78,7 +77,7 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
         super.doBuild();
 
         if (getCamelContext() != null) {
-            this.recorder = getCamelContext().adapt(ExtendedCamelContext.class).getStartupStepRecorder();
+            this.recorder = getCamelContext().getCamelContextExtension().getStartupStepRecorder();
         }
     }
 

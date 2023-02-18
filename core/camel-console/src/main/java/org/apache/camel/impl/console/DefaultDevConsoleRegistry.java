@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.DeferredContextBinding;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleRegistry;
 import org.apache.camel.console.DevConsoleResolver;
@@ -118,7 +117,7 @@ public class DefaultDevConsoleRegistry extends ServiceSupport implements DevCons
         DevConsole answer = consoles.stream().filter(h -> h.getId().equals(id)).findFirst()
                 .orElse(camelContext.getRegistry().findByTypeWithName(DevConsole.class).get(id));
         if (answer == null) {
-            DevConsoleResolver resolver = camelContext.adapt(ExtendedCamelContext.class).getDevConsoleResolver();
+            DevConsoleResolver resolver = camelContext.getCamelContextExtension().getDevConsoleResolver();
             answer = resolver.resolveDevConsole(id);
             if (answer != null) {
                 register(answer);

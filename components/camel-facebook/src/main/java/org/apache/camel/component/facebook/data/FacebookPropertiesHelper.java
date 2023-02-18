@@ -26,7 +26,6 @@ import java.util.Set;
 import facebook4j.Reading;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.facebook.FacebookConstants;
 import org.apache.camel.component.facebook.config.FacebookConfiguration;
 import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
@@ -122,7 +121,7 @@ public final class FacebookPropertiesHelper {
     public static void getEndpointProperties(
             CamelContext camelContext, FacebookEndpointConfiguration configuration,
             Map<String, Object> properties) {
-        BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        BeanIntrospection beanIntrospection = camelContext.getCamelContextExtension().getBeanIntrospection();
         if (beanIntrospection.getProperties(configuration, properties, null, false)) {
             final Set<String> names = properties.keySet();
             // remove component config properties so we only have endpoint properties

@@ -19,7 +19,6 @@ package org.apache.camel.component.springrabbit.integration;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -31,7 +30,7 @@ public class RabbitMQConsumerPooledExchangeIT extends RabbitMQITSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        camelContext.adapt(ExtendedCamelContext.class).setExchangeFactory(new PooledExchangeFactory());
+        camelContext.getCamelContextExtension().setExchangeFactory(new PooledExchangeFactory());
         return camelContext;
     }
 

@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
@@ -40,7 +39,7 @@ public class JaxbRestBindingJaxbDataFormatFactory implements RestBindingJaxbData
             DataFormat jaxb, DataFormat outJaxb)
             throws Exception {
         // lookup configurer
-        PropertyConfigurer configurer = camelContext.adapt(ExtendedCamelContext.class).getConfigurerResolver()
+        PropertyConfigurer configurer = camelContext.getCamelContextExtension().getConfigurerResolver()
                 .resolvePropertyConfigurer("jaxb-dataformat-configurer", camelContext);
         if (configurer == null) {
             throw new IllegalStateException("Cannot find configurer for dataformat: jaxb");

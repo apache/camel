@@ -18,7 +18,6 @@ package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckRepository;
@@ -116,14 +115,14 @@ public class DefaultHealthCheckResolver implements HealthCheckResolver, CamelCon
 
     protected Class<?> findHealthCheck(String name, CamelContext context) throws Exception {
         if (healthCheckFactory == null) {
-            healthCheckFactory = context.adapt(ExtendedCamelContext.class).getFactoryFinder(HEALTH_CHECK_RESOURCE_PATH);
+            healthCheckFactory = context.getCamelContextExtension().getFactoryFinder(HEALTH_CHECK_RESOURCE_PATH);
         }
         return healthCheckFactory.findOptionalClass(name + "-check").orElse(null);
     }
 
     protected Class<?> findHealthCheckRepository(String name, CamelContext context) throws Exception {
         if (healthCheckFactory == null) {
-            healthCheckFactory = context.adapt(ExtendedCamelContext.class).getFactoryFinder(HEALTH_CHECK_RESOURCE_PATH);
+            healthCheckFactory = context.getCamelContextExtension().getFactoryFinder(HEALTH_CHECK_RESOURCE_PATH);
         }
         return healthCheckFactory.findOptionalClass(name + "-repository").orElse(null);
     }

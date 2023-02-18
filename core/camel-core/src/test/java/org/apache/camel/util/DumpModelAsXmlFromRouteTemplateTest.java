@@ -45,7 +45,7 @@ public class DumpModelAsXmlFromRouteTemplateTest extends ContextTestSupport {
         map.put("whereto", "Moes");
         context.addRouteFromTemplate("foo", "myTemplate", map);
 
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("foo"));
         assertNotNull(xml);
         log.info(xml);
@@ -82,7 +82,7 @@ public class DumpModelAsXmlFromRouteTemplateTest extends ContextTestSupport {
         map.put("whereto", "Jacks");
         context.addRouteFromTemplate("bar2", "myTemplate", map);
 
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("bar"), true, false);
         assertNotNull(xml);
         log.info(xml);

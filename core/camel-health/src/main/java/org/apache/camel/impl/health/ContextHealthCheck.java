@@ -19,7 +19,6 @@ package org.apache.camel.impl.health;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.health.HealthCheckResultBuilder;
 
@@ -54,7 +53,7 @@ public final class ContextHealthCheck extends AbstractHealthCheck {
             builder.detail("context.name", getCamelContext().getName());
             builder.detail("context.version", getCamelContext().getVersion());
             builder.detail("context.status", getCamelContext().getStatus().name());
-            builder.detail("context.phase", getCamelContext().adapt(ExtendedCamelContext.class).getStatusPhase());
+            builder.detail("context.phase", getCamelContext().getCamelContextExtension().getStatusPhase());
 
             if (getCamelContext().getStatus().isStarted()) {
                 builder.up();

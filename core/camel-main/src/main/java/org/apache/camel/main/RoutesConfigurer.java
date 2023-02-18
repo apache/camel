@@ -153,7 +153,7 @@ public class RoutesConfigurer {
 
         if (getBasePackageScan() != null) {
             String[] pkgs = getBasePackageScan().split(",");
-            Set<Class<?>> set = camelContext.adapt(ExtendedCamelContext.class)
+            Set<Class<?>> set = camelContext.getCamelContextExtension()
                     .getPackageScanClassResolver()
                     .findImplementations(RoutesBuilder.class, pkgs);
             for (Class<?> routeClazz : set) {
@@ -269,7 +269,7 @@ public class RoutesConfigurer {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
 
-        ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
         ModelineFactory factory = ecc.getModelineFactory();
 
         for (Resource resource : resources) {
@@ -279,7 +279,7 @@ public class RoutesConfigurer {
         // the resource may also have additional configurations which we need to detect via pre-parsing
         for (Resource resource : resources) {
             LOG.debug("Pre-parsing: {}", resource);
-            RoutesLoader loader = camelContext.adapt(ExtendedCamelContext.class).getRoutesLoader();
+            RoutesLoader loader = camelContext.getCamelContextExtension().getRoutesLoader();
             loader.preParseRoute(resource);
         }
 

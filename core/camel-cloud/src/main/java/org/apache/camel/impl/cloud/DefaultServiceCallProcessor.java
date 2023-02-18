@@ -24,7 +24,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.cloud.ServiceCallConstants;
@@ -131,7 +130,7 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
     @Override
     protected void doBuild() throws Exception {
         ObjectHelper.notNull(camelContext, "camel context");
-        processorFactory = camelContext.adapt(ExtendedCamelContext.class).getProcessorFactory();
+        processorFactory = camelContext.getCamelContextExtension().getProcessorFactory();
     }
 
     @Override

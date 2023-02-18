@@ -117,8 +117,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         ObjectHelper.notNull(redeliveryPolicy, "RedeliveryPolicy", this);
 
         this.camelContext = camelContext;
-        this.reactiveExecutor = camelContext.adapt(ExtendedCamelContext.class).getReactiveExecutor();
-        this.awaitManager = camelContext.adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
+        this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
+        this.awaitManager = camelContext.getCamelContextExtension().getAsyncProcessorAwaitManager();
         this.shutdownStrategy = camelContext.getShutdownStrategy();
         this.redeliveryProcessor = redeliveryProcessor;
         this.deadLetter = deadLetter;
@@ -1620,7 +1620,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         if (redeliveryEnabled) {
             if (executorService == null) {
                 // use default shared executor service
-                executorService = camelContext.adapt(ExtendedCamelContext.class).getErrorHandlerExecutorService();
+                executorService = camelContext.getCamelContextExtension().getErrorHandlerExecutorService();
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Using ExecutorService: {} for redeliveries on error handler: {}", executorService, this);
@@ -1637,7 +1637,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
         simpleTask = deadLetter == null && !redeliveryEnabled && (exceptionPolicies == null || exceptionPolicies.isEmpty())
                 && onPrepareProcessor == null;
 
-        boolean pooled = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().isPooled();
+        boolean pooled = camelContext.getCamelContextExtension().getExchangeFactory().isPooled();
         if (pooled) {
             String id = output instanceof IdAware ? ((IdAware) output).getId() : output.toString();
             taskFactory = new PooledTaskFactory(id) {
@@ -1646,7 +1646,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     return simpleTask ? new SimpleTask() : new RedeliveryTask();
                 }
             };
-            int capacity = camelContext.adapt(ExtendedCamelContext.class).getExchangeFactory().getCapacity();
+            int capacity = camelContext.getCamelContextExtension().getExchangeFactory().getCapacity();
             taskFactory.setCapacity(capacity);
         } else {
             taskFactory = new PrototypeTaskFactory() {

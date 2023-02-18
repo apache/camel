@@ -26,7 +26,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConsumerResolver;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -97,9 +96,9 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         }
 
         // create route
-        String id = definition.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+        String id = definition.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory());
         String desc = definition.getDescriptionText();
-        Route route = camelContext.adapt(ExtendedCamelContext.class).getRouteFactory().createRoute(camelContext, definition, id,
+        Route route = camelContext.getCamelContextExtension().getRouteFactory().createRoute(camelContext, definition, id,
                 desc, endpoint, definition.getResource());
 
         // configure error handler
@@ -203,14 +202,14 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 ProcessorReifier<?> reifier = ProcessorReifier.reifier(route, output);
 
                 // ensure node has id assigned
-                String outputId = output.idOrCreate(camelContext.adapt(ExtendedCamelContext.class).getNodeIdFactory());
+                String outputId = output.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory());
                 String eip = reifier.getClass().getSimpleName().replace("Reifier", "");
-                StartupStep step = camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder()
+                StartupStep step = camelContext.getCamelContextExtension().getStartupStepRecorder()
                         .beginStep(ProcessorReifier.class, outputId, "Create " + eip + " Processor");
 
                 reifier.addRoutes();
 
-                camelContext.adapt(ExtendedCamelContext.class).getStartupStepRecorder().endStep(step);
+                camelContext.getCamelContextExtension().getStartupStepRecorder().endStep(step);
             } catch (Exception e) {
                 throw new FailedToCreateRouteException(definition.getId(), definition.toString(), output.toString(), e);
             }
@@ -231,7 +230,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         target.setRouteId(id);
 
         // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-        InternalProcessor internal = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+        InternalProcessor internal = camelContext.getCamelContextExtension().getInternalProcessorFactory()
                 .addUnitOfWorkProcessorAdvice(camelContext, target, route);
 
         // configure route policy
@@ -346,7 +345,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // only during startup phase
         if (camelContext.getStatus().ordinal() < ServiceStatus.Started.ordinal()) {
             // okay route has been created from the model, then the model is no longer needed, and we can de-reference
-            camelContext.adapt(ExtendedCamelContext.class).addBootstrap(route::clearRouteModel);
+            camelContext.getCamelContextExtension().addBootstrap(route::clearRouteModel);
         }
 
         return route;

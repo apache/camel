@@ -21,7 +21,6 @@ import java.lang.reflect.Modifier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Injector;
@@ -39,7 +38,7 @@ public class DefaultInjector implements Injector {
 
     public DefaultInjector(CamelContext context) {
         this.camelContext = context;
-        this.postProcessor = context.adapt(ExtendedCamelContext.class).getBeanPostProcessor();
+        this.postProcessor = context.getCamelContextExtension().getBeanPostProcessor();
     }
 
     @Override

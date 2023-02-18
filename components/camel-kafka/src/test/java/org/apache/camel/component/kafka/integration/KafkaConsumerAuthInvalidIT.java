@@ -22,7 +22,6 @@ import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.MockConsumerInterceptor;
 import org.apache.camel.component.kafka.integration.common.KafkaAdminUtil;
@@ -119,7 +118,7 @@ public class KafkaConsumerAuthInvalidIT {
                 final String simpleSaslJaasConfig
                         = ContainerLocalAuthKafkaService.generateSimpleSaslJaasConfig("camel", "camel-invalid-secret");
 
-                getCamelContext().adapt(ExtendedCamelContext.class)
+                getCamelContext().getCamelContextExtension()
                         .setErrorHandlerFactory(
                                 deadLetterChannel("mock:dlq"));
 

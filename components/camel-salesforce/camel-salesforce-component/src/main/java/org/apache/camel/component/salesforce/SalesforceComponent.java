@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.salesforce.api.SalesforceException;
@@ -341,7 +340,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     private Map<String, Class<?>> parsePackages() {
         Map<String, Class<?>> result = new HashMap<>();
-        Set<Class<?>> classes = getCamelContext().adapt(ExtendedCamelContext.class).getPackageScanClassResolver()
+        Set<Class<?>> classes = getCamelContext().getCamelContextExtension().getPackageScanClassResolver()
                 .findImplementations(AbstractDTOBase.class, getPackagesAsArray());
         for (Class<?> aClass : classes) {
             result.put(aClass.getSimpleName(), aClass);

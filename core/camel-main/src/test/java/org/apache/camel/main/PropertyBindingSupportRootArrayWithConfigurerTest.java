@@ -17,7 +17,6 @@
 package org.apache.camel.main;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.BeanIntrospection;
@@ -35,7 +34,7 @@ public class PropertyBindingSupportRootArrayWithConfigurerTest {
     public void testRootArray() throws Exception {
         CamelContext context = new DefaultCamelContext();
 
-        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        BeanIntrospection bi = context.getCamelContextExtension().getBeanIntrospection();
         bi.setExtendedStatistics(true);
         bi.setLoggingLevel(LoggingLevel.WARN);
 
@@ -68,7 +67,7 @@ public class PropertyBindingSupportRootArrayWithConfigurerTest {
     public void testRootArrayAutoDetectClass() throws Exception {
         CamelContext context = new DefaultCamelContext();
 
-        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        BeanIntrospection bi = context.getCamelContextExtension().getBeanIntrospection();
         bi.setExtendedStatistics(true);
         bi.setLoggingLevel(LoggingLevel.WARN);
 
@@ -101,7 +100,7 @@ public class PropertyBindingSupportRootArrayWithConfigurerTest {
     public void testRootArrayAutoDetectClassTwo() throws Exception {
         CamelContext context = new DefaultCamelContext();
 
-        BeanIntrospection bi = context.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        BeanIntrospection bi = context.getCamelContextExtension().getBeanIntrospection();
         bi.setExtendedStatistics(true);
         bi.setLoggingLevel(LoggingLevel.WARN);
 

@@ -33,7 +33,6 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ManagementMBeansLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.api.management.JmxSystemPropertyKeys;
@@ -365,7 +364,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
         finalizeSettings();
 
-        assembler = camelContext.adapt(ExtendedCamelContext.class).getManagementMBeanAssembler();
+        assembler = camelContext.getCamelContextExtension().getManagementMBeanAssembler();
         if (assembler == null) {
             assembler = new DefaultManagementMBeanAssembler(camelContext);
         }

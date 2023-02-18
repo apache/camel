@@ -24,7 +24,6 @@ import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
@@ -53,7 +52,7 @@ public class CamelContextAddRestDefinitionsFromXmlTest extends ContextTestSuppor
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        jaxbContext = (JAXBContext) context.adapt(ExtendedCamelContext.class).getModelJAXBContextFactory().newJAXBContext();
+        jaxbContext = (JAXBContext) context.getCamelContextExtension().getModelJAXBContextFactory().newJAXBContext();
     }
 
     protected Object parseUri(String uri) throws JAXBException {

@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Resource;
@@ -115,7 +114,7 @@ public class JsseParameters implements CamelContextAware {
     protected InputStream resolveResource(String resource) throws IOException {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
 
-        Resource res = getCamelContext().adapt(ExtendedCamelContext.class).getResourceLoader().resolveResource(resource);
+        Resource res = getCamelContext().getCamelContextExtension().getResourceLoader().resolveResource(resource);
         if (res == null) {
             throw new IOException("Could not open " + resource + " as a file, class path resource, or URL.");
         }

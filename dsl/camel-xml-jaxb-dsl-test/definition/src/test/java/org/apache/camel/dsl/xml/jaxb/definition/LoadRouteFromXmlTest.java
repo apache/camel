@@ -41,7 +41,7 @@ public class LoadRouteFromXmlTest extends ContextTestSupport {
 
         // START SNIPPET: e1
         // load route from XML and add them to the existing camel context
-        ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+        ExtendedCamelContext ecc = context.getCamelContextExtension();
         Resource resource = ecc.getResourceLoader().resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barRoute.xml");
         ecc.getRoutesLoader().loadRoutes(resource);
         // END SNIPPET: e1

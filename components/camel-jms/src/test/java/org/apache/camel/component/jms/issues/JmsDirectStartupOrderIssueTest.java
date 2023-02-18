@@ -47,7 +47,7 @@ public class JmsDirectStartupOrderIssueTest extends AbstractPersistentJMSTest {
         MockEndpoint.assertIsSatisfied(context);
 
         DefaultCamelContext dcc = (DefaultCamelContext) context;
-        List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
+        List<RouteStartupOrder> order = dcc.getCamelContextExtension().getRouteStartupOrder();
         assertEquals(2, order.size());
         assertEquals(1, order.get(0).getStartupOrder());
         assertEquals("direct", order.get(0).getRoute().getId());

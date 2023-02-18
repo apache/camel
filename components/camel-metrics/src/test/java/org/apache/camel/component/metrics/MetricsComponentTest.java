@@ -79,7 +79,7 @@ public class MetricsComponentTest {
         when(camelContext.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
         when(camelRegistry.lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class))
                 .thenReturn(metricRegistry);
-        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        when(camelContext.getCamelContextExtension()).thenReturn(ecc);
         when(ecc.getBeanIntrospection()).thenReturn(new DefaultBeanIntrospection());
         when(ecc.getConfigurerResolver()).thenReturn((name, context) -> null);
 
@@ -108,7 +108,7 @@ public class MetricsComponentTest {
         when(camelContext.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
         when(camelRegistry.lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class))
                 .thenReturn(metricRegistry);
-        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        when(camelContext.getCamelContextExtension()).thenReturn(ecc);
         when(ecc.getBeanIntrospection()).thenReturn(new DefaultBeanIntrospection());
         when(ecc.getConfigurerResolver()).thenReturn((name, context) -> null);
 

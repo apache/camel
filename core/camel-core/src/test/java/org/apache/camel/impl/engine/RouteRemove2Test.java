@@ -32,7 +32,7 @@ public class RouteRemove2Test extends ContextTestSupport {
         DefaultCamelContext defaultContext = (DefaultCamelContext) context;
         assertEquals(2, context.getRoutes().size());
         assertEquals(2, context.getRouteDefinitions().size());
-        assertEquals(2, defaultContext.getRouteStartupOrder().size());
+        assertEquals(2, defaultContext.getCamelContextExtension().getRouteStartupOrder().size());
         assertEquals(2, defaultContext.getRouteServices().size());
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);
@@ -71,7 +71,7 @@ public class RouteRemove2Test extends ContextTestSupport {
 
         assertEquals(1, context.getRoutes().size());
         assertEquals(1, context.getRouteDefinitions().size());
-        assertEquals(1, defaultContext.getRouteStartupOrder().size());
+        assertEquals(1, defaultContext.getCamelContextExtension().getRouteStartupOrder().size());
         assertEquals(1, defaultContext.getRouteServices().size());
     }
 

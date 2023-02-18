@@ -31,7 +31,7 @@ public class JaxbXmlLoadRestTest {
     @Test
     public void testLoadRoutesBuilderFromXml() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            context.getRegistry().bind("dummy-rest", new DummyRestConsumerFactory());
+            context.getCamelContextExtension().getRegistry().bind("dummy-rest", new DummyRestConsumerFactory());
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
@@ -57,7 +57,7 @@ public class JaxbXmlLoadRestTest {
             foo.assertIsSatisfied();
 
             // load rest from XML and add them to the existing camel context
-            ExtendedCamelContext ecc = context.adapt(ExtendedCamelContext.class);
+            ExtendedCamelContext ecc = context.getCamelContextExtension();
             Resource resource = ecc.getResourceLoader().resolveResource(
                     "/org/apache/camel/dsl/xml/jaxb/barRest.xml");
 

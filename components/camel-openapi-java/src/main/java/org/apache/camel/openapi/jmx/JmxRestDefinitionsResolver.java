@@ -68,7 +68,7 @@ public class JmxRestDefinitionsResolver implements RestDefinitionsResolver {
             if (xml != null) {
                 LOG.debug("DumpRestAsXml:\n{}", xml);
 
-                ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
+                ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
                 Resource resource = ecc.getResourceLoader().resolveResource("mem:" + xml);
                 RestsDefinition rests = new ModelParser(resource).parseRestsDefinition().orElse(null);
                 if (rests != null) {

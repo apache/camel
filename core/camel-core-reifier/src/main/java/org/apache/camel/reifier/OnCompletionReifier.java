@@ -19,7 +19,6 @@ package org.apache.camel.reifier;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncProcessor;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -53,7 +52,7 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
         Processor childProcessor = this.createChildProcessor(true);
 
         // wrap the on completion route in a unit of work processor
-        AsyncProcessor target = camelContext.adapt(ExtendedCamelContext.class).getInternalProcessorFactory()
+        AsyncProcessor target = camelContext.getCamelContextExtension().getInternalProcessorFactory()
                 .addUnitOfWorkProcessorAdvice(camelContext, childProcessor, route);
 
         route.setOnCompletion(getId(definition), target);

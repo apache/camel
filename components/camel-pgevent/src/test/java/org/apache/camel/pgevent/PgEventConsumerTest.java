@@ -54,7 +54,7 @@ public class PgEventConsumerTest {
         ExchangeFactory ef = mock(ExchangeFactory.class);
 
         when(endpoint.getCamelContext()).thenReturn(camelContext);
-        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        when(camelContext.getCamelContextExtension()).thenReturn(ecc);
         when(ecc.getExchangeFactory()).thenReturn(ef);
         when(ef.newExchangeFactory(any())).thenReturn(ef);
         when(endpoint.getDatasource()).thenReturn(dataSource);
@@ -81,7 +81,7 @@ public class PgEventConsumerTest {
         ExchangeFactory ef = mock(ExchangeFactory.class);
 
         when(endpoint.getCamelContext()).thenReturn(camelContext);
-        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        when(camelContext.getCamelContextExtension()).thenReturn(ecc);
         when(ecc.getExchangeFactory()).thenReturn(ef);
         when(ef.newExchangeFactory(any())).thenReturn(ef);
         when(endpoint.getDatasource()).thenReturn(dataSource);
@@ -111,7 +111,7 @@ public class PgEventConsumerTest {
         ExchangeFactory ef = mock(ExchangeFactory.class);
 
         when(endpoint.getCamelContext()).thenReturn(camelContext);
-        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(ecc);
+        when(camelContext.getCamelContextExtension()).thenReturn(ecc);
         when(ecc.getExchangeFactory()).thenReturn(ef);
         when(ef.newExchangeFactory(any())).thenReturn(ef);
         when(ef.create(endpoint, false)).thenReturn(exchange);

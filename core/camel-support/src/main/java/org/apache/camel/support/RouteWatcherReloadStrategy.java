@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
@@ -248,7 +247,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
             // reload those other routes that was stopped and removed as we want to keep running those
             Set<String> ids
-                    = getCamelContext().adapt(ExtendedCamelContext.class).getRoutesLoader().updateRoutes(sources);
+                    = getCamelContext().getCamelContextExtension().getRoutesLoader().updateRoutes(sources);
 
             // update okay, so clear as we do not need to remember those anymore
             previousSources.clear();

@@ -63,7 +63,7 @@ public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
 
         Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
             PooledObjectFactory.Statistics stat
-                    = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager().getStatistics();
+                    = context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
             assertEquals(1, stat.getCreatedCounter());
             assertEquals(0, stat.getAcquiredCounter());
             assertEquals(1, stat.getReleasedCounter());
@@ -92,7 +92,7 @@ public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
 
         Awaitility.waitAtMost(2, TimeUnit.SECONDS).untilAsserted(() -> {
             PooledObjectFactory.Statistics stat
-                    = context.adapt(ExtendedCamelContext.class).getExchangeFactoryManager().getStatistics();
+                    = context.getCamelContextExtension().getExchangeFactoryManager().getStatistics();
             assertEquals(1, stat.getCreatedCounter());
             assertEquals(2, stat.getAcquiredCounter());
             assertEquals(3, stat.getReleasedCounter());

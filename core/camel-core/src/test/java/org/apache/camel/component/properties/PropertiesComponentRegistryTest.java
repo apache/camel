@@ -48,7 +48,7 @@ public class PropertiesComponentRegistryTest extends ContextTestSupport {
         DefaultRegistry reg = new DefaultRegistry();
         reg.bind("foo", foo);
         reg.bind("bar", bar);
-        context.setRegistry(reg);
+        context.getCamelContextExtension().setRegistry(reg);
 
         context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
 

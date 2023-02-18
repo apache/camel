@@ -50,7 +50,7 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
 
         // assert correct order
         DefaultCamelContext dcc = (DefaultCamelContext) context;
-        List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
+        List<RouteStartupOrder> order = dcc.getCamelContextExtension().getRouteStartupOrder();
 
         assertEquals(4, order.size());
         assertEquals("seda://foo", order.get(0).getRoute().getEndpoint().getEndpointUri());

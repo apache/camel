@@ -24,7 +24,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.builder.RouteBuilder;
@@ -52,7 +51,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         CamelContext context = super.createCamelContext();
         // to force a different management name than the camel id
         context.getManagementNameStrategy().setNamePattern("19-#name#");
-        context.adapt(ExtendedCamelContext.class).setDescription("My special Camel description");
+        context.getCamelContextExtension().setDescription("My special Camel description");
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("my-camel-context"));
         // debugger needed for source locations
         context.setDebugging(true);

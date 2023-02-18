@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.health.HealthCheck;
 import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
@@ -43,8 +42,8 @@ public class DefaultHealthChecksLoader {
 
     public DefaultHealthChecksLoader(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.resolver = camelContext.adapt(ExtendedCamelContext.class).getPackageScanResourceResolver();
-        this.healthCheckResolver = camelContext.adapt(ExtendedCamelContext.class).getHealthCheckResolver();
+        this.resolver = camelContext.getCamelContextExtension().getPackageScanResourceResolver();
+        this.healthCheckResolver = camelContext.getCamelContextExtension().getHealthCheckResolver();
     }
 
     public Collection<HealthCheck> loadHealthChecks() {

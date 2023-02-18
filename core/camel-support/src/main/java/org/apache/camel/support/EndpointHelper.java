@@ -31,7 +31,6 @@ import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -71,7 +70,7 @@ public final class EndpointHelper {
         // which is a little complex depending on the placeholder is from context-path or query parameters
         // in the uri string
         try {
-            uri = camelContext.adapt(ExtendedCamelContext.class).resolvePropertyPlaceholders(uri, true);
+            uri = camelContext.getCamelContextExtension().resolvePropertyPlaceholders(uri, true);
             if (uri == null || uri.isEmpty()) {
                 return uri;
             }
@@ -313,7 +312,7 @@ public final class EndpointHelper {
             Object v = entry.getValue();
             String value = v != null ? v.toString() : null;
             if (isReferenceParameter(value)) {
-                boolean hit = context.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(context,
+                boolean hit = context.getCamelContextExtension().getBeanIntrospection().setProperty(context,
                         context.getTypeConverter(), bean, name, null, value, true, false, false);
                 if (hit) {
                     // must remove as its a valid option and we could configure it
