@@ -16,19 +16,21 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Properties;
+
 /**
- * Listener for re-loading a {@link Resource} such as a Camel route.
+ * Listener for re-loading a {@link java.util.Properties} such as a Camel route.
  */
 @FunctionalInterface
-public interface ResourceReload {
+public interface PropertiesReload {
 
     /**
-     * Callback when the resource is re-loaded.
+     * Callback when the properties is re-loaded.
      *
-     * @param  name      name of the resource such as the file name (absolute)
-     * @param  resource  the resource
-     * @throws Exception error reloading the resources
+     * @param  name       name of the resource such as the file name (absolute)
+     * @param  properties the properties that was re-loaded
+     * @throws Exception  error reloading properties
      */
-    void onReload(String name, Resource resource) throws Exception;
+    void onReload(String name, Properties properties) throws Exception;
 
 }
