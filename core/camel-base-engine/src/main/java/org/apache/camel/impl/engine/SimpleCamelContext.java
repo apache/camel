@@ -261,7 +261,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected PeriodTaskResolver createPeriodTaskResolver() {
         // we need a factory finder
-        FactoryFinder finder = getFactoryFinderResolver()
+        FactoryFinder finder = getCamelContextExtension().getFactoryFinderResolver()
                 .resolveBootstrapFactoryFinder(getClassResolver(), PeriodTaskResolver.RESOURCE_PATH);
         return new DefaultPeriodTaskResolver(finder);
     }
