@@ -202,7 +202,7 @@ public class MessageHelperTest {
         String out = MessageHelper.dumpAsXml(message, false);
 
         assertEquals("<message exchangeId=\"" + message.getExchange().getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\">"
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">"
                      + "\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>",
                 out);
 
@@ -223,7 +223,7 @@ public class MessageHelperTest {
         String out = MessageHelper.dumpAsXml(message, false, 2);
 
         assertEquals("  <message exchangeId=\"" + message.getExchange().getExchangeId()
-                     + "\" exchangePattern=\"InOut\" type=\"org.apache.camel.support.DefaultMessage\">"
+                     + "\" exchangePattern=\"InOut\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">"
                      + "\n    <headers>\n      <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n    </headers>\n  </message>",
                 out);
 

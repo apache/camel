@@ -67,7 +67,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         log.info(out);
 
         assertEquals("<message exchangeId=\"" + exchanges.get(0).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\""
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\""
                      + ">\n  <body type=\"java.lang.String\">&lt;foo&gt;Camel &amp;gt; Donkey&lt;/foo&gt;</body>\n</message>",
                 out);
 
@@ -76,7 +76,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         assertNotNull(out);
         log.info(out);
         assertEquals("<message exchangeId=\"" + exchanges.get(1).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\""
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\""
                      + ">\n  <body type=\"java.lang.String\">Camel &gt; Donkey</body>\n</message>",
                 out);
 
@@ -85,7 +85,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         assertNotNull(out);
         log.info(out);
         assertEquals("<message exchangeId=\"" + exchanges.get(2).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\""
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\""
                      + ">\n  <headers>\n    <header key=\"name\" type=\"java.lang.String\">Me &amp; You</header>\n  </headers>\n"
                      + "  <body type=\"java.lang.String\">&lt;foo&gt;Camel &amp;gt; Donkey&lt;/foo&gt;</body>\n</message>",
                 out);
@@ -96,7 +96,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         log.info(out);
         assertEquals(
                 "<message exchangeId=\"" + exchanges.get(3).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\">\n  <headers>\n"
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n  <headers>\n"
                      + "    <header key=\"title\" type=\"java.lang.String\">&lt;title&gt;Me &amp;amp; You&lt;/title&gt;</header>\n  </headers>\n"
                      + "  <body type=\"java.lang.String\">&lt;foo&gt;Camel &amp;gt; Donkey&lt;/foo&gt;</body>\n</message>",
                 out);
@@ -106,7 +106,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         assertNotNull(out);
         log.info(out);
         assertEquals("<message exchangeId=\"" + exchanges.get(4).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\""
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\""
                      + ">\n  <headers>\n    <header key=\"name\" type=\"java.lang.String\">Me &amp; You</header>\n  </headers>\n"
                      + "  <body type=\"java.lang.String\">Camel &gt; Donkey</body>\n</message>",
                 out);
@@ -116,7 +116,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         assertNotNull(out);
         log.info(out);
         assertEquals("<message exchangeId=\"" + exchanges.get(5).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\""
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\""
                      + ">\n  <headers>\n    <header key=\"user\" type=\"java.lang.Boolean\">true</header>\n  </headers>\n"
                      + "  <body type=\"java.lang.Integer\">123</body>\n</message>",
                 out);
@@ -126,7 +126,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         assertNotNull(out);
         log.info(out);
         assertEquals("<message exchangeId=\"" + exchanges.get(6).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\""
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\""
                      + ">\n  <headers>\n    <header key=\"title\" type=\"java.lang.String\">Camel rocks</header>\n"
                      + "    <header key=\"uid\" type=\"java.lang.Integer\">123</header>\n"
                      + "    <header key=\"user\" type=\"java.lang.Boolean\">false</header>\n  </headers>\n"
@@ -155,7 +155,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         log.info(out);
 
         assertEquals("<message exchangeId=\"" + exchanges.get(0).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\""
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\""
                      + ">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>",
                 out);
 
@@ -164,7 +164,7 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         assertNotNull(out);
         log.info(out);
         assertEquals("<message exchangeId=\"" + exchanges.get(1).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\""
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\""
                      + ">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n</message>",
                 out);
     }
@@ -190,10 +190,10 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         log.info(out);
 
         assertEquals("<messages>\n<message exchangeId=\"" + exchanges.get(0).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\""
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\""
                      + ">\n  <body type=\"java.lang.String\">Hello World</body>\n</message>\n"
                      + "<message exchangeId=\"" + exchanges.get(1).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\""
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\""
                      + ">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n"
                      + "  <body type=\"java.lang.String\">Bye World</body>\n</message>\n</messages>",
                 out);
@@ -220,10 +220,10 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         log.info(out);
 
         assertEquals("<messages>\n<message exchangeId=\"" + exchanges.get(0).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\">\n  <headers>\n"
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\">\n  <headers>\n"
                      + "    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>\n"
                      + "<message exchangeId=\"" + exchanges.get(1).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\""
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\""
                      + ">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n"
                      + "</message>\n</messages>",
                 out);
@@ -251,10 +251,10 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         log.info(out);
 
         assertEquals("<messages>\n<message exchangeId=\"" + exchanges.get(0).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\""
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\""
                      + ">\n  <body type=\"java.lang.String\">Hello World</body>\n</message>\n"
                      + "<message exchangeId=\"" + exchanges.get(1).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\""
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\""
                      + ">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n"
                      + "  <body type=\"java.lang.String\">Bye World</body>\n</message>\n</messages>",
                 out);
@@ -282,10 +282,10 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
         log.info(out);
 
         assertEquals("<messages>\n<message exchangeId=\"" + exchanges.get(0).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\""
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\""
                      + ">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>\n"
                      + "<message exchangeId=\"" + exchanges.get(1).getExchangeId()
-                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\""
+                     + "\" exchangePattern=\"InOnly\" exchangeType=\"org.apache.camel.support.DefaultExchange\" messageType=\"org.apache.camel.support.DefaultMessage\""
                      + ">\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">456</header>\n  </headers>\n"
                      + "</message>\n</messages>",
                 out);

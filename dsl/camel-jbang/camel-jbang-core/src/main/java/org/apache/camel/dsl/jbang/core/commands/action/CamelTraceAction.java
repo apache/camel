@@ -688,6 +688,12 @@ public class CamelTraceAction extends ActionBaseCommand {
     private String getDataAsTable(Row r) {
         List<TableRow> rows = new ArrayList<>();
 
+        TableRow eRow = new TableRow("Exchange", r.message.getString("exchangeType"), null, null);
+        String tab1 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
+                new Column().dataAlign(HorizontalAlign.LEFT)
+                        .minWidth(showExchangeProperties ? 11 : 9).with(TableRow::kindAsString),
+                new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAndLengthAsString)));
+        // exchange properties
         JsonArray arr = r.message.getCollection("exchangeProperties");
         if (arr != null) {
             for (Object o : arr) {
@@ -695,6 +701,23 @@ public class CamelTraceAction extends ActionBaseCommand {
                 rows.add(new TableRow("Property", jo.getString("type"), jo.getString("key"), jo.get("value")));
             }
         }
+        String tab2 = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                new Column().dataAlign(HorizontalAlign.LEFT)
+                        .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
+                new Column().dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(TableRow::typeAsString),
+                new Column().dataAlign(HorizontalAlign.RIGHT)
+                        .maxWidth(40, OverflowBehaviour.NEWLINE).with(TableRow::keyAsString),
+                new Column().dataAlign(HorizontalAlign.LEFT)
+                        .maxWidth(80, OverflowBehaviour.NEWLINE).with(TableRow::valueAsString)));
+        rows.clear();
+
+        // message type before headers
+        TableRow msgRow = new TableRow("Message", r.message.getString("messageType"), null, null);
+        String tab3 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(msgRow), Arrays.asList(
+                new Column().dataAlign(HorizontalAlign.LEFT)
+                        .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
+                new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAndLengthAsString)));
         arr = r.message.getCollection("headers");
         if (arr != null) {
             for (Object o : arr) {
@@ -702,10 +725,10 @@ public class CamelTraceAction extends ActionBaseCommand {
                 rows.add(new TableRow("Header", jo.getString("type"), jo.getString("key"), jo.get("value")));
             }
         }
-        // properties and headers
-        String tab1 = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+        // headers
+        String tab4 = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().dataAlign(HorizontalAlign.LEFT)
-                        .minWidth(showExchangeProperties ? 11 : 9).with(TableRow::kindAsString),
+                        .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
                 new Column().dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(TableRow::typeAsString),
                 new Column().dataAlign(HorizontalAlign.RIGHT)
@@ -714,50 +737,63 @@ public class CamelTraceAction extends ActionBaseCommand {
                         .maxWidth(80, OverflowBehaviour.NEWLINE).with(TableRow::valueAsString)));
 
         // body and type
-        JsonObject jo = r.message;
-        TableRow msgRow = new TableRow("Message", jo.getString("type"), null, null);
-        jo = r.message.getMap("body");
+        JsonObject jo = r.message.getMap("body");
         TableRow bodyRow = new TableRow("Body", jo.getString("type"), null, jo.get("value"));
-        String tab2 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(msgRow, bodyRow), Arrays.asList(
+        String tab5 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(bodyRow), Arrays.asList(
                 new Column().dataAlign(HorizontalAlign.LEFT)
-                        .minWidth(showExchangeProperties ? 11 : 9).with(TableRow::kindAsString),
+                        .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
                 new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAndLengthAsString)));
         // body value only (span)
-        String tab3 = null;
+        String tab6 = null;
         if (bodyRow.value != null) {
-            tab3 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(bodyRow), Arrays.asList(
+            tab6 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(bodyRow), Arrays.asList(
                     new Column().dataAlign(HorizontalAlign.LEFT).maxWidth(160, OverflowBehaviour.NEWLINE)
                             .with(TableRow::valueAsString)));
         }
-        String tab4 = null;
+        String tab7 = null;
         jo = r.exception;
         if (jo != null) {
-            TableRow eRow = new TableRow("Exception", jo.getString("type"), null, jo.get("message"));
-            tab4 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
+            eRow = new TableRow("Exception", jo.getString("type"), null, jo.get("message"));
+            tab7 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
                     new Column().dataAlign(HorizontalAlign.LEFT)
-                            .minWidth(showExchangeProperties ? 11 : 9).with(TableRow::kindAsStringRed),
+                            .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsStringRed),
                     new Column().dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(TableRow::typeAsString),
                     new Column().dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(80, OverflowBehaviour.NEWLINE).with(TableRow::valueAsStringRed)));
         }
         // stacktrace only (span)
-        String tab5 = null;
+        String tab8 = null;
         if (jo != null) {
-            TableRow eRow = new TableRow("Stacktrace", null, null, jo.get("stackTrace"));
-            tab5 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
+            eRow = new TableRow("Stacktrace", null, null, jo.get("stackTrace"));
+            tab8 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
                     new Column().dataAlign(HorizontalAlign.LEFT).maxWidth(160, OverflowBehaviour.NEWLINE)
                             .with(TableRow::valueAsStringRed)));
         }
-        String answer = tab1 + System.lineSeparator() + tab2;
-        if (tab3 != null) {
-            answer = answer + System.lineSeparator() + tab3;
+        String answer = "";
+        if (tab1 != null && !tab1.isEmpty()) {
+            answer = answer + tab1 + System.lineSeparator();
         }
-        if (tab4 != null) {
-            answer = answer + System.lineSeparator() + tab4;
+        if (tab2 != null && !tab2.isEmpty()) {
+            answer = answer + tab2 + System.lineSeparator();
         }
-        if (tab5 != null) {
-            answer = answer + System.lineSeparator() + tab5;
+        if (tab3 != null && !tab3.isEmpty()) {
+            answer = answer + tab3 + System.lineSeparator();
+        }
+        if (tab4 != null && !tab4.isEmpty()) {
+            answer = answer + tab4 + System.lineSeparator();
+        }
+        if (tab5 != null && !tab5.isEmpty()) {
+            answer = answer + tab5 + System.lineSeparator();
+        }
+        if (tab6 != null && !tab6.isEmpty()) {
+            answer = answer + tab6 + System.lineSeparator();
+        }
+        if (tab7 != null && !tab7.isEmpty()) {
+            answer = answer + tab7 + System.lineSeparator();
+        }
+        if (tab8 != null && !tab8.isEmpty()) {
+            answer = answer + tab8 + System.lineSeparator();
         }
         return answer;
     }
