@@ -166,22 +166,32 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
         LOG.info("Reloading properties: {}. (Only Camel routes and components can be updated with changes)",
                 resource.getLocation());
 
+        // optimize to only update if something changed
+        OrderedLocationProperties changed = null;
+
         PropertiesComponent pc = getCamelContext().getPropertiesComponent();
-        boolean reloaded = pc.reloadProperties(resource.getLocation());
-        if (reloaded) {
-            PropertiesReload pr = getCamelContext().hasService(PropertiesReload.class);
-            if (pr != null) {
-                // load the properties, so we can update (remember location)
-                InputStream is = resource.getInputStream();
-                OrderedProperties tmp = new OrderedProperties();
-                tmp.load(is);
-                IOHelper.close(is);
-                OrderedLocationProperties properties = new OrderedLocationProperties();
-                properties.putAll(resource.getLocation(), tmp);
-                pr.onReload(resource.getLocation(), properties);
+        PropertiesReload pr = getCamelContext().hasService(PropertiesReload.class);
+        if (pr != null) {
+            // load the properties, so we can update (remember location)
+            InputStream is = resource.getInputStream();
+            OrderedProperties tmp = new OrderedProperties();
+            tmp.load(is);
+            IOHelper.close(is);
+            changed = new OrderedLocationProperties();
+            changed.putAll(resource.getLocation(), tmp);
+            // filter to only keep changed properties
+            pc.keepOnlyChangeProperties(changed);
+        }
+
+        if (changed == null || !changed.isEmpty()) {
+            boolean reloaded = pc.reloadProperties(resource.getLocation());
+            if (reloaded) {
+                if (pr != null) {
+                    pr.onReload(resource.getLocation(), changed);
+                }
+                // trigger all routes to be reloaded
+                onRouteReload(null);
             }
-            // trigger all routes to be reloaded
-            onRouteReload(null);
         }
     }
 
