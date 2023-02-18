@@ -1088,7 +1088,7 @@ public class BeanInfo {
         }
 
         // match qualifier types which is used to select among overloaded methods
-        String types = StringHelper.between(methodName, "(", ")");
+        String types = StringHelper.betweenOuterPair(methodName, '(', ')');
         if (org.apache.camel.util.ObjectHelper.isNotEmpty(types)) {
             // we must qualify based on types to match method
             String[] parameters = StringQuoteHelper.splitSafeQuote(types, ',');
