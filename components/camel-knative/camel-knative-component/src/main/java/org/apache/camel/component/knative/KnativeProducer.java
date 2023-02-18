@@ -42,7 +42,7 @@ public class KnativeProducer extends DefaultAsyncProducer {
         Collections.addAll(elements, processors);
 
         CamelContext ecc = getEndpoint().getCamelContext();
-        Processor pipeline = ((ExtendedCamelContext) ecc).getProcessorFactory().createProcessor(ecc, "Pipeline", new Object[] { elements });
+        Processor pipeline = ecc.getCamelContextExtension().getProcessorFactory().createProcessor(ecc, "Pipeline", new Object[] { elements });
 
         this.processor = AsyncProcessorConverterHelper.convert(pipeline);
     }

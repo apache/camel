@@ -247,7 +247,7 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
 
             // detect custom compiler (camel-csimple-joor)
             CamelContext ecc = getCamelContext();
-            Optional<Class<?>> clazz = ((ExtendedCamelContext) ecc).getBootstrapFactoryFinder().findClass(CSimpleCompiler.FACTORY);
+            Optional<Class<?>> clazz = ecc.getCamelContextExtension().getBootstrapFactoryFinder().findClass(CSimpleCompiler.FACTORY);
             if (clazz.isPresent()) {
                 compiler = (CSimpleCompiler) ecc.getInjector().newInstance(clazz.get(), false);
                 if (compiler != null) {

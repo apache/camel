@@ -68,7 +68,7 @@ public class ErrorHandlerBuilderDeserializer implements ConstructNode {
         return new CamelContextCustomizer() {
             @Override
             public void configure(CamelContext camelContext) {
-                ((ExtendedCamelContext) camelContext).setErrorHandlerFactory(builder);
+                camelContext.getCamelContextExtension().setErrorHandlerFactory(builder);
             }
         };
     }

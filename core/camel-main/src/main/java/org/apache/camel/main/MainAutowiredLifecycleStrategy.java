@@ -129,7 +129,7 @@ public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport imp
     }
 
     private void autwire(String name, String kind, Object target) {
-        PropertyConfigurer pc = ((ExtendedCamelContext) camelContext).getConfigurerResolver().resolvePropertyConfigurer(name + "-" + kind, camelContext);
+        PropertyConfigurer pc = camelContext.getCamelContextExtension().getConfigurerResolver().resolvePropertyConfigurer(name + "-" + kind, camelContext);
         if (pc instanceof PropertyConfigurerGetter) {
             PropertyConfigurerGetter getter = (PropertyConfigurerGetter) pc;
             String[] names = getter.getAutowiredNames();

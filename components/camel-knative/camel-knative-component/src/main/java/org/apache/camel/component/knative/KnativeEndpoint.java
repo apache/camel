@@ -117,7 +117,7 @@ public class KnativeEndpoint extends DefaultEndpoint {
             list.add(replyProcessor);
         }
         CamelContext ecc = getCamelContext();
-        Processor pipeline = ((ExtendedCamelContext) ecc).getProcessorFactory().createProcessor(ecc, "Pipeline", new Object[] { list });
+        Processor pipeline = ecc.getCamelContextExtension().getProcessorFactory().createProcessor(ecc, "Pipeline", new Object[] { list });
 
         Consumer consumer = getComponent().getConsumerFactory().createConsumer(this,
                 createTransportConfiguration(service), service, pipeline);

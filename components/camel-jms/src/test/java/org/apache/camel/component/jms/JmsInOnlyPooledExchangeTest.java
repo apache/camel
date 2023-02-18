@@ -85,7 +85,8 @@ public class JmsInOnlyPooledExchangeTest extends AbstractJMSTest {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        ExtendedCamelContext ecc = (ExtendedCamelContext) super.createCamelContext();
+        CamelContext camelContext = super.createCamelContext();
+        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
 
         ecc.setExchangeFactory(new PooledExchangeFactory());
         ecc.setProcessorExchangeFactory(new PooledProcessorExchangeFactory());

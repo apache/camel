@@ -44,7 +44,7 @@ public final class UnitOfWorkProducer extends DefaultAsyncProducer {
         this.producer = producer;
         // wrap in unit of work
         CamelContext ecc = producer.getEndpoint().getCamelContext();
-        this.processor = ((ExtendedCamelContext) ecc).getInternalProcessorFactory()
+        this.processor = ecc.getCamelContextExtension().getInternalProcessorFactory()
                 .addUnitOfWorkProcessorAdvice(ecc, producer, null);
     }
 

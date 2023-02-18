@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.support.LRUCache;
@@ -96,7 +95,7 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
 
         // we want endpoint or transformer to be static if they are part of
         // starting up camel, or if new routes are being setup/added or routes started later
-        if (!context.isStarted() || ((ExtendedCamelContext) context).isSetupRoutes() || routeController.isStartingRoutes()) {
+        if (!context.isStarted() || context.getCamelContextExtension().isSetupRoutes() || routeController.isStartingRoutes()) {
             answer = staticMap.put(key, obj);
         } else {
             answer = dynamicMap.put(key, obj);

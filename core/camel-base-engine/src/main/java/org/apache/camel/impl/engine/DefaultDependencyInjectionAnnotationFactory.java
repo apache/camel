@@ -49,9 +49,9 @@ public class DefaultDependencyInjectionAnnotationFactory
         return () -> {
             if (beanPostProcess) {
                 try {
-                    ((ExtendedCamelContext) camelContext).getBeanPostProcessor()
+                    camelContext.getCamelContextExtension().getBeanPostProcessor()
                             .postProcessBeforeInitialization(bean, beanName);
-                    ((ExtendedCamelContext) camelContext).getBeanPostProcessor()
+                    camelContext.getCamelContextExtension().getBeanPostProcessor()
                             .postProcessAfterInitialization(bean, beanName);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);

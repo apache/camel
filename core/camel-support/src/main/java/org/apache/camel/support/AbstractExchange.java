@@ -193,8 +193,7 @@ class AbstractExchange implements Exchange {
         }
 
         if (context != null) {
-            ExtendedCamelContext ecc = (ExtendedCamelContext) context;
-            HeadersMapFactory factory = ecc.getHeadersMapFactory();
+            HeadersMapFactory factory = context.getCamelContextExtension().getHeadersMapFactory();
             if (factory != null) {
                 return factory.newMap(headers);
             }
