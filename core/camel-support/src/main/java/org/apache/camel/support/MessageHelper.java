@@ -499,10 +499,12 @@ public final class MessageHelper {
             prefix.append(" ");
         }
 
-        // include exchangeId/exchangePattern as attribute on the <message> tag
+        // include exchangeId/exchangePattern/type as attribute on the <message> tag
         sb.append(prefix);
+        String type = ObjectHelper.classCanonicalName(message);
         sb.append("<message exchangeId=\"").append(message.getExchange().getExchangeId())
-                .append("\" exchangePattern=\"").append(message.getExchange().getPattern().name()).append("\">\n");
+                .append("\" exchangePattern=\"").append(message.getExchange().getPattern().name())
+                .append("\" type=\"").append(type).append("\">\n");
 
         // exchange properties
         if (includeExchangeProperties && message.getExchange().hasProperties()) {
@@ -512,7 +514,7 @@ public final class MessageHelper {
             Map<String, Object> properties = new TreeMap<>(message.getExchange().getProperties());
             for (Map.Entry<String, Object> entry : properties.entrySet()) {
                 Object value = entry.getValue();
-                String type = ObjectHelper.classCanonicalName(value);
+                type = ObjectHelper.classCanonicalName(value);
                 sb.append(prefix);
                 sb.append("    <exchangeProperty key=\"").append(entry.getKey()).append("\"");
                 if (type != null) {
@@ -548,7 +550,7 @@ public final class MessageHelper {
             Map<String, Object> headers = new TreeMap<>(message.getHeaders());
             for (Map.Entry<String, Object> entry : headers.entrySet()) {
                 Object value = entry.getValue();
-                String type = ObjectHelper.classCanonicalName(value);
+                type = ObjectHelper.classCanonicalName(value);
                 sb.append(prefix);
                 sb.append("    <header key=\"").append(entry.getKey()).append("\"");
                 if (type != null) {
@@ -579,7 +581,7 @@ public final class MessageHelper {
         if (includeBody) {
             sb.append(prefix);
             sb.append("  <body");
-            String type = ObjectHelper.classCanonicalName(message.getBody());
+            type = ObjectHelper.classCanonicalName(message.getBody());
             if (type != null) {
                 sb.append(" type=\"").append(type).append("\"");
             }
@@ -868,6 +870,7 @@ public final class MessageHelper {
         root.put("message", jo);
         jo.put("exchangeId", message.getExchange().getExchangeId());
         jo.put("exchangePattern", message.getExchange().getPattern().name());
+        jo.put("type", ObjectHelper.classCanonicalName(message));
 
         // exchange properties
         if (includeExchangeProperties && message.getExchange().hasProperties()) {

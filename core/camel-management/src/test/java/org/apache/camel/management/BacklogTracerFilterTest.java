@@ -74,7 +74,8 @@ public class BacklogTracerFilterTest extends ManagementTestSupport {
 
         BacklogTracerEventMessage event = events.get(0);
         assertEquals(null, event.getToNode());
-        assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\" exchangePattern=\"InOnly\">\n"
+        assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId()
+                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\">\n"
                      + "      <headers>\n"
                      + "        <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n"
                      + "      </headers>\n"
@@ -84,7 +85,8 @@ public class BacklogTracerFilterTest extends ManagementTestSupport {
 
         BacklogTracerEventMessage event1 = events.get(1);
         assertEquals("foo", event1.getToNode());
-        assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\" exchangePattern=\"InOnly\">\n"
+        assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId()
+                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\">\n"
                      + "      <headers>\n"
                      + "        <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n"
                      + "      </headers>\n"
@@ -94,7 +96,8 @@ public class BacklogTracerFilterTest extends ManagementTestSupport {
 
         BacklogTracerEventMessage event2 = events.get(2);
         assertEquals("bar", event2.getToNode());
-        assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId() + "\" exchangePattern=\"InOnly\">\n"
+        assertEquals("    <message exchangeId=\"" + exchanges.get(1).getExchangeId()
+                     + "\" exchangePattern=\"InOnly\" type=\"org.apache.camel.support.DefaultMessage\">\n"
                      + "      <headers>\n"
                      + "        <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n"
                      + "      </headers>\n"

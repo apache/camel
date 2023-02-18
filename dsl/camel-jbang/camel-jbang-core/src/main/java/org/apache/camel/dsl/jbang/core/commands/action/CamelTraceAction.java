@@ -705,7 +705,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         // properties and headers
         String tab1 = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
                 new Column().dataAlign(HorizontalAlign.LEFT)
-                        .minWidth(showExchangeProperties ? 10 : 8).with(TableRow::kindAsString),
+                        .minWidth(showExchangeProperties ? 11 : 9).with(TableRow::kindAsString),
                 new Column().dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(TableRow::typeAsString),
                 new Column().dataAlign(HorizontalAlign.RIGHT)
@@ -714,11 +714,13 @@ public class CamelTraceAction extends ActionBaseCommand {
                         .maxWidth(80, OverflowBehaviour.NEWLINE).with(TableRow::valueAsString)));
 
         // body and type
-        JsonObject jo = r.message.getMap("body");
+        JsonObject jo = r.message;
+        TableRow msgRow = new TableRow("Message", jo.getString("type"), null, null);
+        jo = r.message.getMap("body");
         TableRow bodyRow = new TableRow("Body", jo.getString("type"), null, jo.get("value"));
-        String tab2 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(bodyRow), Arrays.asList(
+        String tab2 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(msgRow, bodyRow), Arrays.asList(
                 new Column().dataAlign(HorizontalAlign.LEFT)
-                        .minWidth(showExchangeProperties ? 10 : 8).with(t -> "Body"),
+                        .minWidth(showExchangeProperties ? 11 : 9).with(TableRow::kindAsString),
                 new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAndLengthAsString)));
         // body value only (span)
         String tab3 = null;
@@ -733,7 +735,7 @@ public class CamelTraceAction extends ActionBaseCommand {
             TableRow eRow = new TableRow("Exception", jo.getString("type"), null, jo.get("message"));
             tab4 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
                     new Column().dataAlign(HorizontalAlign.LEFT)
-                            .minWidth(showExchangeProperties ? 10 : 8).with(TableRow::kindAsStringRed),
+                            .minWidth(showExchangeProperties ? 11 : 9).with(TableRow::kindAsStringRed),
                     new Column().dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(TableRow::typeAsString),
                     new Column().dataAlign(HorizontalAlign.LEFT)
