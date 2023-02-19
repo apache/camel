@@ -518,11 +518,7 @@ public class KameletMain extends MainCommandLineSupport {
     }
 
     private static String getPid() {
-        try {
-            return "" + ProcessHandle.current().pid();
-        } catch (Throwable e) {
-            return null;
-        }
+        return String.valueOf(ProcessHandle.current().pid());
     }
 
 }
