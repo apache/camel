@@ -257,7 +257,7 @@ public class SpringCamelContext extends DefaultCamelContext
     protected ModelJAXBContextFactory createModelJAXBContextFactory() {
         Optional<ModelJAXBContextFactory> result = ResolverHelper.resolveService(
                 getCamelContextReference(),
-                getBootstrapFactoryFinder(),
+                getCamelContextExtension().getBootstrapFactoryFinder(),
                 ModelJAXBContextFactory.FACTORY + "-spring",
                 ModelJAXBContextFactory.class);
 

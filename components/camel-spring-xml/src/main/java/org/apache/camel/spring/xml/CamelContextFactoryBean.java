@@ -318,15 +318,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     protected void findRouteBuildersByPackageScan(String[] packages, PackageScanFilter filter, List<RoutesBuilder> builders)
             throws Exception {
         // add filter to class resolver which then will filter
-        getContext().getPackageScanClassResolver().addFilter(filter);
+        getContext().getCamelContextExtension().getPackageScanClassResolver().addFilter(filter);
 
         PackageScanRouteBuilderFinder finder = new PackageScanRouteBuilderFinder(
                 getContext(), packages, getContextClassLoaderOnStart(),
-                getBeanPostProcessor(), getContext().getPackageScanClassResolver());
+                getBeanPostProcessor(), getContext().getCamelContextExtension().getPackageScanClassResolver());
         finder.appendBuilders(builders);
 
         // and remove the filter
-        getContext().getPackageScanClassResolver().removeFilter(filter);
+        getContext().getCamelContextExtension().getPackageScanClassResolver().removeFilter(filter);
     }
 
     @Override
@@ -348,7 +348,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
             }
             // register the bean post processor on camel context
             if (beanPostProcessor instanceof org.apache.camel.spi.CamelBeanPostProcessor) {
-                context.setBeanPostProcessor((org.apache.camel.spi.CamelBeanPostProcessor) beanPostProcessor);
+                context.getCamelContextExtension().setBeanPostProcessor((org.apache.camel.spi.CamelBeanPostProcessor) beanPostProcessor);
             }
         }
     }

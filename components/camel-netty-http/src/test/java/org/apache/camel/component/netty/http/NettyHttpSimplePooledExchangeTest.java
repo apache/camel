@@ -47,7 +47,7 @@ public class NettyHttpSimplePooledExchangeTest extends BaseNettyTest {
         ecc.getExchangeFactory().setStatisticsEnabled(true);
         ecc.getProcessorExchangeFactory().setStatisticsEnabled(true);
 
-        return (CamelContext) ecc;
+        return camelContext;
     }
 
     @Order(1)

@@ -58,7 +58,7 @@ class ErrorHandlerTest extends YamlTestSupport {
                 to('direct:start').withBody('hello').send()
             }
         then:
-            context.getErrorHandlerFactory() instanceof RefErrorHandlerDefinition
+            context.getCamelContextExtension().getErrorHandlerFactory() instanceof RefErrorHandlerDefinition
             MockEndpoint.assertIsSatisfied(context)
     }
 
@@ -72,7 +72,7 @@ class ErrorHandlerTest extends YamlTestSupport {
         when:
             context.start()
         then:
-            with(context.getErrorHandlerFactory(), RefErrorHandlerDefinition) {
+            with(context.getCamelContextExtension().getErrorHandlerFactory(), RefErrorHandlerDefinition) {
                 ref == 'myErrorHandler'
             }
     }
@@ -86,7 +86,7 @@ class ErrorHandlerTest extends YamlTestSupport {
         when:
         context.start()
         then:
-        with(context.getErrorHandlerFactory(), RefErrorHandlerDefinition) {
+        with(context.getCamelContextExtension().getErrorHandlerFactory(), RefErrorHandlerDefinition) {
             ref == 'myErrorHandler'
         }
     }
@@ -103,7 +103,7 @@ class ErrorHandlerTest extends YamlTestSupport {
         when:
             context.start()
         then:
-            with(context.getErrorHandlerFactory(), DeadLetterChannelDefinition) {
+            with(context.getCamelContextExtension().getErrorHandlerFactory(), DeadLetterChannelDefinition) {
                 deadLetterUri == 'mock:on-error'
                 redeliveryPolicy.maximumRedeliveries == "3"
             }
@@ -121,7 +121,7 @@ class ErrorHandlerTest extends YamlTestSupport {
         when:
         context.start()
         then:
-        with(context.getErrorHandlerFactory(), DefaultErrorHandlerDefinition) {
+        with(context.getCamelContextExtension().getErrorHandlerFactory(), DefaultErrorHandlerDefinition) {
             useOriginalMessage == "true"
             redeliveryPolicy.maximumRedeliveries == "2"
         }
@@ -136,7 +136,7 @@ class ErrorHandlerTest extends YamlTestSupport {
         when:
             context.start()
         then:
-            context.getErrorHandlerFactory() instanceof NoErrorHandlerDefinition
+            context.getCamelContextExtension().getErrorHandlerFactory() instanceof NoErrorHandlerDefinition
     }
 
 }
