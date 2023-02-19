@@ -14,24 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
+package org.apache.camel.processor;
 
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@ExtendWith(MockitoExtension.class)
-public class BeanProcessorOverloadedMethodsWithBracketsTest extends CamelTestSupport {
+public class BeanProcessorOverloadedMethodsWithBracketsTest extends ContextTestSupport {
 
     private final String strArgWithBrackets = ")(string_with_brackets()))())";
 
     @Test
-    public void testOverloadedMethodWithBracketsParams() throws InterruptedException {
+    public void testOverloadedMethodWithBracketsParams() {
         template.sendBody("direct:start", null);
         MockEndpoint mock = getMockEndpoint("mock:result");
         String receivedExchangeBody = mock.getExchanges().get(0).getMessage().getBody(String.class);
