@@ -634,11 +634,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     }
 
     private static String getPid() {
-        try {
-            return "" + ProcessHandle.current().pid();
-        } catch (Throwable e) {
-            return null;
-        }
+        return String.valueOf(ProcessHandle.current().pid());
     }
 
     private static File createLockFile(String name) {

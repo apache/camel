@@ -104,11 +104,7 @@ public final class RuntimeUtil {
     }
 
     public static String getPid() {
-        try {
-            return "" + ProcessHandle.current().pid();
-        } catch (Throwable e) {
-            return null;
-        }
+        return String.valueOf(ProcessHandle.current().pid());
     }
 
 }
