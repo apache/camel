@@ -50,7 +50,7 @@ class PooledExchangeTest extends ContextTestSupport {
         ecc.getExchangeFactory().setStatisticsEnabled(true);
         ecc.getProcessorExchangeFactory().setStatisticsEnabled(true);
 
-        return (CamelContext) ecc;
+        return camelContext;
     }
 
     @Test

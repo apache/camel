@@ -26,7 +26,7 @@ public class DefaultPackageScanResourceResolverTest {
     @Test
     public void testFileResourcesScan() throws Exception {
         final DefaultCamelContext ctx = new DefaultCamelContext();
-        final PackageScanResourceResolver resolver = ctx.getPackageScanResourceResolver();
+        final PackageScanResourceResolver resolver = ctx.getCamelContextExtension().getPackageScanResourceResolver();
 
         assertThat(resolver.findResources("file:src/test/resources/org/apache/camel/impl/engine/**/*.xml"))
                 .hasSize(4)

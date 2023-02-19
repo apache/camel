@@ -301,8 +301,8 @@ public class KameletMain extends MainCommandLineSupport {
         if (download) {
             ClassLoader dynamicCL = createApplicationContextClassLoader();
             answer.setApplicationContextClassLoader(dynamicCL);
-            answer.getPackageScanClassResolver().addClassLoader(dynamicCL);
-            answer.getPackageScanResourceResolver().addClassLoader(dynamicCL);
+            answer.getCamelContextExtension().getPackageScanClassResolver().addClassLoader(dynamicCL);
+            answer.getCamelContextExtension().getPackageScanResourceResolver().addClassLoader(dynamicCL);
 
             MavenDependencyDownloader downloader = new MavenDependencyDownloader();
             downloader.setClassLoader(dynamicCL);
@@ -433,10 +433,10 @@ public class KameletMain extends MainCommandLineSupport {
             answer.getCamelContextExtension().getRegistry().bind(DependencyDownloaderStrategy.class.getSimpleName(),
                     new DependencyDownloaderStrategy(answer));
             answer.setClassResolver(new DependencyDownloaderClassResolver(answer, known));
-            answer.setComponentResolver(new DependencyDownloaderComponentResolver(answer, stub));
-            answer.setUriFactoryResolver(new DependencyDownloaderUriFactoryResolver(answer));
+            answer.getCamelContextExtension().setComponentResolver(new DependencyDownloaderComponentResolver(answer, stub));
+            answer.getCamelContextExtension().setUriFactoryResolver(new DependencyDownloaderUriFactoryResolver(answer));
             answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer));
-            answer.setLanguageResolver(new DependencyDownloaderLanguageResolver(answer));
+            answer.getCamelContextExtension().setLanguageResolver(new DependencyDownloaderLanguageResolver(answer));
             answer.setResourceLoader(new DependencyDownloaderResourceLoader(answer));
             answer.setInjector(new KameletMainInjector(answer.getInjector(), stub));
             answer.addService(new DependencyDownloaderKamelet(answer));
