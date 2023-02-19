@@ -690,9 +690,9 @@ public abstract class CamelTestSupport
         boolean spring = hasClassAnnotation("org.springframework.boot.test.context.SpringBootTest",
                 "org.springframework.context.annotation.ComponentScan");
         if (!spring) {
-            context.getExtension(ExtendedCamelContext.class).getBeanPostProcessor().postProcessBeforeInitialization(this,
+            context.getCamelContextExtension().getBeanPostProcessor().postProcessBeforeInitialization(this,
                     getClass().getName());
-            context.getExtension(ExtendedCamelContext.class).getBeanPostProcessor().postProcessAfterInitialization(this,
+            context.getCamelContextExtension().getBeanPostProcessor().postProcessAfterInitialization(this,
                     getClass().getName());
         }
     }
