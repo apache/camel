@@ -139,7 +139,8 @@ public class NettyRedeliveryTest extends CamelTestSupport {
         // Override the error handler executor service such that we can track the tasks created
         CamelContext context = new DefaultCamelContext(createCamelRegistry()) {
 
-            public ScheduledExecutorService getErrorHandlerExecutorService() {
+            @Override
+            protected ScheduledExecutorService createErrorHandlerExecutorService() {
                 return getScheduledExecutorService();
             }
         };
