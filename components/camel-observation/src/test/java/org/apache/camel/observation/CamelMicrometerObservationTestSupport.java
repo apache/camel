@@ -60,6 +60,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class CamelMicrometerObservationTestSupport extends CamelTestSupport {
+    
+    private static final Logger LOG = LoggerFactory.getLogger(CamelMicrometerObservationTestSupport.class);
 
     static final AttributeKey<String> CAMEL_URI_KEY = AttributeKey.stringKey("camel-uri");
     static final AttributeKey<String> COMPONENT_KEY = AttributeKey.stringKey("component");
@@ -130,10 +132,10 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
     protected List<SpanData> verify(SpanTestData[] expected, boolean async) {
         List<SpanData> spans = inMemorySpanExporter.getFinishedSpanItems();
         spans.forEach(mockSpan -> {
-            System.out.println("Span: " + mockSpan);
-            System.out.println("\tComponent: " + mockSpan.getAttributes().get(COMPONENT_KEY));
-            System.out.println("\tTags: " + mockSpan.getAttributes());
-            System.out.println("\tLogs: ");
+            LOG.info("Span: " + mockSpan);
+            LOG.info("\tComponent: " + mockSpan.getAttributes().get(COMPONENT_KEY));
+            LOG.info("\tTags: " + mockSpan.getAttributes());
+            LOG.info("\tLogs: ");
 
         });
         assertEquals(expected.length, spans.size(), "Incorrect number of spans");
