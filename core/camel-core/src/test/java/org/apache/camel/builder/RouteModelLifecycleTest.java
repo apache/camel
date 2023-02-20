@@ -17,7 +17,6 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategySupport;
 import org.apache.camel.model.RouteDefinition;
 import org.junit.jupiter.api.Assertions;

@@ -626,22 +626,23 @@ public class RouteBuilderTest extends TestSupport {
         });
 
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            context.getCamelContextExtension().getRegistry().bind(UUID.randomUUID().toString(), new RouteBuilderLifecycleStrategy() {
-                @Override
-                public void beforeConfigure(RouteBuilder builder) {
-                    ordered.add("before-3");
-                }
+            context.getCamelContextExtension().getRegistry().bind(UUID.randomUUID().toString(),
+                    new RouteBuilderLifecycleStrategy() {
+                        @Override
+                        public void beforeConfigure(RouteBuilder builder) {
+                            ordered.add("before-3");
+                        }
 
-                @Override
-                public void afterConfigure(RouteBuilder builder) {
-                    ordered.add("after-3");
-                }
+                        @Override
+                        public void afterConfigure(RouteBuilder builder) {
+                            ordered.add("after-3");
+                        }
 
-                @Override
-                public int getOrder() {
-                    return Ordered.HIGHEST;
-                }
-            });
+                        @Override
+                        public int getOrder() {
+                            return Ordered.HIGHEST;
+                        }
+                    });
 
             context.addRoutes(builder);
 
