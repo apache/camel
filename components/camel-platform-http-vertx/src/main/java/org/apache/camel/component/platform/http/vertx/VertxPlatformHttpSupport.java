@@ -63,7 +63,7 @@ public final class VertxPlatformHttpSupport {
                 final String key = entry.getKey();
                 final Object value = entry.getValue();
                 // use an iterator as there can be multiple values. (must not use a delimiter)
-                final Iterator<?> it = ObjectHelper.createIterator(value, null);
+                final Iterator<?> it = ObjectHelper.createIterator(value, null, true);
 
                 String firstValue = null;
                 List<String> values = null;
