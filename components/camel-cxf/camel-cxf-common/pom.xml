@@ -141,6 +141,7 @@
                 <dependency>
                     <groupId>com.sun.xml.parsers</groupId>
                     <artifactId>jaxp-ri</artifactId>
+                    <version>${jaxp-ri-version}</version>
                 </dependency>
             </dependencies>
         </profile>
