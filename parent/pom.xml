@@ -2693,11 +2693,6 @@
 	    
 	    <!-- optional dependencies -->
             <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-jxc</artifactId>
-                <version>${jaxb-xjc-version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.sun.xml.parsers</groupId>
                 <artifactId>jaxp-ri</artifactId>
                 <version>1.4.5</version>
