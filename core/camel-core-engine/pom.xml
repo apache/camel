@@ -127,6 +127,7 @@
                                 <class>org.apache.camel.ExtendedCamelContext=org.apache.camel.impl.ExtendedCamelContext</class>
                                 <!-- we want to have configurer for RestConfiguration in camel-core-engine -->
                                 <class>org.apache.camel.spi.RestConfiguration=org.apache.camel.impl.RestConfiguration</class>
+                                <class>org.apache.camel.CamelContext=org.apache.camel.impl.CamelContext</class>
                             </classes>
                         </configuration>
                     </execution>
