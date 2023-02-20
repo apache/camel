@@ -2693,11 +2693,6 @@
 	    
 	    <!-- optional dependencies -->
             <dependency>
-                <groupId>stax</groupId>
-                <artifactId>stax-api</artifactId>
-                <version>${stax-api-version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
                 <version>${jaxb-impl-version}</version>
