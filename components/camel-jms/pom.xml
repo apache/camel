@@ -125,6 +125,7 @@
         <dependency>
             <groupId>org.apache.xbean</groupId>
             <artifactId>xbean-spring</artifactId>
+            <version>${xbean-spring-version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>

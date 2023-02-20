@@ -2749,12 +2749,6 @@
                 <version>${log4j2-version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.apache.xbean</groupId>
-                <artifactId>xbean-spring</artifactId>
-                <version>${xbean-spring-version}</version>
-            </dependency>
-
             <!-- spec jars -->
             <dependency>
                 <groupId>org.apache.geronimo.specs</groupId>
