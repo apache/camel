@@ -2690,25 +2690,8 @@
                 <artifactId>jackson-jr-objects</artifactId>
                 <version>${jackson2-version}</version>
             </dependency>
-
-            <!-- embedded concurrent lru map -->
-            <dependency>
-                <groupId>com.github.ben-manes.caffeine</groupId>
-                <artifactId>caffeine</artifactId>
-                <version>${caffeine-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.checkerframework</groupId>
-                        <artifactId>checker-qual</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.google.errorprone</groupId>
-                        <artifactId>error_prone_annotations</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- optional dependencies -->
+	    
+	    <!-- optional dependencies -->
             <dependency>
                 <groupId>stax</groupId>
                 <artifactId>stax-api</artifactId>
