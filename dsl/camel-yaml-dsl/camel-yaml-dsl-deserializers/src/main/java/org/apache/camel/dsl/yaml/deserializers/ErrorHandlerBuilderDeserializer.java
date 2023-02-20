@@ -18,7 +18,6 @@ package org.apache.camel.dsl.yaml.deserializers;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializationContext;
 import org.apache.camel.dsl.yaml.common.YamlDeserializerResolver;
 import org.apache.camel.dsl.yaml.common.exception.UnsupportedFieldException;

@@ -20,7 +20,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;

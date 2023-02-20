@@ -25,7 +25,6 @@ import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.dsl.yaml.common.exception.InvalidEndpointException;
 import org.apache.camel.dsl.yaml.common.exception.InvalidNodeTypeException;

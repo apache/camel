@@ -429,7 +429,8 @@ public class KameletMain extends MainCommandLineSupport {
             known.loadKnownDependencies();
             DependencyDownloaderPropertyBindingListener listener
                     = new DependencyDownloaderPropertyBindingListener(answer, known);
-            answer.getCamelContextExtension().getRegistry().bind(DependencyDownloaderPropertyBindingListener.class.getSimpleName(), listener);
+            answer.getCamelContextExtension().getRegistry()
+                    .bind(DependencyDownloaderPropertyBindingListener.class.getSimpleName(), listener);
             answer.getCamelContextExtension().getRegistry().bind(DependencyDownloaderStrategy.class.getSimpleName(),
                     new DependencyDownloaderStrategy(answer));
             answer.setClassResolver(new DependencyDownloaderClassResolver(answer, known));
@@ -440,7 +441,8 @@ public class KameletMain extends MainCommandLineSupport {
             answer.setResourceLoader(new DependencyDownloaderResourceLoader(answer));
             answer.setInjector(new KameletMainInjector(answer.getInjector(), stub));
             answer.addService(new DependencyDownloaderKamelet(answer));
-            answer.getCamelContextExtension().getRegistry().bind(DownloadModelineParser.class.getSimpleName(), new DownloadModelineParser(answer));
+            answer.getCamelContextExtension().getRegistry().bind(DownloadModelineParser.class.getSimpleName(),
+                    new DownloadModelineParser(answer));
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }

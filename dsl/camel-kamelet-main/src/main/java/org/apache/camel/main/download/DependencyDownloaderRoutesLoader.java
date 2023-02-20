@@ -18,7 +18,6 @@ package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.dsl.yaml.KameletRoutesBuilderLoader;
 import org.apache.camel.impl.engine.DefaultRoutesLoader;
 import org.apache.camel.spi.FactoryFinder;
