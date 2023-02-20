@@ -46,12 +46,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class CamelOpenTelemetryTestSupport extends CamelTestSupport {
-
     static final AttributeKey<String> CAMEL_URI_KEY = AttributeKey.stringKey("camel-uri");
     static final AttributeKey<String> COMPONENT_KEY = AttributeKey.stringKey("component");
     static final AttributeKey<String> PRE_KEY = AttributeKey.stringKey("pre");
     static final AttributeKey<String> POST_KEY = AttributeKey.stringKey("post");
     static final AttributeKey<String> MESSAGE_KEY = AttributeKey.stringKey("message");
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelOpenTelemetryTestSupport.class);
 
     private InMemorySpanExporter inMemorySpanExporter = InMemorySpanExporter.create();
     private SpanTestData[] expected;
@@ -95,10 +96,10 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
     protected List<SpanData> verify(SpanTestData[] expected, boolean async) {
         List<SpanData> spans = inMemorySpanExporter.getFinishedSpanItems();
         spans.forEach(mockSpan -> {
-            System.out.println("Span: " + mockSpan);
-            System.out.println("\tComponent: " + mockSpan.getAttributes().get(COMPONENT_KEY));
-            System.out.println("\tTags: " + mockSpan.getAttributes());
-            System.out.println("\tLogs: ");
+            LOG.info("Span: {}", mockSpan);
+            LOG.info("Component: {}", mockSpan.getAttributes().get(COMPONENT_KEY));
+            LOG.info("Tags: {}", mockSpan.getAttributes());
+            LOG.info("Logs: ");
 
         });
         assertEquals(expected.length, spans.size(), "Incorrect number of spans");
