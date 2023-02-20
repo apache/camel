@@ -2690,13 +2690,6 @@
                 <version>${jackson2-version}</version>
             </dependency>
 
-            <!-- abdera dependencies-->
-            <dependency>
-                <groupId>org.apache.abdera</groupId>
-                <artifactId>abdera-core</artifactId>
-                <version>${abdera-version}</version>
-            </dependency>
-
             <!-- commons dependencies -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
