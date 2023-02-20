@@ -143,7 +143,7 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
          */
         CamelMainContext build() throws Exception {
             final ModelCamelContext camelContext = new DefaultCamelContext();
-            final ExtendedCamelContext extendedCamelContext = camelContext.getExtension(ExtendedCamelContext.class);
+            final ExtendedCamelContext extendedCamelContext = camelContext.getCamelContextExtension();
             mockEndpointsIfNeeded(extendedCamelContext);
             configureShutdownTimeout(camelContext);
             configureDebuggerIfNeeded(camelContext);

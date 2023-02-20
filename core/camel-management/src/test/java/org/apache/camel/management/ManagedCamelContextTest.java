@@ -266,18 +266,18 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         Assertions.assertNotNull(xml);
 
         Assertions.assertTrue(xml.contains(
+                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"288\"/>"));
+        Assertions.assertTrue(xml.contains(
                 "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"289\"/>"));
         Assertions.assertTrue(xml.contains(
                 "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"290\"/>"));
-        Assertions.assertTrue(xml.contains(
-                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"291\"/>"));
 
+        Assertions.assertTrue(xml.contains(
+                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"292\"/>"));
         Assertions.assertTrue(xml.contains(
                 "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"293\"/>"));
         Assertions.assertTrue(xml.contains(
                 "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"294\"/>"));
-        Assertions.assertTrue(xml.contains(
-                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"295\"/>"));
     }
 
     @Override
