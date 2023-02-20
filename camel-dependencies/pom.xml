@@ -345,7 +345,7 @@
         <maven-assembly-plugin-version>3.4.2</maven-assembly-plugin-version>
         <maven-checkstyle-plugin-version>3.2.1</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>8.45.1</maven-checkstyle-version>
-        <maven-owasp-plugin-version>8.0.2</maven-owasp-plugin-version>
+        <maven-owasp-plugin-version>8.1.0</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.3.0</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.4.1</maven-javadoc-plugin-version>
         <maven-plugin-plugin-version>3.7.0</maven-plugin-plugin-version>
