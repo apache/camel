@@ -681,6 +681,39 @@ public class VertxPlatformHttpEngineTest {
         }
     }
 
+    @Test
+    public void responseHeaders() throws Exception {
+        final CamelContext context = createCamelContext();
+
+        try {
+            context.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() {
+                    from("platform-http:/test")
+                            .setHeader("nonEmptyFromRoute", constant("nonEmptyFromRouteValue"))
+                            .setHeader("emptyFromRoute", constant(""))
+                            .setBody().simple("Hello World");
+                }
+            });
+
+            context.start();
+
+            RestAssured.given()
+                    .header("nonEmpty", "nonEmptyValue")
+                    .header("empty", "")
+                    .get("/test")
+                    .then()
+                    .statusCode(200)
+                    .body(equalTo("Hello World"))
+                    .header("nonEmpty", "nonEmptyValue")
+                    .header("empty", "")
+                    .header("nonEmptyFromRoute", "nonEmptyFromRouteValue")
+                    .header("emptyFromRoute", "");
+        } finally {
+            context.stop();
+        }
+    }
+
     static CamelContext createCamelContext() throws Exception {
         return createCamelContext(null);
     }
