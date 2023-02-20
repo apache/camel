@@ -162,7 +162,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
             public void done(boolean doneSync) {
                 if (!isAggregateOnException() && resourceExchange.isFailed()) {
                     // copy resource exchange onto original exchange (preserving pattern)
-                    copyResultsPreservePattern(exchange, resourceExchange);
+                    copyResultsWithoutCorrelationId(exchange, resourceExchange);
                 } else {
                     prepareResult(exchange);
                     try {
@@ -173,7 +173,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
                         Exchange aggregatedExchange = aggregationStrategy.aggregate(exchange, resourceExchange);
                         if (aggregatedExchange != null) {
                             // copy aggregation result onto original exchange (preserving pattern)
-                            copyResultsPreservePattern(exchange, aggregatedExchange);
+                            copyResultsWithoutCorrelationId(exchange, aggregatedExchange);
                             // handover any synchronization (if unit of work is not shared)
                             if (resourceExchange != null && !isShareUnitOfWork()) {
                                 resourceExchange.adapt(ExtendedExchange.class).handoverCompletions(exchange);
@@ -262,12 +262,20 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
         ServiceHelper.stopService(aggregationStrategy, processorExchangeFactory, sendDynamicProcessor);
     }
 
+    private static void copyResultsWithoutCorrelationId(Exchange target, Exchange source) {
+        Object correlationId = source.removeProperty(ExchangePropertyKey.CORRELATION_ID);
+        copyResultsPreservePattern(target, source);
+        if (correlationId != null) {
+            source.setProperty(ExchangePropertyKey.CORRELATION_ID, correlationId);
+        }
+    }
+
     private static class CopyAggregationStrategy implements AggregationStrategy {
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (newExchange != null) {
-                copyResultsPreservePattern(oldExchange, newExchange);
+                copyResultsWithoutCorrelationId(oldExchange, newExchange);
             }
             return oldExchange;
         }
