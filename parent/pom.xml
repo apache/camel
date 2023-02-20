@@ -2694,11 +2694,6 @@
 	    <!-- optional dependencies -->
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-core</artifactId>
-                <version>${jaxb-core-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-jxc</artifactId>
                 <version>${jaxb-xjc-version}</version>
             </dependency>
