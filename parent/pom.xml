@@ -2750,12 +2750,6 @@
             </dependency>
 
             <!-- spec jars -->
-
-            <dependency>
-                <groupId>jakarta.persistence</groupId>
-                <artifactId>jakarta.persistence-api</artifactId>
-                <version>${jakarta-persistence-api-version}</version>
-            </dependency>
             <dependency>
                 <groupId>jakarta.transaction</groupId>
                 <artifactId>jakarta.transaction-api</artifactId>
