@@ -31,7 +31,7 @@ on:
 jobs:
   checkstyle:
     if: github.repository == 'apache/camel'
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
     - uses: actions/checkout@v3
       with:
@@ -45,7 +45,7 @@ jobs:
         java-version: 17
         cache: 'maven'
     - name: mvn checkstyle
-      run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l checkstyle.log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress  -Dcheckstyle.failOnViolation=true -e checkstyle:checkstyle
+      run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l checkstyle.log -Dmvnd.threads=3 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress  -Dcheckstyle.failOnViolation=true -e checkstyle:checkstyle
     - name: archive logs
       uses: actions/upload-artifact@v3
       if: always()
@@ -66,7 +66,7 @@ jobs:
     if: github.repository == 'apache/camel'
     permissions:
       issues: write
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     strategy:
       matrix:
         java: [ '17' ]
@@ -75,8 +75,8 @@ jobs:
         with:
           persist-credentials: false
           fetch-depth: 0
-      - id: install-packages
-        uses: ./.github/actions/install-packages
+#      - id: install-packages
+#        uses: ./.github/actions/install-packages
       - id: install-mvnd
         uses: ./.github/actions/install-mvnd
       - name: Set up JDK ${{ matrix.java }}
@@ -86,7 +86,7 @@ jobs:
           java-version: ${{ matrix.java }}
           cache: 'maven'
       - name: maven build
-        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l build.log -Dmvnd.threads=2 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -e -Pfastinstall -DskipTests install
+        run: ${{ steps.install-mvnd.outputs.mvnd-dir }}/mvnd -l build.log -Dmvnd.threads=3 -V -Dhttp.keepAlive=false -Dmaven.wagon.http.pool=false -Dmaven.wagon.httpconnectionManager.ttlSeconds=120 --no-transfer-progress -e -Pfastinstall -DskipTests install
       - name: archive logs
         uses: actions/upload-artifact@v3
         if: always()
