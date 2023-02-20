@@ -5,7 +5,7 @@
     "title": "DHIS2",
     "description": "Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web API.",
     "deprecated": false,
-    "firstVersion": "3.21.0",
+    "firstVersion": "4.0.0-SNAPSHOT",
     "label": "api",
     "javaType": "org.apache.camel.component.dhis2.Dhis2Component",
     "supportLevel": "Stable",
