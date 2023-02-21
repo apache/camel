@@ -31,7 +31,7 @@ public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
 
     @Override
     public String getComponent() {
-        return "elasticsearch-rest";
+        return "elasticsearch";
     }
 
     @Override
