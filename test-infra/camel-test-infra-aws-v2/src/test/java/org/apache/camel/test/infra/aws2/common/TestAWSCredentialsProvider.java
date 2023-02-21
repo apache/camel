@@ -21,7 +21,7 @@ import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 
 public class TestAWSCredentialsProvider implements AwsCredentialsProvider {
     public static final TestAWSCredentialsProvider CONTAINER_LOCAL_DEFAULT_PROVIDER
-            = new TestAWSCredentialsProvider("accesskey", "secretkey");
+            = new TestAWSCredentialsProvider("accesskey", "randomatleast16bytes");
 
     private AwsCredentials credentials;
 
