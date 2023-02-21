@@ -201,19 +201,69 @@ public abstract class AbstractCamelContext extends BaseService
         implements CamelContext, CatalogCamelContext, Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContext.class);
-    private final DefaultCamelContextExtension camelContextExtension = new DefaultCamelContextExtension(this);
 
     // start auto assigning route ids using numbering 1000 and upwards
+    final List<Service> servicesToStop = new CopyOnWriteArrayList<>();
+    final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
+    final Map<String, FactoryFinder> bootstrapFactories = new ConcurrentHashMap<>();
+    volatile FactoryFinder bootstrapFactoryFinder;
+    volatile ConfigurerResolver bootstrapConfigurerResolver;
+    final Object lock = new Object();
+    final RouteController internalRouteController = new InternalRouteController(this);
+    volatile DeferServiceFactory deferServiceFactory;
+    volatile AnnotationBasedProcessorFactory annotationBasedProcessorFactory;
+    volatile ExchangeFactoryManager exchangeFactoryManager;
+    volatile ExchangeFactory exchangeFactory;
+    volatile ProcessorExchangeFactory processorExchangeFactory;
+    volatile ReactiveExecutor reactiveExecutor;
+    volatile Registry registry;
+    volatile CamelBeanPostProcessor beanPostProcessor;
+    volatile CamelDependencyInjectionAnnotationFactory dependencyInjectionAnnotationFactory;
+    volatile ComponentResolver componentResolver;
+    volatile ComponentNameResolver componentNameResolver;
+    volatile LanguageResolver languageResolver;
+    volatile ConfigurerResolver configurerResolver;
+    volatile UriFactoryResolver uriFactoryResolver;
+    volatile DataFormatResolver dataFormatResolver;
+    volatile HealthCheckResolver healthCheckResolver;
+    volatile DevConsoleResolver devConsoleResolver;
+    volatile ManagementStrategy managementStrategy;
+    volatile ManagementMBeanAssembler managementMBeanAssembler;
+    volatile HeadersMapFactory headersMapFactory;
+    volatile CliConnectorFactory cliConnectorFactory;
+    volatile BeanProxyFactory beanProxyFactory;
+    volatile BeanProcessorFactory beanProcessorFactory;
+    volatile RoutesLoader routesLoader;
+    volatile ResourceLoader resourceLoader;
+    volatile ModelToXMLDumper modelToXMLDumper;
+    volatile RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory;
+    volatile RuntimeCamelCatalog runtimeCamelCatalog;
+    volatile PackageScanClassResolver packageScanClassResolver;
+    volatile PackageScanResourceResolver packageScanResourceResolver;
+    volatile NodeIdFactory nodeIdFactory;
+    volatile ModelineFactory modelineFactory;
+    volatile ProcessorFactory processorFactory;
+    volatile PeriodTaskResolver periodTaskResolver;
+    volatile PeriodTaskScheduler periodTaskScheduler;
+    volatile InternalProcessorFactory internalProcessorFactory;
+    volatile InterceptEndpointFactory interceptEndpointFactory;
+    volatile RouteFactory routeFactory;
+    volatile FactoryFinderResolver factoryFinderResolver;
+    volatile AsyncProcessorAwaitManager asyncProcessorAwaitManager;
+    volatile ModelJAXBContextFactory modelJAXBContextFactory;
+    volatile UnitOfWorkFactory unitOfWorkFactory;
+    volatile ScheduledExecutorService errorHandlerExecutorService;
+    volatile BeanIntrospection beanIntrospection;
+    volatile boolean eventNotificationApplicable;
+    volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
     int defaultRouteStartupOrder = 1000;
 
+    private final DefaultCamelContextExtension camelContextExtension = new DefaultCamelContextExtension(this);
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<>();
-
     private final GlobalEndpointConfiguration globalEndpointConfiguration = new DefaultGlobalEndpointConfiguration();
     private final Map<String, Component> components = new ConcurrentHashMap<>();
     private final Set<Route> routes = new LinkedHashSet<>();
-    final List<Service> servicesToStop = new CopyOnWriteArrayList<>();
-    final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
     private final List<StartupListener> startupListeners = new CopyOnWriteArrayList<>();
     private final DeferServiceStartupListener deferStartupListener = new DeferServiceStartupListener();
     private final Map<String, Language> languages = new ConcurrentHashMap<>();
@@ -221,21 +271,12 @@ public abstract class AbstractCamelContext extends BaseService
     private final List<LifecycleStrategy> lifecycleStrategies = new CopyOnWriteArrayList<>();
     private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<>();
     private final ThreadLocal<Boolean> isLockModel = new ThreadLocal<>();
-    final Map<String, FactoryFinder> bootstrapFactories = new ConcurrentHashMap<>();
-    volatile FactoryFinder bootstrapFactoryFinder;
-    volatile ConfigurerResolver bootstrapConfigurerResolver;
     private final Map<String, RouteService> routeServices = new LinkedHashMap<>();
     private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<>();
-    final Object lock = new Object();
-    final RouteController internalRouteController = new InternalRouteController(this);
     private final InternalRouteStartupManager internalRouteStartupManager = new InternalRouteStartupManager(this);
-    volatile DeferServiceFactory deferServiceFactory;
-    volatile AnnotationBasedProcessorFactory annotationBasedProcessorFactory;
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<>();
-
     private final StopWatch stopWatch = new StopWatch(false);
     private final Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
-
     private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(() -> new HashSet<>());
     private VetoCamelContextStartException vetoed;
     private String managementName;
@@ -276,73 +317,27 @@ public abstract class AbstractCamelContext extends BaseService
     private Boolean caseInsensitiveHeaders = Boolean.TRUE;
     private Boolean autowiredEnabled = Boolean.TRUE;
     private Long delay;
-
     private Map<String, String> globalOptions = new HashMap<>();
     private volatile String version;
     private volatile PropertiesComponent propertiesComponent;
     private volatile CamelContextNameStrategy nameStrategy;
-
-    volatile ExchangeFactoryManager exchangeFactoryManager;
-    volatile ExchangeFactory exchangeFactory;
-    volatile ProcessorExchangeFactory processorExchangeFactory;
-    volatile ReactiveExecutor reactiveExecutor;
     private volatile ManagementNameStrategy managementNameStrategy;
-    volatile Registry registry;
     private volatile TypeConverter typeConverter;
     private volatile TypeConverterRegistry typeConverterRegistry;
     private volatile Injector injector;
-    volatile CamelBeanPostProcessor beanPostProcessor;
-    volatile CamelDependencyInjectionAnnotationFactory dependencyInjectionAnnotationFactory;
-    volatile ComponentResolver componentResolver;
-    volatile ComponentNameResolver componentNameResolver;
-    volatile LanguageResolver languageResolver;
-    volatile ConfigurerResolver configurerResolver;
-    volatile UriFactoryResolver uriFactoryResolver;
-    volatile DataFormatResolver dataFormatResolver;
-    volatile HealthCheckResolver healthCheckResolver;
-    volatile DevConsoleResolver devConsoleResolver;
-    volatile ManagementStrategy managementStrategy;
-    volatile ManagementMBeanAssembler managementMBeanAssembler;
     private volatile RestRegistryFactory restRegistryFactory;
     private volatile RestRegistry restRegistry;
-    volatile HeadersMapFactory headersMapFactory;
-    volatile CliConnectorFactory cliConnectorFactory;
-    volatile BeanProxyFactory beanProxyFactory;
-    volatile BeanProcessorFactory beanProcessorFactory;
-    volatile RoutesLoader routesLoader;
-    volatile ResourceLoader resourceLoader;
-    volatile ModelToXMLDumper modelToXMLDumper;
-    volatile RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory;
-    volatile RuntimeCamelCatalog runtimeCamelCatalog;
     private volatile ClassResolver classResolver;
-    volatile PackageScanClassResolver packageScanClassResolver;
-    volatile PackageScanResourceResolver packageScanResourceResolver;
-    volatile NodeIdFactory nodeIdFactory;
-    volatile ModelineFactory modelineFactory;
-    volatile ProcessorFactory processorFactory;
-    volatile PeriodTaskResolver periodTaskResolver;
-    volatile PeriodTaskScheduler periodTaskScheduler;
-    volatile InternalProcessorFactory internalProcessorFactory;
-    volatile InterceptEndpointFactory interceptEndpointFactory;
-    volatile RouteFactory routeFactory;
     private volatile MessageHistoryFactory messageHistoryFactory;
-    volatile FactoryFinderResolver factoryFinderResolver;
     private volatile StreamCachingStrategy streamCachingStrategy;
     private volatile InflightRepository inflightRepository;
-    volatile AsyncProcessorAwaitManager asyncProcessorAwaitManager;
     private volatile ShutdownStrategy shutdownStrategy;
-    volatile ModelJAXBContextFactory modelJAXBContextFactory;
     private volatile ExecutorServiceManager executorServiceManager;
     private volatile UuidGenerator uuidGenerator;
-    volatile UnitOfWorkFactory unitOfWorkFactory;
     private volatile RouteController routeController;
-    volatile ScheduledExecutorService errorHandlerExecutorService;
-    volatile BeanIntrospection beanIntrospection;
     private volatile Tracer tracer;
-    volatile boolean eventNotificationApplicable;
     private volatile TransformerRegistry<TransformerKey> transformerRegistry;
     private volatile ValidatorRegistry<ValidatorKey> validatorRegistry;
-    volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
     private EndpointRegistry<NormalizedUri> endpoints;
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
     private ShutdownRoute shutdownRoute = ShutdownRoute.Default;
@@ -1633,7 +1628,7 @@ public abstract class AbstractCamelContext extends BaseService
                 IOHelper.close(inputStream);
             }
         }
-        // special for ActiveMQ as it is really just JMS
+
         return null;
     }
 
