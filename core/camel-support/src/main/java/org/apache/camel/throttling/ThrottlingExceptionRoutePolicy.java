@@ -115,6 +115,15 @@ public class ThrottlingExceptionRoutePolicy extends RoutePolicySupport implement
     }
 
     @Override
+    protected void doStop() throws Exception {
+        Timer timer = halfOpenTimer;
+        if (timer != null) {
+            timer.cancel();
+            halfOpenTimer = null;
+        }
+    }
+
+    @Override
     public void onExchangeDone(Route route, Exchange exchange) {
         if (keepOpen.get()) {
             if (state.get() != STATE_OPEN) {

@@ -27,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.support.processor.CamelLogProcessor;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -35,6 +36,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class LogEndpointTest extends ContextTestSupport {
 
     private static Exchange logged;
+
+    @AfterAll
+    public static void clean() {
+        logged = null;
+    }
 
     private static class MyLogger extends CamelLogProcessor {
 

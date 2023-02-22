@@ -36,14 +36,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SimpleEventNotifierEventsTest {
 
-    private static List<CamelEvent> events = new ArrayList<>();
+    private final List<CamelEvent> events = new ArrayList<>();
 
     private CamelContext context;
     private ProducerTemplate template;
 
     @BeforeEach
     public void setUp() throws Exception {
-        events.clear();
         context = createCamelContext();
         context.addRoutes(createRouteBuilder());
         template = context.createProducerTemplate();

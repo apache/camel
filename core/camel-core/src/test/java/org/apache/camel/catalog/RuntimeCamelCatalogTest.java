@@ -23,6 +23,7 @@ import java.util.Objects;
 import org.apache.camel.catalog.impl.DefaultRuntimeCamelCatalog;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.tooling.model.ComponentModel;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -38,6 +39,11 @@ public class RuntimeCamelCatalogTest {
     public static void createCamelCatalog() {
         catalog = new DefaultRuntimeCamelCatalog();
         catalog.setCamelContext(new DefaultCamelContext());
+    }
+
+    @AfterAll
+    public static void cleanCamelCatalog() {
+        catalog = null;
     }
 
     @Test

@@ -286,6 +286,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <!-- skip file stress tests as they are intended to run manually -->
+                    <argLine>${camel.surefire.fork.vmargs} -Xmx2G -XX:+HeapDumpOnOutOfMemoryError -XX:OnOutOfMemoryError="jcmd %p Thread.print" -XX:+UnlockDiagnosticVMOptions -XX:+LogVMOutput -XX:LogFile=jvm.log</argLine>
                     <excludes>
                         <exclude>org/apache/camel/component/file/stress/**.java</exclude>
                         <exclude>**/DistributedCompletionIntervalTest.java</exclude>
