@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CamelProduceInterfaceEventNotifierTest extends ContextTestSupport {
 
-    private static List<CamelEvent> events = new ArrayList<>();
+    private final List<CamelEvent> events = new ArrayList<>();
 
     private CamelBeanPostProcessor postProcessor;
 

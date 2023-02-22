@@ -24,22 +24,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Service;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class EventNotifierServiceStoppingFailedEventTest extends ContextTestSupport {
 
-    private static List<CamelEvent> events = new ArrayList<>();
     private static String stopOrder;
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        events.clear();
-        super.setUp();
-    }
+    private final List<CamelEvent> events = new ArrayList<>();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

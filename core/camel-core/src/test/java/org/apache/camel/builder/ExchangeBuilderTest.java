@@ -21,22 +21,34 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ExchangeBuilderTest {
-    private static final CamelContext CONTEXT = new DefaultCamelContext();
+    private static CamelContext context;
     private static final String BODY = "Message Body";
     private static final String KEY = "Header key";
     private static final String VALUE = "Header value";
     private static final String PROPERTY_KEY = "Property key";
     private static final String PROPERTY_VALUE = "Property value";
 
+    @BeforeAll
+    public static void init() {
+        context = new DefaultCamelContext();
+    }
+
+    @AfterAll
+    public static void destroy() {
+        context = null;
+    }
+
     @Test
     public void testBuildAnExchangeWithDefaultPattern() {
-        Exchange exchange = new DefaultExchange(CONTEXT);
-        Exchange builtExchange = ExchangeBuilder.anExchange(CONTEXT).build();
+        Exchange exchange = new DefaultExchange(context);
+        Exchange builtExchange = ExchangeBuilder.anExchange(context).build();
 
         assertEquals(exchange.getPattern(), builtExchange.getPattern());
     }
@@ -44,7 +56,7 @@ public class ExchangeBuilderTest {
     @Test
     public void testBuildAnExchangeWithBodyHeaderAndPatternInOnly() throws Exception {
 
-        Exchange exchange = ExchangeBuilder.anExchange(CONTEXT).withBody(BODY).withHeader(KEY, VALUE)
+        Exchange exchange = ExchangeBuilder.anExchange(context).withBody(BODY).withHeader(KEY, VALUE)
                 .withProperty(PROPERTY_KEY, PROPERTY_VALUE).withPattern(ExchangePattern.InOnly)
                 .build();
 
@@ -57,7 +69,7 @@ public class ExchangeBuilderTest {
     @Test
     public void testBuildAnExchangeWithBodyHeaderAndPatternInOut() throws Exception {
 
-        Exchange exchange = ExchangeBuilder.anExchange(CONTEXT).withBody(BODY).withHeader(KEY, VALUE)
+        Exchange exchange = ExchangeBuilder.anExchange(context).withBody(BODY).withHeader(KEY, VALUE)
                 .withProperty(PROPERTY_KEY, PROPERTY_VALUE).withPattern(ExchangePattern.InOut)
                 .build();
 

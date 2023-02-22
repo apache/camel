@@ -25,7 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,20 +32,12 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class MultipleEventNotifierEventsTest extends ContextTestSupport {
 
-    private static List<CamelEvent> events = new ArrayList<>();
-    private static List<CamelEvent> events2 = new ArrayList<>();
+    private final List<CamelEvent> events = new ArrayList<>();
+    private final List<CamelEvent> events2 = new ArrayList<>();
 
     @Override
     protected boolean useJmx() {
         return true;
-    }
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        events.clear();
-        events2.clear();
-        super.setUp();
     }
 
     @Override

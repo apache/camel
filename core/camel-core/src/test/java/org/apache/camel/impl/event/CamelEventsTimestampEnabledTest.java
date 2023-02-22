@@ -27,19 +27,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class CamelEventsTimestampEnabledTest extends ContextTestSupport {
 
-    private static List<CamelEvent> events = new ArrayList<>();
-
-    @Override
-    @BeforeEach
-    public void setUp() throws Exception {
-        events.clear();
-        super.setUp();
-    }
+    private final List<CamelEvent> events = new ArrayList<>();
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
