@@ -74,7 +74,7 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
         try {
             doNotify(event);
         } catch (Exception e) {
-            LOG.warn("Error during processing CamelEvent: " + event + ". This exception is ignored.", e);
+            LOG.warn("Error during processing CamelEvent: {}. This exception is ignored.", event, e);
         }
     }
 
