@@ -238,6 +238,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
+            <version>${spring-version}</version>
             <scope>test</scope>
         </dependency>
 
