@@ -290,10 +290,9 @@ completions
 * any other completion are not used (such as by size, from batch consumer etc)
 * _eagerCheckCompletion_ is implied as `true`, but the option has no effect
 
-=== CompletionAwareAggregationStrategy
+=== onCompletion
 
-If your aggregation strategy implements
-`CompletionAwareAggregationStrategy`, then Camel will invoke the
+Camel will invoke the
 `onComplete` method when the aggregated `Exchange` is completed. This
 allows you to do any last minute custom logic such as to clean up some
 resources, or additional work on the exchange as it's now completed.
