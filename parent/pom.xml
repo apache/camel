@@ -2748,11 +2748,6 @@
             </dependency>
 
             <!-- spec jars -->
-            <dependency>
-                <groupId>jakarta.servlet</groupId>
-                <artifactId>jakarta.servlet-api</artifactId>
-                <version>${jakarta-servlet-api-version}</version>
-            </dependency>
             <!-- Optional Spring Support -->
             <dependency>
                 <groupId>org.springframework</groupId>
