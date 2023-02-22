@@ -141,7 +141,6 @@
         <gmavenplus-plugin-version>1.11.1</gmavenplus-plugin-version>
         <groovy-version>3.0.15</groovy-version>
         <cyclonedx-maven-plugin-version>2.7.5</cyclonedx-maven-plugin-version>
-        <antrun-maven-plugin-version>3.1.0</antrun-maven-plugin-version>
 
         <camel.javadoc.offline>false</camel.javadoc.offline>
     </properties>
@@ -856,6 +855,7 @@
                    <inherited>false</inherited>
                    <configuration>
                         <outputName>camel-sbom</outputName>
+                        <outputDirectory>${project.basedir}/camel-sbom/</outputDirectory>
                    </configuration>
                    <executions>
                        <execution>
@@ -864,26 +864,6 @@
                                <goal>makeAggregateBom</goal>
                            </goals>
                       </execution>
-                   </executions>
-                </plugin>
-                <plugin>
-                     <groupId>org.apache.maven.plugins</groupId>
-                     <artifactId>maven-antrun-plugin</artifactId>
-                     <version>${antrun-maven-plugin-version}</version>
-                     <inherited>false</inherited>
-                     <executions>
-                         <execution>
-                             <phase>package</phase>
-                             <configuration>
-                                 <target>
-                                     <copy file="${project.build.directory}/camel-sbom.json" todir="${project.basedir}/camel-sbom/" />
-                                     <copy file="${project.build.directory}/camel-sbom.xml" todir="${project.basedir}/camel-sbom/" />
-                                 </target>
-                             </configuration>
-                             <goals>
-                                 <goal>run</goal>
-                             </goals>
-                         </execution>
                    </executions>
                 </plugin>
             </plugins>
