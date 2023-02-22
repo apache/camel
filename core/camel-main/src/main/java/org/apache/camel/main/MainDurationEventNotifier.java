@@ -102,7 +102,9 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
 
         if (maxMessages > 0 && complete) {
             boolean result = doneMessages.incrementAndGet() >= maxMessages;
-            LOG.trace("Duration max messages check {} >= {} -> {}", doneMessages.get(), maxMessages, result);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Duration max messages check {} >= {} -> {}", doneMessages.get(), maxMessages, result);
+            }
 
             if (result && shutdownStrategy.isRunAllowed()) {
                 if ("shutdown".equalsIgnoreCase(action)) {
