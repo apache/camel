@@ -37,7 +37,7 @@
         <dependency>
             <groupId>org.hisp.dhis.integration.sdk</groupId>
             <artifactId>dhis2-java-sdk</artifactId>
-            <version>1.0.0-RC4-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
