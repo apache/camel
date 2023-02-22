@@ -67,6 +67,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
+            <version>${spring-version}</version>
         </dependency>
         <!-- either use JMS 1.1 or 2.0 provided by JMS client -->
         <!-- here we use JMS 2.0 API but using JMS 1.1 should work as well -->
