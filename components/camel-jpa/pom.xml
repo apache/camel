@@ -102,6 +102,7 @@
         <dependency>
             <groupId>jakarta.transaction</groupId>
             <artifactId>jakarta.transaction-api</artifactId>
+            <version>${jakarta-transaction-api-version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
