@@ -2754,23 +2754,6 @@
                 <version>${slf4j-version}</version>
             </dependency>
 
-            <!-- httpcomponents httpclient dependencies -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>${httpclient4-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient-cache</artifactId>
-                <version>${httpclient4-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpmime</artifactId>
-                <version>${httpclient4-version}</version>
-            </dependency>
-
             <!-- httpcomponents httpasyncclient dependencies -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
