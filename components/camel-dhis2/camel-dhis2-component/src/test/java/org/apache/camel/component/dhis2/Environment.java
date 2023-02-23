@@ -33,9 +33,8 @@ import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 import org.testcontainers.utility.DockerImageName;
 
 public final class Environment {
-    private Environment() {
 
-    }
+    public static final String ORG_UNIT_ID;
 
     private static final Network NETWORK = Network.newNetwork();
 
@@ -45,7 +44,9 @@ public final class Environment {
 
     private static final Dhis2Client DHIS2_CLIENT;
 
-    public static final String ORG_UNIT_ID;
+    private Environment() {
+
+    }
 
     static {
         POSTGRESQL_CONTAINER = new PostgreSQLContainer<>(
