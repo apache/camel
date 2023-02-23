@@ -2754,14 +2754,6 @@
                 <version>${slf4j-version}</version>
             </dependency>
 
-            <!-- httpcomponents httpasyncclient dependencies -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpasyncclient</artifactId>
-                <version>${httpasyncclient-version}</version>
-            </dependency>
-
-
             <!-- optional scripting support -->
             <dependency>
                 <groupId>org.codehaus.groovy</groupId>
