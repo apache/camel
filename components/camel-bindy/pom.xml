@@ -32,7 +32,7 @@
     <description>Camel Bindy data format support</description>
 
     <properties>
-        <camel.surefire.fork.vmargs>-XX:+ExitOnOutOfMemoryError -Duser.language=en -Duser.region=GB</camel.surefire.fork.vmargs>
+        <camel.surefire.fork.vmargs>-XX:+ExitOnOutOfMemoryError -XX:+HeapDumpOnOutOfMemoryError -Duser.language=en -Duser.region=GB</camel.surefire.fork.vmargs>
         <camel.surefire.parallel>true</camel.surefire.parallel>
     </properties>
 
