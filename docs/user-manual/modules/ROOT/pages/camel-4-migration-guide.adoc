@@ -31,15 +31,15 @@ The following components has been removed:
 | camel-ipfs                           | none
 | camel-jbpm                           | none
 | camel-jclouds                        | none
-| camel-johnzon                        | camel-jackson / camel-fastjson / camel-gson
-| camel-microprofile-metrics           | camel-opentelemtry
+| camel-johnzon                        | camel-jackson, camel-fastjson, camel-gson
+| camel-microprofile-metrics           | camel-micrometer, camel-opentelemtry
 | camel-milo                           | none
-| camel-opentracing                    | camel-opentelemtry
+| camel-opentracing                    | camel-micrometer, camel-opentelemtry
 | camel-optaplanner                    | none
 | camel-rabbitmq                       | spring-rabbitmq-component
 | camel-rest-swagger                   | camel-openapi-rest
 | camel-restdsl-swagger-plugin         | camel-restdsl-openapi-plugin
-| camel-resteasy                       | camel-rest
+| camel-resteasy                       | camel-cxf, camel-rest
 | camel-spark                          | none
 | camel-spring-integration             | none
 | camel-swift                          | none
@@ -48,7 +48,7 @@ The following components has been removed:
 | camel-websocket-jsr356               | camel-vertx-websocket
 | camel-vertx-kafka                    | camel-kafka
 | camel-xstream                        | camel-jacksonxml
-| camel-zipkin                         | camel-opentelemtry
+| camel-zipkin                         | camel-micrometer, camel-opentelemtry
 |===
 
 == Logging
