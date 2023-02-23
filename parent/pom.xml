@@ -358,7 +358,7 @@
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
         <metrics-version>4.2.15</metrics-version>
-        <micrometer-version>1.10.3</micrometer-version>
+        <micrometer-version>1.10.4</micrometer-version>
         <microprofile-config-version>3.0.2</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.0.2</microprofile-fault-tolerance-version>
         <milo-version>0.6.8</milo-version>
@@ -418,8 +418,8 @@
         <quartz-version>2.3.2</quartz-version>
         <quickfixj-version>2.3.1</quickfixj-version>
         <reactive-streams-version>1.0.4</reactive-streams-version>
-        <reactor-version>3.5.2</reactor-version>
-        <reactor-netty-version>1.1.1</reactor-netty-version>
+        <reactor-version>3.5.3</reactor-version>
+        <reactor-netty-version>1.1.3</reactor-netty-version>
         <redisson-version>3.16.7</redisson-version>
         <resilience4j-version>2.0.2</resilience4j-version>
         <rest-assured-version>5.3.0</rest-assured-version>
@@ -449,14 +449,14 @@
         <spark-version>3.3.1</spark-version>
         <splunk-version>1.9.0_1</splunk-version>
         <spock-version>2.1-groovy-3.0</spock-version>
-        <spring-batch-version>4.3.7</spring-batch-version>
+        <spring-batch-version>4.3.8</spring-batch-version>
         <spring-data-redis-version>2.6.2</spring-data-redis-version>
         <spring-ldap-version>2.4.1</spring-ldap-version>
         <spring-vault-core-version>3.0.0</spring-vault-core-version>
-        <spring-version>6.0.4</spring-version>
+        <spring-version>6.0.5</spring-version>
         <spring-rabbitmq-version>3.0.0</spring-rabbitmq-version>
-        <spring-security-version>6.0.1</spring-security-version>
-        <spring-ws-version>4.0.1</spring-ws-version>
+        <spring-security-version>6.0.2</spring-security-version>
+        <spring-ws-version>4.0.2</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okio-version>1.17.2</squareup-okio-version>
