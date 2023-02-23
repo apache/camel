@@ -18,36 +18,37 @@ The following components has been removed:
 
 [options="header"]
 |===
-| Component | Reason | Alternative component(s)                                           
-| camel-activemq               |        | camel-jms / camel-sjms / camel-amqp                        
-| camel-any23                  |        |                                                        
-| camel-atmos                  |        |                                                        
-| camel-caffeine-lrucache      |        |                                                        
-| camel-cdi                    |        |                                                        
-| camel-elasticsearch-rest     |        | elasticsearch-component                                
-| camel-gora                   |        |                                                        
-| camel-hbase                  |        |                                                        
-| camel-iota                   |        |                                                        
-| camel-ipfs                   |        |                                                        
-| camel-jbpm                   |        |                                                        
-| camel-jclouds                |        |                                                        
-| camel-johnzon                |        | jackson-dataformat / fastjson-dataformat / gson-dataformat 
-| camel-microprofile-metrics   |        |                                                        
-| camel-milo                   |        |                                                        
-| camel-opentracing            |        |                                                        
-| camel-optaplanner            |        |                                                        
-| camel-rabbitmq               |        | spring-rabbitmq-component                              
-| camel-rest-swagger           |        | openapi-rest                                           
-| camel-restdsl-swagger-plugin |        |                                                        
-| camel-resteasy               |        | camel-rest                                             
-| camel-spark                  |        |                                                        
-| camel-spring-integration     |        |                                                        
-| camel-swift                  |        |                                                        
-| camel-swagger-java           |        | openapi-java                                           
-| camel-websocket              |        | vertx-websocket                                        
-| camel-websocket-jsr356       |        | vertx-websocket                                        
-| camel-xstream                |        | jacksonXml-dataformat                                  
-| camel-zipkin                 |        |                                                        
+| Component | Alternative component(s)
+| camel-activemq                       | camel-jms, camel-sjms, camel-amqp
+| camel-any23                          | none
+| camel-atmos                          | none
+| camel-caffeine-lrucache              | camel-cache, camel-ignite, camel-infinispan
+| camel-cdi                            | camel-spring-boot, camel-quarkus
+| camel-elasticsearch-rest             | camel-elasticsearch
+| camel-gora                           | none
+| camel-hbase                          | none
+| camel-iota                           | none
+| camel-ipfs                           | none
+| camel-jbpm                           | none
+| camel-jclouds                        | none
+| camel-johnzon                        | camel-jackson / camel-fastjson / camel-gson
+| camel-microprofile-metrics           | camel-opentelemtry
+| camel-milo                           | none
+| camel-opentracing                    | camel-opentelemtry
+| camel-optaplanner                    | none
+| camel-rabbitmq                       | spring-rabbitmq-component
+| camel-rest-swagger                   | camel-openapi-rest
+| camel-restdsl-swagger-plugin         | camel-restdsl-openapi-plugin
+| camel-resteasy                       | camel-rest
+| camel-spark                          | none
+| camel-spring-integration             | none
+| camel-swift                          | none
+| camel-swagger-java                   | camel-openapi-java
+| camel-websocket                      | camel-vertx-websocket
+| camel-websocket-jsr356               | camel-vertx-websocket
+| camel-vertx-kafka                    | camel-kafka
+| camel-xstream                        | camel-jacksonxml
+| camel-zipkin                         | camel-opentelemtry
 |===
 
 == Logging
