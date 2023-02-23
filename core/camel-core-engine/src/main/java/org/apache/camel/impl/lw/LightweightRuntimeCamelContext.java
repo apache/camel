@@ -25,8 +25,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
@@ -35,19 +33,15 @@ import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
-import org.apache.camel.ExchangeConstantProvider;
 import org.apache.camel.Experimental;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.GlobalEndpointConfiguration;
 import org.apache.camel.IsSingleton;
-import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RouteTemplateContext;
@@ -61,89 +55,38 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.ValueHolder;
-import org.apache.camel.catalog.RuntimeCamelCatalog;
-import org.apache.camel.console.DevConsoleResolver;
-import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.impl.converter.CoreTypeConverterRegistry;
 import org.apache.camel.impl.engine.DefaultComponentResolver;
 import org.apache.camel.impl.engine.DefaultDataFormatResolver;
 import org.apache.camel.impl.engine.DefaultLanguageResolver;
-import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.AsyncProcessorAwaitManager;
-import org.apache.camel.spi.BeanIntrospection;
-import org.apache.camel.spi.BeanProcessorFactory;
-import org.apache.camel.spi.BeanProxyFactory;
-import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
-import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.spi.CliConnectorFactory;
-import org.apache.camel.spi.ComponentNameResolver;
-import org.apache.camel.spi.ComponentResolver;
-import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
-import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
-import org.apache.camel.spi.EndpointStrategy;
-import org.apache.camel.spi.EndpointUriFactory;
-import org.apache.camel.spi.ExchangeFactory;
-import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.FactoryFinderResolver;
-import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
-import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptSendToEndpoint;
-import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.LogListener;
-import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
-import org.apache.camel.spi.ModelJAXBContextFactory;
-import org.apache.camel.spi.ModelToXMLDumper;
-import org.apache.camel.spi.ModelineFactory;
-import org.apache.camel.spi.NodeIdFactory;
-import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.PackageScanResourceResolver;
-import org.apache.camel.spi.PeriodTaskResolver;
-import org.apache.camel.spi.PeriodTaskScheduler;
-import org.apache.camel.spi.ProcessorExchangeFactory;
-import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.ResourceLoader;
-import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteController;
-import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutePolicyFactory;
-import org.apache.camel.spi.RouteStartupOrder;
-import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
-import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StreamCachingStrategy;
-import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.spi.UnitOfWorkFactory;
-import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
@@ -152,71 +95,44 @@ import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
-import org.apache.camel.util.URISupport;
 import org.apache.camel.vault.VaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Experimental
-public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCamelContext, CatalogCamelContext {
+public class LightweightRuntimeCamelContext implements CamelContext, CatalogCamelContext {
 
     private static final Logger LOG = LoggerFactory.getLogger(LightweightRuntimeCamelContext.class);
 
     private final CamelContext reference;
     private final Registry registry;
     private final CoreTypeConverterRegistry typeConverter;
-    private final ModelJAXBContextFactory modelJAXBContextFactory;
-    private final ComponentResolver componentResolver;
-    private final ComponentNameResolver componentNameResolver;
-    private final LanguageResolver languageResolver;
-    private final DataFormatResolver dataFormatResolver;
-    private final HealthCheckResolver healthCheckResolver;
-    private final DevConsoleResolver devConsoleResolver;
     private final UuidGenerator uuidGenerator;
     private final EndpointRegistry<? extends ValueHolder<String>> endpoints;
     private final Map<String, Component> components;
     private final Map<String, Language> languages;
     private final PropertiesComponent propertiesComponent;
-    private final BeanIntrospection beanIntrospection;
-    private final CamelBeanPostProcessor beanPostProcessor;
-    private final CamelDependencyInjectionAnnotationFactory dependencyInjectionAnnotationFactory;
-    private final HeadersMapFactory headersMapFactory;
-    private final CliConnectorFactory cliConnectorFactory;
-    private final ExchangeFactory exchangeFactory;
-    private final ExchangeFactoryManager exchangeFactoryManager;
-    private final ProcessorExchangeFactory processorExchangeFactory;
-    private final ModelineFactory modelineFactory;
-    private final ReactiveExecutor reactiveExecutor;
-    private final AsyncProcessorAwaitManager asyncProcessorAwaitManager;
     private final ExecutorServiceManager executorServiceManager;
     private final ShutdownStrategy shutdownStrategy;
     private final ClassLoader applicationContextClassLoader;
-    private final UnitOfWorkFactory unitOfWorkFactory;
     private final RouteController routeController;
-    private final ProcessorFactory processorFactory;
-    private final InternalProcessorFactory internalProcessorFactory;
     private final InflightRepository inflightRepository;
-    private final PeriodTaskResolver periodTaskResolver;
-    private final PeriodTaskScheduler periodTaskScheduler;
     private final Injector injector;
     private final ClassResolver classResolver;
     private final Map<String, String> globalOptions;
     private final String name;
-    private final String description;
-    private final boolean eventNotificationApplicable;
     private final boolean useDataType;
     private final boolean useBreadcrumb;
     private final boolean dumpRoutes;
     private final String mdcLoggingKeysPattern;
     private final boolean useMDCLogging;
-    private final String basePackageScan;
     private final List<Route> routes;
     private final boolean messageHistory;
     private final boolean allowUseOriginalMessage;
     private final boolean logExhaustedMessageBody;
     private final String version;
+    private final LightweightCamelContextExtension lwCamelContextExtension = new LightweightCamelContextExtension(this);
     private Date startDate;
     private StartupSummaryLevel startupSummaryLevel;
 
@@ -224,53 +140,26 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
         this.reference = reference;
         registry = context.getRegistry();
         typeConverter = new CoreTypeConverterRegistry(context.getTypeConverterRegistry());
-        modelJAXBContextFactory = context.getCamelContextExtension().getModelJAXBContextFactory();
         routes = Collections.unmodifiableList(context.getRoutes());
         uuidGenerator = context.getUuidGenerator();
-        componentResolver = context.getCamelContextExtension().getComponentResolver();
-        componentNameResolver = context.getCamelContextExtension().getComponentNameResolver();
-        languageResolver = context.getCamelContextExtension().getLanguageResolver();
-        dataFormatResolver = context.getCamelContextExtension().getDataFormatResolver();
-        healthCheckResolver = context.getCamelContextExtension().getHealthCheckResolver();
-        devConsoleResolver = context.getCamelContextExtension().getDevConsoleResolver();
         endpoints = context.getEndpointRegistry();
         components = context.getComponentNames().stream().collect(Collectors.toMap(s -> s, context::hasComponent));
         languages = context.getLanguageNames().stream().collect(Collectors.toMap(s -> s, context::resolveLanguage));
         propertiesComponent = context.getPropertiesComponent();
-        beanIntrospection = context.getCamelContextExtension().getBeanIntrospection();
-        beanPostProcessor = context.getCamelContextExtension().getBeanPostProcessor();
-        dependencyInjectionAnnotationFactory
-                = context.getCamelContextExtension().getDependencyInjectionAnnotationFactory();
-        headersMapFactory = context.getCamelContextExtension().getHeadersMapFactory();
-        cliConnectorFactory = context.getCamelContextExtension().getCliConnectorFactory();
-        exchangeFactory = context.getCamelContextExtension().getExchangeFactory();
-        exchangeFactoryManager = context.getCamelContextExtension().getExchangeFactoryManager();
-        modelineFactory = context.getCamelContextExtension().getModelineFactory();
-        processorExchangeFactory = context.getCamelContextExtension().getProcessorExchangeFactory();
-        reactiveExecutor = context.getCamelContextExtension().getReactiveExecutor();
-        asyncProcessorAwaitManager = context.getCamelContextExtension().getAsyncProcessorAwaitManager();
         executorServiceManager = context.getExecutorServiceManager();
         shutdownStrategy = context.getShutdownStrategy();
         applicationContextClassLoader = context.getApplicationContextClassLoader();
-        unitOfWorkFactory = context.getCamelContextExtension().getUnitOfWorkFactory();
-        processorFactory = context.getCamelContextExtension().getProcessorFactory();
-        internalProcessorFactory = context.getCamelContextExtension().getInternalProcessorFactory();
         routeController = context.getRouteController();
         inflightRepository = context.getInflightRepository();
-        periodTaskResolver = context.getCamelContextExtension().getPeriodTaskResolver();
-        periodTaskScheduler = context.getCamelContextExtension().getPeriodTaskScheduler();
         globalOptions = context.getGlobalOptions();
         injector = context.getInjector();
         classResolver = context.getClassResolver();
         name = context.getName();
-        description = context.getDescription();
-        eventNotificationApplicable = context.getCamelContextExtension().isEventNotificationApplicable();
         useDataType = context.isUseDataType();
         useBreadcrumb = context.isUseBreadcrumb();
         dumpRoutes = context.isDumpRoutes();
         mdcLoggingKeysPattern = context.getMDCLoggingKeysPattern();
         useMDCLogging = context.isUseMDCLogging();
-        basePackageScan = context.getCamelContextExtension().getBasePackageScan();
         messageHistory = context.isMessageHistory();
         allowUseOriginalMessage = context.isAllowUseOriginalMessage();
         logExhaustedMessageBody = context.isLogExhaustedMessageBody();
@@ -278,40 +167,9 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
         startupSummaryLevel = context.getStartupSummaryLevel();
     }
 
-    /**
-     * Normalize uri so we can do endpoint hits with minor mistakes and parameters is not in the same order.
-     *
-     * @param  uri                            the uri
-     * @return                                normalized uri
-     * @throws ResolveEndpointFailedException if uri cannot be normalized
-     */
-    protected static String normalizeEndpointUri(String uri) {
-        try {
-            uri = URISupport.normalizeUri(uri);
-        } catch (Exception e) {
-            throw new ResolveEndpointFailedException(uri, e);
-        }
-        return uri;
-    }
-
     //
     // Lifecycle
     //
-
-    public CamelContext getCamelContextReference() {
-        return reference;
-    }
-
-    @Override
-    public byte getStatusPhase() {
-        return reference.getCamelContextExtension().getStatusPhase();
-    }
-
-    @Override
-    public void disposeModel() {
-        // noop
-    }
-
     @Override
     public boolean isStarted() {
         return false;
@@ -370,14 +228,14 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
     @Override
     public void start() {
         startDate = new Date();
-        LOG.info("Apache Camel {} ({}) is starting", getVersion(), getName());
+        LOG.info("Apache Camel {} ({}) is starting", getVersion(), lwCamelContextExtension.getName());
         for (Route route : routes) {
             route.getConsumer().start();
         }
         if (LOG.isInfoEnabled()) {
             long l = System.currentTimeMillis() - startDate.getTime();
             LOG.info("Apache Camel {} ({}) {} routes started in {}",
-                    getVersion(), getName(), routes.size(), TimeUtils.printDuration(l, true));
+                    getVersion(), lwCamelContextExtension.getName(), routes.size(), TimeUtils.printDuration(l, true));
         }
     }
 
@@ -531,16 +389,6 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
     }
 
     @Override
-    public Registry getRegistry() {
-        return registry;
-    }
-
-    @Override
-    public void setRegistry(Registry registry) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public TypeConverterRegistry getTypeConverterRegistry() {
         return typeConverter;
     }
@@ -551,73 +399,8 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
     }
 
     @Override
-    public ModelJAXBContextFactory getModelJAXBContextFactory() {
-        return modelJAXBContextFactory;
-    }
-
-    @Override
-    public void setModelJAXBContextFactory(ModelJAXBContextFactory modelJAXBContextFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ComponentResolver getComponentResolver() {
-        return componentResolver;
-    }
-
-    @Override
-    public void setComponentResolver(ComponentResolver componentResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ComponentNameResolver getComponentNameResolver() {
-        return componentNameResolver;
-    }
-
-    @Override
-    public void setComponentNameResolver(ComponentNameResolver componentResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public LanguageResolver getLanguageResolver() {
-        return languageResolver;
-    }
-
-    @Override
-    public void setLanguageResolver(LanguageResolver languageResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public DataFormatResolver getDataFormatResolver() {
-        return dataFormatResolver;
-    }
-
-    @Override
-    public void setDataFormatResolver(DataFormatResolver dataFormatResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public HealthCheckResolver getHealthCheckResolver() {
-        return healthCheckResolver;
-    }
-
-    @Override
-    public void setHealthCheckResolver(HealthCheckResolver healthCheckResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public DevConsoleResolver getDevConsoleResolver() {
-        return devConsoleResolver;
-    }
-
-    @Override
-    public void setDevConsoleResolver(DevConsoleResolver devConsoleResolver) {
-        throw new UnsupportedOperationException();
+    public Registry getRegistry() {
+        return null;
     }
 
     @Override
@@ -632,8 +415,7 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
 
     @Override
     public ExtendedCamelContext getCamelContextExtension() {
-        // TODO: implement
-        throw new UnsupportedOperationException();
+        return lwCamelContextExtension;
     }
 
     @Override
@@ -657,18 +439,8 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
     }
 
     @Override
-    public void setName(String name) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public void setDescription(String description) {
-        throw new UnsupportedOperationException();
+        return lwCamelContextExtension.getDescription();
     }
 
     @Override
@@ -758,15 +530,6 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
     }
 
     @Override
-    public void addBootstrap(BootstrapCloseable bootstrap) {
-    }
-
-    @Override
-    public List<Service> getServices() {
-        return null;
-    }
-
-    @Override
     public boolean hasService(Object object) {
         return false;
     }
@@ -826,12 +589,12 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
 
     @Override
     public Endpoint getEndpoint(String uri) {
-        return doGetEndpoint(uri, false, false);
+        return lwCamelContextExtension.doGetEndpoint(uri, false, false);
     }
 
     @Override
     public Endpoint getEndpoint(String uri, Map<String, Object> parameters) {
-        return doGetEndpoint(uri, parameters, false);
+        return lwCamelContextExtension.doGetEndpoint(uri, parameters, false);
     }
 
     @Override
@@ -975,7 +738,7 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
                 }
             }
             // language not known or not singleton, then use resolver
-            answer = getLanguageResolver().resolveLanguage(language, reference);
+            answer = lwCamelContextExtension.getLanguageResolver().resolveLanguage(language, reference);
             // inject CamelContext if aware
             if (answer != null) {
                 CamelContextAware.trySetCamelContext(answer, reference);
@@ -994,28 +757,7 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
 
     @Override
     public String resolvePropertyPlaceholders(String text) {
-        return resolvePropertyPlaceholders(text, false);
-    }
-
-    @Override
-    public String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional) {
-        if (text != null && text.contains(PropertiesComponent.PREFIX_TOKEN)) {
-            // the parser will throw exception if property key was not found
-            return getPropertiesComponent().parseUri(text, keepUnresolvedOptional);
-        }
-        // is the value a known field (currently we only support
-        // constants from Exchange.class)
-        if (text != null && text.startsWith("Exchange.")) {
-            String field = StringHelper.after(text, "Exchange.");
-            String constant = ExchangeConstantProvider.lookup(field);
-            if (constant != null) {
-                return constant;
-            } else {
-                throw new IllegalArgumentException("Constant field with name: " + field + " not found on Exchange.class");
-            }
-        }
-        // return original text as is
-        return text;
+        return lwCamelContextExtension.resolvePropertyPlaceholders(text, false);
     }
 
     @Override
@@ -1306,16 +1048,6 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
     }
 
     @Override
-    public String getBasePackageScan() {
-        return basePackageScan;
-    }
-
-    @Override
-    public void setBasePackageScan(String basePackageScan) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Boolean isDumpRoutes() {
         return dumpRoutes;
     }
@@ -1405,457 +1137,20 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
         return startupSummaryLevel;
     }
 
-    @Override
-    public Endpoint getPrototypeEndpoint(String uri) {
-        throw new UnsupportedOperationException();
-    }
 
-    @Override
-    public Endpoint getPrototypeEndpoint(NormalizedEndpointUri uri) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Endpoint hasEndpoint(NormalizedEndpointUri uri) {
-        return endpoints.get(uri);
-    }
-
-    @Override
-    public Endpoint getEndpoint(NormalizedEndpointUri uri) {
-        return doGetEndpoint(uri.getUri(), true, false);
-    }
-
-    @Override
-    public Endpoint getEndpoint(NormalizedEndpointUri uri, Map<String, Object> parameters) {
-        return doGetEndpoint(uri.getUri(), parameters, true);
-    }
-
-    protected Endpoint doGetEndpoint(String uri, boolean normalized, boolean prototype) {
-        StringHelper.notEmpty(uri, "uri");
-        // in case path has property placeholders then try to let property
-        // component resolve those
-        if (!normalized) {
-            try {
-                uri = resolvePropertyPlaceholders(uri);
-            } catch (Exception e) {
-                throw new ResolveEndpointFailedException(uri, e);
-            }
-        }
-        // normalize uri so we can do endpoint hits with minor mistakes and
-        // parameters is not in the same order
-        if (!normalized) {
-            uri = normalizeEndpointUri(uri);
-        }
-        Endpoint answer = null;
-        if (!prototype) {
-            // use optimized method to get the endpoint uri
-            NormalizedUri key = NormalizedUri.newNormalizedUri(uri, true);
-            // only lookup and reuse existing endpoints if not prototype scoped
-            answer = endpoints.get(key);
-        }
-        // unknown scheme
-        if (answer == null) {
-            throw new NoSuchEndpointException(uri);
-        }
-        return answer;
-    }
-
-    protected Endpoint doGetEndpoint(String uri, Map<String, Object> parameters, boolean normalized) {
-        StringHelper.notEmpty(uri, "uri");
-        // in case path has property placeholders then try to let property
-        // component resolve those
-        if (!normalized) {
-            try {
-                uri = resolvePropertyPlaceholders(uri);
-            } catch (Exception e) {
-                throw new ResolveEndpointFailedException(uri, e);
-            }
-        }
-        // normalize uri so we can do endpoint hits with minor mistakes and
-        // parameters is not in the same order
-        if (!normalized) {
-            uri = normalizeEndpointUri(uri);
-        }
-        Endpoint answer;
-        String scheme = null;
-        // use optimized method to get the endpoint uri
-        NormalizedUri key = NormalizedUri.newNormalizedUri(uri, true);
-        answer = endpoints.get(key);
-        // unknown scheme
-        if (answer == null) {
-            throw new ResolveEndpointFailedException(uri, "No component found with scheme: " + scheme);
-        }
-        return answer;
-    }
-
-    @Override
-    public NormalizedEndpointUri normalizeUri(String uri) {
-        try {
-            uri = resolvePropertyPlaceholders(uri);
-            return NormalizedUri.newNormalizedUri(uri, false);
-        } catch (Exception e) {
-            throw new ResolveEndpointFailedException(uri, e);
-        }
-    }
-
-    @Override
-    public List<RouteStartupOrder> getRouteStartupOrder() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public CamelBeanPostProcessor getBeanPostProcessor() {
-        return beanPostProcessor;
-    }
-
-    @Override
-    public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory() {
-        return dependencyInjectionAnnotationFactory;
-    }
-
-    @Override
-    public void setDependencyInjectionAnnotationFactory(CamelDependencyInjectionAnnotationFactory factory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ManagementMBeanAssembler getManagementMBeanAssembler() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ErrorHandlerFactory getErrorHandlerFactory() {
-        throw new UnsupportedOperationException();
-    }
 
     //
     // Unsupported mutable methods
     //
 
     @Override
-    public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PackageScanClassResolver getPackageScanClassResolver() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setPackageScanClassResolver(PackageScanClassResolver resolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PackageScanResourceResolver getPackageScanResourceResolver() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setPackageScanResourceResolver(PackageScanResourceResolver resolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public FactoryFinder getDefaultFactoryFinder() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ConfigurerResolver getBootstrapConfigurerResolver() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setBootstrapConfigurerResolver(ConfigurerResolver configurerResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public FactoryFinder getBootstrapFactoryFinder() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setBootstrapFactoryFinder(FactoryFinder factoryFinder) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public FactoryFinder getBootstrapFactoryFinder(String path) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public FactoryFinder getFactoryFinder(String path) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public FactoryFinderResolver getFactoryFinderResolver() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setFactoryFinderResolver(FactoryFinderResolver resolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ProcessorFactory getProcessorFactory() {
-        return processorFactory;
-    }
-
-    @Override
-    public void setProcessorFactory(ProcessorFactory processorFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ModelineFactory getModelineFactory() {
-        return modelineFactory;
-    }
-
-    @Override
-    public void setModelineFactory(ModelineFactory modelineFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public InternalProcessorFactory getInternalProcessorFactory() {
-        return internalProcessorFactory;
-    }
-
-    @Override
-    public void setInternalProcessorFactory(InternalProcessorFactory internalProcessorFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public InterceptEndpointFactory getInterceptEndpointFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public RouteFactory getRouteFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRouteFactory(RouteFactory routeFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public DeferServiceFactory getDeferServiceFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setDeferServiceFactory(DeferServiceFactory deferServiceFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public UnitOfWorkFactory getUnitOfWorkFactory() {
-        return unitOfWorkFactory;
-    }
-
-    @Override
-    public void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public BeanProxyFactory getBeanProxyFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public BeanProcessorFactory getBeanProcessorFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ScheduledExecutorService getErrorHandlerExecutorService() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List<InterceptStrategy> getInterceptStrategies() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Set<LogListener> getLogListeners() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public AsyncProcessorAwaitManager getAsyncProcessorAwaitManager() {
-        return asyncProcessorAwaitManager;
-    }
-
-    @Override
-    public void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public BeanIntrospection getBeanIntrospection() {
-        return beanIntrospection;
-    }
-
-    @Override
-    public void setBeanIntrospection(BeanIntrospection beanIntrospection) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public HeadersMapFactory getHeadersMapFactory() {
-        return headersMapFactory;
-    }
-
-    @Override
-    public void setHeadersMapFactory(HeadersMapFactory factory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public CliConnectorFactory getCliConnectorFactory() {
-        return cliConnectorFactory;
-    }
-
-    @Override
-    public void setCliConnectorFactory(CliConnectorFactory cliConnectorFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ExchangeFactory getExchangeFactory() {
-        return exchangeFactory;
-    }
-
-    @Override
-    public ExchangeFactoryManager getExchangeFactoryManager() {
-        return exchangeFactoryManager;
-    }
-
-    @Override
-    public void setExchangeFactoryManager(ExchangeFactoryManager exchangeFactoryManager) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setExchangeFactory(ExchangeFactory exchangeFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ProcessorExchangeFactory getProcessorExchangeFactory() {
-        return processorExchangeFactory;
-    }
-
-    @Override
-    public void setProcessorExchangeFactory(ProcessorExchangeFactory processorExchangeFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ReactiveExecutor getReactiveExecutor() {
-        return reactiveExecutor;
-    }
-
-    @Override
-    public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isEventNotificationApplicable() {
-        return eventNotificationApplicable;
-    }
-
-    @Override
-    public void setEventNotificationApplicable(boolean eventNotificationApplicable) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ModelToXMLDumper getModelToXMLDumper() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public RuntimeCamelCatalog getRuntimeCamelCatalog() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ConfigurerResolver getConfigurerResolver() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setConfigurerResolver(ConfigurerResolver configurerResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void addRoute(Route route) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void removeRoute(Route route) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Processor createErrorHandler(Route route, Processor processor) throws Exception {
-        // TODO: need to revisit this in order to support dynamic endpoints uri
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String getComponentParameterJsonSchema(String componentName) throws IOException {
         Class<?> clazz;
-        Object instance = getRegistry().lookupByNameAndType(componentName, Component.class);
+        Object instance = lwCamelContextExtension.getRegistry().lookupByNameAndType(componentName, Component.class);
         if (instance != null) {
             clazz = instance.getClass();
         } else {
-            clazz = getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH).findClass(componentName).orElse(null);
+            clazz = lwCamelContextExtension.getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH).findClass(componentName).orElse(null);
             if (clazz == null) {
                 instance = hasComponent(componentName);
                 if (instance != null) {
@@ -1865,22 +1160,18 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
                 }
             }
         }
-        // special for ActiveMQ as it is really just JMS
-        if ("ActiveMQComponent".equals(clazz.getSimpleName())) {
-            return getComponentParameterJsonSchema("jms");
-        } else {
-            return getJsonSchema(clazz.getPackage().getName(), componentName);
-        }
+
+        return getJsonSchema(clazz.getPackage().getName(), componentName);
     }
 
     @Override
     public String getDataFormatParameterJsonSchema(String dataFormatName) throws IOException {
         Class<?> clazz;
-        Object instance = getRegistry().lookupByNameAndType(dataFormatName, DataFormat.class);
+        Object instance = lwCamelContextExtension.getRegistry().lookupByNameAndType(dataFormatName, DataFormat.class);
         if (instance != null) {
             clazz = instance.getClass();
         } else {
-            clazz = getFactoryFinder(DefaultDataFormatResolver.DATAFORMAT_RESOURCE_PATH).findClass(dataFormatName).orElse(null);
+            clazz = lwCamelContextExtension.getFactoryFinder(DefaultDataFormatResolver.DATAFORMAT_RESOURCE_PATH).findClass(dataFormatName).orElse(null);
             if (clazz == null) {
                 return null;
             }
@@ -1891,11 +1182,11 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
     @Override
     public String getLanguageParameterJsonSchema(String languageName) throws IOException {
         Class<?> clazz;
-        Object instance = getRegistry().lookupByNameAndType(languageName, Language.class);
+        Object instance = lwCamelContextExtension.getRegistry().lookupByNameAndType(languageName, Language.class);
         if (instance != null) {
             clazz = instance.getClass();
         } else {
-            clazz = getFactoryFinder(DefaultLanguageResolver.LANGUAGE_RESOURCE_PATH).findClass(languageName).orElse(null);
+            clazz = lwCamelContextExtension.getFactoryFinder(DefaultLanguageResolver.LANGUAGE_RESOURCE_PATH).findClass(languageName).orElse(null);
             if (clazz == null) {
                 return null;
             }
@@ -1936,66 +1227,6 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
     }
 
     @Override
-    public void setupRoutes(boolean done) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isSetupRoutes() {
-        return false;
-    }
-
-    @Override
-    public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setupManagement(Map<String, Object> options) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void addLogListener(LogListener listener) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRoutesLoader(RoutesLoader routesLoader) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public RoutesLoader getRoutesLoader() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ResourceLoader getResourceLoader() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void registerEndpointCallback(EndpointStrategy strategy) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception {
         throw new UnsupportedOperationException();
     }
@@ -2007,16 +1238,6 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
 
     @Override
     public Collection<Endpoint> removeEndpoints(String pattern) throws Exception {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public NodeIdFactory getNodeIdFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setNodeIdFactory(NodeIdFactory factory) {
         throw new UnsupportedOperationException();
     }
 
@@ -2125,197 +1346,6 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public void setLightweight(boolean lightweight) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isLightweight() {
-        return true;
-    }
-
-    @Override
-    public String getTestExcludeRoutes() {
-        return null;
-    }
-
-    @Override
-    public RouteController getInternalRouteController() {
-        return new RouteController() {
-            @Override
-            public LoggingLevel getLoggingLevel() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void setLoggingLevel(LoggingLevel loggingLevel) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public boolean isSupervising() {
-                return false;
-            }
-
-            @Override
-            public SupervisingRouteController supervising() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public <T extends RouteController> T adapt(Class<T> type) {
-                return type.cast(this);
-            }
-
-            @Override
-            public Collection<Route> getControlledRoutes() {
-                return routes;
-            }
-
-            @Override
-            public void startAllRoutes() throws Exception {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void stopAllRoutes() throws Exception {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void removeAllRoutes() throws Exception {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public boolean isStartingRoutes() {
-                return false;
-            }
-
-            @Override
-            public void reloadAllRoutes() throws Exception {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public boolean isReloadingRoutes() {
-                return false;
-            }
-
-            @Override
-            public ServiceStatus getRouteStatus(String routeId) {
-                return ServiceStatus.Started;
-            }
-
-            @Override
-            public void startRoute(String routeId) throws Exception {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void stopRoute(String routeId) throws Exception {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void stopRoute(String routeId, Throwable cause) throws Exception {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void stopRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public boolean stopRoute(String routeId, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout)
-                    throws Exception {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void suspendRoute(String routeId) throws Exception {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void suspendRoute(String routeId, long timeout, TimeUnit timeUnit) throws Exception {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void resumeRoute(String routeId) throws Exception {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public CamelContext getCamelContext() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void setCamelContext(CamelContext camelContext) {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void start() {
-                throw new UnsupportedOperationException();
-            }
-
-            @Override
-            public void stop() {
-                throw new UnsupportedOperationException();
-            }
-        };
-    }
-
-    @Override
-    public UriFactoryResolver getUriFactoryResolver() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setUriFactoryResolver(UriFactoryResolver uriFactoryResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public EndpointUriFactory getEndpointUriFactory(String scheme) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public StartupStepRecorder getStartupStepRecorder() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setStartupStepRecorder(StartupStepRecorder startupStepRecorder) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PeriodTaskResolver getPeriodTaskResolver() {
-        return periodTaskResolver;
-    }
-
-    @Override
-    public void setPeriodTaskScheduler(PeriodTaskScheduler periodTaskScheduler) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PeriodTaskScheduler getPeriodTaskScheduler() {
-        return periodTaskScheduler;
-    }
-
-    @Override
-    public void setPeriodTaskResolver(PeriodTaskResolver periodTaskResolver) {
-        throw new UnsupportedOperationException();
-    }
-
     private void startService(Service service) throws Exception {
         // and register startup aware so they can be notified when
         // camel context has been started
@@ -2326,4 +1356,9 @@ public class LightweightRuntimeCamelContext implements CamelContext, ExtendedCam
         CamelContextAware.trySetCamelContext(service, reference);
         service.start();
     }
+
+    public ExtendedCamelContext getLwCamelContextExtension() {
+        return lwCamelContextExtension;
+    }
+
 }
