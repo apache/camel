@@ -2747,12 +2747,6 @@
                 <version>${log4j2-version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>jsr250-api</artifactId>
-                <version>1.0</version>
-            </dependency>
-
             <!-- optional hapi dependencies -->
             <dependency>
                 <groupId>ca.uhn.hapi</groupId>
