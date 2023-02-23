@@ -2747,12 +2747,6 @@
                 <version>${log4j2-version}</version>
             </dependency>
 
-            <!-- optional disruptor dependencies -->
-            <dependency>
-                <groupId>com.lmax</groupId>
-                <artifactId>disruptor</artifactId>
-                <version>${disruptor-version}</version>
-            </dependency>
 
             <!-- optional Dropbox dependencies -->
             <dependency>
