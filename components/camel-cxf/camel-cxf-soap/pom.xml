@@ -182,6 +182,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
+            <version>${httpclient4-version}</version>
             <scope>test</scope>
         </dependency>
 
