@@ -45,6 +45,7 @@
         <dependency>
             <groupId>com.dropbox.core</groupId>
             <artifactId>dropbox-core-sdk</artifactId>
+            <version>${dropbox-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.fasterxml.jackson.core</groupId>
