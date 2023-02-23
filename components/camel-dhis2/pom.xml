@@ -16,13 +16,6 @@
     <name>Camel :: DHIS2 :: Parent</name>
     <description>Camel DHIS2 Component</description>
 
-    <licenses>
-        <license>
-            <name>BSD</name>
-            <url>http://opensource.org/licenses/BSD-2-Clause</url>
-        </license>
-    </licenses>
-
     <modules>
         <module>camel-dhis2-api</module>
         <module>camel-dhis2-component</module>
