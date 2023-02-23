@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Function;
 
 import org.apache.camel.CamelContext;
@@ -30,7 +29,6 @@ import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.Experimental;
 import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
@@ -44,7 +42,6 @@ import org.apache.camel.Route;
 import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RouteTemplateContext;
 import org.apache.camel.RoutesBuilder;
-import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
@@ -53,9 +50,6 @@ import org.apache.camel.StartupSummaryLevel;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.ValueHolder;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
-import org.apache.camel.catalog.RuntimeCamelCatalog;
-import org.apache.camel.console.DevConsoleResolver;
-import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.FaultToleranceConfigurationDefinition;
@@ -72,82 +66,35 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.validator.ValidatorDefinition;
-import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.AsyncProcessorAwaitManager;
-import org.apache.camel.spi.BeanIntrospection;
-import org.apache.camel.spi.BeanProcessorFactory;
-import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BeanRepository;
-import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
-import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ClassResolver;
-import org.apache.camel.spi.CliConnectorFactory;
-import org.apache.camel.spi.ComponentNameResolver;
-import org.apache.camel.spi.ComponentResolver;
-import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
-import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
-import org.apache.camel.spi.EndpointStrategy;
-import org.apache.camel.spi.EndpointUriFactory;
-import org.apache.camel.spi.ExchangeFactory;
-import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.FactoryFinderResolver;
-import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Injector;
-import org.apache.camel.spi.InterceptEndpointFactory;
-import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.LogListener;
-import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
-import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelReifierFactory;
-import org.apache.camel.spi.ModelToXMLDumper;
-import org.apache.camel.spi.ModelineFactory;
-import org.apache.camel.spi.NodeIdFactory;
-import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.PackageScanResourceResolver;
-import org.apache.camel.spi.PeriodTaskResolver;
-import org.apache.camel.spi.PeriodTaskScheduler;
-import org.apache.camel.spi.ProcessorExchangeFactory;
-import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.ResourceLoader;
-import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteController;
-import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutePolicyFactory;
-import org.apache.camel.spi.RouteStartupOrder;
-import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
-import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.spi.UnitOfWorkFactory;
-import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
@@ -156,7 +103,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.vault.VaultConfiguration;
 
 @Experimental
-public class LightweightCamelContext implements CamelContext, ExtendedCamelContext, CatalogCamelContext, ModelCamelContext {
+public class LightweightCamelContext implements CamelContext, CatalogCamelContext, ModelCamelContext {
 
     protected volatile CamelContext delegate;
 
@@ -197,21 +144,8 @@ public class LightweightCamelContext implements CamelContext, ExtendedCamelConte
      */
     public LightweightCamelContext(Registry registry) {
         this();
-        setRegistry(registry);
-    }
 
-    public CamelContext getCamelContextReference() {
-        return this;
-    }
-
-    @Override
-    public byte getStatusPhase() {
-        return delegate.getCamelContextExtension().getStatusPhase();
-    }
-
-    @Override
-    public void disposeModel() {
-        delegate.getCamelContextExtension().disposeModel();
+        getCamelContextExtension().setRegistry(registry);
     }
 
     @Override
@@ -320,11 +254,6 @@ public class LightweightCamelContext implements CamelContext, ExtendedCamelConte
     }
 
     @Override
-    public void setDescription(String description) {
-        delegate.getCamelContextExtension().setDescription(description);
-    }
-
-    @Override
     public ManagementNameStrategy getManagementNameStrategy() {
         return delegate.getManagementNameStrategy();
     }
@@ -370,11 +299,6 @@ public class LightweightCamelContext implements CamelContext, ExtendedCamelConte
     }
 
     @Override
-    public void addBootstrap(BootstrapCloseable bootstrap) {
-        getExtendedCamelContext().addBootstrap(bootstrap);
-    }
-
-    @Override
     public void addService(Object object) throws Exception {
         delegate.addService(object);
     }
@@ -397,11 +321,6 @@ public class LightweightCamelContext implements CamelContext, ExtendedCamelConte
     @Override
     public boolean removeService(Object object) throws Exception {
         return delegate.removeService(object);
-    }
-
-    @Override
-    public List<Service> getServices() {
-        return getExtendedCamelContext().getServices();
     }
 
     @Override
@@ -667,11 +586,6 @@ public class LightweightCamelContext implements CamelContext, ExtendedCamelConte
     @Override
     public String resolvePropertyPlaceholders(String text) {
         return delegate.resolvePropertyPlaceholders(text);
-    }
-
-    @Override
-    public String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional) {
-        return getExtendedCamelContext().resolvePropertyPlaceholders(text, keepUnresolvedOptional);
     }
 
     @Override
@@ -970,16 +884,6 @@ public class LightweightCamelContext implements CamelContext, ExtendedCamelConte
     }
 
     @Override
-    public String getBasePackageScan() {
-        return getExtendedCamelContext().getBasePackageScan();
-    }
-
-    @Override
-    public void setBasePackageScan(String basePackageScan) {
-        getExtendedCamelContext().setBasePackageScan(basePackageScan);
-    }
-
-    @Override
     public Boolean isUseMDCLogging() {
         return delegate.isUseMDCLogging();
     }
@@ -1224,587 +1128,9 @@ public class LightweightCamelContext implements CamelContext, ExtendedCamelConte
         delegate.removeRouteTemplates(pattern);
     }
 
-    //
-    // ExtendedCamelContext
-    //
-
-    protected ExtendedCamelContext getExtendedCamelContext() {
-        return delegate.getCamelContextExtension();
-    }
-
     @Override
     public ExtendedCamelContext getCamelContextExtension() {
         return delegate.getCamelContextExtension();
-    }
-
-    @Override
-    public void setName(String name) {
-        getExtendedCamelContext().setName(name);
-    }
-
-    @Override
-    public void setRegistry(Registry registry) {
-        getExtendedCamelContext().setRegistry(registry);
-    }
-
-    @Override
-    public void setupRoutes(boolean done) {
-        getExtendedCamelContext().setupRoutes(done);
-    }
-
-    @Override
-    public boolean isSetupRoutes() {
-        return getExtendedCamelContext().isSetupRoutes();
-    }
-
-    @Override
-    public void registerEndpointCallback(EndpointStrategy strategy) {
-        getExtendedCamelContext().registerEndpointCallback(strategy);
-    }
-
-    @Override
-    public Endpoint getPrototypeEndpoint(String uri) {
-        return getExtendedCamelContext().getPrototypeEndpoint(uri);
-    }
-
-    @Override
-    public Endpoint getPrototypeEndpoint(NormalizedEndpointUri uri) {
-        return getExtendedCamelContext().getPrototypeEndpoint(uri);
-    }
-
-    @Override
-    public Endpoint hasEndpoint(NormalizedEndpointUri uri) {
-        return getExtendedCamelContext().hasEndpoint(uri);
-    }
-
-    @Override
-    public Endpoint getEndpoint(NormalizedEndpointUri uri) {
-        return getExtendedCamelContext().getEndpoint(uri);
-    }
-
-    @Override
-    public Endpoint getEndpoint(NormalizedEndpointUri uri, Map<String, Object> parameters) {
-        return getExtendedCamelContext().getEndpoint(uri, parameters);
-    }
-
-    @Override
-    public NormalizedEndpointUri normalizeUri(String uri) {
-        return getExtendedCamelContext().normalizeUri(uri);
-    }
-
-    @Override
-    public List<RouteStartupOrder> getRouteStartupOrder() {
-        return getExtendedCamelContext().getRouteStartupOrder();
-    }
-
-    @Override
-    public CamelBeanPostProcessor getBeanPostProcessor() {
-        return getExtendedCamelContext().getBeanPostProcessor();
-    }
-
-    @Override
-    public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
-        getExtendedCamelContext().setBeanPostProcessor(beanPostProcessor);
-    }
-
-    @Override
-    public CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory() {
-        return getExtendedCamelContext().getDependencyInjectionAnnotationFactory();
-    }
-
-    @Override
-    public void setDependencyInjectionAnnotationFactory(CamelDependencyInjectionAnnotationFactory factory) {
-        getExtendedCamelContext().setDependencyInjectionAnnotationFactory(factory);
-    }
-
-    @Override
-    public ManagementMBeanAssembler getManagementMBeanAssembler() {
-        return getExtendedCamelContext().getManagementMBeanAssembler();
-    }
-
-    @Override
-    public ErrorHandlerFactory getErrorHandlerFactory() {
-        return getExtendedCamelContext().getErrorHandlerFactory();
-    }
-
-    @Override
-    public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
-        getExtendedCamelContext().setErrorHandlerFactory(errorHandlerFactory);
-    }
-
-    @Override
-    public void setNodeIdFactory(NodeIdFactory factory) {
-        getExtendedCamelContext().setNodeIdFactory(factory);
-    }
-
-    @Override
-    public NodeIdFactory getNodeIdFactory() {
-        return getExtendedCamelContext().getNodeIdFactory();
-    }
-
-    @Override
-    public ComponentResolver getComponentResolver() {
-        return getExtendedCamelContext().getComponentResolver();
-    }
-
-    @Override
-    public void setComponentResolver(ComponentResolver componentResolver) {
-        getExtendedCamelContext().setComponentResolver(componentResolver);
-    }
-
-    @Override
-    public ComponentNameResolver getComponentNameResolver() {
-        return getExtendedCamelContext().getComponentNameResolver();
-    }
-
-    @Override
-    public void setComponentNameResolver(ComponentNameResolver componentNameResolver) {
-        getExtendedCamelContext().setComponentNameResolver(componentNameResolver);
-    }
-
-    @Override
-    public LanguageResolver getLanguageResolver() {
-        return getExtendedCamelContext().getLanguageResolver();
-    }
-
-    @Override
-    public void setLanguageResolver(LanguageResolver languageResolver) {
-        getExtendedCamelContext().setLanguageResolver(languageResolver);
-    }
-
-    @Override
-    public DataFormatResolver getDataFormatResolver() {
-        return getExtendedCamelContext().getDataFormatResolver();
-    }
-
-    @Override
-    public void setDataFormatResolver(DataFormatResolver dataFormatResolver) {
-        getExtendedCamelContext().setDataFormatResolver(dataFormatResolver);
-    }
-
-    @Override
-    public HealthCheckResolver getHealthCheckResolver() {
-        return getExtendedCamelContext().getHealthCheckResolver();
-    }
-
-    @Override
-    public void setHealthCheckResolver(HealthCheckResolver healthCheckResolver) {
-        getExtendedCamelContext().setHealthCheckResolver(healthCheckResolver);
-    }
-
-    @Override
-    public DevConsoleResolver getDevConsoleResolver() {
-        return getExtendedCamelContext().getDevConsoleResolver();
-    }
-
-    @Override
-    public void setDevConsoleResolver(DevConsoleResolver devConsoleResolver) {
-        getExtendedCamelContext().setDevConsoleResolver(devConsoleResolver);
-    }
-
-    @Override
-    public PackageScanClassResolver getPackageScanClassResolver() {
-        return getExtendedCamelContext().getPackageScanClassResolver();
-    }
-
-    @Override
-    public void setPackageScanClassResolver(PackageScanClassResolver resolver) {
-        getExtendedCamelContext().setPackageScanClassResolver(resolver);
-    }
-
-    @Override
-    public PackageScanResourceResolver getPackageScanResourceResolver() {
-        return getExtendedCamelContext().getPackageScanResourceResolver();
-    }
-
-    @Override
-    public void setPackageScanResourceResolver(PackageScanResourceResolver resolver) {
-        getExtendedCamelContext().setPackageScanResourceResolver(resolver);
-    }
-
-    @Override
-    public FactoryFinder getDefaultFactoryFinder() {
-        return getExtendedCamelContext().getDefaultFactoryFinder();
-    }
-
-    @Override
-    public ConfigurerResolver getBootstrapConfigurerResolver() {
-        return getExtendedCamelContext().getBootstrapConfigurerResolver();
-    }
-
-    @Override
-    public void setBootstrapConfigurerResolver(ConfigurerResolver configurerResolver) {
-        getExtendedCamelContext().setBootstrapConfigurerResolver(configurerResolver);
-    }
-
-    @Override
-    public FactoryFinder getBootstrapFactoryFinder() {
-        return getExtendedCamelContext().getBootstrapFactoryFinder();
-    }
-
-    @Override
-    public void setBootstrapFactoryFinder(FactoryFinder factoryFinder) {
-        getExtendedCamelContext().setBootstrapFactoryFinder(factoryFinder);
-    }
-
-    @Override
-    public FactoryFinder getBootstrapFactoryFinder(String path) {
-        return getExtendedCamelContext().getBootstrapFactoryFinder(path);
-    }
-
-    @Override
-    public FactoryFinder getFactoryFinder(String path) {
-        return getExtendedCamelContext().getFactoryFinder(path);
-    }
-
-    @Override
-    public void setFactoryFinderResolver(FactoryFinderResolver resolver) {
-        getExtendedCamelContext().setFactoryFinderResolver(resolver);
-    }
-
-    @Override
-    public FactoryFinderResolver getFactoryFinderResolver() {
-        return getExtendedCamelContext().getFactoryFinderResolver();
-    }
-
-    @Override
-    public ProcessorFactory getProcessorFactory() {
-        return getExtendedCamelContext().getProcessorFactory();
-    }
-
-    @Override
-    public void setProcessorFactory(ProcessorFactory processorFactory) {
-        getExtendedCamelContext().setProcessorFactory(processorFactory);
-    }
-
-    @Override
-    public ModelineFactory getModelineFactory() {
-        return getExtendedCamelContext().getModelineFactory();
-    }
-
-    @Override
-    public void setModelineFactory(ModelineFactory modelineFactory) {
-        getExtendedCamelContext().setModelineFactory(modelineFactory);
-    }
-
-    @Override
-    public InternalProcessorFactory getInternalProcessorFactory() {
-        return getExtendedCamelContext().getInternalProcessorFactory();
-    }
-
-    @Override
-    public void setInternalProcessorFactory(InternalProcessorFactory internalProcessorFactory) {
-        getExtendedCamelContext().setInternalProcessorFactory(internalProcessorFactory);
-    }
-
-    @Override
-    public InterceptEndpointFactory getInterceptEndpointFactory() {
-        return getExtendedCamelContext().getInterceptEndpointFactory();
-    }
-
-    @Override
-    public void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory) {
-        getExtendedCamelContext().setInterceptEndpointFactory(interceptEndpointFactory);
-    }
-
-    @Override
-    public RouteFactory getRouteFactory() {
-        return getExtendedCamelContext().getRouteFactory();
-    }
-
-    @Override
-    public void setRouteFactory(RouteFactory routeFactory) {
-        getExtendedCamelContext().setRouteFactory(routeFactory);
-    }
-
-    @Override
-    public ModelJAXBContextFactory getModelJAXBContextFactory() {
-        return getExtendedCamelContext().getModelJAXBContextFactory();
-    }
-
-    @Override
-    public void setModelJAXBContextFactory(ModelJAXBContextFactory modelJAXBContextFactory) {
-        getExtendedCamelContext().setModelJAXBContextFactory(modelJAXBContextFactory);
-    }
-
-    @Override
-    public DeferServiceFactory getDeferServiceFactory() {
-        return getExtendedCamelContext().getDeferServiceFactory();
-    }
-
-    @Override
-    public void setDeferServiceFactory(DeferServiceFactory deferServiceFactory) {
-        getExtendedCamelContext().setDeferServiceFactory(deferServiceFactory);
-    }
-
-    @Override
-    public UnitOfWorkFactory getUnitOfWorkFactory() {
-        return getExtendedCamelContext().getUnitOfWorkFactory();
-    }
-
-    @Override
-    public void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory) {
-        getExtendedCamelContext().setUnitOfWorkFactory(unitOfWorkFactory);
-    }
-
-    @Override
-    public AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory() {
-        return getExtendedCamelContext().getAnnotationBasedProcessorFactory();
-    }
-
-    @Override
-    public void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory) {
-        getExtendedCamelContext().setAnnotationBasedProcessorFactory(annotationBasedProcessorFactory);
-    }
-
-    @Override
-    public BeanProxyFactory getBeanProxyFactory() {
-        return getExtendedCamelContext().getBeanProxyFactory();
-    }
-
-    @Override
-    public BeanProcessorFactory getBeanProcessorFactory() {
-        return getExtendedCamelContext().getBeanProcessorFactory();
-    }
-
-    @Override
-    public ScheduledExecutorService getErrorHandlerExecutorService() {
-        return getExtendedCamelContext().getErrorHandlerExecutorService();
-    }
-
-    @Override
-    public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
-        getExtendedCamelContext().addInterceptStrategy(interceptStrategy);
-    }
-
-    @Override
-    public List<InterceptStrategy> getInterceptStrategies() {
-        return getExtendedCamelContext().getInterceptStrategies();
-    }
-
-    @Override
-    public void setupManagement(Map<String, Object> options) {
-        getExtendedCamelContext().setupManagement(options);
-    }
-
-    @Override
-    public Set<LogListener> getLogListeners() {
-        return getExtendedCamelContext().getLogListeners();
-    }
-
-    @Override
-    public void addLogListener(LogListener listener) {
-        getExtendedCamelContext().addLogListener(listener);
-    }
-
-    @Override
-    public AsyncProcessorAwaitManager getAsyncProcessorAwaitManager() {
-        return getExtendedCamelContext().getAsyncProcessorAwaitManager();
-    }
-
-    @Override
-    public void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager) {
-        getExtendedCamelContext().setAsyncProcessorAwaitManager(manager);
-    }
-
-    @Override
-    public BeanIntrospection getBeanIntrospection() {
-        return getExtendedCamelContext().getBeanIntrospection();
-    }
-
-    @Override
-    public void setBeanIntrospection(BeanIntrospection beanIntrospection) {
-        getExtendedCamelContext().setBeanIntrospection(beanIntrospection);
-    }
-
-    @Override
-    public HeadersMapFactory getHeadersMapFactory() {
-        return getExtendedCamelContext().getHeadersMapFactory();
-    }
-
-    @Override
-    public void setHeadersMapFactory(HeadersMapFactory factory) {
-        getExtendedCamelContext().setHeadersMapFactory(factory);
-    }
-
-    @Override
-    public ExchangeFactory getExchangeFactory() {
-        return getExtendedCamelContext().getExchangeFactory();
-    }
-
-    @Override
-    public void setExchangeFactory(ExchangeFactory exchangeFactory) {
-        getExtendedCamelContext().setExchangeFactory(exchangeFactory);
-    }
-
-    @Override
-    public ExchangeFactoryManager getExchangeFactoryManager() {
-        return getExtendedCamelContext().getExchangeFactoryManager();
-    }
-
-    @Override
-    public void setExchangeFactoryManager(ExchangeFactoryManager exchangeFactoryManager) {
-        getExtendedCamelContext().setExchangeFactoryManager(exchangeFactoryManager);
-    }
-
-    @Override
-    public ProcessorExchangeFactory getProcessorExchangeFactory() {
-        return getExtendedCamelContext().getProcessorExchangeFactory();
-    }
-
-    @Override
-    public void setProcessorExchangeFactory(ProcessorExchangeFactory processorExchangeFactory) {
-        getExtendedCamelContext().setProcessorExchangeFactory(processorExchangeFactory);
-    }
-
-    @Override
-    public ReactiveExecutor getReactiveExecutor() {
-        return getExtendedCamelContext().getReactiveExecutor();
-    }
-
-    @Override
-    public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
-        getExtendedCamelContext().setReactiveExecutor(reactiveExecutor);
-    }
-
-    @Override
-    public boolean isEventNotificationApplicable() {
-        return getExtendedCamelContext().isEventNotificationApplicable();
-    }
-
-    @Override
-    public void setEventNotificationApplicable(boolean eventNotificationApplicable) {
-        getExtendedCamelContext().setEventNotificationApplicable(eventNotificationApplicable);
-    }
-
-    @Override
-    public void setRoutesLoader(RoutesLoader routesLoader) {
-        getExtendedCamelContext().setRoutesLoader(routesLoader);
-    }
-
-    @Override
-    public RoutesLoader getRoutesLoader() {
-        return getExtendedCamelContext().getRoutesLoader();
-    }
-
-    @Override
-    public ResourceLoader getResourceLoader() {
-        return getExtendedCamelContext().getResourceLoader();
-    }
-
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        getExtendedCamelContext().setResourceLoader(resourceLoader);
-    }
-
-    @Override
-    public void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper) {
-        getExtendedCamelContext().setModelToXMLDumper(modelToXMLDumper);
-    }
-
-    @Override
-    public ModelToXMLDumper getModelToXMLDumper() {
-        return getExtendedCamelContext().getModelToXMLDumper();
-    }
-
-    @Override
-    public void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory) {
-        getExtendedCamelContext().setRestBindingJaxbDataFormatFactory(restBindingJaxbDataFormatFactory);
-    }
-
-    @Override
-    public RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory() {
-        return getExtendedCamelContext().getRestBindingJaxbDataFormatFactory();
-    }
-
-    @Override
-    public RuntimeCamelCatalog getRuntimeCamelCatalog() {
-        return getExtendedCamelContext().getRuntimeCamelCatalog();
-    }
-
-    @Override
-    public void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog) {
-        getExtendedCamelContext().setRuntimeCamelCatalog(runtimeCamelCatalog);
-    }
-
-    @Override
-    public ConfigurerResolver getConfigurerResolver() {
-        return getExtendedCamelContext().getConfigurerResolver();
-    }
-
-    @Override
-    public void setConfigurerResolver(ConfigurerResolver configurerResolver) {
-        getExtendedCamelContext().setConfigurerResolver(configurerResolver);
-    }
-
-    @Override
-    public UriFactoryResolver getUriFactoryResolver() {
-        return getExtendedCamelContext().getUriFactoryResolver();
-    }
-
-    @Override
-    public void setUriFactoryResolver(UriFactoryResolver uriFactoryResolver) {
-        getExtendedCamelContext().setUriFactoryResolver(uriFactoryResolver);
-    }
-
-    @Override
-    public RouteController getInternalRouteController() {
-        return getExtendedCamelContext().getInternalRouteController();
-    }
-
-    @Override
-    public EndpointUriFactory getEndpointUriFactory(String scheme) {
-        return getExtendedCamelContext().getEndpointUriFactory(scheme);
-    }
-
-    @Override
-    public void addRoute(Route route) {
-        getExtendedCamelContext().addRoute(route);
-    }
-
-    @Override
-    public void removeRoute(Route route) {
-        getExtendedCamelContext().removeRoute(route);
-    }
-
-    @Override
-    public Processor createErrorHandler(Route route, Processor processor) throws Exception {
-        return getExtendedCamelContext().createErrorHandler(route, processor);
-    }
-
-    @Override
-    public void setLightweight(boolean lightweight) {
-        getExtendedCamelContext().setLightweight(lightweight);
-    }
-
-    @Override
-    public boolean isLightweight() {
-        return getExtendedCamelContext().isLightweight();
-    }
-
-    @Override
-    public StartupStepRecorder getStartupStepRecorder() {
-        return getExtendedCamelContext().getStartupStepRecorder();
-    }
-
-    @Override
-    public void setStartupStepRecorder(StartupStepRecorder startupStepRecorder) {
-        getExtendedCamelContext().setStartupStepRecorder(startupStepRecorder);
-    }
-
-    @Override
-    public CliConnectorFactory getCliConnectorFactory() {
-        return getExtendedCamelContext().getCliConnectorFactory();
-    }
-
-    @Override
-    public void setCliConnectorFactory(CliConnectorFactory cliConnectorFactory) {
-        getExtendedCamelContext().setCliConnectorFactory(cliConnectorFactory);
-    }
-
-    @Override
-    public String getTestExcludeRoutes() {
-        return getExtendedCamelContext().getTestExcludeRoutes();
     }
 
     //
@@ -2122,27 +1448,6 @@ public class LightweightCamelContext implements CamelContext, ExtendedCamelConte
     @Override
     public ModelReifierFactory getModelReifierFactory() {
         return getModelCamelContext().getModelReifierFactory();
-    }
-
-    @Override
-    public PeriodTaskScheduler getPeriodTaskScheduler() {
-        return getExtendedCamelContext().getPeriodTaskScheduler();
-    }
-
-    @Override
-    public void setPeriodTaskScheduler(PeriodTaskScheduler periodTaskScheduler) {
-        getExtendedCamelContext().setPeriodTaskScheduler(periodTaskScheduler);
-
-    }
-
-    @Override
-    public PeriodTaskResolver getPeriodTaskResolver() {
-        return getExtendedCamelContext().getPeriodTaskResolver();
-    }
-
-    @Override
-    public void setPeriodTaskResolver(PeriodTaskResolver periodTaskResolver) {
-        getExtendedCamelContext().setPeriodTaskResolver(periodTaskResolver);
     }
 
     @Override
