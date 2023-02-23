@@ -217,8 +217,6 @@ public class DefaultUnitOfWork implements UnitOfWork {
             log.trace("UnitOfWork done for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
         }
 
-        boolean failed = exchange.isFailed();
-
         // at first done the synchronizations
         UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, log);
 
@@ -228,6 +226,7 @@ public class DefaultUnitOfWork implements UnitOfWork {
         if (context.getCamelContextExtension().isEventNotificationApplicable()) {
             // then fire event to signal the exchange is done
             try {
+                final boolean failed = exchange.isFailed();
                 if (failed) {
                     EventHelper.notifyExchangeFailed(exchange.getContext(), exchange);
                 } else {
