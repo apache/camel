@@ -918,7 +918,7 @@ public final class Jsoner {
             /* See StringWriter. */
         }
         String answer = writableDestination.toString();
-        if ("SerializationOptions.ALLOW_INVALIDS_NOOP".equals(answer)) {
+        if (answer != null && answer.contains("SerializationOptions.ALLOW_INVALIDS_NOOP")) {
             answer = null;
         }
         return answer;

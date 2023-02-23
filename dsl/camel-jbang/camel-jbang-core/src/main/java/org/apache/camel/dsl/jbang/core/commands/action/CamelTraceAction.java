@@ -691,10 +691,18 @@ public class CamelTraceAction extends ActionBaseCommand {
         TableRow eRow = new TableRow("Exchange", r.message.getString("exchangeType"), null, null);
         String tab1 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
                 new Column().dataAlign(HorizontalAlign.LEFT)
-                        .minWidth(showExchangeProperties ? 11 : 9).with(TableRow::kindAsString),
+                        .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
                 new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAndLengthAsString)));
         // exchange properties
         JsonArray arr = r.message.getCollection("exchangeProperties");
+        if (arr != null) {
+            for (Object o : arr) {
+                JsonObject jo = (JsonObject) o;
+                rows.add(new TableRow("Property", jo.getString("type"), jo.getString("key"), jo.get("value")));
+            }
+        }
+        // internal exchange properties
+        arr = r.message.getCollection("internalExchangeProperties");
         if (arr != null) {
             for (Object o : arr) {
                 JsonObject jo = (JsonObject) o;
@@ -705,9 +713,9 @@ public class CamelTraceAction extends ActionBaseCommand {
                 new Column().dataAlign(HorizontalAlign.LEFT)
                         .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
                 new Column().dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(TableRow::typeAsString),
+                        .minWidth(25).maxWidth(40, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
                 new Column().dataAlign(HorizontalAlign.RIGHT)
-                        .maxWidth(40, OverflowBehaviour.NEWLINE).with(TableRow::keyAsString),
+                        .minWidth(25).maxWidth(40, OverflowBehaviour.NEWLINE).with(TableRow::keyAsString),
                 new Column().dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(80, OverflowBehaviour.NEWLINE).with(TableRow::valueAsString)));
         rows.clear();
@@ -730,9 +738,9 @@ public class CamelTraceAction extends ActionBaseCommand {
                 new Column().dataAlign(HorizontalAlign.LEFT)
                         .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
                 new Column().dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(TableRow::typeAsString),
+                        .minWidth(25).maxWidth(40, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
                 new Column().dataAlign(HorizontalAlign.RIGHT)
-                        .maxWidth(40, OverflowBehaviour.NEWLINE).with(TableRow::keyAsString),
+                        .minWidth(25).maxWidth(40, OverflowBehaviour.NEWLINE).with(TableRow::keyAsString),
                 new Column().dataAlign(HorizontalAlign.LEFT)
                         .maxWidth(80, OverflowBehaviour.NEWLINE).with(TableRow::valueAsString)));
 
@@ -756,9 +764,10 @@ public class CamelTraceAction extends ActionBaseCommand {
             eRow = new TableRow("Exception", jo.getString("type"), null, jo.get("message"));
             tab7 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
                     new Column().dataAlign(HorizontalAlign.LEFT)
-                            .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsStringRed),
+                            .minWidth(showExchangeProperties ? 12 : 10)
+                            .with(TableRow::kindAsStringRed),
                     new Column().dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(40, OverflowBehaviour.ELLIPSIS_LEFT).with(TableRow::typeAsString),
+                            .maxWidth(40, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
                     new Column().dataAlign(HorizontalAlign.LEFT)
                             .maxWidth(80, OverflowBehaviour.NEWLINE).with(TableRow::valueAsStringRed)));
         }
@@ -939,6 +948,8 @@ public class CamelTraceAction extends ActionBaseCommand {
             String s;
             if (type == null) {
                 s = "null";
+            } else if (type.startsWith("java.util.concurrent")) {
+                s = type.substring(21);
             } else if (type.startsWith("java.lang.") || type.startsWith("java.util.")) {
                 s = type.substring(10);
             } else {
@@ -955,6 +966,8 @@ public class CamelTraceAction extends ActionBaseCommand {
             String s;
             if (type == null) {
                 s = "null";
+            } else if (type.startsWith("java.util.concurrent")) {
+                s = type.substring(21);
             } else if (type.startsWith("java.lang.") || type.startsWith("java.util.")) {
                 s = type.substring(10);
             } else {
