@@ -2748,13 +2748,6 @@
             </dependency>
 
 
-            <!-- Optional Microsoft Authentication Library for Java  -->
-            <dependency>
-                <groupId>com.microsoft.azure</groupId>
-                <artifactId>msal4j</artifactId>
-                <version>${msal4j-version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-simple</artifactId>
