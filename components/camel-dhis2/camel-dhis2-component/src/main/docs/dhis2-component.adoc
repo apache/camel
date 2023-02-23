@@ -234,7 +234,7 @@ Any of the parameters can be provided in either the endpoint URI, or dynamically
 +
 [source,java]
 ----
-package org.came.dhis2.example;
+package org.camel.dhis2.example;
 
 import org.apache.camel.builder.RouteBuilder;
 
@@ -252,7 +252,7 @@ public class MyRouteBuilder extends RouteBuilder {
 +
 [source,java]
 ----
-package org.came.dhis2.example;
+package org.camel.dhis2.example;
 
 import org.apache.camel.builder.RouteBuilder;
 
@@ -270,7 +270,7 @@ public class MyRouteBuilder extends RouteBuilder {
 +
 [source,java]
 ----
-package org.came.dhis2.example;
+package org.camel.dhis2.example;
 
 import org.apache.camel.builder.RouteBuilder;
 
@@ -321,7 +321,7 @@ Any of the parameters can be provided in either the endpoint URI, or dynamically
 +
 [source,java]
 ----
-package org.came.dhis2.example;
+package org.camel.dhis2.example;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
@@ -396,7 +396,7 @@ Any of the parameters can be provided in either the endpoint URI, or dynamically
 +
 [source,java]
 ----
-package org.came.dhis2.example;
+package org.camel.dhis2.example;
 
 import org.apache.camel.builder.RouteBuilder;
 
@@ -415,7 +415,7 @@ public class MyRouteBuilder extends RouteBuilder {
 +
 [source,java]
 ----
-package org.came.dhis2.example;
+package org.camel.dhis2.example;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.hisp.dhis.integration.sdk.Dhis2ClientBuilder;
