@@ -51,21 +51,21 @@ public final class Environment {
     static {
         POSTGRESQL_CONTAINER = new PostgreSQLContainer<>(
                 DockerImageName.parse("postgis/postgis:12-3.2-alpine").asCompatibleSubstituteFor("postgres"))
-                .withDatabaseName("dhis2")
-                .withNetworkAliases("db")
-                .withUsername("dhis")
-                .withPassword("dhis").withNetwork(NETWORK);
+                        .withDatabaseName("dhis2")
+                        .withNetworkAliases("db")
+                        .withUsername("dhis")
+                        .withPassword("dhis").withNetwork(NETWORK);
 
         POSTGRESQL_CONTAINER.start();
 
         DHIS2_CONTAINER = new GenericContainer<>(
                 "dhis2/core:2.37.4-tomcat-8.5.34-jre8-alpine")
-                .dependsOn(POSTGRESQL_CONTAINER)
-                .withClasspathResourceMapping("dhis.conf", "/DHIS2_home/dhis.conf", BindMode.READ_WRITE)
-                .withNetwork(NETWORK).withExposedPorts(8080)
-                .waitingFor(
-                        new HttpWaitStrategy().forStatusCode(200).withStartupTimeout(Duration.ofSeconds(120)))
-                .withEnv("WAIT_FOR_DB_CONTAINER", "db" + ":" + 5432 + " -t 0");
+                        .dependsOn(POSTGRESQL_CONTAINER)
+                        .withClasspathResourceMapping("dhis.conf", "/DHIS2_home/dhis.conf", BindMode.READ_WRITE)
+                        .withNetwork(NETWORK).withExposedPorts(8080)
+                        .waitingFor(
+                                new HttpWaitStrategy().forStatusCode(200).withStartupTimeout(Duration.ofSeconds(120)))
+                        .withEnv("WAIT_FOR_DB_CONTAINER", "db" + ":" + 5432 + " -t 0");
 
         DHIS2_CONTAINER.start();
 
