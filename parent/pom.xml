@@ -2748,13 +2748,6 @@
             </dependency>
 
 
-            <!-- optional Dropbox dependencies -->
-            <dependency>
-                <groupId>com.dropbox.core</groupId>
-                <artifactId>dropbox-core-sdk</artifactId>
-                <version>${dropbox-version}</version>
-            </dependency>
-
             <!-- optional mina dependencies -->
             <dependency>
                 <groupId>org.apache.mina</groupId>
