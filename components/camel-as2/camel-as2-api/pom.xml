@@ -67,6 +67,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
+            <version>${httpcore4-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
