@@ -1784,12 +1784,8 @@ public abstract class AbstractCamelContext extends BaseService
                 IOHelper.close(inputStream);
             }
         }
-        // special for ActiveMQ as it is really just JMS
-        if ("ActiveMQComponent".equals(clazz.getSimpleName())) {
-            return getComponentParameterJsonSchema("jms");
-        } else {
-            return null;
-        }
+
+        return null;
     }
 
     public String getDataFormatParameterJsonSchema(String dataFormatName) throws IOException {
