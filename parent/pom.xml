@@ -2748,13 +2748,6 @@
             </dependency>
 
 
-            <!-- optional mina dependencies -->
-            <dependency>
-                <groupId>org.apache.mina</groupId>
-                <artifactId>mina-core</artifactId>
-                <version>${mina-version}</version>
-            </dependency>
-
             <!-- Optional Microsoft Authentication Library for Java  -->
             <dependency>
                 <groupId>com.microsoft.azure</groupId>
