@@ -65,8 +65,8 @@ public final class MessageHelper {
      * <p/>
      * Will handle stream based bodies wrapped in StreamCache.
      *
-     * @param message the message with the body
-     * @return the body as String, can return <tt>null</null> if no body
+     * @param  message the message with the body
+     * @return         the body as String, can return <tt>null</null> if no body
      */
     public static String extractBodyAsString(Message message) {
         if (message == null) {
@@ -104,8 +104,8 @@ public final class MessageHelper {
      * <p/>
      * Will skip java.lang. for the build in Java types.
      *
-     * @param message the message with the body
-     * @return the body type name as String, can return <tt>null</null> if no body
+     * @param  message the message with the body
+     * @return         the body type name as String, can return <tt>null</null> if no body
      */
     public static String getBodyTypeName(Message message) {
         if (message == null) {
@@ -157,10 +157,10 @@ public final class MessageHelper {
      * <p/>
      * Will clip the body if its too big for logging. Will prepend the message with <tt>Message: </tt>
      *
-     * @param message the message
-     * @return the logging message
-     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
-     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param  message the message
+     * @return         the logging message
+     * @see            org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
+     * @see            org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      */
     public static String extractBodyForLogging(Message message) {
         return extractBodyForLogging(message, "Message: ");
@@ -171,11 +171,11 @@ public final class MessageHelper {
      * <p/>
      * Will clip the value if its too big for logging.
      *
-     * @param value   the value
-     * @param message the message
-     * @return the logging message
-     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
-     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param  value   the value
+     * @param  message the message
+     * @return         the logging message
+     * @see            org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
+     * @see            org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      */
     public static String extractValueForLogging(Object value, Message message) {
         boolean streams = false;
@@ -205,11 +205,11 @@ public final class MessageHelper {
      * <p/>
      * Will clip the body if its too big for logging.
      *
-     * @param message the message
-     * @param prepend a message to prepend
-     * @return the logging message
-     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
-     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param  message the message
+     * @param  prepend a message to prepend
+     * @return         the logging message
+     * @see            org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
+     * @see            org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      */
     public static String extractBodyForLogging(Message message, String prepend) {
         boolean streams = false;
@@ -228,13 +228,13 @@ public final class MessageHelper {
      * <p/>
      * Will clip the body if its too big for logging.
      *
-     * @param message      the message
-     * @param prepend      a message to prepend
-     * @param allowStreams whether or not streams is allowed
-     * @param allowFiles   whether or not files is allowed (currently not in use)
-     * @return the logging message
-     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
-     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param  message      the message
+     * @param  prepend      a message to prepend
+     * @param  allowStreams whether or not streams is allowed
+     * @param  allowFiles   whether or not files is allowed (currently not in use)
+     * @return              the logging message
+     * @see                 org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
+     * @see                 org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      */
     public static String extractBodyForLogging(Message message, String prepend, boolean allowStreams, boolean allowFiles) {
         // default to 1000 chars
@@ -255,14 +255,14 @@ public final class MessageHelper {
      * <p/>
      * Will clip the body if its too big for logging.
      *
-     * @param message      the message
-     * @param prepend      a message to prepend (optional)
-     * @param allowStreams whether or not streams is allowed
-     * @param allowFiles   whether or not files is allowed (currently not in use)
-     * @param maxChars     limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging message
-     *                     body off.
-     * @return the logging message
-     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param  message      the message
+     * @param  prepend      a message to prepend (optional)
+     * @param  allowStreams whether or not streams is allowed
+     * @param  allowFiles   whether or not files is allowed (currently not in use)
+     * @param  maxChars     limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging message
+     *                      body off.
+     * @return              the logging message
+     * @see                 org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      */
     public static String extractBodyForLogging(
             Message message, String prepend, boolean allowStreams, boolean allowFiles, int maxChars) {
@@ -279,15 +279,15 @@ public final class MessageHelper {
      * <p/>
      * Will clip the body if its too big for logging.
      *
-     * @param message            the message
-     * @param prepend            a message to prepend (optional)
-     * @param allowCachedStreams whether or not cached streams is allowed
-     * @param allowStreams       whether or not streams is allowed
-     * @param allowFiles         whether or not files is allowed (currently not in use)
-     * @param maxChars           limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging
-     *                           message body off.
-     * @return the logging message
-     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param  message            the message
+     * @param  prepend            a message to prepend (optional)
+     * @param  allowCachedStreams whether or not cached streams is allowed
+     * @param  allowStreams       whether or not streams is allowed
+     * @param  allowFiles         whether or not files is allowed (currently not in use)
+     * @param  maxChars           limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging
+     *                            message body off.
+     * @return                    the logging message
+     * @see                       org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      */
     public static String extractBodyForLogging(
             Message message, String prepend, boolean allowCachedStreams, boolean allowStreams, boolean allowFiles,
@@ -306,14 +306,14 @@ public final class MessageHelper {
      * <p/>
      * Will clip the value if its too big for logging.
      *
-     * @param obj          the value
-     * @param message      the message
-     * @param allowStreams whether or not streams is allowed
-     * @param allowFiles   whether or not files is allowed (currently not in use)
-     * @param maxChars     limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging message
-     *                     body off.
-     * @return the logging message
-     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param  obj          the value
+     * @param  message      the message
+     * @param  allowStreams whether or not streams is allowed
+     * @param  allowFiles   whether or not files is allowed (currently not in use)
+     * @param  maxChars     limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging message
+     *                      body off.
+     * @return              the logging message
+     * @see                 org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      */
     public static String extractValueForLogging(
             Object obj, Message message, boolean allowStreams, boolean allowFiles, int maxChars) {
@@ -326,15 +326,15 @@ public final class MessageHelper {
      * <p/>
      * Will clip the value if its too big for logging.
      *
-     * @param obj                the value
-     * @param message            the message
-     * @param allowCachedStreams whether or not cached streams is allowed
-     * @param allowStreams       whether or not streams is allowed
-     * @param allowFiles         whether or not files is allowed (currently not in use)
-     * @param maxChars           limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging
-     *                           message body off.
-     * @return the logging message
-     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param  obj                the value
+     * @param  message            the message
+     * @param  allowCachedStreams whether or not cached streams is allowed
+     * @param  allowStreams       whether or not streams is allowed
+     * @param  allowFiles         whether or not files is allowed (currently not in use)
+     * @param  maxChars           limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging
+     *                            message body off.
+     * @return                    the logging message
+     * @see                       org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      */
     public static String extractValueForLogging(
             Object obj, Message message, boolean allowCachedStreams, boolean allowStreams, boolean allowFiles, int maxChars) {
@@ -419,7 +419,7 @@ public final class MessageHelper {
         // clip body if length enabled and the body is too big
         if (maxChars > 0 && body.length() > maxChars) {
             body = body.substring(0, maxChars) + "... [Body clipped after " + maxChars + " chars, total length is "
-                    + body.length() + "]";
+                   + body.length() + "]";
         }
 
         return body;
@@ -428,8 +428,8 @@ public final class MessageHelper {
     /**
      * Dumps the message as a generic XML structure.
      *
-     * @param message the message
-     * @return the XML
+     * @param  message the message
+     * @return         the XML
      */
     public static String dumpAsXml(Message message) {
         return dumpAsXml(message, true);
@@ -438,9 +438,9 @@ public final class MessageHelper {
     /**
      * Dumps the message as a generic XML structure.
      *
-     * @param message     the message
-     * @param includeBody whether or not to include the message body
-     * @return the XML
+     * @param  message     the message
+     * @param  includeBody whether or not to include the message body
+     * @return             the XML
      */
     public static String dumpAsXml(Message message, boolean includeBody) {
         return dumpAsXml(message, includeBody, 0);
@@ -449,10 +449,10 @@ public final class MessageHelper {
     /**
      * Dumps the message as a generic XML structure.
      *
-     * @param message     the message
-     * @param includeBody whether or not to include the message body
-     * @param indent      number of spaces to indent
-     * @return the XML
+     * @param  message     the message
+     * @param  includeBody whether or not to include the message body
+     * @param  indent      number of spaces to indent
+     * @return             the XML
      */
     public static String dumpAsXml(Message message, boolean includeBody, int indent) {
         return dumpAsXml(message, includeBody, indent, false, true, 128 * 1024);
@@ -461,14 +461,14 @@ public final class MessageHelper {
     /**
      * Dumps the message as a generic XML structure.
      *
-     * @param message      the message
-     * @param includeBody  whether or not to include the message body
-     * @param indent       number of spaces to indent
-     * @param allowStreams whether to include message body if they are stream based
-     * @param allowFiles   whether to include message body if they are file based
-     * @param maxChars     clip body after maximum chars (to avoid very big messages). Use 0 or negative value to not
-     *                     limit at all.
-     * @return the XML
+     * @param  message      the message
+     * @param  includeBody  whether or not to include the message body
+     * @param  indent       number of spaces to indent
+     * @param  allowStreams whether to include message body if they are stream based
+     * @param  allowFiles   whether to include message body if they are file based
+     * @param  maxChars     clip body after maximum chars (to avoid very big messages). Use 0 or negative value to not
+     *                      limit at all.
+     * @return              the XML
      */
     public static String dumpAsXml(
             Message message, boolean includeBody, int indent, boolean allowStreams, boolean allowFiles, int maxChars) {
@@ -478,16 +478,16 @@ public final class MessageHelper {
     /**
      * Dumps the message as a generic XML structure.
      *
-     * @param message                   the message
-     * @param includeBody               whether or not to include the message body
-     * @param includeExchangeProperties whether or not to include exchange properties
-     * @param indent                    number of spaces to indent
-     * @param allowCachedStreams        whether to include message body if they are stream cache based
-     * @param allowStreams              whether to include message body if they are stream based
-     * @param allowFiles                whether to include message body if they are file based
-     * @param maxChars                  clip body after maximum chars (to avoid very big messages). Use 0 or negative
-     *                                  value to not limit at all.
-     * @return the XML
+     * @param  message                   the message
+     * @param  includeBody               whether or not to include the message body
+     * @param  includeExchangeProperties whether or not to include exchange properties
+     * @param  indent                    number of spaces to indent
+     * @param  allowCachedStreams        whether to include message body if they are stream cache based
+     * @param  allowStreams              whether to include message body if they are stream based
+     * @param  allowFiles                whether to include message body if they are file based
+     * @param  maxChars                  clip body after maximum chars (to avoid very big messages). Use 0 or negative
+     *                                   value to not limit at all.
+     * @return                           the XML
      */
     public static String dumpAsXml(
             Message message, boolean includeExchangeProperties, boolean includeBody, int indent,
@@ -671,11 +671,11 @@ public final class MessageHelper {
     /**
      * Dumps the {@link MessageHistory} from the {@link Exchange} in a human readable format.
      *
-     * @param exchange          the exchange
-     * @param exchangeFormatter if provided then information about the exchange is included in the dump
-     * @param logStackTrace     whether to include a header for the stacktrace, to be added (not included in this
-     *                          dump).
-     * @return a human readable message history as a table
+     * @param  exchange          the exchange
+     * @param  exchangeFormatter if provided then information about the exchange is included in the dump
+     * @param  logStackTrace     whether to include a header for the stacktrace, to be added (not included in this
+     *                           dump).
+     * @return                   a human readable message history as a table
      */
     public static String dumpMessageHistoryStacktrace(
             Exchange exchange, ExchangeFormatter exchangeFormatter, boolean logStackTrace) {
@@ -805,8 +805,8 @@ public final class MessageHelper {
     /**
      * Dumps the message as a generic JSon structure.
      *
-     * @param message the message
-     * @return the JSon
+     * @param  message the message
+     * @return         the JSon
      */
     public static String dumpAsJSon(Message message) {
         return dumpAsJSon(message, true);
@@ -815,9 +815,9 @@ public final class MessageHelper {
     /**
      * Dumps the message as a generic JSon structure.
      *
-     * @param message     the message
-     * @param includeBody whether or not to include the message body
-     * @return the JSon
+     * @param  message     the message
+     * @param  includeBody whether or not to include the message body
+     * @return             the JSon
      */
     public static String dumpAsJSon(Message message, boolean includeBody) {
         return dumpAsJSon(message, includeBody, 0);
@@ -826,10 +826,10 @@ public final class MessageHelper {
     /**
      * Dumps the message as a generic JSon structure.
      *
-     * @param message     the message
-     * @param includeBody whether or not to include the message body
-     * @param indent      number of spaces to indent
-     * @return the JSon
+     * @param  message     the message
+     * @param  includeBody whether or not to include the message body
+     * @param  indent      number of spaces to indent
+     * @return             the JSon
      */
     public static String dumpAsJSon(Message message, boolean includeBody, int indent) {
         return dumpAsJSon(message, includeBody, indent, false, true, 128 * 1024, true);
@@ -838,14 +838,14 @@ public final class MessageHelper {
     /**
      * Dumps the message as a generic JSon structure.
      *
-     * @param message      the message
-     * @param includeBody  whether or not to include the message body
-     * @param indent       number of spaces to indent
-     * @param allowStreams whether to include message body if they are stream based
-     * @param allowFiles   whether to include message body if they are file based
-     * @param maxChars     clip body after maximum chars (to avoid very big messages). Use 0 or negative value to not
-     *                     limit at all.
-     * @return the JSon
+     * @param  message      the message
+     * @param  includeBody  whether or not to include the message body
+     * @param  indent       number of spaces to indent
+     * @param  allowStreams whether to include message body if they are stream based
+     * @param  allowFiles   whether to include message body if they are file based
+     * @param  maxChars     clip body after maximum chars (to avoid very big messages). Use 0 or negative value to not
+     *                      limit at all.
+     * @return              the JSon
      */
     public static String dumpAsJSon(
             Message message, boolean includeBody, int indent, boolean allowStreams, boolean allowFiles, int maxChars,
@@ -856,17 +856,17 @@ public final class MessageHelper {
     /**
      * Dumps the message as a generic JSon structure.
      *
-     * @param message                   the message
-     * @param includeExchangeProperties whether or not to include exchange properties
-     * @param includeBody               whether or not to include the message body
-     * @param indent                    number of spaces to indent
-     * @param allowCachedStreams        whether to include message body if they are stream cached based
-     * @param allowStreams              whether to include message body if they are stream based
-     * @param allowFiles                whether to include message body if they are file based
-     * @param maxChars                  clip body after maximum chars (to avoid very big messages). Use 0 or negative
-     *                                  value to not limit at all.
-     * @param pretty                    whether to pretty print JSon
-     * @return the JSon
+     * @param  message                   the message
+     * @param  includeExchangeProperties whether or not to include exchange properties
+     * @param  includeBody               whether or not to include the message body
+     * @param  indent                    number of spaces to indent
+     * @param  allowCachedStreams        whether to include message body if they are stream cached based
+     * @param  allowStreams              whether to include message body if they are stream based
+     * @param  allowFiles                whether to include message body if they are file based
+     * @param  maxChars                  clip body after maximum chars (to avoid very big messages). Use 0 or negative
+     *                                   value to not limit at all.
+     * @param  pretty                    whether to pretty print JSon
+     * @return                           the JSon
      */
     public static String dumpAsJSon(
             Message message, boolean includeExchangeProperties, boolean includeBody, int indent,
@@ -984,8 +984,8 @@ public final class MessageHelper {
     /**
      * Dumps the exception as a generic XML structure.
      *
-     * @param indent number of spaces to indent
-     * @return the XML
+     * @param  indent number of spaces to indent
+     * @return        the XML
      */
     public static String dumpExceptionAsXML(Throwable exception, int indent) {
         StringBuilder prefix = new StringBuilder();
@@ -1022,9 +1022,9 @@ public final class MessageHelper {
     /**
      * Dumps the exception as a generic JSon structure.
      *
-     * @param indent number of spaces to indent
-     * @param pretty whether to pretty print JSon
-     * @return the JSon
+     * @param  indent number of spaces to indent
+     * @param  pretty whether to pretty print JSon
+     * @return        the JSon
      */
     public static String dumpExceptionAsJSon(Throwable exception, int indent, boolean pretty) {
         JsonObject root = new JsonObject();
