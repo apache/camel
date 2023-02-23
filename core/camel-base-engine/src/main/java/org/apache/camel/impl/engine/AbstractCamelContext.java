@@ -240,12 +240,7 @@ public abstract class AbstractCamelContext extends BaseService
     private final StopWatch stopWatch = new StopWatch(false);
     private final Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
     private Set<LogListener> logListeners;
-    private final ThreadLocal<Set<String>> componentsInCreation = new ThreadLocal<Set<String>>() {
-        @Override
-        public Set<String> initialValue() {
-            return new HashSet<>();
-        }
-    };
+    private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(() -> new HashSet<>());
     private VetoCamelContextStartException vetoed;
     private String managementName;
     private ClassLoader applicationContextClassLoader;
