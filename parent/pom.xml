@@ -2754,18 +2754,6 @@
                 <version>${slf4j-version}</version>
             </dependency>
 
-            <!-- httpcomponents httpcore dependencies -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>${httpcore4-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore-nio</artifactId>
-                <version>${httpcore4-version}</version>
-            </dependency>
-
             <!-- httpcomponents httpclient dependencies -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
