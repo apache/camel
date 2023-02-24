@@ -605,14 +605,6 @@ public class CamelTraceAction extends ActionBaseCommand {
         } else {
             System.out.print(u);
         }
-        System.out.print(" ");
-        // MEP
-        //        String mep = String.format("%6.6s", row.exchangePattern);
-        //        if (loggingColor) {
-        //            AnsiConsole.out().print(Ansi.ansi().fgBrightMagenta().a(Ansi.Attribute.INTENSITY_FAINT).a(mep).reset());
-        //        } else {
-        //            System.out.print(mep);
-        //        }
         System.out.print(" - ");
         // status
         System.out.print(getStatus(row));
