@@ -149,27 +149,6 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         this.beanClass = beanType;
     }
 
-    @Deprecated
-    public String getCache() {
-        if (scope == null || BeanScope.Singleton.name().equals(scope)) {
-            return "true";
-        } else {
-            return "false";
-        }
-    }
-
-    /**
-     * Use singleton option instead
-     */
-    @Deprecated
-    public void setCache(String cache) {
-        if ("true".equals(cache)) {
-            scope = BeanScope.Singleton.name();
-        } else {
-            scope = BeanScope.Prototype.name();
-        }
-    }
-
     public String getScope() {
         return scope;
     }

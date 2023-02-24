@@ -41,9 +41,6 @@ public class BeanComponent extends DefaultComponent {
     @SuppressWarnings("unchecked")
     private final Map<BeanInfoCacheKey, BeanInfo> beanInfoCache = LRUCacheFactory.newLRUSoftCache(1000);
 
-    @Deprecated
-    @Metadata(defaultValue = "true", description = "Use singleton option instead.")
-    private Boolean cache;
     @Metadata(defaultValue = "Singleton", description = "Scope of bean."
                                                         + " When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint."
                                                         + " The bean should be thread-safe in case concurrent threads is calling the bean at the same time."
@@ -64,9 +61,6 @@ public class BeanComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BeanEndpoint endpoint = new BeanEndpoint(uri, this);
         endpoint.setBeanName(remaining);
-        if (cache != null) {
-            endpoint.setCache(cache);
-        }
         endpoint.setScope(scope);
         setProperties(endpoint, parameters);
 
@@ -92,20 +86,6 @@ public class BeanComponent extends DefaultComponent {
                     cache.getMisses(), cache.getEvicted());
         }
         beanInfoCache.clear();
-    }
-
-    @Deprecated
-    public Boolean getCache() {
-        return scope == BeanScope.Singleton;
-    }
-
-    @Deprecated
-    public void setCache(Boolean cache) {
-        if (Boolean.TRUE.equals(cache)) {
-            scope = BeanScope.Singleton;
-        } else {
-            scope = BeanScope.Prototype;
-        }
     }
 
     public BeanScope getScope() {

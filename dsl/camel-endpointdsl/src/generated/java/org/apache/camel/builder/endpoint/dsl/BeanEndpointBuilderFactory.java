@@ -43,37 +43,6 @@ public interface BeanEndpointBuilderFactory {
             return (AdvancedBeanEndpointBuilder) this;
         }
         /**
-         * Use scope option instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param cache the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default BeanEndpointBuilder cache(Boolean cache) {
-            doSetProperty("cache", cache);
-            return this;
-        }
-        /**
-         * Use scope option instead.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param cache the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default BeanEndpointBuilder cache(String cache) {
-            doSetProperty("cache", cache);
-            return this;
-        }
-        /**
          * Sets the name of the method to invoke on the bean.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.

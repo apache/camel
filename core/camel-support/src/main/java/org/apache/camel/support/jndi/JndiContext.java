@@ -38,8 +38,6 @@ import javax.naming.OperationNotSupportedException;
 import javax.naming.Reference;
 import javax.naming.spi.NamingManager;
 
-import org.apache.camel.support.IntrospectionSupport;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.CastUtils;
 
 /**
@@ -436,10 +434,4 @@ public class JndiContext implements Context, Serializable {
         }
     }
 
-    @Deprecated
-    protected static Object createBean(Class<?> type, Map<String, Object> properties, String prefix) throws Exception {
-        Object value = ObjectHelper.newInstance(type);
-        IntrospectionSupport.setProperties(value, properties, prefix);
-        return value;
-    }
 }

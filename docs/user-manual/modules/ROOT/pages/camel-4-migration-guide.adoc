@@ -68,6 +68,7 @@ We have removed deprecated APIs such as the following:
 - Removed `@FallbackConverter` as you should use `@Converter(fallback = true)` instead.
 - Removed `uri` attribute on `@EndpointInject`, `@Produce`, and `@Consume` as you should use `value` (default) instead.
   For example `@Produce(uri = "kafka:cheese")` should be changed to `@Produce("kafka:cheese")`
+- Removed `label` on `@UriEndpoint` as you should use `category` instead.
 
 == YAML DSL
 

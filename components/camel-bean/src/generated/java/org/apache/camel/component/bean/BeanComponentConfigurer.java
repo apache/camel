@@ -23,7 +23,6 @@ public class BeanComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
-        case "cache": target.setCache(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "scope": target.setScope(property(camelContext, org.apache.camel.BeanScope.class, value)); return true;
@@ -36,7 +35,6 @@ public class BeanComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
-        case "cache": return java.lang.Boolean.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "scope": return org.apache.camel.BeanScope.class;
@@ -50,7 +48,6 @@ public class BeanComponentConfigurer extends PropertyConfigurerSupport implement
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "autowiredenabled":
         case "autowiredEnabled": return target.isAutowiredEnabled();
-        case "cache": return target.getCache();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "scope": return target.getScope();

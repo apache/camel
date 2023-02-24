@@ -160,11 +160,7 @@ public abstract class AbstractHealthCheck implements HealthCheck, CamelContextAw
         int successCount = (Integer) meta.getOrDefault(SUCCESS_COUNT, 0);
         String successTime = (String) meta.get(SUCCESS_TIME);
         String successStartTime = (String) meta.get(SUCCESS_START_TIME);
-
         String invocationTime = ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME);
-
-        // Set common meta-data
-        meta.put(INVOCATION_ATTEMPT_TIME, invocationTime);
 
         if (!isEnabled()) {
             LOG.debug("health-check ({}) {}/{} disabled", kind, getGroup(), getId());

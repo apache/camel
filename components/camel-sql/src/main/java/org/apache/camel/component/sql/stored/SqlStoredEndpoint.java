@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -36,18 +37,17 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * Perform SQL queries as a JDBC Stored Procedures using Spring JDBC.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "sql-stored", title = "SQL Stored Procedure", syntax = "sql-stored:template",
-             producerOnly = true, label = "database,sql", headersClass = SqlStoredConstants.class)
+             producerOnly = true, category = { Category.DATABASE, Category.SQL }, headersClass = SqlStoredConstants.class)
 public class SqlStoredEndpoint extends DefaultEndpoint {
 
     private CallableStatementWrapperFactory wrapperFactory;
     private JdbcTemplate jdbcTemplate;
 
-    @UriParam(description = "Sets the DataSource to use to communicate with the database.")
-    private DataSource dataSource;
-
     @UriPath(description = "Sets the StoredProcedure template to perform")
     @Metadata(required = true)
     private String template;
+    @UriParam(description = "Sets the DataSource to use to communicate with the database.")
+    private DataSource dataSource;
     @UriParam(description = "Enables or disables batch mode")
     private boolean batch;
     @UriParam(description = "Whether to use the message body as the template and then headers for parameters. If this option is enabled then the template in the uri is not used.")

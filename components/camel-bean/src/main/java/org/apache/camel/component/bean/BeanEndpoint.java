@@ -44,9 +44,6 @@ public class BeanEndpoint extends DefaultEndpoint {
     private String beanName;
     @UriParam(label = "common", description = "Sets the name of the method to invoke on the bean")
     private String method;
-    @Deprecated
-    @UriParam(label = "common", description = "Use scope option instead.")
-    private Boolean cache;
     @UriParam(label = "common", defaultValue = "Singleton", description = "Scope of bean."
                                                                           + " When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint."
                                                                           + " The bean should be thread-safe in case concurrent threads is calling the bean at the same time."
@@ -139,20 +136,6 @@ public class BeanEndpoint extends DefaultEndpoint {
 
     public void setBeanName(String beanName) {
         this.beanName = beanName;
-    }
-
-    @Deprecated
-    public Boolean getCache() {
-        return scope == BeanScope.Singleton;
-    }
-
-    @Deprecated
-    public void setCache(Boolean cache) {
-        if (Boolean.TRUE.equals(cache)) {
-            scope = BeanScope.Singleton;
-        } else {
-            scope = BeanScope.Prototype;
-        }
     }
 
     public BeanScope getScope() {

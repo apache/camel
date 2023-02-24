@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import com.jcraft.jsch.Proxy;
+import org.apache.camel.Category;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
@@ -31,7 +32,7 @@ import org.apache.camel.spi.UriParam;
  * Upload and download files to/from SFTP servers.
  */
 @UriEndpoint(firstVersion = "1.1.0", scheme = "sftp", extendsScheme = "file", title = "SFTP",
-             syntax = "sftp:host:port/directoryName", label = "file", headersClass = FtpConstants.class)
+             syntax = "sftp:host:port/directoryName", category = { Category.FILE }, headersClass = FtpConstants.class)
 @Metadata(excludeProperties = "appendChars,bufferSize,siteCommand,"
                               + "directoryMustExist,extendedAttributes,probeContentType,startingDirectoryMustExist,"
                               + "startingDirectoryMustHaveAccess,forceWrites,copyAndDeleteOnRenameFail,"

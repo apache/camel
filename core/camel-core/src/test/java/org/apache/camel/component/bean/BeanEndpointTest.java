@@ -145,36 +145,6 @@ public class BeanEndpointTest extends ContextTestSupport {
         assertEquals("Hello World", out);
     }
 
-    @Test
-    public void testBeanEndpointCtrWithMethodAndCache() throws Exception {
-        final BeanEndpoint endpoint = new BeanEndpoint();
-        endpoint.setCamelContext(context);
-        endpoint.setCache(true);
-
-        endpoint.setBeanName("foo");
-        endpoint.setMethod("hello");
-        assertEquals("foo", endpoint.getBeanName());
-
-        assertTrue(endpoint.isSingleton());
-        assertNull(endpoint.getBeanHolder());
-        assertEquals("hello", endpoint.getMethod());
-        assertEquals("bean:foo?method=hello", endpoint.getEndpointUri());
-
-        context.addRoutes(new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start").to(endpoint);
-            }
-        });
-        context.start();
-
-        String out = template.requestBody("direct:start", "World", String.class);
-        assertEquals("Hello World", out);
-
-        out = template.requestBody("direct:start", "Moon", String.class);
-        assertEquals("Hello Moon", out);
-    }
-
     public static class FooBean {
 
         public String hello(String hello) {

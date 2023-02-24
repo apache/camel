@@ -163,13 +163,11 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             String extendsScheme = uriEndpoint.extendsScheme();
             String title = uriEndpoint.title();
             Category[] categories = uriEndpoint.category();
-            String label;
+            String label = null;
             if (categories.length > 0) {
                 label = Arrays.stream(categories)
                         .map(Category::getValue)
                         .collect(Collectors.joining(","));
-            } else {
-                label = uriEndpoint.label();
             }
             validateSchemaName(scheme, classElement);
             // support multiple schemes separated by comma, which maps to

@@ -49,22 +49,6 @@ public interface ClasComponentBuilderFactory {
      */
     interface ClasComponentBuilder extends ComponentBuilder<ClassComponent> {
         /**
-         * Use singleton option instead.
-         * 
-         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: producer
-         * 
-         * @param cache the value to set
-         * @return the dsl builder
-         */
-        @Deprecated
-        default ClasComponentBuilder cache(java.lang.Boolean cache) {
-            doSetProperty("cache", cache);
-            return this;
-        }
-        /**
          * Whether the producer should be started lazy (on the first message).
          * By starting lazy you can use this to allow CamelContext and routes to
          * startup in situations where a producer may otherwise fail during
@@ -153,7 +137,6 @@ public interface ClasComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "cache": ((ClassComponent) component).setCache((java.lang.Boolean) value); return true;
             case "lazyStartProducer": ((ClassComponent) component).setLazyStartProducer((boolean) value); return true;
             case "scope": ((ClassComponent) component).setScope((org.apache.camel.BeanScope) value); return true;
             case "autowiredEnabled": ((ClassComponent) component).setAutowiredEnabled((boolean) value); return true;

@@ -26,6 +26,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 
+import org.apache.camel.Category;
 import org.xml.sax.EntityResolver;
 
 import org.apache.camel.CamelContext;
@@ -52,7 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "Managed XsltEndpoint")
 @UriEndpoint(firstVersion = "1.3.0", scheme = "xslt", title = "XSLT", syntax = "xslt:resourceUri", producerOnly = true,
-             label = "core,transformation", headersClass = XsltConstants.class)
+             category = {Category.CORE, Category.TRANSFORMATION}, headersClass = XsltConstants.class)
 public class XsltEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);

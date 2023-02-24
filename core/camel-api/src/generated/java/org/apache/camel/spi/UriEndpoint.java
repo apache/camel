@@ -98,24 +98,11 @@ public @interface UriEndpoint {
     String consumerPrefix() default "";
 
     /**
-     * A human readable title of this entity, such as the component name of the this endpoint.
+     * A human-readable title of this entity, such as the component name of the this endpoint.
      * <p/>
      * For example: JMS, MQTT, Netty HTTP, SAP NetWeaver
      */
     String title();
-
-    /**
-     * To associate this endpoint with label(s).
-     * <p/>
-     * Multiple labels can be defined as a comma separated value.
-     * <p/>
-     * The labels is intended for grouping the endpoints, such as <tt>core</tt>, <tt>file</tt>, <tt>messaging</tt>,
-     * <tt>database</tt>, etc.
-     * <p/>
-     * Deprecated: Use the category field instead
-     */
-    @Deprecated
-    String label() default "";
 
     /**
      * To associate this endpoint with category(ies).
@@ -130,14 +117,14 @@ public @interface UriEndpoint {
     /**
      * Whether this endpoint can only be used as a producer.
      * <p/>
-     * By default its assumed the endpoint can be used as both consumer and producer.
+     * By default, its assumed the endpoint can be used as both consumer and producer.
      */
     boolean producerOnly() default false;
 
     /**
      * Whether this endpoint can only be used as a consumer.
      * <p/>
-     * By default its assumed the endpoint can be used as both consumer and producer.
+     * By default, its assumed the endpoint can be used as both consumer and producer.
      */
     boolean consumerOnly() default false;
 

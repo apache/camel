@@ -62,7 +62,6 @@ public class ConsumerHealthCheck extends RouteHealthCheck {
 
                 // ensure to sanitize uri, so we do not show sensitive information such as passwords
                 builder.detail(ENDPOINT_URI, sanitizedUri);
-                builder.detail(FAILURE_ENDPOINT_URI, sanitizedUri);
 
                 builder.state(result.getState());
                 if (result.getMessage().isPresent()) {
