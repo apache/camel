@@ -45,7 +45,6 @@ import javax.xml.transform.Source;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
@@ -93,7 +92,6 @@ public class FallbackTypeConverter {
         this.defaultObjectFactory = objectFactory;
     }
 
-    @FallbackConverter
     @Converter(fallback = true)
     public Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
 
