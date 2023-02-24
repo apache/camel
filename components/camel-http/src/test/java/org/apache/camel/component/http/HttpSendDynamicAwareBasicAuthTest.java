@@ -100,7 +100,7 @@ public class HttpSendDynamicAwareBasicAuthTest extends BaseHttpTest {
         assertEquals(2, count);
 
         // we only have 2xdirect and 2xhttp
-        assertEquals(4, context.getEndpointMap().size());
+        assertEquals(4, context.getEndpointRegistry().size());
     }
 
 }

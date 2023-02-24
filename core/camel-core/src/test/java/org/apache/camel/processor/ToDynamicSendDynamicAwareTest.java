@@ -52,7 +52,7 @@ public class ToDynamicSendDynamicAwareTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // there should only be a bar:order endpoint
-        boolean found = context.getEndpointMap().containsKey("bar://order");
+        boolean found = context.getEndpointRegistry().containsKey("bar://order");
         assertTrue(found, "There should only be one bar endpoint");
     }
 

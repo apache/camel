@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -208,6 +209,32 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
             }
         }
         return Collections.unmodifiableCollection(answer);
+    }
+
+    public Map<String, V> getReadOnlyMap() {
+        if (isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        // we want to avoid any kind of locking in get/put methods
+        // as getReadOnlyValues is only seldom used, such as when camel-mock
+        // is asserting endpoints at end of testing
+        // so this code will then just retry in case of a concurrency update
+        Map<String, V> answer = new LinkedHashMap<>();
+        boolean done = false;
+        while (!done) {
+            try {
+                for (Entry<K, V> entry : entrySet()) {
+                    String k = entry.getKey().toString();
+                    answer.put(k, entry.getValue());
+                }
+                done = true;
+            } catch (ConcurrentModificationException e) {
+                answer.clear();
+                // try again
+            }
+        }
+        return Collections.unmodifiableMap(answer);
     }
 
     @Override

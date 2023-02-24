@@ -18,7 +18,6 @@ package org.apache.camel.component.http;
 
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.ExchangeBuilder;
@@ -86,7 +85,7 @@ public class HttpSendDynamicAwareUriWithoutSlashTest extends BaseHttpTest {
         assertEquals("a user", out.getMessage().getBody(String.class));
 
         // and there should only be one http endpoint as they are both on same host
-        Map<String, Endpoint> endpointMap = context.getEndpointMap();
+        Map endpointMap = context.getEndpointRegistry();
         assertTrue(endpointMap.containsKey("http://localhost:" + localServer.getLocalPort()), "Should find static uri");
         assertTrue(endpointMap.containsKey("direct://usersDrink"), "Should find direct");
         assertTrue(endpointMap.containsKey("direct://usersDrinkWithoutSlash"), "Should find direct");
@@ -104,7 +103,7 @@ public class HttpSendDynamicAwareUriWithoutSlashTest extends BaseHttpTest {
         assertEquals("a user", out.getMessage().getBody(String.class));
 
         // and there should only be one http endpoint as they are both on same host
-        Map<String, Endpoint> endpointMap = context.getEndpointMap();
+        Map endpointMap = context.getEndpointRegistry();
         assertTrue(endpointMap.containsKey("http://localhost:" + localServer.getLocalPort()), "Should find static uri");
         assertTrue(endpointMap.containsKey("direct://usersDrink"), "Should find direct");
         assertTrue(endpointMap.containsKey("direct://usersDrinkWithoutSlash"), "Should find direct");

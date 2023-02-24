@@ -505,12 +505,6 @@ public class LightweightCamelContext implements ExtendedCamelContext, CatalogCam
     }
 
     @Override
-    @Deprecated
-    public Map<String, Endpoint> getEndpointMap() {
-        return delegate.getEndpointMap();
-    }
-
-    @Override
     public Endpoint hasEndpoint(String uri) {
         return delegate.hasEndpoint(uri);
     }

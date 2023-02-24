@@ -261,7 +261,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         context.start();
 
         // Are there two different PrintConfigurations?
-        Map<String, Endpoint> epm = context().getEndpointMap();
+        Map<String, Endpoint> epm = context().getEndpointRegistry().getReadOnlyMap();
         assertEquals(4, epm.size(), "Four endpoints");
         Endpoint lp1 = null;
         Endpoint lp2 = null;

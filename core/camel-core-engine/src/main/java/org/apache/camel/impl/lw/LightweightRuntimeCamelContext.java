@@ -859,11 +859,6 @@ public class LightweightRuntimeCamelContext implements ExtendedCamelContext, Cat
     }
 
     @Override
-    public Map<String, Endpoint> getEndpointMap() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Endpoint hasEndpoint(String uri) {
         return endpoints.get(NormalizedUri.newNormalizedUri(uri, false));
     }

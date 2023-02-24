@@ -81,12 +81,12 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
         assertEquals("Drinking wine", out);
 
         // and there should only be one http endpoint as they are both on same host
-        boolean found = context.getEndpointMap()
+        boolean found = context.getEndpointRegistry()
                 .containsKey("http://localhost:" + localServer.getLocalPort() + "?throwExceptionOnFailure=false");
         assertTrue(found, "Should find static uri");
 
         // we only have 2xdirect and 1xhttp
-        assertEquals(3, context.getEndpointMap().size());
+        assertEquals(3, context.getEndpointRegistry().size());
     }
 
 }

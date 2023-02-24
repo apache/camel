@@ -453,15 +453,6 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     Collection<Endpoint> getEndpoints();
 
     /**
-     * Returns a new {@link Map} containing all of the endpoints from the {@link org.apache.camel.spi.EndpointRegistry}
-     *
-     * @return     map of endpoints
-     * @deprecated use {@link #getEndpointRegistry()}
-     */
-    @Deprecated
-    Map<String, Endpoint> getEndpointMap();
-
-    /**
      * Is the given endpoint already registered in the {@link org.apache.camel.spi.EndpointRegistry}
      *
      * @param  uri the URI of the endpoint

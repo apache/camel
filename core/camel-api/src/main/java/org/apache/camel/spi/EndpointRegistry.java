@@ -78,6 +78,15 @@ public interface EndpointRegistry<K> extends Map<K, Endpoint>, StaticService {
     boolean isDynamic(String key);
 
     /**
+     * Whether the given endpoint is stored in the registry
+     *
+     * @param  key the endpoint key
+     * @return     <tt>true</tt> if present, <tt>false</tt> if not
+     */
+    @Override
+    boolean containsKey(Object key);
+
+    /**
      * Cleanup the cache (purging stale entries)
      */
     void cleanUp();
@@ -86,5 +95,10 @@ public interface EndpointRegistry<K> extends Map<K, Endpoint>, StaticService {
      * Gets a read-only collection of the endpoints currently in the registry.
      */
     Collection<Endpoint> getReadOnlyValues();
+
+    /**
+     * Gets a read-only map of the endpoints currently in the registry.
+     */
+    Map<String, Endpoint> getReadOnlyMap();
 
 }

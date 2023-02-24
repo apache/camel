@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -785,15 +784,6 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public Collection<Endpoint> getEndpoints() {
         return endpoints.getReadOnlyValues();
-    }
-
-    @Override
-    public Map<String, Endpoint> getEndpointMap() {
-        Map<String, Endpoint> answer = new TreeMap<>();
-        for (Map.Entry<NormalizedUri, Endpoint> entry : endpoints.entrySet()) {
-            answer.put(entry.getKey().get(), entry.getValue());
-        }
-        return answer;
     }
 
     @Override
