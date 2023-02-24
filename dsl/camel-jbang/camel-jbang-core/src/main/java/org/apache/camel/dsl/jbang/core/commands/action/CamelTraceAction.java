@@ -136,7 +136,7 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     private final Map<String, Ansi.Color> nameColors = new HashMap<>();
     private final Map<String, Ansi.Color> exchangeIdColors = new HashMap<>();
-    private int exchangeIdColorsIndex;
+    private int exchangeIdColorsIndex = 1;
 
     public CamelTraceAction(CamelJBangMain main) {
         super(main);
@@ -607,12 +607,12 @@ public class CamelTraceAction extends ActionBaseCommand {
         }
         System.out.print(" ");
         // MEP
-        String mep = String.format("%6.6s", row.exchangePattern);
-        if (loggingColor) {
-            AnsiConsole.out().print(Ansi.ansi().fgBrightMagenta().a(Ansi.Attribute.INTENSITY_FAINT).a(mep).reset());
-        } else {
-            System.out.print(mep);
-        }
+        //        String mep = String.format("%6.6s", row.exchangePattern);
+        //        if (loggingColor) {
+        //            AnsiConsole.out().print(Ansi.ansi().fgBrightMagenta().a(Ansi.Attribute.INTENSITY_FAINT).a(mep).reset());
+        //        } else {
+        //            System.out.print(mep);
+        //        }
         System.out.print(" - ");
         // status
         System.out.print(getStatus(row));
@@ -670,11 +670,14 @@ public class CamelTraceAction extends ActionBaseCommand {
     private String getDataAsTable(Row r) {
         List<TableRow> rows = new ArrayList<>();
 
-        TableRow eRow = new TableRow("Exchange", r.message.getString("exchangeType"), r.exchangeId, null);
+        TableRow eRow = new TableRow("Exchange", r.message.getString("exchangeType"), r.exchangePattern, r.exchangeId);
         String tab1 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
                 new Column().dataAlign(HorizontalAlign.LEFT)
                         .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
-                new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAndLengthAsString),
+                new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAsString)));
+        String tab1b = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
+                new Column().dataAlign(HorizontalAlign.CENTER)
+                        .minWidth(18).maxWidth(18).with(TableRow::mepAsKey),
                 new Column().dataAlign(HorizontalAlign.RIGHT)
                         .maxWidth(80).with(TableRow::exchangeIdAsValue)));
         // exchange properties
@@ -697,7 +700,7 @@ public class CamelTraceAction extends ActionBaseCommand {
                 new Column().dataAlign(HorizontalAlign.LEFT)
                         .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
                 new Column().dataAlign(HorizontalAlign.LEFT)
-                        .minWidth(25).maxWidth(40, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
+                        .minWidth(25).maxWidth(50, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
                 new Column().dataAlign(HorizontalAlign.RIGHT)
                         .minWidth(25).maxWidth(40, OverflowBehaviour.NEWLINE).with(TableRow::keyAsString),
                 new Column().dataAlign(HorizontalAlign.LEFT)
@@ -709,7 +712,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         String tab3 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(msgRow), Arrays.asList(
                 new Column().dataAlign(HorizontalAlign.LEFT)
                         .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
-                new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAndLengthAsString)));
+                new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAsString)));
         arr = r.message.getCollection("headers");
         if (arr != null) {
             for (Object o : arr) {
@@ -722,7 +725,7 @@ public class CamelTraceAction extends ActionBaseCommand {
                 new Column().dataAlign(HorizontalAlign.LEFT)
                         .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
                 new Column().dataAlign(HorizontalAlign.LEFT)
-                        .minWidth(25).maxWidth(40, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
+                        .minWidth(25).maxWidth(50, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
                 new Column().dataAlign(HorizontalAlign.RIGHT)
                         .minWidth(25).maxWidth(40, OverflowBehaviour.NEWLINE).with(TableRow::keyAsString),
                 new Column().dataAlign(HorizontalAlign.LEFT)
@@ -764,8 +767,8 @@ public class CamelTraceAction extends ActionBaseCommand {
                             .with(TableRow::valueAsStringRed)));
         }
         String answer = "";
-        if (tab1 != null && !tab1.isEmpty()) {
-            answer = answer + tab1 + System.lineSeparator();
+        if (tab1 != null && tab1b != null && !tab1.isEmpty()) {
+            answer = answer + tab1 + tab1b + System.lineSeparator();
         }
         if (tab2 != null && !tab2.isEmpty()) {
             answer = answer + tab2 + System.lineSeparator();
@@ -968,20 +971,28 @@ public class CamelTraceAction extends ActionBaseCommand {
             return s;
         }
 
-        String exchangeIdAsValue() {
+        String mepAsKey() {
             String s = key;
             if (loggingColor) {
-                Ansi.Color color = exchangeIdColors.get(key);
+                s = Ansi.ansi().fgBrightMagenta().a(Ansi.Attribute.INTENSITY_FAINT).a(s).reset().toString();
+            }
+            return s;
+        }
+
+        String exchangeIdAsValue() {
+            String s = value.toString();
+            if (loggingColor) {
+                Ansi.Color color = exchangeIdColors.get(s);
                 if (color == null) {
                     // grab a new color
                     exchangeIdColorsIndex++;
                     if (exchangeIdColorsIndex > 6) {
-                        exchangeIdColorsIndex = 1;
+                        exchangeIdColorsIndex = 2;
                     }
                     color = Ansi.Color.values()[exchangeIdColorsIndex];
-                    exchangeIdColors.put(key, color);
+                    exchangeIdColors.put(s, color);
                 }
-                s = Ansi.ansi().fg(color).a(key).reset().toString();
+                s = Ansi.ansi().fg(color).a(s).reset().toString();
             }
             return s;
         }
