@@ -4,7 +4,7 @@
 :artifactid: camel-dhis2
 :description: Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web API.
 :since: 4.0.0-SNAPSHOT
-:supportlevel: Stable
+:supportlevel: Preview
 :component-header: Both producer and consumer are supported
 
 *Since Camel {since}*
