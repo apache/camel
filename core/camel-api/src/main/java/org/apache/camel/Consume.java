@@ -41,14 +41,6 @@ public @interface Consume {
     String value() default "";
 
     /**
-     * The uri to consume from
-     *
-     * @deprecated use value instead
-     */
-    @Deprecated
-    String uri() default "";
-
-    /**
      * Use the field or getter on the bean to provide the uri to consume from
      */
     String property() default "";

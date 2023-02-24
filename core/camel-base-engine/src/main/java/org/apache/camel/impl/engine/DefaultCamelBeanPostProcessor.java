@@ -260,16 +260,12 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
             EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
             if (endpointInject != null) {
-                @SuppressWarnings("deprecation")
-                String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
-                injectField(field, uri, endpointInject.property(), bean, beanName);
+                injectField(field, endpointInject.value(), endpointInject.property(), bean, beanName);
             }
 
             Produce produce = field.getAnnotation(Produce.class);
             if (produce != null) {
-                @SuppressWarnings("deprecation")
-                String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
-                injectField(field, uri, produce.property(), bean, beanName, produce.binding());
+                injectField(field, produce.value(), produce.property(), bean, beanName, produce.binding());
             }
 
             // custom bean injector on the field
@@ -430,14 +426,12 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
 
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
         if (endpointInject != null) {
-            String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
-            setterInjection(method, bean, beanName, uri, endpointInject.property());
+            setterInjection(method, bean, beanName, endpointInject.value(), endpointInject.property());
         }
 
         Produce produce = method.getAnnotation(Produce.class);
         if (produce != null) {
-            String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
-            setterInjection(method, bean, beanName, uri, produce.property());
+            setterInjection(method, bean, beanName, produce.value(), produce.property());
         }
     }
 

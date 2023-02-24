@@ -19,7 +19,6 @@ package org.apache.camel.spi;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
-import org.apache.camel.Route;
 import org.apache.camel.StaticService;
 
 /**
@@ -66,16 +65,6 @@ public interface Tracer extends StaticService {
      * @param exchange the exchange
      */
     void traceAfterRoute(NamedRoute route, Exchange exchange);
-
-    /**
-     * Trace after the route (eg output from route)
-     *
-     * @param      route    the route
-     * @param      exchange the exchange
-     * @deprecated          use {@link #traceAfterRoute(NamedRoute, Exchange)}
-     */
-    @Deprecated
-    void traceAfterRoute(Route route, Exchange exchange);
 
     /**
      * Number of traced messages

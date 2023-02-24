@@ -171,14 +171,6 @@ public interface FluentProducerTemplate extends Service {
     // -----------------------------------------------------------------------
 
     /**
-     * Remove the body and headers.
-     *
-     * @deprecated the template automatic clears when sending
-     */
-    @Deprecated
-    FluentProducerTemplate clearAll();
-
-    /**
      * Set the headers
      *
      * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
@@ -200,14 +192,6 @@ public interface FluentProducerTemplate extends Service {
     FluentProducerTemplate withHeader(String key, Object value);
 
     /**
-     * Remove the headers.
-     *
-     * @deprecated the template automatic clears when sending
-     */
-    @Deprecated
-    FluentProducerTemplate clearHeaders();
-
-    /**
      * Set the message body
      *
      * <b>Important:</b> You can either only use either withExchange, or withProcessor or a combination of
@@ -227,14 +211,6 @@ public interface FluentProducerTemplate extends Service {
      * @param type the type which the body should be converted to
      */
     FluentProducerTemplate withBodyAs(Object body, Class<?> type);
-
-    /**
-     * Remove the body.
-     *
-     * @deprecated the template automatic clears when sending
-     */
-    @Deprecated
-    FluentProducerTemplate clearBody();
 
     /**
      * To customize the producer template for advanced usage like to set the executor service to use.

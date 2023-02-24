@@ -42,14 +42,6 @@ public @interface EndpointInject {
     String value() default "";
 
     /**
-     * The uri of the endpoint
-     *
-     * @deprecated use value instead
-     */
-    @Deprecated
-    String uri() default "";
-
-    /**
      * Use the field or getter on the bean to provide the uri of the endpoint
      */
     String property() default "";

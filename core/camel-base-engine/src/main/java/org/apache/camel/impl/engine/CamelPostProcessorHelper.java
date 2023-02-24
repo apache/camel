@@ -89,8 +89,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         Consume consume = method.getAnnotation(Consume.class);
         if (consume != null) {
             LOG.debug("Creating a consumer for: {}", consume);
-            String uri = consume.value().isEmpty() ? consume.uri() : consume.value();
-            subscribeMethod(method, bean, beanName, uri, consume.property(), consume.predicate());
+            subscribeMethod(method, bean, beanName, consume.value(), consume.property(), consume.predicate());
         }
     }
 

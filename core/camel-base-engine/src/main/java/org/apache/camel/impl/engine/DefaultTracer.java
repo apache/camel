@@ -23,7 +23,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.NamedRoute;
-import org.apache.camel.Route;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.support.CamelContextHelper;
@@ -131,11 +130,6 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         sb.append(data);
         String out = sb.toString();
         dumpTrace(out, route);
-    }
-
-    @Override
-    public void traceAfterRoute(Route route, Exchange exchange) {
-        // noop
     }
 
     @Override

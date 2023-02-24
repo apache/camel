@@ -251,7 +251,6 @@ public abstract class AbstractCamelContext extends BaseService
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
-    private Initialization initialization = Initialization.Default;
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean backlogTrace = Boolean.FALSE;
     private Boolean backlogTraceStandby = Boolean.FALSE;
@@ -513,16 +512,6 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public boolean isVetoStarted() {
         return vetoed != null;
-    }
-
-    @Deprecated
-    public Initialization getInitialization() {
-        return initialization;
-    }
-
-    @Deprecated
-    public void setInitialization(Initialization initialization) {
-        this.initialization = initialization;
     }
 
     @Override
@@ -2768,11 +2757,9 @@ public abstract class AbstractCamelContext extends BaseService
 
         // Initialize LRUCacheFactory as eager as possible,
         // to let it warm up concurrently while Camel is startup up
-        if (initialization != Initialization.Lazy) {
-            StartupStep subStep = startupStepRecorder.beginStep(CamelContext.class, null, "Setup LRUCacheFactory");
-            LRUCacheFactory.init();
-            startupStepRecorder.endStep(subStep);
-        }
+        StartupStep subStep = startupStepRecorder.beginStep(CamelContext.class, null, "Setup LRUCacheFactory");
+        LRUCacheFactory.init();
+        startupStepRecorder.endStep(subStep);
 
         // Setup management first since end users may use it to add event
         // notifiers using the management strategy before the CamelContext has been started
@@ -3868,18 +3855,9 @@ public abstract class AbstractCamelContext extends BaseService
         StartupStep step = startupStepRecorder.beginStep(CamelContext.class, getName(), "Start Mandatory Services");
         initEagerMandatoryServices();
         startupStepRecorder.endStep(step);
-
-        if (initialization != Initialization.Lazy) {
-            step = startupStepRecorder.beginStep(CamelContext.class, getName(), "Start Standard Services");
-            doStartStandardServices();
-            startupStepRecorder.endStep(step);
-
-            if (initialization == Initialization.Eager) {
-                step = startupStepRecorder.beginStep(CamelContext.class, getName(), "Start Eager Services");
-                doStartEagerServices();
-                startupStepRecorder.endStep(step);
-            }
-        }
+        step = startupStepRecorder.beginStep(CamelContext.class, getName(), "Start Standard Services");
+        doStartStandardServices();
+        startupStepRecorder.endStep(step);
     }
 
     /**
@@ -3934,41 +3912,6 @@ public abstract class AbstractCamelContext extends BaseService
 
         // resolve simple language to initialize it
         resolveLanguage("simple");
-    }
-
-    protected void doStartEagerServices() {
-        getPackageScanClassResolver();
-        getInflightRepository();
-        getAsyncProcessorAwaitManager();
-        getReactiveExecutor();
-        getBeanIntrospection();
-        getUriFactoryResolver();
-        getModelToXMLDumper();
-        getNodeIdFactory();
-        getModelJAXBContextFactory();
-        getUnitOfWorkFactory();
-        getRouteController();
-        getRoutesLoader();
-        getResourceLoader();
-
-        try {
-            getRestRegistryFactory();
-        } catch (IllegalArgumentException e) {
-            // ignore in case camel-rest is not on the classpath
-        }
-        try {
-            getProcessorFactory();
-            getInternalProcessorFactory();
-        } catch (IllegalArgumentException e) {
-            // ignore in case camel-core-processor is not on the classpath
-        }
-        try {
-            getBeanProxyFactory();
-            getBeanProcessorFactory();
-        } catch (IllegalArgumentException e) {
-            // ignore in case camel-bean is not on the classpath
-        }
-        getBeanPostProcessor();
     }
 
     /**
@@ -5482,13 +5425,6 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setCliConnectorFactory(CliConnectorFactory cliConnectorFactory) {
         this.cliConnectorFactory = cliConnectorFactory;
-    }
-
-    @Deprecated
-    public enum Initialization {
-        Eager,
-        Default,
-        Lazy
     }
 
     class LifecycleHelper implements AutoCloseable {

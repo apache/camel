@@ -19,7 +19,6 @@ package org.apache.camel.component.properties;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
@@ -542,14 +541,6 @@ public class PropertiesComponent extends ServiceSupport
         return localPropertiesEnabled ? localProperties.get() : null;
     }
 
-    /**
-     * Gets the functions registered in this properties component.
-     */
-    @Deprecated
-    public Map<String, PropertiesFunction> getFunctions() {
-        return propertiesFunctionResolver.getFunctions();
-    }
-
     @Override
     public PropertiesFunction getPropertiesFunction(String name) {
         if (name == null) {
@@ -566,16 +557,6 @@ public class PropertiesComponent extends ServiceSupport
     @Override
     public boolean hasPropertiesFunction(String name) {
         return propertiesFunctionResolver.hasFunction(name);
-    }
-
-    /**
-     * Is there a {@link PropertiesFunction} with the given name?
-     *
-     * @deprecated use hasPropertiesFunction
-     */
-    @Deprecated
-    public boolean hasFunction(String name) {
-        return hasPropertiesFunction(name);
     }
 
     @ManagedAttribute(description = "System properties mode")

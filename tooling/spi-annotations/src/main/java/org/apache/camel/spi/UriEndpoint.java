@@ -92,12 +92,6 @@ public @interface UriEndpoint {
     String alternativeSyntax() default "";
 
     /**
-     * Represents the consumer class which is injected and created by consumers
-     */
-    @Deprecated
-    Class<?> consumerClass() default Object.class;
-
-    /**
      * The configuration parameter name prefix used on parameter names to separate the endpoint properties from the
      * consumer properties
      */

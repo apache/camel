@@ -43,14 +43,6 @@ public @interface Produce {
     String value() default "";
 
     /**
-     * The uri to produce to
-     *
-     * @deprecated use value instead
-     */
-    @Deprecated
-    String uri() default "";
-
-    /**
      * Use the field or getter on the bean to provide the uri to produce to
      */
     String property() default "";
