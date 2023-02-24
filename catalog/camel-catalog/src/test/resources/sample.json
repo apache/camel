@@ -85,7 +85,7 @@
     "backoffMultiplier": { "kind": "parameter", "label": "consumer", "type": "integer", "javaType": "int", "deprecated": "false" },
     "backoffIdleThreshold": { "kind": "parameter", "label": "consumer", "type": "integer", "javaType": "int", "deprecated": "false" },
     "backoffErrorThreshold": { "kind": "parameter", "label": "consumer", "type": "integer", "javaType": "int", "deprecated": "false" },
-    "exchangePattern": { "kind": "parameter", "type": "string", "javaType": "org.apache.camel.ExchangePattern", "enum": [ "InOnly", "InOut", "InOptionalOut" ], "deprecated": "false", "defaultValue": "InOnly", "description": "Sets the default exchange pattern when creating an exchange" },
+    "exchangePattern": { "kind": "parameter", "type": "string", "javaType": "org.apache.camel.ExchangePattern", "enum": [ "InOnly", "InOut" ], "deprecated": "false", "defaultValue": "InOnly", "description": "Sets the default exchange pattern when creating an exchange" },
     "synchronous": { "kind": "parameter", "type": "boolean", "javaType": "boolean", "deprecated": "false", "defaultValue": "false", "description": "Sets whether synchronous processing should be strictly used or Camel is allowed to use asynchronous processing (if supported)." }
   }
 }
