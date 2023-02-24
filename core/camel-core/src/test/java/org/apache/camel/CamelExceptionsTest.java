@@ -223,11 +223,9 @@ public class CamelExceptionsTest extends ContextTestSupport {
     @Test
     public void testExchangePattern() {
         assertTrue(ExchangePattern.InOnly.isInCapable());
-        assertTrue(ExchangePattern.InOptionalOut.isInCapable());
         assertTrue(ExchangePattern.InOut.isInCapable());
 
         assertFalse(ExchangePattern.InOnly.isOutCapable());
-        assertTrue(ExchangePattern.InOptionalOut.isOutCapable());
         assertTrue(ExchangePattern.InOut.isOutCapable());
 
         assertEquals(ExchangePattern.InOnly, ExchangePattern.asEnum("InOnly"));

@@ -345,9 +345,7 @@ public final class ExchangeHelper {
         if (result == source) {
             // we just need to ensure MEP is as expected (eg copy result to OUT if out capable)
             // and the result is not failed
-            if (result.getPattern() == ExchangePattern.InOptionalOut) {
-                // keep as is
-            } else if (result.getPattern().isOutCapable() && !result.hasOut() && !result.isFailed()) {
+            if (result.getPattern().isOutCapable() && !result.hasOut() && !result.isFailed()) {
                 // copy IN to OUT as we expect a OUT response
                 result.getOut().copyFrom(source.getIn());
             }
@@ -362,10 +360,6 @@ public final class ExchangeHelper {
             } else {
                 result.getOut().copyFrom(source.getOut());
             }
-        } else if (result.getPattern() == ExchangePattern.InOptionalOut) {
-            // special case where the result is InOptionalOut and with no OUT response
-            // so we should return null to indicate this fact
-            result.setOut(null);
         } else {
             // no results so lets copy the last input
             // as the final processor on a pipeline might not
@@ -665,10 +659,6 @@ public final class ExchangeHelper {
             if (hasOut && !notOut) {
                 // we have a response in out and the pattern is out capable
                 answer = exchange.getOut().getBody();
-            } else if (!hasOut && exchange.getPattern() == ExchangePattern.InOptionalOut) {
-                // special case where the result is InOptionalOut and with no OUT response
-                // so we should return null to indicate this fact
-                answer = null;
             } else {
                 // use IN as the response
                 answer = exchange.getIn().getBody();

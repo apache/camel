@@ -21184,8 +21184,6 @@ multiple certificates.
       <xs:enumeration value="InOnly"/>
             
       <xs:enumeration value="InOut"/>
-            
-      <xs:enumeration value="InOptionalOut"/>
           
     </xs:restriction>
       

@@ -35,7 +35,7 @@ import org.apache.camel.spi.Metadata;
 public class ToDefinition extends SendDefinition<ToDefinition> {
 
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut,InOptionalOut")
+    @Metadata(label = "advanced", javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
     private String pattern;
 
     public ToDefinition() {

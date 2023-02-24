@@ -570,8 +570,6 @@ public final class EndpointHelper {
             return ExchangePattern.InOnly;
         } else if (url.contains("exchangePattern=InOut")) {
             return ExchangePattern.InOut;
-        } else if (url.contains("exchangePattern=InOptionalOut")) {
-            return ExchangePattern.InOptionalOut;
         }
         return null;
     }

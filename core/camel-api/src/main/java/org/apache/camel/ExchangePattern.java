@@ -26,9 +26,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum ExchangePattern {
     InOnly,
-    InOut,
-    InOptionalOut;
-
+    InOut;
     /**
      * Return true if there can be an IN message
      */

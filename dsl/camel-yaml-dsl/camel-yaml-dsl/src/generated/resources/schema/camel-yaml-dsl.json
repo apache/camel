@@ -2863,7 +2863,7 @@
             },
             "pattern" : {
               "type" : "string",
-              "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
+              "enum" : [ "InOnly", "InOut" ]
             }
           }
         } ],
@@ -3296,7 +3296,7 @@
             },
             "pattern" : {
               "type" : "string",
-              "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
+              "enum" : [ "InOnly", "InOut" ]
             },
             "uri" : {
               "type" : "string"
@@ -3340,7 +3340,7 @@
             },
             "pattern" : {
               "type" : "string",
-              "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
+              "enum" : [ "InOnly", "InOut" ]
             },
             "uri" : {
               "type" : "string"
@@ -3707,7 +3707,7 @@
           },
           "pattern" : {
             "type" : "string",
-            "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
+            "enum" : [ "InOnly", "InOut" ]
           },
           "uri" : {
             "type" : "string"
@@ -4071,7 +4071,7 @@
           },
           "pattern" : {
             "type" : "string",
-            "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
+            "enum" : [ "InOnly", "InOut" ]
           },
           "service-chooser-ref" : {
             "type" : "string"
@@ -4164,7 +4164,7 @@
             },
             "pattern" : {
               "type" : "string",
-              "enum" : [ "InOnly", "InOut", "InOptionalOut" ]
+              "enum" : [ "InOnly", "InOut" ]
             },
             "service-chooser-ref" : {
               "type" : "string"

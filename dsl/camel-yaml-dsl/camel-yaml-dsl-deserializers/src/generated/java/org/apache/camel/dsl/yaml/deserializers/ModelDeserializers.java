@@ -13944,7 +13944,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "kubernetes-service-discovery", type = "object:org.apache.camel.model.cloud.KubernetesServiceCallServiceDiscoveryConfiguration"),
                     @YamlProperty(name = "load-balancer-ref", type = "string"),
                     @YamlProperty(name = "pass-through-service-filter", type = "object:org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration"),
-                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut,InOptionalOut"),
+                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut"),
                     @YamlProperty(name = "service-chooser-ref", type = "string"),
                     @YamlProperty(name = "service-discovery-ref", type = "string"),
                     @YamlProperty(name = "service-filter-ref", type = "string"),
@@ -14130,7 +14130,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "load-balancer-ref", type = "string"),
                     @YamlProperty(name = "name", type = "string", required = true),
                     @YamlProperty(name = "pass-through-service-filter", type = "object:org.apache.camel.model.cloud.PassThroughServiceCallServiceFilterConfiguration"),
-                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut,InOptionalOut"),
+                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut"),
                     @YamlProperty(name = "service-chooser-ref", type = "string"),
                     @YamlProperty(name = "service-discovery-ref", type = "string"),
                     @YamlProperty(name = "service-filter-ref", type = "string"),
@@ -14639,7 +14639,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "disabled", type = "boolean"),
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
-                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut,InOptionalOut", required = true)
+                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut", required = true)
             }
     )
     public static class SetExchangePatternDefinitionDeserializer extends YamlDeserializerBase<SetExchangePatternDefinition> {
@@ -16428,7 +16428,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "id", type = "string"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "parameters", type = "object"),
-                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut,InOptionalOut"),
+                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut"),
                     @YamlProperty(name = "uri", type = "string", required = true)
             }
     )
@@ -16513,7 +16513,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "ignore-invalid-endpoint", type = "boolean"),
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "parameters", type = "object"),
-                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut,InOptionalOut"),
+                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut"),
                     @YamlProperty(name = "uri", type = "string", required = true)
             }
     )
@@ -18190,7 +18190,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "inherit-error-handler", type = "boolean"),
                     @YamlProperty(name = "on-prepare", type = "string"),
                     @YamlProperty(name = "parameters", type = "object"),
-                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut,InOptionalOut"),
+                    @YamlProperty(name = "pattern", type = "enum:InOnly,InOut"),
                     @YamlProperty(name = "uri", type = "string", required = true)
             }
     )

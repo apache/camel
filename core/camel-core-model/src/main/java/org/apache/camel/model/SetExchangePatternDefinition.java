@@ -33,7 +33,7 @@ import org.apache.camel.spi.Metadata;
 public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchangePatternDefinition> {
 
     @XmlAttribute(required = true)
-    @Metadata(required = true, javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut,InOptionalOut")
+    @Metadata(required = true, javaType = "org.apache.camel.ExchangePattern", enums = "InOnly,InOut")
     private String pattern;
 
     public SetExchangePatternDefinition() {
