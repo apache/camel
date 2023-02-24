@@ -42,7 +42,8 @@ import static org.apache.camel.component.google.bigquery.GoogleBigQueryConstants
  * handled by Camel.
  */
 @UriEndpoint(firstVersion = "2.23.0", scheme = SCHEME_BIGQUERY_SQL, title = "Google BigQuery Standard SQL",
-             syntax = "google-bigquery-sql:projectId:queryString", category = { Category.CLOUD, Category.MESSAGING }, producerOnly = true,
+             syntax = "google-bigquery-sql:projectId:queryString", category = { Category.CLOUD, Category.MESSAGING },
+             producerOnly = true,
              headersClass = GoogleBigQueryConstants.class)
 public class GoogleBigQuerySQLEndpoint extends DefaultEndpoint {
 
