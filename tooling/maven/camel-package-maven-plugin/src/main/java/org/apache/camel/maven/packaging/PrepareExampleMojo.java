@@ -108,15 +108,16 @@ public class PrepareExampleMojo extends AbstractMojo {
                     if (!middleFolders.contains(file.getName())) {
                         File pom = new File(file, "pom.xml");
                         if (pom.exists()) {
-                            processExamples(models, file, pom);
+                            processExamples(models, file, pom, null);
                         }
                     } else {
                         File[] subFiles = file.listFiles();
+                        String middleFolder = file.getName();
                         for (File innerFile : subFiles) {
                             if (innerFile.isDirectory()) {
                                 File pom = new File(innerFile, "pom.xml");
                                 if (pom.exists()) {
-                                    processExamples(models, innerFile, pom);
+                                    processExamples(models, innerFile, pom, middleFolder);
                                 }
                             }
                         }
@@ -153,7 +154,7 @@ public class PrepareExampleMojo extends AbstractMojo {
         }
     }
 
-    private void processExamples(List<ExampleModel> models, File file, File pom) throws IOException {
+    private void processExamples(List<ExampleModel> models, File file, File pom, String middleFolder) throws IOException {
         String existing = FileUtils.readFileToString(pom, Charset.defaultCharset());
 
         ExampleModel model = new ExampleModel();
@@ -180,6 +181,9 @@ public class PrepareExampleMojo extends AbstractMojo {
             model.setDeprecated("true");
         } else {
             model.setDeprecated("false");
+        }
+        if (middleFolder != null) {
+            model.setMiddleFolder(middleFolder);
         }
 
         // readme files is either readme.md or readme.adoc
