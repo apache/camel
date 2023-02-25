@@ -28,7 +28,6 @@ import java.util.function.Predicate;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.PooledExchange;
 import org.apache.camel.Processor;

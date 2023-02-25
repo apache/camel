@@ -50,7 +50,8 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
         public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
             if (target instanceof CamelContext contextTarget) {
                 if (!contextConfigurer.configure(camelContext, contextTarget, name, value, ignoreCase)) {
-                    return extensionConfigurer.configure(camelContext, contextTarget.getCamelContextExtension(), name, value, ignoreCase);
+                    return extensionConfigurer.configure(camelContext, contextTarget.getCamelContextExtension(), name, value,
+                            ignoreCase);
                 }
             }
 
@@ -134,7 +135,8 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
         }
     }
 
-    private PropertyConfigurer createPropertyConfigurerForContext(String name, CamelContext context, Class<?> type, Class<?> extensionType) {
+    private PropertyConfigurer createPropertyConfigurerForContext(
+            String name, CamelContext context, Class<?> type, Class<?> extensionType) {
         if (getLog().isDebugEnabled()) {
             getLog().debug("Found configurer: {} via type: {} via: {}{}", name, type.getName(), factoryFinder.getResourcePath(),
                     name);
@@ -142,7 +144,6 @@ public class DefaultConfigurerResolver implements ConfigurerResolver {
 
         var contextConfigurer = (PropertyConfigurer) context.getInjector().newInstance(type, false);
         var extensionConfigurer = (PropertyConfigurer) context.getInjector().newInstance(extensionType, false);
-
 
         // create the component
         if (PropertyConfigurer.class.isAssignableFrom(type)) {

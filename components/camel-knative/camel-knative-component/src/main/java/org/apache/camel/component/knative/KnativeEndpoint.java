@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.cloudevents.CloudEvent;
@@ -117,7 +116,8 @@ public class KnativeEndpoint extends DefaultEndpoint {
             list.add(replyProcessor);
         }
         CamelContext ecc = getCamelContext();
-        Processor pipeline = ecc.getCamelContextExtension().getProcessorFactory().createProcessor(ecc, "Pipeline", new Object[] { list });
+        Processor pipeline
+                = ecc.getCamelContextExtension().getProcessorFactory().createProcessor(ecc, "Pipeline", new Object[] { list });
 
         Consumer consumer = getComponent().getConsumerFactory().createConsumer(this,
                 createTransportConfiguration(service), service, pipeline);

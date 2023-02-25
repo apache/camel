@@ -28,7 +28,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -89,7 +88,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         // internal processor used for sending
         sharedInternalProcessor
                 = this.camelContext.getCamelContextExtension()
-                    .getInternalProcessorFactory().createSharedCamelInternalProcessor(camelContext);
+                        .getInternalProcessorFactory().createSharedCamelInternalProcessor(camelContext);
     }
 
     protected ProducerServicePool createServicePool(CamelContext camelContext, int cacheSize) {

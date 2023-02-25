@@ -67,7 +67,8 @@ public class CamelContextFactoryBeanTest {
         factory.setApplicationContext(applicationContext);
         factory.afterPropertiesSet();
 
-        ModelJAXBContextFactory modelJAXBContextFactory = factory.getContext().getCamelContextExtension().getModelJAXBContextFactory();
+        ModelJAXBContextFactory modelJAXBContextFactory
+                = factory.getContext().getCamelContextExtension().getModelJAXBContextFactory();
 
         assertTrue(modelJAXBContextFactory instanceof CustomModelJAXBContextFactory);
     }

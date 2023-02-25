@@ -31,7 +31,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StaticService;
@@ -247,7 +246,8 @@ public class CSimpleLanguage extends TypedLanguageSupport implements StaticServi
 
             // detect custom compiler (camel-csimple-joor)
             CamelContext ecc = getCamelContext();
-            Optional<Class<?>> clazz = ecc.getCamelContextExtension().getBootstrapFactoryFinder().findClass(CSimpleCompiler.FACTORY);
+            Optional<Class<?>> clazz
+                    = ecc.getCamelContextExtension().getBootstrapFactoryFinder().findClass(CSimpleCompiler.FACTORY);
             if (clazz.isPresent()) {
                 compiler = (CSimpleCompiler) ecc.getInjector().newInstance(clazz.get(), false);
                 if (compiler != null) {

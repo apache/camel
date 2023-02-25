@@ -19,7 +19,6 @@ package org.apache.camel.support.cache;
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.support.service.ServiceHelper;
 
@@ -41,7 +40,8 @@ public class EmptyProducerCache extends DefaultProducerCache {
         AsyncProducer answer;
         try {
             answer = endpoint.createAsyncProducer();
-            boolean startingRoutes = ecc.getCamelContextExtension().isSetupRoutes() || ecc.getRouteController().isStartingRoutes();
+            boolean startingRoutes
+                    = ecc.getCamelContextExtension().isSetupRoutes() || ecc.getRouteController().isStartingRoutes();
             if (startingRoutes && answer.isSingleton()) {
                 // if we are currently starting a route, then add as service and enlist in JMX
                 // - but do not enlist non-singletons in JMX
