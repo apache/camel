@@ -18,8 +18,8 @@ package org.apache.camel.component.language;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.Category;
 import org.apache.camel.Component;
@@ -37,6 +37,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ResourceHelper;
+import org.apache.camel.support.TypedLanguageSupport;
 import org.apache.camel.util.IOHelper;
 
 /**
@@ -58,7 +59,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private String languageName;
     // resourceUri is optional in the language endpoint
     @UriPath(description = "Path to the resource, or a reference to lookup a bean in the Registry to use as the resource")
-    @Metadata(required = false)
+    @Metadata
     private String resourceUri;
     @UriParam
     private String script;
@@ -70,6 +71,8 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private boolean cacheScript;
     @UriParam(defaultValue = "true", description = "Sets whether to use resource content cache or not")
     private boolean contentCache;
+    @UriParam
+    private String resultType;
 
     public LanguageEndpoint() {
         // enable cache by default
@@ -90,6 +93,10 @@ public class LanguageEndpoint extends ResourceEndpoint {
         if (language == null && languageName != null) {
             language = getCamelContext().resolveLanguage(languageName);
         }
+        if (language instanceof TypedLanguageSupport && resultType != null) {
+            Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(resultType);
+            ((TypedLanguageSupport) language).setResultType(clazz);
+        }
         if (cacheScript && expression == null && script != null) {
             boolean external = script.startsWith("file:") || script.startsWith("http:");
             if (!external) {
@@ -98,6 +105,9 @@ public class LanguageEndpoint extends ResourceEndpoint {
                 expression = language.createExpression(script);
             }
         }
+        if (expression != null) {
+            expression.init(getCamelContext());
+        }
     }
 
     @Override
@@ -105,6 +115,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
         if (cacheScript && expression == null && script != null) {
             script = resolveScript(script);
             expression = language.createExpression(script);
+            expression.init(getCamelContext());
         }
 
         return new LanguageProducer(this);
@@ -141,11 +152,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
     @Override
     protected String createEndpointUri() {
         String s = script;
-        try {
-            s = URLEncoder.encode(s, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // ignore
-        }
+        s = URLEncoder.encode(s, StandardCharsets.UTF_8);
         return languageName + ":" + s;
     }
 
@@ -252,6 +259,17 @@ public class LanguageEndpoint extends ResourceEndpoint {
      */
     public void setCacheScript(boolean cacheScript) {
         this.cacheScript = cacheScript;
+    }
+
+    public String getResultType() {
+        return resultType;
+    }
+
+    /**
+     * Sets the class of the result type (type from output)
+     */
+    public void setResultType(String resultType) {
+        this.resultType = resultType;
     }
 
     @Override
