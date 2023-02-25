@@ -22,8 +22,8 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelConfiguration;
 import org.apache.camel.spi.OnCamelContextInitialized;
 import org.apache.camel.spi.OnCamelContextInitializing;
-import org.apache.camel.spi.OnCamelContextStart;
-import org.apache.camel.spi.OnCamelContextStop;
+import org.apache.camel.spi.OnCamelContextStarting;
+import org.apache.camel.spi.OnCamelContextStopping;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,12 +61,12 @@ public class ContextEventsTest {
         }
 
         @BindToRegistry
-        public OnCamelContextStart onContextStart() {
+        public OnCamelContextStarting onContextStart() {
             return context -> onStart.incrementAndGet();
         }
 
         @BindToRegistry
-        public OnCamelContextStop onContextStop() {
+        public OnCamelContextStopping onContextStop() {
             return context -> onStop.incrementAndGet();
         }
     }

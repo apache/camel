@@ -104,7 +104,7 @@ public class DefaultCamelContextWithLifecycleStrategyRestartTest extends Context
         private AtomicInteger removeCounter = new AtomicInteger();
 
         @Override
-        public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
+        public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
             contextStartCounter.incrementAndGet();
         }
 

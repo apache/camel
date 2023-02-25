@@ -56,19 +56,6 @@ public interface LifecycleStrategy {
     /**
      * Notification on starting a {@link CamelContext}.
      *
-     * @param      context                        the camel context
-     * @throws     VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
-     *                                            exceptions will be logged at <tt>WARN</tt> level by Camel will
-     *                                            continue starting itself. *
-     * @deprecated                                use {@link #onContextStarting(CamelContext)}.
-     */
-    @Deprecated
-    default void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-    }
-
-    /**
-     * Notification on starting a {@link CamelContext}.
-     *
      * @param  context                        the camel context
      * @throws VetoCamelContextStartException can be thrown to veto starting {@link CamelContext}. Any other runtime
      *                                        exceptions will be logged at <tt>WARN</tt> level by Camel will continue
@@ -83,16 +70,6 @@ public interface LifecycleStrategy {
      * @param context the camel context
      */
     default void onContextStarted(CamelContext context) {
-    }
-
-    /**
-     * Notification on stopping a {@link CamelContext}.
-     *
-     * @param      context the camel context
-     * @deprecated         use {@link #onContextStopping(CamelContext)}.
-     */
-    @Deprecated
-    default void onContextStop(CamelContext context) {
     }
 
     /**

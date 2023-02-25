@@ -34,13 +34,13 @@ public class DummyLifecycleStrategy extends LifecycleStrategySupport {
     private final List<String> events = new ArrayList<>();
 
     @Override
-    public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-        events.add("onContextStart");
+    public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
+        events.add("onContextStarting");
     }
 
     @Override
-    public void onContextStop(CamelContext context) {
-        events.add("onContextStop");
+    public void onContextStopping(CamelContext context) {
+        events.add("onContextStopping");
     }
 
     @Override

@@ -656,36 +656,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     @Override
-    public CompletableFuture<Object> asyncCallbackSendBody(String uri, Object body, Synchronization onCompletion) {
-        return asyncCallbackSendBody(resolveMandatoryEndpoint(uri), body, onCompletion);
-    }
-
-    @Override
-    public CompletableFuture<Object> asyncCallbackSendBody(Endpoint endpoint, Object body, Synchronization onCompletion) {
-        return asyncCallback(endpoint, ExchangePattern.InOnly, body, onCompletion);
-    }
-
-    @Override
-    public CompletableFuture<Object> asyncCallbackRequestBody(String uri, Object body, Synchronization onCompletion) {
-        return asyncCallbackRequestBody(resolveMandatoryEndpoint(uri), body, onCompletion);
-    }
-
-    @Override
-    public CompletableFuture<Object> asyncCallbackRequestBody(Endpoint endpoint, Object body, Synchronization onCompletion) {
-        return asyncCallback(endpoint, ExchangePattern.InOut, body, onCompletion);
-    }
-
-    @Override
-    public CompletableFuture<Exchange> asyncCallback(String uri, Exchange exchange, Synchronization onCompletion) {
-        return asyncCallback(resolveMandatoryEndpoint(uri), exchange, onCompletion);
-    }
-
-    @Override
-    public CompletableFuture<Exchange> asyncCallback(String uri, Processor processor, Synchronization onCompletion) {
-        return asyncCallback(resolveMandatoryEndpoint(uri), processor, onCompletion);
-    }
-
-    @Override
     public CompletableFuture<Object> asyncRequestBody(final Endpoint endpoint, final Object body) {
         return asyncRequestBody(endpoint, createSetBodyProcessor(body));
     }
@@ -744,18 +714,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 .thenApply(this::extractResultBody);
     }
 
-    @Override
-    public CompletableFuture<Exchange> asyncCallback(
-            final Endpoint endpoint, final Exchange exchange, final Synchronization onCompletion) {
-        return asyncSend(endpoint, exchange).thenApply(createCompletionFunction(onCompletion));
-    }
-
-    @Override
-    public CompletableFuture<Exchange> asyncCallback(
-            final Endpoint endpoint, final Processor processor, final Synchronization onCompletion) {
-        return asyncSend(endpoint, processor).thenApply(createCompletionFunction(onCompletion));
-    }
-
     protected CompletableFuture<Object> asyncRequestBody(final Endpoint endpoint, Processor processor) {
         return asyncRequestBody(endpoint, processor, (Processor) null);
     }
@@ -784,22 +742,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         getExecutorService().submit(() -> getProducerCache().asyncSendExchange(endpoint, pattern, processor,
                 resultProcessor, inExchange, exchangeFuture));
         return exchangeFuture;
-    }
-
-    protected CompletableFuture<Object> asyncCallback(
-            final Endpoint endpoint, final ExchangePattern pattern,
-            final Object body, final Synchronization onCompletion) {
-        return asyncSend(endpoint, pattern, createSetBodyProcessor(body), null)
-                .thenApply(createCompletionFunction(onCompletion))
-                .thenApply(answer -> {
-                    Object result = extractResultBody(answer, pattern);
-                    if (pattern == ExchangePattern.InOnly) {
-                        // return null if not OUT capable
-                        return null;
-                    } else {
-                        return result;
-                    }
-                });
     }
 
     private org.apache.camel.spi.ProducerCache getProducerCache() {

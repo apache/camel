@@ -69,6 +69,9 @@ We have removed deprecated APIs such as the following:
 - Removed `uri` attribute on `@EndpointInject`, `@Produce`, and `@Consume` as you should use `value` (default) instead.
   For example `@Produce(uri = "kafka:cheese")` should be changed to `@Produce("kafka:cheese")`
 - Removed `label` on `@UriEndpoint` as you should use `category` instead.
+- Removed all `asyncCallback` methods on `ProducerTemplate`. Use `asyncSend` or `asyncRequest` instead.
+- Removed `org.apache.camel.spi.OnCamelContextStart`. Use `org.apache.camel.spi.OnCamelContextStarting` instead.
+- Removed `org.apache.camel.spi.OnCamelContextStop`. Use `org.apache.camel.spi.OnCamelContextStopping` instead.
 
 == YAML DSL
 

@@ -56,7 +56,7 @@ public class MainVetoTest {
 
     private class MyVetoLifecycle extends LifecycleStrategySupport {
         @Override
-        public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
+        public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
             throw new VetoCamelContextStartException("We do not like this route", context, false);
         }
     }

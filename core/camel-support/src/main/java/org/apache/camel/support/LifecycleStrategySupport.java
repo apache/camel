@@ -30,10 +30,8 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.OnCamelContextEvent;
 import org.apache.camel.spi.OnCamelContextInitialized;
 import org.apache.camel.spi.OnCamelContextInitializing;
-import org.apache.camel.spi.OnCamelContextStart;
 import org.apache.camel.spi.OnCamelContextStarted;
 import org.apache.camel.spi.OnCamelContextStarting;
-import org.apache.camel.spi.OnCamelContextStop;
 import org.apache.camel.spi.OnCamelContextStopped;
 import org.apache.camel.spi.OnCamelContextStopping;
 
@@ -65,13 +63,6 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
             }
 
             @Override
-            public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-                if (handler instanceof OnCamelContextStart) {
-                    ((OnCamelContextStart) handler).onContextStart(context);
-                }
-            }
-
-            @Override
             public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
                 if (handler instanceof OnCamelContextStarting) {
                     ((OnCamelContextStarting) handler).onContextStarting(context);
@@ -82,13 +73,6 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
             public void onContextStarted(CamelContext context) {
                 if (handler instanceof OnCamelContextStarted) {
                     ((OnCamelContextStarted) handler).onContextStarted(context);
-                }
-            }
-
-            @Override
-            public void onContextStop(CamelContext context) {
-                if (handler instanceof OnCamelContextStop) {
-                    ((OnCamelContextStop) handler).onContextStop(context);
                 }
             }
 
@@ -126,16 +110,6 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
         };
     }
 
-    @Deprecated
-    public static LifecycleStrategy adapt(OnCamelContextStart handler) {
-        return new LifecycleStrategySupport() {
-            @Override
-            public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-                handler.onContextStart(context);
-            }
-        };
-    }
-
     public static LifecycleStrategy adapt(OnCamelContextStarting handler) {
         return new LifecycleStrategySupport() {
             @Override
@@ -150,16 +124,6 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
             @Override
             public void onContextStarted(CamelContext context) {
                 handler.onContextStarted(context);
-            }
-        };
-    }
-
-    @Deprecated
-    public static LifecycleStrategy adapt(OnCamelContextStop handler) {
-        return new LifecycleStrategySupport() {
-            @Override
-            public void onContextStop(CamelContext context) {
-                handler.onContextStop(context);
             }
         };
     }
@@ -196,21 +160,11 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
         return consumer::accept;
     }
 
-    @Deprecated
-    public static OnCamelContextStart onCamelContextStart(Consumer<CamelContext> consumer) {
-        return consumer::accept;
-    }
-
     public static OnCamelContextStarting onCamelContextStarting(Consumer<CamelContext> consumer) {
         return consumer::accept;
     }
 
     public static OnCamelContextStarted onCamelContextStarted(Consumer<CamelContext> consumer) {
-        return consumer::accept;
-    }
-
-    @Deprecated
-    public static OnCamelContextStop onCamelContextStop(Consumer<CamelContext> consumer) {
         return consumer::accept;
     }
 
@@ -227,24 +181,6 @@ public abstract class LifecycleStrategySupport implements LifecycleStrategy {
     // Helpers
     //
     // ********************************
-
-    /**
-     * @deprecated see {@link LifecycleStrategy#onContextStart(CamelContext)}
-     */
-    @Deprecated
-    @Override
-    public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-        // noop
-    }
-
-    /**
-     * @deprecated see {@link LifecycleStrategy#onContextStop(CamelContext)}
-     */
-    @Deprecated
-    @Override
-    public void onContextStop(CamelContext context) {
-        // noop
-    }
 
     @Override
     public void onComponentAdd(String name, Component component) {

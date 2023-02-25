@@ -48,7 +48,7 @@ public class LifecycleStrategyFailOnStartupTest extends TestSupport {
     private static class MyLifecycleStrategy extends DummyLifecycleStrategy {
 
         @Override
-        public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
+        public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
             throw new IllegalArgumentException("Forced");
         }
     }

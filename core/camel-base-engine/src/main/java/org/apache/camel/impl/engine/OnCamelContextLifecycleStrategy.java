@@ -22,10 +22,8 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.OnCamelContextInitialized;
 import org.apache.camel.spi.OnCamelContextInitializing;
-import org.apache.camel.spi.OnCamelContextStart;
 import org.apache.camel.spi.OnCamelContextStarted;
 import org.apache.camel.spi.OnCamelContextStarting;
-import org.apache.camel.spi.OnCamelContextStop;
 import org.apache.camel.spi.OnCamelContextStopped;
 import org.apache.camel.spi.OnCamelContextStopping;
 import org.apache.camel.support.LifecycleStrategySupport;
@@ -61,18 +59,6 @@ class OnCamelContextLifecycleStrategy extends LifecycleStrategySupport {
     }
 
     @Override
-    public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-        for (OnCamelContextStart handler : context.getRegistry().findByType(OnCamelContextStart.class)) {
-            // RoutesBuilder should register them-self to the camel context
-            // to avoid invoking them multiple times if routes are discovered
-            // from the registry (i.e. camel-main)
-            if (!(handler instanceof RoutesBuilder)) {
-                handler.onContextStart(context);
-            }
-        }
-    }
-
-    @Override
     public void onContextStarting(CamelContext context) throws VetoCamelContextStartException {
         for (OnCamelContextStarting handler : context.getRegistry().findByType(OnCamelContextStarting.class)) {
             // RoutesBuilder should register them-self to the camel context
@@ -92,18 +78,6 @@ class OnCamelContextLifecycleStrategy extends LifecycleStrategySupport {
             // from the registry (i.e. camel-main)
             if (!(handler instanceof RoutesBuilder)) {
                 handler.onContextStarted(context);
-            }
-        }
-    }
-
-    @Override
-    public void onContextStop(CamelContext context) {
-        for (OnCamelContextStop handler : context.getRegistry().findByType(OnCamelContextStop.class)) {
-            // RoutesBuilder should register them-self to the camel context
-            // to avoid invoking them multiple times if routes are discovered
-            // from the registry (i.e. camel-main)
-            if (!(handler instanceof RoutesBuilder)) {
-                handler.onContextStop(context);
             }
         }
     }

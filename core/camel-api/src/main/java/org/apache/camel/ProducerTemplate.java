@@ -23,8 +23,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import org.apache.camel.spi.Synchronization;
-
 /**
  * Template for working with Camel and sending {@link Message} instances in an {@link Exchange} to an {@link Endpoint}.
  * <br/>
@@ -1139,98 +1137,5 @@ public interface ProducerTemplate extends Service {
      */
     <T> T extractFutureBody(Future<?> future, long timeout, TimeUnit unit, Class<T> type)
             throws TimeoutException, CamelExecutionException;
-
-    // Asynchronous methods with callback
-    // -----------------------------------------------------------------------
-
-    /**
-     * Sends an asynchronous exchange to the given endpoint.
-     *
-     * @param  endpointUri  the endpoint URI to send the exchange to
-     * @param  exchange     the exchange to send
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    @Deprecated
-    CompletableFuture<Exchange> asyncCallback(String endpointUri, Exchange exchange, Synchronization onCompletion);
-
-    /**
-     * Sends an asynchronous exchange to the given endpoint.
-     *
-     * @param  endpoint     the endpoint to send the exchange to
-     * @param  exchange     the exchange to send
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    @Deprecated
-    CompletableFuture<Exchange> asyncCallback(Endpoint endpoint, Exchange exchange, Synchronization onCompletion);
-
-    /**
-     * Sends an asynchronous exchange to the given endpoint using a supplied processor.
-     *
-     * @param  endpointUri  the endpoint URI to send the exchange to
-     * @param  processor    the transformer used to populate the new exchange {@link Processor} to populate the exchange
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    @Deprecated
-    CompletableFuture<Exchange> asyncCallback(String endpointUri, Processor processor, Synchronization onCompletion);
-
-    /**
-     * Sends an asynchronous exchange to the given endpoint using a supplied processor.
-     *
-     * @param  endpoint     the endpoint to send the exchange to
-     * @param  processor    the transformer used to populate the new exchange {@link Processor} to populate the exchange
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    @Deprecated
-    CompletableFuture<Exchange> asyncCallback(Endpoint endpoint, Processor processor, Synchronization onCompletion);
-
-    /**
-     * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOnly} message exchange
-     * pattern.
-     *
-     * @param  endpointUri  the endpoint URI to send the exchange to
-     * @param  body         the body to send
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    @Deprecated
-    CompletableFuture<Object> asyncCallbackSendBody(String endpointUri, Object body, Synchronization onCompletion);
-
-    /**
-     * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOnly} message exchange
-     * pattern.
-     *
-     * @param  endpoint     the endpoint to send the exchange to
-     * @param  body         the body to send
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    @Deprecated
-    CompletableFuture<Object> asyncCallbackSendBody(Endpoint endpoint, Object body, Synchronization onCompletion);
-
-    /**
-     * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
-     *
-     * @param  endpointUri  the endpoint URI to send the exchange to
-     * @param  body         the body to send
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    @Deprecated
-    CompletableFuture<Object> asyncCallbackRequestBody(String endpointUri, Object body, Synchronization onCompletion);
-
-    /**
-     * Sends an asynchronous body to the given endpoint. Uses an {@link ExchangePattern#InOut} message exchange pattern.
-     *
-     * @param  endpoint     the endpoint to send the exchange to
-     * @param  body         the body to send
-     * @param  onCompletion callback invoked when exchange has been completed
-     * @return              a handle to be used to get the response in the future
-     */
-    @Deprecated
-    CompletableFuture<Object> asyncCallbackRequestBody(Endpoint endpoint, Object body, Synchronization onCompletion);
 
 }

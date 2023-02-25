@@ -2726,7 +2726,6 @@ public abstract class AbstractCamelContext extends BaseService
         for (LifecycleStrategy strategy : lifecycleStrategies) {
             try {
                 strategy.onContextStopping(this);
-                strategy.onContextStop(this);
             } catch (Throwable e) {
                 LOG.warn("Lifecycle strategy {} failed on CamelContext ({}) due to: {}. This exception will be ignored",
                         strategy,
@@ -3292,7 +3291,6 @@ public abstract class AbstractCamelContext extends BaseService
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 try {
                     strategy.onContextStarting(this);
-                    strategy.onContextStart(this);
                 } catch (VetoCamelContextStartException e) {
                     // okay we should not start Camel since it was vetoed
                     LOG.warn("Lifecycle strategy {} vetoed starting CamelContext ({}) due to: {}", strategy, getName(),

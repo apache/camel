@@ -702,7 +702,6 @@ public abstract class BaseMainSupport extends BaseService {
         // allow doing custom configuration before camel is started
         for (MainListener listener : listeners) {
             listener.afterConfigure(this);
-            listener.configure(camelContext);
         }
 
         // we want to log the property placeholder summary after routes has been started,
