@@ -1068,7 +1068,8 @@ public abstract class BaseMainSupport extends BaseService {
             setPropertiesOnTarget(camelContext, camelContext, contextProperties, "camel.context.",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
 
-            setPropertiesOnTarget(camelContext, camelContext.getCamelContextExtension(), contextProperties, "camel.context.extension",
+            setPropertiesOnTarget(camelContext, camelContext.getCamelContextExtension(), contextProperties,
+                    "camel.context.extension",
                     mainConfigurationProperties.isAutoConfigurationFailFast(), true, autoConfiguredProperties);
         }
 

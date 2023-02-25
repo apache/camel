@@ -52,7 +52,8 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
         ConfigurerStrategy.clearBootstrapConfigurers();
 
         Set<Service> set
-                = camelContextExtension.getServices().stream().filter(s -> s instanceof BootstrapCloseable).collect(Collectors.toSet());
+                = camelContextExtension.getServices().stream().filter(s -> s instanceof BootstrapCloseable)
+                        .collect(Collectors.toSet());
         // its a bootstrap service
         for (Service service : set) {
             try {

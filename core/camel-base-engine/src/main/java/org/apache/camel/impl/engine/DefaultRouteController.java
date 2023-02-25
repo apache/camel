@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;

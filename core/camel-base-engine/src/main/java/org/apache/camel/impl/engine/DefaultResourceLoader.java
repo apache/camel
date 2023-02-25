@@ -21,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Resource;
@@ -165,7 +164,8 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
      */
     private ResourceResolver resolveService(String scheme) {
         final CamelContext context = getCamelContext();
-        final FactoryFinder finder = context.getCamelContextExtension().getBootstrapFactoryFinder(ResourceResolver.FACTORY_PATH);
+        final FactoryFinder finder
+                = context.getCamelContextExtension().getBootstrapFactoryFinder(ResourceResolver.FACTORY_PATH);
 
         ResourceResolver rr = ResolverHelper.resolveService(context, finder, scheme, ResourceResolver.class).orElse(null);
         if (rr != null) {

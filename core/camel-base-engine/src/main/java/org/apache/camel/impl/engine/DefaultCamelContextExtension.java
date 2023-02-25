@@ -103,7 +103,7 @@ import org.slf4j.LoggerFactory;
 
 class DefaultCamelContextExtension implements ExtendedCamelContext {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultCamelContextExtension.class);
-    
+
     private final AbstractCamelContext camelContext;
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
@@ -114,7 +114,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private ErrorHandlerFactory errorHandlerFactory;
     private String basePackageScan;
     private boolean lightweight;
-
 
     public DefaultCamelContextExtension(AbstractCamelContext camelContext) {
         this.camelContext = camelContext;
@@ -497,7 +496,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         if (camelContext.bootstrapFactoryFinder == null) {
             synchronized (camelContext.lock) {
                 if (camelContext.bootstrapFactoryFinder == null) {
-                    camelContext.bootstrapFactoryFinder = getFactoryFinderResolver().resolveBootstrapFactoryFinder(camelContext.getClassResolver());
+                    camelContext.bootstrapFactoryFinder
+                            = getFactoryFinderResolver().resolveBootstrapFactoryFinder(camelContext.getClassResolver());
                 }
             }
         }

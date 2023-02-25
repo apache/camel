@@ -500,7 +500,8 @@ public final class DefaultConfigurationConfigurer {
         Map<String, LogListener> logListeners = registry.findByTypeWithName(LogListener.class);
         if (logListeners != null && !logListeners.isEmpty()) {
             for (LogListener logListener : logListeners.values()) {
-                boolean contains = ecc.getCamelContextExtension().getLogListeners() != null && ecc.getCamelContextExtension().getLogListeners().contains(logListener);
+                boolean contains = ecc.getCamelContextExtension().getLogListeners() != null
+                        && ecc.getCamelContextExtension().getLogListeners().contains(logListener);
                 if (!contains) {
                     ecc.getCamelContextExtension().addLogListener(logListener);
                 }

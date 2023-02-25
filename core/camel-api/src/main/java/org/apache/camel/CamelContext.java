@@ -83,13 +83,11 @@ import org.apache.camel.vault.VaultConfiguration;
 public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguration {
 
     /**
-     * Gets the {@link ExtendedCamelContext} that contains the extension points for internal
-     * context APIs.
+     * Gets the {@link ExtendedCamelContext} that contains the extension points for internal context APIs.
      *
      * @return this {@link ExtendedCamelContext}
      */
     ExtendedCamelContext getCamelContextExtension();
-
 
     /**
      * Gets the extension of the given type.

@@ -20,7 +20,6 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.spi.AutowiredLifecycleStrategy;
 import org.apache.camel.spi.DataFormat;
@@ -87,7 +86,8 @@ class DefaultAutowiredLifecycleStrategy extends LifecycleStrategySupport impleme
     }
 
     private void autwire(String name, String kind, Object target) {
-        PropertyConfigurer pc = camelContext.getCamelContextExtension().getConfigurerResolver().resolvePropertyConfigurer(name + "-" + kind, camelContext);
+        PropertyConfigurer pc = camelContext.getCamelContextExtension().getConfigurerResolver()
+                .resolvePropertyConfigurer(name + "-" + kind, camelContext);
         if (pc instanceof PropertyConfigurerGetter) {
             PropertyConfigurerGetter getter = (PropertyConfigurerGetter) pc;
             String[] names = getter.getAutowiredNames();

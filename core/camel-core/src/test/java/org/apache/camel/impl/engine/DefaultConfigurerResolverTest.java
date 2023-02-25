@@ -41,7 +41,7 @@ class DefaultConfigurerResolverTest {
     @Test
     void resolvePropertyConfigurerShouldFallbackToDefaultConfigurer() {
         Stream.of(CamelContext.class.getName(), SimpleCamelContext.class.getName(), "org.apache.camel.model.ModelCamelContext",
-                        "org.apache.camel.SomeCamelContextStuff")
+                "org.apache.camel.SomeCamelContextStuff")
                 .forEach(name -> assertThat(resolver.resolvePropertyConfigurer(name, ctx))
                         .as(name).isInstanceOf(DefaultConfigurerResolver.ContextConfigurer.class));
 
@@ -61,7 +61,6 @@ class DefaultConfigurerResolverTest {
                 .forEach(name -> assertThat(resolver.resolvePropertyConfigurer(name, ctx))
                         .as(name).isNull());
     }
-
 
     @DisplayName("Test that the configurer returns null for classes named similarly, but unrelated to CamelContext")
     @Test
