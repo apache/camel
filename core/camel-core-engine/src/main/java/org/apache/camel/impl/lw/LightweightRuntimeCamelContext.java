@@ -1137,8 +1137,6 @@ public class LightweightRuntimeCamelContext implements CamelContext, CatalogCame
         return startupSummaryLevel;
     }
 
-
-
     //
     // Unsupported mutable methods
     //
@@ -1150,7 +1148,8 @@ public class LightweightRuntimeCamelContext implements CamelContext, CatalogCame
         if (instance != null) {
             clazz = instance.getClass();
         } else {
-            clazz = lwCamelContextExtension.getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH).findClass(componentName).orElse(null);
+            clazz = lwCamelContextExtension.getFactoryFinder(DefaultComponentResolver.RESOURCE_PATH).findClass(componentName)
+                    .orElse(null);
             if (clazz == null) {
                 instance = hasComponent(componentName);
                 if (instance != null) {
@@ -1171,7 +1170,8 @@ public class LightweightRuntimeCamelContext implements CamelContext, CatalogCame
         if (instance != null) {
             clazz = instance.getClass();
         } else {
-            clazz = lwCamelContextExtension.getFactoryFinder(DefaultDataFormatResolver.DATAFORMAT_RESOURCE_PATH).findClass(dataFormatName).orElse(null);
+            clazz = lwCamelContextExtension.getFactoryFinder(DefaultDataFormatResolver.DATAFORMAT_RESOURCE_PATH)
+                    .findClass(dataFormatName).orElse(null);
             if (clazz == null) {
                 return null;
             }
@@ -1186,7 +1186,8 @@ public class LightweightRuntimeCamelContext implements CamelContext, CatalogCame
         if (instance != null) {
             clazz = instance.getClass();
         } else {
-            clazz = lwCamelContextExtension.getFactoryFinder(DefaultLanguageResolver.LANGUAGE_RESOURCE_PATH).findClass(languageName).orElse(null);
+            clazz = lwCamelContextExtension.getFactoryFinder(DefaultLanguageResolver.LANGUAGE_RESOURCE_PATH)
+                    .findClass(languageName).orElse(null);
             if (clazz == null) {
                 return null;
             }
