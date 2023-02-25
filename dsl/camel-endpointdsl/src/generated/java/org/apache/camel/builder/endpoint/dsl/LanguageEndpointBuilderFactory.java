@@ -182,6 +182,20 @@ public interface LanguageEndpointBuilderFactory {
             return this;
         }
         /**
+         * Sets the class of the result type (type from output).
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: producer
+         * 
+         * @param resultType the value to set
+         * @return the dsl builder
+         */
+        default LanguageEndpointBuilder resultType(String resultType) {
+            doSetProperty("resultType", resultType);
+            return this;
+        }
+        /**
          * Sets the script to execute.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.

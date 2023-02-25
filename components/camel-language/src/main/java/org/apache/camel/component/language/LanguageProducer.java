@@ -36,6 +36,8 @@ public class LanguageProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(LanguageProducer.class);
 
+    private Class<?> resultType = Object.class;
+
     public LanguageProducer(LanguageEndpoint endpoint) {
         super(endpoint);
     }
@@ -52,6 +54,7 @@ public class LanguageProducer extends DefaultProducer {
                 // the script may be a file: so resolve it before using
                 script = getEndpoint().resolveScript(script);
                 exp = getEndpoint().getLanguage().createExpression(script);
+                exp.init(getEndpoint().getCamelContext());
             }
         }
         // if not fallback to use expression from endpoint
@@ -95,6 +98,7 @@ public class LanguageProducer extends DefaultProducer {
         if (script != null) {
             // create the expression from the script
             exp = getEndpoint().getLanguage().createExpression(script);
+            exp.init(getEndpoint().getCamelContext());
             // expression was resolved from resource
             getEndpoint().setContentResolvedFromResource(true);
             // if we cache then set this as expression on endpoint so we don't re-create it again
@@ -107,7 +111,7 @@ public class LanguageProducer extends DefaultProducer {
         Object result;
         if (exp != null) {
             try {
-                result = exp.evaluate(exchange, Object.class);
+                result = exp.evaluate(exchange, resultType);
                 LOG.debug("Evaluated expression as: {} with: {}", result, exchange);
             } finally {
                 if (!getEndpoint().isCacheScript()) {
@@ -130,5 +134,13 @@ public class LanguageProducer extends DefaultProducer {
     @Override
     public LanguageEndpoint getEndpoint() {
         return (LanguageEndpoint) super.getEndpoint();
+    }
+
+    @Override
+    protected void doBuild() throws Exception {
+        if (getEndpoint().getResultType() != null) {
+            resultType = getEndpoint().getCamelContext()
+                    .getClassResolver().resolveMandatoryClass(getEndpoint().getResultType());
+        }
     }
 }
