@@ -46,11 +46,8 @@ import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertiesComponent;
-import org.apache.camel.spi.PropertyConfigurer;
-import org.apache.camel.spi.PropertyConfigurerAware;
 import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.support.ExpressionToPredicateAdapter;
-import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ScriptHelper;
 import org.apache.camel.util.ObjectHelper;
 
