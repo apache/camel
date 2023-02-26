@@ -4556,13 +4556,6 @@ public abstract class AbstractCamelContext extends BaseService
         return status;
     }
 
-    @Deprecated
-    public enum Initialization {
-        Eager,
-        Default,
-        Lazy
-    }
-
     class LifecycleHelper implements AutoCloseable {
         final Map<String, String> originalContextMap;
         final ClassLoader tccl;

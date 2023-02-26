@@ -27,7 +27,7 @@ import jakarta.persistence.Query;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
-import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.spi.Language;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.slf4j.Logger;
@@ -38,6 +38,8 @@ import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
 public class JpaProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JpaProducer.class);
+
+    private Language simple;
 
     private final EntityManagerFactory entityManagerFactory;
     private final TransactionStrategy transactionStrategy;
@@ -215,7 +217,7 @@ public class JpaProducer extends DefaultProducer {
             params.forEach((key, value) -> {
                 Object resolvedValue = value;
                 if (value instanceof String) {
-                    resolvedValue = SimpleLanguage.expression((String) value).evaluate(exchange, Object.class);
+                    resolvedValue = simple.createExpression((String) value).evaluate(exchange, Object.class);
                 }
                 query.setParameter(key, resolvedValue);
             });
@@ -356,4 +358,8 @@ public class JpaProducer extends DefaultProducer {
         }
     }
 
+    @Override
+    protected void doBuild() throws Exception {
+        simple = getEndpoint().getCamelContext().resolveLanguage("simple");
+    }
 }

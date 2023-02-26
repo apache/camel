@@ -1279,34 +1279,6 @@ public final class ObjectHelper {
     }
 
     /**
-     * Wraps the caused exception in a {@link RuntimeException} if its not already such an exception.
-     *
-     * @param      e the caused exception
-     * @return       the wrapper exception
-     * @deprecated   Use {@link org.apache.camel.RuntimeCamelException#wrapRuntimeCamelException} instead
-     */
-    @Deprecated
-    public static RuntimeException wrapRuntimeCamelException(Throwable e) {
-        try {
-            Class<? extends RuntimeException> clazz = (Class) Class.forName("org.apache.camel.RuntimeException");
-            if (clazz.isInstance(e)) {
-                // don't double wrap
-                return clazz.cast(e);
-            } else {
-                return clazz.getConstructor(Throwable.class).newInstance(e);
-            }
-        } catch (Throwable t) {
-            // ignore
-        }
-        if (e instanceof RuntimeException) {
-            // don't double wrap
-            return (RuntimeException) e;
-        } else {
-            return new RuntimeException(e);
-        }
-    }
-
-    /**
      * Turns the input array to a list of objects.
      *
      * @param  objects an array of objects or null

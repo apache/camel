@@ -24,7 +24,6 @@ import org.apache.camel.test.main.junit5.CamelMainTestSupport;
 import org.apache.camel.test.main.junit5.common.MyConfiguration;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.util.PropertiesHelper.asProperties;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -40,8 +39,9 @@ class OverridePropertiesTest extends CamelMainTestSupport {
 
     @Override
     protected Properties useOverridePropertiesWithPropertiesComponent() {
-        return asProperties(
-                "name", "John");
+        Properties prop = new Properties();
+        prop.setProperty("name", "John");
+        return prop;
     }
 
     @Test

@@ -23,6 +23,7 @@ import java.net.URL;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -46,7 +47,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
@@ -311,7 +311,8 @@ public class HdfsProducerTest extends HdfsTestSupport {
     @Test
     public void testWriteTextWithDynamicFilenameExpression() throws Exception {
         for (int i = 0; i < 5; i++) {
-            template.sendBodyAndHeader("direct:write_dynamic_filename", "CIAO" + i, Exchange.FILE_NAME, simple("file-${body}"));
+            template.sendBodyAndHeader("direct:write_dynamic_filename", "CIAO" + i, Exchange.FILE_NAME,
+                    new SimpleExpression("file-${body}"));
         }
 
         for (int i = 0; i < 5; i++) {

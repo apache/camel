@@ -18,11 +18,10 @@ package org.apache.camel.component.file.remote.integration;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
+import org.apache.camel.model.language.SimpleExpression;
 import org.apache.camel.test.infra.ftp.services.FtpServiceFactory;
 import org.apache.camel.test.infra.ftp.services.embedded.FtpEmbeddedService;
 import org.junit.jupiter.api.extension.RegisterExtension;
-
-import static org.apache.camel.language.simple.SimpleLanguage.simple;
 
 /**
  * Base class for unit testing using a FTPServer
@@ -33,7 +32,7 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
     public FtpEmbeddedService service = FtpServiceFactory.createEmbeddedService();
 
     public void sendFile(String url, Object body, String fileName) {
-        template.sendBodyAndHeader(url, body, Exchange.FILE_NAME, simple(fileName));
+        template.sendBodyAndHeader(url, body, Exchange.FILE_NAME, new SimpleExpression(fileName));
     }
 
 }

@@ -54,19 +54,6 @@ public final class PropertiesHelper {
         return rc;
     }
 
-    @Deprecated
-    public static Map<String, String> extractStringProperties(Map<String, Object> properties) {
-        Map<String, String> rc = new LinkedHashMap<>(properties.size());
-
-        for (Map.Entry<String, Object> entry : properties.entrySet()) {
-            String name = entry.getKey();
-            String value = entry.getValue().toString();
-            rc.put(name, value);
-        }
-
-        return rc;
-    }
-
     public static boolean hasProperties(Map<String, Object> properties, String optionPrefix) {
         ObjectHelper.notNull(properties, "properties");
 

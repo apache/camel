@@ -214,31 +214,6 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         }
     }
 
-    /**
-     * Asynchronously sends an exchange to an endpoint using a supplied {@link Processor} to populate the exchange
-     * <p>
-     * This method will <b>neither</b> throw an exception <b>nor</b> complete future exceptionally. If processing of the
-     * given Exchange failed then the exception is stored on the return Exchange
-     *
-     * @param  endpoint        the endpoint to send the exchange to
-     * @param  pattern         the message {@link ExchangePattern} such as {@link ExchangePattern#InOnly} or
-     *                         {@link ExchangePattern#InOut}
-     * @param  processor       the transformer used to populate the new exchange
-     * @param  resultProcessor a processor to process the exchange when the send is complete.
-     * @param  future          the preexisting future to complete when processing is done or null if to create new one
-     * @return                 future that completes with exchange when processing is done. Either passed into future
-     *                         parameter or new one if parameter was null
-     */
-    @Deprecated
-    public CompletableFuture<Exchange> asyncSend(
-            Endpoint endpoint,
-            ExchangePattern pattern,
-            Processor processor,
-            Processor resultProcessor,
-            CompletableFuture<Exchange> future) {
-        return asyncSendExchange(endpoint, pattern, processor, resultProcessor, null, future);
-    }
-
     @Override
     public CompletableFuture<Exchange> asyncSendExchange(
             Endpoint endpoint,

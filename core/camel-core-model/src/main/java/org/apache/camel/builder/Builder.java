@@ -47,48 +47,6 @@ public final class Builder {
     }
 
     /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a> value builder.
-     * <p/>
-     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
-     *
-     * @param      beanOrBeanRef either an instanceof a bean or a reference to bean to lookup in the Registry
-     * @return                   the builder
-     * @deprecated               use {@link #method(Object)}
-     */
-    @Deprecated
-    public static ValueBuilder bean(final Object beanOrBeanRef) {
-        return method(beanOrBeanRef, null);
-    }
-
-    /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a> value builder.
-     * <p/>
-     * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).
-     *
-     * @param      beanOrBeanRef either an instanceof a bean or a reference to bean to lookup in the Registry
-     * @param      method        the method name
-     * @return                   the builder
-     * @deprecated               use {@link #method(Class, String)} (Object, String)}
-     */
-    @Deprecated
-    public static ValueBuilder bean(Object beanOrBeanRef, String method) {
-        return method(beanOrBeanRef, method);
-    }
-
-    /**
-     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a> value builder
-     *
-     * @param      beanType the bean class which will be invoked
-     * @param      method   name of method to invoke
-     * @return              the builder
-     * @deprecated          use {@link #method(Class, String)}
-     */
-    @Deprecated
-    public static ValueBuilder bean(Class<?> beanType, String method) {
-        return method(beanType, method);
-    }
-
-    /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">method call expression</a> value builder.
      * <p/>
      * This method accepts dual parameters. Either an bean instance or a reference to a bean (String).

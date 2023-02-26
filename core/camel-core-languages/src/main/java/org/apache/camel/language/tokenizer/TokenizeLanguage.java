@@ -51,51 +51,6 @@ public class TokenizeLanguage extends SingleInputLanguageSupport implements Prop
     private String groupDelimiter;
     private boolean skipFirst;
 
-    @Deprecated
-    public static Expression tokenize(String token) {
-        return tokenize(token, false);
-    }
-
-    @Deprecated
-    public static Expression tokenize(String token, boolean regex) {
-        TokenizeLanguage language = new TokenizeLanguage();
-        language.setToken(token);
-        language.setRegex(regex);
-        return language.createExpression(null);
-    }
-
-    @Deprecated
-    public static Expression tokenize(String headerName, String token) {
-        return tokenize(headerName, token, false);
-    }
-
-    @Deprecated
-    public static Expression tokenize(String headerName, String token, boolean regex) {
-        TokenizeLanguage language = new TokenizeLanguage();
-        language.setHeaderName(headerName);
-        language.setToken(token);
-        language.setRegex(regex);
-        return language.createExpression(null);
-    }
-
-    @Deprecated
-    public static Expression tokenizePair(String startToken, String endToken, boolean includeTokens) {
-        TokenizeLanguage language = new TokenizeLanguage();
-        language.setToken(startToken);
-        language.setEndToken(endToken);
-        language.setIncludeTokens(includeTokens);
-        return language.createExpression(null);
-    }
-
-    @Deprecated
-    public static Expression tokenizeXML(String tagName, String inheritNamespaceTagName) {
-        TokenizeLanguage language = new TokenizeLanguage();
-        language.setToken(tagName);
-        language.setInheritNamespaceTagName(inheritNamespaceTagName);
-        language.setXml(true);
-        return language.createExpression(null);
-    }
-
     @Override
     public boolean configure(CamelContext camelContext, Object target, String name, Object value, boolean ignoreCase) {
         if (target != this) {
