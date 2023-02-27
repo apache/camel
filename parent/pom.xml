@@ -2764,13 +2764,6 @@
                 <version>${slf4j-version}</version>
             </dependency>
 
-            <!-- optional ognl support -->
-            <dependency>
-                <groupId>ognl</groupId>
-                <artifactId>ognl</artifactId>
-                <version>${ognl-version}</version>
-            </dependency>
-
             <!-- optional Saxon support -->
             <dependency>
                 <groupId>net.sf.saxon</groupId>
