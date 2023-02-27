@@ -107,8 +107,6 @@ The get/collection API method has the parameters listed in the table below:
 | queryParams |Custom query parameters | Map
 |===
 
-In addition to the parameters above, the get/collection API can also use any of the link:#query-parameters[Query Parameters].
-
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header. The message header name must be of the format CamelDhis2.parameter. The inBody parameter overrides message header, i.e. the endpoint parameter inBody=myParameterNameHere would override a CamelDhis2.myParameterNameHere header.
 
 ===== Examples
