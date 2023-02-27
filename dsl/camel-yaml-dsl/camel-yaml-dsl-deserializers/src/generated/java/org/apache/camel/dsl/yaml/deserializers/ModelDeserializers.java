@@ -15780,7 +15780,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "max-pool-size", type = "number"),
                     @YamlProperty(name = "max-queue-size", type = "number"),
                     @YamlProperty(name = "pool-size", type = "number"),
-                    @YamlProperty(name = "rejected-policy", type = "enum:Abort,CallerRuns,DiscardOldest,Discard"),
+                    @YamlProperty(name = "rejected-policy", type = "enum:Abort,CallerRuns"),
                     @YamlProperty(name = "time-unit", type = "enum:NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
             }
     )
@@ -15872,7 +15872,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
                     @YamlProperty(name = "max-pool-size", type = "number"),
                     @YamlProperty(name = "max-queue-size", type = "number"),
                     @YamlProperty(name = "pool-size", type = "number"),
-                    @YamlProperty(name = "rejected-policy", type = "enum:Abort,CallerRuns,DiscardOldest,Discard"),
+                    @YamlProperty(name = "rejected-policy", type = "enum:Abort,CallerRuns"),
                     @YamlProperty(name = "thread-name", type = "string"),
                     @YamlProperty(name = "time-unit", type = "enum:NANOSECONDS,MICROSECONDS,MILLISECONDS,SECONDS,MINUTES,HOURS,DAYS")
             }

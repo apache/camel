@@ -3078,7 +3078,7 @@
           },
           "rejected-policy" : {
             "type" : "string",
-            "enum" : [ "Abort", "CallerRuns", "DiscardOldest", "Discard" ]
+            "enum" : [ "Abort", "CallerRuns" ]
           },
           "time-unit" : {
             "type" : "string",
@@ -3124,7 +3124,7 @@
           },
           "rejected-policy" : {
             "type" : "string",
-            "enum" : [ "Abort", "CallerRuns", "DiscardOldest", "Discard" ]
+            "enum" : [ "Abort", "CallerRuns" ]
           },
           "thread-name" : {
             "type" : "string"
