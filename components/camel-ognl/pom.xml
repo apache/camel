@@ -42,6 +42,7 @@
         <dependency>
             <groupId>ognl</groupId>
             <artifactId>ognl</artifactId>
+            <version>${ognl-version}</version>
         </dependency>
 
         <!-- testing -->
