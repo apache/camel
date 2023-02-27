@@ -309,7 +309,7 @@ You don’t interact directly with the _CamelContext_ in this example, but it is
 [[BookGettingStarted-ConceptsAndTerminologyFundamentalToCamel]]
 == Concepts and terminology fundamental to Camel
 
-In this section, we explain additional of Camel concepts and features.
+In this section, we explain additional Camel concepts and features.
 
 [[BookGettingStarted-CamelContext]]
 === CamelContext
