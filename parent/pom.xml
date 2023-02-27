@@ -2764,13 +2764,6 @@
                 <version>${slf4j-version}</version>
             </dependency>
 
-            <!-- optional scripting support -->
-            <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy-jsr223</artifactId>
-                <version>${groovy-version}</version>
-            </dependency>
-
             <!-- optional ognl support -->
             <dependency>
                 <groupId>ognl</groupId>
