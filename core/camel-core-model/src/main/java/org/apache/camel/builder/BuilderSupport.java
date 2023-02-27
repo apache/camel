@@ -352,9 +352,9 @@ public abstract class BuilderSupport implements CamelContextAware {
     /**
      * Resolves the given URI to an endpoint
      *
-     * @param      uri                     the uri to resolve
-     * @throws     NoSuchEndpointException if the endpoint URI could not be resolved
-     * @return                             the endpoint
+     * @param  uri                     the uri to resolve
+     * @throws NoSuchEndpointException if the endpoint URI could not be resolved
+     * @return                         the endpoint
      */
     public Endpoint endpoint(String uri) throws NoSuchEndpointException {
         ObjectHelper.notNull(uri, "uri");
@@ -368,10 +368,10 @@ public abstract class BuilderSupport implements CamelContextAware {
     /**
      * Resolves the given URI to an endpoint of the specified type
      *
-     * @param      uri                     the uri to resolve
-     * @param      type                    the excepted type of the endpoint
-     * @throws     NoSuchEndpointException if the endpoint URI could not be resolved
-     * @return                             the endpoint
+     * @param  uri                     the uri to resolve
+     * @param  type                    the excepted type of the endpoint
+     * @throws NoSuchEndpointException if the endpoint URI could not be resolved
+     * @return                         the endpoint
      */
     public <T extends Endpoint> T endpoint(String uri, Class<T> type) throws NoSuchEndpointException {
         ObjectHelper.notNull(uri, "uri");

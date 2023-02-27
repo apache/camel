@@ -78,7 +78,7 @@ public class TokenizerTest extends ExchangeTestSupport {
 
     @Test
     public void testTokenizeHeaderWithStringConstructor() throws Exception {
-        List<?> names = tokenize(",", "names").evaluate(exchange, List.class);
+        List<?> names = tokenize("names", ",").evaluate(exchange, List.class);
         assertEquals(3, names.size());
 
         assertEquals("Claus", names.get(0));
@@ -88,7 +88,7 @@ public class TokenizerTest extends ExchangeTestSupport {
 
     @Test
     public void testTokenizeHeader() throws Exception {
-        Expression exp = tokenize(",", "names");
+        Expression exp = tokenize("names", ",");
         exp.init(context);
 
         List<?> names = exp.evaluate(exchange, List.class);
