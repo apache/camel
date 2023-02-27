@@ -161,8 +161,10 @@ public class KafkaConsumerUnresolvableHealthCheckIT extends CamelTestSupport {
     public void kafkaConsumerHealthCheck() throws InterruptedException {
         // health-check liveness should be UP
         Collection<HealthCheck.Result> res = HealthCheckHelper.invokeLiveness(context);
+        Assertions.assertFalse(res.isEmpty(), "there should be liveness results to assert");
+
         boolean up = res.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
-        Assertions.assertTrue(up, "liveness check");
+        Assertions.assertTrue(up, "liveness check should be up");
 
         // health-check readiness should be down
         await().atMost(20, TimeUnit.SECONDS).untilAsserted(() -> {

@@ -155,6 +155,8 @@ public class KafkaConsumerBadPortHealthCheckIT extends CamelTestSupport {
     public void kafkaConsumerHealthCheck() throws InterruptedException {
         // health-check liveness should be UP
         Collection<HealthCheck.Result> res = HealthCheckHelper.invokeLiveness(context);
+        Assertions.assertFalse(res.isEmpty(), "there should be liveness results to assert");
+
         boolean up = res.stream().allMatch(r -> r.getState().equals(HealthCheck.State.UP));
         Assertions.assertTrue(up, "liveness check");
 
