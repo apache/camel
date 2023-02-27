@@ -77,8 +77,8 @@ import org.apache.camel.vault.VaultConfiguration;
  * End users are advised to use suspend/resume. Using stop is for shutting down Camel and it's not guaranteed that when
  * it's being started again using the start method that Camel will operate consistently.
  * <p/>
- * You can use the {@link CamelContext#getCamelContextExtension()} to obtain the extension point for the {@link CamelContext}.
- * This extension point exposes internal APIs via {@link ExtendedCamelContext}.
+ * You can use the {@link CamelContext#getCamelContextExtension()} to obtain the extension point for the
+ * {@link CamelContext}. This extension point exposes internal APIs via {@link ExtendedCamelContext}.
  */
 public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguration {
 

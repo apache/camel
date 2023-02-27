@@ -265,7 +265,7 @@ public interface Exchange {
     String XSLT_FATAL_ERROR = "CamelXsltFatalError";
     String XSLT_WARNING = "CamelXsltWarning";
 
-   /**
+    /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
      *
      * @return the message exchange pattern of this exchange
@@ -660,8 +660,8 @@ public interface Exchange {
     long getCreated();
 
     /**
-     * Gets the {@link ExchangeExtension} that contains the extension points for internal exchange APIs. These APIs
-     * are intended for internal usage within Camel and end-users should avoid using them.
+     * Gets the {@link ExchangeExtension} that contains the extension points for internal exchange APIs. These APIs are
+     * intended for internal usage within Camel and end-users should avoid using them.
      *
      * @return the {@link ExchangeExtension} point for this exchange.
      */
