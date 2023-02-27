@@ -997,11 +997,6 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
-    public RouteDefinition adviceWith(RouteDefinition definition, AdviceWithRouteBuilder builder) throws Exception {
-        return AdviceWith.adviceWith(definition, this, builder);
-    }
-
-    @Override
     public void registerValidator(ValidatorDefinition def) {
         if (model == null && isLightweight()) {
             throw new IllegalStateException("Access to model not supported in lightweight mode");

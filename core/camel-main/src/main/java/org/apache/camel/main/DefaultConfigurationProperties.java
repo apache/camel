@@ -128,9 +128,6 @@ public abstract class DefaultConfigurationProperties<T> {
     private boolean dumpRoutes;
     private Map<String, String> globalOptions;
     // route controller
-    @Metadata(defaultValue = "DEBUG")
-    @Deprecated
-    private LoggingLevel routeControllerLoggingLevel;
     private boolean routeControllerSuperviseEnabled;
     private String routeControllerIncludeRoutes;
     private String routeControllerExcludeRoutes;
@@ -1359,20 +1356,6 @@ public abstract class DefaultConfigurationProperties<T> {
         this.globalOptions.put(key, value.toString());
     }
 
-    @Deprecated
-    public LoggingLevel getRouteControllerLoggingLevel() {
-        return routeControllerLoggingLevel;
-    }
-
-    /**
-     * Sets the logging level used for logging route activity (such as starting and stopping routes). The default
-     * logging level is DEBUG.
-     */
-    @Deprecated
-    public void setRouteControllerLoggingLevel(LoggingLevel routeControllerLoggingLevel) {
-        this.routeControllerLoggingLevel = routeControllerLoggingLevel;
-    }
-
     public boolean isRouteControllerSuperviseEnabled() {
         return routeControllerSuperviseEnabled;
     }
@@ -2523,15 +2506,6 @@ public abstract class DefaultConfigurationProperties<T> {
             this.globalOptions = new HashMap<>();
         }
         this.globalOptions.put(key, value);
-        return (T) this;
-    }
-
-    /**
-     * Sets the logging level used for logging route activity (such as starting and stopping routes). The default
-     * logging level is DEBUG.
-     */
-    public T withRouteControllerLoggingLevel(LoggingLevel routeControllerLoggingLevel) {
-        this.routeControllerLoggingLevel = routeControllerLoggingLevel;
         return (T) this;
     }
 

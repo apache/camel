@@ -1466,11 +1466,6 @@ public class LightweightCamelContext implements CamelContext, CatalogCamelContex
     }
 
     @Override
-    public RouteDefinition adviceWith(RouteDefinition definition, AdviceWithRouteBuilder builder) throws Exception {
-        return getModelCamelContext().adviceWith(definition, builder);
-    }
-
-    @Override
     public void registerValidator(ValidatorDefinition validator) {
         getModelCamelContext().registerValidator(validator);
     }

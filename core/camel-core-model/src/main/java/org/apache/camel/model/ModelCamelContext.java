@@ -53,15 +53,6 @@ public interface ModelCamelContext extends CamelContext, Model {
     Predicate createPredicate(ExpressionDefinition definition);
 
     /**
-     * Advices the route model with the advice with builder and returns the adviced route model
-     *
-     * @deprecated use
-     *             {@link org.apache.camel.builder.AdviceWith#adviceWith(RouteDefinition, CamelContext, RouteBuilder)}
-     */
-    @Deprecated
-    RouteDefinition adviceWith(RouteDefinition definition, AdviceWithRouteBuilder builder) throws Exception;
-
-    /**
      * Registers the route input validator
      */
     void registerValidator(ValidatorDefinition validator);

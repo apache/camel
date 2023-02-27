@@ -153,8 +153,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerIncludeRoutes": target.setRouteControllerIncludeRoutes(property(camelContext, java.lang.String.class, value)); return true;
         case "routecontrollerinitialdelay":
         case "RouteControllerInitialDelay": target.setRouteControllerInitialDelay(property(camelContext, long.class, value)); return true;
-        case "routecontrollerlogginglevel":
-        case "RouteControllerLoggingLevel": target.setRouteControllerLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "routecontrollersuperviseenabled":
         case "RouteControllerSuperviseEnabled": target.setRouteControllerSuperviseEnabled(property(camelContext, boolean.class, value)); return true;
         case "routecontrollerthreadpoolsize":
@@ -394,8 +392,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerIncludeRoutes": return java.lang.String.class;
         case "routecontrollerinitialdelay":
         case "RouteControllerInitialDelay": return long.class;
-        case "routecontrollerlogginglevel":
-        case "RouteControllerLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "routecontrollersuperviseenabled":
         case "RouteControllerSuperviseEnabled": return boolean.class;
         case "routecontrollerthreadpoolsize":
@@ -636,8 +632,6 @@ public class MainConfigurationPropertiesConfigurer extends org.apache.camel.supp
         case "RouteControllerIncludeRoutes": return target.getRouteControllerIncludeRoutes();
         case "routecontrollerinitialdelay":
         case "RouteControllerInitialDelay": return target.getRouteControllerInitialDelay();
-        case "routecontrollerlogginglevel":
-        case "RouteControllerLoggingLevel": return target.getRouteControllerLoggingLevel();
         case "routecontrollersuperviseenabled":
         case "RouteControllerSuperviseEnabled": return target.isRouteControllerSuperviseEnabled();
         case "routecontrollerthreadpoolsize":

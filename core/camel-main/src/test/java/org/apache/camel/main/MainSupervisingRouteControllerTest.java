@@ -42,7 +42,7 @@ public class MainSupervisingRouteControllerTest {
         // lets make a simple route
         Main main = new Main();
         main.configure().addRoutesBuilder(new MyRoute());
-        main.configure().withRouteControllerLoggingLevel(LoggingLevel.OFF)
+        main.configure()
                 .withRouteControllerSuperviseEnabled(true)
                 .withRouteControllerBackOffDelay(25)
                 .withRouteControllerBackOffMaxAttempts(3)

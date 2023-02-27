@@ -346,9 +346,6 @@ public final class DefaultConfigurationConfigurer {
             }
             src.setUnhealthyOnExhausted(config.isRouteControllerUnhealthyOnExhausted());
         }
-        if (config.getRouteControllerLoggingLevel() != null) {
-            camelContext.getRouteController().setLoggingLevel(config.getRouteControllerLoggingLevel());
-        }
     }
 
     /**
