@@ -349,17 +349,6 @@ public interface Exchange {
     Object getProperty(String name);
 
     /**
-     * Returns a property associated with this exchange by name
-     *
-     * @param  name         the name of the property
-     * @param  defaultValue the default value to return if property was absent
-     * @return              the value of the given property or <tt>defaultValue</tt> if there is no property for the
-     *                      given name
-     */
-    @Deprecated
-    Object getProperty(String name, Object defaultValue);
-
-    /**
      * Returns a property associated with this exchange by name and specifying the type required
      *
      * @param  name the name of the property

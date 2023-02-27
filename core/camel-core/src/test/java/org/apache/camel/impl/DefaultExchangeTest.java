@@ -145,7 +145,6 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
 
         assertEquals("apple", exchange.getProperty("fruit", String.class));
         assertEquals("apple", exchange.getProperty("fruit", "banana", String.class));
-        assertEquals("banana", exchange.getProperty("beer", "banana"));
         assertEquals("banana", exchange.getProperty("beer", "banana", String.class));
     }
 

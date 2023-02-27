@@ -6,7 +6,7 @@
 :supportlevel: Stable-deprecated
 :deprecated: *deprecated*
 
-IMPORTANT: The Service Call EIP is deprecated
+IMPORTANT: The Service Call EIP is deprecated in Camel 3.x and removed in Camel 4 onwards.
 
 How can I call a remote service in a distributed system where the service is looked up from a service registry of some sorts?
 

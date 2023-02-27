@@ -293,12 +293,6 @@ class AbstractExchange implements Exchange {
     }
 
     @Override
-    public Object getProperty(String name, Object defaultValue) {
-        Object answer = getProperty(name);
-        return answer != null ? answer : defaultValue;
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String name, Class<T> type) {
         Object value = getProperty(name);
