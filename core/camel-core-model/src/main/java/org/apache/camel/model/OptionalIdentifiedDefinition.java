@@ -141,35 +141,6 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
     }
 
     /**
-     * Sets the description of this node
-     *
-     * @param  id   sets the id, use null to not set an id
-     * @param  text sets the text description, use null to not set a text
-     * @param  lang sets the language for the description, use null to not set a language
-     * @return      the builder
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public T description(String id, String text, String lang) {
-        if (id != null) {
-            setId(id);
-        }
-        if (text != null) {
-            if (description == null) {
-                description = new DescriptionDefinition();
-            }
-            description.setText(text);
-        }
-        if (lang != null) {
-            if (description == null) {
-                description = new DescriptionDefinition();
-            }
-            description.setLang(lang);
-        }
-        return (T) this;
-    }
-
-    /**
      * Sets the id of this node.
      * <p/>
      * <b>Important:</b> If you want to set the id of the route, then you <b>must</b> use <tt>routeId(String)</tt>

@@ -97,8 +97,7 @@ behavior.
 The `Abort` policy, means the task is rejected, and a
 `RejectedExecutionException` is thrown.
 
-The other options `Discard` and `DiscardOldest`
-is *deprecated* and should not be used.
+IMPORTANT: The reject policy options `Discard` and `DiscardOldest` is deprecated in Camel 3.x and removed in Camel 4 onwards.
 
 === Default values
 

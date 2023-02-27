@@ -186,13 +186,8 @@ public class ModelParser extends BaseParser {
         };
     }
     protected DescriptionDefinition doParseDescriptionDefinition() throws IOException, XmlPullParserException {
-        return doParse(new DescriptionDefinition(), (def, key, val) -> {
-            if ("lang".equals(key)) {
-                def.setLang(val);
-                return true;
-            }
-            return false;
-        }, noElementHandler(), (def, val) -> def.setText(val));
+        return doParse(new DescriptionDefinition(),
+            noAttributeHandler(), noElementHandler(), (def, val) -> def.setText(val));
     }
     protected BeanDefinition doParseBeanDefinition() throws IOException, XmlPullParserException {
         return doParse(new BeanDefinition(), (def, key, val) -> {

@@ -35,7 +35,7 @@ public class GenerateXmlTest extends XmlTestSupport {
         RouteDefinition route = context.route();
         route.from("seda:a");
         route.filter(new XQueryExpression("in.header.foo == 'bar'")).to("seda:b");
-        route.description(null, "This is a description of the route", "en");
+        route.description("This is a description of the route");
         dump(context);
     }
 
@@ -45,7 +45,7 @@ public class GenerateXmlTest extends XmlTestSupport {
         RouteDefinition route = context.route();
         route.from("seda:a");
         route.filter(new GroovyExpression("in.headers.any { h -> h.startsWith('foo') }")).to("seda:b");
-        route.description(null, "This is a description of the route", "en");
+        route.description("This is a description of the route");
         List<?> list = route.getOutputs();
         assertEquals(1, list.size(), "Size of list: " + list);
 

@@ -414,19 +414,6 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         return this;
     }
 
-    @Override
-    public RestDefinition description(String id, String text, String lang) {
-        if (getVerbs().isEmpty()) {
-            super.description(id, text, lang);
-        } else {
-            // add on last verb as that is how the Java DSL works
-            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-            verb.description(id, text, lang);
-        }
-
-        return this;
-    }
-
     public RestDefinition consumes(String mediaType) {
         if (getVerbs().isEmpty()) {
             this.consumes = mediaType;

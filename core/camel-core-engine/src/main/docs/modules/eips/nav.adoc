@@ -26,8 +26,6 @@
  ** xref:eips:from-eip.adoc[From]
  ** xref:eips:guaranteed-delivery.adoc[Guaranteed Delivery]
  ** xref:eips:idempotentConsumer-eip.adoc[Idempotent Consumer]
- ** xref:eips:inOnly-eip.adoc[In Only]
- ** xref:eips:inOut-eip.adoc[In Out]
  ** xref:eips:intercept.adoc[Intercept]
  ** xref:eips:kamelet-eip.adoc[Kamelet]
  ** xref:eips:loadBalance-eip.adoc[Load Balance]

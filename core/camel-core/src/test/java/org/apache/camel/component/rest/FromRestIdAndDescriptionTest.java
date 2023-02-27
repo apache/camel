@@ -41,7 +41,6 @@ public class FromRestIdAndDescriptionTest extends FromRestGetTest {
         RestDefinition rest2 = context.getRestDefinitions().get(1);
         assertEquals("bye", rest2.getId());
         assertEquals("Bye Service", rest2.getDescriptionText());
-        assertEquals("en", rest2.getDescription().getLang());
 
         assertEquals("Says bye to you", rest2.getVerbs().get(0).getDescriptionText());
         assertEquals("Updates the bye message", rest2.getVerbs().get(1).getDescriptionText());
@@ -58,7 +57,7 @@ public class FromRestIdAndDescriptionTest extends FromRestGetTest {
                 rest("/say/hello").id("hello").description("Hello Service").get().id("get-say").description("Says hello to you")
                         .to("direct:hello");
 
-                rest("/say/bye").description("bye", "Bye Service", "en")
+                rest("/say/bye").id("bye").description("Bye Service")
                         .get().id("{{mySpecialId}}").description("Says bye to you")
                         .consumes("application/json").param().type(RestParamType.header)
                         .description("header param description1").dataType("integer").allowableValues("1", "2", "3", "4")

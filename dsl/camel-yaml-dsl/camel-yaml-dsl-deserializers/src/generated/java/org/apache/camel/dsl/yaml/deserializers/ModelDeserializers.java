@@ -4201,10 +4201,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             inline = true,
             types = org.apache.camel.model.DescriptionDefinition.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
-            properties = {
-                    @YamlProperty(name = "lang", type = "string", deprecated = true),
-                    @YamlProperty(name = "text", type = "string")
-            }
+            properties = @YamlProperty(name = "text", type = "string")
     )
     public static class DescriptionDefinitionDeserializer extends YamlDeserializerBase<DescriptionDefinition> {
         public DescriptionDefinitionDeserializer() {
@@ -4225,11 +4222,6 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(DescriptionDefinition target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
-                case "lang": {
-                    String val = asText(node);
-                    target.setLang(val);
-                    break;
-                }
                 case "text": {
                     String val = asText(node);
                     target.setText(val);

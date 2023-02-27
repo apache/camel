@@ -75,6 +75,8 @@ We have removed deprecated APIs such as the following:
 
 == EIP Changes
 
+Removed `lang` attribute for the `<description>` on every EIPs.
+
 The `InOnly` and `InOut` EIPs has been removed.
 Instead, use `SetExchangePattern` or `To` where you can specify exchange pattern to use.
 

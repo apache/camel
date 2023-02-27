@@ -1181,7 +1181,6 @@ public class ModelWriter extends BaseWriter {
             DescriptionDefinition def)
             throws IOException {
         startElement(name);
-        doWriteAttribute("lang", def.getLang());
         doWriteValue(def.getText());
         endElement();
     }

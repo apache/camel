@@ -3270,25 +3270,11 @@ Sets the id of this node.
       
   </xs:complexType>
     
-  <xs:complexType name="descriptionDefinition">
+  <xs:simpleType name="descriptionDefinition">
         
-    <xs:simpleContent>
-            
-      <xs:extension base="xs:string">
-                
-        <xs:attribute name="lang" type="xs:string">
-          <xs:annotation>
-            <xs:documentation xml:lang="en"><![CDATA[
-Deprecated: Language, such as en for english.
-            ]]></xs:documentation>
-          </xs:annotation>
-        </xs:attribute>
-              
-      </xs:extension>
-          
-    </xs:simpleContent>
+    <xs:restriction base="xs:string"/>
       
-  </xs:complexType>
+  </xs:simpleType>
     
   <xs:complexType name="aggregateDefinition">
         

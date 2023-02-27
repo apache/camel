@@ -756,9 +756,6 @@
         }, {
           "type" : "object",
           "properties" : {
-            "lang" : {
-              "type" : "string"
-            },
             "text" : {
               "type" : "string"
             }
