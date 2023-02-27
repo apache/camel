@@ -32,7 +32,9 @@ public enum ThreadPoolRejectedPolicy {
 
     Abort,
     CallerRuns,
+    @Deprecated
     DiscardOldest,
+    @Deprecated
     Discard;
 
     public RejectedExecutionHandler asRejectedExecutionHandler() {
