@@ -29,13 +29,13 @@
     <!-- Send the exchange as InOnly -->
     <route>
       <from uri="direct:testInOut"/>
-      <to uri="mock:result" pattern=InOut"/>
+      <to uri="mock:result" pattern="InOut"/>
     </route>
 
     <!-- Send the exchange as InOnly -->
     <route>
       <from uri="direct:testInOnly"/>
-      <to uri="mock:result" pattern=InOnly"/>
+      <to uri="mock:result" pattern="InOnly"/>
     </route>
 
 
