@@ -73,11 +73,11 @@ We have removed deprecated APIs such as the following:
 - Removed `org.apache.camel.spi.OnCamelContextStart`. Use `org.apache.camel.spi.OnCamelContextStarting` instead.
 - Removed `org.apache.camel.spi.OnCamelContextStop`. Use `org.apache.camel.spi.OnCamelContextStopping` instead.
 - Decoupled the `org.apache.camel.ExtendedCamelContext` from the `org.apache.camel.CamelContext`.
--- Replaced `adapt()` from `org.apache.camel.CamelContext` with `getCamelContextExtension`
+- Replaced `adapt()` from `org.apache.camel.CamelContext` with `getCamelContextExtension`
 - Decoupled the `org.apache.camel.ExtendedExchange` from the `org.apache.camel.Exchange`.
--- Replaced `adapt()` from `org.apache.camel.ExtendedExchange` with `getExchangeExtension`
+- Replaced `adapt()` from `org.apache.camel.ExtendedExchange` with `getExchangeExtension`
 - Exchange failure handling status has moved from being a property defined as `ExchangePropertyKey.FAILURE_HANDLED` to a member of the ExtendedExchange, accessible via `isFailureHandled()`method.
-
+- Removed `Discard` and `DiscardOldest` from `org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy`.
 
 == EIP Changes
 
