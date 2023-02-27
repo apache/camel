@@ -111,7 +111,7 @@ public class ThreadPoolBuilderTest extends ContextTestSupport {
         ThreadPoolBuilder builder = new ThreadPoolBuilder(context);
         ExecutorService executor
                 = builder.poolSize(50).maxPoolSize(100).maxQueueSize(2000).keepAliveTime(20000, TimeUnit.MILLISECONDS)
-                        .rejectedPolicy(ThreadPoolRejectedPolicy.DiscardOldest).build(this, "myPool");
+                        .rejectedPolicy(ThreadPoolRejectedPolicy.Abort).build(this, "myPool");
         assertNotNull(executor);
 
         assertFalse(executor.isShutdown());

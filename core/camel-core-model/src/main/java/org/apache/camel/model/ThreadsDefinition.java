@@ -67,7 +67,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
     private String threadName;
     @XmlAttribute
     @Metadata(label = "advanced", javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
-              enums = "Abort,CallerRuns,DiscardOldest,Discard")
+              enums = "Abort,CallerRuns")
     private String rejectedPolicy;
     @XmlAttribute
     @Metadata(label = "advanced", defaultValue = "true")

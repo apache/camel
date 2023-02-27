@@ -58,7 +58,7 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     @XmlAttribute
     @Metadata(description = "Sets the handler for tasks which cannot be executed by the thread pool.",
               defaultValue = "CallerRuns", javaType = "org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy",
-              enums = "Abort,CallerRuns,DiscardOldest,Discard")
+              enums = "Abort,CallerRuns")
     private String rejectedPolicy = ThreadPoolRejectedPolicy.CallerRuns.name();
     @XmlAttribute(required = true)
     @Metadata(description = "To use a custom thread name / pattern")
