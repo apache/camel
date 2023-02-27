@@ -36,7 +36,7 @@
         <!-- define a big profile with many threads -->
         <threadPoolProfile id="big"
                            poolSize="{{big.min}}"
-                           maxPoolSize="{{big.max}}" rejectedPolicy="DiscardOldest"/>
+                           maxPoolSize="{{big.max}}" rejectedPolicy="Abort"/>
 
         <route>
             <from uri="direct:start"/>

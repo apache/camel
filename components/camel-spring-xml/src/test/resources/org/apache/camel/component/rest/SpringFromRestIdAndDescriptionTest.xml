@@ -40,7 +40,7 @@
       </get>
     </rest>
     <rest id="bye" path="/say/bye">
-      <description lang="en">Bye Service</description>
+      <description>Bye Service</description>
       <get consumes="application/json" id="{{mySpecialId}}">
         <description>Says bye to you</description>
           <param name="header_count" type="header" description="header param description1" dataType="integer" defaultValue="1" required="true">

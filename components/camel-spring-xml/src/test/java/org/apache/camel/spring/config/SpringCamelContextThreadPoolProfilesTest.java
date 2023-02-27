@@ -66,7 +66,7 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         ThreadPoolProfile profile = context.getExecutorServiceManager().getThreadPoolProfile("big");
         assertEquals(50, profile.getPoolSize().intValue());
         assertEquals(100, profile.getMaxPoolSize().intValue());
-        assertEquals(ThreadPoolRejectedPolicy.DiscardOldest, profile.getRejectedPolicy());
+        assertEquals(ThreadPoolRejectedPolicy.Abort, profile.getRejectedPolicy());
         assertEquals(null, profile.getKeepAliveTime());
         assertEquals(null, profile.getMaxQueueSize());
 
@@ -77,7 +77,7 @@ public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport 
         assertEquals(100, tp.getMaximumPoolSize());
         // should inherit default options
         assertEquals(60, tp.getKeepAliveTime(TimeUnit.SECONDS));
-        assertEquals("DiscardOldest", tp.getRejectedExecutionHandler().toString());
+        assertEquals("Abort", tp.getRejectedExecutionHandler().toString());
     }
 
 }
