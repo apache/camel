@@ -28,7 +28,6 @@ import org.apache.camel.spi.MockSendToEndpointStrategyFactory;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.function.ThrowingConsumer;
 
 import static org.apache.camel.spi.FactoryFinder.DEFAULT_PATH;
 
