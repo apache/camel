@@ -148,7 +148,8 @@ public class TokenizerExpression extends SingleInputExpressionDefinition {
     }
 
     /**
-     * Whether to include the tokens in the parts when using pairs
+     * Whether to include the tokens in the parts when using pairs. When including tokens then the endToken property
+     * must also be configured (to use pair mode).
      * <p/>
      * The default value is false
      */
