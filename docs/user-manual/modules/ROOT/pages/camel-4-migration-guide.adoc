@@ -74,7 +74,8 @@ We have removed deprecated APIs such as the following:
 - Removed `org.apache.camel.spi.OnCamelContextStop`. Use `org.apache.camel.spi.OnCamelContextStopping` instead.
 - Decoupled the `org.apache.camel.ExtendedCamelContext` from the `org.apache.camel.CamelContext`.
 -- Replaced `adapt()` from `org.apache.camel.CamelContext` with `getCamelContextExtension`
-
+- Decoupled the `org.apache.camel.ExtendedExchange` from the `org.apache.camel.Exchange`.
+-- Replaced `adapt()` from `org.apache.camel.ExtendedExchange` with `getExchangeExtension`
 
 == YAML DSL
 
