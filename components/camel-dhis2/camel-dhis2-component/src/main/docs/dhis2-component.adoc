@@ -44,10 +44,10 @@ include::partial$component-endpoint-options.adoc[]
 
 // endpoint options: END
 
-===== Examples
+== Examples
 
 * Fetch an organisation unit by ID:
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -68,7 +68,7 @@ public class MyRouteBuilder extends RouteBuilder {
 ----
 
 * Fetch an organisation unit code by ID:
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -85,10 +85,9 @@ public class MyRouteBuilder extends RouteBuilder {
             .json(OrganisationUnit.class);
     }
 }
-
 ----
 
-==== METHOD collection
+== METHOD collection
 
 Signatures:
 
@@ -109,10 +108,8 @@ The get/collection API method has the parameters listed in the table below:
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header. The message header name must be of the format CamelDhis2.parameter. The inBody parameter overrides message header, i.e. the endpoint parameter inBody=myParameterNameHere would override a CamelDhis2.myParameterNameHere header.
 
-===== Examples
-
 * Fetch all organisation units:
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -130,7 +127,7 @@ public class MyRouteBuilder extends RouteBuilder {
 ----
 
 * Fetch all organisation unit codes:
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -148,7 +145,7 @@ public class MyRouteBuilder extends RouteBuilder {
 ----
 
 * Fetch users with a phone number:
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -165,7 +162,7 @@ public class MyRouteBuilder extends RouteBuilder {
 }
 ----
 
-=== API: post
+== API: post
 
 *Both producer and consumer are supported*
 
@@ -175,7 +172,7 @@ The post API is defined in the syntax as follows:
 dhis2:post/methodName?[parameters]
 ....
 
-==== METHOD resource
+== METHOD resource
 
 Signatures:
 
@@ -192,14 +189,12 @@ below:
 | queryParams | Custom query parameters | Map
 |===
 
-In addition to the parameters above, the post/resource API can also use any of the link:#query-parameters[Query Parameters].
-
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header. The message header name must be of the format CamelDhis2.parameter. The inBody parameter overrides message header, i.e. the endpoint parameter inBody=myParameterNameHere would override a CamelDhis2.myParameterNameHere header.
 
-===== Examples
+== Examples
 
 * Save a data value set
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -238,7 +233,7 @@ public class MyRouteBuilder extends RouteBuilder {
 }
 ----
 
-=== API: resourceTables
+== API: resourceTables
 
 *Both producer and consumer are supported*
 
@@ -248,7 +243,7 @@ The resourceTables API is defined in the syntax as follows:
 dhis2:resourceTables/methodName?[parameters]
 ....
 
-==== METHOD analytics
+== METHOD analytics
 
 Signatures:
 
@@ -267,14 +262,10 @@ The resourceTables/analytics API method has the parameters listed in the table b
 | interval | Duration in milliseconds between completeness checks | Integer
 |===
 
-In addition to the parameters above, the resourceTables/analytics API can also use any of the link:#query-parameters[Query Parameters].
-
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header. The message header name must be of the format CamelDhis2.parameter. The inBody parameter overrides message header, i.e. the endpoint parameter inBody=myParameterNameHere would override a CamelDhis2.myParameterNameHere header.
 
-===== Examples
-
 * Run analytics
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -293,7 +284,7 @@ public class MyRouteBuilder extends RouteBuilder {
 == Usage Examples
 
 * Reference DHIS2 client
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -315,7 +306,7 @@ public class MyRouteBuilder extends RouteBuilder {
 ----
 
 * Set custom query parameters
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
