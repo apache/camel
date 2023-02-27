@@ -72,6 +72,9 @@ We have removed deprecated APIs such as the following:
 - Removed all `asyncCallback` methods on `ProducerTemplate`. Use `asyncSend` or `asyncRequest` instead.
 - Removed `org.apache.camel.spi.OnCamelContextStart`. Use `org.apache.camel.spi.OnCamelContextStarting` instead.
 - Removed `org.apache.camel.spi.OnCamelContextStop`. Use `org.apache.camel.spi.OnCamelContextStopping` instead.
+- Decoupled the `org.apache.camel.ExtendedCamelContext` from the `org.apache.camel.CamelContext`.
+-- Replaced `adapt()` from `org.apache.camel.CamelContext` with `getCamelContextExtension`
+
 
 == YAML DSL
 
