@@ -120,6 +120,9 @@ public class TokenizeLanguage extends SingleInputLanguageSupport implements Prop
         if (isXml() && (endToken != null || includeTokens)) {
             throw new IllegalArgumentException("Cannot have both xml and pair tokenizer enabled.");
         }
+        if (endToken == null && includeTokens) {
+            throw new IllegalArgumentException("The option includeTokens requires endToken to be specified.");
+        }
 
         Expression answer = null;
         if (isXml()) {
