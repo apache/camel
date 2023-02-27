@@ -504,20 +504,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param  endpoints list of endpoints to send to
      * @return           the builder
      */
-    @Deprecated
-    public Type to(Iterable<Endpoint> endpoints) {
-        for (Endpoint endpoint : endpoints) {
-            addOutput(new ToDefinition(endpoint));
-        }
-        return asType();
-    }
-
-    /**
-     * Sends the exchange to a list of endpoints
-     *
-     * @param  endpoints list of endpoints to send to
-     * @return           the builder
-     */
     public Type to(@AsEndpointUri EndpointProducerBuilder... endpoints) {
         for (EndpointProducerBuilder endpoint : endpoints) {
             addOutput(new ToDefinition(endpoint));
@@ -551,21 +537,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return           the builder
      */
     public Type to(ExchangePattern pattern, Endpoint... endpoints) {
-        for (Endpoint endpoint : endpoints) {
-            addOutput(new ToDefinition(endpoint, pattern));
-        }
-        return asType();
-    }
-
-    /**
-     * Sends the exchange to a list of endpoints
-     *
-     * @param  pattern   the pattern to use for the message exchanges
-     * @param  endpoints list of endpoints to send to
-     * @return           the builder
-     */
-    @Deprecated
-    public Type to(ExchangePattern pattern, Iterable<Endpoint> endpoints) {
         for (Endpoint endpoint : endpoints) {
             addOutput(new ToDefinition(endpoint, pattern));
         }
@@ -614,156 +585,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type setExchangePattern(String exchangePattern) {
         addOutput(new SetExchangePatternDefinition(exchangePattern));
         return asType();
-    }
-
-    /**
-     * Sends the message to the given endpoint using an <a href="http://camel.apache.org/event-message.html">Event
-     * Message</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
-     * <p/>
-     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
-     *
-     * @param      uri The endpoint uri which is used for sending the exchange
-     * @return         the builder
-     * @deprecated     use to where you can specify the exchange pattern as well
-     */
-    @Deprecated
-    public Type inOnly(@AsEndpointUri String uri) {
-        return to(ExchangePattern.InOnly, uri);
-    }
-
-    /**
-     * Sends the message to the given endpoint using an <a href="http://camel.apache.org/event-message.html">Event
-     * Message</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
-     * <p/>
-     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
-     *
-     * @param      endpoint The endpoint which is used for sending the exchange
-     * @return              the builder
-     * @deprecated          use to where you can specify the exchange pattern as well
-     */
-    @Deprecated
-    public Type inOnly(Endpoint endpoint) {
-        return to(ExchangePattern.InOnly, endpoint);
-    }
-
-    /**
-     * Sends the message to the given endpoints using an <a href="http://camel.apache.org/event-message.html">Event
-     * Message</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
-     * <p/>
-     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
-     *
-     * @param      uris list of endpoints to send to
-     * @return          the builder
-     * @deprecated      use to where you can specify the exchange pattern as well
-     */
-    @Deprecated
-    public Type inOnly(@AsEndpointUri String... uris) {
-        return to(ExchangePattern.InOnly, uris);
-    }
-
-    /**
-     * Sends the message to the given endpoints using an <a href="http://camel.apache.org/event-message.html">Event
-     * Message</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
-     * <p/>
-     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
-     *
-     * @param      endpoints list of endpoints to send to
-     * @return               the builder
-     * @deprecated           use to where you can specify the exchange pattern as well
-     */
-    @Deprecated
-    public Type inOnly(@AsEndpointUri Endpoint... endpoints) {
-        return to(ExchangePattern.InOnly, endpoints);
-    }
-
-    /**
-     * Sends the message to the given endpoints using an <a href="http://camel.apache.org/event-message.html">Event
-     * Message</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
-     * <p/>
-     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
-     *
-     * @param      endpoints list of endpoints to send to
-     * @return               the builder
-     * @deprecated           use to where you can specify the exchange pattern as well
-     */
-    @Deprecated
-    public Type inOnly(Iterable<Endpoint> endpoints) {
-        return to(ExchangePattern.InOnly, endpoints);
-    }
-
-    /**
-     * Sends the message to the given endpoint using an <a href="http://camel.apache.org/request-reply.html">Request
-     * Reply</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
-     * <p/>
-     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
-     *
-     * @param      uri The endpoint uri which is used for sending the exchange
-     * @return         the builder
-     * @deprecated     use to where you can specify the exchange pattern as well
-     */
-    @Deprecated
-    public Type inOut(@AsEndpointUri String uri) {
-        return to(ExchangePattern.InOut, uri);
-    }
-
-    /**
-     * Sends the message to the given endpoint using an <a href="http://camel.apache.org/request-reply.html">Request
-     * Reply</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
-     * <p/>
-     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
-     *
-     * @param      endpoint The endpoint which is used for sending the exchange
-     * @return              the builder
-     * @deprecated          use to where you can specify the exchange pattern as well
-     */
-    @Deprecated
-    public Type inOut(Endpoint endpoint) {
-        return to(ExchangePattern.InOut, endpoint);
-    }
-
-    /**
-     * Sends the message to the given endpoints using an <a href="http://camel.apache.org/request-reply.html">Request
-     * Reply</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
-     * <p/>
-     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
-     *
-     * @param      uris list of endpoints to send to
-     * @return          the builder
-     * @deprecated      use to where you can specify the exchange pattern as well
-     */
-    @Deprecated
-    public Type inOut(@AsEndpointUri String... uris) {
-        return to(ExchangePattern.InOut, uris);
-    }
-
-    /**
-     * Sends the message to the given endpoints using an <a href="http://camel.apache.org/request-reply.html">Request
-     * Reply</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
-     * <p/>
-     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
-     *
-     * @param      endpoints list of endpoints to send to
-     * @return               the builder
-     * @deprecated           use to where you can specify the exchange pattern as well
-     */
-    @Deprecated
-    public Type inOut(Endpoint... endpoints) {
-        return to(ExchangePattern.InOut, endpoints);
-    }
-
-    /**
-     * Sends the message to the given endpoints using an <a href="http://camel.apache.org/request-reply.html">Request
-     * Reply</a> or <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
-     * <p/>
-     * Notice the existing MEP is restored after the message has been sent to the given endpoint.
-     *
-     * @param      endpoints list of endpoints to send to
-     * @return               the builder
-     * @deprecated           use to where you can specify the exchange pattern as well
-     */
-    @Deprecated
-    public Type inOut(Iterable<Endpoint> endpoints) {
-        return to(ExchangePattern.InOut, endpoints);
     }
 
     /**
@@ -1041,24 +862,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         PipelineDefinition answer = new PipelineDefinition();
         addOutput(answer);
         answer.to(endpoints);
-        return asType();
-    }
-
-    /**
-     * <a href="https://camel.apache.org/components/latest/eips/pipeline-eip.html">Pipes and Filters EIP:</a> Creates a
-     * {@link org.apache.camel.processor.Pipeline} of the list of endpoints so that the message will get processed by
-     * each endpoint in turn and for request/response the output of one endpoint will be the input of the next endpoint
-     *
-     * @param  endpoints list of endpoints
-     * @return           the builder
-     */
-    @Deprecated
-    public Type pipeline(Collection<Endpoint> endpoints) {
-        PipelineDefinition answer = new PipelineDefinition();
-        for (Endpoint endpoint : endpoints) {
-            answer.addOutput(new ToDefinition(endpoint));
-        }
-        addOutput(answer);
         return asType();
     }
 
@@ -1711,7 +1514,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the builder
      */
     public SamplingDefinition sample() {
-        return sample(1, TimeUnit.SECONDS);
+        return sample(Duration.ofSeconds(1));
     }
 
     /**
@@ -1738,22 +1541,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public SamplingDefinition sample(String samplePeriod) {
         SamplingDefinition answer = new SamplingDefinition(samplePeriod);
-        addOutput(answer);
-        return answer;
-    }
-
-    /**
-     * <a href="http://camel.apache.org/sampling.html">Sampling Throttler</a> Creates a sampling throttler allowing you
-     * to extract a sample of exchanges from the traffic through a route. It is configured with a sampling period during
-     * which only a single exchange is allowed to pass through. All other exchanges will be stopped.
-     *
-     * @param  samplePeriod this is the sample interval, only one exchange is allowed through in this interval
-     * @param  unit         this is the units for the samplePeriod e.g. Seconds
-     * @return              the builder
-     */
-    @Deprecated
-    public SamplingDefinition sample(long samplePeriod, TimeUnit unit) {
-        SamplingDefinition answer = new SamplingDefinition(samplePeriod, unit);
         addOutput(answer);
         return answer;
     }

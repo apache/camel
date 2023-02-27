@@ -17,6 +17,7 @@
 package org.apache.camel.component.scheduler;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -40,14 +41,14 @@ public class SchedulerBlockingManualTest extends ContextTestSupport {
                 from("scheduler://trigger?delay=2000&repeatCount=3").routeId("scheduler")
                         .threads(10)
                         .log("1")
-                        .inOut("seda:route1")
+                        .to(ExchangePattern.InOut, "seda:route1")
                         .log("1.1");
 
                 from("seda:route1?concurrentConsumers=2").routeId("first route")
                         .log("2")
                         .delay(5000)
                         .log("2.1")
-                        .inOut("seda:route2")
+                        .to(ExchangePattern.InOut, "seda:route2")
                         .log("2.2");
 
                 from("seda:route2").routeId("second route")
