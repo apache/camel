@@ -604,11 +604,6 @@ class AbstractExchange implements Exchange {
     }
 
     @Override
-    public <T extends Exchange> T adapt(Class<T> type) {
-        return type.cast(this);
-    }
-
-    @Override
     public ExchangePattern getPattern() {
         return pattern;
     }
