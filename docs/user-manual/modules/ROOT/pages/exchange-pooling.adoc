@@ -1,61 +1,68 @@
 = Exchange Pooling
 
-Apache Camel requires a tiny resource overhead when routing message.
+The routing engine keeps the state of each message, tracking the message flow, and where the messages are going next. The routing engine also handles complex tasks such as error handling, capturing metrics, and many other things. A small number of Java objects are allocated on the heap for each processing step during routing.
 
-For example the routing engine keeps state of each individual message, keeping track of the message flow,
-and where messaging are going next. The routing engine also handles complex tasks such as error handling,
-capturing metrics, and many other things. All together small numbers of Java objects is allocated
-on the heap for each processing step during routing.
+Because of this routing bookkeeping and processing, Apache Camel requires a tiny resource overhead when routing messages.
 
-With the advance of cloud computing, where work loads are precisely measured, then Camel has undergone
-a series of core optimizations to reduce its overhead.
+With the advance of cloud computing, where workloads are precisely measured, then Camel has undergone a series of core optimizations to reduce its overhead.
 
 == Pooling objects to reduce object allocations
 
-The _Exchange Pooling_ functionality is _object pooling_ by recycling commonly used objects by the routing enginge.
+The most significant object being reused is the `org.apache.camel.Exchange` object. This object is the root object
+that holds the message with its payload, headers, metadata, and other content.
 
-The most significant object being reused is the `org.apache.camel.Exchange` object that is the root object
-that holds the message with its payload, headers, meta-data and other content.
+Besides pooling exchanges, then internal objects used by the routing engine are also pooled and recycled. This can dramatically reduce the object allocations from Camel core itself.
 
-Besides pooling exchanges then internal objects used by the routing engine is also pooled and recycled.
-All together this dramatically reduces the object allocations, from camel core itself.
+There will always be object allocations from the actual message content (payload and headers), and also from the Camel components in use and its 3rd party libraries. The footprint of Camel core and its routing engine is close to zero when pooling is enabled.
 
-There will always be objects allocations from the actual message content (payload and headers), and also
-from the Camel components in use and its 3rd party libraries. The footprint of Camel core and its routing engine is close to zero, when pooling is enabled.
+This all sounds marvelous so what are the negative aspects? The price to pay for object pooling is the complexity of managing the pool (acquiring and returning objects to the pool). However, all of this is taken care of by Camel itself. The object pools are using JDK `ConcurrentMap` instances and take up very little memory. Managing the pool causes a small CPU overhead associated with adding and removing objects from the pools, and resetting the objects before reuse.
 
-This all sounds marvelous so what is the negatives? Yes the price to pay for object pooling,
-is the complexity of managing the pool (acquire and returning objects to the pool); however
-all of this is taken care of by Camel itself. The object pools are using JDK `ConcurrentMap`
-instances and take up very little memory. The negative is very tiny CPU cost on adding and removing
-objects from the pools, and resetting the objects before reuse.
-
-It is possible better to sacrifice the very tiny CPU cost for reduced object allocations, which helps
-to avoid the JVM garbage collection running more frequently, and causing your application to halt or delay
-processing messages at any given time.
+In most cases, it may be possible to sacrifice the very tiny CPU cost in exchange for reduced object allocations. This can improve responsiveness and reduce latency by preventing the JVM garbage collection from running more frequently (under some circumstances, the garbage collection overhead can cause your application to halt or delay processing messages due to stop-the-world pauses and other processing overhead associated with it).
 
 == Enabling Exchange Pooling
 
-The _object pooling_ is currently not enabled by default, and requires to be turned on.
-
-This can be done as shown in Java:
-
-[source,java]
-----
-CamelContext context = ...
-context.adapt(ExtendedCamelContext.class).setExchangeFactory(new PooledExchangeFactory());
-----
-
-If using _Camel Main_, Camel Spring Boot, or Camel Quarkus
-you can enable this in the `application.properties`:
+The _object pooling_ is currently disabled by default. If you are using Camel Main (from Camel Core), Camel Spring Boot, or Camel Quarkus, then you can enable this in the `application.properties`:
 
 [source,properties]
 ----
 camel.main.exchange-factory = pooled
 ----
 
+=== Enabling Exchange Pooling on Camel 3.x
+
+If you are using a different runtime or want to do that programmatically, you can do so in Camel version 3 (Camel 3.x) using the `setExchangeFactory` method from the `ExtendedCamelContext`. Here's an example of how to do that using Java:
+
+[source,java]
+----
+// suppose a Camel context object declared in the scope
+CamelContext context = ...
+
+context.adapt(ExtendedCamelContext.class).setExchangeFactory(new PooledExchangeFactory());
+----
+
+[NOTE]
+====
+The `ExtendedCamelContext` is an internal API of Camel and, as such, may not offer the same level of backward compatibility as the public APIs. Whenever possible, configure the exchange pooling via application properties.
+====
+
+=== Enabling Exchange Pooling on Camel 4.x
+
+If you are using a different runtime or if you want to do that programmatically, you can do so in Camel 4 and newer versions using the `setExchangeFactory` method from the `ExtendedCamelContext`. Here's an example of how to do that using Java:
+
+[source,java]
+----
+CamelContext context = ...
+context.getExchangeExtension().setExchangeFactory(new PooledExchangeFactory());
+----
+
+[NOTE]
+====
+The `ExtendedCamelContext` is an internal API of Camel and, as such, may not offer the same level of backward compatibility as the public APIs. Whenever possible, configure the exchange pooling via application properties.
+====
+
 == Configuration Options
 
-The exchange pool can be configured with the following options:
+You can configure exchange poolomg with the following options:
 
 [width="100%",cols="25%,50%,25%",options="header"]
 |===
@@ -67,12 +74,11 @@ The exchange pool can be configured with the following options:
 
 == Management
 
-If object pooling is enabled, then Camel provides a JMX MBean which allows to introspect the pools and their usage
-via JMX. This requires to add `camel-management` JAR to the classpath.
+If object pooling is enabled, then Camel provides a JMX MBean which allows us to introspect the pools and their usage via JMX. This requires adding `camel-management` JAR to the classpath.
 
 == Examples
 
 We have provided a few examples which we are using for performance profiling.
-For example the basic https://github.com/apache/camel-performance-tests/tree/main/profiling/timer-log[timer-log] example.
+You can check the basic https://github.com/apache/camel-performance-tests/tree/main/profiling/timer-log[timer-log] if you need an example.
 
 
