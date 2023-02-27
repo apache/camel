@@ -73,6 +73,11 @@ We have removed deprecated APIs such as the following:
 - Removed `org.apache.camel.spi.OnCamelContextStart`. Use `org.apache.camel.spi.OnCamelContextStarting` instead.
 - Removed `org.apache.camel.spi.OnCamelContextStop`. Use `org.apache.camel.spi.OnCamelContextStopping` instead.
 
+== EIP Changes
+
+The `InOnly` and `InOut` EIPs has been removed.
+Instead, use `SetExchangePattern` or `To` where you can specify exchange pattern to use.
+
 == YAML DSL
 
 The backwards compatible mode Camel 3.14 or older, which allowed to have _steps_ as child to _route_ has been removed.

@@ -68,18 +68,6 @@
           "idempotentConsumer" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.IdempotentConsumerDefinition"
           },
-          "in-only" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.InOnlyDefinition"
-          },
-          "inOnly" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.InOnlyDefinition"
-          },
-          "in-out" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.InOutDefinition"
-          },
-          "inOut" : {
-            "$ref" : "#/items/definitions/org.apache.camel.model.InOutDefinition"
-          },
           "intercept" : {
             "$ref" : "#/items/definitions/org.apache.camel.model.InterceptDefinition"
           },
@@ -1149,62 +1137,6 @@
           }
         },
         "required" : [ "idempotent-repository" ]
-      },
-      "org.apache.camel.model.InOnlyDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inherit-error-handler" : {
-              "type" : "boolean"
-            },
-            "parameters" : {
-              "type" : "object"
-            },
-            "uri" : {
-              "type" : "string"
-            }
-          }
-        } ],
-        "required" : [ "uri" ]
-      },
-      "org.apache.camel.model.InOutDefinition" : {
-        "oneOf" : [ {
-          "type" : "string"
-        }, {
-          "type" : "object",
-          "properties" : {
-            "description" : {
-              "type" : "string"
-            },
-            "disabled" : {
-              "type" : "boolean"
-            },
-            "id" : {
-              "type" : "string"
-            },
-            "inherit-error-handler" : {
-              "type" : "boolean"
-            },
-            "parameters" : {
-              "type" : "object"
-            },
-            "uri" : {
-              "type" : "string"
-            }
-          }
-        } ],
-        "required" : [ "uri" ]
       },
       "org.apache.camel.model.InputTypeDefinition" : {
         "type" : "object",

@@ -139,12 +139,6 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         doWriteIdempotentConsumerDefinition("idempotentConsumer", def);
     }
-    public void writeInOnlyDefinition(InOnlyDefinition def) throws IOException {
-        doWriteInOnlyDefinition("inOnly", def);
-    }
-    public void writeInOutDefinition(InOutDefinition def) throws IOException {
-        doWriteInOutDefinition("inOut", def);
-    }
     public void writeInputTypeDefinition(
             InputTypeDefinition def)
             throws IOException {
@@ -1371,24 +1365,6 @@ public class ModelWriter extends BaseWriter {
             throws IOException {
         startElement(name);
         doWriteIdentifiedTypeAttributes(def);
-        endElement();
-    }
-    protected void doWriteInOnlyDefinition(
-            String name,
-            InOnlyDefinition def)
-            throws IOException {
-        startElement(name);
-        doWriteSendDefinitionAttributes(def);
-        doWriteOptionalIdentifiedDefinitionElements(def);
-        endElement();
-    }
-    protected void doWriteInOutDefinition(
-            String name,
-            InOutDefinition def)
-            throws IOException {
-        startElement(name);
-        doWriteSendDefinitionAttributes(def);
-        doWriteOptionalIdentifiedDefinitionElements(def);
         endElement();
     }
     protected void doWriteInputTypeDefinition(
@@ -4704,8 +4680,6 @@ public class ModelWriter extends BaseWriter {
                 case "FinallyDefinition" -> doWriteFinallyDefinition("doFinally", (FinallyDefinition) v);
                 case "FromDefinition" -> doWriteFromDefinition("from", (FromDefinition) v);
                 case "IdempotentConsumerDefinition" -> doWriteIdempotentConsumerDefinition("idempotentConsumer", (IdempotentConsumerDefinition) v);
-                case "InOnlyDefinition" -> doWriteInOnlyDefinition("inOnly", (InOnlyDefinition) v);
-                case "InOutDefinition" -> doWriteInOutDefinition("inOut", (InOutDefinition) v);
                 case "InputTypeDefinition" -> doWriteInputTypeDefinition("inputType", (InputTypeDefinition) v);
                 case "InterceptDefinition" -> doWriteInterceptDefinition("intercept", (InterceptDefinition) v);
                 case "InterceptFromDefinition" -> doWriteInterceptFromDefinition("interceptFrom", (InterceptFromDefinition) v);
@@ -4807,8 +4781,6 @@ public class ModelWriter extends BaseWriter {
                 case "FilterDefinition" -> doWriteFilterDefinition("filter", (FilterDefinition) v);
                 case "FinallyDefinition" -> doWriteFinallyDefinition("doFinally", (FinallyDefinition) v);
                 case "IdempotentConsumerDefinition" -> doWriteIdempotentConsumerDefinition("idempotentConsumer", (IdempotentConsumerDefinition) v);
-                case "InOnlyDefinition" -> doWriteInOnlyDefinition("inOnly", (InOnlyDefinition) v);
-                case "InOutDefinition" -> doWriteInOutDefinition("inOut", (InOutDefinition) v);
                 case "InterceptDefinition" -> doWriteInterceptDefinition("intercept", (InterceptDefinition) v);
                 case "InterceptFromDefinition" -> doWriteInterceptFromDefinition("interceptFrom", (InterceptFromDefinition) v);
                 case "InterceptSendToEndpointDefinition" -> doWriteInterceptSendToEndpointDefinition("interceptSendToEndpoint", (InterceptSendToEndpointDefinition) v);

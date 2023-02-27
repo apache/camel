@@ -8,7 +8,8 @@
 
 The *inOut:* EIP define an InOut ExchangePattern.
 
-WARNING: inOut is deprecated. Use xref:event-message.adoc[setExchangePattern] instead.
+WARNING: inOut is deprecated in Camel 3.x and removed in Camel 4 onwards.
+Use xref:event-message.adoc[setExchangePattern] instead.
 
 
 == EIP options

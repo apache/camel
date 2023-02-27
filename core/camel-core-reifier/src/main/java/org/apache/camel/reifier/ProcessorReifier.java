@@ -48,8 +48,6 @@ import org.apache.camel.model.ExecutorServiceAwareDefinition;
 import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.FinallyDefinition;
 import org.apache.camel.model.IdempotentConsumerDefinition;
-import org.apache.camel.model.InOnlyDefinition;
-import org.apache.camel.model.InOutDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
@@ -214,10 +212,6 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
             return new FinallyReifier(route, definition);
         } else if (definition instanceof IdempotentConsumerDefinition) {
             return new IdempotentConsumerReifier(route, definition);
-        } else if (definition instanceof InOnlyDefinition) {
-            return new SendReifier(route, definition);
-        } else if (definition instanceof InOutDefinition) {
-            return new SendReifier(route, definition);
         } else if (definition instanceof InterceptFromDefinition) {
             return new InterceptFromReifier(route, definition);
         } else if (definition instanceof InterceptDefinition) {

@@ -23,8 +23,6 @@ GlobalOptionDefinition
 GlobalOptionsDefinition
 IdempotentConsumerDefinition
 IdentifiedType
-InOnlyDefinition
-InOutDefinition
 InputTypeDefinition
 InterceptDefinition
 InterceptFromDefinition

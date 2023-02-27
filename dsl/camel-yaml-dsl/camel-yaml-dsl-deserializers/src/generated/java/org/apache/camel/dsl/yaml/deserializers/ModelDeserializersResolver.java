@@ -179,12 +179,6 @@ public final class ModelDeserializersResolver implements YamlDeserializerResolve
             case "idempotent-consumer": return new ModelDeserializers.IdempotentConsumerDefinitionDeserializer();
             case "idempotentConsumer": return new ModelDeserializers.IdempotentConsumerDefinitionDeserializer();
             case "org.apache.camel.model.IdempotentConsumerDefinition": return new ModelDeserializers.IdempotentConsumerDefinitionDeserializer();
-            case "in-only": return new ModelDeserializers.InOnlyDefinitionDeserializer();
-            case "inOnly": return new ModelDeserializers.InOnlyDefinitionDeserializer();
-            case "org.apache.camel.model.InOnlyDefinition": return new ModelDeserializers.InOnlyDefinitionDeserializer();
-            case "in-out": return new ModelDeserializers.InOutDefinitionDeserializer();
-            case "inOut": return new ModelDeserializers.InOutDefinitionDeserializer();
-            case "org.apache.camel.model.InOutDefinition": return new ModelDeserializers.InOutDefinitionDeserializer();
             case "input-type": return new ModelDeserializers.InputTypeDefinitionDeserializer();
             case "inputType": return new ModelDeserializers.InputTypeDefinitionDeserializer();
             case "org.apache.camel.model.InputTypeDefinition": return new ModelDeserializers.InputTypeDefinitionDeserializer();

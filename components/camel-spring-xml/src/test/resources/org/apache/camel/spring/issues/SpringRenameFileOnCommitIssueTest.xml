@@ -33,7 +33,7 @@
             </setProperty>
             <convertBodyTo type="String"/>
             <to uri="validator:org/apache/camel/spring/issues/validate.xsd"/>
-            <inOut uri="direct:source"/>
+            <to uri="direct:source" pattern="InOut"/>
             <to uri="mock:result"/>
         </route>
 

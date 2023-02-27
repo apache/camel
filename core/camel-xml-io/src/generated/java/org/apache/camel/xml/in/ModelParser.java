@@ -482,23 +482,6 @@ public class ModelParser extends BaseParser {
             return true;
         }, outputExpressionNodeElementHandler(), noValueHandler());
     }
-    protected InOnlyDefinition doParseInOnlyDefinition() throws IOException, XmlPullParserException {
-        return doParse(new InOnlyDefinition(),
-            sendDefinitionAttributeHandler(), optionalIdentifiedDefinitionElementHandler(), noValueHandler());
-    }
-    protected <T extends SendDefinition> AttributeHandler<T> sendDefinitionAttributeHandler() {
-        return (def, key, val) -> {
-            if ("uri".equals(key)) {
-                def.setUri(val);
-                return true;
-            }
-            return processorDefinitionAttributeHandler().accept(def, key, val);
-        };
-    }
-    protected InOutDefinition doParseInOutDefinition() throws IOException, XmlPullParserException {
-        return doParse(new InOutDefinition(),
-            sendDefinitionAttributeHandler(), optionalIdentifiedDefinitionElementHandler(), noValueHandler());
-    }
     protected InputTypeDefinition doParseInputTypeDefinition() throws IOException, XmlPullParserException {
         return doParse(new InputTypeDefinition(), (def, key, val) -> {
             switch (key) {
@@ -1494,6 +1477,15 @@ public class ModelParser extends BaseParser {
             }
             return sendDefinitionAttributeHandler().accept(def, key, val);
         }, optionalIdentifiedDefinitionElementHandler(), noValueHandler());
+    }
+    protected <T extends SendDefinition> AttributeHandler<T> sendDefinitionAttributeHandler() {
+        return (def, key, val) -> {
+            if ("uri".equals(key)) {
+                def.setUri(val);
+                return true;
+            }
+            return processorDefinitionAttributeHandler().accept(def, key, val);
+        };
     }
     protected <T extends ToDynamicDefinition> AttributeHandler<T> toDynamicDefinitionAttributeHandler() {
         return (def, key, val) -> {
@@ -3262,8 +3254,6 @@ public class ModelParser extends BaseParser {
             case "filter": return doParseFilterDefinition();
             case "doFinally": return doParseFinallyDefinition();
             case "idempotentConsumer": return doParseIdempotentConsumerDefinition();
-            case "inOnly": return doParseInOnlyDefinition();
-            case "inOut": return doParseInOutDefinition();
             case "intercept": return doParseInterceptDefinition();
             case "interceptFrom": return doParseInterceptFromDefinition();
             case "interceptSendToEndpoint": return doParseInterceptSendToEndpointDefinition();

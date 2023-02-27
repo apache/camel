@@ -59,7 +59,7 @@
                 <simple>${body} not is 'org.apache.camel.processor.transformer.TransformerRouteTest\\$AOrder'</simple>
                 <throwException exceptionType="java.lang.Exception" message="expected AOrder object but was '${body}'"/>
             </when>
-            <inOut uri="direct:xyz"/>
+            <to uri="direct:xyz" pattern="InOut"/>
             <to uri="mock:abcresult"/>
         </route>
 
@@ -79,14 +79,14 @@
             <from uri="direct:dataFormat"/>
             <inputType urn="json:JsonXOrder"/>
             <outputType urn="json:JsonXOrderResponse"/>
-            <inOut uri="direct:xyz"/>
+            <to uri="direct:xyz" pattern="InOut"/>
         </route>
         
         <route>
             <from uri="direct:endpoint"/>
             <inputType urn="xml:XmlXOrder"/>
             <outputType urn="xml:XmlXOrderResponse"/>
-            <inOut uri="direct:xyz"/>
+            <to uri="direct:xyz" pattern="InOut"/>
         </route>
         
         <route>
@@ -98,7 +98,7 @@
             <from uri="direct:custom"/>
             <inputType urn="other:OtherXOrder"/>
             <outputType urn="other:OtherXOrderResponse"/>
-            <inOut uri="direct:xyz"/>
+            <to uri="direct:xyz" pattern="InOut"/>
         </route>
 
         <route>

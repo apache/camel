@@ -40,7 +40,7 @@
         <route>
             <from uri="file:target/filetocxf"/>
             <to uri="log:request"/>
-            <inOut uri="routerEndpoint"/>
+            <to uri="routerEndpoint" pattern="InOut"/>
             <to uri="log:reply"/>
             <to uri="mock:result"/>
         </route>
