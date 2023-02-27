@@ -575,7 +575,6 @@ public final class ExchangeHelper {
      */
     public static boolean isFailureHandled(Exchange exchange) {
         return exchange.getExchangeExtension().isFailureHandled();
-        //        return exchange.getProperty(ExchangePropertyKey.FAILURE_HANDLED, false, Boolean.class);
     }
 
     /**
