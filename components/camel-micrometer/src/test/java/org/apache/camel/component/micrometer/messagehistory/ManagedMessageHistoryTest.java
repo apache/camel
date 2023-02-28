@@ -41,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
 public class ManagedMessageHistoryTest extends CamelTestSupport {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -75,8 +76,20 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         return context;
     }
 
+    private void cleanMbeanServer() throws Exception {
+        //Deleting data from other tests
+        for (ObjectName it : timerNames()) {
+            getMBeanServer().unregisterMBean(it);
+        }
+    }
+
+    private Set<ObjectName> timerNames() throws Exception {
+        return getMBeanServer().queryNames(new ObjectName("org.apache.camel.micrometer:type=timers,name=*"), null);
+    }
+
     @Test
     public void testMessageHistory() throws Exception {
+        cleanMbeanServer();
         int count = 10;
 
         getMockEndpoint("mock:foo").expectedMessageCount(count / 2);
@@ -97,8 +110,7 @@ public class ManagedMessageHistoryTest extends CamelTestSupport {
         assertEquals(3, meterRegistry.getMeters().size());
 
         // there should be 3 mbeans
-        Set<ObjectName> set
-                = getMBeanServer().queryNames(new ObjectName("org.apache.camel.micrometer:type=timers,name=*"), null);
+        Set<ObjectName> set = timerNames();
         assertEquals(3, set.size());
 
         ObjectName fooMBean = set.stream().filter(on -> on.getCanonicalName().contains("foo")).findFirst()
