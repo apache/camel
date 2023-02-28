@@ -131,6 +131,7 @@
         <dependency>
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
+            <version>${awaitility-version}</version>
             <scope>test</scope>
         </dependency>
         <!-- forcing okhttp v3.x related to https://issues.apache.org/jira/browse/CAMEL-16336 -->
