@@ -29,12 +29,12 @@
     </parent>
 
     <artifactId>camel-dhis2-api</artifactId>
-    <name>Camel DHIS2 API</name>
+    <name>Camel :: DHIS2 API</name>
     <description>Camel DHIS2 API</description>
     <packaging>jar</packaging>
 
     <properties>
-        <firstVersion>4.0.0-SNAPSHOT</firstVersion>
+        <firstVersion>4.0.0</firstVersion>
     </properties>
 
     <build>
@@ -61,7 +61,6 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>4.6.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
