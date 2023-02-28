@@ -210,13 +210,6 @@ public class RoutesConfigurer {
 
         // add the discovered routes
         addDiscoveredRoutes(camelContext, routes);
-
-        // then discover and add templates
-        Set<ConfigureRouteTemplates> set = camelContext.getRegistry().findByType(ConfigureRouteTemplates.class);
-        for (ConfigureRouteTemplates crt : set) {
-            LOG.debug("Configuring route templates via: {}", crt);
-            crt.configure(camelContext);
-        }
     }
 
     private void addDiscoveredRoutes(CamelContext camelContext, List<RoutesBuilder> routes) throws Exception {

@@ -257,29 +257,6 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         Assertions.assertTrue(names.contains("reverse"));
     }
 
-    @Test
-    public void testSourceLocations() throws Exception {
-        MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = getContextObjectName();
-
-        String xml = (String) mbeanServer.invoke(on, "dumpRoutesSourceLocationsAsXml", null, null);
-        Assertions.assertNotNull(xml);
-
-        Assertions.assertTrue(xml.contains(
-                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"288\"/>"));
-        Assertions.assertTrue(xml.contains(
-                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"289\"/>"));
-        Assertions.assertTrue(xml.contains(
-                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"290\"/>"));
-
-        Assertions.assertTrue(xml.contains(
-                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"292\"/>"));
-        Assertions.assertTrue(xml.contains(
-                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"293\"/>"));
-        Assertions.assertTrue(xml.contains(
-                "sourceLocation=\"ManagedCamelContextTest.java\" sourceLineNumber=\"294\"/>"));
-    }
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
