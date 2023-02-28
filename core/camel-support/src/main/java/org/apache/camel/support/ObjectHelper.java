@@ -811,39 +811,6 @@ public final class ObjectHelper {
 
     /**
      * Returns true if the collection contains the specified value
-     *
-     * @deprecated use {@link #typeCoerceContains(TypeConverter, Object, Object, boolean)}
-     */
-    @Deprecated
-    public static boolean contains(Object collectionOrArray, Object value) {
-        // favor String types
-        if (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder) {
-            collectionOrArray = collectionOrArray.toString();
-        }
-        if (value instanceof StringBuffer || value instanceof StringBuilder) {
-            value = value.toString();
-        }
-
-        if (collectionOrArray instanceof Collection) {
-            Collection<?> collection = (Collection<?>) collectionOrArray;
-            return collection.contains(value);
-        } else if (collectionOrArray instanceof String && value instanceof String) {
-            String str = (String) collectionOrArray;
-            String subStr = (String) value;
-            return str.contains(subStr);
-        } else {
-            Iterator<?> iter = createIterator(collectionOrArray);
-            while (iter.hasNext()) {
-                if (org.apache.camel.util.ObjectHelper.equal(value, iter.next())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Returns true if the collection contains the specified value
      */
     public static boolean typeCoerceContains(
             TypeConverter typeConverter, Object collectionOrArray, Object value, boolean ignoreCase) {
