@@ -39,7 +39,6 @@ import static org.apache.camel.support.IntrospectionSupport.getProperties;
 import static org.apache.camel.support.IntrospectionSupport.getProperty;
 import static org.apache.camel.support.IntrospectionSupport.getPropertyGetter;
 import static org.apache.camel.support.IntrospectionSupport.getPropertySetter;
-import static org.apache.camel.support.IntrospectionSupport.hasProperties;
 import static org.apache.camel.support.IntrospectionSupport.isGetter;
 import static org.apache.camel.support.IntrospectionSupport.isSetter;
 import static org.apache.camel.support.IntrospectionSupport.setProperty;
@@ -255,29 +254,6 @@ public class IntrospectionSupportTest extends ContextTestSupport {
 
         assertFalse(isSetter(setter3, false));
         assertTrue(isSetter(setter3, true));
-    }
-
-    @Test
-    public void testHasProperties() throws Exception {
-        Map<String, Object> empty = Collections.emptyMap();
-        assertFalse(hasProperties(empty, null));
-        assertFalse(hasProperties(empty, ""));
-        assertFalse(hasProperties(empty, "foo."));
-
-        Map<String, Object> param = new HashMap<>();
-        assertFalse(hasProperties(param, null));
-        assertFalse(hasProperties(param, ""));
-        assertFalse(hasProperties(param, "foo."));
-
-        param.put("name", "Claus");
-        assertTrue(hasProperties(param, null));
-        assertTrue(hasProperties(param, ""));
-        assertFalse(hasProperties(param, "foo."));
-
-        param.put("foo.name", "Hadrian");
-        assertTrue(hasProperties(param, null));
-        assertTrue(hasProperties(param, ""));
-        assertTrue(hasProperties(param, "foo."));
     }
 
     @Test

@@ -41,6 +41,7 @@ import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed BacklogDebugger")
@@ -383,7 +384,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
                             + "]";
                 }
 
-                long elapsed = StopWatch.elapsedMillisSince(suspendedExchange.getCreated());
+                long elapsed = TimeUtils.elapsedMillisSince(suspendedExchange.getCreated());
 
                 messageHistoryBuffer
                         .append("    <messageHistoryEntry")

@@ -348,26 +348,6 @@ public final class IntrospectionSupport {
         return answer;
     }
 
-    /**
-     * @deprecated use {@link org.apache.camel.util.PropertiesHelper}
-     */
-    @Deprecated
-    public static boolean hasProperties(Map<String, Object> properties, String optionPrefix) {
-        ObjectHelper.notNull(properties, "properties");
-
-        if (ObjectHelper.isNotEmpty(optionPrefix)) {
-            for (String name : properties.keySet()) {
-                if (name.startsWith(optionPrefix)) {
-                    return true;
-                }
-            }
-            // no parameters with this prefix
-            return false;
-        } else {
-            return !properties.isEmpty();
-        }
-    }
-
     public static Object getProperty(Object target, String propertyName)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         ObjectHelper.notNull(target, "target");

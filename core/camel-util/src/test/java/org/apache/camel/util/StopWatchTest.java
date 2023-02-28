@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.util;
 
 import java.time.Duration;
-import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
@@ -33,18 +31,6 @@ class StopWatchTest {
         Thread.sleep(Duration.ofSeconds(1).toMillis());
 
         long taken = stopWatch.taken();
-        assertTrue(taken >= 1000, "Elapsed time should be equal to or greater than 1000 ms but was " + taken);
-        assertTrue(taken < 1500, "Elapsed time should be smaller than 1500 ms but was " + taken);
-    }
-
-    @SuppressWarnings("deprecated")
-    @Test
-    void testDurationMatchesExpectWithDate() throws InterruptedException {
-        Date startTime = new Date();
-
-        Thread.sleep(Duration.ofSeconds(1).toMillis());
-
-        long taken = StopWatch.elapsedMillisSince(startTime.getTime());
         assertTrue(taken >= 1000, "Elapsed time should be equal to or greater than 1000 ms but was " + taken);
         assertTrue(taken < 1500, "Elapsed time should be smaller than 1500 ms but was " + taken);
     }

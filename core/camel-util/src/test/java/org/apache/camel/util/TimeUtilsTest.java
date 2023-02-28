@@ -18,7 +18,11 @@ package org.apache.camel.util;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.util.Date;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TimeUtilsTest {
 
@@ -66,5 +70,16 @@ public class TimeUtilsTest {
         long time = 259032000;
         long time2 = TimeUtils.toMilliSeconds(TimeUtils.printDuration(time, true));
         assertEquals(time, time2);
+    }
+
+    @Test
+    void testDurationMatchesExpectWithDate() throws InterruptedException {
+        Date startTime = new Date();
+
+        Thread.sleep(Duration.ofSeconds(1).toMillis());
+
+        long taken = TimeUtils.elapsedMillisSince(startTime.getTime());
+        assertTrue(taken >= 1000, "Elapsed time should be equal to or greater than 1000 ms but was " + taken);
+        assertTrue(taken < 1500, "Elapsed time should be smaller than 1500 ms but was " + taken);
     }
 }
