@@ -372,7 +372,6 @@ public abstract class ApiMethodParser<T> {
             return name;
         }
 
-        @Deprecated
         public Class<?> getResultType() {
             return resultType;
         }
