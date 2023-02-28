@@ -21,7 +21,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-import io.micrometer.core.instrument.*;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.LongTaskTimer;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tags;
+import io.micrometer.core.instrument.Timer;
 import org.apache.camel.Exchange;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Route;
@@ -49,7 +53,7 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
     private MicrometerRoutePolicyNamingStrategy namingStrategy = MicrometerRoutePolicyNamingStrategy.DEFAULT;
     private MicrometerRoutePolicyConfiguration configuration = MicrometerRoutePolicyConfiguration.DEFAULT;
 
-    Map<Route, MetricsStatistics> statisticsMap = new HashMap<>();
+    private final Map<Route, MetricsStatistics> statisticsMap = new HashMap<>();
 
     private static final class MetricsStatistics {
         private final MeterRegistry meterRegistry;
@@ -71,7 +75,9 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
             this.meterRegistry = ObjectHelper.notNull(meterRegistry, "MeterRegistry", this);
             this.namingStrategy = ObjectHelper.notNull(namingStrategy, "MicrometerRoutePolicyNamingStrategy", this);
             this.route = route;
-            if (configuration.isAdditionalCounters()) initAdditionalCounters();
+            if (configuration.isAdditionalCounters()) {
+                initAdditionalCounters();
+            }
         }
 
         private void initAdditionalCounters() {
@@ -80,7 +86,8 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                         "Number of successfully completed exchanges");
             }
             if (configuration.isExchangesFailed()) {
-                this.exchangesFailed = createCounter(namingStrategy.getExchangesFailedName(route), "Number of failed exchanges");
+                this.exchangesFailed
+                        = createCounter(namingStrategy.getExchangesFailedName(route), "Number of failed exchanges");
             }
             if (configuration.isExchangesTotal()) {
                 this.exchangesTotal
@@ -91,7 +98,8 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                         "Number of external initiated redeliveries (such as from JMS broker)");
             }
             if (configuration.isFailuresHandled()) {
-                this.failuresHandled = createCounter(namingStrategy.getFailuresHandledName(route), "Number of failures handled");
+                this.failuresHandled
+                        = createCounter(namingStrategy.getFailuresHandledName(route), "Number of failures handled");
             }
             if (configuration.isLongTask()) {
                 LongTaskTimer.Builder builder = LongTaskTimer.builder(namingStrategy.getLongTaskName(route))
@@ -126,19 +134,28 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
                 }
                 sample.stop(timer);
             }
-            LongTaskTimer.Sample ltSampler = (LongTaskTimer.Sample) exchange.removeProperty(propertyName(exchange) + "_long_task");
-            if (ltSampler != null) ltSampler.stop();
+            LongTaskTimer.Sample ltSampler
+                    = (LongTaskTimer.Sample) exchange.removeProperty(propertyName(exchange) + "_long_task");
+            if (ltSampler != null) {
+                ltSampler.stop();
+            }
             if (configuration.isAdditionalCounters()) {
                 updateAdditionalCounters(exchange);
             }
         }
 
         private void updateAdditionalCounters(Exchange exchange) {
-            if (exchangesTotal != null) exchangesTotal.increment();
+            if (exchangesTotal != null) {
+                exchangesTotal.increment();
+            }
             if (exchange.isFailed()) {
-                if (exchangesFailed != null) exchangesFailed.increment();
+                if (exchangesFailed != null) {
+                    exchangesFailed.increment();
+                }
             } else {
-                if (exchangesSucceeded != null) exchangesSucceeded.increment();
+                if (exchangesSucceeded != null) {
+                    exchangesSucceeded.increment();
+                }
                 if (failuresHandled != null && ExchangeHelper.isFailureHandled(exchange)) {
                     failuresHandled.increment();
                 }
@@ -226,7 +243,8 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         // create statistics holder
         // for now we record only all the timings of a complete exchange (responses)
         // we have in-flight / total statistics already from camel-core
-        statisticsMap.computeIfAbsent(route, it -> new MetricsStatistics(getMeterRegistry(), it, getNamingStrategy(), configuration));
+        statisticsMap.computeIfAbsent(route,
+                it -> new MetricsStatistics(getMeterRegistry(), it, getNamingStrategy(), configuration));
     }
 
     @Override
