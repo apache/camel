@@ -96,7 +96,8 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
 
         boolean complete = false;
         if (maxMessages > 0) {
-            complete = event.getType() == CamelEvent.Type.ExchangeCompleted || event.getType() == CamelEvent.Type.ExchangeFailed;
+            complete = event.getType() == CamelEvent.Type.ExchangeCompleted
+                    || event.getType() == CamelEvent.Type.ExchangeFailed;
 
             boolean result = doneMessages.incrementAndGet() >= maxMessages;
             if (LOG.isTraceEnabled()) {
@@ -116,7 +117,6 @@ public class MainDurationEventNotifier extends EventNotifierSupport {
                 }
             }
         }
-
 
         // idle reacts on both incoming and complete messages
         if (maxIdleSeconds > 0) {
