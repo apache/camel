@@ -801,10 +801,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
                 UnitOfWorkHelper.doneUow(uow, exchange);
             }
 
+            // after UoW is done lets pop the route context which must be done on every existing UoW
             if (route != null && existing != null) {
                 existing.popRoute();
             }
-            // after UoW is done lets pop the route context which must be done on every existing UoW
         }
 
         protected UnitOfWork createUnitOfWork(Exchange exchange) {
