@@ -37,8 +37,8 @@ public class MonitorFilterConfiguration implements Cloneable {
     @UriParam(defaultValue = "0.0", description = "Deadband value for MonitorFilterType DataChangeFilter.")
     private Double dataChangeFilterDeadbandValue = 0.0;
 
-    @UriParam(description = "Daata change trigger for data change monitor filter type.")
-    private DataChangeTrigger dataChangeFilterTrigger = DataChangeTrigger.StatusValue;
+    @UriParam(defaultValue = "StatusValueTimestamp", description = "Data change trigger for data change monitor filter type.")
+    private DataChangeTrigger dataChangeFilterTrigger = DataChangeTrigger.StatusValueTimestamp;
 
     public MonitorFilterType getMonitorFilterType() {
         return monitorFilterType;
@@ -80,7 +80,8 @@ public class MonitorFilterConfiguration implements Cloneable {
         switch (monitorFilterType) {
             default:
                 return new DataChangeFilter(
-                        DataChangeTrigger.StatusValueTimestamp, this.getDataChangeFilterDeadbandType(),
+                        this.getDataChangeFilterTrigger(),
+                        this.getDataChangeFilterDeadbandType(),
                         this.getDataChangeFilterDeadbandValue());
         }
     }
