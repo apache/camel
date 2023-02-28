@@ -39,7 +39,6 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
