@@ -78,6 +78,7 @@ We have removed deprecated APIs such as the following:
 - Replaced `adapt()` from `org.apache.camel.ExtendedExchange` with `getExchangeExtension`
 - Exchange failure handling status has moved from being a property defined as `ExchangePropertyKey.FAILURE_HANDLED` to a member of the ExtendedExchange, accessible via `isFailureHandled()`method.
 - Removed `Discard` and `DiscardOldest` from `org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy`.
+- Removed `org.apache.camel.builder.SimpleBuilder`. Was mostly used internally in Camel with the Java DSL in some situations.
 
 == EIP Changes
 

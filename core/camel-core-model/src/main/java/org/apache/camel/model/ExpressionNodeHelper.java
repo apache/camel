@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.SimpleBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.SimpleExpression;
@@ -43,13 +42,7 @@ public final class ExpressionNodeHelper {
      * @return            a definition which describes the expression
      */
     public static ExpressionDefinition toExpressionDefinition(Expression expression) {
-        if (expression instanceof SimpleBuilder) {
-            SimpleBuilder builder = (SimpleBuilder) expression;
-            // we want to use the definition objects in the route graph
-            SimpleExpression answer = new SimpleExpression(builder.getText());
-            answer.setResultType(builder.getResultType());
-            return answer;
-        } else if (expression instanceof ExpressionResultTypeAware
+        if (expression instanceof ExpressionResultTypeAware
                 && expression.getClass().getName().equals("org.apache.camel.language.xpath.XPathBuilder")) {
             ExpressionResultTypeAware aware = (ExpressionResultTypeAware) expression;
             // we keep the original expression by using the constructor that
@@ -74,20 +67,13 @@ public final class ExpressionNodeHelper {
      * Determines which {@link ExpressionDefinition} describes the given predicate in the best possible way.
      * <p/>
      * This implementation will use types such as {@link SimpleExpression}, {@link XPathExpression} etc. if the given
-     * predicate is detect as such a type.
+     * predicate is detected as such a type.
      *
      * @param  predicate the predicate
      * @return           a definition which describes the predicate
      */
     public static ExpressionDefinition toExpressionDefinition(Predicate predicate) {
-        if (predicate instanceof SimpleBuilder) {
-            SimpleBuilder builder = (SimpleBuilder) predicate;
-            // we want to use the definition objects in the route graph
-            SimpleExpression answer = new SimpleExpression(builder.getText());
-            answer.setExpression(builder.getText());
-            answer.setResultType(builder.getResultType());
-            return answer;
-        } else if (predicate instanceof ExpressionResultTypeAware
+        if (predicate instanceof ExpressionResultTypeAware
                 && predicate.getClass().getName().equals("org.apache.camel.language.xpath.XPathBuilder")) {
             ExpressionResultTypeAware aware = (ExpressionResultTypeAware) predicate;
             Expression expression = (Expression) predicate;
