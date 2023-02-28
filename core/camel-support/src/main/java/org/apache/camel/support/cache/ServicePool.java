@@ -132,10 +132,10 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
     private void waitForService(StatefulService service) {
         BlockingTask task = Tasks.foregroundTask().withBudget(Budgets.iterationTimeBudget()
-                        .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
-                        .withMaxDuration(Duration.ofMillis(30000))
-                        .withInterval(Duration.ofMillis(5))
-                        .build())
+                .withMaxIterations(IterationBoundedBudget.UNLIMITED_ITERATIONS)
+                .withMaxDuration(Duration.ofMillis(30000))
+                .withInterval(Duration.ofMillis(5))
+                .build())
                 .build();
 
         if (!task.run(service::isStarting)) {
