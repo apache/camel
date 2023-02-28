@@ -157,6 +157,16 @@ public interface BeanIntrospection extends StaticService, AfterPropertiesConfigu
     Method getPropertyGetter(Class<?> type, String propertyName, boolean ignoreCase) throws NoSuchMethodException;
 
     /**
+     * Gets the setter method for the property.
+     *
+     * @param  type                  the target class
+     * @param  propertyName          the property name
+     * @return                       the setter method
+     * @throws NoSuchMethodException is thrown if there are no setter method for the property
+     */
+    Method getPropertySetter(Class<?> type, String propertyName) throws NoSuchMethodException;
+
+    /**
      * This method supports three modes to set a property:
      *
      * 1. Setting a Map property where the property name refers to a map via name[aKey] where aKey is the map key to

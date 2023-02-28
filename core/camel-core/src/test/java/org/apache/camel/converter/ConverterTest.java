@@ -34,8 +34,8 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.DefaultExchange;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.junit.jupiter.api.BeforeEach;
@@ -189,9 +189,16 @@ public class ConverterTest extends TestSupport {
     @Test
     public void testPrimitiveIntPropertySetter() {
         MyBean bean = new MyBean();
-        assertDoesNotThrow(() -> IntrospectionSupport.setProperty(converter, bean, "foo", "4"),
+
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+        BeanIntrospection bi = context.getCamelContextExtension().getBeanIntrospection();
+
+        assertDoesNotThrow(() -> bi.setProperty(context, converter, bean, "foo", "4", null, true, true, true),
                 "Setting an int property in a bean, should have succeeded without throwing exceptions");
         assertEquals(4, bean.getFoo(), "The property bean.foo does not match the value that was previously set");
+
+        context.stop();
     }
 
     @Test

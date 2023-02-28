@@ -25,8 +25,10 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlElementRef;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.spi.BeanIntrospection;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +51,10 @@ public class ModelSanityCheckerTest {
 
     @Test
     public void testSanity() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+        BeanIntrospection bi = context.getCamelContextExtension().getBeanIntrospection();
+
         Set<Class<?>> classes = discoverJaxbClasses();
         assertNotNull(classes);
         assertTrue(classes.size() > 140, "There should be > 140 classes, was: " + classes.size());
@@ -84,8 +90,8 @@ public class ModelSanityCheckerTest {
                 // check getter/setter
                 if (attribute || element || elementRef) {
                     // check for getter/setter
-                    Method getter = IntrospectionSupport.getPropertyGetter(clazz, field.getName());
-                    Method setter = IntrospectionSupport.getPropertySetter(clazz, field.getName());
+                    Method getter = bi.getPropertyGetter(clazz, field.getName(), false);
+                    Method setter = bi.getPropertySetter(clazz, field.getName());
 
                     assertNotNull(getter, "Getter " + field.getName() + " on class " + clazz.getName() + " is missing");
                     assertNotNull(setter, "Setter " + field.getName() + " on class " + clazz.getName() + " is missing");
@@ -116,7 +122,7 @@ public class ModelSanityCheckerTest {
                                + " should not have @XmlElementRef annotation");
             }
         }
-
+        context.stop();
     }
 
 }

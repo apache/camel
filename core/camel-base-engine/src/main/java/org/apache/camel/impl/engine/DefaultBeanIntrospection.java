@@ -184,6 +184,15 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
     }
 
     @Override
+    public Method getPropertySetter(Class<?> type, String propertyName) throws NoSuchMethodException {
+        invoked.incrementAndGet();
+        if (!preStartDone || logger.shouldLog()) {
+            log("getPropertySetter", type, propertyName);
+        }
+        return IntrospectionSupport.getPropertySetter(type, propertyName);
+    }
+
+    @Override
     public boolean setProperty(
             CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
             boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase)
