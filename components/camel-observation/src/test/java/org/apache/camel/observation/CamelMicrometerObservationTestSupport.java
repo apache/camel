@@ -33,6 +33,8 @@ import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationRegistry;
 import io.micrometer.observation.tck.TestObservationRegistry;
+import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
+import io.micrometer.tracing.handler.PropagatingReceiverTracingObservationHandler;
 import io.micrometer.tracing.handler.PropagatingSenderTracingObservationHandler;
 import io.micrometer.tracing.otel.bridge.OtelBaggageManager;
 import io.micrometer.tracing.otel.bridge.OtelCurrentTraceContext;
@@ -98,7 +100,7 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
 
         io.micrometer.tracing.Tracer otelTracer = otelTracer();
         OtelPropagator otelPropagator = new OtelPropagator(ContextPropagators.create(B3Propagator.injectingSingleHeader()), tracer);
-        observationRegistry.observationConfig().observationHandler(new ObservationHandler.FirstMatchingCompositeObservationHandler(new CamelPropagatingSenderTracingObservationHandler<>(otelTracer, otelPropagator), new CamelPropagatingReceiverTracingObservationHandler<>(otelTracer, otelPropagator), new CamelDefaultTracingObservationHandler(otelTracer)));
+        observationRegistry.observationConfig().observationHandler(new ObservationHandler.FirstMatchingCompositeObservationHandler(new PropagatingSenderTracingObservationHandler<>(otelTracer, otelPropagator), new PropagatingReceiverTracingObservationHandler<>(otelTracer, otelPropagator), new DefaultTracingObservationHandler(otelTracer)));
 
         micrometerObservationTracer.setObservationRegistry(observationRegistry);
         // if you want baggage

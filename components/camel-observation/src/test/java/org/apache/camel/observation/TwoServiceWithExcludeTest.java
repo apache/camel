@@ -19,6 +19,7 @@ package org.apache.camel.observation;
 import java.util.Collections;
 import java.util.Set;
 
+import io.opentelemetry.api.trace.SpanKind;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ import org.junit.jupiter.api.Test;
 class TwoServiceWithExcludeTest extends CamelMicrometerObservationTestSupport {
 
     private static SpanTestData[] testdata = {
-            new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
+            new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA").setKind(SpanKind.SERVER)
     };
 
     TwoServiceWithExcludeTest() {

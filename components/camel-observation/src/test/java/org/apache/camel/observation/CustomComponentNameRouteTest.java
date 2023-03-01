@@ -16,6 +16,7 @@
  */
 package org.apache.camel.observation;
 
+import io.opentelemetry.api.trace.SpanKind;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class CustomComponentNameRouteTest extends CamelMicrometerObservationTestSupport
                     .setParentId(2).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
             new SpanTestData().setLabel("myseda:a server").setUri("myseda://a").setOperation("a")
                     .setParentId(3).addLogMessage("routing at a").addLogMessage("End of routing"),
-            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start").setKind(SpanKind.SERVER)
     };
 
     CustomComponentNameRouteTest() {

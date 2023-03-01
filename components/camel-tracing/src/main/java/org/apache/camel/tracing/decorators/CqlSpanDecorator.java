@@ -43,7 +43,7 @@ public class CqlSpanDecorator extends AbstractSpanDecorator {
     @Override
     public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
-        span.setTag(Tag.DB_TYPE, CASSANDRA_DB_TYPE);
+        span.setLowCardinalityTag(Tag.DB_TYPE, CASSANDRA_DB_TYPE);
         URI uri = URI.create(endpoint.getEndpointUri());
         if (uri.getPath() != null && uri.getPath().length() > 0) {
             // Strip leading '/' from path

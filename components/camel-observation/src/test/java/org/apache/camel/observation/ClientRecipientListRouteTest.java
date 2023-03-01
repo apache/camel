@@ -16,6 +16,7 @@
  */
 package org.apache.camel.observation;
 
+import io.opentelemetry.api.trace.SpanKind;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,7 @@ class ClientRecipientListRouteTest extends CamelMicrometerObservationTestSupport
                     .setParentId(3),
             new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
                     .setParentId(3),
-            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start").setKind(SpanKind.SERVER)
     };
 
     ClientRecipientListRouteTest() {

@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.observation;
+package org.apache.camel.observation.otel;
 
-import io.micrometer.observation.Observation;
 import io.micrometer.observation.transport.ReceiverContext;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
@@ -24,6 +23,8 @@ import io.micrometer.tracing.handler.PropagatingReceiverTracingObservationHandle
 import io.micrometer.tracing.propagation.Propagator;
 
 public class CamelPropagatingReceiverTracingObservationHandler<T extends ReceiverContext> extends PropagatingReceiverTracingObservationHandler<T> {
+
+    static final String SPAN_DECORATOR_INTERNAL = "camel.micrometer.abstract-internal";
 
     /**
      * Creates a new instance of {@link PropagatingReceiverTracingObservationHandler}.
@@ -37,7 +38,7 @@ public class CamelPropagatingReceiverTracingObservationHandler<T extends Receive
 
     @Override
     public Span.Builder customizeExtractedSpan(T context, Span.Builder builder) {
-        boolean internalComponent = context.getOrDefault(MicrometerObservationTracer.SPAN_DECORATOR_INTERNAL, false);
+        boolean internalComponent = context.getOrDefault(SPAN_DECORATOR_INTERNAL, false);
         if (internalComponent && context.getParentObservation() == null) {
             builder.kind(null);
         }

@@ -38,6 +38,8 @@ import org.apache.camel.tracing.decorators.AbstractInternalSpanDecorator;
 @ManagedResource(description = "MicrometerObservationTracer")
 public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer {
 
+    private static final String CAMEL_CONTEXT_NAME = "camel.operation";
+
     static final String SPAN_DECORATOR_INTERNAL = "camel.micrometer.abstract-internal";
 
     private ObservationRegistry observationRegistry;
@@ -119,7 +121,8 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
     protected SpanAdapter startSendingEventSpan(
             String operationName, SpanKind kind, SpanAdapter parentObservation, Exchange exchange, InjectAdapter injectAdapter) {
         Observation.Context context = spanKindToContextOnInject(kind, injectAdapter, exchange);
-        Observation observation = Observation.createNotStarted(operationName, () -> context, observationRegistry);
+        Observation observation = Observation.createNotStarted(CAMEL_CONTEXT_NAME, () -> context, observationRegistry);
+        observation.contextualName(operationName);
         if (parentObservation != null) {
             observation.parentObservation(getParentObservation(parentObservation));
         }

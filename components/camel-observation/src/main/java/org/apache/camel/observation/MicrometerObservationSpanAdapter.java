@@ -44,12 +44,11 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
 
     @Override
     public void setComponent(String component) {
-        this.observation.highCardinalityKeyValue("component", component);
+        this.observation.lowCardinalityKeyValue("component", component);
     }
 
     @Override
     public void setError(boolean error) {
-        this.observation.error(new RuntimeException("TODO: How do we treat errors"));
         this.observation.lowCardinalityKeyValue("error", String.valueOf(error));
     }
 
@@ -79,8 +78,41 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
     }
 
     @Override
+    public void setLowCardinalityTag(Tag key, String value) {
+        observation.lowCardinalityKeyValue(key.toString(), value);
+    }
+
+    @Override
+    public void setLowCardinalityTag(Tag key, Number value) {
+        observation.lowCardinalityKeyValue(key.toString(), value.toString());
+    }
+
+    @Override
+    public void setLowCardinalityTag(String key, String value) {
+        observation.lowCardinalityKeyValue(key, value);
+    }
+
+    @Override
+    public void setLowCardinalityTag(String key, Number value) {
+        observation.lowCardinalityKeyValue(key, value.toString());
+    }
+
+    @Override
+    public void setLowCardinalityTag(String key, Boolean value) {
+        observation.lowCardinalityKeyValue(key, value.toString());
+    }
+
+    @Override
     public void log(Map<String, String> fields) {
         observation.event(() -> getMessageNameFromFields(fields));
+        String event = fields.get("event");
+        if ("error".equalsIgnoreCase(event)) {
+            if (fields.containsKey("message")) {
+                observation.error(new RuntimeException(fields.get("message")));
+            } else {
+                setError(true);
+            }
+        }
     }
 
     @Override

@@ -14,29 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.observation;
+package org.apache.camel.observation.otel;
 
-import io.micrometer.observation.transport.SenderContext;
+import io.micrometer.common.util.StringUtils;
+import io.micrometer.observation.Observation;
 import io.micrometer.tracing.Span;
 import io.micrometer.tracing.Tracer;
-import io.micrometer.tracing.handler.PropagatingReceiverTracingObservationHandler;
-import io.micrometer.tracing.handler.PropagatingSenderTracingObservationHandler;
-import io.micrometer.tracing.propagation.Propagator;
+import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 
-public class CamelPropagatingSenderTracingObservationHandler<T extends SenderContext> extends PropagatingSenderTracingObservationHandler<T> {
+public class CamelDefaultTracingObservationHandler extends DefaultTracingObservationHandler {
 
     /**
-     * Creates a new instance of {@link PropagatingReceiverTracingObservationHandler}.
+     * Creates a new instance of {@link DefaultTracingObservationHandler}.
      *
-     * @param tracer     the tracer to use to record events
-     * @param propagator the mechanism to propagate tracing information from the carrier
+     * @param tracer the tracer to use to record events
      */
-    public CamelPropagatingSenderTracingObservationHandler(Tracer tracer, Propagator propagator) {
-        super(tracer, propagator);
+    public CamelDefaultTracingObservationHandler(Tracer tracer) {
+        super(tracer);
+    }
+
+    // Current implementation of OpenTelemetry is not doing hyphens
+    // e.g. ServiceB does not become service-b
+    @Override
+    public String getSpanName(Observation.Context context) {
+        String name = context.getName();
+        if (StringUtils.isNotBlank(context.getContextualName())) {
+            name = context.getContextualName();
+        }
+        return name;
     }
 
     @Override
-    public void tagSpan(T context, Span span) {
+    public void tagSpan(Observation.Context context, Span span) {
         super.tagSpan(context, span);
         if (context.getError() != null) {
             span.tag("error", "true");

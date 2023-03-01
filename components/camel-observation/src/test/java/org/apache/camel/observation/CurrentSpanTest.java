@@ -75,7 +75,7 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
         SpanTestData[] expectedSpans = {
                 new SpanTestData().setLabel("syncmock:result").setUri("syncmock://result").setOperation("syncmock")
                         .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:bar").setUri("direct://bar").setOperation("bar")
+                new SpanTestData().setLabel("direct:bar").setUri("direct://bar").setOperation("bar").setKind(SpanKind.SERVER)
         };
 
         // sync pipeline
@@ -93,7 +93,7 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
         SpanTestData[] expectedSpans = {
                 new SpanTestData().setLabel("asyncmock1:result").setUri("asyncmock1://result").setOperation("asyncmock1")
                         .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:foo").setUri("direct://foo").setOperation("foo")
+                new SpanTestData().setLabel("direct:foo").setUri("direct://foo").setOperation("foo").setKind(SpanKind.SERVER)
         };
 
         // sync to async pipeline
@@ -157,8 +157,8 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
         List<SpanData> spans = verify(expectedSpans, false);
         assertEquals(spans.get(0).getParentSpanId(), spans.get(1).getSpanId());
 
-        assertTrue("true".equals(spans.get(0).getAttributes().get(AttributeKey.stringKey("error")))); // Micrometer Tracing doesn't support other keys than boolean
-        assertTrue("true".equals(spans.get(1).getAttributes().get(AttributeKey.stringKey("error"))));
+        assertTrue("error".equals(spans.get(0).getEvents().get(0).getName()));
+        assertTrue("error".equals(spans.get(1).getEvents().get(0).getName()));
 
     }
 
@@ -171,7 +171,7 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
                         .setKind(SpanKind.CLIENT),
                 new SpanTestData().setLabel("syncmock:result").setUri("syncmock://result").setOperation("syncmock")
                         .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:start").setUri("direct://start").setOperation("start")
+                new SpanTestData().setLabel("direct:start").setUri("direct://start").setOperation("start").setKind(SpanKind.SERVER)
         };
 
         // sync pipeline
