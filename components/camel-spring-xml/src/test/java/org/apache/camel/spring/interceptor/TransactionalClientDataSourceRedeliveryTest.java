@@ -49,7 +49,7 @@ public class TransactionalClientDataSourceRedeliveryTest extends TransactionalCl
 
         assertEquals(true, out.getIn().getHeader(Exchange.REDELIVERED));
         assertEquals(4, out.getIn().getHeader(Exchange.REDELIVERY_COUNTER));
-        assertEquals(true, out.getProperty(Exchange.FAILURE_HANDLED));
+        assertEquals(true, out.getExchangeExtension().isFailureHandled());
         assertEquals(false, out.getExchangeExtension().isErrorHandlerHandled());
     }
 
