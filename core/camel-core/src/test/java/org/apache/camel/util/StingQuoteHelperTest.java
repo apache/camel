@@ -225,4 +225,27 @@ public class StingQuoteHelperTest {
         assertEquals("dependency=mvn:com.foo:myapp:2.1", out[2]);
     }
 
+    @Test
+    public void testKeepQuotes() throws Exception {
+        String[] out = StringQuoteHelper.splitSafeQuote("'body'", ',', false, true);
+        assertEquals(1, out.length);
+        assertEquals("'body'", out[0]);
+
+        out = StringQuoteHelper.splitSafeQuote("'body', 123", ',', false, true);
+        assertEquals(2, out.length);
+        assertEquals("'body'", out[0]);
+        assertEquals("123", out[1]);
+
+        out = StringQuoteHelper.splitSafeQuote("'body', \"world\"", ',', false, true);
+        assertEquals(2, out.length);
+        assertEquals("'body'", out[0]);
+        assertEquals("\"world\"", out[1]);
+
+        out = StringQuoteHelper.splitSafeQuote("'body', \"world\", 123", ',', false, true);
+        assertEquals(3, out.length);
+        assertEquals("'body'", out[0]);
+        assertEquals("\"world\"", out[1]);
+        assertEquals("123", out[2]);
+    }
+
 }
