@@ -42,6 +42,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
+            <version>${testcontainers-version}</version>
         </dependency>
 
         <!-- Any JMS-based infra should provide their own implementation-->
