@@ -22,7 +22,7 @@ import java.util.Stack;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "pipe", description = "Run Camel integration in pipe and filters mode for terminal scripting")
-class Pipe extends CamelCommand {
+public class Pipe extends CamelCommand {
 
     @CommandLine.Parameters(description = "Name of file", arity = "1",
                             paramLabel = "<file>", parameterConsumer = FileConsumer.class)
