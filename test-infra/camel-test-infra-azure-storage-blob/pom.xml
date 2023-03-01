@@ -61,12 +61,14 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
+            <version>${testcontainers-version}</version>
         </dependency>
 
         <!-- azure sdk -->
         <dependency>
             <groupId>com.azure</groupId>
             <artifactId>azure-storage-blob</artifactId>
+            <version>${testcontainers-version}</version>
         </dependency>
     </dependencies>
 
