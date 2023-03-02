@@ -104,7 +104,6 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
 
     @Override
     public void log(Map<String, String> fields) {
-        observation.event(() -> getMessageNameFromFields(fields));
         String event = fields.get("event");
         if ("error".equalsIgnoreCase(event)) {
             if (fields.containsKey("message")) {
@@ -112,6 +111,8 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
             } else {
                 setError(true);
             }
+        } else {
+            observation.event(() -> getMessageNameFromFields(fields));
         }
     }
 

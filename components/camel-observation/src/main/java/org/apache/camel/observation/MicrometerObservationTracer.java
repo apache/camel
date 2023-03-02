@@ -38,7 +38,7 @@ import org.apache.camel.tracing.decorators.AbstractInternalSpanDecorator;
 @ManagedResource(description = "MicrometerObservationTracer")
 public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer {
 
-    private static final String CAMEL_CONTEXT_NAME = "camel.operation";
+    private static final String CAMEL_CONTEXT_NAME = "camel.component";
 
     static final String SPAN_DECORATOR_INTERNAL = "camel.micrometer.abstract-internal";
 
@@ -70,10 +70,13 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
             case SPAN_KIND_SERVER:
                 RequestReplyReceiverContext<Object, Message> replyReceiverContext = new RequestReplyReceiverContext<>((carrier, key) -> String.valueOf(adapter.get(key)));
                 replyReceiverContext.setResponse(exchange.getMessage());
+                replyReceiverContext.setCarrier(exchange.getIn());
                 return replyReceiverContext;
             case CONSUMER:
             case SPAN_KIND_CLIENT:
-                return new ReceiverContext<>((carrier, key) -> String.valueOf(adapter.get(key)));
+                ReceiverContext<Message> receiverContext = new ReceiverContext<>((carrier, key) -> String.valueOf(adapter.get(key)));
+                receiverContext.setCarrier(exchange.getIn());
+                return receiverContext;
         default:
                 return new Observation.Context();
         }
@@ -84,9 +87,12 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
             case SPAN_KIND_CLIENT:
                 RequestReplySenderContext<Object, Message> senderContext = new RequestReplySenderContext<>((carrier, key, value) -> adapter.put(key, value));
                 senderContext.setResponse(exchange.getMessage());
+                senderContext.setCarrier(exchange.getIn());
                 return senderContext;
             case PRODUCER:
-                return new SenderContext<>((carrier, key, value) -> adapter.put(key, value));
+                SenderContext<Message> context = new SenderContext<>((carrier, key, value) -> adapter.put(key, value));
+                context.setCarrier(exchange.getIn());
+                return context;
             case SPAN_KIND_SERVER:
             case CONSUMER:
                 throw new UnsupportedOperationException("You can't inject when receiving a message");

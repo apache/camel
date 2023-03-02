@@ -29,6 +29,7 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.sdk.trace.ReadableSpan;
 import io.opentelemetry.sdk.trace.data.SpanData;
+import io.opentelemetry.sdk.trace.internal.data.ExceptionEventData;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -50,6 +51,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -157,8 +159,8 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
         List<SpanData> spans = verify(expectedSpans, false);
         assertEquals(spans.get(0).getParentSpanId(), spans.get(1).getSpanId());
 
-        assertTrue("error".equals(spans.get(0).getEvents().get(0).getName()));
-        assertTrue("error".equals(spans.get(1).getEvents().get(0).getName()));
+        assertNotNull(((ExceptionEventData) spans.get(0).getEvents().get(0)).getException());
+        assertNotNull(((ExceptionEventData) spans.get(1).getEvents().get(0)).getException());
 
     }
 
