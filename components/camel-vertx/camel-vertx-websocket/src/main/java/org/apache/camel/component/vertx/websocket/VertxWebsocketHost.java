@@ -112,9 +112,11 @@ public class VertxWebsocketHost {
                             }
                         }
 
-                        webSocket.textMessageHandler(message -> consumer.onMessage(connectionKey, message, remote));
+                        webSocket.textMessageHandler(
+                                message -> consumer.onMessage(connectionKey, message, remote, routingContext));
                         webSocket
-                                .binaryMessageHandler(message -> consumer.onMessage(connectionKey, message.getBytes(), remote));
+                                .binaryMessageHandler(message -> consumer.onMessage(connectionKey, message.getBytes(), remote,
+                                        routingContext));
                         webSocket.exceptionHandler(exception -> consumer.onException(connectionKey, exception, remote));
                         webSocket.closeHandler(closeEvent -> {
                             if (LOG.isDebugEnabled()) {
