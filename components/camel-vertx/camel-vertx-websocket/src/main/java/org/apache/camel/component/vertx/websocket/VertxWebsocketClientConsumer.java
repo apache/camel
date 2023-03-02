@@ -21,7 +21,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.WebSocket;
 import io.vertx.core.net.impl.ConnectionBase;
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -98,10 +97,38 @@ public class VertxWebsocketClientConsumer extends DefaultConsumer {
     }
 
     protected void handleResult(Object result) {
-        Exchange exchange = createExchange(true);
-        AsyncCallback cb = defaultConsumerCallback(exchange, true);
+        Exchange exchange = createExchange(false);
         Message message = exchange.getMessage();
         message.setBody(result);
-        getAsyncProcessor().process(exchange, cb);
+        processExchange(exchange);
+    }
+
+    protected void processExchange(Exchange exchange) {
+        Vertx vertx = getEndpoint().getVertx();
+        vertx.executeBlocking(
+                promise -> {
+                    try {
+                        createUoW(exchange);
+                    } catch (Exception e) {
+                        promise.fail(e);
+                        return;
+                    }
+
+                    getAsyncProcessor().process(exchange, c -> {
+                        promise.complete();
+                    });
+                },
+                false,
+                result -> {
+                    try {
+                        if (result.failed()) {
+                            Throwable cause = result.cause();
+                            getExceptionHandler().handleException(cause);
+                        }
+                    } finally {
+                        doneUoW(exchange);
+                        releaseExchange(exchange, false);
+                    }
+                });
     }
 }
