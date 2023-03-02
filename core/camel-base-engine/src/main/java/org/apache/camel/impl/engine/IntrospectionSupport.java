@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.impl.engine;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
@@ -41,6 +41,10 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.LRUCache;
+import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -59,11 +63,10 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * <p/>
  * This implementation will use a cache when the {@link #getProperties(Object, java.util.Map, String)} method is being
  * used. Also the {@link #cacheClass(Class)} method gives access to the introspect cache.
- *
- * @deprecated use {@link org.apache.camel.spi.BeanIntrospection}
+ * <p/>
+ * This class is only for internal use by Camel - not for end users; use {@link BeanIntrospection} instead.
  */
-@Deprecated
-public final class IntrospectionSupport {
+final class IntrospectionSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(IntrospectionSupport.class);
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<>();

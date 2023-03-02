@@ -32,7 +32,6 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.CamelLogger;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

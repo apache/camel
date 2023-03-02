@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.support;
+package org.apache.camel.impl.engine;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -32,15 +32,15 @@ import org.apache.camel.util.AnotherExampleBean;
 import org.apache.camel.util.OtherExampleBean;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.support.IntrospectionSupport.extractProperties;
-import static org.apache.camel.support.IntrospectionSupport.findSetterMethodsOrderedByParameterType;
-import static org.apache.camel.support.IntrospectionSupport.getProperties;
-import static org.apache.camel.support.IntrospectionSupport.getProperty;
-import static org.apache.camel.support.IntrospectionSupport.getPropertyGetter;
-import static org.apache.camel.support.IntrospectionSupport.getPropertySetter;
-import static org.apache.camel.support.IntrospectionSupport.isGetter;
-import static org.apache.camel.support.IntrospectionSupport.isSetter;
-import static org.apache.camel.support.IntrospectionSupport.setProperty;
+import static org.apache.camel.impl.engine.IntrospectionSupport.extractProperties;
+import static org.apache.camel.impl.engine.IntrospectionSupport.findSetterMethodsOrderedByParameterType;
+import static org.apache.camel.impl.engine.IntrospectionSupport.getProperties;
+import static org.apache.camel.impl.engine.IntrospectionSupport.getProperty;
+import static org.apache.camel.impl.engine.IntrospectionSupport.getPropertyGetter;
+import static org.apache.camel.impl.engine.IntrospectionSupport.getPropertySetter;
+import static org.apache.camel.impl.engine.IntrospectionSupport.isGetter;
+import static org.apache.camel.impl.engine.IntrospectionSupport.isSetter;
+import static org.apache.camel.impl.engine.IntrospectionSupport.setProperty;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -49,7 +49,6 @@ import static org.junit.jupiter.api.Assertions.*;
  * The deprecation warnings are a false positive here because this class test IntrospectionSupport (which is, indeed,
  * deprecated)
  */
-
 public class IntrospectionSupportTest extends ContextTestSupport {
 
     @Test
