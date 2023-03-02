@@ -45,9 +45,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit test for IntrospectionSupport
- *
- * The deprecation warnings are a false positive here because this class test IntrospectionSupport (which is, indeed,
- * deprecated)
  */
 public class IntrospectionSupportTest extends ContextTestSupport {
 
@@ -532,7 +529,7 @@ public class IntrospectionSupportTest extends ContextTestSupport {
 
         // extract all "foo." properties
         // and their keys should have the prefix removed
-        Map<String, Object> foo = extractProperties(params, "foo.");
+        Map<String, Object> foo = extractProperties(params, "foo.", true);
         assertEquals(2, foo.size());
         assertEquals("Camel", foo.get("name"));
         assertEquals(5, foo.get("age"));

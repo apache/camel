@@ -36,7 +36,6 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@SuppressWarnings("deprecation")
 public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntrospection, CamelContextAware, StartupListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultBeanIntrospection.class);

@@ -32,7 +32,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -44,7 +43,6 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -117,14 +115,14 @@ final class IntrospectionSupport {
      * <p/>
      * This implementation will clear its introspection cache.
      */
-    public static void stop() {
+    static void stop() {
         clearCache();
     }
 
     /**
      * Clears the introspection cache.
      */
-    public static void clearCache() {
+    static void clearCache() {
         if (LOG.isDebugEnabled() && CACHE instanceof LRUCache) {
             LRUCache localCache = (LRUCache) IntrospectionSupport.CACHE;
             LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", localCache.size(), localCache.getHits(),
@@ -133,11 +131,11 @@ final class IntrospectionSupport {
         CACHE.clear();
     }
 
-    public static long getCacheCounter() {
+    static long getCacheCounter() {
         return CACHE.size();
     }
 
-    public static boolean isGetter(Method method) {
+    static boolean isGetter(Method method) {
         String name = method.getName();
         Class<?> type = method.getReturnType();
         int parameterCount = method.getParameterCount();
@@ -155,7 +153,7 @@ final class IntrospectionSupport {
         return false;
     }
 
-    public static String getGetterShorthandName(Method method) {
+    static String getGetterShorthandName(Method method) {
         if (!isGetter(method)) {
             return method.getName();
         }
@@ -172,7 +170,7 @@ final class IntrospectionSupport {
         return name;
     }
 
-    public static String getSetterShorthandName(Method method) {
+    static String getSetterShorthandName(Method method) {
         if (!isSetter(method)) {
             return method.getName();
         }
@@ -186,7 +184,7 @@ final class IntrospectionSupport {
         return name;
     }
 
-    public static boolean isSetter(Method method, boolean allowBuilderPattern) {
+    static boolean isSetter(Method method, boolean allowBuilderPattern) {
         String name = method.getName();
         Class<?> type = method.getReturnType();
         int parameterCount = method.getParameterCount();
@@ -206,25 +204,8 @@ final class IntrospectionSupport {
         return false;
     }
 
-    public static boolean isSetter(Method method) {
+    static boolean isSetter(Method method) {
         return isSetter(method, false);
-    }
-
-    /**
-     * Will inspect the target for properties.
-     * <p/>
-     * Notice a property must have both a getter/setter method to be included. Notice all <tt>null</tt> values won't be
-     * included.
-     *
-     * @param  target the target bean
-     * @return        the map with found properties
-     */
-    public static Map<String, Object> getNonNullProperties(Object target) {
-        Map<String, Object> properties = new HashMap<>();
-
-        getProperties(target, properties, null, false);
-
-        return properties;
     }
 
     /**
@@ -238,7 +219,7 @@ final class IntrospectionSupport {
      * @param  optionPrefix an optional prefix to append the property key
      * @return              <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
      */
-    public static boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix) {
+    static boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix) {
         return getProperties(target, properties, optionPrefix, true);
     }
 
@@ -253,7 +234,7 @@ final class IntrospectionSupport {
      * @param  includeNull  whether to include <tt>null</tt> values
      * @return              <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
      */
-    public static boolean getProperties(
+    static boolean getProperties(
             Object target, Map<String, Object> properties, String optionPrefix, boolean includeNull) {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
@@ -293,7 +274,7 @@ final class IntrospectionSupport {
      * @param  clazz the class
      * @return       the introspection result as a {@link BeanIntrospection.ClassInfo} structure.
      */
-    public static BeanIntrospection.ClassInfo cacheClass(Class<?> clazz) {
+    static BeanIntrospection.ClassInfo cacheClass(Class<?> clazz) {
         BeanIntrospection.ClassInfo cache = CACHE.get(clazz);
         if (cache == null) {
             cache = doIntrospectClass(clazz);
@@ -302,7 +283,7 @@ final class IntrospectionSupport {
         return cache;
     }
 
-    private static BeanIntrospection.ClassInfo doIntrospectClass(Class<?> clazz) {
+    static BeanIntrospection.ClassInfo doIntrospectClass(Class<?> clazz) {
         BeanIntrospection.ClassInfo answer = new BeanIntrospection.ClassInfo();
         answer.clazz = clazz;
 
@@ -351,7 +332,7 @@ final class IntrospectionSupport {
         return answer;
     }
 
-    public static Object getProperty(Object target, String propertyName)
+    static Object getProperty(Object target, String propertyName)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(propertyName, "property");
@@ -363,11 +344,7 @@ final class IntrospectionSupport {
         return method.invoke(target);
     }
 
-    public static Object getOrElseProperty(Object target, String propertyName, Object defaultValue) {
-        return getOrElseProperty(target, propertyName, defaultValue, false);
-    }
-
-    public static Object getOrElseProperty(Object target, String propertyName, Object defaultValue, boolean ignoreCase) {
+    static Object getOrElseProperty(Object target, String propertyName, Object defaultValue, boolean ignoreCase) {
         try {
             if (ignoreCase) {
                 Class<?> clazz = target.getClass();
@@ -386,11 +363,11 @@ final class IntrospectionSupport {
         }
     }
 
-    public static Method getPropertyGetter(Class<?> type, String propertyName) throws NoSuchMethodException {
+    static Method getPropertyGetter(Class<?> type, String propertyName) throws NoSuchMethodException {
         return getPropertyGetter(type, propertyName, false);
     }
 
-    public static Method getPropertyGetter(Class<?> type, String propertyName, boolean ignoreCase)
+    static Method getPropertyGetter(Class<?> type, String propertyName, boolean ignoreCase)
             throws NoSuchMethodException {
         if (ignoreCase) {
             List<Method> methods = new ArrayList<>();
@@ -416,7 +393,7 @@ final class IntrospectionSupport {
         }
     }
 
-    public static Method getPropertySetter(Class<?> type, String propertyName) throws NoSuchMethodException {
+    static Method getPropertySetter(Class<?> type, String propertyName) throws NoSuchMethodException {
         String name = "set" + StringHelper.capitalize(propertyName, true);
         for (Method method : type.getMethods()) {
             if (isSetter(method) && method.getName().equals(name)) {
@@ -426,7 +403,7 @@ final class IntrospectionSupport {
         throw new NoSuchMethodException(type.getCanonicalName() + "." + name);
     }
 
-    public static boolean isPropertyIsGetter(Class<?> type, String propertyName) {
+    static boolean isPropertyIsGetter(Class<?> type, String propertyName) {
         try {
             Method method = type.getMethod("is" + StringHelper.capitalize(propertyName, true));
             if (method != null) {
@@ -439,11 +416,7 @@ final class IntrospectionSupport {
         return false;
     }
 
-    /**
-     * @deprecated use {@link PropertyBindingSupport}
-     */
-    @Deprecated
-    public static boolean setProperties(
+    static boolean setProperties(
             Object target, Map<String, Object> properties, String optionPrefix, boolean allowBuilderPattern)
             throws Exception {
         ObjectHelper.notNull(target, "target");
@@ -466,28 +439,7 @@ final class IntrospectionSupport {
         return rc;
     }
 
-    /**
-     * @deprecated use {@link PropertyBindingSupport}
-     */
-    @Deprecated
-    public static boolean setProperties(Object target, Map<String, Object> properties, String optionPrefix) throws Exception {
-        StringHelper.notEmpty(optionPrefix, "optionPrefix");
-        return setProperties(target, properties, optionPrefix, false);
-    }
-
-    /**
-     * @deprecated use {@link org.apache.camel.util.PropertiesHelper}
-     */
-    @Deprecated
-    public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
-        return extractProperties(properties, optionPrefix, true);
-    }
-
-    /**
-     * @deprecated use {@link org.apache.camel.util.PropertiesHelper}
-     */
-    @Deprecated
-    public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix, boolean remove) {
+    static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix, boolean remove) {
         ObjectHelper.notNull(properties, "properties");
 
         Map<String, Object> rc = new LinkedHashMap<>(properties.size());
@@ -509,29 +461,7 @@ final class IntrospectionSupport {
         return rc;
     }
 
-    /**
-     * @deprecated use {@link org.apache.camel.util.PropertiesHelper}
-     */
-    @Deprecated
-    public static Map<String, String> extractStringProperties(Map<String, Object> properties) {
-        ObjectHelper.notNull(properties, "properties");
-
-        Map<String, String> rc = new LinkedHashMap<>(properties.size());
-
-        for (Entry<String, Object> entry : properties.entrySet()) {
-            String name = entry.getKey();
-            String value = entry.getValue().toString();
-            rc.put(name, value);
-        }
-
-        return rc;
-    }
-
-    /**
-     * @deprecated use {@link PropertyBindingSupport}
-     */
-    @Deprecated
-    public static boolean setProperties(
+    static boolean setProperties(
             CamelContext context, TypeConverter typeConverter, Object target, Map<String, Object> properties)
             throws Exception {
         ObjectHelper.notNull(target, "target");
@@ -549,20 +479,12 @@ final class IntrospectionSupport {
         return rc;
     }
 
-    /**
-     * @deprecated use {@link PropertyBindingSupport}
-     */
-    @Deprecated
-    public static boolean setProperties(TypeConverter typeConverter, Object target, Map<String, Object> properties)
+    static boolean setProperties(TypeConverter typeConverter, Object target, Map<String, Object> properties)
             throws Exception {
         return setProperties(null, typeConverter, target, properties);
     }
 
-    /**
-     * @deprecated use {@link PropertyBindingSupport}
-     */
-    @Deprecated
-    public static boolean setProperties(Object target, Map<String, Object> properties) throws Exception {
+    static boolean setProperties(Object target, Map<String, Object> properties) throws Exception {
         return setProperties(null, target, properties);
     }
 
@@ -579,7 +501,7 @@ final class IntrospectionSupport {
      * found matching the property name on the {@code target} bean. For this mode to be triggered the parameters
      * {@code context} and {@code refName} must NOT be NULL, and {@code value} MUST be NULL.
      */
-    public static boolean setProperty(
+    static boolean setProperty(
             CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
             boolean allowBuilderPattern)
             throws Exception {
@@ -599,7 +521,7 @@ final class IntrospectionSupport {
      * found matching the property name on the {@code target} bean. For this mode to be triggered the parameters
      * {@code context} and {@code refName} must NOT be NULL, and {@code value} MUST be NULL.
      */
-    public static boolean setProperty(
+    static boolean setProperty(
             CamelContext context, TypeConverter typeConverter, Object target, String name, Object value, String refName,
             boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase)
             throws Exception {
@@ -839,36 +761,34 @@ final class IntrospectionSupport {
         return false;
     }
 
-    public static boolean setProperty(CamelContext context, Object target, String name, Object value) throws Exception {
+    static boolean setProperty(CamelContext context, Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
         return setProperty(context, context != null ? context.getTypeConverter() : null, target, name, value, null, true, false,
                 false);
     }
 
-    public static boolean setProperty(
+    static boolean setProperty(
             CamelContext context, TypeConverter typeConverter, Object target, String name, Object value)
             throws Exception {
         // allow build pattern as a setter as well
         return setProperty(context, typeConverter, target, name, value, null, true, false, false);
     }
 
-    public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
+    static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
         return setProperty(null, typeConverter, target, name, value, null, true, false, false);
     }
 
-    @Deprecated
-    public static boolean setProperty(Object target, String name, Object value, boolean allowBuilderPattern) throws Exception {
+    static boolean setProperty(Object target, String name, Object value, boolean allowBuilderPattern) throws Exception {
         return setProperty(null, null, target, name, value, null, allowBuilderPattern, false, false);
     }
 
-    @Deprecated
-    public static boolean setProperty(Object target, String name, Object value) throws Exception {
+    static boolean setProperty(Object target, String name, Object value) throws Exception {
         // allow build pattern as a setter as well
         return setProperty(target, name, value, true);
     }
 
-    public static Set<Method> findSetterMethods(
+    static Set<Method> findSetterMethods(
             Class<?> clazz, String name,
             boolean allowBuilderPattern, boolean allowPrivateSetter, boolean ignoreCase) {
         Set<Method> candidates = new LinkedHashSet<>();
