@@ -26,9 +26,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class VertxWebsocketConsumerAsClientReconnectTest extends VertxWebSocketTestSupport {
+public class VertxWebsocketConsumerAsClientMaxReconnectTest extends VertxWebSocketTestSupport {
     @Test
-    void testReconnect() throws Exception {
+    void testMaxReconnect() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedBodiesReceived("Hello World");
 
@@ -38,7 +38,7 @@ public class VertxWebsocketConsumerAsClientReconnectTest extends VertxWebSocketT
 
         // Stop server
         mockEndpoint.reset();
-        mockEndpoint.expectedBodiesReceived("Hello World Again");
+        mockEndpoint.expectedMessageCount(0);
 
         context.getRouteController().stopRoute("server");
 
@@ -53,13 +53,13 @@ public class VertxWebsocketConsumerAsClientReconnectTest extends VertxWebSocketT
         Assertions.assertNotNull(exception);
         Assertions.assertInstanceOf(ConnectException.class, exception.getCause());
 
+        // Wait for client consumer reconnect max attempts to be exhausted
+        Thread.sleep(300);
+
         // Restart server
         context.getRouteController().startRoute("server");
 
-        // Wait for client consumer reconnect
-        Thread.sleep(300);
-
-        // Verify that the client consumer reconnected
+        // Verify that the client consumer gave up reconnecting
         template.sendBody(uri, "Hello World Again");
         mockEndpoint.assertIsSatisfied();
     }
@@ -73,9 +73,10 @@ public class VertxWebsocketConsumerAsClientReconnectTest extends VertxWebSocketT
                         .log("Server consumer: Received message: ${body}")
                         .toF("vertx-websocket:localhost:%d/echo?sendToAll=true", port);
 
-                fromF("vertx-websocket:localhost:%d/echo?consumeAsClient=true&reconnectInterval=10", port)
-                        .log("Client consumer 1: Received message: ${body}")
-                        .to("mock:result");
+                fromF("vertx-websocket:localhost:%d/echo?consumeAsClient=true&reconnectInterval=10&maxReconnectAttempts=1",
+                        port)
+                                .log("Client consumer 1: Received message: ${body}")
+                                .to("mock:result");
             }
         };
     }
