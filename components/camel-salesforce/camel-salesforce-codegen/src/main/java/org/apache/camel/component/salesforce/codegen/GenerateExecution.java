@@ -48,7 +48,8 @@ import org.apache.camel.component.salesforce.api.dto.PickListValue;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.impl.engine.DefaultBeanIntrospection;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.util.StringHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -69,6 +70,7 @@ public class GenerateExecution extends AbstractSalesforceExecution {
 
         private Stack<String> stack;
         private final Map<String, AtomicInteger> varNames = new HashMap<>();
+        private final BeanIntrospection bi = new DefaultBeanIntrospection();
 
         public String current() {
             return stack.peek();
@@ -259,7 +261,7 @@ public class GenerateExecution extends AbstractSalesforceExecution {
 
         public Set<Map.Entry<String, Object>> propertiesOf(final Object object) {
             final Map<String, Object> properties = new TreeMap<>();
-            IntrospectionSupport.getProperties(object, properties, null, false);
+            bi.getProperties(object, properties, null, false);
 
             final Function<Map.Entry<String, Object>, String> keyMapper = e -> StringUtils.capitalize(e.getKey());
             final Function<Map.Entry<String, Object>, Object> valueMapper = Map.Entry::getValue;
@@ -540,8 +542,8 @@ public class GenerateExecution extends AbstractSalesforceExecution {
     private VelocityEngine createVelocityEngine() {
         // initialize velocity to load resources from class loader and use Log4J
         final Properties velocityProperties = new Properties();
-        velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADER, "cloader");
-        velocityProperties.setProperty("cloader.resource.loader.class", ClasspathResourceLoader.class.getName());
+        velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADERS, "cloader");
+        velocityProperties.setProperty("resource.loader.cloader.class", ClasspathResourceLoader.class.getName());
         velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, LOG.getName());
         final VelocityEngine engine = new VelocityEngine(velocityProperties);
 
