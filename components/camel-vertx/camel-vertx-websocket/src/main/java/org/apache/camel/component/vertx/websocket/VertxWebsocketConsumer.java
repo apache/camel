@@ -18,7 +18,7 @@ package org.apache.camel.component.vertx.websocket;
 
 import io.vertx.core.net.SocketAddress;
 import io.vertx.core.net.impl.ConnectionBase;
-import org.apache.camel.AsyncCallback;
+import io.vertx.ext.web.RoutingContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
@@ -60,15 +60,13 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
         return endpoint.getComponent();
     }
 
-    public void onMessage(String connectionKey, Object message, SocketAddress remote) {
+    public void onMessage(String connectionKey, Object message, SocketAddress remote, RoutingContext routingContext) {
         Exchange exchange = createExchange(true);
         exchange.getMessage().setHeader(VertxWebsocketConstants.REMOTE_ADDRESS, remote);
         exchange.getMessage().setHeader(VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
         exchange.getMessage().setBody(message);
 
-        // use default consumer callback
-        AsyncCallback cb = defaultConsumerCallback(exchange, true);
-        getAsyncProcessor().process(exchange, cb);
+        processExchange(exchange, routingContext);
     }
 
     public void onException(String connectionKey, Throwable cause, SocketAddress remote) {
@@ -82,5 +80,34 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
         exchange.getMessage().setHeader(VertxWebsocketConstants.CONNECTION_KEY, connectionKey);
         getExceptionHandler().handleException("Error processing exchange", exchange, cause);
         releaseExchange(exchange, false);
+    }
+
+    protected void processExchange(Exchange exchange, RoutingContext routingContext) {
+        routingContext.vertx().executeBlocking(
+                promise -> {
+                    try {
+                        createUoW(exchange);
+                    } catch (Exception e) {
+                        promise.fail(e);
+                        return;
+                    }
+
+                    getAsyncProcessor().process(exchange, c -> {
+                        promise.complete();
+                    });
+                },
+                false,
+                result -> {
+                    try {
+                        if (result.failed()) {
+                            Throwable cause = result.cause();
+                            getExceptionHandler().handleException(cause);
+                            routingContext.fail(cause);
+                        }
+                    } finally {
+                        doneUoW(exchange);
+                        releaseExchange(exchange, false);
+                    }
+                });
     }
 }
