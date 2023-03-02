@@ -250,7 +250,7 @@ public abstract class AbstractSalesforceExecution {
             if (httpProxyExcludedAddresses != null && !httpProxyExcludedAddresses.isEmpty()) {
                 proxy.getExcludedAddresses().addAll(httpProxyExcludedAddresses);
             }
-            httpClient.getProxyConfiguration().getProxies().add(proxy);
+            httpClient.getProxyConfiguration().addProxy(proxy);
         }
         if (httpProxyUsername != null && httpProxyPassword != null) {
             StringHelper.notEmpty(httpProxyAuthUri, "httpProxyAuthUri");
