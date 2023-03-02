@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -34,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class VertxWebSocketEventTest extends VertxWebSocketTestSupport {
 
     private static final String MESSAGE_BODY = "Hello World";
-    private ServerWebSocket webSocket;
+    private final CompletableFuture<ServerWebSocket> webSocketFuture = new CompletableFuture<>();
 
     @BindToRegistry("serverOptions")
     public HttpServerOptions serverOptions() {
@@ -46,10 +47,12 @@ public class VertxWebSocketEventTest extends VertxWebSocketTestSupport {
     @Test
     void webSocketEvents() throws Exception {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
-        mockEndpoint.expectedBodiesReceived("WebSocket Open", "WebSocket Message", "WebSocket Error", "WebSocket Close");
+        mockEndpoint.expectedBodiesReceivedInAnyOrder("WebSocket Open", "WebSocket Message", "WebSocket Error",
+                "WebSocket Close");
 
         template.sendBody("vertx-websocket:localhost:" + port + "/test", MESSAGE_BODY);
 
+        ServerWebSocket webSocket = webSocketFuture.get(5000, TimeUnit.SECONDS);
         assertNotNull(webSocket);
 
         // Trigger error event (message length > max allowed)
@@ -82,7 +85,7 @@ public class VertxWebSocketEventTest extends VertxWebSocketTestSupport {
                         .when(simple("${header.CamelVertxWebsocket.event} == 'OPEN'"))
                         .process(exchange -> {
                             Message message = exchange.getMessage();
-                            webSocket = message.getBody(ServerWebSocket.class);
+                            webSocketFuture.complete(message.getBody(ServerWebSocket.class));
                         })
                         .setBody().constant("WebSocket Open")
                         .to("mock:result")
