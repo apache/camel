@@ -74,6 +74,7 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
+            <version>${hamcrest-version}</version>
             <scope>test</scope>
         </dependency>
         <!-- Override the guava version prescribed by Camel with the one needed by wiremock for tests -->
