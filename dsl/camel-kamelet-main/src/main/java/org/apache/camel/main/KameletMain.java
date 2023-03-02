@@ -16,7 +16,10 @@
  */
 package org.apache.camel.main;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -471,15 +474,38 @@ public class KameletMain extends MainCommandLineSupport {
 
     protected ClassLoader createApplicationContextClassLoader() {
         if (classLoader == null) {
+            // jars need to be added to dependency downloader classloader
+            List<String> jars = new ArrayList<>();
             // create class loader (that are download capable) only once
             // any additional files to add to classpath
             ClassLoader parentCL = KameletMain.class.getClassLoader();
             String cpFiles = getInitialProperties().getProperty("camel.jbang.classpathFiles");
             if (cpFiles != null) {
-                parentCL = new ExtraFilesClassLoader(parentCL, cpFiles.split(","));
-                LOG.info("Additional files added to classpath: {}", cpFiles);
+                String[] arr = cpFiles.split(",");
+                List<String> files = new ArrayList<>();
+                for (String s : arr) {
+                    if (s.endsWith(".jar")) {
+                        jars.add(s);
+                    } else {
+                        files.add(s);
+                    }
+                }
+                if (!files.isEmpty()) {
+                    parentCL = new ExtraFilesClassLoader(parentCL, files);
+                    LOG.info("Additional files added to classpath: {}", String.join(", ", files));
+                }
             }
-            classLoader = new DependencyDownloaderClassLoader(parentCL);
+            DependencyDownloaderClassLoader cl = new DependencyDownloaderClassLoader(parentCL);
+            if (!jars.isEmpty()) {
+                for (String jar : jars) {
+                    File f = new File(jar).getAbsoluteFile();
+                    if (f.isFile() && f.exists()) {
+                        cl.addFile(f);
+                    }
+                }
+                LOG.info("Additional jars added to classpath: {}", String.join(", ", jars));
+            }
+            classLoader = cl;
         }
         return classLoader;
     }
