@@ -22,7 +22,6 @@ import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.net.SocketAddress;
 import io.vertx.core.net.impl.ConnectionBase;
 import io.vertx.ext.web.RoutingContext;
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -65,10 +64,7 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
         Exchange exchange = createExchange(true);
         exchange.getMessage().setBody(message);
         populateExchangeHeaders(exchange, connectionKey, remote, routingContext, VertxWebsocketEvent.MESSAGE);
-
-        // use default consumer callback
-        AsyncCallback cb = defaultConsumerCallback(exchange, true);
-        getAsyncProcessor().process(exchange, cb);
+        processExchange(exchange, routingContext);
     }
 
     public void onException(String connectionKey, Throwable cause, SocketAddress remote, RoutingContext routingContext) {
@@ -88,19 +84,13 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
         Exchange exchange = createExchange(true);
         populateExchangeHeaders(exchange, connectionKey, remote, routingContext, VertxWebsocketEvent.OPEN);
         exchange.getMessage().setBody(webSocket);
-
-        // use default consumer callback
-        AsyncCallback cb = defaultConsumerCallback(exchange, true);
-        getAsyncProcessor().process(exchange, cb);
+        processExchange(exchange, routingContext);
     }
 
     public void onClose(String connectionKey, SocketAddress remote, RoutingContext routingContext) {
         Exchange exchange = createExchange(true);
         populateExchangeHeaders(exchange, connectionKey, remote, routingContext, VertxWebsocketEvent.CLOSE);
-
-        // use default consumer callback
-        AsyncCallback cb = defaultConsumerCallback(exchange, true);
-        getAsyncProcessor().process(exchange, cb);
+        processExchange(exchange, routingContext);
     }
 
     protected void populateExchangeHeaders(
@@ -115,5 +105,34 @@ public class VertxWebsocketConsumer extends DefaultConsumer {
                 .forEach((name, value) -> VertxWebsocketHelper.appendHeader(headers, name, value));
         routingContext.pathParams()
                 .forEach((name, value) -> VertxWebsocketHelper.appendHeader(headers, name, value));
+    }
+
+    protected void processExchange(Exchange exchange, RoutingContext routingContext) {
+        routingContext.vertx().executeBlocking(
+                promise -> {
+                    try {
+                        createUoW(exchange);
+                    } catch (Exception e) {
+                        promise.fail(e);
+                        return;
+                    }
+
+                    getAsyncProcessor().process(exchange, c -> {
+                        promise.complete();
+                    });
+                },
+                false,
+                result -> {
+                    try {
+                        if (result.failed()) {
+                            Throwable cause = result.cause();
+                            getExceptionHandler().handleException(cause);
+                            routingContext.fail(cause);
+                        }
+                    } finally {
+                        doneUoW(exchange);
+                        releaseExchange(exchange, false);
+                    }
+                });
     }
 }
