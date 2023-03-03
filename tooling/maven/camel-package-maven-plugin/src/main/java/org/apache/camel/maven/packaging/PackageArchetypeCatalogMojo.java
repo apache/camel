@@ -205,26 +205,8 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
     }
 
     private static void writeTop(FileOutputStream fos) throws IOException {
-        fos.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".getBytes());
-        writeLicense(fos);
-        fos.write("<archetype-catalog>\n  <archetypes>".getBytes());
-    }
-
-    private static void writeLicense(FileOutputStream fos) throws IOException {
-        fos.write("<!--\n\n".getBytes());
-        fos.write("    Licensed to the Apache Software Foundation (ASF) under one or more\n".getBytes());
-        fos.write("    contributor license agreements.  See the NOTICE file distributed with\n".getBytes());
-        fos.write("    this work for additional information regarding copyright ownership.\n".getBytes());
-        fos.write("    The ASF licenses this file to You under the Apache License, Version 2.0\n".getBytes());
-        fos.write("    (the \"License\"); you may not use this file except in compliance with\n".getBytes());
-        fos.write("    the License.  You may obtain a copy of the License at\n".getBytes());
-        fos.write("\n         http://www.apache.org/licenses/LICENSE-2.0\n\n".getBytes());
-        fos.write("    Unless required by applicable law or agreed to in writing, software\n".getBytes());
-        fos.write("    distributed under the License is distributed on an \"AS IS\" BASIS,\n".getBytes());
-        fos.write("    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n".getBytes());
-        fos.write("    See the License for the specific language governing permissions and\n".getBytes());
-        fos.write("    limitations under the License.\n".getBytes());
-        fos.write("\n-->\n".getBytes());
+        String top = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<archetype-catalog>\n  <archetypes>";
+        fos.write(top.getBytes());
     }
 
     private static class ArchetypeModel {
