@@ -16,9 +16,13 @@
  */
 package org.apache.camel.component.micrometer.routepolicy;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.LongTaskTimer;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Tags;
 import io.micrometer.core.instrument.Timer;
@@ -46,61 +50,116 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
     private MeterRegistry meterRegistry;
     private boolean prettyPrint;
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
-    private MetricsStatistics statistics;
     private MicrometerRoutePolicyNamingStrategy namingStrategy = MicrometerRoutePolicyNamingStrategy.DEFAULT;
+    private MicrometerRoutePolicyConfiguration configuration = MicrometerRoutePolicyConfiguration.DEFAULT;
+
+    private final Map<Route, MetricsStatistics> statisticsMap = new HashMap<>();
 
     private static final class MetricsStatistics {
         private final MeterRegistry meterRegistry;
         private final Route route;
         private final MicrometerRoutePolicyNamingStrategy namingStrategy;
-        private final Counter exchangesSucceeded;
-        private final Counter exchangesFailed;
-        private final Counter exchangesTotal;
-        private final Counter externalRedeliveries;
-        private final Counter failuresHandled;
+        private final MicrometerRoutePolicyConfiguration configuration;
+        private Counter exchangesSucceeded;
+        private Counter exchangesFailed;
+        private Counter exchangesTotal;
+        private Counter externalRedeliveries;
+        private Counter failuresHandled;
+        private Timer timer;
+        private LongTaskTimer longTaskTimer;
 
         private MetricsStatistics(MeterRegistry meterRegistry, Route route,
-                                  MicrometerRoutePolicyNamingStrategy namingStrategy) {
+                                  MicrometerRoutePolicyNamingStrategy namingStrategy,
+                                  MicrometerRoutePolicyConfiguration configuration) {
+            this.configuration = ObjectHelper.notNull(configuration, "MicrometerRoutePolicyConfiguration", this);
             this.meterRegistry = ObjectHelper.notNull(meterRegistry, "MeterRegistry", this);
             this.namingStrategy = ObjectHelper.notNull(namingStrategy, "MicrometerRoutePolicyNamingStrategy", this);
             this.route = route;
-            this.exchangesSucceeded = createCounter(namingStrategy.getExchangesSucceededName(route),
-                    "Number of successfully completed exchanges");
-            this.exchangesFailed = createCounter(namingStrategy.getExchangesFailedName(route), "Number of failed exchanges");
-            this.exchangesTotal
-                    = createCounter(namingStrategy.getExchangesTotalName(route), "Total number of processed exchanges");
-            this.externalRedeliveries = createCounter(namingStrategy.getExternalRedeliveriesName(route),
-                    "Number of external initiated redeliveries (such as from JMS broker)");
-            this.failuresHandled = createCounter(namingStrategy.getFailuresHandledName(route), "Number of failures handled");
+            if (configuration.isAdditionalCounters()) {
+                initAdditionalCounters();
+            }
+        }
+
+        private void initAdditionalCounters() {
+            if (configuration.isExchangesSucceeded()) {
+                this.exchangesSucceeded = createCounter(namingStrategy.getExchangesSucceededName(route),
+                        "Number of successfully completed exchanges");
+            }
+            if (configuration.isExchangesFailed()) {
+                this.exchangesFailed
+                        = createCounter(namingStrategy.getExchangesFailedName(route), "Number of failed exchanges");
+            }
+            if (configuration.isExchangesTotal()) {
+                this.exchangesTotal
+                        = createCounter(namingStrategy.getExchangesTotalName(route), "Total number of processed exchanges");
+            }
+            if (configuration.isExternalRedeliveries()) {
+                this.externalRedeliveries = createCounter(namingStrategy.getExternalRedeliveriesName(route),
+                        "Number of external initiated redeliveries (such as from JMS broker)");
+            }
+            if (configuration.isFailuresHandled()) {
+                this.failuresHandled
+                        = createCounter(namingStrategy.getFailuresHandledName(route), "Number of failures handled");
+            }
+            if (configuration.isLongTask()) {
+                LongTaskTimer.Builder builder = LongTaskTimer.builder(namingStrategy.getLongTaskName(route))
+                        .tags(namingStrategy.getTags(route))
+                        .description("Route long task metric");
+                if (configuration.getLongTaskInitiator() != null) {
+                    configuration.getLongTaskInitiator().accept(builder);
+                }
+                longTaskTimer = builder.register(meterRegistry);
+            }
         }
 
         public void onExchangeBegin(Exchange exchange) {
             Timer.Sample sample = Timer.start(meterRegistry);
             exchange.setProperty(propertyName(exchange), sample);
+            if (longTaskTimer != null) {
+                exchange.setProperty(propertyName(exchange) + "_long_task", longTaskTimer.start());
+            }
         }
 
         public void onExchangeDone(Exchange exchange) {
             Timer.Sample sample = (Timer.Sample) exchange.removeProperty(propertyName(exchange));
             if (sample != null) {
-                Timer timer = Timer.builder(namingStrategy.getName(route))
-                        .tags(namingStrategy.getTags(route))
-                        .description("Route performance metrics")
-                        .register(meterRegistry);
+                if (timer == null) {
+                    Timer.Builder builder = Timer.builder(namingStrategy.getName(route))
+                            .tags(namingStrategy.getTags(route))
+                            .description("Route performance metrics");
+                    if (configuration.getTimerInitiator() != null) {
+                        configuration.getTimerInitiator().accept(builder);
+                    }
+                    timer = builder.register(meterRegistry);
+                }
                 sample.stop(timer);
             }
+            LongTaskTimer.Sample ltSampler
+                    = (LongTaskTimer.Sample) exchange.removeProperty(propertyName(exchange) + "_long_task");
+            if (ltSampler != null) {
+                ltSampler.stop();
+            }
+            if (configuration.isAdditionalCounters()) {
+                updateAdditionalCounters(exchange);
+            }
+        }
 
-            exchangesTotal.increment();
-
+        private void updateAdditionalCounters(Exchange exchange) {
+            if (exchangesTotal != null) {
+                exchangesTotal.increment();
+            }
             if (exchange.isFailed()) {
-                exchangesFailed.increment();
+                if (exchangesFailed != null) {
+                    exchangesFailed.increment();
+                }
             } else {
-                exchangesSucceeded.increment();
-
-                if (ExchangeHelper.isFailureHandled(exchange)) {
+                if (exchangesSucceeded != null) {
+                    exchangesSucceeded.increment();
+                }
+                if (failuresHandled != null && ExchangeHelper.isFailureHandled(exchange)) {
                     failuresHandled.increment();
                 }
-
-                if (exchange.isExternalRedelivered()) {
+                if (externalRedeliveries != null && exchange.isExternalRedelivered()) {
                     externalRedeliveries.increment();
                 }
             }
@@ -150,6 +209,14 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         this.namingStrategy = namingStrategy;
     }
 
+    public MicrometerRoutePolicyConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(MicrometerRoutePolicyConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
     @Override
     public void onInit(Route route) {
         super.onInit(route);
@@ -176,21 +243,20 @@ public class MicrometerRoutePolicy extends RoutePolicySupport implements NonMana
         // create statistics holder
         // for now we record only all the timings of a complete exchange (responses)
         // we have in-flight / total statistics already from camel-core
-        statistics = new MetricsStatistics(getMeterRegistry(), route, getNamingStrategy());
+        statisticsMap.computeIfAbsent(route,
+                it -> new MetricsStatistics(getMeterRegistry(), it, getNamingStrategy(), configuration));
     }
 
     @Override
     public void onExchangeBegin(Route route, Exchange exchange) {
-        if (statistics != null) {
-            statistics.onExchangeBegin(exchange);
-        }
+        Optional.ofNullable(statisticsMap.get(route))
+                .ifPresent(statistics -> statistics.onExchangeBegin(exchange));
     }
 
     @Override
     public void onExchangeDone(Route route, Exchange exchange) {
-        if (statistics != null) {
-            statistics.onExchangeDone(exchange);
-        }
+        Optional.ofNullable(statisticsMap.get(route))
+                .ifPresent(statistics -> statistics.onExchangeDone(exchange));
     }
 
 }
