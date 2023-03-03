@@ -2773,13 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- optional Jettison -->
-            <dependency>
-                <groupId>org.codehaus.jettison</groupId>
-                <artifactId>jettison</artifactId>
-                <version>${jettison-version}</version>
-            </dependency>
-
             <!-- optional Axiom -->
             <dependency>
                 <groupId>org.apache.ws.commons.axiom</groupId>
