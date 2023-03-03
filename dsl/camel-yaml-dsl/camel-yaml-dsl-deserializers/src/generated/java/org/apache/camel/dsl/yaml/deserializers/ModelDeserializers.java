@@ -18531,6 +18531,7 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
             types = org.apache.camel.model.language.XMLTokenizerExpression.class,
             order = org.apache.camel.dsl.yaml.common.YamlDeserializerResolver.ORDER_LOWEST - 1,
             properties = {
+                    @YamlProperty(name = "expression", type = "string", required = true),
                     @YamlProperty(name = "group", type = "number"),
                     @YamlProperty(name = "header-name", type = "string"),
                     @YamlProperty(name = "id", type = "string"),
@@ -18559,6 +18560,11 @@ public final class ModelDeserializers extends YamlDeserializerSupport {
         protected boolean setProperty(XMLTokenizerExpression target, String propertyKey,
                 String propertyName, Node node) {
             switch(propertyKey) {
+                case "expression": {
+                    String val = asText(node);
+                    target.setExpression(val);
+                    break;
+                }
                 case "group": {
                     String val = asText(node);
                     target.setGroup(val);

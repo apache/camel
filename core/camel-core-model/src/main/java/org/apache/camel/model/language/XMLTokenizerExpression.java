@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Expression;
 import org.apache.camel.spi.Metadata;
 
 /**
@@ -33,10 +34,10 @@ import org.apache.camel.spi.Metadata;
 public class XMLTokenizerExpression extends NamespaceAwareExpression {
 
     @XmlAttribute
-    @Metadata(label = "advanced", enums = "i,w,u,t")
+    @Metadata(defaultValue = "i", enums = "i,w,u,t")
     private String mode;
     @XmlAttribute
-    @Metadata(label = "advanced", javaType = "java.lang.Integer")
+    @Metadata(javaType = "java.lang.Integer")
     private String group;
 
     public XMLTokenizerExpression() {
@@ -45,6 +46,11 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     public XMLTokenizerExpression(String expression) {
         super(expression);
     }
+
+    public XMLTokenizerExpression(Expression expression) {
+        setExpressionValue(expression);
+    }
+
 
     private XMLTokenizerExpression(Builder builder) {
         super(builder);
