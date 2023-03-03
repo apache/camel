@@ -6647,6 +6647,9 @@
         }, {
           "type" : "object",
           "properties" : {
+            "expression" : {
+              "type" : "string"
+            },
             "group" : {
               "type" : "number"
             },
@@ -6673,7 +6676,8 @@
               "type" : "boolean"
             }
           }
-        } ]
+        } ],
+        "required" : [ "expression" ]
       },
       "org.apache.camel.model.language.XPathExpression" : {
         "oneOf" : [ {
