@@ -91,7 +91,7 @@
         <box-java-sdk-version>2.58.0</box-java-sdk-version>
         <braintree-gateway-version>3.19.0</braintree-gateway-version>
         <brave-zipkin-version>5.13.3</brave-zipkin-version>
-        <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
+        <build-helper-maven-plugin-version>3.3.0</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
         <caffeine-version>3.1.2</caffeine-version>
         <californium-version>2.7.2</californium-version>
@@ -174,7 +174,7 @@
         <fop-version>2.7</fop-version>
         <formatter-maven-plugin-version>2.17.1</formatter-maven-plugin-version>
         <ftpserver-version>1.1.2</ftpserver-version>
-        <freemarker-version>2.3.31</freemarker-version>
+        <freemarker-version>2.3.32</freemarker-version>
         <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
         <geronimo-annotation-1.2-spec-version>1.0</geronimo-annotation-1.2-spec-version>
         <geronimo-atinject-1.0-spec-version>1.0</geronimo-atinject-1.0-spec-version>
@@ -238,7 +238,7 @@
         <hsqldb-version>2.7.1</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
         <httpcore4-version>4.4.15</httpcore4-version>
-        <httpclient4-version>4.5.13</httpclient4-version>
+        <httpclient4-version>4.5.14</httpclient4-version>
         <httpasyncclient-version>4.1.5</httpasyncclient-version>
         <huaweicloud-obs-version>3.21.4.1</huaweicloud-obs-version>
         <huaweicloud-sdk-version>3.0.76</huaweicloud-sdk-version>
@@ -501,7 +501,7 @@
         <spark-version>3.2.2</spark-version>
         <splunk-version>1.9.0_1</splunk-version>
         <spock-version>2.1-groovy-3.0</spock-version>
-        <spring-batch-version>4.3.7</spring-batch-version>
+        <spring-batch-version>4.3.8</spring-batch-version>
         <spring-data-redis-version>2.6.2</spring-data-redis-version>
         <spring-integration-version>5.5.16</spring-integration-version>
         <spring-ldap-version>2.4.1</spring-ldap-version>
@@ -510,8 +510,8 @@
         <spring-version>${spring5-version}</spring-version>
         <spring5-version>5.3.24</spring5-version>
         <spring-rabbitmq-version>2.4.7</spring-rabbitmq-version>
-        <spring-security-version>5.7.5</spring-security-version>
-        <spring-ws-version>3.1.4</spring-ws-version>
+        <spring-security-version>5.7.7</spring-security-version>
+        <spring-ws-version>3.1.5</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okio-version>1.17.2</squareup-okio-version>
@@ -554,7 +554,7 @@
         <xml-resolver-version>1.2</xml-resolver-version>
         <xmlgraphics-batik-version>1.15</xmlgraphics-batik-version>
         <xmlsec-version>2.2.3</xmlsec-version>
-        <xmlunit-version>2.9.0</xmlunit-version>
+        <xmlunit-version>2.9.1</xmlunit-version>
         <xpp3-version>1.1.4c</xpp3-version>
         <xstream-version>1.4.20</xstream-version>
         <yetus-audience-annotations-version>0.13.0</yetus-audience-annotations-version>
