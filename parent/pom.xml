@@ -2773,13 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- default JPA support -->
-            <dependency>
-                <groupId>org.apache.openjpa</groupId>
-                <artifactId>openjpa-persistence-jdbc</artifactId>
-                <version>${openjpa-version}</version>
-            </dependency>
-
             <!-- hibernate and other db systems -->
             <dependency>
                 <groupId>org.hibernate</groupId>
