@@ -111,10 +111,16 @@ public class VertxPlatformHttpConsumer extends DefaultConsumer {
         }
 
         if (getEndpoint().getConsumes() != null) {
-            newRoute.consumes(getEndpoint().getConsumes());
+            //comma separated contentTypes has to be registered one by one
+            for (String c : getEndpoint().getConsumes().split(",")) {
+                newRoute.consumes(c);
+            }
         }
         if (getEndpoint().getProduces() != null) {
-            newRoute.produces(getEndpoint().getProduces());
+            //comma separated contentTypes has to be registered one by one
+            for (String p : getEndpoint().getProduces().split(",")) {
+                newRoute.produces(p);
+            }
         }
 
         newRoute.handler(router.bodyHandler());
