@@ -51,7 +51,6 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         setExpressionValue(expression);
     }
 
-
     private XMLTokenizerExpression(Builder builder) {
         super(builder);
         this.mode = builder.mode;
