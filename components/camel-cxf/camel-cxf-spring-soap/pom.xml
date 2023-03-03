@@ -228,6 +228,7 @@
         <dependency>
             <groupId>org.codehaus.jettison</groupId>
             <artifactId>jettison</artifactId>
+            <version>${jettison-version}</version>
             <scope>test</scope>
         </dependency>
 
