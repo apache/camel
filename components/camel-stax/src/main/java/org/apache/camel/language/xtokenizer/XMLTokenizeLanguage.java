@@ -109,14 +109,17 @@ public class XMLTokenizeLanguage extends SingleInputLanguageSupport implements P
         answer.setMode(property(Character.class, properties, 1, "i"));
         answer.setGroup(property(Integer.class, properties, 2, group));
         Object obj = properties[3];
-        if (obj instanceof Namespaces) {
-            answer.setNamespaces((Namespaces) obj);
-        } else if (obj instanceof Map) {
-            Namespaces ns = new Namespaces();
-            ((Map<String, String>) obj).forEach(ns::add);
-            answer.setNamespaces(ns);
-        } else {
-            throw new IllegalArgumentException("Namespaces is not instance of java.util.Map or " + Namespaces.class.getName());
+        if (obj != null) {
+            if (obj instanceof Namespaces) {
+                answer.setNamespaces((Namespaces) obj);
+            } else if (obj instanceof Map) {
+                Namespaces ns = new Namespaces();
+                ((Map<String, String>) obj).forEach(ns::add);
+                answer.setNamespaces(ns);
+            } else {
+                throw new IllegalArgumentException(
+                        "Namespaces is not instance of java.util.Map or " + Namespaces.class.getName());
+            }
         }
         String path = expression != null ? expression : this.path;
         answer.setPropertyName(property(String.class, properties, 4, getPropertyName()));
