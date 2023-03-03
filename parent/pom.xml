@@ -113,13 +113,13 @@
         <consul-client-version>1.5.3</consul-client-version>
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
         <corda-version>4.10</corda-version>
-        <couchbase-client-version>3.4.2</couchbase-client-version>
+        <couchbase-client-version>3.4.3</couchbase-client-version>
         <curator-version>5.4.0</curator-version>
         <cxf-version>4.0.0</cxf-version>
         <cxf-codegen-plugin-version>4.0.0</cxf-codegen-plugin-version>
         <!-- cxf-xjc is not released as often -->
         <cxf-xjc-plugin-version>4.0.0</cxf-xjc-plugin-version>
-	<cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
+        <cxf-xjc-utils-version>4.0.0</cxf-xjc-utils-version>
         <datasonnet-mapper-version>2.5-jakarta4</datasonnet-mapper-version>
         <debezium-version>2.1.2.Final</debezium-version>
         <debezium-mysql-connector-version>8.0.29</debezium-mysql-connector-version>
@@ -273,7 +273,7 @@
         <jetcd-grpc-version>1.47.0</jetcd-grpc-version>
         <jetcd-guava-version>31.1-jre</jetcd-guava-version>
         <jetcd-version>0.7.5</jetcd-version>
-        <jetty-version>11.0.13</jetty-version>
+        <jetty-version>11.0.14</jetty-version>
         <jetty-plugin-version>${jetty-version}</jetty-plugin-version>
         <jetty-runner-groupId>org.eclipse.jetty</jetty-runner-groupId>
         <jettison-version>1.5.3</jettison-version>
