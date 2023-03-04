@@ -362,7 +362,7 @@
         <maven-surefire-report-plugin-version>3.0.0-M8</maven-surefire-report-plugin-version>
         <maven-wagon-version>3.5.2</maven-wagon-version>
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
-        <metrics-version>4.2.15</metrics-version>
+        <metrics-version>4.2.17</metrics-version>
         <micrometer-version>1.10.4</micrometer-version>
         <microprofile-config-version>3.0.2</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.0.2</microprofile-fault-tolerance-version>
