@@ -151,7 +151,7 @@
             <plugin>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-api-component-maven-plugin</artifactId>
-                <version>${camelVersion}</version>
+                <version>${project.version}</version>
                 <configuration>
                     <scheme>${schemeName}</scheme>
                     <componentName>${componentName}</componentName>
