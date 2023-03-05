@@ -779,6 +779,8 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
+                            <failIfNoTests>false</failIfNoTests>
+                            <failIfNoSpecifiedTests>false</failIfNoSpecifiedTests>
                             <skipITs>true</skipITs>
                         </configuration>
                     </plugin>
