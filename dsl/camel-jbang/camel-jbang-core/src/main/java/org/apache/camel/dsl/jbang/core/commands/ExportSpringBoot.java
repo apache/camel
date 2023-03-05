@@ -40,8 +40,6 @@ import org.apache.commons.io.FileUtils;
 
 class ExportSpringBoot extends Export {
 
-    private static final String DEFAULT_CAMEL_CATALOG = "org.apache.camel.catalog.DefaultCamelCatalog";
-
     public ExportSpringBoot(CamelJBangMain main) {
         super(main);
     }
