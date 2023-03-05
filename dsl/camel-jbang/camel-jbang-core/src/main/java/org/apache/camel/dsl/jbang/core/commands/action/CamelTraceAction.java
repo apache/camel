@@ -43,6 +43,7 @@ import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.JSonHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.XmlHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -131,7 +132,7 @@ public class CamelTraceAction extends ActionBaseCommand {
     boolean latest;
 
     @CommandLine.Option(names = { "--pretty" },
-                        description = "Pretty print message body when using JSon format")
+                        description = "Pretty print message body when using JSon or XML format")
     boolean pretty;
 
     String findAnsi;
@@ -902,6 +903,7 @@ public class CamelTraceAction extends ActionBaseCommand {
             if (value == null) {
                 return "null";
             }
+            boolean json = false;
             String s = value.toString();
             if (!s.isEmpty()) {
                 try {
@@ -911,8 +913,27 @@ public class CamelTraceAction extends ActionBaseCommand {
                     } else {
                         s = JSonHelper.prettyPrint(s, 2);
                     }
+                    if (s != null && !s.isEmpty()) {
+                        json = true;
+                    }
                 } catch (Throwable e) {
                     // ignore as not json
+                }
+                if (s == null || s.isEmpty()) {
+                    s = value.toString();
+                }
+                if (!json) {
+                    // try with xml
+                    try {
+                        s = Jsoner.unescape(s);
+                        if (loggingColor) {
+                            s = XmlHelper.colorPrint(s, 2, true);
+                        } else {
+                            s = XmlHelper.prettyPrint(s, 2);
+                        }
+                    } catch (Throwable e) {
+                        // ignore as not xml
+                    }
                 }
                 if (s == null || s.isEmpty()) {
                     s = value.toString();
