@@ -41,6 +41,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.JSonHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -128,6 +129,10 @@ public class CamelTraceAction extends ActionBaseCommand {
     @CommandLine.Option(names = { "--latest" },
                         description = "Only output traces from the latest (follow if necessary until complete and exit)")
     boolean latest;
+
+    @CommandLine.Option(names = { "--pretty" },
+                        description = "Pretty print message body when using JSon format")
+    boolean pretty;
 
     String findAnsi;
 
@@ -735,7 +740,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         if (bodyRow.value != null) {
             tab6 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(bodyRow), Arrays.asList(
                     new Column().dataAlign(HorizontalAlign.LEFT).maxWidth(160, OverflowBehaviour.NEWLINE)
-                            .with(TableRow::valueAsString)));
+                            .with(b -> pretty ? bodyRow.valueAsStringPretty() : bodyRow.valueAsString())));
         }
         String tab7 = null;
         jo = r.exception;
@@ -891,6 +896,32 @@ public class CamelTraceAction extends ActionBaseCommand {
 
         String valueAsString() {
             return value != null ? value.toString() : "null";
+        }
+
+        String valueAsStringPretty() {
+            if (value == null) {
+                return "null";
+            }
+            String s = value.toString();
+            if (!s.isEmpty()) {
+                try {
+                    s = Jsoner.unescape(s);
+                    if (loggingColor) {
+                        s = JSonHelper.colorPrint(s, 2, true);
+                    } else {
+                        s = JSonHelper.prettyPrint(s, 2);
+                    }
+                } catch (Throwable e) {
+                    // ignore as not json
+                }
+                if (s == null || s.isEmpty()) {
+                    s = value.toString();
+                }
+            }
+            if (s == null) {
+                return "null";
+            }
+            return s;
         }
 
         String valueAsStringRed() {
