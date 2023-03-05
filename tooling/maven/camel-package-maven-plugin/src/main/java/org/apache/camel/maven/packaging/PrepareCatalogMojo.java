@@ -112,12 +112,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File modelsOutDir;
 
     /**
-     * The output directory for archetypes catalog
-     */
-    @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/archetypes")
-    protected File archetypesOutDir;
-
-    /**
      * The output directory for XML schemas catalog
      */
     @Parameter(defaultValue = "${project.basedir}/src/generated/resources/org/apache/camel/catalog/schemas")
@@ -164,12 +158,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}/../../../components/camel-spring-xml")
     protected File springDir;
-
-    /**
-     * The archetypes directory where all the Apache Camel Maven archetypes are
-     */
-    @Parameter(defaultValue = "${project.build.directory}/../../../archetypes")
-    protected File archetypesDir;
 
     /**
      * The directory where the camel-spring XML schema are
@@ -290,7 +278,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
             Set<String> languages = executeLanguages();
             Set<String> others = executeOthers();
             executeDocuments(components, dataformats, languages, others);
-            executeArchetypes();
             executeXmlSchemas();
             executeMain();
         } catch (Exception e) {
@@ -703,16 +690,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
         printOthersReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
 
         return otherNames;
-    }
-
-    protected void executeArchetypes() throws Exception {
-        Path archetypesDir = this.archetypesDir.toPath();
-        Path archetypesOutDir = this.archetypesOutDir.toPath();
-
-        getLog().info("Copying Archetype Catalog");
-
-        // find the generate catalog
-        copyFile(archetypesDir.resolve("target/classes/archetype-catalog.xml"), archetypesOutDir);
     }
 
     protected void executeXmlSchemas() throws Exception {

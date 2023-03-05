@@ -165,12 +165,6 @@ public class CamelCatalogTest {
     }
 
     @Test
-    public void testArchetypeCatalog() {
-        String schema = catalog.archetypeCatalogAsXml();
-        assertNotNull(schema);
-    }
-
-    @Test
     public void testMain() {
         String schema = catalog.mainJsonSchema();
         assertNotNull(schema);

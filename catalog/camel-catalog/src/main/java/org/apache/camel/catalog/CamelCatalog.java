@@ -322,13 +322,6 @@ public interface CamelCatalog {
     Set<String> findOtherLabels();
 
     /**
-     * Returns the Apache Camel Maven Archetype catalog in XML format.
-     *
-     * @return the catalog in XML
-     */
-    String archetypeCatalogAsXml();
-
-    /**
      * Returns the Camel Spring XML schema
      *
      * @return the spring XML schema

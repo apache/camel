@@ -80,6 +80,7 @@ We have removed deprecated APIs such as the following:
 - Removed `Discard` and `DiscardOldest` from `org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy`.
 - Removed `org.apache.camel.builder.SimpleBuilder`. Was mostly used internally in Camel with the Java DSL in some situations.
 - Moved `org.apache.camel.support.IntrospectionSupport` to `camel-core-engine` for internal use only. End users should use `org.apache.camel.spi.BeanInspection` instead.
+- Removed `archetypeCatalogAsXml` method from `org.apache.camel.catalog.CamelCatalog`.
 
 == EIP Changes
 
