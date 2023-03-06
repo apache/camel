@@ -403,6 +403,24 @@ following options:
 |prettyPrint |false |Whether to use pretty print when outputting statistics in json format
 |meterRegistry |  |Allow to use a shared `MeterRegistry`. If none is provided then Camel will create a shared instance used by the this CamelContext.
 |durationUnit |TimeUnit.MILLISECONDS |The unit to use for duration in when dumping the statistics as json.
+|configuration | see below |MicrometerRoutePolicyConfiguration.class
+|=======================================================================
+
+The `MicrometerRoutePolicyConfiguration` supports the
+following options:
+
+[width="100%",options="header"]
+|=======================================================================
+|Name |Default |Description
+|additionalCounters | true | activates all additional counters
+|exchangesSucceeded | true | activates counter for succeeded exchanges
+|exchangesFailed | true | activates counter for failed exchanges
+|exchangesTotal | true | activates counter for total count of exchanges
+|externalRedeliveries | true | activates counter for redeliveries of exchanges
+|failuresHandled | true | activates counter for handled failures
+|longTask | false | activates long task timer (current processing time for micrometer)
+|timerInitiator |  null | Consumer<Timer.Builder> for custom initialize Timer
+|longTaskInitiator |  null | Consumer<LongTaskTimer.Builder> for custom initialize LongTaskTimer
 |=======================================================================
 
 If JMX is enabled in the CamelContext, the MBean is registered in the `type=services` tree
