@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -472,23 +473,32 @@ abstract class ExportBaseCommand extends CamelCommand {
      * @param  camelVersion the camel version
      * @return              repositories or null if none are in use
      */
-    protected static String getMavenRepos(Properties prop, String camelVersion) {
-        String answer = prop.getProperty("camel.jbang.repos");
+    protected static String getMavenRepos(File settings, Properties prop, String camelVersion) throws Exception {
+        StringJoiner sj = new StringJoiner(",");
+
+        String repos = prop.getProperty("camel.jbang.repos");
+        if (repos != null) {
+            sj.add(repos);
+        }
 
         if (camelVersion == null) {
             camelVersion = new DefaultCamelCatalog().getCatalogVersion();
         }
-
         // include apache snapshot repo if we use SNAPSHOT version of Camel
         if (camelVersion.endsWith("-SNAPSHOT")) {
-            if (answer == null) {
-                answer = "https://repository.apache.org/content/groups/snapshots/";
-            } else if (!answer.contains("https://repository.apache.org/content/groups/snapshots/")) {
-                answer += ",https://repository.apache.org/content/groups/snapshots/";
+            sj.add("https://repository.apache.org/content/groups/snapshots/");
+        }
+
+        // there may be additional extra repositories
+        List<String> lines = Files.readAllLines(settings.toPath());
+        for (String line : lines) {
+            if (line.startsWith("repository=")) {
+                String r = StringHelper.after(line, "repository=");
+                sj.add(r);
             }
         }
 
-        return answer;
+        return sj.toString();
     }
 
     protected static boolean hasModeline(File settings) {
