@@ -220,6 +220,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private static final RepositoryPolicy POLICY_DISABLED = new RepositoryPolicy(
             false, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_IGNORE);
 
+    int customCount = 1;
     private String[] bootClasspath;
     private DownloadThreadPool threadPool;
     private DIRegistry registry;
@@ -227,6 +228,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private CamelContext camelContext;
     private final Set<DownloadListener> downloadListeners = new LinkedHashSet<>();
     private final Set<ArtifactDownloadListener> artifactDownloadListeners = new LinkedHashSet<>();
+    private KnownReposResolver knownReposResolver;
 
     // repository URLs set from "camel.jbang.repos" property or --repos option.
     private String repos;
@@ -257,6 +259,14 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
+    }
+
+    public KnownReposResolver getKnownReposResolver() {
+        return knownReposResolver;
+    }
+
+    public void setKnownReposResolver(KnownReposResolver knownReposResolver) {
+        this.knownReposResolver = knownReposResolver;
     }
 
     @Override
@@ -317,18 +327,23 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
+    public void downloadDependency(String groupId, String artifactId, String version, String extraRepos) {
+        doDownloadDependency(groupId, artifactId, version, true, false, extraRepos);
+    }
+
+    @Override
     public void downloadHiddenDependency(String groupId, String artifactId, String version) {
-        doDownloadDependency(groupId, artifactId, version, true, true);
+        doDownloadDependency(groupId, artifactId, version, true, true, null);
     }
 
     @Override
     public void downloadDependency(String groupId, String artifactId, String version, boolean transitively) {
-        doDownloadDependency(groupId, artifactId, version, transitively, false);
+        doDownloadDependency(groupId, artifactId, version, transitively, false, null);
     }
 
     protected void doDownloadDependency(
             String groupId, String artifactId, String version, boolean transitively,
-            boolean hidden) {
+            boolean hidden, String extraRepos) {
 
         if (!hidden) {
             // trigger listener
@@ -367,6 +382,11 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             if (!apacheSnapshotsIncluded && "org.apache.camel".equals(groupId) && version.contains("SNAPSHOT")) {
                 repositories.add(apacheSnapshots);
             }
+            // include extra repositories (if any)
+            repositories.addAll(resolveExtraRepositories(extraRepos));
+            // and from known extra repositories (if any)
+            String known = knownReposResolver.getRepo(artifactId);
+            repositories.addAll(resolveExtraRepositories(known));
 
             List<MavenArtifact> artifacts = resolveDependenciesViaAether(deps, repositories, transitively);
             List<File> files = new ArrayList<>();
@@ -491,6 +511,38 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         for (DownloadListener listener : downloadListeners) {
             listener.onLoadingModeline(key, value);
         }
+    }
+
+    private List<RemoteRepository> resolveExtraRepositories(String extraRepos) {
+        List<RemoteRepository> repositories = new ArrayList<>();
+        if (extraRepos != null) {
+            Set<URL> repositoryURLs = new HashSet<>();
+            for (String repo : extraRepos.split(",")) {
+                try {
+                    URL url = new URL(repo);
+                    if (url.getHost().equals("repo1.maven.org")) {
+                        continue;
+                    }
+                    String id = "custom" + customCount++;
+                    RepositoryPolicy releasePolicy = fresh ? POLICY_FRESH : POLICY_DEFAULT;
+                    if (repositoryURLs.add(url)) {
+                        if (url.getHost().equals("repository.apache.org") && url.getPath().contains("/snapshots")) {
+                            apacheSnapshotsIncluded = true;
+                            repositories.add(apacheSnapshots);
+                        } else {
+                            // both snapshots and releases allowed for custom repos
+                            repositories.add(new RemoteRepository.Builder(id, "default", repo)
+                                    .setReleasePolicy(releasePolicy)
+                                    .setSnapshotPolicy(fresh ? POLICY_FRESH : POLICY_DEFAULT)
+                                    .build());
+                        }
+                    }
+                } catch (MalformedURLException e) {
+                    LOG.warn("Can't use {} URL: {}. Skipping.", repo, e.getMessage(), e);
+                }
+            }
+        }
+        return repositories;
     }
 
     @Override
@@ -1117,7 +1169,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 .build();
 
         // and custom repos and remember URLs to not duplicate the repositories from the settings
-        int customCount = 1;
         if (repos != null) {
             for (String repo : repos.split(",")) {
                 try {
