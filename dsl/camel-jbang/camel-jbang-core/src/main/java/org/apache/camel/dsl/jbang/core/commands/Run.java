@@ -1067,7 +1067,6 @@ class Run extends CamelCommand {
             onDownloadDependency(groupId, artifactId, version);
         }
 
-        @Override
         public void onExtraRepository(String repo) {
             if (!repos.contains(repo)) {
                 writeSettings("repository", repo);

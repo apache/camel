@@ -136,6 +136,10 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     protected boolean fresh;
 
+    @CommandLine.Option(names = { "--additional-properties" },
+                        description = "Additional maven properties, ex. --additional-properties=prop1=foo,prop2=bar")
+    protected String additionalProperties;
+
     @CommandLine.Option(names = { "--logging" }, defaultValue = "false",
                         description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
     boolean logging;

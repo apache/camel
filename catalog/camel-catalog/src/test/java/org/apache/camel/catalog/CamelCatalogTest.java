@@ -17,6 +17,9 @@
 package org.apache.camel.catalog;
 
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -1517,6 +1520,21 @@ public class CamelCatalogTest {
         am = catalog.modelFromMavenGAV("org.apache.camel", "camel-jms", null);
         Assertions.assertInstanceOf(ComponentModel.class, am);
         Assertions.assertEquals("Sent and receive messages to/from a JMS Queue or Topic.", am.getDescription());
+    }
+
+    @Test
+    public void loadFooResourceWithBarKind() throws IOException {
+        InputStream is = catalog.loadResource("bar", "foo.txt");
+        Assertions.assertNotNull(is);
+
+        String content = new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        Assertions.assertEquals("Hello Camel", content);
+    }
+
+    @Test
+    public void loadNotExistingResource() {
+        InputStream is = catalog.loadResource("bar", "not_exists");
+        Assertions.assertNull(is);
     }
 
 }
