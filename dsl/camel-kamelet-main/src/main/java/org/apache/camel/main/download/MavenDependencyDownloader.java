@@ -361,6 +361,13 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             if (!apacheSnapshotsIncluded && "org.apache.camel".equals(groupId) && version.contains("SNAPSHOT")) {
                 repositories.add(apacheSnapshots);
             }
+            List<RemoteRepository> extaRepositories = new ArrayList<>();
+            // include extra repositories (if any)
+            extaRepositories.addAll(resolveExtraRepositories(extraRepos));
+            // and from known extra repositories (if any)
+            String known = knownReposResolver.getRepo(artifactId);
+            extaRepositories.addAll(resolveExtraRepositories(known));
+            repositories.addAll(extaRepositories);
 
             List<MavenArtifact> artifacts = resolveDependenciesViaAether(deps, repositories, transitively);
             List<File> files = new ArrayList<>();
@@ -389,6 +396,13 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             if (!artifacts.isEmpty()) {
                 for (DownloadListener listener : downloadListeners) {
                     listener.onDownloadedDependency(groupId, artifactId, version);
+                }
+            }
+            if (!extaRepositories.isEmpty()) {
+                for (RemoteRepository repo : extaRepositories) {
+                    for (DownloadListener listener : downloadListeners) {
+                        listener.onExtraRepository(repo.getUrl());
+                    }
                 }
             }
 
