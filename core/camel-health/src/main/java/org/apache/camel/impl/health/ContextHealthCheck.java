@@ -42,8 +42,8 @@ public final class ContextHealthCheck extends AbstractHealthCheck {
 
     @Override
     public boolean isLiveness() {
-        // this check is only for readiness
-        return false;
+        // context is also liveness to ensure we have at least one liveness check
+        return true;
     }
 
     @Override

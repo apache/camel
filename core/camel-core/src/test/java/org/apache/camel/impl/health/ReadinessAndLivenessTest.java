@@ -110,6 +110,11 @@ public class ReadinessAndLivenessTest {
         }
 
         @Override
+        public boolean isReadiness() {
+            return true;
+        }
+
+        @Override
         public boolean isLiveness() {
             return false;
         }
@@ -133,6 +138,11 @@ public class ReadinessAndLivenessTest {
         }
 
         @Override
+        public boolean isLiveness() {
+            return true;
+        }
+
+        @Override
         public void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
             builder.down();
         }
@@ -143,6 +153,16 @@ public class ReadinessAndLivenessTest {
 
         protected MyAllCheck(String group, String id) {
             super(group, id);
+        }
+
+        @Override
+        public boolean isReadiness() {
+            return true;
+        }
+
+        @Override
+        public boolean isLiveness() {
+            return true;
         }
 
         @Override

@@ -19,6 +19,13 @@ Component developers that has plugins for Camel Developer Console, should just u
 `camel-support` and `camel-util-json` as dependencies,
 and then extend `AbstractDevConsole` for custom console implementations.
 
+=== camel-health
+
+The `org.apache.camel.health.HealthCheck` method `isLiveness` is now default `false` instead of `true`.
+
+Camel provides the `CamelContextCheck` as both readiness and liveness checks, so there is at least
+one of each out of the box.
+
 === camel-main
 
 The option `camel.main.routesReloadRestartDuration` has changed its default value from `true` to `false`.

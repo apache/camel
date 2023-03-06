@@ -60,7 +60,7 @@ public class ScheduledPollConsumerHealthCheck implements HealthCheck {
         final HealthCheckResultBuilder builder = HealthCheckResultBuilder.on(this);
 
         // set initial state
-        builder.state(registry.getInitialState());
+        builder.state(initialState);
 
         // ensure to sanitize uri, so we do not show sensitive information such as passwords
         builder.detail(ENDPOINT_URI, sanitizedUri);

@@ -87,7 +87,9 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
     }
 
     /**
-     * Whether this health check can be used for readiness checks
+     * Whether this health check can be used for readiness checks.
+     *
+     * Readiness check is default.
      */
     default boolean isReadiness() {
         return true;
@@ -95,9 +97,11 @@ public interface HealthCheck extends HasGroup, HasId, Ordered {
 
     /**
      * Whether this health check can be used for liveness checks
+     *
+     * Liveness check is not default, and must be explicit enabled.
      */
     default boolean isLiveness() {
-        return true;
+        return false;
     }
 
     /**
