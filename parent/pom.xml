@@ -2773,13 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- Maven exec-plugin dependencies -->
-            <dependency>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>${exec-maven-plugin-version}</version>
-            </dependency>
-
             <!-- Optional Zendesk -->
             <dependency>
                 <groupId>com.cloudbees.thirdparty</groupId>
