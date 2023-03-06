@@ -118,7 +118,7 @@
         <!-- reproduceable builds: https://maven.apache.org/guides/mini/guide-reproducible-builds.html -->
         <project.build.outputTimestamp>1</project.build.outputTimestamp>
 
-        <maven-compiler-plugin-version>3.10.1</maven-compiler-plugin-version>
+        <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
         <maven-surefire-plugin-version>3.0.0-M8</maven-surefire-plugin-version>
         <maven-failsafe-plugin-version>3.0.0-M8</maven-failsafe-plugin-version>
