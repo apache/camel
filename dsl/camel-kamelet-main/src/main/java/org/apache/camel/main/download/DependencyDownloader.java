@@ -82,6 +82,16 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
     void downloadDependency(String groupId, String artifactId, String version);
 
     /**
+     * Downloads the dependency incl transitive dependencies
+     *
+     * @param groupId    maven group id
+     * @param artifactId maven artifact id
+     * @param version    maven version
+     * @param extraRepos additional remote maven repositories to use when downloading
+     */
+    void downloadDependency(String groupId, String artifactId, String version, String extraRepos);
+
+    /**
      * Downloads the dependency
      *
      * @param groupId      maven group id
