@@ -1045,6 +1045,7 @@ class Run extends CamelCommand {
 
     private class RunDownloadListener implements DownloadListener {
         final Set<String> downloaded = new HashSet<>();
+        final Set<String> repos = new HashSet<>();
         final Set<String> kamelets = new HashSet<>();
         final Set<String> modelines = new HashSet<>();
 
@@ -1064,6 +1065,14 @@ class Run extends CamelCommand {
         public void onAlreadyDownloadedDependency(String groupId, String artifactId, String version) {
             // we want to register everything
             onDownloadDependency(groupId, artifactId, version);
+        }
+
+        @Override
+        public void onExtraRepository(String repo) {
+            if (!repos.contains(repo)) {
+                writeSettings("repository", repo);
+                repos.add(repo);
+            }
         }
 
         @Override

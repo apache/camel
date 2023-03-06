@@ -34,6 +34,13 @@ public interface DownloadListener {
     }
 
     /**
+     * Some dependencies require third-party maven repositories to be downloaded.
+     */
+    default void onExtraRepository(String repo) {
+        // noop
+    }
+
+    /**
      * Uses an existing already downloaded dependency
      */
     void onAlreadyDownloadedDependency(String groupId, String artifactId, String version);
