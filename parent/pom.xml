@@ -2773,13 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- Optional Zendesk -->
-            <dependency>
-                <groupId>com.cloudbees.thirdparty</groupId>
-                <artifactId>zendesk-java-client</artifactId>
-                <version>${zendesk-client-version}</version>
-            </dependency>
-
             <!-- optional misc -->
             <dependency>
                 <groupId>commons-dbcp</groupId>
