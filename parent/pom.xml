@@ -2773,18 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- optional Axiom -->
-            <dependency>
-                <groupId>org.apache.ws.commons.axiom</groupId>
-                <artifactId>axiom-api</artifactId>
-                <version>${axiom-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.ws.commons.axiom</groupId>
-                <artifactId>axiom-impl</artifactId>
-                <version>${axiom-version}</version>
-            </dependency>
-
             <!-- Maven exec-plugin dependencies -->
             <dependency>
                 <groupId>org.codehaus.mojo</groupId>
