@@ -30,6 +30,9 @@ import static org.apache.camel.util.StringHelper.padString;
 
 public final class XmlPrettyPrinter {
 
+    private XmlPrettyPrinter() {
+    }
+
     @FunctionalInterface
     public interface ColorPrintElement {
 
