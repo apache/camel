@@ -64,7 +64,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         formatter.setShowExchangeId(true);
         formatter.setShowExchangePattern(false);
         formatter.setMultiline(false);
-        formatter.setShowHeaders(false);
+        formatter.setShowHeaders(true);
         formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Default);
         setExchangeFormatter(formatter);
     }
