@@ -81,6 +81,7 @@ We have removed deprecated APIs such as the following:
 - Removed `org.apache.camel.builder.SimpleBuilder`. Was mostly used internally in Camel with the Java DSL in some situations.
 - Moved `org.apache.camel.support.IntrospectionSupport` to `camel-core-engine` for internal use only. End users should use `org.apache.camel.spi.BeanInspection` instead.
 - Removed `archetypeCatalogAsXml` method from `org.apache.camel.catalog.CamelCatalog`.
+- The `org.apache.camel.health.HealthCheck` method `isLiveness` is now default `false` instead of `true`.
 
 == EIP Changes
 
@@ -88,6 +89,13 @@ Removed `lang` attribute for the `<description>` on every EIPs.
 
 The `InOnly` and `InOut` EIPs has been removed.
 Instead, use `SetExchangePattern` or `To` where you can specify exchange pattern to use.
+
+== Camel Health
+
+Health checks are now by default only readiness checks out of the box.
+
+Camel provides the `CamelContextCheck` as both readiness and liveness checks, so there is at least
+one of each out of the box.
 
 == YAML DSL
 

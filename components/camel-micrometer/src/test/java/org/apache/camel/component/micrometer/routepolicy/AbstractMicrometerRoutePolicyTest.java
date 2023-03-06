@@ -47,13 +47,16 @@ public abstract class AbstractMicrometerRoutePolicyTest extends CamelTestSupport
         return meterRegistry;
     }
 
+    protected MicrometerRoutePolicyFactory createMicrometerRoutePolicyFactory() {
+        return new MicrometerRoutePolicyFactory();
+    }
+
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        MicrometerRoutePolicyFactory factory = new MicrometerRoutePolicyFactory();
+        MicrometerRoutePolicyFactory factory = createMicrometerRoutePolicyFactory();
         factory.setMeterRegistry(meterRegistry);
         context.addRoutePolicyFactory(factory);
-
         return context;
     }
 

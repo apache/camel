@@ -68,7 +68,7 @@
         <avro-ipc-jetty-version>1.11.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.20.16</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.20.17</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-sdk-bom-version>1.2.9</azure-sdk-bom-version>
@@ -78,7 +78,7 @@
         <braintree-gateway-version>3.21.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
         <c3p0-version>0.9.5.5</c3p0-version>
-        <caffeine-version>3.1.4</caffeine-version>
+        <caffeine-version>3.1.5</caffeine-version>
         <californium-version>2.7.2</californium-version>
         <californium-scandium-version>2.7.4</californium-scandium-version>
         <cassandra-driver-version>4.15.0</cassandra-driver-version>
@@ -340,7 +340,7 @@
         <maven-assembly-plugin-version>3.4.2</maven-assembly-plugin-version>
         <maven-checkstyle-plugin-version>3.2.1</maven-checkstyle-plugin-version>
         <maven-checkstyle-version>8.45.1</maven-checkstyle-version>
-        <maven-owasp-plugin-version>8.1.0</maven-owasp-plugin-version>
+        <maven-owasp-plugin-version>8.1.2</maven-owasp-plugin-version>
         <maven-jar-plugin-version>3.3.0</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.4.1</maven-javadoc-plugin-version>
         <maven-plugin-plugin-version>3.7.0</maven-plugin-plugin-version>
@@ -366,7 +366,7 @@
         <mina-version>2.2.1</mina-version>
         <minidns-version>0.3.4</minidns-version>
         <minimal-json-version>0.9.5</minimal-json-version>
-        <minio-version>8.5.1</minio-version>
+        <minio-version>8.5.2</minio-version>
         <mock-javamail-version>2.0</mock-javamail-version>
         <mockwebserver-version>0.2.2</mockwebserver-version>
         <mockito-version>3.12.4</mockito-version>
@@ -2773,48 +2773,7 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- optional Axiom -->
-            <dependency>
-                <groupId>org.apache.ws.commons.axiom</groupId>
-                <artifactId>axiom-api</artifactId>
-                <version>${axiom-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.ws.commons.axiom</groupId>
-                <artifactId>axiom-impl</artifactId>
-                <version>${axiom-version}</version>
-            </dependency>
-
-            <!-- Maven exec-plugin dependencies -->
-            <dependency>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>${exec-maven-plugin-version}</version>
-            </dependency>
-
-            <!-- Optional Zendesk -->
-            <dependency>
-                <groupId>com.cloudbees.thirdparty</groupId>
-                <artifactId>zendesk-java-client</artifactId>
-                <version>${zendesk-client-version}</version>
-            </dependency>
-
             <!-- optional misc -->
-            <dependency>
-                <groupId>commons-dbcp</groupId>
-                <artifactId>commons-dbcp</artifactId>
-                <version>${commons-dbcp-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-dbcp2</artifactId>
-                <version>${commons-dbcp2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>${commons-collections-version}</version>
-            </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>

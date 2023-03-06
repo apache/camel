@@ -37,12 +37,6 @@ public class Cw2ClientHealthCheck extends AbstractHealthCheck {
     }
 
     @Override
-    public boolean isLiveness() {
-        // this health check is only readiness
-        return false;
-    }
-
-    @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
         Cw2Configuration configuration = cw2Endpoint.getConfiguration();
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
