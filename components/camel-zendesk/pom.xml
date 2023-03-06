@@ -49,6 +49,7 @@
         <dependency>
             <groupId>com.cloudbees.thirdparty</groupId>
             <artifactId>zendesk-java-client</artifactId>
+            <version>${zendesk-client-version}</version>
         </dependency>
 
         <!-- testing -->
