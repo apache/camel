@@ -142,7 +142,7 @@ class ExportCamelMain extends Export {
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);
-        String repos = getMavenRepos(prop, camelVersion);
+        String repos = getMavenRepos(settings, prop, camelVersion);
         if (repos == null) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
         } else {
