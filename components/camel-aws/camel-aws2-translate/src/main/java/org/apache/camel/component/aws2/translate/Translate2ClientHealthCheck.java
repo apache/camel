@@ -37,12 +37,6 @@ public class Translate2ClientHealthCheck extends AbstractHealthCheck {
     }
 
     @Override
-    public boolean isLiveness() {
-        // this health check is only readiness
-        return false;
-    }
-
-    @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
         Translate2Configuration configuration = translate2Endpoint.getConfiguration();
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {

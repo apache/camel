@@ -37,12 +37,6 @@ public class EKS2ClientHealthCheck extends AbstractHealthCheck {
     }
 
     @Override
-    public boolean isLiveness() {
-        // this health check is only readiness
-        return false;
-    }
-
-    @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
         EKS2Configuration configuration = eks2Endpoint.getConfiguration();
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {

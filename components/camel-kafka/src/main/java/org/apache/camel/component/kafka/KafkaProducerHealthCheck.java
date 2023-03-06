@@ -38,12 +38,6 @@ public class KafkaProducerHealthCheck extends AbstractHealthCheck {
     }
 
     @Override
-    public boolean isLiveness() {
-        // this health check is only readiness
-        return false;
-    }
-
-    @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
         if (!kafkaProducer.isReady()) {
             builder.down();
