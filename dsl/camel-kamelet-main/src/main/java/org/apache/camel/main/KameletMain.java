@@ -48,6 +48,7 @@ import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.main.download.DownloadModelineParser;
 import org.apache.camel.main.download.KameletMainInjector;
 import org.apache.camel.main.download.KnownDependenciesResolver;
+import org.apache.camel.main.download.KnownReposResolver;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.main.download.TypeConverterLoaderDownloadListener;
 import org.apache.camel.main.http.VertxHttpServer;
@@ -311,7 +312,10 @@ public class KameletMain extends MainCommandLineSupport {
             answer.getPackageScanClassResolver().addClassLoader(dynamicCL);
             answer.getPackageScanResourceResolver().addClassLoader(dynamicCL);
 
+            KnownReposResolver known = new KnownReposResolver(camelContext);
+            known.loadKnownDependencies();
             MavenDependencyDownloader downloader = new MavenDependencyDownloader();
+            downloader.setKnownReposResolver(known);
             downloader.setClassLoader(dynamicCL);
             downloader.setCamelContext(answer);
             downloader.setRepos(repos);
