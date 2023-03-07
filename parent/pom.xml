@@ -2773,12 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- optional Nitrite dependencies -->
-            <dependency>
-                <groupId>org.dizitart</groupId>
-                <artifactId>nitrite</artifactId>
-                <version>${nitrite-version}</version>
-            </dependency>
             <!-- need this to use the new 'maven-archetype' packaging type -->
             <dependency>
                 <groupId>org.apache.maven.archetype</groupId>
