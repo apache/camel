@@ -47,6 +47,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+            <version>${commons-io-version}</version>
         </dependency>
 
         <!-- test dependencies -->
