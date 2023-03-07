@@ -16,11 +16,16 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import org.apache.camel.util.IOHelper;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Properties;
+import java.util.function.Consumer;
 
-import org.apache.camel.util.IOHelper;
 import picocli.CommandLine;
 
 /**
@@ -33,20 +38,47 @@ public class CommandLineHelper {
     public static void augmentWithUserConfiguration(CommandLine commandLine, String... args) {
         File file = new File(System.getProperty("user.home"), USER_CONFIG);
         if (file.isFile() && file.exists()) {
+            commandLine.setDefaultValueProvider(new CamelUserConfigDefaultValueProvider(file));
+        }
+    }
+
+    public static void createPropertyFile() throws IOException {
+        File file = new File(System.getProperty("user.home"), CommandLineHelper.USER_CONFIG);
+        if (!file.exists()) {
+            file.createNewFile();
+        }
+    }
+
+    public static void loadProperties(Consumer<Properties> consumer) {
+        File file = new File(System.getProperty("user.home"), CommandLineHelper.USER_CONFIG);
+        if (file.isFile() && file.exists()) {
             FileInputStream fis = null;
             try {
                 fis = new FileInputStream(file);
                 Properties prop = new Properties();
                 prop.load(fis);
                 IOHelper.close(fis);
-                if (!prop.isEmpty()) {
-                    commandLine.setDefaultValueProvider(new CamelUserConfigDefaultValueProvider(prop));
-                }
+                consumer.accept(prop);
             } catch (Exception e) {
                 throw new RuntimeException("Cannot load user configuration: " + file);
             } finally {
                 IOHelper.close(fis);
             }
+        } else {
+            System.out.println(CommandLineHelper.USER_CONFIG + " does not exists");
+        }
+    }
+
+    public static void storeProperties(Properties properties) {
+        File file = new File(System.getProperty("user.home"), CommandLineHelper.USER_CONFIG);
+        if (file.isFile() && file.exists()) {
+            try (FileOutputStream fos = new FileOutputStream(file)) {
+                properties.store(fos, null);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        } else {
+            System.out.println(CommandLineHelper.USER_CONFIG + " does not exists");
         }
     }
 
@@ -54,6 +86,10 @@ public class CommandLineHelper {
 
         public CamelUserConfigDefaultValueProvider(Properties properties) {
             super(properties);
+        }
+
+        public CamelUserConfigDefaultValueProvider(File file) {
+            super(file);
         }
 
         @Override

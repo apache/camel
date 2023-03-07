@@ -125,7 +125,12 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("bind", new CommandLine(new Bind(main)))
                 .addSubcommand("pipe", new CommandLine(new Pipe(main)))
                 .addSubcommand("export", new CommandLine(new Export(main)))
-                .addSubcommand("completion", new CommandLine(new Complete(main)));
+                .addSubcommand("completion", new CommandLine(new Complete(main)))
+                .addSubcommand("config", new CommandLine(new ConfigCommand(main))
+                        .addSubcommand("list", new CommandLine(new ConfigList(main)))
+                        .addSubcommand("get", new CommandLine(new ConfigGet(main)))
+                        .addSubcommand("unset", new CommandLine(new ConfigUnset(main)))
+                        .addSubcommand("set", new CommandLine(new ConfigSet(main))));
 
         commandLine.getCommandSpec().versionProvider(() -> {
             CamelCatalog catalog = new DefaultCamelCatalog();
