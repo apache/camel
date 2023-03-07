@@ -42,7 +42,7 @@ public class JMSTransactionalClientWithRollbackTest extends AbstractSpringJMSTes
         // success at 3rd attempt
         mock.message(0).header("count").isEqualTo(3);
 
-        template.sendBody("activemq:queue:okay", "Hello World");
+        template.sendBody("activemq:queue:okay.JMSTransactionalClientWithRollbackTest", "Hello World");
 
         mock.assertIsSatisfied();
     }

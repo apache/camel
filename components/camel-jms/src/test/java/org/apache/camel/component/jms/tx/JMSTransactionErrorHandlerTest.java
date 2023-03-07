@@ -47,7 +47,7 @@ public class JMSTransactionErrorHandlerTest extends AbstractSpringJMSTestSupport
         // and not JMS doing the redelivery
         mock.message(0).header("JMSRedelivered").isEqualTo(false);
 
-        template.sendBody("activemq:queue:okay", "Hello World");
+        template.sendBody("activemq:queue:okay.JMSTransactionErrorHandlerTest", "Hello World");
 
         mock.assertIsSatisfied();
     }

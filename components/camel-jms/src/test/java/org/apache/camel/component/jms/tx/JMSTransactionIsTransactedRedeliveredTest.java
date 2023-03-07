@@ -77,7 +77,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends AbstractSpringJMS
         // success at 3rd attempt
         mock.message(0).header("count").isEqualTo(3);
 
-        template.sendBody("activemq:queue:okay", "Hello World");
+        template.sendBody("activemq:queue:okay.JMSTransactionIsTransactedRedeliveredTest", "Hello World");
 
         mock.assertIsSatisfied();
         error.assertIsSatisfied();
