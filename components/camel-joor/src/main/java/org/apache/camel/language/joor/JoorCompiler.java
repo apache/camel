@@ -89,7 +89,7 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
     protected void doStop() throws Exception {
         super.doStop();
         if (counter > 0) {
-            LOG.info("jOOR language compiled {} {} in {}", counter, counter == 1 ? "script" : "scripts",
+            LOG.debug("Java compiled {} {} in {}", counter, counter == 1 ? "script" : "scripts",
                     TimeUtils.printDuration(taken, true));
         }
     }
