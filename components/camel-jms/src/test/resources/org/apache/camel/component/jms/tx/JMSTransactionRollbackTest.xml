@@ -56,7 +56,7 @@
       </errorHandler>
 
         <route errorHandlerRef="txEH">
-            <from uri="activemq:queue:okay"/>
+            <from uri="activemq:queue:okay.JMSTransactionRollbackTest"/>
             <transacted/>
             <to uri="mock:before"/>
             <process ref="myProcessor"/>

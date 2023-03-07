@@ -39,7 +39,7 @@ public class JMSTransactionRollbackTest extends AbstractSpringJMSTestSupport {
         getMockEndpoint("mock:before").expectedMessageCount(6);
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        template.sendBody("activemq:queue:okay", "Hello World");
+        template.sendBody("activemq:queue:okay.JMSTransactionRollbackTest", "Hello World");
 
         MockEndpoint.assertIsSatisfied(context);
     }
