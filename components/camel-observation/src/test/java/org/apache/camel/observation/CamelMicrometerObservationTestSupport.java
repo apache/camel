@@ -63,12 +63,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class CamelMicrometerObservationTestSupport extends CamelTestSupport {
     
-    private static final Logger LOG = LoggerFactory.getLogger(CamelMicrometerObservationTestSupport.class);
-
     static final AttributeKey<String> CAMEL_URI_KEY = AttributeKey.stringKey("camel-uri");
     static final AttributeKey<String> COMPONENT_KEY = AttributeKey.stringKey("component");
     static final AttributeKey<String> PRE_KEY = AttributeKey.stringKey("pre");
     static final AttributeKey<String> POST_KEY = AttributeKey.stringKey("post");
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelMicrometerObservationTestSupport.class);
 
     private InMemorySpanExporter inMemorySpanExporter = InMemorySpanExporter.create();
     private SpanTestData[] expected;
@@ -100,7 +100,11 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
 
         io.micrometer.tracing.Tracer otelTracer = otelTracer();
         OtelPropagator otelPropagator = new OtelPropagator(ContextPropagators.create(B3Propagator.injectingSingleHeader()), tracer);
-        observationRegistry.observationConfig().observationHandler(new ObservationHandler.FirstMatchingCompositeObservationHandler(new PropagatingSenderTracingObservationHandler<>(otelTracer, otelPropagator), new PropagatingReceiverTracingObservationHandler<>(otelTracer, otelPropagator), new DefaultTracingObservationHandler(otelTracer)));
+        observationRegistry.observationConfig().observationHandler(
+                new ObservationHandler.FirstMatchingCompositeObservationHandler(
+                        new PropagatingSenderTracingObservationHandler<>(otelTracer, otelPropagator),
+                        new PropagatingReceiverTracingObservationHandler<>(otelTracer, otelPropagator),
+                        new DefaultTracingObservationHandler(otelTracer)));
 
         micrometerObservationTracer.setObservationRegistry(observationRegistry);
         // if you want baggage

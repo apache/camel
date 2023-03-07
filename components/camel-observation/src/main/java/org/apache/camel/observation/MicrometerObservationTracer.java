@@ -38,13 +38,13 @@ import org.apache.camel.tracing.decorators.AbstractInternalSpanDecorator;
 @ManagedResource(description = "MicrometerObservationTracer")
 public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer {
 
-    private static final String CAMEL_CONTEXT_NAME = "camel.component";
-
     static final String SPAN_DECORATOR_INTERNAL = "camel.micrometer.abstract-internal";
 
-    private ObservationRegistry observationRegistry;
+    private static final String CAMEL_CONTEXT_NAME = "camel.component";
 
     private Tracer tracer = Tracer.NOOP;
+
+    private ObservationRegistry observationRegistry;
 
     public ObservationRegistry getObservationRegistry() {
         return observationRegistry;
