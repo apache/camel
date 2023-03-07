@@ -62,6 +62,7 @@ import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
 import org.apache.camel.dsl.jbang.core.commands.process.ListService;
 import org.apache.camel.dsl.jbang.core.commands.process.ListVault;
 import org.apache.camel.dsl.jbang.core.commands.process.StopProcess;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -132,6 +133,7 @@ public class CamelJBangMain implements Callable<Integer> {
             return new String[] { v };
         });
 
+        CommandLineHelper.augmentWithUserConfiguration(commandLine, args);
         int exitCode = commandLine.execute(args);
         System.exit(exitCode);
     }
