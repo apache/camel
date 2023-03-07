@@ -16,6 +16,7 @@
  */
 package org.apache.camel.catalog;
 
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
@@ -562,5 +563,14 @@ public interface CamelCatalog {
      * @return            the requested model or {@code null} in case it is not available in this {@link CamelCatalog}
      */
     ArtifactModel<?> modelFromMavenGAV(String groupId, String artifactId, String version);
+
+    /**
+     * Load resource from catalog classpath
+     *
+     * @param  kind The resource kind, ex. camel-jbang
+     * @param  name The resource name
+     * @return      An input stream for reading the resource; null if the resource could not be found
+     */
+    InputStream loadResource(String kind, String name);
 
 }
