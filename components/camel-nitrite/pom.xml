@@ -42,6 +42,7 @@
     <dependency>
       <groupId>org.dizitart</groupId>
       <artifactId>nitrite</artifactId>
+      <version>${nitrite-version}</version>
     </dependency>
 
     <!-- testing -->

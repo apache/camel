@@ -22,6 +22,10 @@
 	<core xmlns="urn:activemq:core">
 
 		<persistence-enabled>false</persistence-enabled>
+		<journal-directory>target/tx/data</journal-directory>
+		<bindings-directory>target/tx/data/bindings</bindings-directory>
+		<paging-directory>target/tx/data/paging</paging-directory>
+		<large-messages-directory>target/tx/data/large-messages</large-messages-directory>
 
 		<acceptors>
 			<acceptor name="in-vm">vm://999</acceptor>
