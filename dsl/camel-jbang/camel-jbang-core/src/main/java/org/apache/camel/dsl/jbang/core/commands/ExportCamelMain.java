@@ -84,13 +84,14 @@ class ExportCamelMain extends Export {
 
         // copy source files
         String packageName = exportPackageName(ids[0], ids[1]);
-        File srcJavaDir = new File(BUILD_DIR, "src/main/java/" + packageName.replace('.', '/'));
+        File srcJavaDirRoot = new File(BUILD_DIR, "src/main/java");
+        File srcJavaDir = new File(srcJavaDirRoot, packageName.replace('.', File.separatorChar));
         srcJavaDir.mkdirs();
         File srcResourcesDir = new File(BUILD_DIR, "src/main/resources");
         srcResourcesDir.mkdirs();
         File srcCamelResourcesDir = new File(BUILD_DIR, "src/main/resources/camel");
         srcCamelResourcesDir.mkdirs();
-        copySourceFiles(settings, profile, srcJavaDir, srcResourcesDir, srcCamelResourcesDir, packageName);
+        copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir, packageName);
         // copy from settings to profile
         copySettingsAndProfile(settings, profile, srcResourcesDir, prop -> {
             if (!prop.containsKey("camel.main.basePackageScan") && !prop.containsKey("camel.main.base-package-scan")) {
@@ -234,10 +235,12 @@ class ExportCamelMain extends Export {
 
     @Override
     protected void copySourceFiles(
-            File settings, File profile, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir, String packageName)
+            File settings, File profile, File srcJavaDirRoot, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir,
+            String packageName)
             throws Exception {
 
-        super.copySourceFiles(settings, profile, srcJavaDir, srcResourcesDir, srcCamelResourcesDir, packageName);
+        super.copySourceFiles(settings, profile, srcJavaDirRoot, srcJavaDir, srcResourcesDir, srcCamelResourcesDir,
+                packageName);
 
         // log4j configuration
         InputStream is = ExportCamelMain.class.getResourceAsStream("/log4j2.properties");
