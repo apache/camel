@@ -2773,18 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- optional avro -->
-            <dependency>
-                <groupId>org.apache.avro</groupId>
-                <artifactId>avro</artifactId>
-                <version>${avro-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.avro</groupId>
-                <artifactId>avro-ipc</artifactId>
-                <version>${avro-version}</version>
-            </dependency>
-
             <!-- optional ftpserver -->
             <dependency>
                 <groupId>org.apache.ftpserver</groupId>
