@@ -33,6 +33,10 @@
     <description>Camel Dummy Component</description>
     <packaging>jar</packaging>
 
+    <properties>
+        <camel-prepare-component>true</camel-prepare-component>
+    </properties>
+
     <dependencies>
 
         <dependency>
@@ -66,18 +70,49 @@
                 <version>${project.version}</version>
                 <executions>
                     <execution>
-                        <id>prepare</id>
+                        <id>generate</id>
                         <goals>
-                            <goal>prepare-components</goal>
+                            <goal>generate</goal>
                         </goals>
-                        <phase>generate-resources</phase>
+                        <phase>process-classes</phase>
                     </execution>
                     <execution>
-                        <id>validate</id>
+                        <id>generate-postcompile</id>
                         <goals>
-                            <goal>validate-components</goal>
+                            <goal>generate-postcompile</goal>
                         </goals>
                         <phase>prepare-package</phase>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.camel</groupId>
+                        <artifactId>camel-core-model</artifactId>
+                        <version>${project.version}</version>
+                        <scope>compile</scope>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/generated/java</source>
+                            </sources>
+                            <resources>
+                                <resource>
+                                    <directory>src/generated/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
