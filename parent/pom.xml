@@ -2773,18 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- optional ftpserver -->
-            <dependency>
-                <groupId>org.apache.ftpserver</groupId>
-                <artifactId>ftpserver-core</artifactId>
-                <version>${ftpserver-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.ftpserver</groupId>
-                <artifactId>ftplet-api</artifactId>
-                <version>${ftpserver-version}</version>
-            </dependency>
-
             <!-- optional zookeeper dependency -->
             <dependency>
                 <groupId>org.apache.zookeeper</groupId>
