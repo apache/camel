@@ -33,7 +33,7 @@
         <!-- in this route the transactionErrorHandler is used -->
         <camel:route errorHandlerRef="transactionErrorHandler">
             <!-- 1: from the jms queue -->
-            <camel:from uri="activemq:queue:okay"/>
+            <camel:from uri="activemq:queue:okay.TransactionErrorHandlerCustomerSpringParserTest"/>
             <!-- 2: setup the transactional boundaries to require a transaction -->
             <camel:transacted ref="required"/>
             <!-- 3: call our business logic that is myProcessor -->

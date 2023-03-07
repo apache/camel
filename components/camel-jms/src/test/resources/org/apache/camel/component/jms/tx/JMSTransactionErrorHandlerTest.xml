@@ -71,7 +71,7 @@
         <jmxAgent id="agent" disabled="true"/>
         <route errorHandlerRef="myErrorHandler">
             <!-- 1: from the jms queue -->
-            <from uri="activemq:queue:okay"/>
+            <from uri="activemq:queue:okay.JMSTransactionErrorHandlerTest"/>
             <!-- 2: mark this route as transacted -->
             <transacted/>
             <!-- 3: call our business logic that is myProcessor -->

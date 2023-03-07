@@ -43,7 +43,7 @@ public class JMSTransactionalClientTest extends AbstractSpringJMSTestSupport {
         // success at 3rd attempt
         mock.message(0).header("count").isEqualTo(3);
 
-        template.sendBody("activemq:queue:okay", "Hello World");
+        template.sendBody("activemq:queue:okay.JMSTransactionalClientTest", "Hello World");
 
         mock.assertIsSatisfied();
         // END SNIPPET: e1
