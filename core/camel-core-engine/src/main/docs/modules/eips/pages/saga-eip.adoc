@@ -145,11 +145,10 @@ Configuration can be done in the Spring Boot `application.yaml` file:
 [source,yaml]
 ----
 camel:
-  service:
-    lra:
-      enabled: true
-      coordinator-url: http://lra-service-host
-      local-participant-url: http://my-host-as-seen-by-lra-service:8080/context-path
+  lra:
+    enabled: true
+    coordinator-url: http://lra-service-host
+    local-participant-url: http://my-host-as-seen-by-lra-service:8080/context-path
 ----
 
 Once done, the Saga EIP can be directly used inside Camel routes, and it will use the LRA Saga Service under the hood.
@@ -355,7 +354,7 @@ from("direct:newOrder")
     .log("Order ${body} created");
 ----
 
-All participants (e.g. credit service, order service) can set their own timeout. The minimum value of those timeouts is taken as timeout for the saga when they are composed together.
+All participants (e.g. credit service, order service) can set their own timeout. When a participant joins an existing transaction, the timeout of the already active saga can be influenced. It should calculate the moment in time the saga would become eligible for cancellation based on the time which the request enters the method and the timeout. When this moment is earlier than the moment calculated for the saga at that time, this new moment becomes the timeout moment for the saga. So when multiple participants define a timeout period, the earliest one will trigger the cancellation of the saga.
 
 A timeout can also be specified at saga level as follows:
 
