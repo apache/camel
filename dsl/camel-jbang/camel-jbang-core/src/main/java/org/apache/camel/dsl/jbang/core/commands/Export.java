@@ -107,6 +107,7 @@ class Export extends ExportBaseCommand {
         cmd.gradleWrapper = this.gradleWrapper;
         cmd.buildTool = this.buildTool;
         cmd.quiet = this.quiet;
+        cmd.additionalProperties = this.additionalProperties;
         // run export
         return cmd.export();
     }

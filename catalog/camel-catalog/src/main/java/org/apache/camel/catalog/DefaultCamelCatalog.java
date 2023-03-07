@@ -63,6 +63,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     private static final String ARCHETYPES_CATALOG = "org/apache/camel/catalog/archetypes/archetype-catalog.xml";
     private static final String SCHEMAS_XML = "org/apache/camel/catalog/schemas";
     private static final String MAIN_DIR = "org/apache/camel/catalog/main";
+    private static final String BASE_RESOURCE_DIR = "org/apache/camel/catalog";
 
     private final VersionHelper version = new VersionHelper();
 
@@ -493,6 +494,11 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
             }
         }
         return null;
+    }
+
+    @Override
+    public InputStream loadResource(String kind, String name) {
+        return versionManager.getResourceAsStream(BASE_RESOURCE_DIR + "/" + kind + "/" + name);
     }
 
     private static boolean matchArtifact(ArtifactModel<?> am, String groupId, String artifactId, String version) {
