@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -27,10 +28,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
@@ -55,6 +59,9 @@ abstract class ExportBaseCommand extends CamelCommand {
             "camel.jbang.classpathFiles",
             "camel.jbang.localKameletDir"
     };
+
+    private static final Pattern PACKAGE_PATTERN = Pattern.compile(
+            "^\\s*package\\s+([a-zA-Z][.\\w]*)\\s*;.*$", Pattern.MULTILINE);
 
     @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
                         description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
@@ -291,7 +298,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     }
 
     protected void copySourceFiles(
-            File settings, File profile, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir,
+            File settings, File profile, File srcJavaDirRoot, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir,
             String packageName)
             throws Exception {
         // read the settings file and find the files to copy
@@ -323,13 +330,28 @@ abstract class ExportBaseCommand extends CamelCommand {
                     } else {
                         out = new File(target, source.getName());
                     }
-                    safeCopy(source, out, true);
-                    if (java) {
+                    if (!java) {
+                        safeCopy(source, out, true);
+                    } else {
                         // need to append package name in java source file
-                        List<String> lines = Files.readAllLines(out.toPath());
-                        lines.add(0, "");
-                        lines.add(0, "package " + packageName + ";");
-                        FileOutputStream fos = new FileOutputStream(out);
+                        List<String> lines = Files.readAllLines(source.toPath());
+                        Optional<String> hasPackage = lines.stream().filter(l -> l.trim().startsWith("package ")).findFirst();
+                        FileOutputStream fos;
+                        if (hasPackage.isPresent()) {
+                            String pn = determinePackageName(hasPackage.get());
+                            if (pn != null) {
+                                File dir = new File(srcJavaDirRoot, pn.replace('.', File.separatorChar));
+                                dir.mkdirs();
+                                out = new File(dir, source.getName());
+                                fos = new FileOutputStream(out);
+                            } else {
+                                throw new IOException("Cannot determine package name from source: " + source);
+                            }
+                        } else {
+                            fos = new FileOutputStream(out);
+                            lines.add(0, "");
+                            lines.add(0, "package " + packageName + ";");
+                        }
                         for (String line : lines) {
                             adjustJavaSourceFileLine(line, fos);
                             fos.write(line.getBytes(StandardCharsets.UTF_8));
@@ -541,4 +563,10 @@ abstract class ExportBaseCommand extends CamelCommand {
             Files.copy(source, target.toPath());
         }
     }
+
+    private static String determinePackageName(String content) {
+        final Matcher matcher = PACKAGE_PATTERN.matcher(content);
+        return matcher.find() ? matcher.group(1) : null;
+    }
+
 }
