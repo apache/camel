@@ -42,7 +42,7 @@ import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingle
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
 
 @Command(name = "init", description = "Creates a new Camel integration")
-public class Init extends CamelCommand {
+class Init extends CamelCommand {
 
     @Parameters(description = "Name of integration file (or a github link)", arity = "1",
                 paramLabel = "<file>", parameterConsumer = FileConsumer.class)
