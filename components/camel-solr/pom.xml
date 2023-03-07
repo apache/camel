@@ -150,6 +150,7 @@
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
+            <version>${xml-apis-version}</version>
             <scope>test</scope>
         </dependency>
         <!-- test infra -->

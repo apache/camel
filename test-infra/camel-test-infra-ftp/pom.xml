@@ -36,12 +36,14 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+            <version>${commons-io-version}</version>
         </dependency>
 
         <!-- for the embedded FTP server -->
         <dependency>
             <groupId>org.apache.ftpserver</groupId>
             <artifactId>ftpserver-core</artifactId>
+            <version>${ftpserver-version}</version>
         </dependency>
 
         <!-- for the embedded SFTP server -->
