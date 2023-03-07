@@ -79,6 +79,8 @@ public class MavenVersionManagerManualTest {
     @Test
     public void testEndpointOptions218OrNewer() {
         CamelCatalog catalog = new DefaultCamelCatalog(false);
+        catalog.setVersionManager(new MavenVersionManager());
+        catalog.loadVersion("2.18.3");
 
         String json = catalog.componentJSonSchema("ahc");
         assertNotNull(json);
