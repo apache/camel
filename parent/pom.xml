@@ -2775,11 +2775,6 @@
 	    
             <!-- optional misc -->
             <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>${commons-io-version}</version>
-            </dependency>
-            <dependency>
                 <groupId>xerces</groupId>
                 <artifactId>xercesImpl</artifactId>
                 <version>${xerces-version}</version>
