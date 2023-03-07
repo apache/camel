@@ -40,13 +40,35 @@ public class CommandLineHelper {
                 prop.load(fis);
                 IOHelper.close(fis);
                 if (!prop.isEmpty()) {
-                    commandLine.setDefaultValueProvider(new CommandLine.PropertiesDefaultProvider(prop));
+                    commandLine.setDefaultValueProvider(new CamelUserConfigDefaultValueProvider(prop));
                 }
             } catch (Exception e) {
                 throw new RuntimeException("Cannot load user configuration: " + file);
             } finally {
                 IOHelper.close(fis);
             }
+        }
+    }
+
+    private static class CamelUserConfigDefaultValueProvider extends CommandLine.PropertiesDefaultProvider {
+
+        public CamelUserConfigDefaultValueProvider(Properties properties) {
+            super(properties);
+        }
+
+        @Override
+        public String defaultValue(CommandLine.Model.ArgSpec arg) throws Exception {
+            String value = super.defaultValue(arg);
+            if (value != null) {
+                if (arg instanceof CommandLine.Model.OptionSpec) {
+                    // TODO: capture these default values that are in use
+                    // and find a way to log them only once (and have an option to turn this off)
+                    CommandLine.Model.OptionSpec os = (CommandLine.Model.OptionSpec) arg;
+                    String k = os.longestName();
+                    System.out.println(k + "=" + value);
+                }
+            }
+            return value;
         }
     }
 
