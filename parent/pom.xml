@@ -2712,6 +2712,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>dummy-component</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.camel.maven</groupId>
                 <artifactId>camel-debezium-maven-plugin</artifactId>
                 <version>${project.version}</version>
