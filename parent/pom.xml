@@ -2773,19 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- optional misc -->
-            <dependency>
-                <groupId>org.codehaus.woodstox</groupId>
-                <artifactId>woodstox-core-asl</artifactId>
-                <version>${woodstox-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>javax.xml.stream</groupId>
-                        <artifactId>stax-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
             <!-- optional avro -->
             <dependency>
                 <groupId>org.apache.avro</groupId>
