@@ -2773,28 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- pdfbox -->
-            <dependency>
-                <groupId>org.apache.pdfbox</groupId>
-                <artifactId>fontbox</artifactId>
-                <version>${pdfbox-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.pdfbox</groupId>
-                <artifactId>pdfbox</artifactId>
-                <version>${pdfbox-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.pdfbox</groupId>
-                <artifactId>pdfbox-tools</artifactId>
-                <version>${pdfbox-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.pdfbox</groupId>
-                <artifactId>pdfbox-debugger</artifactId>
-                <version>${pdfbox-version}</version>
-            </dependency>
-
             <!-- apache pulsar -->
             <dependency>
               <groupId>org.apache.pulsar</groupId>
