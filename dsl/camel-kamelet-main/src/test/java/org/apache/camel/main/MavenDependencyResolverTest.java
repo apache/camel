@@ -131,8 +131,8 @@ public class MavenDependencyResolverTest {
     @Test
     public void testDownload() throws Exception {
         List<String> deps = List.of("org.apache.camel:camel-core:3.17.0");
-        try (DIRegistry registry = new DIRegistry();
-             MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
+        try (MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
+            // build() creates own DIRegistry and configures the resolver/aether stuff
             downloader.build();
 
             List<MavenArtifact> answer = downloader.resolveDependenciesViaAether(deps, true);
@@ -214,6 +214,8 @@ public class MavenDependencyResolverTest {
 
         try (DIRegistry registry = new DIRegistry();
              MavenDependencyDownloader downloader = new MavenDependencyDownloader()) {
+            // here we don't call downloader.build() and will do the same stuff manually for demonstration purpose
+
             // see org.eclipse.aether.impl.DefaultServiceLocator.DefaultServiceLocator() - it registers
             // lots of default implementations to get started (but it's deprecated with MRESOLVER-157)
 
