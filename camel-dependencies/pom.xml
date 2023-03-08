@@ -207,7 +207,7 @@
         <hamcrest-version>2.2</hamcrest-version>
         <hapi-version>2.3</hapi-version>
         <hapi-base-version>2.3</hapi-base-version>
-        <hapi-fhir-version>6.2.4</hapi-fhir-version>
+        <hapi-fhir-version>6.4.2</hapi-fhir-version>
         <hawtbuf-version>1.11</hawtbuf-version>
         <hawtdispatch-version>1.22</hawtdispatch-version>
         <hazelcast-version>5.2.1</hazelcast-version>
