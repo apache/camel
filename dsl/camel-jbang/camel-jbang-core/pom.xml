@@ -71,6 +71,7 @@
         <dependency>
             <groupId>info.picocli</groupId>
             <artifactId>picocli</artifactId>
+            <version>${picocli-version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.freva</groupId>
