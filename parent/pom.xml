@@ -2773,13 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-
-            <dependency>
-                <groupId>info.picocli</groupId>
-                <artifactId>picocli</artifactId>
-                <version>${picocli-version}</version>
-            </dependency>
-
             <!-- directory-watcher for camel-file-watch component -->
             <dependency>
                 <groupId>io.methvin</groupId>
