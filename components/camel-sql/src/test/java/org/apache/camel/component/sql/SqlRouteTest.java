@@ -88,9 +88,8 @@ public class SqlRouteTest extends CamelTestSupport {
 
         mock.expectedMessageCount(1);
         Exchange exchange = new DefaultExchange(context);
-        exchange.getMessage().setHeader(SqlConstants.SQL_QUERY, "select * from projects where project = :#id order by id");
-        exchange.getMessage().setHeader("id", 3);
-        exchange.getMessage().setBody("Camel");
+        exchange.getMessage().setHeader(SqlConstants.SQL_QUERY, "select * from projects where id = :#id order by id");
+        exchange.getMessage().setHeader("id", 1);
         template.send("direct:simple", exchange);
         mock.assertIsSatisfied();
         received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());

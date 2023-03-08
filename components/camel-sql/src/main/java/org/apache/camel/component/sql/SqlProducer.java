@@ -100,7 +100,7 @@ public class SqlProducer extends DefaultProducer {
             String queryHeader = exchange.getIn().getHeader(SqlConstants.SQL_QUERY, String.class);
             if (queryHeader != null) {
                 String placeholder = getEndpoint().isUsePlaceholder() ? getEndpoint().getPlaceholder() : null;
-                sql = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), queryHeader, placeholder);
+                sql = SqlHelper.resolvePlaceholders(queryHeader, placeholder);
             } else {
                 sql = resolvedQuery;
             }
