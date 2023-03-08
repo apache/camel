@@ -84,7 +84,7 @@ public class CatalogDoc extends CamelCommand {
     boolean headers;
 
     @CommandLine.Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.1.1")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.2")
     String kameletsVersion;
 
     CamelCatalog catalog;
