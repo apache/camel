@@ -2783,19 +2783,6 @@
             </dependency>
 
             <dependency>
-                <groupId>com.sun.xml.messaging.saaj</groupId>
-                <artifactId>saaj-impl</artifactId>
-                <version>3.0.0</version>
-                <exclusions>
-                    <exclusion>
-                        <!--Get dependency from jaxb-runtime-->
-                        <groupId>org.jvnet.staxex</groupId>
-                        <artifactId>stax-ex</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>jaxb-runtime</artifactId>
                 <version>${glassfish-jaxb-runtime-version}</version>
