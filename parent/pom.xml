@@ -2773,12 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- Optional grok -->
-            <dependency>
-              <groupId>io.krakens</groupId>
-              <artifactId>java-grok</artifactId>
-              <version>${java-grok-version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>info.picocli</groupId>
