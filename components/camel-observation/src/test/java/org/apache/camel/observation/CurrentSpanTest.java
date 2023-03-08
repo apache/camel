@@ -24,7 +24,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
-import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanKind;
 import io.opentelemetry.sdk.trace.ReadableSpan;
@@ -53,7 +52,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
     CurrentSpanTest() {
@@ -173,7 +171,8 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
                         .setKind(SpanKind.CLIENT),
                 new SpanTestData().setLabel("syncmock:result").setUri("syncmock://result").setOperation("syncmock")
                         .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:start").setUri("direct://start").setOperation("start").setKind(SpanKind.SERVER)
+                new SpanTestData().setLabel("direct:start").setUri("direct://start").setOperation("start")
+                        .setKind(SpanKind.SERVER)
         };
 
         // sync pipeline

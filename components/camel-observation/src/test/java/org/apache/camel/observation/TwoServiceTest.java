@@ -26,7 +26,8 @@ class TwoServiceTest extends CamelMicrometerObservationTestSupport {
     private static SpanTestData[] testdata = {
             new SpanTestData().setLabel("ServiceB server").setUri("direct://ServiceB").setOperation("service-b")
                     .setParentId(1),
-            new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA").setKind(SpanKind.SERVER)
+            new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
+                    .setKind(SpanKind.SERVER)
     };
 
     TwoServiceTest() {
