@@ -85,7 +85,15 @@
         <dependency>
             <groupId>com.sun.xml.messaging.saaj</groupId>
             <artifactId>saaj-impl</artifactId>
-        </dependency>
+            <version>3.0.0</version>
+            <exclusions>
+                <exclusion>
+                   <!--Get dependency from jaxb-runtime-->
+                   <groupId>org.jvnet.staxex</groupId>
+                   <artifactId>stax-ex</artifactId>
+                 </exclusion>
+            </exclusions>
+         </dependency>
 
         <!-- test dependencies -->
         <dependency>
