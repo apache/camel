@@ -50,7 +50,7 @@ public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
     @Override
     public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
-        span.setTag(Tag.DB_TYPE, ELASTICSEARCH_DB_TYPE);
+        span.setLowCardinalityTag(Tag.DB_TYPE, ELASTICSEARCH_DB_TYPE);
 
         Map<String, String> queryParameters = toQueryParameters(endpoint.getEndpointUri());
         if (queryParameters.containsKey("indexName")) {

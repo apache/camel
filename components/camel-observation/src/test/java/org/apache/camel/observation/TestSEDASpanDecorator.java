@@ -14,35 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.tracing.decorators;
+package org.apache.camel.observation;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.tracing.SpanAdapter;
-import org.apache.camel.tracing.Tag;
+import org.apache.camel.tracing.decorators.SedaSpanDecorator;
 
-public class JdbcSpanDecorator extends AbstractSpanDecorator {
-
-    @Override
-    public String getComponent() {
-        return "jdbc";
-    }
-
-    @Override
-    public String getComponentClassName() {
-        return "org.apache.camel.component.jdbc.JdbcComponent";
-    }
+class TestSEDASpanDecorator extends SedaSpanDecorator {
 
     @Override
     public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
+        span.setTag("pre", "test");
+    }
 
-        span.setLowCardinalityTag(Tag.DB_TYPE, "sql");
-
-        Object body = exchange.getIn().getBody();
-        if (body instanceof String) {
-            span.setTag(Tag.DB_STATEMENT, (String) body);
-        }
+    @Override
+    public void post(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
+        super.post(span, exchange, endpoint);
+        span.setTag("post", "test");
     }
 
 }
