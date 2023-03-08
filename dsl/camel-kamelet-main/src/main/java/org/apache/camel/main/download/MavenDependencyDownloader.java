@@ -82,9 +82,6 @@ import org.apache.maven.settings.io.SettingsReader;
 import org.apache.maven.settings.io.SettingsWriter;
 import org.apache.maven.settings.validation.DefaultSettingsValidator;
 import org.apache.maven.settings.validation.SettingsValidator;
-import org.apache.maven.wagon.Wagon;
-import org.apache.maven.wagon.providers.file.FileWagon;
-import org.apache.maven.wagon.providers.http.HttpWagon;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.eclipse.aether.ConfigurationProperties;
 import org.eclipse.aether.DefaultRepositorySystemSession;
@@ -188,9 +185,11 @@ import org.eclipse.aether.spi.connector.transport.TransporterProvider;
 import org.eclipse.aether.spi.io.FileProcessor;
 import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
 import org.eclipse.aether.spi.synccontext.SyncContextFactory;
-import org.eclipse.aether.transport.wagon.WagonConfigurator;
-import org.eclipse.aether.transport.wagon.WagonProvider;
-import org.eclipse.aether.transport.wagon.WagonTransporterFactory;
+import org.eclipse.aether.transport.file.FileTransporterFactory;
+import org.eclipse.aether.transport.http.ChecksumExtractor;
+import org.eclipse.aether.transport.http.HttpTransporterFactory;
+import org.eclipse.aether.transport.http.Nexus2ChecksumExtractor;
+import org.eclipse.aether.transport.http.XChecksumChecksumExtractor;
 import org.eclipse.aether.util.artifact.DefaultArtifactTypeRegistry;
 import org.eclipse.aether.util.graph.manager.ClassicDependencyManager;
 import org.eclipse.aether.util.graph.selector.AndDependencySelector;
@@ -557,7 +556,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private List<RemoteRepository> resolveExtraRepositories(String extraRepos) {
         List<RemoteRepository> repositories = new ArrayList<>();
         if (extraRepos != null) {
-            Set<URL> repositoryURLs = new HashSet<>();
+            Set<String> repositoryURLs = new HashSet<>();
             for (String repo : extraRepos.split(",")) {
                 try {
                     URL url = new URL(repo);
@@ -566,7 +565,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                     }
                     String id = "custom" + customCount++;
                     RepositoryPolicy releasePolicy = fresh ? POLICY_FRESH : POLICY_DEFAULT;
-                    if (repositoryURLs.add(url)) {
+                    if (repositoryURLs.add(url.toExternalForm())) {
                         if (url.getHost().equals("repository.apache.org") && url.getPath().contains("/snapshots")) {
                             apacheSnapshotsIncluded = true;
                             repositories.add(apacheSnapshots);
@@ -587,7 +586,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
-    protected void doBuild() throws Exception {
+    protected void doBuild() {
         if (classLoader == null && camelContext != null) {
             classLoader = camelContext.getApplicationContextClassLoader();
         }
@@ -596,6 +595,10 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         ServiceHelper.buildService(threadPool);
 
         // Aether/maven-resolver configuration used without Shrinkwrap
+        // and without deprecated:
+        //  - org.eclipse.aether.impl.DefaultServiceLocator
+        //  - org.apache.maven.repository.internal.MavenRepositorySystemUtils.newServiceLocator()
+
         registry = new DIRegistry();
         final Properties systemProperties = new Properties();
         // MNG-5670 guard against ConcurrentModificationException
@@ -630,7 +633,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
-    protected void doInit() throws Exception {
+    protected void doInit() {
         RuntimeMXBean mb = ManagementFactory.getRuntimeMXBean();
         if (mb != null) {
             bootClasspath = mb.getClassPath().split("[:|;]");
@@ -673,11 +676,20 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             mavenSettings = null;
         }
 
-        if (!skip && mavenSettingsSecurity == null) {
-            String m2settingsSecurity = System.getProperty("user.home") + File.separator + ".m2"
-                                        + File.separator + "settings-security.xml";
-            if (new File(m2settingsSecurity).isFile()) {
-                mavenSettingsSecurity = m2settingsSecurity;
+        if (!skip) {
+            if (mavenSettingsSecurity == null) {
+                // implicit security settings
+                String m2settingsSecurity = System.getProperty("user.home") + File.separator + ".m2"
+                        + File.separator + "settings-security.xml";
+                if (new File(m2settingsSecurity).isFile()) {
+                    mavenSettingsSecurity = m2settingsSecurity;
+                }
+            } else {
+                if (!new File(mavenSettingsSecurity).isFile()) {
+                    LOG.warn("Can't access {}. Skipping Maven settings-settings.xml configuration.",
+                            mavenSettingsSecurity);
+                }
+                mavenSettingsSecurity = null;
             }
         }
     }
@@ -749,8 +761,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         // remaining requirements of org.eclipse.aether.internal.impl.synccontext.DefaultSyncContextFactory
         registry.bind(NamedLockFactoryAdapterFactory.class, NamedLockFactoryAdapterFactoryImpl.class);
 
-        HashMap<String, NameMapper> mappers = new HashMap<>();
-
         // remaining requirements of org.eclipse.aether.internal.impl.DefaultRemoteRepositoryManager
         registry.bind(UpdatePolicyAnalyzer.class, DefaultUpdatePolicyAnalyzer.class);
         registry.bind(ChecksumPolicyProvider.class, DefaultChecksumPolicyProvider.class);
@@ -795,37 +805,20 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         registry.bind(RepositoryConnectorFactory.class, BasicRepositoryConnectorFactory.class);
         // repository connectory factory needs transporter provider(s)
         registry.bind(TransporterProvider.class, DefaultTransporterProvider.class);
-        // and transport provider needs transport factories
-        //        registry.bind(TransporterFactory.class, HttpTransporterFactory.class);
-        //        registry.bind(TransporterFactory.class, FileTransporterFactory.class);
-        // with wagon factory, we may have more flexibility, because a Wagon
-        // may use pre-configured instance of http client (with all the TLS stuff configured)
-        registry.bind(TransporterFactory.class, WagonTransporterFactory.class);
-        // wagon transporter factory needs a wagon provider
-        // wagon transporter uses a hint to select an org.apache.maven.wagon.Wagon. The hint comes from
-        // org.apache.maven.wagon.repository.Repository.getProtocol()
-        registry.bind("manualWagonProvider", WagonProvider.class, new WagonProvider() {
-            @Override
-            public Wagon lookup(String roleHint) {
-                switch (roleHint) {
-                    case "file":
-                        return new FileWagon();
-                    case "http":
-                    case "https":
-                        return new HttpWagon();
-                    default:
-                        return null;
-                }
-            }
 
-            @Override
-            public void release(Wagon wagon) {
-            }
-        });
-        // wagon transporter factory also needs a wagon configurator
-        registry.bind("manualWagonConfigurator", WagonConfigurator.class,
-                (WagonConfigurator) (wagon, configuration) -> {
-                });
+        // and transport provider needs transport factories. there are several implementations, but one of them
+        // is another indirect factory - the WagonTransporterFactory. However it was marked as _ancient_ with
+        // Maven 3.9 / Maven Resolver 1.9, so we'll use the _native_ ones. Even if the wagon allows us to share
+        // the http client (wagon) easier.
+        //        registry.bind(TransporterFactory.class, WagonTransporterFactory.class);
+        registry.bind(TransporterFactory.class, FileTransporterFactory.class);
+        registry.bind(TransporterFactory.class, HttpTransporterFactory.class);
+
+        // requirements of org.eclipse.aether.transport.http.HttpTransporterFactory
+        // nexus2 - ETag: "{SHA1{d40d68ba1f88d8e9b0040f175a6ff41928abd5e7}}"
+        registry.bind(ChecksumExtractor.class, Nexus2ChecksumExtractor.class);
+        // x-checksum - x-checksum-sha1: c74edb60ca2a0b57ef88d9a7da28f591e3d4ce7b
+        registry.bind(ChecksumExtractor.class, XChecksumChecksumExtractor.class);
 
         // requirements of org.eclipse.aether.connector.basic.BasicRepositoryConnectorFactory
         registry.bind(RepositoryLayoutProvider.class, DefaultRepositoryLayoutProvider.class);
@@ -976,6 +969,10 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         DefaultAuthenticationSelector baseAuthenticationSelector = new DefaultAuthenticationSelector();
         AuthenticationSelector authenticationSelector
                 = new ConservativeAuthenticationSelector(baseAuthenticationSelector);
+
+        int connectTimeout = ConfigurationProperties.DEFAULT_CONNECT_TIMEOUT;
+        int requestTimeout = ConfigurationProperties.DEFAULT_REQUEST_TIMEOUT;
+
         for (Server server : settings.getServers()) {
             // no need to bother with null values
             Authentication auth = new AuthenticationBuilder()
@@ -996,6 +993,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             }
 
             if (server.getConfiguration() instanceof Xpp3Dom) {
+                // === pre maven 3.9 / maven-resolver 1.9:
                 // this part is a generic configuration used by different Maven components
                 //  - entire configuration is read by maven-core itself and passed as
                 //    org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration object using
@@ -1033,6 +1031,29 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 //    and wagon's "httpHeaders" field is overriden - previously it was set to the value
                 //    of org.eclipse.aether.transport.wagon.WagonTransporter.headers which contained a User-Agent
                 //    header set from "aether.connector.userAgent" property set by Maven...
+                //
+                // === maven 3.9 / maven-resolver 1.9:
+                // As https://maven.apache.org/guides/mini/guide-resolver-transport.html says, the default transport
+                // (the default transport used by Maven Resolver) changed from ancient Wagon to modern
+                // maven-resolver-transport-http aka native HTTP transport.
+                // org.apache.maven.internal.aether.DefaultRepositorySystemSessionFactory.newRepositorySession()
+                // (org.apache.maven:maven-core) has changed considerably in Maven 3.9.0. Before 3.9.0,
+                // org.apache.maven.settings.Server.getConfiguration() was taken and simply passed (wrapped in
+                // org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration) as aether session config property
+                // named "aether.connector.wagon.config.<serverId>"
+                //
+                // With maven 3.9 / maven-resolver 1.9, the same property is used, but the XML configuration is
+                // "translated to proper resolver configuration properties as well", so additionally:
+                // - <httpHeaders> is translated into Map set as "aether.connector.http.headers.<serverId>" property
+                // - <connectTimeout> is translated into Integer set as "aether.connector.connectTimeout.<serverId>"
+                // - <requestTimeout> is translated into Integer set as "aether.connector.requestTimeout.<serverId>"
+                // - if <httpConfiguration>/<all>/<connectionTimeout> is found, a WARNING is printed:
+                //   [WARNING] Settings for server <serverId> uses legacy format
+                // - if <httpConfiguration>/<all>/<readTimeout> is found, a WARNING is printed:
+                //   [WARNING] Settings for server <serverId> uses legacy format
+                // (mind the translation: connectionTimeout->connectTimeout and readTimeout->requestTimeout
+                //
+                // all the properties are described here: https://maven.apache.org/resolver/configuration.html
 
                 Map<String, String> headers = new LinkedHashMap<>();
                 Xpp3Dom serverConfig = (Xpp3Dom) server.getConfiguration();
@@ -1062,7 +1083,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 }
                 serverConfigurations.put(ConfigurationProperties.HTTP_HEADERS + "." + server.getId(), headers);
 
-                // handle:
+                // DON'T handle (as it's pre-maven 3.9):
                 //     <server>
                 //      <id>my-server</id>
                 //      <configuration>
@@ -1075,6 +1096,28 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 //      </configuration>
                 //    </server>
                 // see org.codehaus.plexus.component.configurator.converters.composite.ObjectWithFieldsConverter
+                // handle (maven 3.9+):
+                //     <server>
+                //      <id>my-server</id>
+                //      <configuration>
+                //        <connectTimeout>5000</connectTimeout>
+                //        <requestTimeout>5000</requestTimeout>
+                //      </configuration>
+                //    </server>
+                Xpp3Dom connectTimeoutNode = serverConfig.getChild("connectTimeout");
+                if (connectTimeoutNode != null) {
+                    try {
+                        connectTimeout = Integer.parseInt(connectTimeoutNode.getValue());
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
+                Xpp3Dom requestTimeoutNode = serverConfig.getChild("requestTimeout");
+                if (requestTimeoutNode != null) {
+                    try {
+                        requestTimeout = Integer.parseInt(requestTimeoutNode.getValue());
+                    } catch (NumberFormatException ignored) {
+                    }
+                }
             }
         }
 
@@ -1143,10 +1186,8 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         // timeouts. see:
         //  - org.eclipse.aether.transport.http.HttpTransporter.HttpTransporter()
         //  - org.eclipse.aether.transport.wagon.WagonTransporter.connectWagon()
-        session.setConfigProperty(ConfigurationProperties.CONNECT_TIMEOUT,
-                ConfigurationProperties.DEFAULT_CONNECT_TIMEOUT);
-        session.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT,
-                ConfigurationProperties.DEFAULT_REQUEST_TIMEOUT);
+        session.setConfigProperty(ConfigurationProperties.CONNECT_TIMEOUT, connectTimeout);
+        session.setConfigProperty(ConfigurationProperties.REQUEST_TIMEOUT, requestTimeout);
 
         // server headers configuration - for each <server> from the settings.xml
         serverConfigurations.forEach(session::setConfigProperty);
@@ -1195,7 +1236,8 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     public List<RemoteRepository> configureRemoteRepositories(Settings settings, String repos, boolean fresh) {
         List<RemoteRepository> repositories = new ArrayList<>();
 
-        Set<URL> repositoryURLs = new HashSet<>();
+        // a set to prevent duplicates, but do not store URLs directly (hashCode() may lead to DNS resolution!)
+        Set<String> repositoryURLs = new HashSet<>();
 
         // add maven central first - always
         repositories.add(new RemoteRepository.Builder("central", "default", MAVEN_CENTRAL_REPO)
@@ -1219,7 +1261,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                     }
                     String id = "custom" + customCount++;
                     RepositoryPolicy releasePolicy = fresh ? POLICY_FRESH : POLICY_DEFAULT;
-                    if (repositoryURLs.add(url)) {
+                    if (repositoryURLs.add(url.toExternalForm())) {
                         if (url.getHost().equals("repository.apache.org") && url.getPath().contains("/snapshots")) {
                             apacheSnapshotsIncluded = true;
                             repositories.add(apacheSnapshots);
@@ -1242,7 +1284,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             for (Repository r : settings.getProfilesAsMap().get(profile).getRepositories()) {
                 try {
                     URL url = new URL(r.getUrl());
-                    if (repositoryURLs.add(url)) {
+                    if (repositoryURLs.add(url.toExternalForm())) {
                         if (url.getHost().equals("repository.apache.org") && url.getPath().startsWith("/snapshots")) {
                             apacheSnapshotsIncluded = true;
                         }
