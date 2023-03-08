@@ -2773,18 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- apache pulsar -->
-            <dependency>
-              <groupId>org.apache.pulsar</groupId>
-              <artifactId>pulsar-client</artifactId>
-              <version>${pulsar-version}</version>
-            </dependency>
-            <dependency>
-              <groupId>org.apache.pulsar</groupId>
-              <artifactId>pulsar-client-admin</artifactId>
-              <version>${pulsar-version}</version>
-            </dependency>
-
             <!-- apicurio -->
             <dependency>
                 <groupId>io.apicurio</groupId>
