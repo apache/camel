@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -36,10 +37,22 @@ import picocli.CommandLine.Command;
          description = "Top status of Camel integrations")
 public class CamelContextTop extends ProcessWatchCommand {
 
+    public static class PidNameMemAgeCompletionCandidates implements Iterable<String> {
+
+        public PidNameMemAgeCompletionCandidates() {
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return List.of("pid", "name", "mem", "age").iterator();
+        }
+
+    }
+
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" },
+    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameMemAgeCompletionCandidates.class,
                         description = "Sort by pid, name, mem, or age", defaultValue = "mem")
     String sort;
 

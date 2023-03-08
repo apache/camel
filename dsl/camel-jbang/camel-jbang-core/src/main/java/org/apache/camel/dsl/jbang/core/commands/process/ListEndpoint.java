@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -36,10 +37,22 @@ import picocli.CommandLine.Command;
 @Command(name = "endpoint", description = "Get usage of Camel endpoints")
 public class ListEndpoint extends ProcessWatchCommand {
 
+    public static class PidNameAgeTotalCompletionCandidates implements Iterable<String> {
+
+        public PidNameAgeTotalCompletionCandidates() {
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return List.of("pid", "name", "age", "total").iterator();
+        }
+
+    }
+
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" },
+    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeTotalCompletionCandidates.class,
                         description = "Sort by pid, name, age or total", defaultValue = "pid")
     String sort;
 

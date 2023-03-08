@@ -50,6 +50,7 @@ import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.generator.openapi.RestDslGenerator;
@@ -140,7 +141,8 @@ class Run extends CamelCommand {
     @Option(names = { "--logging" }, defaultValue = "true", description = "Can be used to turn off logging")
     boolean logging = true;
 
-    @Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
+    @Option(names = { "--logging-level" }, completionCandidates = LoggingLevelCompletionCandidates.class,
+            defaultValue = "info", description = "Logging level")
     String loggingLevel;
 
     @Option(names = { "--logging-color" }, defaultValue = "true", description = "Use colored logging")

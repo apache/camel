@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,10 +42,22 @@ import picocli.CommandLine.Command;
 @Command(name = "route-controller", description = "List status of route controller in a running Camel integration")
 public class RouteControllerAction extends ActionWatchCommand {
 
+    public static class IdStateCompletionCandidates implements Iterable<String> {
+
+        public IdStateCompletionCandidates() {
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return List.of("id", "state").iterator();
+        }
+
+    }
+
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
     String name;
 
-    @CommandLine.Option(names = { "--sort" },
+    @CommandLine.Option(names = { "--sort" }, completionCandidates = IdStateCompletionCandidates.class,
                         description = "Sort by id, or state", defaultValue = "id")
     String sort;
 

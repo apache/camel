@@ -19,6 +19,7 @@ package org.apache.camel.dsl.jbang.core.commands;
 import java.nio.file.Path;
 import java.util.Stack;
 
+import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "pipe", description = "Run Camel integration in pipe and filters mode for terminal scripting")
@@ -45,7 +46,8 @@ class Pipe extends CamelCommand {
                         description = "Can be used to turn on logging (logs to file in <user home>/.camel directory)")
     boolean logging;
 
-    @CommandLine.Option(names = { "--logging-level" }, defaultValue = "info", description = "Logging level")
+    @CommandLine.Option(names = { "--logging-level" }, completionCandidates = LoggingLevelCompletionCandidates.class,
+                        defaultValue = "info", description = "Logging level")
     String loggingLevel;
 
     @CommandLine.Option(names = { "--properties" },

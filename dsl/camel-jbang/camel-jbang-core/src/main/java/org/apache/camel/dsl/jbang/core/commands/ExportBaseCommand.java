@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.download.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
@@ -72,7 +73,8 @@ abstract class ExportBaseCommand extends CamelCommand {
             "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies).")
     protected String dependencies;
 
-    @CommandLine.Option(names = { "--runtime" }, description = "Runtime (spring-boot, quarkus, or camel-main)")
+    @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
+                        description = "Runtime (spring-boot, quarkus, or camel-main)")
     protected String runtime;
 
     @CommandLine.Option(names = { "--gav" }, description = "The Maven group:artifact:version")

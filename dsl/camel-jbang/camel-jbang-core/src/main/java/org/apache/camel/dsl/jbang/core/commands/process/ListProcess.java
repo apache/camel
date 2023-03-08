@@ -25,6 +25,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
@@ -34,7 +35,7 @@ import picocli.CommandLine.Command;
 @Command(name = "ps", description = "List running Camel integrations")
 public class ListProcess extends ProcessWatchCommand {
 
-    @CommandLine.Option(names = { "--sort" },
+    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 

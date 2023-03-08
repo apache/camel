@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -36,7 +37,19 @@ import picocli.CommandLine.Command;
          description = "List secrets from security vaults used by running Camel integrations")
 public class ListVault extends ProcessWatchCommand {
 
-    @CommandLine.Option(names = { "--sort" },
+    public static class PidNameCompletionCandidates implements Iterable<String> {
+
+        public PidNameCompletionCandidates() {
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return List.of("pid", "name").iterator();
+        }
+
+    }
+
+    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameCompletionCandidates.class,
                         description = "Sort by pid, name", defaultValue = "pid")
     String sort;
 

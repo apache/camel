@@ -27,6 +27,8 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
+import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.TimeUtils;
@@ -37,7 +39,7 @@ import picocli.CommandLine;
                      description = "List or change logging levels")
 public class LoggerAction extends ActionBaseCommand {
 
-    @CommandLine.Option(names = { "--sort" },
+    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 
@@ -48,7 +50,7 @@ public class LoggerAction extends ActionBaseCommand {
                         description = "To select all running Camel integrations")
     boolean all;
 
-    @CommandLine.Option(names = { "--level", "--logging-level" },
+    @CommandLine.Option(names = { "--logging-level" }, completionCandidates = LoggingLevelCompletionCandidates.class,
                         description = "To change logging level")
     String loggingLevel;
 

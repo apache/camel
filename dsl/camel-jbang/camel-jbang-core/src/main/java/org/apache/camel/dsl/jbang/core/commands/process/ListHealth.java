@@ -30,6 +30,7 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
 import org.apache.camel.health.HealthCheckHelper;
 import org.apache.camel.util.StringHelper;
@@ -42,7 +43,7 @@ import picocli.CommandLine.Command;
 @Command(name = "health", description = "Get health check status of running Camel integrations")
 public class ListHealth extends ProcessWatchCommand {
 
-    @CommandLine.Option(names = { "--sort" },
+    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameAgeCompletionCandidates.class,
                         description = "Sort by pid, name or age", defaultValue = "pid")
     String sort;
 

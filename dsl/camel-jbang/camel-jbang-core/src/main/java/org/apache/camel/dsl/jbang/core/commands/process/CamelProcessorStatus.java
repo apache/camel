@@ -18,6 +18,7 @@ package org.apache.camel.dsl.jbang.core.commands.process;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -37,10 +38,22 @@ import picocli.CommandLine.Command;
 @Command(name = "processor", description = "Get status of Camel processors")
 public class CamelProcessorStatus extends ProcessWatchCommand {
 
+    public static class PidNameCompletionCandidates implements Iterable<String> {
+
+        public PidNameCompletionCandidates() {
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return List.of("pid", "name").iterator();
+        }
+
+    }
+
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "0..1")
     String name = "*";
 
-    @CommandLine.Option(names = { "--sort" },
+    @CommandLine.Option(names = { "--sort" }, completionCandidates = PidNameCompletionCandidates.class,
                         description = "Sort by pid or name", defaultValue = "pid")
     String sort;
 

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import com.github.freva.asciitable.AsciiTable;
@@ -40,10 +41,22 @@ import picocli.CommandLine.Command;
 @Command(name = "thread-dump", description = "List threads in a running Camel integration")
 public class CamelThreadDump extends ActionWatchCommand {
 
+    public static class IdNameStateCompletionCandidates implements Iterable<String> {
+
+        public IdNameStateCompletionCandidates() {
+        }
+
+        @Override
+        public Iterator<String> iterator() {
+            return List.of("id", "name", "state").iterator();
+        }
+
+    }
+
     @CommandLine.Parameters(description = "Name or pid of running Camel integration", arity = "1")
     String name;
 
-    @CommandLine.Option(names = { "--sort" },
+    @CommandLine.Option(names = { "--sort" }, completionCandidates = IdNameStateCompletionCandidates.class,
                         description = "Sort by id, name or state", defaultValue = "id")
     String sort;
 
