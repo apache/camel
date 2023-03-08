@@ -16,24 +16,26 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
-import org.apache.camel.util.IOHelper;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 import java.util.function.Consumer;
 
+import org.apache.camel.util.IOHelper;
 import picocli.CommandLine;
 
 /**
  * Helper for CLI command line.
  */
-public class CommandLineHelper {
+public final class CommandLineHelper {
 
     public static final String USER_CONFIG = ".camel-jbang-user.properties";
+
+    private CommandLineHelper() {
+        super();
+    }
 
     public static void augmentWithUserConfiguration(CommandLine commandLine, String... args) {
         File file = new File(System.getProperty("user.home"), USER_CONFIG);
