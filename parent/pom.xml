@@ -2783,12 +2783,6 @@
             </dependency>
 
             <dependency>
-                <groupId>jakarta.jws</groupId>
-                <artifactId>jakarta.jws-api</artifactId>
-                <version>${jakarta-jws-api-version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>com.sun.xml.messaging.saaj</groupId>
                 <artifactId>saaj-impl</artifactId>
                 <version>3.0.0</version>
