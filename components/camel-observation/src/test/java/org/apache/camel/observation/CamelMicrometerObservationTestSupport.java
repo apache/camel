@@ -32,7 +32,6 @@ import io.micrometer.core.instrument.observation.DefaultMeterObservationHandler;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import io.micrometer.observation.ObservationHandler;
 import io.micrometer.observation.ObservationRegistry;
-import io.micrometer.observation.tck.TestObservationRegistry;
 import io.micrometer.tracing.handler.DefaultTracingObservationHandler;
 import io.micrometer.tracing.handler.PropagatingReceiverTracingObservationHandler;
 import io.micrometer.tracing.handler.PropagatingSenderTracingObservationHandler;
@@ -62,7 +61,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class CamelMicrometerObservationTestSupport extends CamelTestSupport {
-    
+
     static final AttributeKey<String> CAMEL_URI_KEY = AttributeKey.stringKey("camel-uri");
     static final AttributeKey<String> COMPONENT_KEY = AttributeKey.stringKey("component");
     static final AttributeKey<String> PRE_KEY = AttributeKey.stringKey("pre");
@@ -99,7 +98,8 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
         observationRegistry.observationConfig().observationHandler(new DefaultMeterObservationHandler(meterRegistry));
 
         io.micrometer.tracing.Tracer otelTracer = otelTracer();
-        OtelPropagator otelPropagator = new OtelPropagator(ContextPropagators.create(B3Propagator.injectingSingleHeader()), tracer);
+        OtelPropagator otelPropagator
+                = new OtelPropagator(ContextPropagators.create(B3Propagator.injectingSingleHeader()), tracer);
         observationRegistry.observationConfig().observationHandler(
                 new ObservationHandler.FirstMatchingCompositeObservationHandler(
                         new PropagatingSenderTracingObservationHandler<>(otelTracer, otelPropagator),
@@ -117,7 +117,8 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
 
     private OtelTracer otelTracer() {
         OtelCurrentTraceContext otelCurrentTraceContext = new OtelCurrentTraceContext();
-        OtelBaggageManager otelBaggageManager = new OtelBaggageManager(otelCurrentTraceContext, Collections.emptyList(), Collections.emptyList());
+        OtelBaggageManager otelBaggageManager
+                = new OtelBaggageManager(otelCurrentTraceContext, Collections.emptyList(), Collections.emptyList());
         return new OtelTracer(tracer, otelCurrentTraceContext, o -> {
 
         }, otelBaggageManager);

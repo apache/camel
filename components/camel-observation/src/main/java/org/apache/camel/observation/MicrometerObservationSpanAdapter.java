@@ -145,6 +145,7 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
 
         return DEFAULT_EVENT_NAME;
     }
+
     public void setCorrelationContextItem(String key, String value) {
         Baggage baggage = tracer.createBaggage(key);
         Span span = getTracingContext().getSpan();

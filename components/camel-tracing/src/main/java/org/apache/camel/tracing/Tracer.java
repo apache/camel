@@ -78,7 +78,8 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
 
     protected abstract void initTracer();
 
-    protected abstract SpanAdapter startSendingEventSpan(String operationName, SpanKind kind, SpanAdapter parent, Exchange exchange, InjectAdapter injectAdapter);
+    protected abstract SpanAdapter startSendingEventSpan(
+            String operationName, SpanKind kind, SpanAdapter parent, Exchange exchange, InjectAdapter injectAdapter);
 
     protected abstract SpanAdapter startExchangeBeginSpan(
             Exchange exchange, SpanDecorator sd, String operationName, SpanKind kind, SpanAdapter parent);

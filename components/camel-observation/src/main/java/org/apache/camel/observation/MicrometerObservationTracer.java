@@ -62,30 +62,35 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
         this.tracer = tracer;
     }
 
-    private Observation.Context spanKindToContextOnExtract(org.apache.camel.tracing.SpanKind kind, SpanDecorator sd, Exchange exchange) {
+    private Observation.Context spanKindToContextOnExtract(
+            org.apache.camel.tracing.SpanKind kind, SpanDecorator sd, Exchange exchange) {
         ExtractAdapter adapter = sd.getExtractAdapter(exchange.getIn().getHeaders(), encoding);
         switch (kind) {
-        case PRODUCER:
-            throw new UnsupportedOperationException("You can't extract when sending a message");
+            case PRODUCER:
+                throw new UnsupportedOperationException("You can't extract when sending a message");
             case SPAN_KIND_SERVER:
-                RequestReplyReceiverContext<Object, Message> replyReceiverContext = new RequestReplyReceiverContext<>((carrier, key) -> String.valueOf(adapter.get(key)));
+                RequestReplyReceiverContext<Object, Message> replyReceiverContext
+                        = new RequestReplyReceiverContext<>((carrier, key) -> String.valueOf(adapter.get(key)));
                 replyReceiverContext.setResponse(exchange.getMessage());
                 replyReceiverContext.setCarrier(exchange.getIn());
                 return replyReceiverContext;
             case CONSUMER:
             case SPAN_KIND_CLIENT:
-                ReceiverContext<Message> receiverContext = new ReceiverContext<>((carrier, key) -> String.valueOf(adapter.get(key)));
+                ReceiverContext<Message> receiverContext
+                        = new ReceiverContext<>((carrier, key) -> String.valueOf(adapter.get(key)));
                 receiverContext.setCarrier(exchange.getIn());
                 return receiverContext;
-        default:
+            default:
                 return new Observation.Context();
         }
     }
 
-    private Observation.Context spanKindToContextOnInject(org.apache.camel.tracing.SpanKind kind, InjectAdapter adapter, Exchange exchange) {
+    private Observation.Context spanKindToContextOnInject(
+            org.apache.camel.tracing.SpanKind kind, InjectAdapter adapter, Exchange exchange) {
         switch (kind) {
             case SPAN_KIND_CLIENT:
-                RequestReplySenderContext<Object, Message> senderContext = new RequestReplySenderContext<>((carrier, key, value) -> adapter.put(key, value));
+                RequestReplySenderContext<Object, Message> senderContext
+                        = new RequestReplySenderContext<>((carrier, key, value) -> adapter.put(key, value));
                 senderContext.setResponse(exchange.getMessage());
                 senderContext.setCarrier(exchange.getIn());
                 return senderContext;
@@ -125,7 +130,8 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
 
     @Override
     protected SpanAdapter startSendingEventSpan(
-            String operationName, SpanKind kind, SpanAdapter parentObservation, Exchange exchange, InjectAdapter injectAdapter) {
+            String operationName, SpanKind kind, SpanAdapter parentObservation, Exchange exchange,
+            InjectAdapter injectAdapter) {
         Observation.Context context = spanKindToContextOnInject(kind, injectAdapter, exchange);
         Observation observation = Observation.createNotStarted(CAMEL_CONTEXT_NAME, () -> context, observationRegistry);
         observation.contextualName(operationName);
@@ -145,7 +151,8 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
             Exchange exchange, SpanDecorator sd, String operationName, org.apache.camel.tracing.SpanKind kind,
             SpanAdapter parent) {
         boolean parentPresent = parent != null;
-        Observation.Context context = parentPresent ? new Observation.Context() : spanKindToContextOnExtract(kind, sd, exchange);
+        Observation.Context context
+                = parentPresent ? new Observation.Context() : spanKindToContextOnExtract(kind, sd, exchange);
         context.put(SPAN_DECORATOR_INTERNAL, sd instanceof AbstractInternalSpanDecorator);
         Observation observation = Observation.createNotStarted(operationName, () -> context, observationRegistry);
         if (parentPresent) {

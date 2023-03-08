@@ -23,7 +23,8 @@ import io.micrometer.tracing.handler.PropagatingReceiverTracingObservationHandle
 import io.micrometer.tracing.handler.PropagatingSenderTracingObservationHandler;
 import io.micrometer.tracing.propagation.Propagator;
 
-public class CamelPropagatingSenderTracingObservationHandler<T extends SenderContext> extends PropagatingSenderTracingObservationHandler<T> {
+public class CamelPropagatingSenderTracingObservationHandler<T extends SenderContext>
+        extends PropagatingSenderTracingObservationHandler<T> {
 
     /**
      * Creates a new instance of {@link PropagatingReceiverTracingObservationHandler}.
