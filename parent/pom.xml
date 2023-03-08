@@ -2773,14 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- apicurio -->
-            <dependency>
-                <groupId>io.apicurio</groupId>
-                <artifactId>apicurio-data-models</artifactId>
-                <version>${apicurio-version}</version>
-            </dependency>
-
-
             <!-- Optional grok -->
             <dependency>
               <groupId>io.krakens</groupId>
