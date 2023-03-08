@@ -2773,13 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- need this to use the new 'maven-archetype' packaging type -->
-            <dependency>
-                <groupId>org.apache.maven.archetype</groupId>
-                <artifactId>archetype-packaging</artifactId>
-                <version>${maven-archetype-packaging-version}</version>
-            </dependency>
-
             <!-- pdfbox -->
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
