@@ -93,7 +93,7 @@
 
         <!-- use groovy grape to download JARs as that is easy to use -->
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
             <version>${groovy-version}</version>
         </dependency>
