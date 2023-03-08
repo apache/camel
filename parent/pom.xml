@@ -2773,13 +2773,6 @@
                 <scope>import</scope>
             </dependency>
 	    
-            <!-- directory-watcher for camel-file-watch component -->
-            <dependency>
-                <groupId>io.methvin</groupId>
-                <artifactId>directory-watcher</artifactId>
-                <version>${directory-watcher-version}</version>
-            </dependency>
-
             <!-- Netty bom -->
             <dependency>
                 <groupId>io.netty</groupId>
