@@ -71,6 +71,7 @@
         <dependency>
             <groupId>jakarta.xml.soap</groupId>
             <artifactId>jakarta.xml.soap-api</artifactId>
+            <version>${jakarta-xml-soap-api-version}</version>
         </dependency>
 
         <dependency>
