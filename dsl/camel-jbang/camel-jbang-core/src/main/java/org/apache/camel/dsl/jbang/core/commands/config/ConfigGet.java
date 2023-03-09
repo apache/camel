@@ -14,33 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang.core.commands.config;
 
-import java.io.PrintStream;
-
-import picocli.AutoComplete;
+import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "complete", description = "Generate completion script for bash/zsh")
-public class Complete extends CamelCommand {
+@CommandLine.Command(name = "get",
+                     description = "Display user configuration value")
+public class ConfigGet extends CamelCommand {
 
-    public Complete(CamelJBangMain main) {
+    @CommandLine.Parameters(description = "Configuration key", arity = "1")
+    private String key;
+
+    public ConfigGet(CamelJBangMain main) {
         super(main);
     }
 
     @Override
     public Integer call() throws Exception {
-        String script = AutoComplete.bash(
-                spec.parent().name(),
-                spec.parent().commandLine());
+        CommandLineHelper.loadProperties(properties -> {
+            if (properties.containsKey(key)) {
+                System.out.println(properties.getProperty(key));
+            } else {
+                System.out.println(key + " key not found");
+            }
+        });
 
-        // not PrintWriter.println: scripts with Windows line separators fail in strange
-        // ways!
-        PrintStream out = System.out;
-        out.print(script);
-        out.print('\n');
-        out.flush();
         return 0;
     }
-
 }
