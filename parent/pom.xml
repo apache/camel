@@ -2788,12 +2788,6 @@
             </dependency>
 
             <dependency>
-                <groupId>jakarta.xml.soap</groupId>
-                <artifactId>jakarta.xml.soap-api</artifactId>
-                <version>${jakarta-xml-soap-api-version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.eclipse.angus</groupId>
                 <artifactId>angus-mail</artifactId>
                 <version>${angus-mail-version}</version>
