@@ -20,7 +20,8 @@ import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import picocli.CommandLine;
 
-@CommandLine.Command(name = "config", description = "User configuration")
+@CommandLine.Command(name = "config",
+                     description = "Get and set user configuration values (use config --help to see sub commands)")
 public class ConfigCommand extends CamelCommand {
 
     public ConfigCommand(CamelJBangMain main) {
