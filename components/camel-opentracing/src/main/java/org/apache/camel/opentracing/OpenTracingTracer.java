@@ -97,7 +97,8 @@ public class OpenTracingTracer extends org.apache.camel.tracing.Tracer {
     }
 
     @Override
-    protected SpanAdapter startSendingEventSpan(String operationName, SpanKind kind, SpanAdapter parent) {
+    protected SpanAdapter startSendingEventSpan(
+            String operationName, SpanKind kind, SpanAdapter parent, Exchange exchange, InjectAdapter injectAdapter) {
         SpanBuilder spanBuilder = tracer.buildSpan(operationName).withTag(Tags.SPAN_KIND.getKey(), mapToSpanKind(kind));
         if (parent != null) {
             io.opentracing.Span parentSpan = ((OpenTracingSpanAdapter) parent).getOpenTracingSpan();

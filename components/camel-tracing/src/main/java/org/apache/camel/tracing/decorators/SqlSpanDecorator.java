@@ -38,7 +38,7 @@ public class SqlSpanDecorator extends AbstractSpanDecorator {
     @Override
     public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
-        span.setTag(Tag.DB_TYPE, "sql");
+        span.setLowCardinalityTag(Tag.DB_TYPE, "sql");
 
         String sqlquery = exchange.getIn().getHeader(CAMEL_SQL_QUERY, String.class);
         if (sqlquery != null) {

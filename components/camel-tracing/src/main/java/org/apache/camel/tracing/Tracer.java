@@ -78,7 +78,8 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
 
     protected abstract void initTracer();
 
-    protected abstract SpanAdapter startSendingEventSpan(String operationName, SpanKind kind, SpanAdapter parent);
+    protected abstract SpanAdapter startSendingEventSpan(
+            String operationName, SpanKind kind, SpanAdapter parent, Exchange exchange, InjectAdapter injectAdapter);
 
     protected abstract SpanAdapter startExchangeBeginSpan(
             Exchange exchange, SpanDecorator sd, String operationName, SpanKind kind, SpanAdapter parent);
@@ -252,10 +253,11 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
                     }
 
                     SpanAdapter parent = ActiveSpanManager.getSpan(ese.getExchange());
+                    InjectAdapter injectAdapter = sd.getInjectAdapter(ese.getExchange().getIn().getHeaders(), encoding);
                     SpanAdapter span = startSendingEventSpan(sd.getOperationName(ese.getExchange(), ese.getEndpoint()),
-                            sd.getInitiatorSpanKind(), parent);
+                            sd.getInitiatorSpanKind(), parent, ese.getExchange(), injectAdapter);
                     sd.pre(span, ese.getExchange(), ese.getEndpoint());
-                    inject(span, sd.getInjectAdapter(ese.getExchange().getIn().getHeaders(), encoding));
+                    inject(span, injectAdapter);
                     ActiveSpanManager.activate(ese.getExchange(), span);
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Tracing: start client span={}", span);

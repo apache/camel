@@ -42,7 +42,7 @@ import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingle
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
 
 @Command(name = "init", description = "Creates a new Camel integration")
-class Init extends CamelCommand {
+public class Init extends CamelCommand {
 
     @Parameters(description = "Name of integration file (or a github link)", arity = "1",
                 paramLabel = "<file>", parameterConsumer = FileConsumer.class)
@@ -59,7 +59,7 @@ class Init extends CamelCommand {
     private String fromKamelet;
 
     @Option(names = {
-            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.1.1")
+            "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.2")
     private String kameletsVersion;
 
     @Option(names = {

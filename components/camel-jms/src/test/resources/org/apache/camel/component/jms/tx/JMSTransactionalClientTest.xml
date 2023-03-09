@@ -30,7 +30,7 @@
         <!-- and now our route using the XML syntax -->
         <camel:route errorHandlerRef="errorHandler">
             <!-- 1: from the jms queue -->
-            <camel:from uri="activemq:queue:okay"/>
+            <camel:from uri="activemq:queue:okay.JMSTransactionalClientTest"/>
             <!-- 2: setup the transactional boundaries to require a transaction -->
             <camel:transacted ref="PROPAGATION_REQUIRED"/>
             <!-- 3: call our business logic that is myProcessor -->

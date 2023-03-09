@@ -23,9 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -82,6 +84,19 @@ public class SqlRouteTest extends CamelTestSupport {
         row = assertIsInstanceOf(Map.class, received.get(0));
         assertEquals("Linux", row.get("PROJECT"));
         assertEquals("XXX", row.get("license"));
+        mock.reset();
+
+        mock.expectedMessageCount(1);
+        Exchange exchange = new DefaultExchange(context);
+        exchange.getMessage().setHeader(SqlConstants.SQL_QUERY, "select * from projects where id = :#id order by id");
+        exchange.getMessage().setHeader("id", 1);
+        template.send("direct:simple", exchange);
+        mock.assertIsSatisfied();
+        received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        row = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals(1, row.get("id"));
+        assertEquals("ASF", row.get("license"));
+        mock.reset();
     }
 
     @Test

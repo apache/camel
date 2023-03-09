@@ -75,7 +75,7 @@ import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.asGithubSingle
 import static org.apache.camel.dsl.jbang.core.common.GitHubHelper.fetchGithubUrls;
 
 @Command(name = "run", description = "Run as local Camel integration")
-class Run extends CamelCommand {
+public class Run extends CamelCommand {
 
     public static final String WORK_DIR = ".camel-jbang";
     public static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
@@ -638,7 +638,7 @@ class Run extends CamelCommand {
             cmd = StringHelper.after(cmd, "main.CamelJBang ");
         }
         if (cmd == null) {
-            System.err.println("No Camel integration files to run");
+            spec.commandLine().getOut().println("No Camel integration files to run");
             return 1;
         }
         cmd = cmd.replaceFirst("--background=true", "");

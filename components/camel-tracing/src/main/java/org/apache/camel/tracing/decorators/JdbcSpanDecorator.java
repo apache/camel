@@ -37,7 +37,7 @@ public class JdbcSpanDecorator extends AbstractSpanDecorator {
     public void pre(SpanAdapter span, Exchange exchange, Endpoint endpoint) {
         super.pre(span, exchange, endpoint);
 
-        span.setTag(Tag.DB_TYPE, "sql");
+        span.setLowCardinalityTag(Tag.DB_TYPE, "sql");
 
         Object body = exchange.getIn().getBody();
         if (body instanceof String) {
