@@ -229,7 +229,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private boolean fresh;
 
     private String mavenSettings;
-    private String mavenSettingsSecurity;7
+    private String mavenSettingsSecurity;
     private RepositorySystem repositorySystem;
     private RepositorySystemSession repositorySystemSession;
     // actual repositories to be used with maven-resolver
