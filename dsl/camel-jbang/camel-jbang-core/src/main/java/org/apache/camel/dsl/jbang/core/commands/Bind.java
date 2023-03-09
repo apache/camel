@@ -45,7 +45,7 @@ import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.asText;
 import static org.apache.camel.dsl.yaml.common.YamlDeserializerSupport.nodeAt;
 
 @Command(name = "bind", description = "Bind source and sink Kamelets as a new Camel integration")
-class Bind extends CamelCommand {
+public class Bind extends CamelCommand {
 
     @CommandLine.Option(names = { "--source" }, description = "Source (from) such as a Kamelet or Camel endpoint uri",
                         required = true)
