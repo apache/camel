@@ -2786,12 +2786,6 @@
                 <artifactId>jaxb-runtime</artifactId>
                 <version>${glassfish-jaxb-runtime-version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>org.eclipse.angus</groupId>
-                <artifactId>angus-mail</artifactId>
-                <version>${angus-mail-version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 
