@@ -41,6 +41,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-mock</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-jaxb</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.atlasmap</groupId>
