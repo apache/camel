@@ -46,14 +46,14 @@ public final class CommandLineHelper {
     }
 
     public static void createPropertyFile() throws IOException {
-        File file = new File(System.getProperty("user.home"), CommandLineHelper.USER_CONFIG);
+        File file = new File(System.getProperty("user.home"), USER_CONFIG);
         if (!file.exists()) {
             file.createNewFile();
         }
     }
 
     public static void loadProperties(Consumer<Properties> consumer) {
-        File file = new File(System.getProperty("user.home"), CommandLineHelper.USER_CONFIG);
+        File file = new File(System.getProperty("user.home"), USER_CONFIG);
         if (file.isFile() && file.exists()) {
             FileInputStream fis = null;
             try {
@@ -70,7 +70,7 @@ public final class CommandLineHelper {
     }
 
     public static void storeProperties(Properties properties) {
-        File file = new File(System.getProperty("user.home"), CommandLineHelper.USER_CONFIG);
+        File file = new File(System.getProperty("user.home"), USER_CONFIG);
         if (file.isFile() && file.exists()) {
             try (FileOutputStream fos = new FileOutputStream(file)) {
                 properties.store(fos, null);
@@ -78,7 +78,7 @@ public final class CommandLineHelper {
                 throw new RuntimeException(ex);
             }
         } else {
-            System.out.println(CommandLineHelper.USER_CONFIG + " does not exists");
+            System.out.println(USER_CONFIG + " does not exists");
         }
     }
 
