@@ -67,14 +67,17 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
+            <version>${jackson2-version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
+            <version>${jackson2-version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <version>${jackson2-version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -85,6 +88,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
             <artifactId>jackson-jakarta-rs-json-provider</artifactId>
+            <version>${jackson2-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>jakarta.xml.bind</groupId>
@@ -95,6 +99,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-jsonSchema</artifactId>
+            <version>${jackson2-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.validation</groupId>
