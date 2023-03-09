@@ -46,6 +46,10 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-validator</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-xml-jaxb</artifactId>
+        </dependency>
 
         <!-- for base 64 in XAdES -->
         <dependency>
