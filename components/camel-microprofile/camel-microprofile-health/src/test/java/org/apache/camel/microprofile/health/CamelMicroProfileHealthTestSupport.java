@@ -122,6 +122,11 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
             }
 
             @Override
+            public boolean isLiveness() {
+                return true;
+            }
+
+            @Override
             public boolean isReadiness() {
                 return false;
             }
@@ -135,6 +140,11 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
             @Override
             protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
                 consumer.accept(builder);
+            }
+
+            @Override
+            public boolean isReadiness() {
+                return true;
             }
 
             @Override
