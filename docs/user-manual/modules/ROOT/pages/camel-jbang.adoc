@@ -1809,32 +1809,32 @@ NOTE: These are options from the export command, so you can see mor details and 
 
 == Configuration
 
-Camel JBang can be used to store and use user configuration so that cli options won't have to be specified each time, for example, in order to run a different camel version, instead of executing
+Camel JBang `config` command is used to store and use the user configuration. This eliminates the need to specify CLI options each time. For example, to run a different Camel version, instead of executing
 
 [source,bash]
 ----
 camel run * --camel-version=3.18.4
 ----
 
-the option camel-version can be added to the user configuration like
+the camel-version can be added to the user configuration such as:
 
 [source,bash]
 ----
 camel config set camel-version=3.18.4
 ----
 
-and then, the run command will pick the user configuration
+Now, the run command picks the user configuration:
 
 [source,bash]
 ----
 camel run *
 ----
 
-The user configuration file will be stored in ~/.camel-jbang-user.properties
+The user configuration file is stored in `~/.camel-jbang-user.properties`
 
 === Set and unset configuration
 
-Every Camel JBang option can be added to the user configuration, for example to export a simple project
+Every Camel JBang option is added to the user configuration. For example, to export a simple project such as
 
 [source,bash]
 ----
@@ -1847,32 +1847,32 @@ camel config set camel-spring-boot-version=3.20.1
 camel export
 ----
 
-User configurations values can be unset via:
+User configuration keys are unset using the following:
 
 [source,bash]
 ----
-camel config unset camel-spring-boot-version=3.20.1
+camel config unset camel-spring-boot-version
 ----
 
 === List and get configurations
 
-User configurations keys can be listed with:
+User configuration keys are listed using the following:
 
 [source,bash]
 ----
 camel config list
 ----
 
-Given the configuration in the previous paragraph the ouptut will be:
+Following is the output for the above mentioned configuration.
 
 [source,bash]
 ----
-gav
-runtime
-deps
+runtime = spring-boot
+deps = org.apache.camel.springboot:camel-timer-starter
+gav = com.foo:acme:1.0-SNAPSHOT
 ----
 
-In order to get a value given a key, get command can be used:
+To obtain a value for the given key, use the `get` command.
 
 [source,bash]
 ----
