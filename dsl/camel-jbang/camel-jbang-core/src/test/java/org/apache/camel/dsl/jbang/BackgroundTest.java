@@ -41,7 +41,6 @@ import org.apache.camel.dsl.jbang.core.commands.action.CamelRouteStopAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelSourceAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelSourceTop;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelThreadDump;
-import org.apache.camel.dsl.jbang.core.commands.action.CamelTraceAction;
 import org.apache.camel.dsl.jbang.core.commands.action.LoggerAction;
 import org.apache.camel.dsl.jbang.core.commands.action.RouteControllerAction;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogCommand;
@@ -90,7 +89,6 @@ public class BackgroundTest {
                 .addSubcommand("log", new CommandLine(new CamelLogAction(main)))
                 .addSubcommand("ps", new CommandLine(new ListProcess(main)))
                 .addSubcommand("stop", new CommandLine(new StopProcess(main)))
-                .addSubcommand("trace", new CommandLine(new CamelTraceAction(main)))
                 .addSubcommand("get", new CommandLine(new CamelStatus(main))
                         .addSubcommand("context", new CommandLine(new CamelContextStatus(main)))
                         .addSubcommand("route", new CommandLine(new CamelRouteStatus(main)))
