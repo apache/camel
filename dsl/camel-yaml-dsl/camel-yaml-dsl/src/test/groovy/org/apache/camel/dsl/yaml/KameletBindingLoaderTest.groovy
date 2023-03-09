@@ -579,7 +579,7 @@ class KameletBindingLoaderTest extends YamlTestSupport {
         context.routeDefinitions.size() == 3
 
         // global stream caching enabled
-        context.streamCaching == true
+        context.isStreamCaching() == true
 
         with (context.routeDefinitions[1]) {
             template == true

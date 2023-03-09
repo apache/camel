@@ -75,25 +75,25 @@
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>org.codehaus.groovy</groupId>
+                    <groupId>org.apache.groovy</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
                 <exclusion>
-                    <groupId>junit</groupId>
+                    <groupId>org.junit.platform</groupId>
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
 
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
             <version>${groovy-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
-            <artifactId>groovy-test</artifactId>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-test-junit5</artifactId>
             <version>${groovy-version}</version>
             <scope>test</scope>
         </dependency>
