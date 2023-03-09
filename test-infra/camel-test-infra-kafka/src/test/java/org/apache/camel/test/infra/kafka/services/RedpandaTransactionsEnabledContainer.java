@@ -22,7 +22,7 @@ import org.testcontainers.redpanda.RedpandaContainer;
 
 public class RedpandaTransactionsEnabledContainer extends RedpandaContainer {
 
-    public static final String DEFAULT_REDPANDA_CONTAINER = "docker.redpanda.com/vectorized/redpanda:v22.3.10";
+    public static final String DEFAULT_REDPANDA_CONTAINER = "docker.redpanda.com/vectorized/redpanda:v23.1.1";
     public static final String REDPANDA_CONTAINER
             = System.getProperty("itest.redpanda.container.image", DEFAULT_REDPANDA_CONTAINER);
     public static final int REDPANDA_PORT = 9092;
