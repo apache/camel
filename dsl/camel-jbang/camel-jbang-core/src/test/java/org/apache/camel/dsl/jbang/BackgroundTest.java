@@ -14,12 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.commands;
+package org.apache.camel.dsl.jbang;
 
-import java.util.concurrent.Callable;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
-import org.apache.camel.catalog.CamelCatalog;
-import org.apache.camel.catalog.DefaultCamelCatalog;
+import org.apache.camel.dsl.jbang.core.commands.Bind;
+import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
+import org.apache.camel.dsl.jbang.core.commands.CodeGenerator;
+import org.apache.camel.dsl.jbang.core.commands.CodeRestGenerator;
+import org.apache.camel.dsl.jbang.core.commands.Complete;
+import org.apache.camel.dsl.jbang.core.commands.DependencyCommand;
+import org.apache.camel.dsl.jbang.core.commands.DependencyCopy;
+import org.apache.camel.dsl.jbang.core.commands.DependencyList;
+import org.apache.camel.dsl.jbang.core.commands.Export;
+import org.apache.camel.dsl.jbang.core.commands.Init;
+import org.apache.camel.dsl.jbang.core.commands.Pipe;
+import org.apache.camel.dsl.jbang.core.commands.Run;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelGCAction;
 import org.apache.camel.dsl.jbang.core.commands.action.CamelLogAction;
@@ -40,11 +51,6 @@ import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogDoc;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogKamelet;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogLanguage;
 import org.apache.camel.dsl.jbang.core.commands.catalog.CatalogOther;
-import org.apache.camel.dsl.jbang.core.commands.config.ConfigCommand;
-import org.apache.camel.dsl.jbang.core.commands.config.ConfigGet;
-import org.apache.camel.dsl.jbang.core.commands.config.ConfigList;
-import org.apache.camel.dsl.jbang.core.commands.config.ConfigSet;
-import org.apache.camel.dsl.jbang.core.commands.config.ConfigUnset;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextStatus;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelContextTop;
 import org.apache.camel.dsl.jbang.core.commands.process.CamelCount;
@@ -67,17 +73,18 @@ import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
 import org.apache.camel.dsl.jbang.core.commands.process.ListService;
 import org.apache.camel.dsl.jbang.core.commands.process.ListVault;
 import org.apache.camel.dsl.jbang.core.commands.process.StopProcess;
-import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
-import picocli.CommandLine.Command;
 
-@Command(name = "camel", description = "Apache Camel CLI", mixinStandardHelpOptions = true)
-public class CamelJBangMain implements Callable<Integer> {
-    private static CommandLine commandLine;
+@Disabled
+public class BackgroundTest {
 
-    public static void run(String... args) {
+    @Test
+    public void test() {
         CamelJBangMain main = new CamelJBangMain();
-        commandLine = new CommandLine(main)
+        CommandLine commandLine = new CommandLine(main)
                 .addSubcommand("init", new CommandLine(new Init(main)))
                 .addSubcommand("run", new CommandLine(new Run(main)))
                 .addSubcommand("log", new CommandLine(new CamelLogAction(main)))
@@ -130,28 +137,16 @@ public class CamelJBangMain implements Callable<Integer> {
                 .addSubcommand("bind", new CommandLine(new Bind(main)))
                 .addSubcommand("pipe", new CommandLine(new Pipe(main)))
                 .addSubcommand("export", new CommandLine(new Export(main)))
-                .addSubcommand("completion", new CommandLine(new Complete(main)))
-                .addSubcommand("config", new CommandLine(new ConfigCommand(main))
-                        .addSubcommand("list", new CommandLine(new ConfigList(main)))
-                        .addSubcommand("get", new CommandLine(new ConfigGet(main)))
-                        .addSubcommand("unset", new CommandLine(new ConfigUnset(main)))
-                        .addSubcommand("set", new CommandLine(new ConfigSet(main))));
+                .addSubcommand("completion", new CommandLine(new Complete(main)));
 
-        commandLine.getCommandSpec().versionProvider(() -> {
-            CamelCatalog catalog = new DefaultCamelCatalog();
-            String v = catalog.getCatalogVersion();
-            return new String[] { v };
-        });
+        StringWriter sw = new StringWriter();
+        commandLine.setOut(new PrintWriter(sw));
 
-        CommandLineHelper.augmentWithUserConfiguration(commandLine, args);
-        int exitCode = commandLine.execute(args);
-        System.exit(exitCode);
+        int exitCode = commandLine.execute("init", "test.yaml", "--directory=target/data");
+        Assertions.assertThat(exitCode).isEqualTo(0);
+
+        exitCode = commandLine.execute("run", "target/data/test.yaml", "--background");
+        Assertions.assertThat(exitCode).isEqualTo(0);
+        Assertions.assertThat(sw.toString()).doesNotContain("No Camel integration files to run");
     }
-
-    @Override
-    public Integer call() throws Exception {
-        commandLine.execute("--help");
-        return 0;
-    }
-
 }

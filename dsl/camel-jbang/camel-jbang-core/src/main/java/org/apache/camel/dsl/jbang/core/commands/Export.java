@@ -27,7 +27,7 @@ import picocli.CommandLine.Command;
 
 @Command(name = "export",
          description = "Export Camel integration to Spring Boot or Quarkus based project")
-class Export extends ExportBaseCommand {
+public class Export extends ExportBaseCommand {
 
     public Export(CamelJBangMain main) {
         super(main);
