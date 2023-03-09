@@ -1074,14 +1074,6 @@ public class Run extends CamelCommand {
         }
 
         @Override
-        public void onExtraRepository(String repo) {
-            if (!repos.contains(repo)) {
-                writeSettings("repository", repo);
-                repos.add(repo);
-            }
-        }
-
-        @Override
         public void onLoadingKamelet(String name) {
             if (!kamelets.contains(name)) {
                 writeSettings("kamelet", name);
