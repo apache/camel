@@ -67,7 +67,7 @@ public class CamelMicroProfileHealthSupervisedRoutesMainTest {
             assertEquals(Status.UP.name(), healthObject.getString("status"));
 
             JsonArray checks = healthObject.getJsonArray("checks");
-            assertEquals(4, checks.size());
+            assertEquals(5, checks.size());
 
             Optional<JsonObject> camelRoutesCheck = findHealthCheck("camel-routes", checks);
             camelRoutesCheck.ifPresentOrElse(check -> {
