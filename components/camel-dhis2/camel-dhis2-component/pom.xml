@@ -17,8 +17,7 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -84,7 +83,7 @@
                                 <api>
                                     <apiName>post</apiName>
                                     <proxyClass>org.apache.camel.component.dhis2.api.Dhis2Post</proxyClass>
-                                    <fromJavasource/>
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>resource</nullableOption>
                                         <nullableOption>queryParams</nullableOption>
@@ -93,7 +92,7 @@
                                 <api>
                                     <apiName>resourceTables</apiName>
                                     <proxyClass>org.apache.camel.component.dhis2.api.Dhis2ResourceTables</proxyClass>
-                                    <fromJavasource/>
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>skipEvents</nullableOption>
                                         <nullableOption>skipAggregate</nullableOption>
@@ -104,7 +103,7 @@
                                 <api>
                                     <apiName>get</apiName>
                                     <proxyClass>org.apache.camel.component.dhis2.api.Dhis2Get</proxyClass>
-                                    <fromJavasource/>
+                                    <fromJavasource />
                                     <nullableOptions>
                                         <nullableOption>itemType</nullableOption>
                                         <nullableOption>paging</nullableOption>
