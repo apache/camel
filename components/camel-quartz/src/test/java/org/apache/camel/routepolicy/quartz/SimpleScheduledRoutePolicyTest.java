@@ -263,5 +263,86 @@ public class SimpleScheduledRoutePolicyTest {
             context.getComponent("quartz", QuartzComponent.class).stop();
             success.assertIsSatisfied();
         }
+
+        @Nested
+        class SimpleTest7 extends NoBuilderTest {
+            @Test
+            public void testNoAutoStartup() throws Exception {
+                MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
+                success.expectedMessageCount(1);
+
+                context.getComponent("direct", DirectComponent.class).setBlock(false);
+                context.getComponent("quartz", QuartzComponent.class)
+                        .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+                context.addRoutes(new RouteBuilder() {
+                    public void configure() {
+                        SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
+                        long startTime = System.currentTimeMillis() + 3000L;
+                        policy.setRouteStartDate(new Date(startTime));
+                        policy.setRouteStartRepeatCount(1);
+                        policy.setRouteStartRepeatInterval(3000);
+
+                        from("direct:start")
+                                .routeId("test")
+                                .noAutoStartup()
+                                .routePolicy(policy)
+                                .to("mock:success");
+                    }
+                });
+                context.start();
+
+                Thread.sleep(5000);
+                assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("test"));
+                template.sendBody("direct:start", "Ready or not, Here, I come");
+
+                context.getComponent("quartz", QuartzComponent.class).stop();
+                success.assertIsSatisfied();
+            }
+        }
+
+        @Nested
+        class SimpleTest8 extends NoBuilderTest {
+            @Test
+            public void testNoAutoStartupDynamic() throws Exception {
+                MockEndpoint success = context.getEndpoint("mock:success", MockEndpoint.class);
+                success.expectedMessageCount(1);
+
+                context.getComponent("direct", DirectComponent.class).setBlock(false);
+                context.getComponent("quartz", QuartzComponent.class)
+                        .setPropertiesFile("org/apache/camel/routepolicy/quartz/myquartz.properties");
+
+                context.addRoutes(new RouteBuilder() {
+                    @Override
+                    public void configure() throws Exception {
+                        from("direct:start")
+                                .process(e -> context.addRoutes(new RouteBuilder() {
+                                    @Override
+                                    public void configure() throws Exception {
+                                        SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
+                                        long startTime = System.currentTimeMillis() + 3000L;
+                                        policy.setRouteStartDate(new Date(startTime));
+
+                                        from("direct:dynamic")
+                                                .routeId("dynamic")
+                                                .noAutoStartup()
+                                                .routePolicy(policy)
+                                                .to("mock:success");
+                                    }
+                                }));
+                    }
+                });
+
+                context.start();
+
+                template.sendBody("direct:start", "Hello World");
+
+                Thread.sleep(5000);
+                assertSame(ServiceStatus.Started, context.getRouteController().getRouteStatus("dynamic"));
+                template.sendBody("direct:dynamic", "Ready or not, Here, I come");
+
+                context.getComponent("quartz", QuartzComponent.class).stop();
+                success.assertIsSatisfied();
+            }
+        }
     }
 }
