@@ -61,7 +61,7 @@ public final class Environment {
         DHIS2_CONTAINER = new GenericContainer<>(
                 "dhis2/core:2.37.4-tomcat-8.5.34-jre8-alpine")
                 .dependsOn(POSTGRESQL_CONTAINER)
-                .withClasspathResourceMapping("dhis.conf", "/DHIS2_home/dhis.conf", BindMode.READ_WRITE)
+                .withClasspathResourceMapping("dhis.conf", "/DHIS2_home/dhis.conf", BindMode.READ_ONLY)
                 .withNetwork(NETWORK).withExposedPorts(8080)
                 .waitingFor(
                         new HttpWaitStrategy().forStatusCode(200).withStartupTimeout(Duration.ofSeconds(120)))
