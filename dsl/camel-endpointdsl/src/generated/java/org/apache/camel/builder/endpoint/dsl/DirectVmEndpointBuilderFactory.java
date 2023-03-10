@@ -527,6 +527,7 @@ public interface DirectVmEndpointBuilderFactory {
          * @param path name
          * @return the dsl builder
          */
+        @Deprecated
         default DirectVmEndpointBuilder directVm(String path) {
             return DirectVmEndpointBuilderFactory.endpointBuilder("direct-vm", path);
         }
@@ -549,12 +550,14 @@ public interface DirectVmEndpointBuilderFactory {
          * @param path name
          * @return the dsl builder
          */
+        @Deprecated
         default DirectVmEndpointBuilder directVm(
                 String componentName,
                 String path) {
             return DirectVmEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static DirectVmEndpointBuilder endpointBuilder(
             String componentName,
             String path) {

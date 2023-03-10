@@ -29,7 +29,7 @@
     <artifactId>camel-directvm</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: Direct VM</name>
+    <name>Camel :: Direct VM (deprecated)</name>
     <description>Camel Direct VM component</description>
 
     <dependencies>

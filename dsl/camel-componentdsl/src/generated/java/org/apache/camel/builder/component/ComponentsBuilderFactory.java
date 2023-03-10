@@ -1104,6 +1104,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.DirectVmComponentBuilderFactory.DirectVmComponentBuilder directVm() {
         return org.apache.camel.builder.component.dsl.DirectVmComponentBuilderFactory.directVm();
     }
@@ -4437,6 +4438,7 @@ public interface ComponentsBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static org.apache.camel.builder.component.dsl.VmComponentBuilderFactory.VmComponentBuilder vm() {
         return org.apache.camel.builder.component.dsl.VmComponentBuilderFactory.vm();
     }

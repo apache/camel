@@ -3641,6 +3641,7 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.DirectVmEndpointBuilderFactory.DirectVmEndpointBuilder directVm(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.DirectVmEndpointBuilderFactory.endpointBuilder("direct-vm", path);
@@ -3664,6 +3665,7 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.DirectVmEndpointBuilderFactory.DirectVmEndpointBuilder directVm(
             String componentName,
             String path) {
@@ -15355,6 +15357,7 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.VmEndpointBuilderFactory.VmEndpointBuilder vm(
             String path) {
         return org.apache.camel.builder.endpoint.dsl.VmEndpointBuilderFactory.endpointBuilder("vm", path);
@@ -15377,6 +15380,7 @@ public class StaticEndpointBuilders {
      * @param path name
      * @return the dsl builder
      */
+    @Deprecated
     public static org.apache.camel.builder.endpoint.dsl.VmEndpointBuilderFactory.VmEndpointBuilder vm(
             String componentName,
             String path) {

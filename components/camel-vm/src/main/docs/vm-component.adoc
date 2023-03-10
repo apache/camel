@@ -1,10 +1,11 @@
-= VM Component
+= VM Component (deprecated)
 :doctitle: VM
 :shortname: vm
 :artifactid: camel-vm
 :description: Call another endpoint in the same CamelContext asynchronously.
 :since: 1.1
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes

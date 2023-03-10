@@ -1,10 +1,11 @@
-= Direct VM Component
+= Direct VM Component (deprecated)
 :doctitle: Direct VM
 :shortname: direct-vm
 :artifactid: camel-directvm
 :description: Call another endpoint from any Camel Context in the same JVM synchronously.
 :since: 2.10
-:supportlevel: Stable
+:supportlevel: Stable-deprecated
+:deprecated: *deprecated*
 :component-header: Both producer and consumer are supported
 :core:
 //Manually maintained attributes

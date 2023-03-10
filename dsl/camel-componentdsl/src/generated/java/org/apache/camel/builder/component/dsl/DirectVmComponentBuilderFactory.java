@@ -41,6 +41,7 @@ public interface DirectVmComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static DirectVmComponentBuilder directVm() {
         return new DirectVmComponentBuilderImpl();
     }
