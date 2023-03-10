@@ -58,7 +58,7 @@
         <angus-mail-version>1.1.0</angus-mail-version>
         <apacheds-version>2.0.0.AM26</apacheds-version>
         <apache-drill-version>1.20.2</apache-drill-version>
-        <apicurio-version>1.1.26</apicurio-version>
+        <apicurio-version>1.1.27</apicurio-version>
         <arangodb-java-version>6.20.0</arangodb-java-version>
         <as2-lib-version>4.11.0</as2-lib-version>
         <ascii-table-version>1.8.0</ascii-table-version>
