@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
+import org.apache.camel.builder.Builder;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.junit.jupiter.api.BeforeEach;
@@ -122,6 +123,15 @@ public class DefaultMessageHeaderTest {
         assertEquals("bar", msg.getHeader("FOO"));
         assertEquals("bar", msg.getHeader("foo"));
         assertEquals("bar", msg.getHeader("Foo"));
+    }
+
+    @Test
+    public void testSetWithExpression() {
+        Message msg = new DefaultExchange(camelContext).getMessage();
+        assertNull(msg.getHeader("foo"));
+
+        msg.setHeader("foo", Builder.constant("bar"));
+        assertEquals("bar", msg.getHeader("foo"));
     }
 
     @Test

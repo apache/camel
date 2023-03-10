@@ -29,6 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.SafeCopyProperty;
 import org.apache.camel.TypeConversionException;
+import org.apache.camel.builder.Builder;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
@@ -148,6 +149,9 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         assertEquals("apple", exchange.getProperty("fruit", "banana", String.class));
         assertEquals("banana", exchange.getProperty("beer", "banana"));
         assertEquals("banana", exchange.getProperty("beer", "banana", String.class));
+
+        exchange.setProperty("expression", Builder.constant("constant"));
+        assertEquals("constant", exchange.getProperty("expression"));
     }
 
     @Test

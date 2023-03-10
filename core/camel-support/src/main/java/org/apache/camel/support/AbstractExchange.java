@@ -32,6 +32,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangePropertyKey;
+import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ExtendedExchange;
 import org.apache.camel.Message;
@@ -343,6 +344,9 @@ class AbstractExchange implements ExtendedExchange {
     @Override
     public void setProperty(String name, Object value) {
         ExchangePropertyKey key = ExchangePropertyKey.asExchangePropertyKey(name);
+        if (value instanceof Expression) {
+            value = ((Expression) value).evaluate(this, Object.class);
+        }
         if (key != null) {
             setProperty(key, value);
         } else if (value != null) {

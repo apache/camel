@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.HeadersMapFactory;
 
@@ -206,6 +207,9 @@ public class DefaultMessage extends MessageSupport {
     public void setHeader(String name, Object value) {
         if (headers == null) {
             headers = createHeaders();
+        }
+        if (value instanceof Expression) {
+            value = ((Expression) value).evaluate(getExchange(), Object.class);
         }
         headers.put(name, value);
     }
