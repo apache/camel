@@ -304,6 +304,7 @@
                 <dependency>
                     <groupId>org.codehaus.woodstox</groupId>
                     <artifactId>woodstox-core-asl</artifactId>
+                    <version>${woodstox-version}</version>
                     <scope>test</scope>
                 </dependency>
             </dependencies>
