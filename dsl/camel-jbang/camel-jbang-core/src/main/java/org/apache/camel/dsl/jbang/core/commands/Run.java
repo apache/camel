@@ -597,30 +597,28 @@ public class Run extends CamelCommand {
     }
 
     protected int runCamelVersion(KameletMain main) throws Exception {
-        String cmd = ProcessHandle.current().info().commandLine().orElse(null);
-        if (cmd != null) {
-            cmd = StringHelper.after(cmd, "main.CamelJBang ");
-        }
-        if (cmd == null) {
-            System.err.println("No Camel integration files to run");
-            return 1;
-        }
+        List<String> cmds = new ArrayList<>();
+        cmds.addAll(spec.commandLine().getParseResult().originalArgs());
+
         if (background) {
-            cmd = cmd.replaceFirst("--background=true", "");
-            cmd = cmd.replaceFirst("--background", "");
+            cmds.remove("--background=true");
+            cmds.remove("--background");
         }
-        cmd = cmd.replaceFirst("--camel-version=" + camelVersion, "");
+        cmds.remove("--camel-version=" + camelVersion);
         // need to use jbang command to specify camel version
-        String jbang = "jbang run -Dcamel.jbang.version=" + camelVersion;
+        List<String> jbangArgs = new ArrayList<>();
+        jbangArgs.add("jbang");
+        jbangArgs.add("run");
+        jbangArgs.add("-Dcamel.jbang.version=" + camelVersion);
+
         if (repos != null) {
-            jbang += " --repos=" + repos;
+            jbangArgs.add("--repos=" + repos);
         }
-        cmd = jbang + " camel@apache/camel " + cmd;
+        jbangArgs.add("camel@apache/camel");
+        jbangArgs.addAll(cmds);
 
         ProcessBuilder pb = new ProcessBuilder();
-        String[] arr = cmd.split("\\s+"); // TODO: safe split
-        List<String> args = Arrays.asList(arr);
-        pb.command(args);
+        pb.command(jbangArgs);
         if (background) {
             Process p = pb.start();
             System.out.println("Running Camel integration: " + name + " (version: " + camelVersion
@@ -635,22 +633,16 @@ public class Run extends CamelCommand {
     }
 
     protected int runBackground(KameletMain main) throws Exception {
-        String cmd = ProcessHandle.current().info().commandLine().orElse(null);
-        if (cmd != null) {
-            cmd = StringHelper.after(cmd, "main.CamelJBang ");
-        }
-        if (cmd == null) {
-            spec.commandLine().getOut().println("No Camel integration files to run");
-            return 1;
-        }
-        cmd = cmd.replaceFirst("--background=true", "");
-        cmd = cmd.replaceFirst("--background", "");
-        cmd = "camel " + cmd;
+        List<String> cmds = new ArrayList<>();
+        cmds.addAll(spec.commandLine().getParseResult().originalArgs());
+
+        cmds.remove("--background=true");
+        cmds.remove("--background");
+
+        cmds.add(0, "camel");
 
         ProcessBuilder pb = new ProcessBuilder();
-        String[] arr = cmd.split("\\s+"); // TODO: safe split
-        List<String> args = Arrays.asList(arr);
-        pb.command(args);
+        pb.command(cmds);
         Process p = pb.start();
         System.out.println("Running Camel integration: " + name + " in background with PID: " + p.pid());
         return 0;
@@ -664,6 +656,8 @@ public class Run extends CamelCommand {
         content = content.replaceFirst("\\{\\{ \\.JavaVersion }}", "17"); // TODO: java 11 or 17
         if (repos != null) {
             content = content.replaceFirst("\\{\\{ \\.MavenRepositories }}", "//REPOS " + repos);
+        } else {
+            content = content.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
         }
 
         // use custom distribution of camel
@@ -690,34 +684,30 @@ public class Run extends CamelCommand {
         String fn = WORK_DIR + "/CustomCamelJBang.java";
         Files.write(Paths.get(fn), content.getBytes(StandardCharsets.UTF_8));
 
-        String cmd = ProcessHandle.current().info().commandLine().orElse(null);
-        if (cmd != null) {
-            cmd = StringHelper.after(cmd, "main.CamelJBang ");
-        }
-        if (cmd == null) {
-            System.err.println("No Camel integration files to run");
-            return 1;
-        }
+        List<String> cmds = new ArrayList<>();
+        cmds.addAll(spec.commandLine().getParseResult().originalArgs());
+
         if (background) {
-            cmd = cmd.replaceFirst("--background=true", "");
-            cmd = cmd.replaceFirst("--background", "");
+            cmds.remove("--background=true");
+            cmds.remove("--background");
         }
         if (repos != null) {
             if (!VersionHelper.isGE(v, "3.18.1")) {
                 // --repos is not supported in 3.18.0 or older, so remove
-                cmd = cmd.replaceFirst("--repos=" + repos, "");
+                cmds.remove("--repos=" + repos);
             }
         }
 
-        cmd = cmd.replaceFirst("--camel-version=" + camelVersion, "");
+        cmds.remove("--camel-version=" + camelVersion);
         // need to use jbang command to specify camel version
-        String jbang = "jbang " + WORK_DIR + "/CustomCamelJBang.java ";
-        cmd = jbang + cmd;
+        List<String> jbangArgs = new ArrayList<>();
+        jbangArgs.add("jbang");
+        jbangArgs.add(WORK_DIR + "/CustomCamelJBang.java");
+
+        jbangArgs.addAll(cmds);
 
         ProcessBuilder pb = new ProcessBuilder();
-        String[] arr = cmd.split("\\s+"); // TODO: safe split
-        List<String> args = Arrays.asList(arr);
-        pb.command(args);
+        pb.command(jbangArgs);
         if (background) {
             Process p = pb.start();
             System.out.println("Running Camel integration: " + name + " (version: " + camelVersion
