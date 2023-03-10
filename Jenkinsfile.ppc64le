@@ -1,0 +1,111 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+def AGENT_LABEL = 'ppc64le'
+def JDK_NAME = env.JDK_NAME ?: 'jdk_17_latest'
+
+def MAVEN_PARAMS = "-B -e -fae -V -Dnoassembly -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2"
+def MAVEN_TEST_PARAMS = env.MAVEN_TEST_PARAMS ?: "-Dkafka.instance.type=local-strimzi-container -Dci.env.name=apache.org"
+/*
+Below parameters are required for camel/core/camel-core module's test cases to pass
+- xpathExprGrpLimit: limits the number of groups an Xpath expression can contain 
+- xpathExprOpLimit: limits the number of operators an Xpath expression can contain
+*/
+def MAVEN_TEST_LIMIT_PARAMS = "-Djdk.xml.xpathExprGrpLimit=100 -Djdk.xml.xpathExprOpLimit=2000"
+
+pipeline {
+
+    agent {
+        label AGENT_LABEL
+    }
+
+    tools {
+        jdk JDK_NAME
+    }
+
+    environment {
+        MAVEN_SKIP_RC = true
+    }
+
+    options {
+        buildDiscarder(
+            logRotator(artifactNumToKeepStr: '5', numToKeepStr: '10')
+        )
+        disableConcurrentBuilds()
+    }
+
+    parameters {
+        booleanParam(name: 'CLEAN', defaultValue: true, description: 'Perform the build in clean workspace')
+    }
+
+    stages {
+
+        stage('Clean workspace') {
+             when {
+                 expression { params.CLEAN }
+             }
+             steps {
+                 sh 'git clean -fdx'
+           }
+        }
+
+        stage('Build & Install') {
+            when {
+                branch 'main'
+            }
+            steps {
+                // Skip modules camel-kudu and docs as these are not supported on ppc64le.
+                sh "./mvnw -U $MAVEN_PARAMS -Darchetype.test.skip -Dmaven.test.skip.exec=true clean install -pl '!docs,!components/camel-kudu'"
+            }
+        }
+
+        stage('Checks') {
+            steps {
+                sh "./mvnw $MAVEN_PARAMS -Darchetype.test.skip -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
+            }
+        }
+
+        stage('Test') {
+            steps {
+                timeout(unit: 'HOURS', time: 7) {
+                    // Skip the test case execution of modules which are either not supported on ppc64le or vendor images are not available for ppc64le.
+                    sh "./mvnw $MAVEN_PARAMS $MAVEN_TEST_PARAMS $MAVEN_TEST_LIMIT_PARAMS -Darchetype.test.skip -Dmaven.test.failure.ignore=true -Dcheckstyle.skip=true verify -pl '!docs,!components/camel-kudu,!components/camel-djl,!components/camel-consul,!components/camel-pulsar,!components/camel-xmpp,!components/camel-google/camel-google-pubsub,!components/camel-hdfs,!components/camel-zookeeper,!components/camel-zookeeper-master'"
+                }
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: '**/target/surefire-reports/*.xml'
+                    junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/*.xml'
+                }
+            }
+        }
+
+    }
+
+    post {
+        always {
+            emailext(
+                subject: '${DEFAULT_SUBJECT}',
+                body: '${DEFAULT_CONTENT}',
+                recipientProviders: [[$class: 'CulpritsRecipientProvider']]
+            )
+        }
+    }
+}
+
