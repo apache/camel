@@ -4,14 +4,14 @@
 :artifactid: camel-dhis2
 :description: Leverages the DHIS2 Java SDK to integrate Apache Camel with the DHIS2 Web API.
 :since: 3.21
-:supportlevel: Stable
+:supportlevel: Preview
 :component-header: Both producer and consumer are supported
 
 *Since Camel {since}*
 
 *{component-header}*
 
-The Camel DHIS2 component leverages the https://github.com/dhis2/dhis2-java-sdk[DHIS2 Java SDK] to integrate Apache Camel with the https://dhis2.org/[DHIS2]. DHIS2 is a free, open-source software platform for collecting, analyzing, visualizing and sharing data.
+The Camel DHIS2 component leverages the https://github.com/dhis2/dhis2-java-sdk[DHIS2 Java SDK] to integrate Apache Camel with https://dhis2.org/[DHIS2]. DHIS2 is a free, open-source, fully customizable platform for collecting, analyzing, visualizing, and sharing aggregate and individual-data for district-level, national, regional, and international system and program management in health, education, and other domains.
 
 Maven users will need to add the following dependency to their `+pom.xml+`.
 
@@ -31,140 +31,23 @@ Maven users will need to add the following dependency to their `+pom.xml+`.
 dhis2://operation/method[?options]
 ....
 
-== Configuring Options
+// component-configure options: START
 
-Camel components are configured on two separate levels:
+// component-configure options: END
 
-* component level
-* endpoint level
+// component options: START
+include::partial$component-configure-options.adoc[]
+include::partial$component-endpoint-options.adoc[]
+// component options: END
 
-=== Configuring Component Options
+// endpoint options: START
 
-The component level is the highest level which holds general and common configurations that are inherited by the endpoints. For example a component may have security settings, credentials for authentication, urls for network connection and so forth.
+// endpoint options: END
 
-Some components only have a few options, and others may have many. Because components typically have pre-configured defaults that are commonly used, then you may often only need to configure a few options on a component; or none at all.
-
-Configuring components can be done with the https://camel.apache.org/manual/component-dsl.html[Component DSL], in a configuration file (application.properties|yaml), or directly with Java
-code.
-
-=== Configuring Endpoint Options
-
-Where you find yourself configuring the most is on endpoints, as endpoints often have many options, which allows you to configure what you need the endpoint to do. The options are also categorized into whether the endpoint is used as consumer (from) or as a producer (to), or used for both.
-
-Configuring endpoints is most often done directly in the endpoint URI as path and query parameters. You can also use the https://camel.apache.org/manual/Endpoint-dsl.html[Endpoint DSL] as a type safe way of configuring endpoints.
-
-A good practice when configuring options is to use https://camel.apache.org/manual/using-propertyplaceholder.html[Property Placeholders], which allows to not hardcode urls, port numbers, sensitive information, and other settings. In other words placeholders allows to externalize the configuration from your code, and gives more flexibility and reuse.
-
-The following two sections lists all the options, firstly for the component followed by the endpoint.
-
-== Component Options
-
-The DHIS2 component supports the options listed below.
-
-[width="100%",cols="13%,58%,4%,25%",options="header",]
-|===
-| Naming | Description | Default | Type
-| baseApiUrl (common) | DHIS2 server base API URL | | String
-| username (common) | Username for use for basic authentication | | String
-| password (common) | Password for use for basic authentication | | String
-| client (advanced) | Dhis2Client is an expensive object to create. To avoid creating multiple instances, it can be set directly. | | org.hisp.dhis.integration.sdk.api.Dhis2Client
-|===
-
-== Endpoint Options
-
-The DHIS2 endpoint is configured using URI syntax:
-
-....
-dhis2:apiName/methodName
-....
-
-with the following path and query parameters:
-
-=== Path Parameters
-
-[width="100%",cols="13%,74%,5%,8%",options="header",]
-|===
-| Naming | Description |Default | Type
-| apiName (common) | *Required* What kind of operation to perform. Enum values: | | Dhis2ApiName
-| methodName (common) | *Required* What sub operation to use for the selected operation | | String
-|===
-
-=== Query Parameters
-
-[width="100%",cols="16%,46%,6%,32%",options="header",]
-|===
-| Naming | Description | Default | Type
-| baseApiUrl (common) | DHIS2 server base API URL | | String
-| inBody (common) | Sets the name of a parameter to be passed in the exchange In Body | | String
-| client (advanced) | To use the custom client | | org.hisp.dhis.integration.sdk.api.Dhis2Client
-| password (security) | Password to use for basic authentication | | String
-| username (security) | Username to use for basic authentication | | String
-|===
-
-== API Parameters
-
-The DHIS2 endpoint is an API-based component and has additional parameters based on which API name and API method is used. The API name and API method is located in the endpoint URI as the apiName/methodName path parameters:
-
-....
-dhis2:apiName/methodName
-....
-
-The API names as listed in the table below:
-
-[width="100%",cols="15%,5%,80%",options="header",]
-|===
-| API Name | Type | Description
-| get | Both | API for the get operation, which fetches a resource or a list resources from the server
-| post | Both | API for the create operation, which creates a new resource on the server
-| resourceTables | Both | API for resource and analytic operations
-|===
-
-Each API is documented in the following sections to come.
-
-=== API: get
-
-*Both producer and consumer are supported*
-
-The get API is defined in the syntax as follows:
-
-....
-dhis2:get/methodName?[parameters]
-....
-
-The method(s) is listed in the table below, followed by detailed syntax for each method. (API methods can have a shorthand alias name which can be used in the syntax instead of the name)
-
-[cols=",,",options="header",]
-|===
-| Method | Alias | Description
-| resource | | Retrieve a resource
-| collection | | Retrieve a list of resources
-|===
-
-==== METHOD resource
-
-Signatures:
-
-* java.io.InputStream resource(java.lang.String path, java.lang.String fields, java.lang.String filter, java.util.Map<String, Object> queryParams)
-
-The get/resource API method has the parameters listed in the table below:
-
-[cols=",,",options="header",]
-|===
-| Parameter | Description | Type
-| path | Resource URL path | String
-| fields | Comma-delimited list of fields to fetch | String
-| filter | Search criteria | String
-| queryParams | Custom query parameters | Map
-|===
-
-In addition to the parameters above, the get/resource API can also use any of the link:#query-parameters[Query Parameters].
-
-Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header. The message header name must be of the format CamelDhis2.parameter. The inBody parameter overrides message header, i.e. the endpoint parameter inBody=myParameterNameHere would override a CamelDhis2.myParameterNameHere header.
-
-===== Examples
+== Examples
 
 * Fetch an organisation unit by ID:
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -185,7 +68,7 @@ public class MyRouteBuilder extends RouteBuilder {
 ----
 
 * Fetch an organisation unit code by ID:
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -202,10 +85,9 @@ public class MyRouteBuilder extends RouteBuilder {
             .json(OrganisationUnit.class);
     }
 }
-
 ----
 
-==== METHOD collection
+== METHOD collection
 
 Signatures:
 
@@ -224,14 +106,10 @@ The get/collection API method has the parameters listed in the table below:
 | queryParams |Custom query parameters | Map
 |===
 
-In addition to the parameters above, the get/collection API can also use any of the link:#query-parameters[Query Parameters].
-
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header. The message header name must be of the format CamelDhis2.parameter. The inBody parameter overrides message header, i.e. the endpoint parameter inBody=myParameterNameHere would override a CamelDhis2.myParameterNameHere header.
 
-===== Examples
-
 * Fetch all organisation units:
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -249,7 +127,7 @@ public class MyRouteBuilder extends RouteBuilder {
 ----
 
 * Fetch all organisation unit codes:
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -267,7 +145,7 @@ public class MyRouteBuilder extends RouteBuilder {
 ----
 
 * Fetch users with a phone number:
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -284,7 +162,7 @@ public class MyRouteBuilder extends RouteBuilder {
 }
 ----
 
-=== API: post
+== API: post
 
 *Both producer and consumer are supported*
 
@@ -294,7 +172,7 @@ The post API is defined in the syntax as follows:
 dhis2:post/methodName?[parameters]
 ....
 
-==== METHOD resource
+== METHOD resource
 
 Signatures:
 
@@ -311,14 +189,12 @@ below:
 | queryParams | Custom query parameters | Map
 |===
 
-In addition to the parameters above, the post/resource API can also use any of the link:#query-parameters[Query Parameters].
-
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header. The message header name must be of the format CamelDhis2.parameter. The inBody parameter overrides message header, i.e. the endpoint parameter inBody=myParameterNameHere would override a CamelDhis2.myParameterNameHere header.
 
-===== Examples
+== Examples
 
 * Save a data value set
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -357,7 +233,7 @@ public class MyRouteBuilder extends RouteBuilder {
 }
 ----
 
-=== API: resourceTables
+== API: resourceTables
 
 *Both producer and consumer are supported*
 
@@ -367,7 +243,7 @@ The resourceTables API is defined in the syntax as follows:
 dhis2:resourceTables/methodName?[parameters]
 ....
 
-==== METHOD analytics
+== METHOD analytics
 
 Signatures:
 
@@ -390,10 +266,8 @@ In addition to the parameters above, the resourceTables/analytics API can also u
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header. The message header name must be of the format CamelDhis2.parameter. The inBody parameter overrides message header, i.e. the endpoint parameter inBody=myParameterNameHere would override a CamelDhis2.myParameterNameHere header.
 
-===== Examples
-
 * Run analytics
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -412,7 +286,7 @@ public class MyRouteBuilder extends RouteBuilder {
 == Usage Examples
 
 * Reference DHIS2 client
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;
@@ -434,7 +308,7 @@ public class MyRouteBuilder extends RouteBuilder {
 ----
 
 * Set custom query parameters
-+
+
 [source,java]
 ----
 package org.camel.dhis2.example;

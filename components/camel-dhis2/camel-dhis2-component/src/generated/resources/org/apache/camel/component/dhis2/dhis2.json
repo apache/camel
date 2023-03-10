@@ -8,7 +8,7 @@
     "firstVersion": "3.21.0",
     "label": "api",
     "javaType": "org.apache.camel.component.dhis2.Dhis2Component",
-    "supportLevel": "Stable",
+    "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dhis2",
     "version": "3.21.0-SNAPSHOT",
