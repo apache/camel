@@ -24,8 +24,6 @@ public class Dhis2EndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("methodName", java.lang.String.class);
         map.put("baseApiUrl", java.lang.String.class);
         map.put("inBody", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("username", java.lang.String.class);
         map.put("sendEmptyMessageWhenIdle", boolean.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("exceptionHandler", org.apache.camel.spi.ExceptionHandler.class);
@@ -47,6 +45,8 @@ public class Dhis2EndpointConfigurer extends PropertyConfigurerSupport implement
         map.put("startScheduler", boolean.class);
         map.put("timeUnit", java.util.concurrent.TimeUnit.class);
         map.put("useFixedDelay", boolean.class);
+        map.put("password", java.lang.String.class);
+        map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 

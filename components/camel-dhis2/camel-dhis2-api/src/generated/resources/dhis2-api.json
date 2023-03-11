@@ -6,7 +6,7 @@
     "description": "Camel DHIS2 API",
     "deprecated": false,
     "firstVersion": "3.21.0",
-    "supportLevel": "Stable",
+    "supportLevel": "Preview",
     "groupId": "org.apache.camel",
     "artifactId": "camel-dhis2-api",
     "version": "3.21.0-SNAPSHOT"

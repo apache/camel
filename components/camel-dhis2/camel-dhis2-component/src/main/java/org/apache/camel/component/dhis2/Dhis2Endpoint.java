@@ -48,7 +48,6 @@ public class Dhis2Endpoint extends AbstractApiEndpoint<Dhis2ApiName, Dhis2Config
     @UriParam
     private final Dhis2Configuration configuration;
 
-    // TODO create and manage API proxy
     private Object apiProxy;
 
     public Dhis2Endpoint(String uri, Dhis2Component component,
