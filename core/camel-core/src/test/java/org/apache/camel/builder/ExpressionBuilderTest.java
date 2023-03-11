@@ -134,6 +134,13 @@ public class ExpressionBuilderTest extends TestSupport {
         assertExpression(headerExpression("name", String.class), exchange, "James");
     }
 
+    @Test
+    public void testConstantsOnly() throws Exception {
+        Expression expression = concatExpression(
+                List.of(constantExpression("Hello"), constantExpression(" big "), constantExpression("World")));
+        assertExpression(expression, exchange, "Hello big World");
+    }
+
     @Override
     @BeforeEach
     public void setUp() throws Exception {

@@ -20,7 +20,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -1701,9 +1700,13 @@ public class ExpressionBuilder {
     private static Expression concatExpressionOptimized(final Collection<Expression> expressions, final String description) {
         return new ExpressionAdapter() {
             private Collection<Object> optimized;
+            private String optimizedValue;
 
             @Override
             public Object evaluate(Exchange exchange) {
+                if (optimizedValue != null) {
+                    return optimizedValue;
+                }
                 StringBuilder buffer = new StringBuilder();
                 Collection<?> col = optimized != null ? optimized : expressions;
                 for (Object obj : col) {
@@ -1713,8 +1716,8 @@ public class ExpressionBuilder {
                         if (text != null) {
                             buffer.append(text);
                         }
-                    } else {
-                        buffer.append((String) obj);
+                    } else if (obj != null) {
+                        buffer.append(obj);
                     }
                 }
                 return buffer.toString();
@@ -1724,6 +1727,7 @@ public class ExpressionBuilder {
             public void init(CamelContext context) {
                 if (optimized == null) {
                     Collection<Object> preprocessedExpression = new ArrayList<>(expressions.size());
+                    boolean constantsOnly = true;
                     for (Expression expression : expressions) {
                         expression.init(context);
                         if (expression instanceof ConstantExpressionAdapter) {
@@ -1731,9 +1735,18 @@ public class ExpressionBuilder {
                             preprocessedExpression.add(value.toString());
                         } else {
                             preprocessedExpression.add(expression);
+                            constantsOnly = false;
                         }
                     }
-                    optimized = preprocessedExpression;
+                    if (constantsOnly) {
+                        StringBuilder sb = new StringBuilder();
+                        for (Object o : preprocessedExpression) {
+                            sb.append(o);
+                        }
+                        optimizedValue = sb.toString();
+                    } else {
+                        optimized = preprocessedExpression;
+                    }
                 } else {
                     for (Expression expression : expressions) {
                         expression.init(context);
