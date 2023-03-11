@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.vm;
+package org.apache.camel.component.stub;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -27,7 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.parallel.ResourceLock;
 
 @ResourceLock("VmComponent")
-public abstract class AbstractVmTestSupport extends ContextTestSupport {
+public abstract class AbstractStubTestSupport extends ContextTestSupport {
 
     protected CamelContext context2;
     protected ProducerTemplate template2;
@@ -52,8 +52,6 @@ public abstract class AbstractVmTestSupport extends ContextTestSupport {
     @AfterEach
     public void tearDown() throws Exception {
         stopServices(context2, template2);
-        VmComponent.ENDPOINTS.clear();
-        VmComponent.QUEUES.clear();
         super.tearDown();
     }
 

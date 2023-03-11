@@ -65,8 +65,8 @@ public class StreamCachingInOutTest extends ContextTestSupport {
                 context.getStreamCachingStrategy().setSpoolThreshold(1);
                 from("direct:c").noStreamCaching().to("direct:d").convertBodyTo(String.class).to("mock:c");
                 from("direct:d").streamCaching().process(new TestProcessor());
-                from("direct:e").noStreamCaching().to("direct-vm:f").convertBodyTo(String.class).to("mock:e");
-                from("direct-vm:f").streamCaching().process(new TestProcessor());
+                from("direct:e").noStreamCaching().to("direct:f").convertBodyTo(String.class).to("mock:e");
+                from("direct:f").streamCaching().process(new TestProcessor());
             }
         };
     }

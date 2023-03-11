@@ -24,6 +24,7 @@ The following components has been removed:
 | camel-atmos                          | none
 | camel-caffeine-lrucache              | camel-cache, camel-ignite, camel-infinispan
 | camel-cdi                            | camel-spring-boot, camel-quarkus
+| camel-directvm                       | camel-direct
 | camel-elasticsearch-rest             | camel-elasticsearch
 | camel-gora                           | none
 | camel-hbase                          | none

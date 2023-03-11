@@ -3515,51 +3515,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.DirectEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Direct VM (camel-directvm)
-     * Call another endpoint from any Camel Context in the same JVM
-     * synchronously.
-     * 
-     * Category: core,endpoint
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-directvm
-     * 
-     * Syntax: <code>direct-vm:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name of direct-vm endpoint
-     * 
-     * @param path name
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.DirectVmEndpointBuilderFactory.DirectVmEndpointBuilder directVm(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.DirectVmEndpointBuilderFactory.endpointBuilder("direct-vm", path);
-    }
-    /**
-     * Direct VM (camel-directvm)
-     * Call another endpoint from any Camel Context in the same JVM
-     * synchronously.
-     * 
-     * Category: core,endpoint
-     * Since: 2.10
-     * Maven coordinates: org.apache.camel:camel-directvm
-     * 
-     * Syntax: <code>direct-vm:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name of direct-vm endpoint
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path name
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.DirectVmEndpointBuilderFactory.DirectVmEndpointBuilder directVm(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.DirectVmEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Disruptor (camel-disruptor)
      * Provides asynchronous SEDA behavior using LMAX Disruptor.
      * 

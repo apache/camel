@@ -1705,28 +1705,6 @@
     "producerOnly": false,
     "lenientProperties": false
   },
-  "DirectVmComponentBuilderFactory": {
-    "kind": "component",
-    "name": "direct-vm",
-    "title": "Direct VM",
-    "description": "Call another endpoint from any Camel Context in the same JVM synchronously.",
-    "deprecated": false,
-    "firstVersion": "2.10.0",
-    "label": "core,endpoint",
-    "javaType": "org.apache.camel.component.directvm.DirectVmComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-directvm",
-    "version": "4.0.0-SNAPSHOT",
-    "scheme": "direct-vm",
-    "extendsScheme": "",
-    "syntax": "direct-vm:name",
-    "async": true,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "DisruptorComponentBuilderFactory": {
     "kind": "component",
     "name": "disruptor",
