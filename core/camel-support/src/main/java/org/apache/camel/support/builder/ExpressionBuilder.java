@@ -1642,12 +1642,11 @@ public class ExpressionBuilder {
      */
     public static Expression concatExpression(final Collection<Expression> expressions, final String description) {
         for (Expression expression : expressions) {
-            if(expression instanceof ConstantExpressionAdapter){
+            if (expression instanceof ConstantExpressionAdapter) {
                 return concatExpressionOptimized(expressions, description);
             }
         }
-
-        return concatExpressionUnoptimized(expressions,description);
+        return concatExpressionUnoptimized(expressions, description);
     }
 
     /**
@@ -1700,15 +1699,13 @@ public class ExpressionBuilder {
      * @return an expression which when evaluated will return the concatenated values
      */
     private static Expression concatExpressionOptimized(final Collection<Expression> expressions, final String description) {
-
-
         return new ExpressionAdapter() {
-
-            private Collection<Object> col;
+            private Collection<Object> optimized;
 
             @Override
             public Object evaluate(Exchange exchange) {
                 StringBuilder buffer = new StringBuilder();
+                Collection<?> col = optimized != null ? optimized : expressions;
                 for (Object obj : col) {
                     if (obj instanceof Expression) {
                         Expression expression = (Expression) obj;
@@ -1725,7 +1722,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
-                if(col == null) {
+                if (optimized == null) {
                     Collection<Object> preprocessedExpression = new ArrayList<>(expressions.size());
                     for (Expression expression : expressions) {
                         expression.init(context);
@@ -1736,14 +1733,12 @@ public class ExpressionBuilder {
                             preprocessedExpression.add(expression);
                         }
                     }
-                    col = Collections.unmodifiableCollection(preprocessedExpression);
-                }
-                else{
+                    optimized = preprocessedExpression;
+                } else {
                     for (Expression expression : expressions) {
                         expression.init(context);
                     }
                 }
-
             }
 
             @Override
@@ -1756,7 +1751,6 @@ public class ExpressionBuilder {
             }
         };
     }
-
 
     /**
      * Returns an Expression for the inbound message id
