@@ -22,7 +22,7 @@ import java.util.concurrent.BlockingQueue;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.seda.BlockingQueueFactory;
-import org.apache.camel.component.vm.VmComponent;
+import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.NormalizedUri;
@@ -35,7 +35,7 @@ import org.apache.camel.support.NormalizedUri;
  * routes, or isolating bits of middleware.
  */
 @org.apache.camel.spi.annotations.Component("stub")
-public class StubComponent extends VmComponent {
+public class StubComponent extends SedaComponent {
 
     @Metadata
     private boolean shadow;
