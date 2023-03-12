@@ -67,6 +67,9 @@ import org.apache.camel.dsl.jbang.core.commands.process.ListProcess;
 import org.apache.camel.dsl.jbang.core.commands.process.ListService;
 import org.apache.camel.dsl.jbang.core.commands.process.ListVault;
 import org.apache.camel.dsl.jbang.core.commands.process.StopProcess;
+import org.apache.camel.dsl.jbang.core.commands.version.VersionCommand;
+import org.apache.camel.dsl.jbang.core.commands.version.VersionGet;
+import org.apache.camel.dsl.jbang.core.commands.version.VersionList;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -135,7 +138,10 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("list", new CommandLine(new ConfigList(main)))
                         .addSubcommand("get", new CommandLine(new ConfigGet(main)))
                         .addSubcommand("unset", new CommandLine(new ConfigUnset(main)))
-                        .addSubcommand("set", new CommandLine(new ConfigSet(main))));
+                        .addSubcommand("set", new CommandLine(new ConfigSet(main))))
+                .addSubcommand("version", new CommandLine(new VersionCommand(main))
+                        .addSubcommand("get", new CommandLine(new VersionGet(main)))
+                        .addSubcommand("list", new CommandLine(new VersionList(main))));
 
         commandLine.getCommandSpec().versionProvider(() -> {
             CamelCatalog catalog = new DefaultCamelCatalog();
