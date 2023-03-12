@@ -15,11 +15,10 @@
 
 The Disruptor component provides asynchronous
 https://en.wikipedia.org/wiki/Staged_event-driven_architecture[SEDA] behavior much as the
-standard SEDA Component, but utilizes a
+standard SEDA component, but utilizes a
 https://github.com/LMAX-Exchange/disruptor[Disruptor] instead of a
 http://docs.oracle.com/javase/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
-utilized by the standard xref:seda-component.adoc[SEDA]. Alternatively, a *disruptor-vm:* endpoint is supported by this component, providing an
-alternative to the standard xref:vm-component.adoc[VM]. As with the SEDA
+utilized by the standard xref:seda-component.adoc[SEDA]. Alternatively, a *disruptor-vm:* endpoint is supported by this component. As with the SEDA
 component, buffers of the *disruptor:* endpoints are only visible within
 a *single* CamelContext and no support is
 provided for persistence or recovery. The buffers of the
@@ -28,15 +27,15 @@ across CamelContexts instances so you can use this mechanism to
 communicate across web applications (provided that *camel-disruptor.jar*
 is on the *system/boot* classpath).
 
-The main advantage of choosing to use the Disruptor Component over the
-SEDA or the VM Component is performance in use cases where there is high
+The main advantage of choosing to use the Disruptor component over the
+SEDA is performance in use cases where there is high
 contention between producer(s) and/or multicasted or concurrent
-Consumers. In those cases, significant increases of throughput and
+consumers. In those cases, significant increases of throughput and
 reduction of latency has been observed. Performance in scenarios without
-contention is comparable to the SEDA and VM Components.
+contention is comparable to the SEDA component.
 
 The Disruptor is implemented with the intention of mimicing the
-behaviour and options of the SEDA and VM Components as much as possible.
+behaviour and options of the SEDA component as much as possible.
 The main differences with the them are the following:
 
 * The buffer used is always bounded in size (default 1024 exchanges).
@@ -53,7 +52,7 @@ complete flushing of all pending exchanges in the Disruptor.
 * As a result of the reconfiguration: Data sent over a Disruptor is
 directly processed and 'gone' if there is at least one consumer, late
 joiners only get new exchanges published after they've joined.
-* The *pollTimeout* option is not supported by the Disruptor Component.
+* The *pollTimeout* option is not supported by the Disruptor component.
 * When a producer blocks on a full Disruptor, it does not respond to
 thread interrupts.
 

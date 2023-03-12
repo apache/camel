@@ -8,6 +8,5 @@ Some implementations include:
 
 * xref:components::jms-component.adoc[JMS] for queues only
 * xref:components::mock-component.adoc[Mock]
-* xref:components::seda-component.adoc[Seda]
-* xref:components::vm-component.adoc[VM]
+* xref:components::seda-component.adoc[SEDA]
 

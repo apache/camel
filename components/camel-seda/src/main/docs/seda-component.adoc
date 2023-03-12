@@ -20,15 +20,12 @@ messages are exchanged on a
 http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
 and consumers are invoked in a separate thread from the producer.
 
-Note that queues are only visible within a _single_
-CamelContext. If you want to communicate across
-`CamelContext` instances (for example, communicating between Web
-applications), see the xref:vm-component.adoc[VM] component.
+Note that queues are only visible within the same CamelContext.
 
 This component does not implement any kind of persistence or recovery,
-if the VM terminates while messages are yet to be processed. If you need
-persistence, reliability or distributed SEDA, try using either
-xref:jms-component.adoc[JMS] or xref:jms-component.adoc[ActiveMQ].
+if the JVM terminates while messages are yet to be processed. If you need
+persistence, reliability or distributed SEDA, try using 
+xref:jms-component.adoc[JMS].
 
 [TIP]
 ====
