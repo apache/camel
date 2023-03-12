@@ -655,28 +655,26 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     public void expectedHeaderValuesReceivedInAnyOrder(final String name, final List<?> values) {
         expectedMessageCount(values.size());
 
-        expects(new Runnable() {
-            public void run() {
-                // these are the expected values to find
-                final Set<Object> actualHeaderValues = new CopyOnWriteArraySet<>(values);
+        expects(() -> {
+            // these are the expected values to find
+            final Set<Object> actualHeaderValues = new CopyOnWriteArraySet<>(values);
 
-                for (int i = 0; i < getReceivedExchanges().size(); i++) {
-                    Exchange exchange = getReceivedExchange(i);
+            for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                Exchange exchange = getReceivedExchange(i);
 
-                    Object actualValue = exchange.getIn().getHeader(name);
-                    for (Object expectedValue : actualHeaderValues) {
-                        actualValue = extractActualValue(exchange, actualValue, expectedValue);
-                        // remove any found values
-                        actualHeaderValues.remove(actualValue);
-                    }
+                Object actualValue = exchange.getIn().getHeader(name);
+                for (Object expectedValue : actualHeaderValues) {
+                    actualValue = extractActualValue(exchange, actualValue, expectedValue);
+                    // remove any found values
+                    actualHeaderValues.remove(actualValue);
                 }
-
-                // should be empty, as we should find all the values
-                assertTrue("Expected " + values.size() + " headers with key[" + name + "], received "
-                           + (values.size() - actualHeaderValues.size())
-                           + " headers. Expected header values: " + actualHeaderValues,
-                        actualHeaderValues.isEmpty());
             }
+
+            // should be empty, as we should find all the values
+            assertTrue("Expected " + values.size() + " headers with key[" + name + "], received "
+                       + (values.size() - actualHeaderValues.size())
+                       + " headers. Expected header values: " + actualHeaderValues,
+                    actualHeaderValues.isEmpty());
         });
     }
 
@@ -746,28 +744,26 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     public void expectedPropertyValuesReceivedInAnyOrder(final String name, final List<?> values) {
         expectedMessageCount(values.size());
 
-        expects(new Runnable() {
-            public void run() {
-                // these are the expected values to find
-                final Set<Object> actualPropertyValues = new CopyOnWriteArraySet<>(values);
+        expects(() -> {
+            // these are the expected values to find
+            final Set<Object> actualPropertyValues = new CopyOnWriteArraySet<>(values);
 
-                for (int i = 0; i < getReceivedExchanges().size(); i++) {
-                    Exchange exchange = getReceivedExchange(i);
+            for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                Exchange exchange = getReceivedExchange(i);
 
-                    Object actualValue = exchange.getProperty(name);
-                    for (Object expectedValue : actualPropertyValues) {
-                        actualValue = extractActualValue(exchange, actualValue, expectedValue);
-                        // remove any found values
-                        actualPropertyValues.remove(actualValue);
-                    }
+                Object actualValue = exchange.getProperty(name);
+                for (Object expectedValue : actualPropertyValues) {
+                    actualValue = extractActualValue(exchange, actualValue, expectedValue);
+                    // remove any found values
+                    actualPropertyValues.remove(actualValue);
                 }
-
-                // should be empty, as we should find all the values
-                assertTrue("Expected " + values.size() + " properties with key[" + name + "], received "
-                           + (values.size() - actualPropertyValues.size())
-                           + " properties. Expected property values: " + actualPropertyValues,
-                        actualPropertyValues.isEmpty());
             }
+
+            // should be empty, as we should find all the values
+            assertTrue("Expected " + values.size() + " properties with key[" + name + "], received "
+                       + (values.size() - actualPropertyValues.size())
+                       + " properties. Expected property values: " + actualPropertyValues,
+                    actualPropertyValues.isEmpty());
         });
     }
 
@@ -915,16 +911,14 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.expectedBodyValues = bodies;
         this.actualBodyValues = new ArrayList<>();
 
-        expects(new Runnable() {
-            public void run() {
-                List<Object> actualBodyValuesSet = new ArrayList<>(actualBodyValues);
-                for (int i = 0; i < expectedBodyValues.size(); i++) {
-                    getReceivedExchange(i);
+        expects(() -> {
+            List<Object> actualBodyValuesSet = new ArrayList<>(actualBodyValues);
+            for (int i = 0; i < expectedBodyValues.size(); i++) {
+                getReceivedExchange(i);
 
-                    Object expectedBody = expectedBodyValues.get(i);
-                    assertTrue("Message with body " + expectedBody + " was expected but not found in " + actualBodyValuesSet,
-                            actualBodyValuesSet.remove(expectedBody));
-                }
+                Object expectedBody = expectedBodyValues.get(i);
+                assertTrue("Message with body " + expectedBody + " was expected but not found in " + actualBodyValuesSet,
+                        actualBodyValuesSet.remove(expectedBody));
             }
         });
     }
@@ -984,27 +978,25 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     public void expectedFileExists(final String name, final String content) {
         final File file = new File(FileUtil.normalizePath(name));
 
-        expects(new Runnable() {
-            public void run() {
-                // wait at most 5 seconds for the file to exists
-                final long timeout = System.currentTimeMillis() + 5000;
+        expects(() -> {
+            // wait at most 5 seconds for the file to exists
+            final long timeout = System.currentTimeMillis() + 5000;
 
-                boolean stop = false;
-                while (!stop && !file.exists()) {
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        // ignore
-                    }
-                    stop = System.currentTimeMillis() > timeout;
+            boolean stop = false;
+            while (!stop && !file.exists()) {
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    // ignore
                 }
+                stop = System.currentTimeMillis() > timeout;
+            }
 
-                assertTrue("The file should exists: " + name, file.exists());
+            assertTrue("The file should exists: " + name, file.exists());
 
-                if (content != null) {
-                    String body = getCamelContext().getTypeConverter().convertTo(String.class, file);
-                    assertEquals("Content of file: " + name, content, body);
-                }
+            if (content != null) {
+                String body = getCamelContext().getTypeConverter().convertTo(String.class, file);
+                assertEquals("Content of file: " + name, content, body);
             }
         });
     }
@@ -1013,11 +1005,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * Adds an expectation that messages received should have the given exchange pattern
      */
     public void expectedExchangePattern(final ExchangePattern exchangePattern) {
-        expectedMessagesMatches(new Predicate() {
-            public boolean matches(Exchange exchange) {
-                return exchange.getPattern().equals(exchangePattern);
-            }
-        });
+        expectedMessagesMatches(exchange -> exchange.getPattern().equals(exchangePattern));
     }
 
     /**
