@@ -120,11 +120,7 @@ public final class NettyHelper {
      */
     public static void close(Channel channel) {
         if (channel != null) {
-            channel.close().addListener(new ChannelFutureListener() {
-                public void operationComplete(ChannelFuture future) {
-                    LOG.trace("Channel closed: {}", future.channel());
-                }
-            });
+            channel.close().addListener((ChannelFuture future) -> LOG.trace("Channel closed: {}", future.channel()));
         }
     }
 
