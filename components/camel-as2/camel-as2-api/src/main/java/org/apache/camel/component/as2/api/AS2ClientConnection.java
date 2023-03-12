@@ -34,7 +34,6 @@ import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
-import org.apache.http.config.ConnectionConfig;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.conn.HttpConnectionFactory;
@@ -92,11 +91,8 @@ public class AS2ClientConnection {
                 .add(new RequestConnControl())
                 .add(new RequestExpectContinue(true)).build();
 
-        HttpConnectionFactory<HttpRoute, ManagedHttpClientConnection> connFactory = new HttpConnectionFactory<>() {
-            @Override
-            public AS2BHttpClientConnection create(HttpRoute route, ConnectionConfig config) {
-                return new AS2BHttpClientConnection(UUID.randomUUID().toString(), 8 * 1024);
-            }
+        HttpConnectionFactory<HttpRoute, ManagedHttpClientConnection> connFactory = (route, config) -> {
+            return new AS2BHttpClientConnection(UUID.randomUUID().toString(), 8 * 1024);
         };
 
         connectionPoolManager = new PoolingHttpClientConnectionManager(connFactory);
