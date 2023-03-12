@@ -4136,19 +4136,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.VertxWebsocketComponentBuilderFactory.vertxWebsocket();
     }
     /**
-     * VM (camel-vm)
-     * Call another endpoint in the same CamelContext asynchronously.
-     * 
-     * Category: core,endpoint
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-vm
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.VmComponentBuilderFactory.VmComponentBuilder vm() {
-        return org.apache.camel.builder.component.dsl.VmComponentBuilderFactory.vm();
-    }
-    /**
      * Weather (camel-weather)
      * Poll the weather information from Open Weather Map.
      * 

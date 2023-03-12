@@ -29,7 +29,6 @@ import org.junit.jupiter.api.parallel.ResourceLock;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ResourceLock("DirectVmComponent")
 public class StreamCachingInOutTest extends ContextTestSupport {
     private static final String TEST_FILE = "org/apache/camel/processor/simple.txt";
 

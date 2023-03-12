@@ -48,7 +48,7 @@ public class DefaultComponentNameResolverTest extends ContextTestSupport {
         assertTrue(names.contains("file"));
         assertTrue(names.contains("log"));
         assertTrue(names.contains("mock"));
-        assertTrue(names.contains("vm"));
+        assertTrue(names.contains("seda"));
         assertTrue(names.contains("xslt"));
 
         context.stop();

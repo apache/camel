@@ -6832,28 +6832,6 @@
     "producerOnly": false,
     "lenientProperties": true
   },
-  "VmComponentBuilderFactory": {
-    "kind": "component",
-    "name": "vm",
-    "title": "VM",
-    "description": "Call another endpoint in the same CamelContext asynchronously.",
-    "deprecated": false,
-    "firstVersion": "1.1.0",
-    "label": "core,endpoint",
-    "javaType": "org.apache.camel.component.vm.VmComponent",
-    "supportLevel": "Stable",
-    "groupId": "org.apache.camel",
-    "artifactId": "camel-vm",
-    "version": "4.0.0-SNAPSHOT",
-    "scheme": "vm",
-    "extendsScheme": "",
-    "syntax": "vm:name",
-    "async": true,
-    "api": false,
-    "consumerOnly": false,
-    "producerOnly": false,
-    "lenientProperties": false
-  },
   "WeatherComponentBuilderFactory": {
     "kind": "component",
     "name": "weather",

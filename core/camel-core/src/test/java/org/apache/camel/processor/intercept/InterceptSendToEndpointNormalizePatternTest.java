@@ -24,7 +24,6 @@ import org.junit.jupiter.api.parallel.ResourceLock;
 /**
  * Unit test for intercepting sending to endpoint
  */
-@ResourceLock("VmComponent")
 public class InterceptSendToEndpointNormalizePatternTest extends ContextTestSupport {
 
     @Test

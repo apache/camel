@@ -26,7 +26,6 @@ import org.junit.jupiter.api.parallel.ResourceLock;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ResourceLock("VmComponent")
 public class NotifyBuilderExactlyDoneSplitterWhereSentToIssueTest extends ContextTestSupport {
 
     @Test

@@ -61,7 +61,6 @@ public class StartingRoutesErrorReportedTest extends ContextTestSupport {
     }
 
     @Test
-    @ResourceLock("VmComponent")
     public void testMaskPassword() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {

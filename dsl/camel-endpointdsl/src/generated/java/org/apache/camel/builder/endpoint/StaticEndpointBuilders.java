@@ -14293,49 +14293,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.VertxWebsocketEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * VM (camel-vm)
-     * Call another endpoint in the same CamelContext asynchronously.
-     * 
-     * Category: core,endpoint
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-vm
-     * 
-     * Syntax: <code>vm:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name of queue
-     * 
-     * @param path name
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.VmEndpointBuilderFactory.VmEndpointBuilder vm(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.VmEndpointBuilderFactory.endpointBuilder("vm", path);
-    }
-    /**
-     * VM (camel-vm)
-     * Call another endpoint in the same CamelContext asynchronously.
-     * 
-     * Category: core,endpoint
-     * Since: 1.1
-     * Maven coordinates: org.apache.camel:camel-vm
-     * 
-     * Syntax: <code>vm:name</code>
-     * 
-     * Path parameter: name (required)
-     * Name of queue
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path name
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.VmEndpointBuilderFactory.VmEndpointBuilder vm(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.VmEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Weather (camel-weather)
      * Poll the weather information from Open Weather Map.
      * 

@@ -1,1 +1,0 @@
-../../../../../components/camel-vm/src/main/docs/vm-component.adoc

@@ -52,7 +52,6 @@
         <module>camel-stub</module>
         <module>camel-timer</module>
         <module>camel-validator</module>
-        <module>camel-vm</module>
         <module>camel-xpath</module>
         <module>camel-xslt</module>
 

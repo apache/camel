@@ -48,6 +48,7 @@ The following components has been removed:
 | camel-websocket                      | camel-vertx-websocket
 | camel-websocket-jsr356               | camel-vertx-websocket
 | camel-vertx-kafka                    | camel-kafka
+| camel-vm                             | camel-seda
 | camel-xstream                        | camel-jacksonxml
 | camel-zipkin                         | camel-micrometer, camel-opentelemtry
 |===
