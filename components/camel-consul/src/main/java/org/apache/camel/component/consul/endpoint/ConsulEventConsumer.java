@@ -78,13 +78,9 @@ public final class ConsulEventConsumer extends AbstractConsulConsumer<EventClien
 
         @Override
         public void watch(final EventClient client) {
-            scheduledExecutorService.schedule(new Runnable() {
-                @Override
-                public void run() {
-                    client.listEvents(key, QueryOptions.blockSeconds(configuration.getBlockSeconds(), index.get()).build(),
-                            EventWatcher.this);
-                }
-            }, configuration.getBlockSeconds(), TimeUnit.SECONDS);
+            Runnable runnable = () -> client.listEvents(key,
+                    QueryOptions.blockSeconds(configuration.getBlockSeconds(), index.get()).build(), EventWatcher.this);
+            scheduledExecutorService.schedule(runnable, configuration.getBlockSeconds(), TimeUnit.SECONDS);
         }
 
         @Override
