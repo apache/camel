@@ -19,7 +19,6 @@ package org.apache.camel.component.stub;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.parallel.ResourceLock;
 
 public class StubInOutTest extends ContextTestSupport {
 
