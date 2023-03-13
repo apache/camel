@@ -26,7 +26,6 @@ import com.github.freva.asciitable.Column;
 import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.MavenDependencyDownloader;
@@ -39,7 +38,7 @@ public class VersionList extends CamelCommand {
                         description = "Sort by version", defaultValue = "version")
     String sort;
 
-    @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
+    @CommandLine.Option(names = { "--runtime" },
                         description = "Runtime (spring-boot, quarkus, or camel-main)")
     String runtime;
 
