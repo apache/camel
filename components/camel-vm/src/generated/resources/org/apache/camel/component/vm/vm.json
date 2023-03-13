@@ -4,7 +4,7 @@
     "name": "vm",
     "title": "VM",
     "description": "Call another endpoint in the same CamelContext asynchronously.",
-    "deprecated": false,
+    "deprecated": true,
     "firstVersion": "1.1.0",
     "label": "core,endpoint",
     "javaType": "org.apache.camel.component.vm.VmComponent",

@@ -29,7 +29,7 @@
     <artifactId>camel-vm</artifactId>
     <packaging>jar</packaging>
 
-    <name>Camel :: VM</name>
+    <name>Camel :: VM (deprecated)</name>
     <description>Camel VM component</description>
 
     <dependencies>

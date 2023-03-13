@@ -927,6 +927,7 @@ public interface VmEndpointBuilderFactory {
          * @param path name
          * @return the dsl builder
          */
+        @Deprecated
         default VmEndpointBuilder vm(String path) {
             return VmEndpointBuilderFactory.endpointBuilder("vm", path);
         }
@@ -948,10 +949,12 @@ public interface VmEndpointBuilderFactory {
          * @param path name
          * @return the dsl builder
          */
+        @Deprecated
         default VmEndpointBuilder vm(String componentName, String path) {
             return VmEndpointBuilderFactory.endpointBuilder(componentName, path);
         }
     }
+    @Deprecated
     static VmEndpointBuilder endpointBuilder(String componentName, String path) {
         class VmEndpointBuilderImpl extends AbstractEndpointBuilder implements VmEndpointBuilder, AdvancedVmEndpointBuilder {
             public VmEndpointBuilderImpl(String path) {

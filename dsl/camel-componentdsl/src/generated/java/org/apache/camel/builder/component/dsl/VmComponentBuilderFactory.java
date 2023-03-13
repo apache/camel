@@ -40,6 +40,7 @@ public interface VmComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static VmComponentBuilder vm() {
         return new VmComponentBuilderImpl();
     }

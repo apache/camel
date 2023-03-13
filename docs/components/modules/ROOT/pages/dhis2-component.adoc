@@ -1,0 +1,1 @@
+../../../../../components/camel-dhis2/camel-dhis2-component/src/main/docs/dhis2-component.adoc

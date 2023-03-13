@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorConfiguration;
 import org.apache.camel.component.zookeeper.ZooKeeperCuratorHelper;
+import org.apache.camel.component.zookeeper.cloud.MetaData;
 import org.apache.camel.component.zookeeper.cloud.ZooKeeperServiceDiscovery;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.zookeeper.services.ZooKeeperService;
@@ -54,19 +55,19 @@ class ZooKeeperServiceDiscoveryIT {
             configuration.setBasePath("/camel");
             configuration.setCuratorFramework(curatorFramework);
 
-            try (ServiceDiscovery<ZooKeeperServiceDiscovery.MetaData> zkDiscovery
+            try (ServiceDiscovery<MetaData> zkDiscovery
                     = ZooKeeperCuratorHelper.createServiceDiscovery(
                             configuration,
                             curatorFramework,
-                            ZooKeeperServiceDiscovery.MetaData.class)) {
+                            MetaData.class)) {
 
                 curatorFramework.start();
                 zkDiscovery.start();
 
-                List<ServiceInstance<ZooKeeperServiceDiscovery.MetaData>> instances = new ArrayList<>();
+                List<ServiceInstance<MetaData>> instances = new ArrayList<>();
                 for (int i = 0; i < 3; i++) {
-                    ServiceInstance<ZooKeeperServiceDiscovery.MetaData> instance
-                            = ServiceInstance.<ZooKeeperServiceDiscovery.MetaData> builder()
+                    ServiceInstance<MetaData> instance
+                            = ServiceInstance.<MetaData> builder()
                                     .address("127.0.0.1")
                                     .port(AvailablePortFinder.getNextAvailable())
                                     .name("my-service")

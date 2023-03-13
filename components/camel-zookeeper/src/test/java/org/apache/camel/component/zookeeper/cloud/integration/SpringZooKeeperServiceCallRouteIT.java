@@ -18,7 +18,7 @@ package org.apache.camel.component.zookeeper.cloud.integration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.zookeeper.cloud.ZooKeeperServiceDiscovery;
+import org.apache.camel.component.zookeeper.cloud.MetaData;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.test.AvailablePortFinderPropertiesFunction;
 import org.apache.camel.test.infra.zookeeper.services.ZooKeeperService;
@@ -45,7 +45,7 @@ public class SpringZooKeeperServiceCallRouteIT extends CamelSpringTestSupport {
     private static final String SERVICE_PATH = "/camel";
 
     private CuratorFramework curator;
-    private ServiceDiscovery<ZooKeeperServiceDiscovery.MetaData> discovery;
+    private ServiceDiscovery<MetaData> discovery;
     private AvailablePortFinderPropertiesFunction function;
 
     // ***********************
@@ -73,17 +73,17 @@ public class SpringZooKeeperServiceCallRouteIT extends CamelSpringTestSupport {
                 .retryPolicy(new ExponentialBackoffRetry(1000, 3))
                 .build();
 
-        discovery = ServiceDiscoveryBuilder.builder(ZooKeeperServiceDiscovery.MetaData.class)
+        discovery = ServiceDiscoveryBuilder.builder(MetaData.class)
                 .client(curator)
                 .basePath(SERVICE_PATH)
-                .serializer(new JsonInstanceSerializer<>(ZooKeeperServiceDiscovery.MetaData.class))
+                .serializer(new JsonInstanceSerializer<>(MetaData.class))
                 .build();
 
         curator.start();
         discovery.start();
 
         discovery.registerService(
-                ServiceInstance.<ZooKeeperServiceDiscovery.MetaData> builder()
+                ServiceInstance.<MetaData> builder()
                         .address("127.0.0.1")
                         .port(Integer.parseInt(function.apply("service-1")))
                         .name(SERVICE_NAME)
@@ -91,7 +91,7 @@ public class SpringZooKeeperServiceCallRouteIT extends CamelSpringTestSupport {
                         .build());
 
         discovery.registerService(
-                ServiceInstance.<ZooKeeperServiceDiscovery.MetaData> builder()
+                ServiceInstance.<MetaData> builder()
                         .address("127.0.0.1")
                         .port(Integer.parseInt(function.apply("service-2")))
                         .name(SERVICE_NAME)
@@ -99,7 +99,7 @@ public class SpringZooKeeperServiceCallRouteIT extends CamelSpringTestSupport {
                         .build());
 
         discovery.registerService(
-                ServiceInstance.<ZooKeeperServiceDiscovery.MetaData> builder()
+                ServiceInstance.<MetaData> builder()
                         .address("127.0.0.1")
                         .port(Integer.parseInt(function.apply("service-3")))
                         .name(SERVICE_NAME)
