@@ -27,24 +27,24 @@ import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 @UriParams
 @Configurer
 public class Dhis2Configuration {
-    @UriParam(description = "Base API URL")
+    @UriParam(description = "DHIS2 server base API URL (e.g., https://play.dhis2.org/2.39.1.1/api)")
     private String baseApiUrl;
 
-    @UriParam(description = "Username")
+    @UriParam(description = "DHIS2 account username for accessing the DHIS2 API", secret = true, label = "security")
     private String username;
 
-    @UriParam(description = "Password")
+    @UriParam(description = "DHIS2 account password for accessing the DHIS2 API", secret = true, label = "security")
     private String password;
 
-    @UriPath(description = "API name")
+    @UriPath(description = "API operation (e.g., get)")
     @Metadata(required = true)
     private Dhis2ApiName apiName;
 
-    @UriPath(description = "Method name")
+    @UriPath(description = "Subject of the API operation (e.g., resource)")
     @Metadata(required = true)
     private String methodName;
 
-    @UriParam(label = "advanced", description = "To use the custom client")
+    @UriParam(label = "advanced", description = "References a user-defined org.hisp.dhis.integration.sdk.api.Dhis2Client")
     private Dhis2Client client;
 
     public String getBaseApiUrl() {
