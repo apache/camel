@@ -47,6 +47,7 @@ import org.w3c.dom.NodeList;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.main.injection.DIRegistry;
+import org.apache.camel.main.util.VersionHelper;
 import org.apache.camel.main.util.XmlHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -224,6 +225,9 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     private static final Logger LOG = LoggerFactory.getLogger(MavenDependencyDownloader.class);
     private static final String CP = System.getProperty("java.class.path");
+
+    private static final String MINIMUM_CAMEL_VERSION = "3.14.0";
+    private static final String MINIMUM_QUARKUS_VERSION = "2.13.0";
 
     private static final RepositoryPolicy POLICY_DEFAULT = new RepositoryPolicy(
             true, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_WARN);
@@ -465,7 +469,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
-    public List<String> downloadAvailableVersions(String groupId, String artifactId, String repo) {
+    public List<String[]> resolveAvailableVersions(String groupId, String artifactId, String repo) {
         String gav = groupId + ":" + artifactId;
         LOG.debug("DownloadAvailableVersions: {}", gav);
 
@@ -477,11 +481,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 repository = extra.get(0);
             }
         }
-        List<String> versions = resolveAvailableVersions(groupId, artifactId, repository);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("DownloadAvailableVersions {} -> [{}]", gav, versions);
-        }
-
+        List<String[]> versions = resolveAvailableVersions(groupId, artifactId, repository);
         return versions;
     }
 
@@ -1323,10 +1323,10 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         }
     }
 
-    public List<String> resolveAvailableVersions(
+    public List<String[]> resolveAvailableVersions(
             String groupId, String artifactId, RemoteRepository repository) {
 
-        List<String> answer = new ArrayList<>();
+        List<String[]> answer = new ArrayList<>();
 
         try {
             MetadataRequest ar = new MetadataRequest();
@@ -1347,18 +1347,97 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                             Element node = (Element) nl.item(i);
                             String v = node.getTextContent();
                             if (v != null) {
-                                answer.add(v);
+                                if ("camel-catalog-provider-springboot".equals(artifactId)) {
+                                    String sbv = null;
+                                    if (VersionHelper.isGE(v, MINIMUM_CAMEL_VERSION)) {
+                                        sbv = resolveSpringBootVersionByCamelVersion(v, repository);
+                                    }
+                                    answer.add(new String[] { v, sbv });
+                                } else if ("camel-quarkus-catalog".equals(artifactId)) {
+                                    String cv = null;
+                                    if (VersionHelper.isGE(v, MINIMUM_QUARKUS_VERSION)) {
+                                        cv = resolveCamelVersionByQuarkusVersion(v, repository);
+                                    }
+                                    answer.add(new String[] { cv, v });
+                                } else {
+                                    answer.add(new String[] { v, null });
+                                }
                             }
                         }
                     }
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace(); // TODO:
             String msg = "Cannot resolve available versions in " + repository.getUrl();
             throw new DownloadException(msg, e);
         }
 
         return answer;
+    }
+
+    private String resolveCamelVersionByQuarkusVersion(String quarkusVersion, RemoteRepository repository) throws Exception {
+        String gav = "org.apache.camel.quarkus" + ":" + "camel-quarkus" + ":pom:" + quarkusVersion;
+        // always include maven central
+        List<RemoteRepository> repos;
+        if (repository == remoteRepositories.get(0)) {
+            repos = List.of(repository);
+        } else {
+            repos = List.of(remoteRepositories.get(0), repository);
+        }
+        List<MavenArtifact> artifacts = resolveDependenciesViaAether(List.of(gav), repos, false);
+        if (!artifacts.isEmpty()) {
+            MavenArtifact ma = artifacts.get(0);
+            if (ma != null && ma.getFile() != null) {
+                String name = ma.getFile().getAbsolutePath();
+                File file = new File(name);
+                if (file.exists()) {
+                    DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
+                    DocumentBuilder db = dbf.newDocumentBuilder();
+                    Document dom = db.parse(file);
+                    // the camel version is in <parent>
+                    NodeList nl = dom.getElementsByTagName("parent");
+                    if (nl.getLength() == 1) {
+                        Element node = (Element) nl.item(0);
+                        return node.getElementsByTagName("version").item(0).getTextContent();
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private String resolveSpringBootVersionByCamelVersion(String camelVersion, RemoteRepository repository) throws Exception {
+        String gav = "org.apache.camel.springboot" + ":" + "spring-boot" + ":pom:" + camelVersion;
+        // always include maven central
+        List<RemoteRepository> repos;
+        if (repository == remoteRepositories.get(0)) {
+            repos = List.of(repository);
+        } else {
+            repos = List.of(remoteRepositories.get(0), repository);
+        }
+        List<MavenArtifact> artifacts = resolveDependenciesViaAether(List.of(gav), repos, false);
+        if (!artifacts.isEmpty()) {
+            MavenArtifact ma = artifacts.get(0);
+            if (ma != null && ma.getFile() != null) {
+                String name = ma.getFile().getAbsolutePath();
+                File file = new File(name);
+                if (file.exists()) {
+                    DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
+                    DocumentBuilder db = dbf.newDocumentBuilder();
+                    Document dom = db.parse(file);
+                    // the camel version is in <properties>
+                    NodeList nl = dom.getElementsByTagName("properties");
+                    if (nl.getLength() > 0) {
+                        Element node = (Element) nl.item(0);
+                        return node.getElementsByTagName("spring-boot-version").item(0).getTextContent();
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     private static class AcceptAllDependencyFilter implements DependencyFilter {

@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import com.github.freva.asciitable.AsciiTable;
 import com.github.freva.asciitable.Column;
+import com.github.freva.asciitable.HorizontalAlign;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
@@ -35,7 +36,6 @@ import picocli.CommandLine;
 public class VersionList extends CamelCommand {
 
     private static final String MINIMUM_VERSION = "3.14.0";
-    private static final String MINIMUM_QUARKUS_VERSION = "2.13.0";
 
     // TODO: Filter for minimum camel version
     // TODO: grab Q and SB runtime version
@@ -46,10 +46,13 @@ public class VersionList extends CamelCommand {
 
     @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
                         description = "Runtime (spring-boot, quarkus, or camel-main)")
-    protected String runtime;
+    String runtime;
 
     @CommandLine.Option(names = { "--repo", "--repos" }, description = "Maven repository for downloading available versions")
     String repo;
+
+    @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
+    boolean fresh;
 
     public VersionList(CamelJBangMain main) {
         super(main);
@@ -60,8 +63,10 @@ public class VersionList extends CamelCommand {
         configureLoggingOff();
         KameletMain main = new KameletMain();
 
-        List<String> versions;
+        List<String[]> versions;
         try {
+            main.setFresh(fresh);
+            main.setRepos(repo);
             main.start();
 
             // use kamelet-main to download from maven
@@ -77,8 +82,8 @@ public class VersionList extends CamelCommand {
                 a = "camel-quarkus-catalog";
             }
 
-            versions = downloader.downloadAvailableVersions(g, a, repo);
-            versions = versions.stream().filter(this::acceptVersion).collect(Collectors.toList());
+            versions = downloader.resolveAvailableVersions(g, a, repo);
+            versions = versions.stream().filter(v -> acceptVersion(v[0])).collect(Collectors.toList());
 
             main.stop();
         } catch (Exception e) {
@@ -87,20 +92,23 @@ public class VersionList extends CamelCommand {
         }
 
         List<Row> rows = new ArrayList<>();
-        for (String v : versions) {
+        for (String[] v : versions) {
             Row row = new Row();
             rows.add(row);
-            row.coreVersion = v;
+            row.coreVersion = v[0];
+            row.runtimeVersion = v[1];
         }
 
         // sort rows
         rows.sort(this::sortRow);
 
         System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("QUARKUS VERSION").visible("quarkus".equalsIgnoreCase(runtime)).with(r -> r.runtimeVersion),
-                new Column().header("SPRING BOOT VERSION").visible("spring-boot".equalsIgnoreCase(runtime))
-                        .with(r -> r.runtimeVersion),
-                new Column().header("CAMEL VERSION").with(r -> r.coreVersion))));
+                new Column().header("QUARKUS").visible("quarkus".equalsIgnoreCase(runtime))
+                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion),
+                new Column().header("SPRING-BOOT").visible("spring-boot".equalsIgnoreCase(runtime))
+                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion),
+                new Column().header("CAMEL VERSION")
+                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.coreVersion))));
 
         return 0;
     }
@@ -123,16 +131,15 @@ public class VersionList extends CamelCommand {
     }
 
     private boolean acceptVersion(String version) {
-        String min = MINIMUM_VERSION;
-        if ("quarkus".equalsIgnoreCase(runtime)) {
-            min = MINIMUM_QUARKUS_VERSION;
+        if (version == null) {
+            return false;
         }
-        return VersionHelper.isGE(version, min);
+        return VersionHelper.isGE(version, MINIMUM_VERSION);
     }
 
     private static class Row {
-        String runtimeVersion;
         String coreVersion;
+        String runtimeVersion;
     }
 
 }
