@@ -42,6 +42,7 @@
         <module>swagger-rest-dsl-generator</module>
         <module>openapi-rest-dsl-generator</module>
         <module>maven</module>
+        <module>camel-tooling-maven</module>
     </modules>
 
     <properties>

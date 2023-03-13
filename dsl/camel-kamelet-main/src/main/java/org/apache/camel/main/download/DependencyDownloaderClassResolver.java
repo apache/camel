@@ -20,6 +20,7 @@ import java.io.InputStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.engine.DefaultClassResolver;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.ObjectHelper;
 
 public final class DependencyDownloaderClassResolver extends DefaultClassResolver {

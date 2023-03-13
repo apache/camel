@@ -284,6 +284,7 @@
         <jakarta-cdi-api-version>2.0.2</jakarta-cdi-api-version>
         <jakarta-api-version>2.1.5</jakarta-api-version>
         <jakarta.el-version>3.0.3</jakarta.el-version>
+        <jakarta-inject-version>1.0.5</jakarta-inject-version>
         <jakarta-jaxb-version>2.3.3</jakarta-jaxb-version>
         <javax-soap-api-version>1.4.0</javax-soap-api-version>
         <jaxws-api-version>2.3.0</jaxws-api-version>

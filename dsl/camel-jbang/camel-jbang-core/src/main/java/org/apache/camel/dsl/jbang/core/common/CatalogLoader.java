@@ -34,8 +34,8 @@ import org.apache.camel.catalog.VersionManager;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DependencyDownloaderClassLoader;
 import org.apache.camel.main.download.DownloadException;
-import org.apache.camel.main.download.MavenArtifact;
 import org.apache.camel.main.download.MavenDependencyDownloader;
+import org.apache.camel.tooling.maven.MavenArtifact;
 
 public final class CatalogLoader {
 

@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.tooling.maven.MavenGav;
 
 public class CommandLineDependencyDownloader extends ServiceSupport {
 
