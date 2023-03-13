@@ -217,6 +217,9 @@ public class Run extends CamelCommand {
 
     @Override
     public Integer call() throws Exception {
+        System.out.println("Running integration with the following configuration:");
+        printConfigurationValues();
+
         return run();
     }
 
