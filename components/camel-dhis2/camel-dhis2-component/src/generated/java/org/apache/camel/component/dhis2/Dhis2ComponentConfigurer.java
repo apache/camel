@@ -21,13 +21,13 @@ public class Dhis2ComponentConfigurer extends PropertyConfigurerSupport implemen
     static {
         Map<String, Object> map = new CaseInsensitiveMap();
         map.put("baseApiUrl", java.lang.String.class);
-        map.put("password", java.lang.String.class);
-        map.put("username", java.lang.String.class);
         map.put("bridgeErrorHandler", boolean.class);
         map.put("lazyStartProducer", boolean.class);
         map.put("autowiredEnabled", boolean.class);
         map.put("client", org.hisp.dhis.integration.sdk.api.Dhis2Client.class);
         map.put("configuration", org.apache.camel.component.dhis2.Dhis2Configuration.class);
+        map.put("password", java.lang.String.class);
+        map.put("username", java.lang.String.class);
         ALL_OPTIONS = map;
     }
 
