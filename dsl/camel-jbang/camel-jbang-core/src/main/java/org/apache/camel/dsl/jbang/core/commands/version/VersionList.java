@@ -35,11 +35,6 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "list", description = "Displays available Camel versions")
 public class VersionList extends CamelCommand {
 
-    private static final String MINIMUM_VERSION = "3.14.0";
-
-    // TODO: Filter for minimum camel version
-    // TODO: grab Q and SB runtime version
-
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by version", defaultValue = "version")
     String sort;
@@ -47,6 +42,10 @@ public class VersionList extends CamelCommand {
     @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
                         description = "Runtime (spring-boot, quarkus, or camel-main)")
     String runtime;
+
+    @CommandLine.Option(names = { "--minimum-version" },
+                        description = "Minimum Camel version to avoid resolving too old releases", defaultValue = "3.14.0")
+    String minimumVersion = "3.14.0";
 
     @CommandLine.Option(names = { "--repo", "--repos" }, description = "Maven repository for downloading available versions")
     String repo;
@@ -76,13 +75,13 @@ public class VersionList extends CamelCommand {
             String a = "camel-catalog";
             if ("spring-boot".equalsIgnoreCase(runtime)) {
                 g = "org.apache.camel.springboot";
-                a = "camel-catalog-provider-springboot";
+                a = "camel-spring-boot";
             } else if ("quarkus".equalsIgnoreCase(runtime)) {
                 g = "org.apache.camel.quarkus";
                 a = "camel-quarkus-catalog";
             }
 
-            versions = downloader.resolveAvailableVersions(g, a, repo);
+            versions = downloader.resolveAvailableVersions(g, a, minimumVersion, repo);
             versions = versions.stream().filter(v -> acceptVersion(v[0])).collect(Collectors.toList());
 
             main.stop();
@@ -103,12 +102,12 @@ public class VersionList extends CamelCommand {
         rows.sort(this::sortRow);
 
         System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
+                new Column().header("CAMEL VERSION")
+                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.coreVersion),
                 new Column().header("QUARKUS").visible("quarkus".equalsIgnoreCase(runtime))
                         .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion),
                 new Column().header("SPRING-BOOT").visible("spring-boot".equalsIgnoreCase(runtime))
-                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion),
-                new Column().header("CAMEL VERSION")
-                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.coreVersion))));
+                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion))));
 
         return 0;
     }
@@ -122,9 +121,7 @@ public class VersionList extends CamelCommand {
         }
         switch (s) {
             case "version":
-                String v1 = o1.runtimeVersion != null ? o1.runtimeVersion : o1.coreVersion;
-                String v2 = o2.runtimeVersion != null ? o2.runtimeVersion : o2.coreVersion;
-                return VersionHelper.compare(v1, v2) * negate;
+                return VersionHelper.compare(o1.coreVersion, o2.coreVersion) * negate;
             default:
                 return 0;
         }
@@ -134,7 +131,7 @@ public class VersionList extends CamelCommand {
         if (version == null) {
             return false;
         }
-        return VersionHelper.isGE(version, MINIMUM_VERSION);
+        return VersionHelper.isGE(version, minimumVersion);
     }
 
     private static class Row {

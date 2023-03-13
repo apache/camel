@@ -125,13 +125,14 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
     /**
      * Resolves the available versions for the given maven artifact
      *
-     * @param  groupId    maven group id
-     * @param  artifactId maven artifact id
-     * @param  repo       to use specific maven repository instead of maven central
-     * @return            list of versions of the given artifact (0=camel-core version, 1=runtime version, such as
-     *                    spring-boot or quarkus)
+     * @param  groupId        maven group id
+     * @param  artifactId     maven artifact id
+     * @param  minimumVersion optional minimum version to avoid resolving too old releases
+     * @param  repo           to use specific maven repository instead of maven central
+     * @return                list of versions of the given artifact (0=camel-core version, 1=runtime version, such as
+     *                        spring-boot or quarkus)
      */
-    List<String[]> resolveAvailableVersions(String groupId, String artifactId, String repo);
+    List<String[]> resolveAvailableVersions(String groupId, String artifactId, String minimumVersion, String repo);
 
     /**
      * Checks whether the dependency is already on the classpath
