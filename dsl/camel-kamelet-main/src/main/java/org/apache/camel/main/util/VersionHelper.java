@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dsl.jbang.core.common;
+package org.apache.camel.main.util;
 
 import org.apache.camel.util.StringHelper;
 
@@ -25,14 +25,6 @@ public final class VersionHelper {
 
     public static boolean isGE(String source, String target) {
         return compare(source, target) >= 0;
-    }
-
-    public static boolean isLE(String source, String target) {
-        return compare(source, target) <= 0;
-    }
-
-    public static boolean isBetween(String source, String inclusive, String exclusive) {
-        return compare(source, inclusive) >= 0 && compare(source, exclusive) < 0;
     }
 
     public static int compare(String source, String target) {
