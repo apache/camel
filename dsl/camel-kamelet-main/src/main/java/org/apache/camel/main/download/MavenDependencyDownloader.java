@@ -226,8 +226,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private static final Logger LOG = LoggerFactory.getLogger(MavenDependencyDownloader.class);
     private static final String CP = System.getProperty("java.class.path");
 
-    private static final String MINIMUM_CAMEL_VERSION = "3.14.0";
-    private static final String MINIMUM_QUARKUS_VERSION = "2.13.0";
+    private static final String MINIMUM_QUARKUS_VERSION = "2.0.0";
 
     private static final RepositoryPolicy POLICY_DEFAULT = new RepositoryPolicy(
             true, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_WARN);
@@ -469,7 +468,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
-    public List<String[]> resolveAvailableVersions(String groupId, String artifactId, String repo) {
+    public List<String[]> resolveAvailableVersions(String groupId, String artifactId, String minimumVersion, String repo) {
         String gav = groupId + ":" + artifactId;
         LOG.debug("DownloadAvailableVersions: {}", gav);
 
@@ -481,7 +480,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 repository = extra.get(0);
             }
         }
-        List<String[]> versions = resolveAvailableVersions(groupId, artifactId, repository);
+        List<String[]> versions = resolveAvailableVersions(groupId, artifactId, minimumVersion, repository);
         return versions;
     }
 
@@ -1324,7 +1323,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     public List<String[]> resolveAvailableVersions(
-            String groupId, String artifactId, RemoteRepository repository) {
+            String groupId, String artifactId, String minimumVersion, RemoteRepository repository) {
 
         List<String[]> answer = new ArrayList<>();
 
@@ -1347,18 +1346,19 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                             Element node = (Element) nl.item(i);
                             String v = node.getTextContent();
                             if (v != null) {
-                                if ("camel-catalog-provider-springboot".equals(artifactId)) {
+                                if ("camel-spring-boot".equals(artifactId)) {
                                     String sbv = null;
-                                    if (VersionHelper.isGE(v, MINIMUM_CAMEL_VERSION)) {
+                                    if (VersionHelper.isGE(v, minimumVersion)) {
                                         sbv = resolveSpringBootVersionByCamelVersion(v, repository);
                                     }
                                     answer.add(new String[] { v, sbv });
                                 } else if ("camel-quarkus-catalog".equals(artifactId)) {
-                                    String cv = null;
                                     if (VersionHelper.isGE(v, MINIMUM_QUARKUS_VERSION)) {
-                                        cv = resolveCamelVersionByQuarkusVersion(v, repository);
+                                        String cv = resolveCamelVersionByQuarkusVersion(v, repository);
+                                        if (cv != null && VersionHelper.isGE(cv, minimumVersion)) {
+                                            answer.add(new String[] { cv, v });
+                                        }
                                     }
-                                    answer.add(new String[] { cv, v });
                                 } else {
                                     answer.add(new String[] { v, null });
                                 }
