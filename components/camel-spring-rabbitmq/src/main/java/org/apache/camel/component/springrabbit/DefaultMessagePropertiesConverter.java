@@ -71,6 +71,9 @@ public class DefaultMessagePropertiesConverter implements MessagePropertiesConve
             if (messageProperties.getTimestamp() != null) {
                 answer.put(Exchange.MESSAGE_TIMESTAMP, messageProperties.getTimestamp().getTime());
             }
+
+            // Helps in getting to acknowledge manually
+            answer.put(SpringRabbitMQConstants.DELIVERY_TAG, messageProperties.getDeliveryTag());
         }
 
         return answer;
