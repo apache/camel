@@ -14,18 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main.download;
-
-import org.eclipse.aether.artifact.Artifact;
-import org.eclipse.aether.artifact.ArtifactTypeRegistry;
-import org.eclipse.aether.artifact.DefaultArtifact;
+package org.apache.camel.tooling.maven;
 
 /**
- * Maven GAV model
+ * Maven GAV model with parsing support and speacial rules for some names:
+ * <ul>
+ * <li>{@code camel:core -> org.apache.camel:camel-core}</li>
+ * <li>{@code camel-xxx -> org.apache.camel:camel-xxx}</li>
+ * <li>{@code camel-quarkus-xxx -> camel-xxx}</li>
+ * </ul>
  */
 public final class MavenGav {
-
-    private Artifact artifact;
 
     private String groupId;
     private String artifactId;
@@ -37,18 +36,26 @@ public final class MavenGav {
     }
 
     public static MavenGav parseGav(String gav) {
-        return parseGav(gav, null, null);
+        return parseGav(gav, null);
+    }
+
+    public static MavenGav fromCoordinates(
+            String groupId, String artifactId, String version, String packaging,
+            String classifier) {
+        MavenGav answer = new MavenGav();
+        answer.groupId = groupId;
+        answer.artifactId = artifactId;
+        answer.version = version;
+        if (classifier != null && !"".equals(classifier)) {
+            answer.classifier = classifier;
+        }
+        if (packaging != null && !"".equals(packaging)) {
+            answer.packaging = packaging;
+        }
+        return answer;
     }
 
     public static MavenGav parseGav(String gav, String defaultVersion) {
-        return parseGav(gav, defaultVersion, null);
-    }
-
-    public static MavenGav parseGav(String gav, ArtifactTypeRegistry artifactTypeRegistry) {
-        return parseGav(gav, null, artifactTypeRegistry);
-    }
-
-    public static MavenGav parseGav(String gav, String defaultVersion, ArtifactTypeRegistry artifactTypeRegistry) {
         MavenGav answer = new MavenGav();
         // camel-k style GAV
         if (gav.startsWith("camel:")) {
@@ -91,6 +98,7 @@ public final class MavenGav {
                 answer.setVersion(defaultVersion);
             }
         } else {
+            // for those used to OSGi's pax-url-aether syntax
             String[] parts = gav.startsWith("mvn:") ? gav.substring(4).split(":") : gav.split(":");
             if (parts.length > 0) {
                 answer.setGroupId(parts[0]);
@@ -113,15 +121,6 @@ public final class MavenGav {
                     answer.setVersion(parts[4]);
                 }
             }
-        }
-        if (artifactTypeRegistry == null) {
-            answer.setArtifact(new DefaultArtifact(
-                    answer.groupId, answer.artifactId, answer.classifier,
-                    answer.packaging, answer.version));
-        } else {
-            answer.setArtifact(new DefaultArtifact(
-                    answer.groupId, answer.artifactId, answer.classifier,
-                    answer.packaging, answer.version, artifactTypeRegistry.get(answer.packaging)));
         }
 
         return answer;
@@ -165,14 +164,6 @@ public final class MavenGav {
 
     public void setClassifier(String classifier) {
         this.classifier = classifier;
-    }
-
-    public Artifact getArtifact() {
-        return artifact;
-    }
-
-    public void setArtifact(Artifact artifact) {
-        this.artifact = artifact;
     }
 
     @Override

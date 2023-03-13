@@ -21,7 +21,7 @@ import java.util.Comparator;
 import java.util.Properties;
 
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
-import org.apache.camel.main.download.MavenGav;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.CamelCaseOrderedProperties;
 import picocli.CommandLine.Command;
 

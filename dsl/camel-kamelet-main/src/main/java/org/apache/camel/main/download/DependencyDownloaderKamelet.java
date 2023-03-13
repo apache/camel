@@ -35,6 +35,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RouteTemplateLoaderListener;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

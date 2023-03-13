@@ -91,16 +91,10 @@
             </exclusions>
         </dependency>
 
-        <!-- use groovy grape to download JARs as that is easy to use -->
+        <!-- use camel-tooling-maven for artifact downloading -->
         <dependency>
-            <groupId>org.apache.groovy</groupId>
-            <artifactId>groovy</artifactId>
-            <version>${groovy-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.ivy</groupId>
-            <artifactId>ivy</artifactId>
-            <version>${ivy-version}</version>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-tooling-maven</artifactId>
         </dependency>
 
         <!-- testing -->
