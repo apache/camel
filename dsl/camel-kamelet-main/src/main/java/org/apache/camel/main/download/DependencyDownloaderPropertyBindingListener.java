@@ -18,6 +18,7 @@ package org.apache.camel.main.download;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.PropertyBindingListener;
+import org.apache.camel.tooling.maven.MavenGav;
 
 public class DependencyDownloaderPropertyBindingListener implements PropertyBindingListener {
 

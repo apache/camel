@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.StaticService;
+import org.apache.camel.tooling.maven.MavenArtifact;
 
 /**
  * To download dependencies at runtime.
@@ -128,7 +129,7 @@ public interface DependencyDownloader extends CamelContextAware, StaticService {
      * @param  groupId        maven group id
      * @param  artifactId     maven artifact id
      * @param  minimumVersion optional minimum version to avoid resolving too old releases
-     * @param  repo           to use specific maven repository instead of maven central
+     * @param  repo           to use specific maven repository instead of maven central (used if repo is {@code null})
      * @return                list of versions of the given artifact (0=camel-core version, 1=runtime version, such as
      *                        spring-boot or quarkus)
      */

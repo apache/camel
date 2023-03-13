@@ -16,15 +16,19 @@
  */
 package org.apache.camel.catalog.maven;
 
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import groovy.grape.Grape;
-import groovy.lang.GroovyClassLoader;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.tooling.maven.MavenArtifact;
+import org.apache.camel.tooling.maven.MavenDownloader;
+import org.apache.camel.tooling.maven.MavenDownloaderImpl;
+import org.eclipse.aether.ConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,8 +42,17 @@ import static org.apache.camel.catalog.maven.ComponentArtifactHelper.loadCompone
 public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMavenArtifactProvider.class);
-    private String cacheDirectory;
+    private String localRepository;
     private boolean log;
+
+    private final MavenDownloader downloader;
+
+    private final Map<String, String> repositories = new LinkedHashMap<>();
+
+    public DefaultMavenArtifactProvider() {
+        downloader = new MavenDownloaderImpl();
+        ((MavenDownloaderImpl) downloader).build();
+    }
 
     /**
      * Sets whether to log errors and warnings to System.out. By default nothing is logged.
@@ -50,15 +63,12 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
 
     @Override
     public void setCacheDirectory(String directory) {
-        this.cacheDirectory = directory;
+        this.localRepository = directory;
     }
 
     @Override
     public void addMavenRepository(String name, String url) {
-        Map<String, Object> repo = new HashMap<>();
-        repo.put("name", name);
-        repo.put("root", url);
-        Grape.addResolver(repo);
+        repositories.put(name, url);
     }
 
     @Override
@@ -68,30 +78,34 @@ public class DefaultMavenArtifactProvider implements MavenArtifactProvider {
         final Set<String> names = new LinkedHashSet<>();
 
         try {
-            if (cacheDirectory != null) {
+            MavenDownloader mavenDownloader = downloader;
+            if (localRepository != null) {
                 if (log) {
-                    LOGGER.debug("Using cache directory: {}", cacheDirectory);
+                    LOGGER.debug("Using cache directory: {}", localRepository);
                 }
-                System.setProperty("grape.root", cacheDirectory);
+                // customize only local repository
+                mavenDownloader = mavenDownloader.customize(localRepository,
+                        ConfigurationProperties.DEFAULT_CONNECT_TIMEOUT,
+                        ConfigurationProperties.DEFAULT_REQUEST_TIMEOUT);
             }
 
-            Grape.setEnableAutoDownload(true);
+            if (log) {
+                LOGGER.info("Downloading {}:{}:{}", groupId, artifactId, version);
+            }
 
-            try (final GroovyClassLoader classLoader = new GroovyClassLoader()) {
-
-                Map<String, Object> param = new HashMap<>();
-                param.put("classLoader", classLoader);
-                param.put("group", groupId);
-                param.put("module", artifactId);
-                param.put("version", version);
-                // no need to download transitive dependencies as we only need to check the component itself
-                param.put("validate", false);
-                param.put("transitive", false);
-
-                if (log) {
-                    LOGGER.info("Downloading {}:{}:{}", groupId, artifactId, version);
+            try (OpenURLClassLoader classLoader = new OpenURLClassLoader()) {
+                if (version == null || "".equals(version.trim())) {
+                    version = "LATEST";
                 }
-                Grape.grab(param);
+                String gav = String.format("%s:%s:%s", groupId, artifactId, version);
+                Set<String> extraRepositories = new LinkedHashSet<>(repositories.values());
+                List<MavenArtifact> artifacts
+                        = mavenDownloader.resolveArtifacts(Collections.singletonList(gav), extraRepositories,
+                                false, version.contains("SNAPSHOT"));
+
+                for (MavenArtifact ma : artifacts) {
+                    classLoader.addURL(ma.getFile().toURI().toURL());
+                }
 
                 // the classloader can load content from the downloaded JAR
                 if (camelCatalog != null) {
