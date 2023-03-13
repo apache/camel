@@ -50,6 +50,9 @@ public class VersionList extends CamelCommand {
     @CommandLine.Option(names = { "--repo", "--repos" }, description = "Maven repository for downloading available versions")
     String repo;
 
+    @CommandLine.Option(names = { "--lts" }, description = "Only show LTS supported releases")
+    boolean lts;
+
     @CommandLine.Option(names = { "--fresh" }, description = "Make sure we use fresh (i.e. non-cached) resources")
     boolean fresh;
 
@@ -107,7 +110,11 @@ public class VersionList extends CamelCommand {
                 new Column().header("QUARKUS").visible("quarkus".equalsIgnoreCase(runtime))
                         .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion),
                 new Column().header("SPRING-BOOT").visible("spring-boot".equalsIgnoreCase(runtime))
-                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion))));
+                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion),
+                new Column().header("JDK")
+                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::jdkVersion),
+                new Column().header("SUPPORT")
+                        .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(this::lts))));
 
         return 0;
     }
@@ -127,11 +134,54 @@ public class VersionList extends CamelCommand {
         }
     }
 
+    private String jdkVersion(Row r) {
+        if (VersionHelper.isGE(r.coreVersion, "4.0")) {
+            return "17";
+        } else if (VersionHelper.isGE(r.coreVersion, "3.15")) {
+            return "11, 17";
+        } else if (VersionHelper.isGE(r.coreVersion, "3.15")) {
+            return "11, 17";
+        } else if (VersionHelper.isGE(r.coreVersion, "3.0")) {
+            return "8, 11";
+        } else {
+            return "8";
+        }
+    }
+
+    private String lts(Row r) {
+        return isLtsRelease(r.coreVersion) ? "LTS" : "";
+    }
+
+    private static boolean isLtsRelease(String version) {
+        if (VersionHelper.isBetween(version, "4.0.0", "4.1")) {
+            return true;
+        } else if (VersionHelper.isBetween(version, "3.20", "3.99")) {
+            return true;
+        } else if (VersionHelper.isBetween(version, "3.18", "3.19")) {
+            return true;
+        } else if (VersionHelper.isBetween(version, "3.14", "3.15")) {
+            return true;
+        } else if (VersionHelper.isBetween(version, "3.11", "3.12")) {
+            return true;
+        } else if (VersionHelper.isBetween(version, "3.11", "3.12")) {
+            return true;
+        } else if (VersionHelper.isBetween(version, "3.7", "3.8")) {
+            return true;
+        } else if (VersionHelper.isBetween(version, "3.4", "3.5")) {
+            return true;
+        }
+        return false;
+    }
+
     private boolean acceptVersion(String version) {
         if (version == null) {
             return false;
         }
-        return VersionHelper.isGE(version, minimumVersion);
+        boolean accept = VersionHelper.isGE(version, minimumVersion);
+        if (accept && lts) {
+            accept = isLtsRelease(version);
+        }
+        return accept;
     }
 
     private static class Row {

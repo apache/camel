@@ -27,6 +27,14 @@ public final class VersionHelper {
         return compare(source, target) >= 0;
     }
 
+    public static boolean isLE(String source, String target) {
+        return compare(source, target) <= 0;
+    }
+
+    public static boolean isBetween(String source, String inclusive, String exclusive) {
+        return compare(source, inclusive) >= 0 && compare(source, exclusive) < 0;
+    }
+
     public static int compare(String source, String target) {
         if (source == null || target == null) {
             return 0;
