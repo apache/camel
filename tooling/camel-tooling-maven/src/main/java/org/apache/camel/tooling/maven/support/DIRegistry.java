@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main.injection;
+package org.apache.camel.tooling.maven.support;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
@@ -52,6 +52,13 @@ import org.apache.camel.util.function.Suppliers;
  * <p>
  * Such requirement was found when trying to configure maven-resolver without using the deprecated service locator
  * helpers (see <a href="https://issues.apache.org/jira/browse/MRESOLVER-157">MRESOLVER-157</a>).
+ * </p>
+ *
+ * <p>
+ * While this is quite thin extension of {@link SupplierRegistry} and thin implementation of JSR-330 style of dependency
+ * injection and could potentially be used in many places, for now it's used <em>only</em> to configure
+ * <em>beans/services</em> required by {@link org.eclipse.aether.RepositorySystem}. If there's a need to use this
+ * registry in other places, we can move it from {@code camel-tooling-maven} module.
  * </p>
  */
 public class DIRegistry extends SupplierRegistry {

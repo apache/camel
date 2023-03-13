@@ -16,6 +16,8 @@
  */
 package org.apache.camel.catalog.maven;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.util.Set;
 
 import org.apache.camel.catalog.CamelCatalog;
@@ -30,13 +32,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class MavenArtifactProviderManualTest {
 
     @Test
-    public void testAddComponent() {
+    public void testAddComponent() throws MalformedURLException {
         CamelCatalog camelCatalog = new DefaultCamelCatalog();
         MavenArtifactProvider provider = new DefaultMavenArtifactProvider();
         provider.setCacheDirectory("target/cache");
 
         int before = camelCatalog.findComponentNames().size();
 
+        // use ~/.m2/repository as one of the remote repos - I needed it to test dummy-component SNAPSHOT
+        // fixed only locally (and also when Apache Snapshots repo was down)
+        provider.addMavenRepository("local",
+                new File(System.getProperty("user.home"), ".m2/repository").toURI().toURL().toString());
         Set<String> names = provider.addArtifactToCatalog(camelCatalog, "org.apache.camel", "dummy-component",
                 camelCatalog.getCatalogVersion());
         assertTrue(names.contains("dummy"));

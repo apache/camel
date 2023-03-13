@@ -55,7 +55,7 @@ public class VersionList extends CamelCommand {
                         description = "Minimum Camel version to avoid resolving too old releases", defaultValue = "3.14.0")
     String minimumVersion = "3.14.0";
 
-    @CommandLine.Option(names = { "--repo", "--repos" }, description = "Maven repository for downloading available versions")
+    @CommandLine.Option(names = { "--repo" }, description = "Maven repository for downloading available versions")
     String repo;
 
     @CommandLine.Option(names = { "--lts" }, description = "Only show LTS supported releases")

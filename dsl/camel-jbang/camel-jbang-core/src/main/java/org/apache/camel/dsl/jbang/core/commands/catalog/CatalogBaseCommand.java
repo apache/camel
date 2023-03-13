@@ -32,7 +32,7 @@ import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
 import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
-import org.apache.camel.main.download.MavenGav;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.util.json.Jsoner;
 import picocli.CommandLine;

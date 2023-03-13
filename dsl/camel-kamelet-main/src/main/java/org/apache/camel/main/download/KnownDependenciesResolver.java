@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.tooling.maven.MavenGav;
 
 public final class KnownDependenciesResolver {
 

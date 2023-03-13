@@ -14,30 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.main.download;
+package org.apache.camel.catalog.maven;
 
-import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
 
-public class MavenArtifact {
+class OpenURLClassLoader extends URLClassLoader {
 
-    private final MavenGav gav;
-    private final File file;
-
-    public MavenArtifact(MavenGav gav, File file) {
-        this.gav = gav;
-        this.file = file;
-    }
-
-    public MavenGav getGav() {
-        return gav;
-    }
-
-    public File getFile() {
-        return file;
+    public OpenURLClassLoader() {
+        super(new URL[0]);
     }
 
     @Override
-    public String toString() {
-        return gav.toString();
+    public void addURL(URL url) {
+        super.addURL(url);
     }
+
 }
