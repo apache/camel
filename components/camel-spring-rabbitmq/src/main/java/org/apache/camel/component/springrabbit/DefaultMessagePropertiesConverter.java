@@ -73,7 +73,7 @@ public class DefaultMessagePropertiesConverter implements MessagePropertiesConve
             }
             
             // Helps in getting to acknowledge manually
-            answer.put("deliveryTag", messageProperties.getDeliveryTag());
+            answer.put(SpringRabbitMQConstants.DELIVERY_TAG, messageProperties.getDeliveryTag());
         }
 
         return answer;
