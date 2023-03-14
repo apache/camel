@@ -30,6 +30,7 @@ import org.apache.camel.tooling.model.EipModel;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.model.ReleaseModel;
 
 /**
  * Catalog of components, data formats, models (EIPs), languages, and more from this Apache Camel release.
@@ -572,5 +573,10 @@ public interface CamelCatalog {
      * @return      An input stream for reading the resource; null if the resource could not be found
      */
     InputStream loadResource(String kind, String name);
+
+    /**
+     * Load all Camel releases from catalog
+     */
+    List<ReleaseModel> camelReleases();
 
 }

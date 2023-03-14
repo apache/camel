@@ -44,7 +44,10 @@ import org.apache.camel.tooling.model.JsonMapper;
 import org.apache.camel.tooling.model.LanguageModel;
 import org.apache.camel.tooling.model.MainModel;
 import org.apache.camel.tooling.model.OtherModel;
+import org.apache.camel.tooling.model.ReleaseModel;
+import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
+import org.apache.camel.util.json.Jsoner;
 
 /**
  * Default {@link CamelCatalog}.
@@ -485,6 +488,25 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
     @Override
     public InputStream loadResource(String kind, String name) {
         return versionManager.getResourceAsStream(BASE_RESOURCE_DIR + "/" + kind + "/" + name);
+    }
+
+    @Override
+    public List<ReleaseModel> camelReleases() {
+        return cache("camelReleases", () -> {
+            try {
+                List<ReleaseModel> answer = new ArrayList<>();
+                InputStream is = loadResource("releases", "camel-releases.json");
+                String json = CatalogHelper.loadText(is);
+                JsonArray arr = (JsonArray) Jsoner.deserialize(json);
+                for (Object o : arr) {
+                    JsonObject jo = (JsonObject) o;
+                    answer.add(JsonMapper.generateReleaseModel(jo));
+                }
+                return answer;
+            } catch (Exception e) {
+                return Collections.emptyList();
+            }
+        });
     }
 
     private static boolean matchArtifact(ArtifactModel<?> am, String groupId, String artifactId, String version) {

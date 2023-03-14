@@ -606,6 +606,32 @@ public final class JsonMapper {
         return json;
     }
 
+    public static JsonObject asJsonObject(ReleaseModel model) {
+        JsonObject json = new JsonObject();
+        json.put("version", model.getVersion());
+        json.put("date", model.getDate());
+        if (model.getEol() != null) {
+            json.put("eol", model.getEol());
+        }
+        if (model.getKind() != null) {
+            json.put("kind", model.getKind());
+        }
+        if (model.getJdk() != null) {
+            json.put("jdk", model.getJdk());
+        }
+        return json;
+    }
+
+    public static ReleaseModel generateReleaseModel(JsonObject obj) {
+        ReleaseModel model = new ReleaseModel();
+        model.setVersion(obj.getString("version"));
+        model.setDate(obj.getString("date"));
+        model.setEol(obj.getString("eol"));
+        model.setKind(obj.getString("kind"));
+        model.setJdk(obj.getString("jdk"));
+        return model;
+    }
+
     public static String createJsonSchema(MainModel model) {
         JsonObject wrapper = asJsonObject(model);
         return serialize(wrapper);

@@ -31,6 +31,7 @@ import org.apache.camel.tooling.model.ArtifactModel;
 import org.apache.camel.tooling.model.ComponentModel;
 import org.apache.camel.tooling.model.DataFormatModel;
 import org.apache.camel.tooling.model.LanguageModel;
+import org.apache.camel.tooling.model.ReleaseModel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -1535,6 +1536,19 @@ public class CamelCatalogTest {
     public void loadNotExistingResource() {
         InputStream is = catalog.loadResource("bar", "not_exists");
         Assertions.assertNull(is);
+    }
+
+    @Test
+    public void camelReleases() {
+        List<ReleaseModel> list = catalog.camelReleases();
+        Assertions.assertTrue(list.size() > 100);
+
+        ReleaseModel rel = list.stream().filter(r -> r.getVersion().equals("3.20.1")).findFirst().orElse(null);
+        Assertions.assertNotNull(rel);
+        Assertions.assertEquals("3.20.1", rel.getVersion());
+        Assertions.assertEquals("2023-01-07", rel.getDate());
+        Assertions.assertEquals("2023-12-21", rel.getEol());
+        Assertions.assertEquals("lts", rel.getKind());
     }
 
 }
