@@ -32,20 +32,20 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.camel.main.util.VersionHelper;
-import org.apache.camel.main.util.XmlHelper;
-import org.apache.camel.tooling.maven.MavenGav;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.main.util.VersionHelper;
+import org.apache.camel.main.util.XmlHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.tooling.maven.MavenArtifact;
 import org.apache.camel.tooling.maven.MavenDownloader;
 import org.apache.camel.tooling.maven.MavenDownloaderImpl;
+import org.apache.camel.tooling.maven.MavenGav;
 import org.apache.camel.tooling.maven.MavenResolutionException;
 import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
@@ -286,7 +286,8 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     }
 
     @Override
-    public List<String[]> resolveAvailableVersions(String groupId, String artifactId,
+    public List<String[]> resolveAvailableVersions(
+            String groupId, String artifactId,
             String minimumVersion, String repo) {
         String gav = groupId + ":" + artifactId;
         LOG.debug("DownloadAvailableVersions: {}", gav);

@@ -413,8 +413,9 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                         .build();
 
                 // simply configure them in addition to the default repositories
-                List<RemoteRepository> customResolutionRepository = repositorySystem.newResolutionRepositories(repositorySystemSession,
-                        Collections.singletonList(custom));
+                List<RemoteRepository> customResolutionRepository
+                        = repositorySystem.newResolutionRepositories(repositorySystemSession,
+                                Collections.singletonList(custom));
 
                 req.setRepository(customResolutionRepository.get(0));
             }
@@ -1186,7 +1187,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     /**
      * Configure a location of {@code settings.xml} (when not set, defaults to {@code ~/.m2/settings.xml} unless it's
      * explicitly set to {@code "false"}.
-     * 
+     *
      * @param mavenSettings
      */
     public void setMavenSettingsLocation(String mavenSettings) {
@@ -1197,7 +1198,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
      * Configure a location of {@code settings-security.xml} (when not set, defaults to
      * {@code ~/.m2/settings-security.xml} unless {@link #setMavenSettingsLocation(String)} is set explicitly set to
      * {@code "false"}.
-     * 
+     *
      * @param mavenSettingsSecurity
      */
     public void setMavenSettingsSecurityLocation(String mavenSettingsSecurity) {
@@ -1206,7 +1207,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
 
     /**
      * Configure comma-separated list of repositories to use (in addition to the ones discovered from Maven settings).
-     * 
+     *
      * @param repos
      */
     public void setRepos(String repos) {
@@ -1217,7 +1218,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
      * Set a flag determining Maven update behavior. See the description of {@code -U,--update-snapshots} Maven option.
      * When set to {@code true}, Maven metadata (to determine newest SNAPSHOT or RELEASE or LATEST version) is always
      * fetched.
-     * 
+     *
      * @param fresh
      */
     public void setFresh(boolean fresh) {
