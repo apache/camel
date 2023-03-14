@@ -81,7 +81,7 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
             addResourceDirectory(path);
 
         } catch (Exception e) {
-            throw new MojoExecutionException(e);
+            throw new MojoExecutionException("Error updating Camel releases", e);
         }
     }
 
