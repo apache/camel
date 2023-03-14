@@ -21,15 +21,10 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
-import org.apache.camel.dsl.jbang.core.common.RuntimeCompletionCandidates;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "get", description = "Displays current Camel version")
 public class VersionGet extends CamelCommand {
-
-    @CommandLine.Option(names = { "--runtime" }, completionCandidates = RuntimeCompletionCandidates.class,
-                        description = "Runtime (spring-boot, quarkus, or camel-main)")
-    protected String runtime;
 
     public VersionGet(CamelJBangMain main) {
         super(main);
