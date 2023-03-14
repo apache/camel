@@ -1932,6 +1932,19 @@ public interface SpringRabbitMQEndpointBuilderFactory {
         public String springRabbitmqExchangeOverrideName() {
             return "SpringRabbitmqExchangeOverrideName";
         }
+
+        /**
+         * Delivery tag for manual acknowledge mode.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code SpringRabbitmqDeliveryTag}.
+         */
+        public String springRabbitmqDeliveryTag() {
+            return "SpringRabbitmqDeliveryTag";
+        }
     }
     static SpringRabbitMQEndpointBuilder endpointBuilder(
             String componentName,
