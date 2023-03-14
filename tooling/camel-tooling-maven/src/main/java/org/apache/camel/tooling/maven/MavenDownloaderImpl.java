@@ -413,8 +413,9 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                         .build();
 
                 // simply configure them in addition to the default repositories
-                List<RemoteRepository> customResolutionRepository = repositorySystem.newResolutionRepositories(repositorySystemSession,
-                        Collections.singletonList(custom));
+                List<RemoteRepository> customResolutionRepository
+                        = repositorySystem.newResolutionRepositories(repositorySystemSession,
+                                Collections.singletonList(custom));
 
                 req.setRepository(customResolutionRepository.get(0));
             }
