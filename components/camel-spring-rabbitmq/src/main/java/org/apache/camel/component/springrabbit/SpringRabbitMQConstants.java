@@ -27,6 +27,8 @@ public final class SpringRabbitMQConstants {
     public static final String ROUTING_OVERRIDE_KEY = "CamelSpringRabbitmqRoutingOverrideKey";
     @Metadata(description = "The exchange name.", javaType = "String")
     public static final String EXCHANGE_OVERRIDE_NAME = "CamelSpringRabbitmqExchangeOverrideName";
+    @Metadata(description = "Delivery tag for manual acknowledge mode", javaType = "long")
+    public static final String DELIVERY_TAG = "CamelSpringRabbitmqDeliveryTag";
     public static final String DIRECT_MESSAGE_LISTENER_CONTAINER = "DMLC";
     public static final String SIMPLE_MESSAGE_LISTENER_CONTAINER = "SMLC";
 
@@ -39,7 +41,6 @@ public final class SpringRabbitMQConstants {
     public static final String DELIVERY_LIMIT = "x-delivery-limit";
     public static final String EXPIRES = "x-expires";
     public static final String SINGLE_ACTIVE_CONSUMER = "x-single-active-consumer";
-    public static final String DELIVERY_TAG = "deliveryTag";
 
     private SpringRabbitMQConstants() {
         // Constants class
