@@ -1348,7 +1348,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace(); // TODO:
             String msg = "Cannot resolve available versions in " + repository.getUrl();
             throw new DownloadException(msg, e);
         }
