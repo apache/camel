@@ -73,7 +73,7 @@
         <avro-ipc-jetty-version>1.11.1</avro-ipc-jetty-version>
         <avro-ipc-netty-version>1.11.1</avro-ipc-netty-version>
         <awaitility-version>4.2.0</awaitility-version>
-        <aws-java-sdk2-version>2.20.22</aws-java-sdk2-version>
+        <aws-java-sdk2-version>2.20.23</aws-java-sdk2-version>
         <aws-xray-version>2.6.1</aws-xray-version>
         <axiom-version>1.2.14</axiom-version>
         <azure-sdk-bom-version>1.2.9</azure-sdk-bom-version>
@@ -243,7 +243,7 @@
         <jasypt-version>1.9.3</jasypt-version>
         <java-grok-version>0.1.9</java-grok-version>
         <java-util-version>2.0.0</java-util-version>
-        <jnats-version>2.16.5</jnats-version>
+        <jnats-version>2.16.8</jnats-version>
         <javacc-maven-plugin-version>3.0.1</javacc-maven-plugin-version>
         <javacrumbs-version>0.22</javacrumbs-version>
         <javaparser-version>3.13.10</javaparser-version>
