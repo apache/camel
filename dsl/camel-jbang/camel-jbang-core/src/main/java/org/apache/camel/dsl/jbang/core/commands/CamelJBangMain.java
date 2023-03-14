@@ -70,6 +70,7 @@ import org.apache.camel.dsl.jbang.core.commands.process.StopProcess;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionCommand;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionGet;
 import org.apache.camel.dsl.jbang.core.commands.version.VersionList;
+import org.apache.camel.dsl.jbang.core.commands.version.VersionSet;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -141,6 +142,7 @@ public class CamelJBangMain implements Callable<Integer> {
                         .addSubcommand("set", new CommandLine(new ConfigSet(main))))
                 .addSubcommand("version", new CommandLine(new VersionCommand(main))
                         .addSubcommand("get", new CommandLine(new VersionGet(main)))
+                        .addSubcommand("set", new CommandLine(new VersionSet(main)))
                         .addSubcommand("list", new CommandLine(new VersionList(main))));
 
         commandLine.getCommandSpec().versionProvider(() -> {
