@@ -160,8 +160,7 @@ abstract class ExportBaseCommand extends CamelCommand {
             RuntimeUtil.configureLog("off", false, false, false, true);
         }
 
-        System.out.println("Exporting integration with the following configuration:");
-        printConfigurationValues();
+        printConfigurationValues("Exporting integration with the following configuration:");
         // export
         return export();
     }
