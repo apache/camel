@@ -44,9 +44,9 @@ public interface MavenDownloader {
     /**
      * Resolves available versions for groupId + artifactId from single remote repository.
      *
-     * @param groupId
-     * @param artifactId
-     * @param repository external repository to use (defaults to Maven Central if {@code null})
+     * @param  groupId
+     * @param  artifactId
+     * @param  repository external repository to use (defaults to Maven Central if {@code null})
      * @return
      */
     List<MavenGav> resolveAvailableVersions(String groupId, String artifactId, String repository)
