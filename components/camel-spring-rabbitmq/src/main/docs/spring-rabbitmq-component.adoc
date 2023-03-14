@@ -240,19 +240,18 @@ from("direct:order")
 
 == Manual Acknowledgement 
 
-If we need to manually acknowledge a message for some use case , we can 
+If we need to manually acknowledge a message for some use case  we can
 do it by setting and acknowledgeMode to Manual and using the below snippet
-of code to get Channel and deliveryTag to manually acknowledge the message
+of code to get Channel and deliveryTag to manually acknowledge the message:
 
 [source,java]
 ----
 from("spring-rabbitmq:%s?queues=%s&acknowledgeMode=MANUAL")
     .process(exchange -> {
         Channel channel = exchange.getProperty(SpringRabbitMQConstants.CHANNEL, Channel.class);
-        long deliveryTag = exchange.getIn().getHeader("deliveryTag",Long.class);
-         channel.basicAck(deliveryTag,false);
+        long deliveryTag = exchange.getMessage().getHeader(SpringRabbitMQConstants.DELIVERY_TAG, long.class);
+        channel.basicAck(deliveryTag, false);
     })
-
 ----
 
 
