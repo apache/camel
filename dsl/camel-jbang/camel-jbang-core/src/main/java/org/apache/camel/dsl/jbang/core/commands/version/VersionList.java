@@ -69,8 +69,7 @@ public class VersionList extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
-        configureLoggingOff();
+    public Integer doCall() throws Exception {
         KameletMain main = new KameletMain();
 
         List<String[]> versions;

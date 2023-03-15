@@ -31,7 +31,7 @@ public class VersionGet extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         CamelCatalog catalog = new DefaultCamelCatalog();
         String v = catalog.getCatalogVersion();
         System.out.println("Camel JBang version: " + v);

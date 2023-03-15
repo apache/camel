@@ -26,7 +26,7 @@ public class CodeGenerator extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         new CommandLine(this).execute("--help");
         return 0;
     }

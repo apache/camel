@@ -61,7 +61,7 @@ public class ListMetric extends ProcessWatchCommand {
     }
 
     @Override
-    public Integer doCall() throws Exception {
+    public Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);

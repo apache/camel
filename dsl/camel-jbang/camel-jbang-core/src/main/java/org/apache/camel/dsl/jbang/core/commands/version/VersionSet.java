@@ -43,7 +43,7 @@ public class VersionSet extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         CommandLineHelper.createPropertyFile();
 
         CommandLineHelper.loadProperties(properties -> {

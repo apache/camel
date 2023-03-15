@@ -76,7 +76,7 @@ public class ListHealth extends ProcessWatchCommand {
     }
 
     @Override
-    public Integer doCall() throws Exception {
+    public Integer doProcessWatchCall() throws Exception {
         final List<Row> rows = new ArrayList<>();
 
         // include stack-traces
