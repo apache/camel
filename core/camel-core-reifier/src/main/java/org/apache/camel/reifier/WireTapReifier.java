@@ -70,8 +70,9 @@ public class WireTapReifier extends ToDynamicReifier<WireTapDefinition<?>> {
         SendProcessor sendProcessor = null;
         boolean simple = LanguageSupport.hasSimpleFunction(uri);
         boolean dynamic = parseBoolean(definition.getDynamicUri(), true);
-        if (dynamic && simple) {
-            // dynamic so we need the dynamic send processor
+        boolean invalid = parseBoolean(definition.getIgnoreInvalidEndpoint(), false);
+        if (dynamic && simple || invalid) {
+            // dynamic or ignore-invalid so we need the dynamic send processor
             dynamicSendProcessor = (SendDynamicProcessor) super.createProcessor();
         } else {
             // static so we can use a plain send processor
