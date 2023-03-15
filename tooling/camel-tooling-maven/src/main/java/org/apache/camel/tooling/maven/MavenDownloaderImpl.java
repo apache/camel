@@ -290,6 +290,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         repositorySystemSession = configureRepositorySystemSession(registry, systemProperties,
                 settings, new File(settings.getLocalRepository()));
 
+        defaultPolicy = fresh ? POLICY_FRESH : POLICY_DEFAULT;
+
         // process repositories - both from settings.xml and from --repos option. All are subject to
         // mirrorring and proxying (handled by org.eclipse.aether.RepositorySystem#newResolutionRepositories())
         List<RemoteRepository> originalRepositories = configureDefaultRepositories(settings);
@@ -306,8 +308,6 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
             apacheSnapshotsResolutionRepository = repositorySystem.newResolutionRepositories(repositorySystemSession,
                     Collections.singletonList(apacheSnapshotsRepository)).get(0);
         }
-
-        defaultPolicy = fresh ? POLICY_FRESH : POLICY_DEFAULT;
     }
 
     @Override
@@ -1131,18 +1131,26 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                                 // default (enabled) policy for releases
                                 rb.setPolicy(defaultPolicy);
                             } else {
+                                String updatePolicy = r.getReleases().getUpdatePolicy() == null
+                                        ? RepositoryPolicy.UPDATE_POLICY_DAILY : r.getReleases().getUpdatePolicy();
+                                String checksumPolicy = r.getReleases().getChecksumPolicy() == null
+                                        ? RepositoryPolicy.CHECKSUM_POLICY_WARN : r.getReleases().getChecksumPolicy();
                                 rb.setPolicy(new RepositoryPolicy(
                                         r.getReleases().isEnabled(),
-                                        r.getReleases().getUpdatePolicy(), r.getReleases().getChecksumPolicy()));
+                                        updatePolicy, checksumPolicy));
                             }
                             // if someone defines Apache snapshots repository, (s)he has to specify proper policy, sorry.
                             if (r.getSnapshots() == null) {
                                 // default (disabled) policy for releases
                                 rb.setSnapshotPolicy(POLICY_DISABLED);
                             } else {
+                                String updatePolicy = r.getSnapshots().getUpdatePolicy() == null
+                                        ? RepositoryPolicy.UPDATE_POLICY_DAILY : r.getSnapshots().getUpdatePolicy();
+                                String checksumPolicy = r.getSnapshots().getChecksumPolicy() == null
+                                        ? RepositoryPolicy.CHECKSUM_POLICY_WARN : r.getSnapshots().getChecksumPolicy();
                                 rb.setSnapshotPolicy(new RepositoryPolicy(
                                         r.getSnapshots().isEnabled(),
-                                        r.getSnapshots().getUpdatePolicy(), r.getSnapshots().getChecksumPolicy()));
+                                        updatePolicy, checksumPolicy));
                             }
                             repositories.add(rb.build());
                         }
