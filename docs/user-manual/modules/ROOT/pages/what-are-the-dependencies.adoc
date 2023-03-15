@@ -6,6 +6,7 @@
 - Camel 3 requires JDK 8 and supports JDK 11
 - Camel 3.15.0+ requires JDK 11
 - Camel 3.17.0+ requires JDK 11 and supports JDK 17
+- Camel 4.0.0+ requires JDK 17
 
 == Camel JAR Dependencies
 
