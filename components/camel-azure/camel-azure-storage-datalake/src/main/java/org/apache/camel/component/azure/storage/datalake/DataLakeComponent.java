@@ -67,7 +67,6 @@ public class DataLakeComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
 
         setCredentialsFromRegistry(configuration);
-        validateConfiguration(configuration);
 
         return endpoint;
     }
@@ -95,13 +94,6 @@ public class DataLakeComponent extends DefaultComponent {
                 configuration.setClientSecretCredential(clientSecretCredentials.stream().findFirst().get());
             }
 
-        }
-    }
-
-    private void validateConfiguration(final DataLakeConfiguration config) {
-        if (config.getServiceClient() == null && config.getClientSecretCredential() == null
-                && config.getSharedKeyCredential() == null) {
-            throw new IllegalArgumentException("client or credentials must be specified");
         }
     }
 
