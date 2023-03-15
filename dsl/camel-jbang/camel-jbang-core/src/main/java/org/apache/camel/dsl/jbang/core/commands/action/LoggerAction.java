@@ -61,7 +61,7 @@ public class LoggerAction extends ActionBaseCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         if (loggingLevel == null) {
             return callList();
         }
@@ -74,9 +74,6 @@ public class LoggerAction extends ActionBaseCommand {
     }
 
     protected Integer callChangeLoggingLevel() throws Exception {
-        // configure logging first
-        configureLoggingOff();
-
         List<Long> pids = findPids(name);
 
         for (long pid : pids) {
