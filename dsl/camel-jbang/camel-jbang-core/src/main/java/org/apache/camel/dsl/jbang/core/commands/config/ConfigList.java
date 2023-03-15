@@ -29,7 +29,7 @@ public class ConfigList extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         CommandLineHelper
                 .loadProperties(p -> {
                     for (String k : p.stringPropertyNames()) {

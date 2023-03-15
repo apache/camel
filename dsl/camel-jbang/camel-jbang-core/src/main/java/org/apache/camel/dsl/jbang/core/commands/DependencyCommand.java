@@ -27,7 +27,7 @@ public class DependencyCommand extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         // default to list
         new CommandLine(new DependencyList(getMain())).execute();
         return 0;

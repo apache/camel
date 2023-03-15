@@ -32,10 +32,7 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
-        // configure logging first
-        configureLoggingOff();
-
+    public Integer doCall() throws Exception {
         int exit;
         if (watch) {
             do {
@@ -46,7 +43,7 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
                 }
             } while (exit == 0);
         } else {
-            exit = doCall();
+            exit = doWatchCall();
         }
         return exit;
     }
@@ -55,6 +52,6 @@ abstract class ActionWatchCommand extends ActionBaseCommand {
         AnsiConsole.out().print(Ansi.ansi().eraseScreen().cursor(1, 1));
     }
 
-    protected abstract Integer doCall() throws Exception;
+    protected abstract Integer doWatchCall() throws Exception;
 
 }
