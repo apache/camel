@@ -19,12 +19,15 @@ package org.apache.camel.test.infra.core;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default lifecycle manager suitable for most of the tests within Camel and end-user applications
  */
 public class DefaultContextLifeCycleManager implements ContextLifeCycleManager {
     public static final int DEFAULT_SHUTDOWN_TIMEOUT = 10;
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultContextLifeCycleManager.class);
     private int shutdownTimeout = DEFAULT_SHUTDOWN_TIMEOUT;
     private boolean reset = true;
 
@@ -47,12 +50,20 @@ public class DefaultContextLifeCycleManager implements ContextLifeCycleManager {
 
     @Override
     public void afterAll(CamelContext context) {
-        context.shutdown();
+        if (context != null) {
+            context.shutdown();
+        } else {
+            LOG.error("Cannot run the JUnit's afterAll because the context is null: a problem may have prevented the context from starting");
+        }
     }
 
     @Override
     public void beforeAll(CamelContext context) {
-        context.getShutdownStrategy().setTimeout(shutdownTimeout);
+        if (context != null) {
+            context.getShutdownStrategy().setTimeout(shutdownTimeout);
+        } else {
+            LOG.error("Cannot run the JUnit's beforeAll because the context is null: a problem may have prevented the context from starting");
+        }
     }
 
     @Override
