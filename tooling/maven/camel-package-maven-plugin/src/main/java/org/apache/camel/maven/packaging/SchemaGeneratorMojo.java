@@ -1084,7 +1084,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private boolean expressionRequired(String modelName) {
-        if ("method".equals(modelName) || "tokenize".equals(modelName) || "xtokenize".equals(modelName)) {
+        if ("method".equals(modelName) || "tokenize".equals(modelName)) {
             // skip expression attribute on these three languages as they are
             // solely configured using attributes
             return false;
