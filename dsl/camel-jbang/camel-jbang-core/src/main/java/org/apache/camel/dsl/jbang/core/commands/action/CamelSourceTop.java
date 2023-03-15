@@ -53,7 +53,7 @@ public class CamelSourceTop extends ActionWatchCommand {
     }
 
     @Override
-    public Integer doCall() throws Exception {
+    public Integer doWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids(name);

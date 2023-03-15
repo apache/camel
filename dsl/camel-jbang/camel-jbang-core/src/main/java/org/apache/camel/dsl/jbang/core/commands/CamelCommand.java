@@ -57,6 +57,21 @@ public abstract class CamelCommand implements Callable<Integer> {
         RuntimeUtil.configureLog("off", false, false, false, false);
     }
 
+    protected boolean disarrangeLogging() {
+        return true;
+    }
+
+    @Override
+    public Integer call() throws Exception {
+        if (disarrangeLogging()) {
+            configureLoggingOff();
+        }
+
+        return doCall();
+    }
+
+    public abstract Integer doCall() throws Exception;
+
     public File getStatusFile(String pid) {
         if (camelDir == null) {
             camelDir = new File(System.getProperty("user.home"), ".camel");

@@ -35,22 +35,19 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
-        // configure logging first
-        configureLoggingOff();
-
+    public Integer doCall() throws Exception {
         int exit;
         if (watch) {
             do {
                 clearScreen();
-                exit = doCall();
+                exit = doProcessWatchCall();
                 if (exit == 0) {
                     // use 2-sec delay in watch mode
                     Thread.sleep(2000);
                 }
             } while (exit == 0);
         } else {
-            exit = doCall();
+            exit = doProcessWatchCall();
         }
         return exit;
     }
@@ -59,6 +56,6 @@ abstract class ProcessWatchCommand extends ProcessBaseCommand {
         AnsiConsole.out().print(Ansi.ansi().eraseScreen().cursor(1, 1));
     }
 
-    protected abstract Integer doCall() throws Exception;
+    protected abstract Integer doProcessWatchCall() throws Exception;
 
 }

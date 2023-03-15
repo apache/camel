@@ -29,7 +29,12 @@ public class CatalogCommand extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    protected boolean disarrangeLogging() {
+        return false;
+    }
+
+    @Override
+    public Integer doCall() throws Exception {
         new CommandLine(this).execute("--help");
         return 0;
     }

@@ -34,7 +34,7 @@ public class ConfigSet extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         CommandLineHelper.createPropertyFile();
 
         if (configuration.split("=").length == 1) {
