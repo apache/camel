@@ -1655,14 +1655,14 @@ public class ExpressionBuilder {
      */
     private static Expression concatExpressionOptimized(final Collection<Expression> expressions, final String description) {
 
-
         return new ExpressionAdapter() {
 
-            private Collection<Object> col;
+            private Collection<Object> optimized;
 
             @Override
             public Object evaluate(Exchange exchange) {
                 StringBuilder buffer = new StringBuilder();
+                Collection<?> col = optimized != null ? optimized : expressions;
                 for (Object obj : col) {
                     if (obj instanceof Expression) {
                         Expression expression = (Expression) obj;
@@ -1679,7 +1679,7 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
-                if(col == null) {
+                if(optimized == null) {
                     Collection<Object> preprocessedExpression = new ArrayList<>(expressions.size());
                     for (Expression expression : expressions) {
                         expression.init(context);
@@ -1690,7 +1690,7 @@ public class ExpressionBuilder {
                             preprocessedExpression.add(expression);
                         }
                     }
-                    col = Collections.unmodifiableCollection(preprocessedExpression);
+                    optimized = Collections.unmodifiableCollection(preprocessedExpression);
                 }
                 else{
                     for (Expression expression : expressions) {
