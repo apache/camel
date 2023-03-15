@@ -29,7 +29,7 @@ public class ConfigCommand extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         // defaults to list
         new CommandLine(new ConfigList(getMain())).execute();
         return 0;

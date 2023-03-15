@@ -94,9 +94,6 @@ public class CatalogDoc extends CamelCommand {
     }
 
     CamelCatalog loadCatalog() throws Exception {
-        // configure logging first
-        configureLoggingOff();
-
         if ("spring-boot".equals(runtime)) {
             return CatalogLoader.loadSpringBootCatalog(repos, camelVersion);
         } else if ("quarkus".equals(runtime)) {
@@ -110,7 +107,7 @@ public class CatalogDoc extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         this.catalog = loadCatalog();
 
         String prefix = StringHelper.before(name, ":");

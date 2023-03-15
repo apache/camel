@@ -29,7 +29,7 @@ public class VersionCommand extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         // defaults to get
         new CommandLine(new VersionGet(getMain())).execute();
         return 0;
