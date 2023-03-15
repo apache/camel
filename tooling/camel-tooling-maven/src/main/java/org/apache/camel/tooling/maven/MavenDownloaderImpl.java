@@ -225,6 +225,8 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     private static final RepositoryPolicy POLICY_DISABLED = new RepositoryPolicy(
             false, RepositoryPolicy.UPDATE_POLICY_NEVER, RepositoryPolicy.CHECKSUM_POLICY_IGNORE);
 
+    private RepositoryResolver repositoryResolver;
+
     private RepositorySystem repositorySystem;
     private RepositorySystemSession repositorySystemSession;
 
@@ -258,6 +260,9 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     @Override
     protected void doBuild() {
         // prepare all services that don't change when resolving Maven artifacts
+
+        repositoryResolver = new DefaultRepositoryResolver();
+        repositoryResolver.build();
 
         // Aether/maven-resolver configuration used without Shrinkwrap
         // and without deprecated:
@@ -1162,6 +1167,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     private void configureRepositories(List<RemoteRepository> repositories, Set<String> urls) {
         urls.forEach(repo -> {
             try {
+                repo = repositoryResolver.resolveRepository(repo);
                 URL url = new URL(repo);
                 if (url.getHost().equals("repo1.maven.org")) {
                     // Maven Central is always used, so skip it
