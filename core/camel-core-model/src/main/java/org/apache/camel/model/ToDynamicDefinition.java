@@ -164,18 +164,16 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     }
 
     /**
-     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
-     *
-     * @return the builder
+     * For dynamic endpoints then this option can be used to ignore invalid dynamic endpoints. This option is only in use
+     * if dynamic is enabled and the endpoint uri is also dynamic (using ${ } style)
      */
     public ToDynamicDefinition ignoreInvalidEndpoint(boolean ignoreInvalidEndpoint) {
         return ignoreInvalidEndpoint(Boolean.toString(ignoreInvalidEndpoint));
     }
 
     /**
-     * Ignore the invalidate endpoint exception when try to create a producer with that endpoint
-     *
-     * @return the builder
+     * For dynamic endpoints then this option can be used to ignore invalid dynamic endpoints. This option is only in use
+     * if dynamic is enabled and the endpoint uri is also dynamic (using ${ } style)
      */
     public ToDynamicDefinition ignoreInvalidEndpoint(String ignoreInvalidEndpoint) {
         setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
