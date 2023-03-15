@@ -16047,8 +16047,8 @@ producers.
         <xs:attribute name="ignoreInvalidEndpoint" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Ignore the invalidate endpoint exception when try to create a producer with that
-endpoint. Default value: false
+Whether to ignore invalid endpoint URIs and skip sending the message. Default
+value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
