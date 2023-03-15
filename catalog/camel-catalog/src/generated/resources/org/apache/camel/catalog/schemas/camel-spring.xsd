@@ -16047,8 +16047,9 @@ producers.
         <xs:attribute name="ignoreInvalidEndpoint" type="xs:string">
           <xs:annotation>
             <xs:documentation xml:lang="en"><![CDATA[
-Ignore the invalidate endpoint exception when try to create a producer with that
-endpoint. Default value: false
+For dynamic endpoints then this option can be used to ignore invalid dynamic
+endpoints. This option is only in use if dynamic is enabled and the endpoint uri
+is also dynamic (using ${ } style). Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>

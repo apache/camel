@@ -164,16 +164,16 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
     }
 
     /**
-     * For dynamic endpoints then this option can be used to ignore invalid dynamic endpoints. This option is only in use
-     * if dynamic is enabled and the endpoint uri is also dynamic (using ${ } style)
+     * For dynamic endpoints then this option can be used to ignore invalid dynamic endpoints. This option is only in
+     * use if dynamic is enabled and the endpoint uri is also dynamic (using ${ } style)
      */
     public ToDynamicDefinition ignoreInvalidEndpoint(boolean ignoreInvalidEndpoint) {
         return ignoreInvalidEndpoint(Boolean.toString(ignoreInvalidEndpoint));
     }
 
     /**
-     * For dynamic endpoints then this option can be used to ignore invalid dynamic endpoints. This option is only in use
-     * if dynamic is enabled and the endpoint uri is also dynamic (using ${ } style)
+     * For dynamic endpoints then this option can be used to ignore invalid dynamic endpoints. This option is only in
+     * use if dynamic is enabled and the endpoint uri is also dynamic (using ${ } style)
      */
     public ToDynamicDefinition ignoreInvalidEndpoint(String ignoreInvalidEndpoint) {
         setIgnoreInvalidEndpoint(ignoreInvalidEndpoint);
