@@ -69,9 +69,7 @@ public class Bind extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
-        // configure logging first
-        configureLoggingOff();
+    public Integer doCall() throws Exception {
 
         // the kamelet binding source and sink can either be a kamelet or an uri
         String in = "kamelet";

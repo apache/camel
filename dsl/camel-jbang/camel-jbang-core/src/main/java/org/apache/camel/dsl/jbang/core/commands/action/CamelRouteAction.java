@@ -42,10 +42,7 @@ public abstract class CamelRouteAction extends ActionBaseCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
-        // configure logging first
-        configureLoggingOff();
-
+    public Integer doCall() throws Exception {
         if (!all && name == null) {
             return 0;
         } else if (all) {

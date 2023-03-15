@@ -29,7 +29,7 @@ public class Complete extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         String script = AutoComplete.bash(
                 spec.parent().name(),
                 spec.parent().commandLine());

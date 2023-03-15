@@ -33,7 +33,7 @@ public class ConfigGet extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         CommandLineHelper.loadProperties(properties -> {
             if (properties.containsKey(key)) {
                 System.out.println(properties.getProperty(key));
