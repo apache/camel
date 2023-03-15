@@ -33,7 +33,7 @@ public class ConfigUnset extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         CommandLineHelper.loadProperties(properties -> {
             properties.remove(key);
             CommandLineHelper.storeProperties(properties);

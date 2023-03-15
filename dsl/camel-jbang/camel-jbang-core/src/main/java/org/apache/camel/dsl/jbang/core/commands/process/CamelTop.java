@@ -33,7 +33,7 @@ public class CamelTop extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public Integer doCall() throws Exception {
         // default to top the integrations
         CamelContextTop cmd = new CamelContextTop(getMain());
         cmd.watch = watch;

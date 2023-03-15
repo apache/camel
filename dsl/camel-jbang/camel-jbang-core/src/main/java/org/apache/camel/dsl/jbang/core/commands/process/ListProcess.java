@@ -47,7 +47,7 @@ public class ListProcess extends ProcessWatchCommand {
         super(main);
     }
 
-    protected Integer doCall() throws Exception {
+    protected Integer doProcessWatchCall() throws Exception {
         List<Row> rows = new ArrayList<>();
 
         List<Long> pids = findPids("*");

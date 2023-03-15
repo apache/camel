@@ -63,7 +63,12 @@ public class Pipe extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public boolean disarrangeLogging() {
+        return false;
+    }
+
+    @Override
+    public Integer doCall() throws Exception {
         // remove leading ./ when calling a script in pipe mode
         if (file != null && file.startsWith("./")) {
             file = file.substring(2);

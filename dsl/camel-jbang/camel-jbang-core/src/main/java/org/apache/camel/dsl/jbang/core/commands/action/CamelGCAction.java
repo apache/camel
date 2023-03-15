@@ -36,10 +36,7 @@ public class CamelGCAction extends ActionBaseCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
-        // configure logging first
-        configureLoggingOff();
-
+    public Integer doCall() throws Exception {
         List<Long> pids = findPids(name);
         for (long pid : pids) {
             JsonObject root = new JsonObject();

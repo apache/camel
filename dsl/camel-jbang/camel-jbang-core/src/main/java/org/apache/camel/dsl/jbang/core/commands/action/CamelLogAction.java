@@ -110,10 +110,7 @@ public class CamelLogAction extends ActionBaseCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
-        // configure logging first
-        configureLoggingOff();
-
+    public Integer doCall() throws Exception {
         Map<Long, Row> rows = new LinkedHashMap<>();
 
         // find new pids

@@ -216,7 +216,12 @@ public class Run extends CamelCommand {
     }
 
     @Override
-    public Integer call() throws Exception {
+    public boolean disarrangeLogging() {
+        return false;
+    }
+
+    @Override
+    public Integer doCall() throws Exception {
         printConfigurationValues("Running integration with the following configuration:");
         // run
         return run();
