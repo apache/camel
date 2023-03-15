@@ -13,7 +13,7 @@
 
 *{component-header}*
 
-The http://vertx.io/[Vert.x] HTTP component provides the capability to produce messages to HTTP endpoints via the https://vertx.io/docs/vertx-web-client/java/[Vert.x Web Client].
+The https://vertx.io/[Vert.x] HTTP component provides the capability to produce messages to HTTP endpoints via the https://vertx.io/docs/vertx-web-client/java/[Vert.x Web Client].
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
@@ -133,7 +133,7 @@ WebClientOptions options = new WebClientOptions().setMaxRedirects(5)
     .setIdleTimeout(10)
     .setConnectTimeout(3);
 
-camelContext.getRegistry.bind("clinetOptions", options);
+camelContext.getRegistry.bind("clientOptions", options);
 ---------------------------
 
 Then reference the options on the `vertx-http` producer.
@@ -141,7 +141,7 @@ Then reference the options on the `vertx-http` producer.
 [source,java]
 ---------------------------
 from("direct:start")
-    .to("vertx-http:http://localhost:8080?webClientOptions=#options")
+    .to("vertx-http:http://localhost:8080?webClientOptions=#clientOptions")
 ---------------------------
 
 == SSL
