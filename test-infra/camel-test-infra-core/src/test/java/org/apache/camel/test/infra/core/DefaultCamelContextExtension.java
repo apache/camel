@@ -16,6 +16,8 @@
  */
 package org.apache.camel.test.infra.core;
 
+import java.util.Objects;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
@@ -26,6 +28,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.util.ObjectHelper;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +72,7 @@ public class DefaultCamelContextExtension extends AbstractCamelContextExtension 
     @Override
     public void beforeAll(ExtensionContext extensionContext) throws Exception {
         context = createCamelContext(fixtureProcessor, extensionContext);
+        Objects.requireNonNull(context, "Cannot run the test because the context is null");
 
         producerTemplate = context.createProducerTemplate();
         producerTemplate.start();
