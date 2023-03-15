@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -1593,32 +1594,34 @@ public class ExpressionBuilder {
      * @return an expression which when evaluated will return the concatenated values
      */
     public static Expression concatExpression(final Collection<Expression> expressions, final String description) {
-        return new ExpressionAdapter() {
 
-            private Collection<Object> col;
+        for (Expression expression : expressions) {
+            if(expression instanceof ConstantExpressionAdapter){
+                return concatExpressionOptimized(expressions, description);
+            }
+        }
+
+        return concatExpressionUnoptimized(expressions,description);
+    }
+
+    /**
+     * Returns an expression which returns the string concatenation value of the various
+     * expressions
+     *
+     * @param expressions the expression to be concatenated dynamically
+     * @param description the text description of the expression
+     * @return an expression which when evaluated will return the concatenated values
+     */
+    private static Expression concatExpressionUnoptimized(final Collection<Expression> expressions, final String description) {
+        return new ExpressionAdapter() {
 
             @Override
             public Object evaluate(Exchange exchange) {
                 StringBuilder buffer = new StringBuilder();
-                if (col != null) {
-                    // optimize for constant expressions so we can do this a bit faster
-                    for (Object obj : col) {
-                        if (obj instanceof Expression) {
-                            Expression expression = (Expression) obj;
-                            String text = expression.evaluate(exchange, String.class);
-                            if (text != null) {
-                                buffer.append(text);
-                            }
-                        } else {
-                            buffer.append((String) obj);
-                        }
-                    }
-                } else {
-                    for (Expression expression : expressions) {
-                        String text = expression.evaluate(exchange, String.class);
-                        if (text != null) {
-                            buffer.append(text);
-                        }
+                for (Expression expression : expressions) {
+                    String text = expression.evaluate(exchange, String.class);
+                    if (text != null) {
+                        buffer.append(text);
                     }
                 }
                 return buffer.toString();
@@ -1626,26 +1629,76 @@ public class ExpressionBuilder {
 
             @Override
             public void init(CamelContext context) {
-                boolean constant = false;
                 for (Expression expression : expressions) {
                     expression.init(context);
-                    constant |= expression instanceof ConstantExpressionAdapter;
                 }
-                if (constant) {
-                    // okay some of the expressions are constant so we can optimize and avoid
-                    // evaluate them but use their constant value as-is directly
-                    // this can be common with the simple language where you use it for templating
-                    // by mixing string text and simple functions together (or via the log EIP)
-                    col = new ArrayList<>(expressions.size());
-                    for (Expression expression : expressions) {
-                        if (expression instanceof ConstantExpressionAdapter) {
-                            Object value = ((ConstantExpressionAdapter) expression).getValue();
-                            col.add(value.toString());
-                        } else {
-                            col.add(expression);
+            }
+
+            @Override
+            public String toString() {
+                if (description != null) {
+                    return description;
+                } else {
+                    return "concat(" + expressions + ")";
+                }
+            }
+        };
+    }
+
+    /**
+     * Returns an optimized expression which returns the string concatenation value of the various.
+     * expressions
+     *
+     * @param expressions the expression to be concatenated dynamically
+     * @param description the text description of the expression
+     * @return an expression which when evaluated will return the concatenated values
+     */
+    private static Expression concatExpressionOptimized(final Collection<Expression> expressions, final String description) {
+
+
+        return new ExpressionAdapter() {
+
+            private Collection<Object> optimized;
+
+            @Override
+            public Object evaluate(Exchange exchange) {
+                StringBuilder buffer = new StringBuilder();
+                Collection<?> col = optimized != null ? optimized : expressions;
+                for (Object obj : col) {
+                    if (obj instanceof Expression) {
+                        Expression expression = (Expression) obj;
+                        String text = expression.evaluate(exchange, String.class);
+                        if (text != null) {
+                            buffer.append(text);
                         }
+                    } else {
+                        buffer.append((String) obj);
                     }
                 }
+                return buffer.toString();
+            }
+
+            @Override
+            public void init(CamelContext context) {
+                if(optimized == null) {
+                    Collection<Object> preprocessedExpression = new ArrayList<>(expressions.size());
+                    for (Expression expression : expressions) {
+                        expression.init(context);
+                        if (expression instanceof ConstantExpressionAdapter) {
+                            Object value = ((ConstantExpressionAdapter) expression).getValue();
+                            preprocessedExpression.add(value.toString());
+                        } else {
+                            preprocessedExpression.add(expression);
+                        }
+                    }
+                    optimized = Collections.unmodifiableCollection(preprocessedExpression);
+                }
+                else{
+                    for (Expression expression : expressions) {
+                        expression.init(context);
+                    }
+                }
+
             }
 
             @Override
