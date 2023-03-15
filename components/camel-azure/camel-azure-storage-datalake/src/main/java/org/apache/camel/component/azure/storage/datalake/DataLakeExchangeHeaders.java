@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 
 import com.azure.core.http.HttpHeaders;
 import com.azure.storage.common.ParallelTransferOptions;
+import com.azure.storage.file.datalake.DataLakeFileClient;
 import com.azure.storage.file.datalake.models.AccessTier;
 import com.azure.storage.file.datalake.models.ArchiveStatus;
 import com.azure.storage.file.datalake.models.CopyStatusType;
@@ -258,6 +259,14 @@ public class DataLakeExchangeHeaders {
         return getObjectFromHeaders(exchange, DataLakeConstants.UMASK, String.class);
     }
 
+    public static DataLakeFileClient getFileClientFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DataLakeConstants.FILE_CLIENT, DataLakeFileClient.class);
+    }
+
+    public static Boolean getFlushFromHeaders(final Exchange exchange) {
+        return getObjectFromHeaders(exchange, DataLakeConstants.FLUSH, Boolean.class);
+    }
+
     private static <T> T getObjectFromHeaders(final Exchange exchange, final String headerName, final Class<T> classType) {
         return ObjectHelper.isEmpty(exchange) ? null : exchange.getIn().getHeader(headerName, classType);
     }
@@ -415,4 +424,8 @@ public class DataLakeExchangeHeaders {
         return this;
     }
 
+    public DataLakeExchangeHeaders fileClient(final DataLakeFileClient fileClient) {
+        headers.put(DataLakeConstants.FILE_CLIENT, fileClient);
+        return this;
+    }
 }

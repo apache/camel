@@ -204,6 +204,10 @@ public final class DataLakeConstants {
     public static final String PERMISSION = HEADER_PREFIX + "Permission";
     @Metadata(label = "from user", description = "Sets the umask for file.", javaType = "String")
     public static final String UMASK = HEADER_PREFIX + "Umask";
+    @Metadata(label = "from user", description = "Sets the file client to use", javaType = "DataLakeFileClient")
+    public static final String FILE_CLIENT = HEADER_PREFIX + "FileClient";
+    @Metadata(label = "from user", description = "Sets whether to flush on append", javaType = "Boolean")
+    public static final String FLUSH = HEADER_PREFIX + "Flush";
 
     private DataLakeConstants() {
     }
