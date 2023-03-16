@@ -47,7 +47,9 @@ import org.apache.maven.plugins.annotations.Parameter;
 @Mojo(name = "update-camel-releases", threadSafe = true, defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
 
-    private static final String GIT_URL = "https://api.github.com/repos/apache/camel-website/contents/content/releases/";
+    private static final String GIT_CAMEL_URL = "https://api.github.com/repos/apache/camel-website/contents/content/releases/";
+    private static final String GIT_CAMEL_QUARKUS_URL
+            = "https://api.github.com/repos/apache/camel-website/contents/content/releases/q/";
 
     /**
      * The output directory for generated file
@@ -63,26 +65,32 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
 
         try {
             getLog().info("Updating Camel release information from camel-website");
-            List<String> links = fetchCamelReleaseLinks();
-            List<ReleaseModel> releases = processReleases(links);
-            releases.sort(Comparator.comparing(ReleaseModel::getVersion));
-            getLog().info("Found " + releases.size() + " Camel releases");
+            List<String> links = fetchCamelReleaseLinks(GIT_CAMEL_URL);
+            updateCamelRelease(links, "camel-releases.json");
 
-            JsonArray arr = new JsonArray();
-            for (ReleaseModel r : releases) {
-                JsonObject jo = JsonMapper.asJsonObject(r);
-                arr.add(jo);
-            }
-            String json = Jsoner.serialize(arr);
-            json = Jsoner.prettyPrint(json, 4);
-
-            Path path = outDir.toPath();
-            updateResource(path, "camel-releases.json", json);
-            addResourceDirectory(path);
-
+            links = fetchCamelReleaseLinks(GIT_CAMEL_QUARKUS_URL);
+            updateCamelRelease(links, "camel-quarkus-releases.json");
         } catch (Exception e) {
             throw new MojoExecutionException(e);
         }
+    }
+
+    private void updateCamelRelease(List<String> links, String fileName) throws Exception {
+        List<ReleaseModel> releases = processReleases(links);
+        releases.sort(Comparator.comparing(ReleaseModel::getVersion));
+        getLog().info("Found " + releases.size() + " releases");
+
+        JsonArray arr = new JsonArray();
+        for (ReleaseModel r : releases) {
+            JsonObject jo = JsonMapper.asJsonObject(r);
+            arr.add(jo);
+        }
+        String json = Jsoner.serialize(arr);
+        json = Jsoner.prettyPrint(json, 4);
+
+        Path path = outDir.toPath();
+        updateResource(path, fileName, json);
+        addResourceDirectory(path);
     }
 
     private List<ReleaseModel> processReleases(List<String> urls) throws Exception {
@@ -124,12 +132,12 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
         return answer;
     }
 
-    private List<String> fetchCamelReleaseLinks() throws Exception {
+    private List<String> fetchCamelReleaseLinks(String gitUrl) throws Exception {
         List<String> answer = new ArrayList<>();
 
         // use JDK http client to call github api
         HttpClient hc = HttpClient.newHttpClient();
-        HttpResponse<String> res = hc.send(HttpRequest.newBuilder(new URI(GIT_URL)).timeout(Duration.ofSeconds(20)).build(),
+        HttpResponse<String> res = hc.send(HttpRequest.newBuilder(new URI(gitUrl)).timeout(Duration.ofSeconds(20)).build(),
                 HttpResponse.BodyHandlers.ofString());
 
         // follow redirect
