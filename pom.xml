@@ -120,8 +120,8 @@
 
         <maven-compiler-plugin-version>3.11.0</maven-compiler-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
-        <maven-surefire-plugin-version>3.0.0-M8</maven-surefire-plugin-version>
-        <maven-failsafe-plugin-version>3.0.0-M8</maven-failsafe-plugin-version>
+        <maven-surefire-plugin-version>3.0.0</maven-surefire-plugin-version>
+        <maven-failsafe-plugin-version>3.0.0</maven-failsafe-plugin-version>
         <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
         <java-diff-utils-version>4.7</java-diff-utils-version>
