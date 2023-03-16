@@ -28,7 +28,7 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class HashicorpVaultLocalContainerService implements HashicorpVaultService, ContainerService<GenericContainer<?>> {
-    public static final String CONTAINER_IMAGE = "hashicorp/vault:1.12.2";
+    public static final String CONTAINER_IMAGE = "hashicorp/vault:1.13.0";
     public static final String CONTAINER_NAME = "hashicorp-vault";
     private static final String DEFAULT_TOKEN = "myToken";
 
