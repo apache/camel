@@ -99,10 +99,15 @@ public class DataLakeComponent extends DefaultComponent {
     }
 
     private void validateConfiguration(final DataLakeConfiguration config) {
-        if (config.getServiceClient() == null && config.getClientSecretCredential() == null
-                && config.getSharedKeyCredential() == null) {
-            throw new IllegalArgumentException("client or credentials must be specified");
+        final boolean hasClientSecretCredentials = config.getClientSecretCredential() != null
+                || config.getTenantId() != null && config.getClientSecret() != null && config.getClientId() != null;
+        final boolean hasSharedKeyCredentials = config.getSharedKeyCredential() != null
+                || config.getAccountName() != null && config.getAccountKey() != null;
+        final boolean hasSasCredentials = config.getSasCredential() != null || config.getSasSignature() != null;
+        if (config.getServiceClient() == null && !config.getUseDefaultIdentity()
+                && !hasClientSecretCredentials && !hasSharedKeyCredentials && !hasSasCredentials) {
+            throw new IllegalArgumentException(
+                    "client secret or shared key or SAS credentials must be specified, or default identity has to be enabled");
         }
     }
-
 }
