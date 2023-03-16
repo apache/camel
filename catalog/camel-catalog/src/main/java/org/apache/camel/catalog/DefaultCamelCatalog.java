@@ -492,10 +492,19 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public List<ReleaseModel> camelReleases() {
-        return cache("camelReleases", () -> {
+        return camelReleases("camel-releases.json");
+    }
+
+    @Override
+    public List<ReleaseModel> camelQuarkusReleases() {
+        return camelReleases("camel-quarkus-releases.json");
+    }
+
+    private List<ReleaseModel> camelReleases(String file) {
+        return cache(file, () -> {
             try {
                 List<ReleaseModel> answer = new ArrayList<>();
-                InputStream is = loadResource("releases", "camel-releases.json");
+                InputStream is = loadResource("releases", file);
                 String json = CatalogHelper.loadText(is);
                 JsonArray arr = (JsonArray) Jsoner.deserialize(json);
                 for (Object o : arr) {

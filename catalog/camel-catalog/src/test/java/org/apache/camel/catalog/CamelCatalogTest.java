@@ -1551,4 +1551,18 @@ public class CamelCatalogTest {
         Assertions.assertEquals("lts", rel.getKind());
     }
 
+    @Test
+    public void camelQuarkusReleases() {
+        List<ReleaseModel> list = catalog.camelQuarkusReleases();
+        Assertions.assertTrue(list.size() > 20);
+
+        ReleaseModel rel = list.stream().filter(r -> r.getVersion().equals("2.13.2")).findFirst().orElse(null);
+        Assertions.assertNotNull(rel);
+        Assertions.assertEquals("2.13.2", rel.getVersion());
+        Assertions.assertEquals("2022-12-16", rel.getDate());
+        Assertions.assertEquals("2022-03-26", rel.getEol());
+        Assertions.assertEquals("lts", rel.getKind());
+        Assertions.assertEquals("11", rel.getJdk());
+    }
+
 }

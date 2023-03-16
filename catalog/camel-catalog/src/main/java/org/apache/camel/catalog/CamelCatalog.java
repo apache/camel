@@ -575,8 +575,13 @@ public interface CamelCatalog {
     InputStream loadResource(String kind, String name);
 
     /**
-     * Load all Camel releases from catalog
+     * Load all Camel releases (core and spring-boot) from catalog
      */
     List<ReleaseModel> camelReleases();
+
+    /**
+     * Load all Camel Quarkus releases from catalog
+     */
+    List<ReleaseModel> camelQuarkusReleases();
 
 }
