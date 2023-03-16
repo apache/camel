@@ -73,6 +73,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private boolean autospanLine;
     private boolean allowEmptyStream;
     private boolean quotingEscaped;
+    private boolean quotingOnlyWhenNeeded;
     private boolean endWithLineBreak;
     private boolean removeQuotes;
 
@@ -312,6 +313,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         org.apache.camel.util.ObjectHelper.notNull(this.separator,
                 "The separator has not been instantiated or property not defined in the @CsvRecord annotation");
 
+        String carriageReturn = ConverterUtils.getStringCarriageReturn(getCarriageReturn());
         char separator = ConverterUtils.getCharDelimiter(this.getSeparator());
 
         if (LOG.isDebugEnabled()) {
@@ -362,24 +364,27 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             l.add(temp);
         }
 
-        if (l != null) {
-            Iterator<List<String>> it = l.iterator();
-            while (it.hasNext()) {
-                List<String> tokens = it.next();
-                Iterator<String> itx = tokens.iterator();
+        Iterator<List<String>> it = l.iterator();
+        while (it.hasNext()) {
+            List<String> tokens = it.next();
+            Iterator<String> itx = tokens.iterator();
 
-                while (itx.hasNext()) {
-                    String res = itx.next();
-                    if (res != null) {
-                        // the field may be enclosed in quotes if a quote was configured
-                        if (quoting && quote != null) {
-                            buffer.append(quote);
-                        }
+            while (itx.hasNext()) {
+                String res = itx.next();
+                if (res != null) {
+                    // RFC 4180 section 2.6 - fields containing line breaks, double
+                    // quotes, and commas should be enclosed in double-quotes
+                    boolean needsQuotes = quoting && quote != null &&
+                            (!quotingOnlyWhenNeeded || res.contains(carriageReturn) || res.indexOf(separator) != -1
+                                    || res.contains(quote));
+
+                    if (needsQuotes) {
+                        buffer.append(quote);
+
                         // CAMEL-7519 - improvement escape the token itself by prepending escape char
-                        if (quoting && quote != null && (res.contains("\\" + quote) || res.contains(quote)) && quotingEscaped) {
+                        if (quotingEscaped && (res.contains("\\" + quote) || res.contains(quote))) {
                             buffer.append(res.replaceAll("\\" + quote, "\\\\" + quote));
-                        } else if (quoting && quote != null && quote.equals(DOUBLE_QUOTES_SYMBOL) && res.contains(quote)
-                                && !quotingEscaped) {
+                        } else if (!quotingEscaped && quote.equals(DOUBLE_QUOTES_SYMBOL) && res.contains(quote)) {
                             // If double-quotes are used to enclose fields, then a double-quote
                             // appearing inside a field must be escaped by preceding it with another
                             // double quote according to RFC 4180 section 2.7
@@ -387,19 +392,20 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                         } else {
                             buffer.append(res);
                         }
-                        if (quoting && quote != null) {
-                            buffer.append(quote);
-                        }
-                    }
 
-                    if (itx.hasNext()) {
-                        buffer.append(separator);
+                        buffer.append(quote);
+                    } else {
+                        buffer.append(res);
                     }
                 }
 
-                if (it.hasNext()) {
-                    buffer.append(ConverterUtils.getStringCarriageReturn(getCarriageReturn()));
+                if (itx.hasNext()) {
+                    buffer.append(separator);
                 }
+            }
+
+            if (it.hasNext()) {
+                buffer.append(ConverterUtils.getStringCarriageReturn(getCarriageReturn()));
             }
         }
 
@@ -672,6 +678,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     // Get quotingEscaped parameter
                     quotingEscaped = record.quotingEscaped();
                     LOG.debug("Escape quote character flag of the CSV: {}", quotingEscaped);
+
+                    // Get quotingOnlyWhenNeeded parameter
+                    quotingOnlyWhenNeeded = record.quotingOnlyWhenNeeded();
+                    LOG.debug("Quoting only when needed: {}", quotingOnlyWhenNeeded);
 
                     // Get endWithLineBreak parameter
                     endWithLineBreak = record.endWithLineBreak();
