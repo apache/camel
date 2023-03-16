@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JAXBConvertTest extends ExchangeTestSupport {
 
@@ -91,5 +92,20 @@ public class JAXBConvertTest extends ExchangeTestSupport {
         TypeConverter converter = context.getTypeConverter();
         Exception ex = Assertions.assertThrows(NoTypeConversionAvailableException.class,
                 () -> converter.mandatoryConvertTo(StreamCache.class, exchange, order));
+    }
+
+    @Test
+    public void testObjectToStringConverter() {
+        PurchaseOrder order = new PurchaseOrder();
+        order.setName("foo");
+        order.setAmount(123.45);
+        order.setPrice(2.22);
+        TypeConverter converter = context.getTypeConverter();
+        String res = converter.convertTo(String.class, exchange, order);
+        String expected
+                = "<purchaseOrder name=\"foo\" price=\"2.22\" amount=\"123.45\" "
+                  + "xmlns:address=\"http://www.camel.apache.org/jaxb/example/address/1\" "
+                  + "xmlns:order=\"http://www.camel.apache.org/jaxb/example/order/1\"/>";
+        assertTrue(res.contains(expected));
     }
 }

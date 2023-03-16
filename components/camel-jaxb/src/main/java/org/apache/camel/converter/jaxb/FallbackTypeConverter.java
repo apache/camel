@@ -92,6 +92,11 @@ public class FallbackTypeConverter {
         this.defaultObjectFactory = objectFactory;
     }
 
+    @Converter
+    public String objectToString(Object value, Exchange exchange) {
+        return (String) convertTo(String.class, exchange, value, null);
+    }
+
     @Converter(fallback = true)
     public Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
 
