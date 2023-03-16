@@ -53,7 +53,8 @@ public class DefaultContextLifeCycleManager implements ContextLifeCycleManager {
         if (context != null) {
             context.shutdown();
         } else {
-            LOG.error("Cannot run the JUnit's afterAll because the context is null: a problem may have prevented the context from starting");
+            LOG.error(
+                    "Cannot run the JUnit's afterAll because the context is null: a problem may have prevented the context from starting");
         }
     }
 
@@ -62,7 +63,8 @@ public class DefaultContextLifeCycleManager implements ContextLifeCycleManager {
         if (context != null) {
             context.getShutdownStrategy().setTimeout(shutdownTimeout);
         } else {
-            LOG.error("Cannot run the JUnit's beforeAll because the context is null: a problem may have prevented the context from starting");
+            LOG.error(
+                    "Cannot run the JUnit's beforeAll because the context is null: a problem may have prevented the context from starting");
         }
     }
 
