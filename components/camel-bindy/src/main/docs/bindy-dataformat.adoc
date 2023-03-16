@@ -128,6 +128,9 @@ one time.
 
 | quotingEscaped | boolean |  | false | Indicate if the values must be escaped when quoting (optional)
 
+| quotingOnlyWhenNeeded | boolean |  | false a| Indicate if the values should be quoted only when needed (optional) - if enabled then the value is only quoted
+when it contains the configured separator, quote, or crlf characters. The quoting option must also be enabled.
+
 | removeQuotes | boolean |  | true | The remove quotes parameter flags if unmarshalling should try to remove quotes for each field
 
 | skipField | boolean |  | false a| The skipField parameter will allow to skip fields of a CSV file. If some fields are not necessary, they can be

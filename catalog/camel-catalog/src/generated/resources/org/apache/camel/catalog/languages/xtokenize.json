@@ -16,6 +16,7 @@
     "modelJavaType": "org.apache.camel.model.language.XMLTokenizerExpression"
   },
   "properties": {
+    "expression": { "kind": "value", "displayName": "Expression", "required": true, "type": "string", "javaType": "java.lang.String", "deprecated": false, "autowired": false, "secret": false, "description": "The expression value in your chosen language syntax" },
     "mode": { "kind": "attribute", "displayName": "Mode", "required": false, "type": "enum", "javaType": "java.lang.String", "enum": [ "i", "w", "u", "t" ], "deprecated": false, "autowired": false, "secret": false, "defaultValue": "i", "description": "The extraction mode. The available extraction modes are: i - injecting the contextual namespace bindings into the extracted token (default) w - wrapping the extracted token in its ancestor context u - unwrapping the extracted token to its child content t - extracting the text content of the specified element" },
     "group": { "kind": "attribute", "displayName": "Group", "required": false, "type": "integer", "javaType": "java.lang.Integer", "deprecated": false, "autowired": false, "secret": false, "description": "To group N parts together" },
     "namespace": { "kind": "element", "displayName": "Namespace", "label": "common", "required": false, "type": "array", "javaType": "java.util.List<org.apache.camel.model.PropertyDefinition>", "deprecated": false, "autowired": false, "secret": false, "description": "Injects the XML Namespaces of prefix - uri mappings" },
