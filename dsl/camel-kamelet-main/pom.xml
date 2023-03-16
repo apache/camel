@@ -175,16 +175,6 @@
             <artifactId>log4j-slf4j2-impl</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-resourceresolver-github</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-groovy-dsl</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
