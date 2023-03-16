@@ -74,12 +74,9 @@ public class ThrowExceptionProcessor extends AsyncProcessorSupport
                 exchange.setException(cause);
             }
         } catch (Throwable e) {
-            if (exception != null) {
-                exchange.setException(
-                        new CamelExchangeException("Error creating new instance of " + exception.getClass(), exchange, e));
-            } else {
-                // TODO
-            }
+            Class<? extends Exception> exceptionClass = exception != null ? exception.getClass() : type;
+            exchange.setException(
+                    new CamelExchangeException("Error creating new instance of " + exceptionClass, exchange, e));
         }
 
         callback.done(true);
