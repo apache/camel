@@ -1364,24 +1364,30 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
         } else {
             repos = List.of(remoteRepositories.get(0), repository);
         }
-        List<MavenArtifact> artifacts = resolveDependenciesViaAether(List.of(gav), repos, false);
-        if (!artifacts.isEmpty()) {
-            MavenArtifact ma = artifacts.get(0);
-            if (ma != null && ma.getFile() != null) {
-                String name = ma.getFile().getAbsolutePath();
-                File file = new File(name);
-                if (file.exists()) {
-                    DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
-                    DocumentBuilder db = dbf.newDocumentBuilder();
-                    Document dom = db.parse(file);
-                    // the camel version is in <parent>
-                    NodeList nl = dom.getElementsByTagName("parent");
-                    if (nl.getLength() == 1) {
-                        Element node = (Element) nl.item(0);
-                        return node.getElementsByTagName("version").item(0).getTextContent();
+
+        try {
+            List<MavenArtifact> artifacts = resolveDependenciesViaAether(List.of(gav), repos, false);
+            if (!artifacts.isEmpty()) {
+                MavenArtifact ma = artifacts.get(0);
+                if (ma != null && ma.getFile() != null) {
+                    String name = ma.getFile().getAbsolutePath();
+                    File file = new File(name);
+                    if (file.exists()) {
+                        DocumentBuilderFactory dbf = XmlHelper.createDocumentBuilderFactory();
+                        DocumentBuilder db = dbf.newDocumentBuilder();
+                        Document dom = db.parse(file);
+                        // the camel version is in <parent>
+                        NodeList nl = dom.getElementsByTagName("parent");
+                        if (nl.getLength() == 1) {
+                            Element node = (Element) nl.item(0);
+                            return node.getElementsByTagName("version").item(0).getTextContent();
+                        }
                     }
                 }
             }
+        } catch (DownloadException ex) {
+            // Artifact may not exist on repository, just skip it
+            LOG.debug(ex.getMessage(), ex);
         }
 
         return null;
