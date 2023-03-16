@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.aws2.s3.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.s3.AWS2S3Configuration;
 import org.apache.camel.component.aws2.s3.client.AWS2CamelS3InternalClient;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.SdkHttpClient;
 import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
@@ -32,8 +32,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS s3 client for all users to use. This implementation is for local instances to use a static and solid
@@ -76,7 +74,8 @@ public class AWS2S3ClientIAMProfileOptimizedImpl implements AWS2CamelS3InternalC
                 clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder)
                         .credentialsProvider(ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
             } else {
-                clientBuilder = clientBuilder.credentialsProvider(ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
+                clientBuilder = clientBuilder
+                        .credentialsProvider(ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
             }
         } else {
             if (!isClientConfigFound) {
