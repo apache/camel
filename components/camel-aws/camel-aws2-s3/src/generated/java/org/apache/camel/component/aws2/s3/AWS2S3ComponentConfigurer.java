@@ -95,6 +95,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "pojoRequest": getOrCreateConfiguration(target).setPojoRequest(property(camelContext, boolean.class, value)); return true;
         case "policy": getOrCreateConfiguration(target).setPolicy(property(camelContext, java.lang.String.class, value)); return true;
         case "prefix": getOrCreateConfiguration(target).setPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "profilecredentialsname":
+        case "profileCredentialsName": getOrCreateConfiguration(target).setProfileCredentialsName(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
         case "proxyHost": getOrCreateConfiguration(target).setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -122,6 +124,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "useCustomerKey": getOrCreateConfiguration(target).setUseCustomerKey(property(camelContext, boolean.class, value)); return true;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": getOrCreateConfiguration(target).setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": getOrCreateConfiguration(target).setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usesses3":
         case "useSSES3": getOrCreateConfiguration(target).setUseSSES3(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -203,6 +207,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "pojoRequest": return boolean.class;
         case "policy": return java.lang.String.class;
         case "prefix": return java.lang.String.class;
+        case "profilecredentialsname":
+        case "profileCredentialsName": return java.lang.String.class;
         case "proxyhost":
         case "proxyHost": return java.lang.String.class;
         case "proxyport":
@@ -230,6 +236,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "useCustomerKey": return boolean.class;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return boolean.class;
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": return boolean.class;
         case "usesses3":
         case "useSSES3": return boolean.class;
         default: return null;
@@ -307,6 +315,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "pojoRequest": return getOrCreateConfiguration(target).isPojoRequest();
         case "policy": return getOrCreateConfiguration(target).getPolicy();
         case "prefix": return getOrCreateConfiguration(target).getPrefix();
+        case "profilecredentialsname":
+        case "profileCredentialsName": return getOrCreateConfiguration(target).getProfileCredentialsName();
         case "proxyhost":
         case "proxyHost": return getOrCreateConfiguration(target).getProxyHost();
         case "proxyport":
@@ -334,6 +344,8 @@ public class AWS2S3ComponentConfigurer extends PropertyConfigurerSupport impleme
         case "useCustomerKey": return getOrCreateConfiguration(target).isUseCustomerKey();
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return getOrCreateConfiguration(target).isUseDefaultCredentialsProvider();
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": return getOrCreateConfiguration(target).isUseProfileCredentialsProvider();
         case "usesses3":
         case "useSSES3": return getOrCreateConfiguration(target).isUseSSES3();
         default: return null;

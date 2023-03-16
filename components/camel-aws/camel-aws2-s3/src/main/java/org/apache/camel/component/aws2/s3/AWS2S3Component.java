@@ -51,10 +51,10 @@ public class AWS2S3Component extends DefaultComponent {
         configuration.setBucketName(remaining);
         AWS2S3Endpoint endpoint = new AWS2S3Endpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
-        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider()) && configuration.getAmazonS3Client() == null
+        if (Boolean.FALSE.equals(configuration.isUseDefaultCredentialsProvider()) && Boolean.FALSE.equals(configuration.isUseProfileCredentialsProvider()) && configuration.getAmazonS3Client() == null
                 && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException(
-                    "useDefaultCredentialsProvider is set to false, AmazonS3Client or accessKey and secretKey must be specified");
+                    "useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, AmazonS3Client or accessKey and secretKey must be specified");
         }
 
         return endpoint;

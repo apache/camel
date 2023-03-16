@@ -105,6 +105,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "pollstrategy":
         case "pollStrategy": target.setPollStrategy(property(camelContext, org.apache.camel.spi.PollingConsumerPollStrategy.class, value)); return true;
         case "prefix": target.getConfiguration().setPrefix(property(camelContext, java.lang.String.class, value)); return true;
+        case "profilecredentialsname":
+        case "profileCredentialsName": target.getConfiguration().setProfileCredentialsName(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
         case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -149,6 +151,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": target.getConfiguration().setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         case "usesses3":
         case "useSSES3": target.getConfiguration().setUseSSES3(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -247,6 +251,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "pollstrategy":
         case "pollStrategy": return org.apache.camel.spi.PollingConsumerPollStrategy.class;
         case "prefix": return java.lang.String.class;
+        case "profilecredentialsname":
+        case "profileCredentialsName": return java.lang.String.class;
         case "proxyhost":
         case "proxyHost": return java.lang.String.class;
         case "proxyport":
@@ -291,6 +297,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "useDefaultCredentialsProvider": return boolean.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": return boolean.class;
         case "usesses3":
         case "useSSES3": return boolean.class;
         default: return null;
@@ -385,6 +393,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "pollstrategy":
         case "pollStrategy": return target.getPollStrategy();
         case "prefix": return target.getConfiguration().getPrefix();
+        case "profilecredentialsname":
+        case "profileCredentialsName": return target.getConfiguration().getProfileCredentialsName();
         case "proxyhost":
         case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":
@@ -429,6 +439,8 @@ public class AWS2S3EndpointConfigurer extends PropertyConfigurerSupport implemen
         case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": return target.getConfiguration().isUseProfileCredentialsProvider();
         case "usesses3":
         case "useSSES3": return target.getConfiguration().isUseSSES3();
         default: return null;

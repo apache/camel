@@ -18,6 +18,7 @@ package org.apache.camel.component.aws2.s3.client;
 
 import org.apache.camel.component.aws2.s3.AWS2S3Configuration;
 import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientIAMProfileOptimizedImpl;
 import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientStandardImpl;
 
 /**
@@ -35,7 +36,12 @@ public final class AWS2S3ClientFactory {
      * @return               AWSS3Client
      */
     public static AWS2CamelS3InternalClient getAWSS3Client(AWS2S3Configuration configuration) {
-        return Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())
-                ? new AWS2S3ClientIAMOptimizedImpl(configuration) : new AWS2S3ClientStandardImpl(configuration);
+        if (Boolean.TRUE.equals(configuration.isUseDefaultCredentialsProvider())) {
+            return new AWS2S3ClientIAMOptimizedImpl(configuration);
+        } else if (Boolean.TRUE.equals(configuration.isUseProfileCredentialsProvider())) {
+            return new AWS2S3ClientIAMProfileOptimizedImpl(configuration);
+        } else {
+            return new AWS2S3ClientStandardImpl(configuration);
+        }
     }
 }

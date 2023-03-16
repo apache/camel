@@ -106,6 +106,10 @@ public class AWS2S3Configuration implements Cloneable {
     private boolean useSSES3;
     @UriParam(defaultValue = "false")
     private boolean useDefaultCredentialsProvider;
+    @UriParam(defaultValue = "false")
+    private boolean useProfileCredentialsProvider;
+    @UriParam
+    private String profileCredentialsName;
     @UriParam(label = "producer")
     private String keyName;
     @UriParam(defaultValue = "false")
@@ -515,8 +519,7 @@ public class AWS2S3Configuration implements Cloneable {
     }
 
     /**
-     * Set whether the S3 client should expect to load credentials through a default credentials provider or to expect
-     * static credentials to be passed in.
+     * Set whether the S3 client should expect to load credentials through a default credentials provider.
      */
     public void setUseDefaultCredentialsProvider(Boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
@@ -524,6 +527,17 @@ public class AWS2S3Configuration implements Cloneable {
 
     public Boolean isUseDefaultCredentialsProvider() {
         return useDefaultCredentialsProvider;
+    }
+
+    /**
+     * Set whether the S3 client should expect to load credentials through a profile credentials provider.
+     */
+    public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
+        this.useProfileCredentialsProvider = useProfileCredentialsProvider;
+    }
+
+    public boolean isUseProfileCredentialsProvider() {
+        return useProfileCredentialsProvider;
     }
 
     public boolean isAutoCreateBucket() {
@@ -680,6 +694,17 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setUseSSES3(boolean useSSES3) {
         this.useSSES3 = useSSES3;
+    }
+
+    public String getProfileCredentialsName() {
+        return profileCredentialsName;
+    }
+
+    /**
+     * If using a profile credentials provider this parameter will set the profile name
+     */
+    public void setProfileCredentialsName(String profileCredentialsName) {
+        this.profileCredentialsName = profileCredentialsName;
     }
 
     public AWS2S3Configuration copy() {

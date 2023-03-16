@@ -19,6 +19,7 @@ package org.apache.camel.component.aws2.s3;
 import org.apache.camel.component.aws2.s3.client.AWS2CamelS3InternalClient;
 import org.apache.camel.component.aws2.s3.client.AWS2S3ClientFactory;
 import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientIAMOptimizedImpl;
+import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientIAMProfileOptimizedImpl;
 import org.apache.camel.component.aws2.s3.client.impl.AWS2S3ClientStandardImpl;
 import org.junit.jupiter.api.Test;
 
@@ -47,5 +48,13 @@ public class AWSS3ClientFactoryTest {
         s3Configuration.setUseDefaultCredentialsProvider(true);
         AWS2CamelS3InternalClient awss3Client = AWS2S3ClientFactory.getAWSS3Client(s3Configuration);
         assertTrue(awss3Client instanceof AWS2S3ClientIAMOptimizedImpl);
+    }
+
+    @Test
+    public void getIAMProfileOptimizedS3Client() {
+        AWS2S3Configuration s3Configuration = new AWS2S3Configuration();
+        s3Configuration.setUseProfileCredentialsProvider(true);
+        AWS2CamelS3InternalClient awss3Client = AWS2S3ClientFactory.getAWSS3Client(s3Configuration);
+        assertTrue(awss3Client instanceof AWS2S3ClientIAMProfileOptimizedImpl);
     }
 }
