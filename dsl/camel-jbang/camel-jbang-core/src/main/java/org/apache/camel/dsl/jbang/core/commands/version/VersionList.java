@@ -100,7 +100,7 @@ public class VersionList extends CamelCommand {
         }
 
         CamelCatalog catalog = new DefaultCamelCatalog();
-        List<ReleaseModel> releases = catalog.camelReleases();
+        List<ReleaseModel> releases = runtime.equals("quarkus") ? catalog.camelQuarkusReleases() : catalog.camelReleases();
 
         List<Row> rows = new ArrayList<>();
         for (String[] v : versions) {
@@ -110,7 +110,8 @@ public class VersionList extends CamelCommand {
             row.runtimeVersion = v[1];
 
             // enrich with details from catalog (if we can find any)
-            ReleaseModel rm = releases.stream().filter(r -> v[0].equals(r.getVersion())).findFirst().orElse(null);
+            String catalogVersion = runtime.equals("quarkus") ? v[1] : v[0];
+            ReleaseModel rm = releases.stream().filter(r -> catalogVersion.equals(r.getVersion())).findFirst().orElse(null);
             if (rm != null) {
                 row.releaseDate = rm.getDate();
                 row.eolDate = rm.getEol();
@@ -136,11 +137,11 @@ public class VersionList extends CamelCommand {
                         .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(r -> r.runtimeVersion),
                 new Column().header("JDK")
                         .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::jdkVersion),
-                new Column().header("KIND").visible(!"quarkus".equalsIgnoreCase(runtime))
+                new Column().header("KIND")
                         .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.CENTER).with(this::kind),
-                new Column().header("RELEASED").visible(!"quarkus".equalsIgnoreCase(runtime))
+                new Column().header("RELEASED")
                         .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::releaseDate),
-                new Column().header("SUPPORTED UNTIL").visible(!"quarkus".equalsIgnoreCase(runtime))
+                new Column().header("SUPPORTED UNTIL")
                         .headerAlign(HorizontalAlign.CENTER).dataAlign(HorizontalAlign.RIGHT).with(this::eolDate))));
 
         return 0;
