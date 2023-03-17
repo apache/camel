@@ -914,14 +914,16 @@ public class AggregateProcessor extends AsyncProcessorSupport
 
         for (String key : keys) {
             Exchange exchange = aggregationRepository.get(camelContext, key);
-            // grab the timeout value
-            long timeout = exchange.getProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT, 0L, long.class);
-            if (timeout > 0) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Restoring CompletionTimeout for exchangeId: {} with timeout: {} millis.",
-                            exchange.getExchangeId(), timeout);
+            if (exchange != null) {
+                // grab the timeout value
+                long timeout = exchange.getProperty(ExchangePropertyKey.AGGREGATED_TIMEOUT, 0L, long.class);
+                if (timeout > 0) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Restoring CompletionTimeout for exchangeId: {} with timeout: {} millis.",
+                                exchange.getExchangeId(), timeout);
+                    }
+                    addExchangeToTimeoutMap(key, exchange, timeout);
                 }
-                addExchangeToTimeoutMap(key, exchange, timeout);
             }
         }
 
