@@ -545,6 +545,8 @@ jbang -Dcamel.jbang.version=3.18.4 camel@apache/camel [command]
 NOTE: Older versions of Camel may not work as well with Camel JBang as the newest versions.
 Starting from Camel 3.20 onwards is the versions that are recommended to be used onwards.
 
+TIP: In Camel *3.20.3* onwards there is a `version` command, see the following section for more details.
+
 In *Camel 3.20.2* onwards the `run` command has built-in support, using `--camel-version`,
 for specifying Camel version to use for the running Camel integration.
 
@@ -562,6 +564,118 @@ You can also try bleeding edge development by using SNAPSHOT such as:
 ----
 jbang --fresh -Dcamel.jbang.version=3.21.0-SNAPSHOT camel@apache/camel [command]
 ----
+
+=== Using the version command
+
+In *Camel 3.20.3* onwards the `version` command makes it possible to configure a specific version
+of Camel to use when running or exporting. This makes it possible to use the latest Camel JBang CLI
+and run integrations using an older Camel version.
+
+[source,bash]
+----
+camel version
+Camel JBang version: 3.20.3
+----
+
+Here Camel JBang is using version 3.20.3. Now suppose we want to run Camel integrations with version 3.18.2.
+
+[source,bash]
+----
+camel version set 3.18.2
+----
+
+And you can see what Camel version has been set by:
+
+[source,bash]
+----
+camel version
+Camel JBang version: 3.20.3
+User configuration:
+    camel-version = 3.18.2
+----
+
+And when running an integration, then Camel JBang will show you the _version override_ when starting.
+
+[source,bash]
+----
+camel run foo.java
+Running integration with the following configuration:
+    --camel-version=3.18.2
+2023-03-17 13:35:13.876  INFO 28451 --- [           main] org.apache.camel.main.MainSupport        : Apache Camel (JBang) 3.18.2 is starting
+...
+----
+
+If you want to unset the version, you can use the `--reset` option:
+
+[source,bash]
+----
+camel version set --reset
+----
+
+Then the Camel version in use will be the same version as Camel JBang.
+
+==== Listing available Camel releases
+
+The `version` command can also show available Camel releases by checking the Maven central repository.
+
+[source,bash]
+----
+camel version list
+ CAMEL VERSION   JDK   KIND     RELEASED     SUPPORTED UNTIL
+    3.14.0       8,11  LTS    December 2021    December 2023
+    3.14.1       8,11  LTS     January 2022    December 2023
+    3.14.2       8,11  LTS       March 2022    December 2023
+    3.14.3       8,11  LTS         May 2022    December 2023
+    3.14.4       8,11  LTS        June 2022    December 2023
+    3.14.5       8,11  LTS      August 2022    December 2023
+    3.14.6       8,11  LTS    November 2022    December 2023
+    3.14.7       8,11  LTS    December 2022    December 2023
+    3.15.0         11         February 2022
+    3.16.0         11            March 2022
+    3.17.0      11,17              May 2022
+    3.18.0      11,17  LTS        July 2022        July 2023
+    3.18.1      11,17  LTS      August 2022        July 2023
+    3.18.2      11,17  LTS   September 2022        July 2023
+    3.18.3      11,17  LTS     October 2022        July 2023
+    3.18.4      11,17  LTS    December 2022        July 2023
+    3.18.5      11,17  LTS     January 2023        July 2023
+    3.19.0      11,17          October 2022
+    3.20.0      11,17  LTS    December 2022    December 2023
+    3.20.1      11,17  LTS     January 2023    December 2023
+    3.20.2      11,17  LTS    February 2023    December 2023
+   4.0.0-M1        17   RC    February 2023
+   4.0.0-M2        17   RC       March 2023
+----
+
+NOTE: The `version list` shows the latest releases going back a few versions, at this time of writing the minimum version
+is Camel 3.14. To show all Camel 3.x releases, you can specify `--minimum-version=3.0` and the list is longer.
+The list can only go back to Camel 2.18, as we do not have all release meta-data for older releases.
+
+You can also show Camel releases for either Spring Boot or Quarkus using the `--runtime` option, such as:
+
+[source,bash]
+----
+camel version list --runtime=quarkus
+ CAMEL VERSION  QUARKUS   JDK  KIND     RELEASED     SUPPORTED UNTIL
+    3.14.0       2.6.0     11         December 2021
+    3.14.1       2.7.0     11  LTS    February 2022      August 2022
+    3.14.2       2.7.1     11  LTS       April 2022      August 2022
+    3.14.4       2.7.2     11  LTS        July 2022      August 2022
+    3.15.0      2.8.0-M1   11            March 2022
+    3.16.0       2.8.0     11            April 2022
+    3.16.0       2.9.0     11              May 2022
+    3.17.0       2.10.0    11             June 2022
+    3.18.0       2.11.0    11             July 2022
+    3.18.1       2.12.0    11        September 2022
+    3.18.2       2.13.0    11  LTS   September 2022       March 2023
+    3.18.3       2.13.1    11  LTS    November 2022       March 2023
+    3.18.3       2.13.2    11  LTS    December 2022       March 2023
+    3.19.0       2.14.0    11         November 2022
+    3.19.0       2.15.0    11         December 2022
+    3.20.1       2.16.0    11          January 2023
+----
+
+TIP: See more options with `camel version list --help`.
 
 === Running Camel K integrations or bindings
 
