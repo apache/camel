@@ -100,7 +100,7 @@ public class VersionList extends CamelCommand {
         }
 
         CamelCatalog catalog = new DefaultCamelCatalog();
-        List<ReleaseModel> releases = runtime.equals("quarkus") ? catalog.camelQuarkusReleases() : catalog.camelReleases();
+        List<ReleaseModel> releases = "quarkus".equals(runtime) ? catalog.camelQuarkusReleases() : catalog.camelReleases();
 
         List<Row> rows = new ArrayList<>();
         for (String[] v : versions) {
@@ -110,7 +110,7 @@ public class VersionList extends CamelCommand {
             row.runtimeVersion = v[1];
 
             // enrich with details from catalog (if we can find any)
-            String catalogVersion = runtime.equals("quarkus") ? v[1] : v[0];
+            String catalogVersion = "quarkus".equals(runtime) ? v[1] : v[0];
             ReleaseModel rm = releases.stream().filter(r -> catalogVersion.equals(r.getVersion())).findFirst().orElse(null);
             if (rm != null) {
                 row.releaseDate = rm.getDate();
