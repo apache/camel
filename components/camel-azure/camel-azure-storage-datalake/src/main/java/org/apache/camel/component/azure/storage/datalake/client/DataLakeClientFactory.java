@@ -18,16 +18,22 @@ package org.apache.camel.component.azure.storage.datalake.client;
 
 import java.util.Locale;
 
+import com.azure.core.credential.AzureSasCredential;
 import com.azure.identity.ClientSecretCredential;
 import com.azure.identity.ClientSecretCredentialBuilder;
+import com.azure.identity.DefaultAzureCredentialBuilder;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.file.datalake.DataLakeServiceClient;
 import com.azure.storage.file.datalake.DataLakeServiceClientBuilder;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class DataLakeClientFactory {
     private static final String SERVICE_URI_SEGMENT = ".dfs.core.windows.net";
+
+    private static final Logger LOG = LoggerFactory.getLogger(DataLakeClientFactory.class);
 
     private DataLakeClientFactory() {
     }
@@ -35,19 +41,28 @@ public final class DataLakeClientFactory {
     public static DataLakeServiceClient createDataLakeServiceClient(final DataLakeConfiguration configuration) {
         final DataLakeServiceClient client;
         if (configuration.getServiceClient() != null) {
+            LOG.trace("Using configured service client instance");
             client = configuration.getServiceClient();
+        } else if (configuration.getUseDefaultIdentity()) {
+            client = createDataLakeServiceClientWithDefaultIdentity(configuration);
         } else if (configuration.getAccountKey() != null || configuration.getSharedKeyCredential() != null) {
             client = createDataLakeServiceClientWithSharedKey(configuration);
+        } else if (configuration.getSasSignature() != null || configuration.getSasCredential() != null) {
+            client = createDataLakeServiceClientWithSas(configuration);
         } else {
             client = createDataLakeServiceClientWithClientSecret(configuration);
         }
+
         return client;
     }
 
     private static DataLakeServiceClient createDataLakeServiceClientWithSharedKey(final DataLakeConfiguration configuration) {
         StorageSharedKeyCredential sharedKeyCredential = configuration.getSharedKeyCredential();
         if (sharedKeyCredential == null) {
+            LOG.trace("Using account name and account key to instantiate service client");
             sharedKeyCredential = new StorageSharedKeyCredential(configuration.getAccountName(), configuration.getAccountKey());
+        } else {
+            LOG.trace("Using configured shared key instance to instantiate service client");
         }
 
         return new DataLakeServiceClientBuilder()
@@ -59,17 +74,48 @@ public final class DataLakeClientFactory {
     private static DataLakeServiceClient createDataLakeServiceClientWithClientSecret(
             final DataLakeConfiguration configuration) {
         ClientSecretCredential clientSecretCredential = configuration.getClientSecretCredential();
-
         if (clientSecretCredential == null) {
+            LOG.trace("Using client id, client secret, tenant id to instantiate service client");
             clientSecretCredential = new ClientSecretCredentialBuilder()
                     .clientId(configuration.getClientId())
                     .clientSecret(configuration.getClientSecret())
                     .tenantId(configuration.getTenantId())
                     .build();
+        } else {
+            LOG.trace("Using configured client secret instance to instantiate service client");
         }
 
         return new DataLakeServiceClientBuilder()
                 .credential(clientSecretCredential)
+                .endpoint(buildAzureUri(configuration))
+                .buildClient();
+    }
+
+    private static DataLakeServiceClient createDataLakeServiceClientWithSas(
+            final DataLakeConfiguration configuration) {
+        AzureSasCredential sasCredential = configuration.getSasCredential();
+        if (sasCredential == null) {
+            LOG.trace("Using SAS signature to instantiate service client");
+            sasCredential = new AzureSasCredential(configuration.getSasSignature());
+        } else {
+            LOG.trace("Using configured SAS instance to instantiate service client");
+        }
+
+        return new DataLakeServiceClientBuilder()
+                .credential(sasCredential)
+                .endpoint(buildAzureUri(configuration))
+                .buildClient();
+    }
+
+    private static DataLakeServiceClient createDataLakeServiceClientWithDefaultIdentity(
+            final DataLakeConfiguration configuration) {
+        LOG.trace("Using default identity to instantiate service client");
+        final DefaultAzureCredentialBuilder defaultAzureCredentialBuilder = new DefaultAzureCredentialBuilder();
+        if (configuration.getTenantId() != null) {
+            defaultAzureCredentialBuilder.tenantId(configuration.getTenantId());
+        }
+        return new DataLakeServiceClientBuilder()
+                .credential(defaultAzureCredentialBuilder.build())
                 .endpoint(buildAzureUri(configuration))
                 .buildClient();
     }

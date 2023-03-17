@@ -96,5 +96,4 @@ public class DataLakeComponent extends DefaultComponent {
 
         }
     }
-
 }
