@@ -32,8 +32,8 @@ public class ExchangeCookieHandler extends BaseCookieHandler {
     @Override
     protected CookieManager getCookieManager(Exchange exchange) {
         Object handlerObj = exchange.getProperty(Exchange.COOKIE_HANDLER);
-        if (handlerObj instanceof java.net.CookieManager) {
-            return (CookieManager) handlerObj;
+        if (handlerObj instanceof java.net.CookieManager manager) {
+            return manager;
         } else {
             CookieManager handler = new CookieManager();
             handler.setCookiePolicy(cookiePolicy);
