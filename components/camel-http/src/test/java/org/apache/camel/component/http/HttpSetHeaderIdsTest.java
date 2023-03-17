@@ -21,9 +21,9 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,10 +38,10 @@ public class HttpSetHeaderIdsTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/myids", (httpRequest, httpResponse, httpContext) -> {
+                .setSslContext(getSSLContext())
+                .register("/myids", (httpRequest, httpResponse, httpContext) -> {
                     Assertions.assertNull(httpRequest.getFirstHeader("ids"));
-                    String u = httpRequest.getRequestLine().getUri();
+                    String u = httpRequest.getRequestUri();
                     httpResponse.setEntity(new StringEntity(u));
                 }).create();
         localServer.start();

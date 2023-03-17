@@ -18,8 +18,8 @@ package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,14 +46,14 @@ public class HttpProducerSelectMethodTest extends BaseHttpTest {
 
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/myget", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
-                .registerHandler("/mypost", new BasicValidationHandler(POST.name(), null, null, getExpectedContent()))
-                .registerHandler("/myget2", new BasicValidationHandler(GET.name(), "q=Camel", null, getExpectedContent()))
+                .setSslContext(getSSLContext())
+                .register("/myget", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .register("/mypost", new BasicValidationHandler(POST.name(), null, null, getExpectedContent()))
+                .register("/myget2", new BasicValidationHandler(GET.name(), "q=Camel", null, getExpectedContent()))
                 .create();
         localServer.start();
 
-        baseUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
+        baseUrl = "http://localhost:" + localServer.getLocalPort();
 
     }
 

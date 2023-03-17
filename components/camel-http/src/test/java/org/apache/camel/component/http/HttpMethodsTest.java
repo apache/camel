@@ -21,9 +21,9 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
-import org.apache.http.HttpStatus;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -52,22 +52,22 @@ public class HttpMethodsTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/get", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
-                .registerHandler("/patch", new BasicValidationHandler(PATCH.name(), null, null, getExpectedContent()))
-                .registerHandler("/patch1",
+                .setSslContext(getSSLContext())
+                .register("/get", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .register("/patch", new BasicValidationHandler(PATCH.name(), null, null, getExpectedContent()))
+                .register("/patch1",
                         new BasicValidationHandler(PATCH.name(), null, "rocks camel?", getExpectedContent()))
-                .registerHandler("/post", new BasicValidationHandler(POST.name(), null, null, getExpectedContent()))
-                .registerHandler("/post1", new BasicValidationHandler(POST.name(), null, "rocks camel?", getExpectedContent()))
-                .registerHandler("/put", new BasicValidationHandler(PUT.name(), null, null, getExpectedContent()))
-                .registerHandler("/trace", new BasicValidationHandler(TRACE.name(), null, null, getExpectedContent()))
-                .registerHandler("/options", new BasicValidationHandler(OPTIONS.name(), null, null, getExpectedContent()))
-                .registerHandler("/delete", new BasicValidationHandler(DELETE.name(), null, null, getExpectedContent()))
-                .registerHandler("/delete1", new BasicValidationHandler(DELETE.name(), null, null, getExpectedContent()))
-                .registerHandler("/head", new BasicValidationHandler(HEAD.name(), null, null, getExpectedContent())).create();
+                .register("/post", new BasicValidationHandler(POST.name(), null, null, getExpectedContent()))
+                .register("/post1", new BasicValidationHandler(POST.name(), null, "rocks camel?", getExpectedContent()))
+                .register("/put", new BasicValidationHandler(PUT.name(), null, null, getExpectedContent()))
+                .register("/trace", new BasicValidationHandler(TRACE.name(), null, null, getExpectedContent()))
+                .register("/options", new BasicValidationHandler(OPTIONS.name(), null, null, getExpectedContent()))
+                .register("/delete", new BasicValidationHandler(DELETE.name(), null, null, getExpectedContent()))
+                .register("/delete1", new BasicValidationHandler(DELETE.name(), null, null, getExpectedContent()))
+                .register("/head", new BasicValidationHandler(HEAD.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
-        baseUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
+        baseUrl = "http://localhost:" + localServer.getLocalPort();
 
         super.setUp();
     }

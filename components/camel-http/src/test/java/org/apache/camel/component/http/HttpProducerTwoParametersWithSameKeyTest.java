@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.http;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,16 +44,16 @@ public class HttpProducerTwoParametersWithSameKeyTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/myapp", (request, response, context) -> {
-                    String uri = request.getRequestLine().getUri();
+                .setSslContext(getSSLContext())
+                .register("/myapp", (request, response, context) -> {
+                    String uri = request.getRequestUri();
                     assertEquals("/myapp?from=me&to=foo&to=bar", uri);
 
                     response.setHeader("bar", "yes");
                     response.addHeader("foo", "123");
                     response.addHeader("foo", "456");
-                    response.setEntity(new StringEntity("OK", "ASCII"));
-                    response.setStatusCode(HttpStatus.SC_OK);
+                    response.setEntity(new StringEntity("OK", StandardCharsets.US_ASCII));
+                    response.setCode(HttpStatus.SC_OK);
                 }).create();
         localServer.start();
 
@@ -71,7 +72,7 @@ public class HttpProducerTwoParametersWithSameKeyTest extends BaseHttpTest {
 
     @Test
     public void testTwoParametersWithSameKey() throws Exception {
-        String endpointUri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
+        String endpointUri = "http://localhost:" + localServer.getLocalPort()
                              + "/myapp?from=me&to=foo&to=bar";
 
         Exchange out = template.request(endpointUri, null);

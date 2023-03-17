@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.http.auth.Credentials;
-import org.apache.http.auth.NTCredentials;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.NTCredentials;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 
 public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfigurer {
     private final String username;
-    private final String password;
+    private final char[] password;
     private final String domain;
     private final String host;
     private final HttpCredentialsHelper credentialsHelper;
@@ -31,7 +31,7 @@ public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfig
     public BasicAuthenticationHttpClientConfigurer(String user, String pwd, String domain, String host,
                                                    HttpCredentialsHelper credentialsHelper) {
         this.username = user;
-        this.password = pwd;
+        this.password = pwd == null ? new char[0] : pwd.toCharArray();
         this.domain = domain;
         this.host = host;
         this.credentialsHelper = credentialsHelper;

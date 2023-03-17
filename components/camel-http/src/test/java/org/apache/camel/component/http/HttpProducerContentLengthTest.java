@@ -20,10 +20,10 @@ import java.io.ByteArrayInputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
-import org.apache.http.Header;
-import org.apache.http.HttpStatus;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,8 +47,8 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
 
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/content-streamed", (request, response, context) -> {
+                .setSslContext(getSSLContext())
+                .register("/content-streamed", (request, response, context) -> {
                     Header contentLengthHeader = request.getFirstHeader(Exchange.CONTENT_LENGTH);
                     String contentLength = contentLengthHeader != null ? contentLengthHeader.getValue() : "";
                     Header transferEncodingHeader = request.getFirstHeader(Exchange.TRANSFER_ENCODING);
@@ -57,9 +57,9 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
                     //Request Body Chunked if no Content-Length set.
                     assertEquals("", contentLength);
                     assertEquals("chunked", transferEncoding);
-                    response.setStatusCode(HttpStatus.SC_OK);
+                    response.setCode(HttpStatus.SC_OK);
                 })
-                .registerHandler("/content-not-streamed", (request, response, context) -> {
+                .register("/content-not-streamed", (request, response, context) -> {
                     Header contentLengthHeader = request.getFirstHeader(Exchange.CONTENT_LENGTH);
                     String contentLength = contentLengthHeader != null ? contentLengthHeader.getValue() : "";
                     Header transferEncodingHeader = request.getFirstHeader(Exchange.TRANSFER_ENCODING);
@@ -68,13 +68,13 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
                     //Content-Length should match byte array
                     assertEquals("35", contentLength);
                     assertEquals("", transferEncoding);
-                    response.setStatusCode(HttpStatus.SC_OK);
+                    response.setCode(HttpStatus.SC_OK);
                 })
                 .create();
 
         localServer.start();
 
-        endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
+        endpointUrl = "http://localhost:" + localServer.getLocalPort();
 
     }
 

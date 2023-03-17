@@ -14,22 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http;
+package org.apache.camel.component.http.interceptor;
 
-import java.util.Optional;
+import java.io.IOException;
 
-import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.EntityDetails;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpHeaders;
 import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.HttpResponseInterceptor;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.protocol.HttpContext;
 
-public final class HttpUtil {
-    private HttpUtil() {
-    }
-
-    public static Optional<Header> responseHeader(HttpResponse response, String headerName) {
-        return Optional.ofNullable(response.getFirstHeader(headerName));
-    }
-
-    public static Optional<String> responseHeaderValue(HttpResponse response, String headerName) {
-        return responseHeader(response, headerName).map(Header::getValue);
+public class ResponseProxyBasicUnauthorized implements HttpResponseInterceptor {
+    @Override
+    public void process(final HttpResponse response, final EntityDetails entity, final HttpContext context)
+            throws HttpException, IOException {
+        if (response.getCode() == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
+            response.addHeader(HttpHeaders.PROXY_AUTHENTICATE, "Basic realm=\"test realm\"");
+        }
     }
 }

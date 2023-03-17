@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.http.client.CookieStore;
-import org.apache.http.cookie.Cookie;
+import org.apache.hc.client5.http.cookie.Cookie;
+import org.apache.hc.client5.http.cookie.CookieStore;
 
 /**
  * A noop {@link CookieStore} used when bridging endpoints.

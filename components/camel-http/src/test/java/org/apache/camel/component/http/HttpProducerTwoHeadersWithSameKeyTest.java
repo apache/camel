@@ -16,15 +16,16 @@
  */
 package org.apache.camel.component.http;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.http.Header;
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,8 +46,8 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/myapp", (request, response, context) -> {
+                .setSslContext(getSSLContext())
+                .register("/myapp", (request, response, context) -> {
                     Header[] from = request.getHeaders("from");
                     assertEquals("me", from[0].getValue());
                     Header[] to = request.getHeaders("to");
@@ -55,9 +56,10 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
                     response.setHeader("bar", "yes");
                     response.addHeader("foo", "123");
                     response.addHeader("foo", "456");
-                    response.setEntity(new StringEntity("OK", "ASCII"));
-                    response.setStatusCode(HttpStatus.SC_OK);
-                }).registerHandler("/myapp", (request, response, context) -> {
+                    response.setEntity(new StringEntity("OK", StandardCharsets.US_ASCII));
+                    response.setCode(HttpStatus.SC_OK);
+                })
+                .register("/myapp", (request, response, context) -> {
                     Header[] from = request.getHeaders("from");
                     assertEquals("me", from[0].getValue());
                     Header[] to = request.getHeaders("to");
@@ -66,8 +68,8 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
                     response.setHeader("bar", "yes");
                     response.addHeader("foo", "123");
                     response.addHeader("foo", "456");
-                    response.setEntity(new StringEntity("OK", "ASCII"));
-                    response.setStatusCode(HttpStatus.SC_OK);
+                    response.setEntity(new StringEntity("OK", StandardCharsets.US_ASCII));
+                    response.setCode(HttpStatus.SC_OK);
                 }).create();
         localServer.start();
 
@@ -87,7 +89,7 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
     @Test
     public void testTwoHeadersWithSameKeyHeader() throws Exception {
         String endpointUri
-                = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myapp";
+                = "http://localhost:" + localServer.getLocalPort() + "/myapp";
 
         Exchange out = template.request(endpointUri, exchange -> {
             exchange.getIn().setBody(null);

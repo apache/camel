@@ -18,11 +18,11 @@ import org.apache.camel.util.DoubleMap;
  */
 @SuppressWarnings("unchecked")
 @DeferredContextBinding
-public final class HttpEntityConverterLoader implements TypeConverterLoader, CamelContextAware {
+public final class HttpConvertersLoader implements TypeConverterLoader, CamelContextAware {
 
     private CamelContext camelContext;
 
-    public HttpEntityConverterLoader() {
+    public HttpConvertersLoader() {
     }
 
     @Override
@@ -41,12 +41,14 @@ public final class HttpEntityConverterLoader implements TypeConverterLoader, Cam
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, org.apache.hc.core5.http.HttpEntity.class, byte[].class, false,
-            (type, exchange, value) -> org.apache.camel.component.http.HttpEntityConverter.toHttpEntity((byte[]) value, exchange));
-        addTypeConverter(registry, org.apache.hc.core5.http.HttpEntity.class, java.io.InputStream.class, false,
-            (type, exchange, value) -> org.apache.camel.component.http.HttpEntityConverter.toHttpEntity((java.io.InputStream) value, exchange));
-        addTypeConverter(registry, org.apache.hc.core5.http.HttpEntity.class, java.lang.String.class, false,
-            (type, exchange, value) -> org.apache.camel.component.http.HttpEntityConverter.toHttpEntity((java.lang.String) value, exchange));
+        addTypeConverter(registry, org.apache.hc.core5.util.TimeValue.class, java.lang.String.class, false,
+            (type, exchange, value) -> org.apache.camel.component.http.HttpConverters.toTimeValue((java.lang.String) value));
+        addTypeConverter(registry, org.apache.hc.core5.util.TimeValue.class, long.class, false,
+            (type, exchange, value) -> org.apache.camel.component.http.HttpConverters.toTimeValue((long) value));
+        addTypeConverter(registry, org.apache.hc.core5.util.Timeout.class, java.lang.String.class, false,
+            (type, exchange, value) -> org.apache.camel.component.http.HttpConverters.toTimeout((java.lang.String) value));
+        addTypeConverter(registry, org.apache.hc.core5.util.Timeout.class, long.class, false,
+            (type, exchange, value) -> org.apache.camel.component.http.HttpConverters.toTimeout((long) value));
     }
 
     private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method) { 

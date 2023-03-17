@@ -20,8 +20,8 @@ import java.net.SocketTimeoutException;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.handler.DelayValidationHandler;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 public class HttpPollingConsumerTest extends BaseHttpTest {
 
     private HttpServer localServer;
-    private String user = "camel";
-    private String password = "password";
+    private final String user = "camel";
+    private final String password = "password";
     private String endpointUrl;
 
     @BeforeEach
@@ -45,11 +45,11 @@ public class HttpPollingConsumerTest extends BaseHttpTest {
 
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/", new DelayValidationHandler(GET.name(), null, null, getExpectedContent(), 1000)).create();
+                .setSslContext(getSSLContext())
+                .register("/", new DelayValidationHandler(GET.name(), null, null, getExpectedContent(), 1000)).create();
         localServer.start();
 
-        endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
+        endpointUrl = "http://localhost:" + localServer.getLocalPort();
     }
 
     @AfterEach

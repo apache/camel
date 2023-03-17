@@ -24,10 +24,11 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.GZIPHelper;
-import org.apache.http.HttpEntity;
-import org.apache.http.entity.AbstractHttpEntity;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.InputStreamEntity;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.AbstractHttpEntity;
+import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
+import org.apache.hc.core5.http.io.entity.InputStreamEntity;
 
 /**
  * Some converter methods to make it easier to convert the body to RequestEntity types.
@@ -60,26 +61,27 @@ public final class HttpEntityConverter {
     }
 
     private static HttpEntity asHttpEntity(InputStream in, Exchange exchange) throws IOException {
+        String contentEncoding = null;
+        ContentType contentType = null;
+        if (exchange != null) {
+            contentEncoding = exchange.getIn().getHeader(HttpConstants.CONTENT_ENCODING, String.class);
+            String contentTypeAsString = ExchangeHelper.getContentType(exchange);
+            if (contentTypeAsString != null) {
+                contentType = ContentType.parse(contentTypeAsString);
+            }
+        }
+
         InputStreamEntity entity;
         if (exchange != null && !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
-            String contentEncoding = exchange.getIn().getHeader(HttpConstants.CONTENT_ENCODING, String.class);
             InputStream stream = GZIPHelper.compressGzip(contentEncoding, in);
+            int available = stream.available();
             entity = new InputStreamEntity(
-                    stream, stream instanceof ByteArrayInputStream
-                            ? stream.available() != 0 ? stream.available() : -1 : -1);
+                    stream, stream instanceof ByteArrayInputStream ? available != 0 ? available : -1 : -1, contentType,
+                    contentEncoding);
         } else {
-            entity = new InputStreamEntity(in, -1);
+            entity = new InputStreamEntity(in, -1, contentType, contentEncoding);
         }
-        if (exchange != null) {
-            String contentEncoding = exchange.getIn().getHeader(HttpConstants.CONTENT_ENCODING, String.class);
-            if (contentEncoding != null) {
-                entity.setContentEncoding(contentEncoding);
-            }
-            String contentType = ExchangeHelper.getContentType(exchange);
-            if (contentType != null) {
-                entity.setContentType(contentType);
-            }
-        }
+
         return entity;
     }
 
@@ -87,33 +89,31 @@ public final class HttpEntityConverter {
         AbstractHttpEntity entity;
 
         String contentEncoding = null;
+        ContentType contentType = null;
         if (exchange != null) {
             contentEncoding = exchange.getIn().getHeader(HttpConstants.CONTENT_ENCODING, String.class);
+            String contentTypeAsString = ExchangeHelper.getContentType(exchange);
+            if (contentTypeAsString != null) {
+                contentType = ContentType.parse(contentTypeAsString);
+            }
         }
 
         if (exchange != null && !exchange.getProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.FALSE, Boolean.class)) {
             boolean gzip = GZIPHelper.isGzip(contentEncoding);
             if (gzip) {
                 InputStream stream = GZIPHelper.compressGzip(contentEncoding, data);
+                int available = stream.available();
                 entity = new InputStreamEntity(
                         stream, stream instanceof ByteArrayInputStream
-                                ? stream.available() != 0 ? stream.available() : -1 : -1);
+                                ? available != 0 ? available : -1 : -1,
+                        contentType, contentEncoding);
             } else {
                 // use a byte array entity as-is
-                entity = new ByteArrayEntity(data);
+                entity = new ByteArrayEntity(data, contentType, contentEncoding);
             }
         } else {
             // create the Repeatable HttpEntity
-            entity = new ByteArrayEntity(data);
-        }
-        if (exchange != null) {
-            if (contentEncoding != null) {
-                entity.setContentEncoding(contentEncoding);
-            }
-            String contentType = ExchangeHelper.getContentType(exchange);
-            if (contentType != null) {
-                entity.setContentType(contentType);
-            }
+            entity = new ByteArrayEntity(data, contentType, contentEncoding);
         }
         return entity;
     }

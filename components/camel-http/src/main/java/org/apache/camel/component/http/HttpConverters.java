@@ -16,24 +16,37 @@
  */
 package org.apache.camel.component.http;
 
-import org.apache.camel.CamelContext;
-import org.junit.jupiter.api.BeforeEach;
+import org.apache.camel.Converter;
+import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
 
-public class HttpBodyWithOtherProtocalNameTest extends HttpBodyTest {
+/**
+ * Some converter methods to build different types used to configure the component.
+ */
+@Converter(generateLoader = true)
+public final class HttpConverters {
 
-    @BeforeEach
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        setProtocolString("newHttp://");
+    private HttpConverters() {
+        // Helper class
     }
 
-    @Override
-    public CamelContext createCamelContext() throws Exception {
-        CamelContext answer = super.createCamelContext();
-        // register the a new HttpComponent with different protocol name
-        answer.addComponent("newHttp", new HttpComponent());
-        return answer;
+    @Converter
+    public static Timeout toTimeout(long millis) {
+        return Timeout.ofMilliseconds(millis);
     }
 
+    @Converter
+    public static Timeout toTimeout(String millis) {
+        return Timeout.ofMilliseconds(Long.parseLong(millis));
+    }
+
+    @Converter
+    public static TimeValue toTimeValue(long millis) {
+        return TimeValue.ofMilliseconds(millis);
+    }
+
+    @Converter
+    public static TimeValue toTimeValue(String millis) {
+        return TimeValue.ofMilliseconds(Long.parseLong(millis));
+    }
 }

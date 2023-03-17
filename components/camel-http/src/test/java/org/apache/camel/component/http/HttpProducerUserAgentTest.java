@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.http;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.Exchange;
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,16 +44,16 @@ public class HttpProducerUserAgentTest extends BaseHttpTest {
 
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/agent", (request, response, context) -> {
+                .setSslContext(getSSLContext())
+                .register("/agent", (request, response, context) -> {
                     String agent = request.getFirstHeader("User-Agent").getValue();
                     assertEquals("MyAgent", agent);
-                    response.setEntity(new StringEntity(agent, "ASCII"));
-                    response.setStatusCode(HttpStatus.SC_OK);
+                    response.setEntity(new StringEntity(agent, StandardCharsets.US_ASCII));
+                    response.setCode(HttpStatus.SC_OK);
                 }).create();
         localServer.start();
 
-        endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
+        endpointUrl = "http://localhost:" + localServer.getLocalPort();
 
         HttpComponent http = context.getComponent("http", HttpComponent.class);
         http.setUserAgent("MyAgent");

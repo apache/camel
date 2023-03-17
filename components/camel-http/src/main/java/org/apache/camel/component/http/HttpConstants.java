@@ -18,11 +18,13 @@ package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.Metadata;
-import org.apache.http.HttpHeaders;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpHeaders;
 
 public final class HttpConstants {
 
     public static final String CONTENT_TYPE_JAVA_SERIALIZED_OBJECT = "application/x-java-serialized-object";
+    public static final ContentType JAVA_SERIALIZED_OBJECT = ContentType.create(CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
     public static final String CONTENT_TYPE_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
 
     @Metadata(description = "The HTTP content encoding. Is set on both the IN and OUT message to\n" +

@@ -14,29 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http;
+package org.apache.camel.component.http.interceptor;
 
-import java.net.URI;
+import java.io.IOException;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.hc.core5.http.EntityDetails;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpRequestInterceptor;
+import org.apache.hc.core5.http.protocol.HttpContext;
 
-public class HttpGetWithBodyMethod extends HttpEntityEnclosingRequestBase {
+public class RequestBasicAuth implements HttpRequestInterceptor {
 
-    public static final String METHOD_NAME = "GET";
+    private final BasicAuthTokenExtractor authTokenExtractor;
 
-    public HttpGetWithBodyMethod(String uri, HttpEntity entity) {
-        setURI(URI.create(uri));
-        setEntity(entity);
-    }
-
-    public HttpGetWithBodyMethod(URI uri, HttpEntity entity) {
-        setURI(uri);
-        setEntity(entity);
+    public RequestBasicAuth() {
+        this.authTokenExtractor = new BasicAuthTokenExtractor();
     }
 
     @Override
-    public String getMethod() {
-        return METHOD_NAME;
+    public void process(HttpRequest request, EntityDetails entity, HttpContext context) throws HttpException, IOException {
+        context.setAttribute("creds", this.authTokenExtractor.extract(request));
     }
 }

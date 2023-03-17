@@ -19,8 +19,8 @@ package org.apache.camel.component.http;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.apache.camel.util.URISupport;
-import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,7 +62,6 @@ public class HttpEndpointURLTest extends CamelTestSupport {
                 = context.getEndpoint("http://www.google.com?maxTotalConnections=40&connectionsPerRoute=5", HttpEndpoint.class);
         HttpClientConnectionManager connectionManager = http1.getClientConnectionManager();
         assertTrue(connectionManager instanceof PoolingHttpClientConnectionManager, "Get a wrong type of connection manager");
-        @SuppressWarnings("resource")
         PoolingHttpClientConnectionManager poolManager = (PoolingHttpClientConnectionManager) connectionManager;
         assertEquals(40, poolManager.getMaxTotal(), "Get a wrong setting of maxTotalConnections");
         assertEquals(5, poolManager.getDefaultMaxPerRoute(), "Get a wrong setting of connectionsPerRoute");

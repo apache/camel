@@ -16,27 +16,24 @@
  */
 package org.apache.camel.component.http;
 
-import java.net.URI;
+import org.apache.camel.CamelContext;
+import org.junit.jupiter.api.BeforeEach;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+public class HttpBodyWithOtherProtocolNameTest extends HttpBodyTest {
 
-public class HttpDeleteWithBodyMethod extends HttpEntityEnclosingRequestBase {
-
-    public static final String METHOD_NAME = "DELETE";
-
-    public HttpDeleteWithBodyMethod(String uri, HttpEntity entity) {
-        setURI(URI.create(uri));
-        setEntity(entity);
-    }
-
-    public HttpDeleteWithBodyMethod(URI uri, HttpEntity entity) {
-        setURI(uri);
-        setEntity(entity);
+    @BeforeEach
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        setProtocolString("newHttp://");
     }
 
     @Override
-    public String getMethod() {
-        return METHOD_NAME;
+    public CamelContext createCamelContext() throws Exception {
+        CamelContext answer = super.createCamelContext();
+        // register a new HttpComponent with different protocol name
+        answer.addComponent("newHttp", new HttpComponent());
+        return answer;
     }
+
 }

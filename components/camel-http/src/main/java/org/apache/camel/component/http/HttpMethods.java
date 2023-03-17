@@ -21,78 +21,57 @@ import java.net.URI;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpHead;
-import org.apache.http.client.methods.HttpOptions;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.methods.HttpTrace;
+import org.apache.hc.client5.http.classic.methods.HttpDelete;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpHead;
+import org.apache.hc.client5.http.classic.methods.HttpOptions;
+import org.apache.hc.client5.http.classic.methods.HttpPatch;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.classic.methods.HttpTrace;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
 
 public enum HttpMethods implements Expression {
 
-    GET(HttpGet.class),
-    PATCH(HttpPatch.class),
-    POST(HttpPost.class),
-    PUT(HttpPut.class),
-    DELETE(HttpDelete.class),
-    HEAD(HttpHead.class),
-    OPTIONS(HttpOptions.class),
-    TRACE(HttpTrace.class);
+    GET(false),
+    PATCH(true),
+    POST(true),
+    PUT(true),
+    DELETE(false),
+    HEAD(false),
+    OPTIONS(false),
+    TRACE(false);
 
     final boolean entity;
 
-    HttpMethods(Class<? extends HttpRequestBase> clazz) {
-        entity = HttpEntityEnclosingRequestBase.class.isAssignableFrom(clazz);
+    HttpMethods(boolean entity) {
+        this.entity = entity;
     }
 
-    public HttpRequestBase createMethod(final String url) {
-        switch (this) {
-            case GET:
-                return new HttpGet(url);
-            case PATCH:
-                return new HttpPatch(url);
-            case POST:
-                return new HttpPost(url);
-            case PUT:
-                return new HttpPut(url);
-            case DELETE:
-                return new HttpDelete(url);
-            case HEAD:
-                return new HttpHead(url);
-            case OPTIONS:
-                return new HttpOptions(url);
-            case TRACE:
-                return new HttpTrace(url);
-            default:
-                throw new RuntimeException("no such method " + this);
-        }
+    public HttpUriRequest createMethod(final String url) {
+        return switch (this) {
+            case GET -> new HttpGet(url);
+            case PATCH -> new HttpPatch(url);
+            case POST -> new HttpPost(url);
+            case PUT -> new HttpPut(url);
+            case DELETE -> new HttpDelete(url);
+            case HEAD -> new HttpHead(url);
+            case OPTIONS -> new HttpOptions(url);
+            case TRACE -> new HttpTrace(url);
+        };
     }
 
-    public HttpRequestBase createMethod(final URI uri) {
-        switch (this) {
-            case GET:
-                return new HttpGet(uri);
-            case PATCH:
-                return new HttpPatch(uri);
-            case POST:
-                return new HttpPost(uri);
-            case PUT:
-                return new HttpPut(uri);
-            case DELETE:
-                return new HttpDelete(uri);
-            case HEAD:
-                return new HttpHead(uri);
-            case OPTIONS:
-                return new HttpOptions(uri);
-            case TRACE:
-                return new HttpTrace(uri);
-            default:
-                throw new RuntimeException("no such method " + this);
-        }
+    public HttpUriRequest createMethod(final URI uri) {
+        return switch (this) {
+            case GET -> new HttpGet(uri);
+            case PATCH -> new HttpPatch(uri);
+            case POST -> new HttpPost(uri);
+            case PUT -> new HttpPut(uri);
+            case DELETE -> new HttpDelete(uri);
+            case HEAD -> new HttpHead(uri);
+            case OPTIONS -> new HttpOptions(uri);
+            case TRACE -> new HttpTrace(uri);
+        };
     }
 
     public final boolean isEntityEnclosing() {

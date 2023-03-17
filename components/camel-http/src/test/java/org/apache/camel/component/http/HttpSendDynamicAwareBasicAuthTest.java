@@ -22,8 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.DrinkAuthValidationHandler;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,9 +40,8 @@ public class HttpSendDynamicAwareBasicAuthTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/moes", new DrinkAuthValidationHandler(GET.name(), null, null, "drink"))
-                .registerHandler("/joes", new DrinkAuthValidationHandler(GET.name(), null, null, "drink")).create();
+                .setSslContext(getSSLContext())
+                .register("/joes", new DrinkAuthValidationHandler(GET.name(), null, null, "drink")).create();
 
         localServer.start();
 
@@ -76,9 +75,11 @@ public class HttpSendDynamicAwareBasicAuthTest extends BaseHttpTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:moes")
-                        .toD("http://{{myUsername}}:{{myPassword}}@localhost:" + localServer.getLocalPort()
-                             + "/moes?authMethod=Basic&authenticationPreemptive=true&throwExceptionOnFailure=false&drink=${header.drink}");
+                // Providing the username and password as user info is considered as an HTTP protocol violation
+                // according to the RFC 7230, so its support has been removed
+                //                from("direct:moes")
+                //                        .toD("http://{{myUsername}}:{{myPassword}}@localhost:" + localServer.getLocalPort()
+                //                             + "/moes?authMethod=Basic&authenticationPreemptive=true&throwExceptionOnFailure=false&drink=${header.drink}");
 
                 from("direct:joes")
                         .toD("http://localhost:" + localServer.getLocalPort()
@@ -89,18 +90,15 @@ public class HttpSendDynamicAwareBasicAuthTest extends BaseHttpTest {
 
     @Test
     public void testDynamicAware() throws Exception {
-        String out = fluentTemplate.to("direct:moes").withHeader("drink", "beer").request(String.class);
-        assertEquals("Drinking beer", out);
-
-        out = fluentTemplate.to("direct:joes").withHeader("drink", "wine").request(String.class);
+        String out = fluentTemplate.to("direct:joes").withHeader("drink", "wine").request(String.class);
         assertEquals("Drinking wine", out);
 
-        // and there should be two http endpoint as they use different ways to configure username/password
+        // and there should be one http endpoint
         long count = context.getEndpoints().stream().filter(e -> e instanceof HttpEndpoint).count();
-        assertEquals(2, count);
+        assertEquals(1, count);
 
-        // we only have 2xdirect and 2xhttp
-        assertEquals(4, context.getEndpointRegistry().size());
+        // we only have one direct and one http
+        assertEquals(2, context.getEndpointRegistry().size());
     }
 
 }

@@ -38,9 +38,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.github.dockerjava.zerodep.shaded.org.apache.hc.core5.http.ContentType.APPLICATION_JSON;
 import static org.apache.camel.component.http.HttpMethods.POST;
-import static org.apache.http.HttpHeaders.HOST;
-import static org.apache.http.entity.ContentType.APPLICATION_JSON;
+import static org.apache.hc.core5.http.HttpHeaders.HOST;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 
