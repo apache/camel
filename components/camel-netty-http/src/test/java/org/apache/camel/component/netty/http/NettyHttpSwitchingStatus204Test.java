@@ -19,12 +19,12 @@ package org.apache.camel.component.netty.http;
 import io.netty.handler.codec.http.FullHttpResponse;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,11 +36,12 @@ public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
     @Test
     public void testSwitchNoBodyTo204ViaHttp() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/bar");
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpResponse httpResponse = httpClient.execute(request);
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse httpResponse = client.execute(request)) {
 
-        assertEquals(204, httpResponse.getStatusLine().getStatusCode());
-        assertNull(httpResponse.getEntity());
+            assertEquals(204, httpResponse.getCode());
+            assertNull(httpResponse.getEntity());
+        }
     }
 
     @Test
@@ -76,12 +77,13 @@ public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
     @Test
     public void testNoSwitchingNoCodeViaHttp() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/foo");
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpResponse httpResponse = httpClient.execute(request);
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse httpResponse = client.execute(request)) {
 
-        assertEquals(200, httpResponse.getStatusLine().getStatusCode());
-        assertNotNull(httpResponse.getEntity());
-        assertEquals("No Content", EntityUtils.toString(httpResponse.getEntity()));
+            assertEquals(200, httpResponse.getCode());
+            assertNotNull(httpResponse.getEntity());
+            assertEquals("No Content", EntityUtils.toString(httpResponse.getEntity()));
+        }
     }
 
     @Test
@@ -117,12 +119,13 @@ public class NettyHttpSwitchingStatus204Test extends BaseNettyTest {
     @Test
     public void testNoSwitchingNoBodyViaHttp() throws Exception {
         HttpUriRequest request = new HttpGet("http://localhost:" + getPort() + "/foobar");
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpResponse httpResponse = httpClient.execute(request);
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse httpResponse = client.execute(request)) {
 
-        assertEquals(200, httpResponse.getStatusLine().getStatusCode());
-        assertNotNull(httpResponse.getEntity());
-        assertEquals("", EntityUtils.toString(httpResponse.getEntity()));
+            assertEquals(200, httpResponse.getCode());
+            assertNotNull(httpResponse.getEntity());
+            assertEquals("", EntityUtils.toString(httpResponse.getEntity()));
+        }
     }
 
     @Test

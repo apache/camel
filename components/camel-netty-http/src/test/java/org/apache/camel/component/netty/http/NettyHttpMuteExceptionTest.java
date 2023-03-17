@@ -17,11 +17,11 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,16 +31,14 @@ public class NettyHttpMuteExceptionTest extends BaseNettyTest {
 
     @Test
     public void testMuteException() throws Exception {
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpGet get = new HttpGet("http://localhost:" + getPort() + "/foo");
-            get.addHeader("Accept", "application/text");
-
-            try (CloseableHttpResponse response = client.execute(get)) {
-                String body = EntityUtils.toString(response.getEntity(), "UTF-8");
-                assertNotNull(body);
-                assertEquals("", body);
-                assertEquals(500, response.getStatusLine().getStatusCode());
-            }
+        HttpGet get = new HttpGet("http://localhost:" + getPort() + "/foo");
+        get.addHeader("Accept", "application/text");
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(get)) {
+            String body = EntityUtils.toString(response.getEntity(), "UTF-8");
+            assertNotNull(body);
+            assertEquals("", body);
+            assertEquals(500, response.getCode());
         }
     }
 
