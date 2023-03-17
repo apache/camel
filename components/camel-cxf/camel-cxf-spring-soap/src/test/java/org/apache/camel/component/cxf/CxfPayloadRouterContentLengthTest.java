@@ -28,14 +28,14 @@ import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.spring.junit5.CamelSpringTestSupport;
 import org.apache.camel.util.IOHelper;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Request;
@@ -91,7 +91,7 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
     public void setUp() throws Exception {
         /*
          * We start a Jetty for the service in order to have better control over
-         * the response The response must contain only a Content-Type and a
+         * the response. The response must contain only a Content-Type and a
          * Content-Length but no other header
          */
         LOG.info("Starting jetty server at port {}", JETTY_PORT);
@@ -149,28 +149,20 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
     }
 
     @Test
-    public void testInvokeRouter() throws IOException {
+    public void testInvokeRouter() throws Exception {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         long contentLength = 0;
         boolean isChunked = false;
         String receivedContent = null;
-        try {
-            HttpPost httppost = new HttpPost("http://localhost:" + CXFTestSupport.getPort1() + "/TEST/PROXY");
-            StringEntity reqEntity = new StringEntity(REQUEST_MESSAGE, ContentType.TEXT_XML);
-            reqEntity.setChunked(false);
-            httppost.setEntity(reqEntity);
-            CloseableHttpResponse response = httpclient.execute(httppost);
-            try {
-                HttpEntity respEntity = response.getEntity();
-                contentLength = respEntity.getContentLength();
-                isChunked = respEntity.isChunked();
-                receivedContent = EntityUtils.toString(respEntity);
-                EntityUtils.consume(response.getEntity());
-            } finally {
-                response.close();
-            }
-        } finally {
-            httpclient.close();
+        HttpPost httppost = new HttpPost("http://localhost:" + CXFTestSupport.getPort1() + "/TEST/PROXY");
+        StringEntity reqEntity = new StringEntity(REQUEST_MESSAGE, ContentType.TEXT_XML, false);
+        httppost.setEntity(reqEntity);
+        try (httpclient; CloseableHttpResponse response = httpclient.execute(httppost)) {
+            HttpEntity respEntity = response.getEntity();
+            contentLength = respEntity.getContentLength();
+            isChunked = respEntity.isChunked();
+            receivedContent = EntityUtils.toString(respEntity);
+            EntityUtils.consume(response.getEntity());
         }
         assertNotNull(receivedContent);
         // chunked encoding is fine, we don't need to check the content length
@@ -181,7 +173,7 @@ public class CxfPayloadRouterContentLengthTest extends CamelSpringTestSupport {
                 "[" + receivedContent + "] does not contain [" + RESPONSE_STRING + "]");
         // check whether the response was cut off by the client because the
         // Content-Length was wrong
-        assertTrue(receivedContent.matches(".*\\</.*:Envelope\\>"),
+        assertTrue(receivedContent.matches(".*</.*:Envelope>"),
                 "[" + receivedContent + "] does not contain the closing Envelope tag.");
     }
 

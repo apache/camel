@@ -16,19 +16,19 @@
  */
 package org.apache.camel.component.cxf.jaxws;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CxfConusmerNamespacePayLoadTest extends CxfConsumerPayloadTest {
+public class CxfConsumerNamespacePayLoadTest extends CxfConsumerPayloadTest {
     private static final String ECHO_RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
                                                 + "<soap:Body><ns1:echoResponse xmlns:ns1=\"http://jaxws.cxf.component.camel.apache.org/\">"
                                                 + "<return xmlns=\"http://jaxws.cxf.component.camel.apache.org/\">echo Hello World!</return>"
@@ -43,7 +43,7 @@ public class CxfConusmerNamespacePayLoadTest extends CxfConsumerPayloadTest {
     protected void checkRequest(String expect, String request) {
         if (expect.equals(ECHO_REQUEST)) {
             // just check the namespace of xsd
-            assertTrue(request.indexOf("xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"") > 0, "Expect to find the namesapce");
+            assertTrue(request.indexOf("xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"") > 0, "Expect to find the namespace");
         }
     }
 
@@ -56,16 +56,13 @@ public class CxfConusmerNamespacePayLoadTest extends CxfConsumerPayloadTest {
 
         StringEntity entity = new StringEntity(ECHO_REQUEST, ContentType.create("text/xml", "ISO-8859-1"));
         post.setEntity(entity);
-        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
-        try {
-            HttpResponse response = httpclient.execute(post);
-            assertEquals(200, response.getStatusLine().getStatusCode());
+        try (CloseableHttpClient httpclient = HttpClientBuilder.create().build();
+             CloseableHttpResponse response = httpclient.execute(post)) {
+            assertEquals(200, response.getCode());
             String responseBody = EntityUtils.toString(response.getEntity());
 
             assertEquals(ECHO_RESPONSE, responseBody, "Get a wrong response");
-        } finally {
-            httpclient.close();
         }
 
     }

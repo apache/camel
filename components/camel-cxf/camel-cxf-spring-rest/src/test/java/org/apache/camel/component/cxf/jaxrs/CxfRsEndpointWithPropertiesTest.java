@@ -22,10 +22,10 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.spring.AbstractSpringBeanTestSupport;
 import org.apache.cxf.feature.Feature;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,12 +52,10 @@ public class CxfRsEndpointWithPropertiesTest extends AbstractSpringBeanTestSuppo
         assertEquals("aValue", endpointProps.get("aKey"), "Wrong property value");
 
         HttpGet get = new HttpGet(testEndpoint.getAddress());
-        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
-        try {
-            HttpResponse response = httpclient.execute(get);
-            assertEquals(404, response.getStatusLine().getStatusCode());
-        } finally {
-            httpclient.close();
+
+        try (CloseableHttpClient httpclient = HttpClientBuilder.create().build();
+             CloseableHttpResponse response = httpclient.execute(get)) {
+            assertEquals(404, response.getCode());
         }
     }
 
