@@ -16,21 +16,15 @@
  */
 package org.apache.camel.itest.http;
 
-import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
-import org.apache.http.Consts;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -54,14 +48,9 @@ public class HttpMaxConnectionPerHostTest {
     @BeforeAll
     public static void setUp() throws Exception {
         localServer = new HttpTestServer();
-        localServer.register("/", new HttpRequestHandler() {
-            public void handle(
-                    HttpRequest request, HttpResponse response,
-                    HttpContext context)
-                    throws HttpException, IOException {
-                response.setStatusCode(HttpStatus.SC_OK);
-                response.setEntity(new StringEntity("OK", Consts.ISO_8859_1));
-            }
+        localServer.register("/", (request, response, context) -> {
+            response.setCode(HttpStatus.SC_OK);
+            response.setEntity(new StringEntity("OK", StandardCharsets.ISO_8859_1));
         });
         localServer.start();
     }
