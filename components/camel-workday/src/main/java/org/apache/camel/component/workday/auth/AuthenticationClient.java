@@ -18,11 +18,11 @@ package org.apache.camel.component.workday.auth;
 
 import java.io.IOException;
 
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 
-public interface AutheticationClient {
+public interface AuthenticationClient {
 
-    void configure(CloseableHttpClient httpClient, HttpRequestBase method) throws IOException;
+    void configure(CloseableHttpClient httpClient, HttpUriRequest request) throws IOException;
 
 }

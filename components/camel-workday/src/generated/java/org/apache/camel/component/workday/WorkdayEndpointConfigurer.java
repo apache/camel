@@ -27,7 +27,7 @@ public class WorkdayEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "clientSecret": target.getWorkdayConfiguration().setClientSecret(property(camelContext, java.lang.String.class, value)); return true;
         case "host": target.getWorkdayConfiguration().setHost(property(camelContext, java.lang.String.class, value)); return true;
         case "httpconnectionmanager":
-        case "httpConnectionManager": target.getWorkdayConfiguration().setHttpConnectionManager(property(camelContext, org.apache.http.impl.conn.PoolingHttpClientConnectionManager.class, value)); return true;
+        case "httpConnectionManager": target.getWorkdayConfiguration().setHttpConnectionManager(property(camelContext, org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "reportformat":
@@ -48,7 +48,7 @@ public class WorkdayEndpointConfigurer extends PropertyConfigurerSupport impleme
         case "clientSecret": return java.lang.String.class;
         case "host": return java.lang.String.class;
         case "httpconnectionmanager":
-        case "httpConnectionManager": return org.apache.http.impl.conn.PoolingHttpClientConnectionManager.class;
+        case "httpConnectionManager": return org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "reportformat":

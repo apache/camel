@@ -18,22 +18,23 @@ package org.apache.camel.component.workday.auth;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
 import org.apache.camel.component.workday.WorkdayConfiguration;
-import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.NameValuePair;
+import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.hc.core5.http.message.StatusLine;
 
-public class AuthClientForIntegration implements AutheticationClient {
+public class AuthClientForIntegration implements AuthenticationClient {
 
     public static final String BASE_TOKEN_ENDPOINT = "https://%s/ccx/oauth2/%s/token";
 
@@ -49,15 +50,14 @@ public class AuthClientForIntegration implements AutheticationClient {
 
     private static final String CONTENT_TYPE = "application/x-www-form-urlencoded";
 
-    private WorkdayConfiguration workdayConfiguration;
+    private final WorkdayConfiguration workdayConfiguration;
 
     public AuthClientForIntegration(WorkdayConfiguration workdayConfiguration) {
         this.workdayConfiguration = workdayConfiguration;
     }
 
     @Override
-    public void configure(CloseableHttpClient httpClient, HttpRequestBase method) throws IOException {
-
+    public void configure(CloseableHttpClient httpClient, HttpUriRequest method) throws IOException {
         String bearerToken = getBearerToken(httpClient);
         method.addHeader(AUTHORIZATION_HEADER, "Bearer " + bearerToken);
 
@@ -69,33 +69,36 @@ public class AuthClientForIntegration implements AutheticationClient {
 
         HttpPost httpPost = createPostMethod(tokenUrl);
 
-        CloseableHttpResponse httpResponse = httpClient.execute(httpPost);
+        return httpClient.execute(
+                httpPost,
+                httpResponse -> {
+                    if (httpResponse.getCode() != HttpStatus.SC_OK) {
+                        throw new IllegalStateException(
+                                "Got the invalid http status value '" + new StatusLine(httpResponse)
+                                                        + "' as the result of the Token Request '" + tokenUrl + "'");
+                    }
 
-        if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            throw new IllegalStateException(
-                    "Got the invalid http status value '" + httpResponse.getStatusLine()
-                                            + "' as the result of the Token Request '" + tokenUrl + "'");
-        }
+                    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+                        httpResponse.getEntity().writeTo(baos);
+                        return parseResponse(baos.toString());
+                    }
+                });
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        httpResponse.getEntity().writeTo(baos);
-        return parseResponse(baos.toString());
     }
 
-    private HttpPost createPostMethod(String tokenUrl) throws UnsupportedEncodingException {
+    private HttpPost createPostMethod(String tokenUrl) {
 
-        List<NameValuePair> nvps = new ArrayList<NameValuePair>();
+        List<NameValuePair> nvps = new ArrayList<>();
         nvps.add(new BasicNameValuePair(GRANT_TYPE, REFRESH_TOKEN));
         nvps.add(new BasicNameValuePair(REFRESH_TOKEN, workdayConfiguration.getTokenRefresh()));
 
         HttpPost postMethod = new HttpPost(tokenUrl);
         postMethod.addHeader(CONTENT_TYPE_HEADER, CONTENT_TYPE);
         postMethod.addHeader(AUTHORIZATION_HEADER,
-                "Basic " + new String(
-                        Base64.getEncoder()
-                                .encode((workdayConfiguration.getClientId() + ":" + workdayConfiguration.getClientSecret())
-                                        .getBytes())));
-        postMethod.setEntity(new UrlEncodedFormEntity(nvps, "UTF-8"));
+                "Basic " + Arrays.toString(Base64.getEncoder()
+                        .encode((workdayConfiguration.getClientId() + ":" + workdayConfiguration.getClientSecret())
+                                .getBytes())));
+        postMethod.setEntity(new UrlEncodedFormEntity(nvps, StandardCharsets.UTF_8));
 
         return postMethod;
     }

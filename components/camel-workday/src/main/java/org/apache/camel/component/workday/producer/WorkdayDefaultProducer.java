@@ -17,18 +17,20 @@
 package org.apache.camel.component.workday.producer;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.workday.WorkdayConfiguration;
 import org.apache.camel.component.workday.WorkdayEndpoint;
 import org.apache.camel.component.workday.auth.AuthClientForIntegration;
-import org.apache.camel.component.workday.auth.AutheticationClient;
+import org.apache.camel.component.workday.auth.AuthenticationClient;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.message.StatusLine;
 
 /**
  * The Workday Default producer.
@@ -38,14 +40,14 @@ public abstract class WorkdayDefaultProducer extends DefaultProducer {
     @Metadata(description = "The workday URL", javaType = "String")
     public static final String WORKDAY_URL_HEADER = "CamelWorkdayURL";
 
-    private WorkdayEndpoint endpoint;
+    private final WorkdayEndpoint endpoint;
 
-    private AutheticationClient autheticationClient;
+    private final AuthenticationClient authenticationClient;
 
     public WorkdayDefaultProducer(WorkdayEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.autheticationClient = new AuthClientForIntegration(this.endpoint.getWorkdayConfiguration());
+        this.authenticationClient = new AuthClientForIntegration(this.endpoint.getWorkdayConfiguration());
     }
 
     @Override
@@ -60,26 +62,42 @@ public abstract class WorkdayDefaultProducer extends DefaultProducer {
         String workdayUri = prepareUri(endpoint.getWorkdayConfiguration());
 
         HttpGet httpGet = new HttpGet(workdayUri);
-        this.autheticationClient.configure(httpClient, httpGet);
+        this.authenticationClient.configure(httpClient, httpGet);
 
-        CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
+        try {
+            httpClient.execute(
+                    httpGet,
+                    httpResponse -> {
+                        if (httpResponse.getCode() != HttpStatus.SC_OK) {
+                            throw new IllegalStateException(
+                                    "Got the invalid http status value '" + new StatusLine(httpResponse)
+                                                            + "' as the result of the RAAS '"
+                                                            + workdayUri + "'");
+                        }
 
-        if (httpResponse.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            throw new IllegalStateException(
-                    "Got the invalid http status value '" + httpResponse.getStatusLine() + "' as the result of the RAAS '"
-                                            + workdayUri + "'");
+                        try {
+                            String report = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class,
+                                    httpResponse.getEntity().getContent());
+
+                            if (report.isEmpty()) {
+                                throw new IllegalStateException(
+                                        "Got the unexpected value '" + report + "' as the result of the report '" + workdayUri
+                                                                + "'");
+                            }
+
+                            exchange.getIn().setBody(report);
+                            exchange.getIn().setHeader(WORKDAY_URL_HEADER, workdayUri);
+                            return null;
+                        } catch (NoTypeConversionAvailableException e) {
+                            throw new RuntimeCamelException(e);
+                        }
+                    });
+        } catch (RuntimeCamelException e) {
+            if (e.getCause() instanceof Exception ex) {
+                throw ex;
+            }
+            throw e;
         }
-
-        String report = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class,
-                httpResponse.getEntity().getContent());
-
-        if (report.isEmpty()) {
-            throw new IllegalStateException(
-                    "Got the unexpected value '" + report + "' as the result of the report '" + workdayUri + "'");
-        }
-
-        exchange.getIn().setBody(report);
-        exchange.getIn().setHeader(WORKDAY_URL_HEADER, workdayUri);
     }
 
     public abstract String prepareUri(WorkdayConfiguration configuration) throws Exception;
