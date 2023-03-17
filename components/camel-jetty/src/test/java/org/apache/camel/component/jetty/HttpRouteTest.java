@@ -33,14 +33,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.stream.InputStreamCache;
 import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
@@ -114,55 +114,47 @@ public class HttpRouteTest extends BaseJettyTest {
 
     @Test
     public void testPostParameter() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
         HttpPost post = new HttpPost("http://localhost:" + port1 + "/parameter");
         post.addHeader("request", "PostParameter");
         post.addHeader("others", "bloggs");
-
-        HttpResponse response = client.execute(post);
-        String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
-        assertEquals("PostParameter", out, "Get a wrong output ");
-
-        client.close();
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(post)) {
+            String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
+            assertEquals("PostParameter", out, "Get a wrong output ");
+        }
     }
 
     @Test
     public void testPostXMLMessage() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
         HttpPost post = new HttpPost("http://localhost:" + port1 + "/postxml");
         post.setEntity(new StringEntity(POST_MESSAGE, ContentType.APPLICATION_XML));
-
-        HttpResponse response = client.execute(post);
-        String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
-        assertEquals("OK", out, "Get a wrong output ");
-
-        client.close();
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(post)) {
+            String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
+            assertEquals("OK", out, "Get a wrong output ");
+        }
     }
 
     @Test
     public void testPostParameterInURI() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
         HttpPost post = new HttpPost("http://localhost:" + port1 + "/parameter?request=PostParameter&others=bloggs");
         post.setEntity(new StringEntity(POST_MESSAGE, ContentType.APPLICATION_XML));
-
-        HttpResponse response = client.execute(post);
-        String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
-        assertEquals("PostParameter", out, "Get a wrong output ");
-
-        client.close();
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(post)) {
+            String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
+            assertEquals("PostParameter", out, "Get a wrong output ");
+        }
     }
 
     @Test
     public void testPutParameterInURI() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
         HttpPut put = new HttpPut("http://localhost:" + port1 + "/parameter?request=PutParameter&others=bloggs");
         put.setEntity(new StringEntity(POST_MESSAGE, ContentType.APPLICATION_XML));
-
-        HttpResponse response = client.execute(put);
-        String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
-        assertEquals("PutParameter", out, "Get a wrong output ");
-
-        client.close();
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(put)) {
+            String out = context.getTypeConverter().convertTo(String.class, response.getEntity().getContent());
+            assertEquals("PutParameter", out, "Get a wrong output ");
+        }
     }
 
     @Test
@@ -185,14 +177,12 @@ public class HttpRouteTest extends BaseJettyTest {
 
     @Test
     public void testResponseCode() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
         HttpGet get = new HttpGet("http://localhost:" + port1 + "/responseCode");
-
-        HttpResponse response = client.execute(get);
-        // just make sure we get the right
-        assertEquals(400, response.getStatusLine().getStatusCode(), "Get a wrong status code.");
-
-        client.close();
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(get)) {
+            // just make sure we get the right
+            assertEquals(400, response.getCode(), "Get a wrong status code.");
+        }
     }
 
     protected void invokeHttpEndpoint() {

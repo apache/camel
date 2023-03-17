@@ -24,7 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,10 +105,12 @@ public class MultiThreadedHttpGetTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:withConversion?concurrentConsumers=5").to("http://localhost:{{port}}/search")
+                from("seda:withConversion?concurrentConsumers=5")
+                        .to("http://localhost:{{port}}/search")
                         .convertBodyTo(String.class).to("mock:results");
 
-                from("seda:withoutConversion?concurrentConsumers=5").to("http://localhost:{{port}}/search").to("mock:results");
+                from("seda:withoutConversion?concurrentConsumers=5")
+                        .to("http://localhost:{{port}}/search").to("mock:results");
 
                 from("jetty:http://localhost:{{port}}/search").process(new Processor() {
                     public void process(Exchange exchange) {

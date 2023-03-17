@@ -31,13 +31,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,7 +62,6 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
 
     @Test
     public void testSendMultiPartForm() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
 
         File file = new File("src/test/resources/log4j2.properties");
         HttpPost httppost = new HttpPost("http://localhost:" + getPort() + "/test");
@@ -71,19 +70,19 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                 .addBinaryBody(file.getName(), file).build();
         httppost.setEntity(entity);
 
-        HttpResponse response = client.execute(httppost);
-        assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
-        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(httppost)) {
+            assertEquals(200, response.getCode(), "Get a wrong response status");
+            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
 
-        assertEquals("A binary file of some kind", responseString, "Get a wrong result");
-        assertNotNull(response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
+            assertEquals("A binary file of some kind", responseString, "Get a wrong result");
+            assertNotNull(response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
 
-        client.close();
+        }
     }
 
     @Test
     public void testSendMultiPartFormOverrideEnableMultpartFilterFalse() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
 
         File file = new File("src/test/resources/log4j2.properties");
 
@@ -92,10 +91,12 @@ public class MultiPartFormWithCustomFilterTest extends BaseJettyTest {
                 .addBinaryBody(file.getName(), file).build();
         httppost.setEntity(entity);
 
-        HttpResponse response = client.execute(httppost);
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(httppost)) {
 
-        assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
-        assertNotNull(response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
+            assertEquals(200, response.getCode(), "Get a wrong response status");
+            assertNotNull(response.getFirstHeader("MyMultipartFilter").getValue(), "Did not use custom multipart filter");
+        }
     }
 
     @Override

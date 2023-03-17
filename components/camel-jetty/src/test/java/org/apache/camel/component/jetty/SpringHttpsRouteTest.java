@@ -68,7 +68,7 @@ public class SpringHttpsRouteTest {
 
     @BeforeEach
     public void setUp() {
-        // ensure jsse clients can validate the self signed dummy localhost
+        // ensure jsse clients can validate the self-signed dummy localhost
         // cert,
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = Thread.currentThread().getContextClassLoader().getResource("jsse/localhost.p12");

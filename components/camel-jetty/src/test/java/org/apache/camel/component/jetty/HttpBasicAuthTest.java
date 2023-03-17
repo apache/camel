@@ -17,7 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import java.security.Principal;
-import java.util.Arrays;
+import java.util.List;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -53,11 +53,11 @@ public class HttpBasicAuthTest extends BaseJettyTest {
 
         ConstraintSecurityHandler sh = new ConstraintSecurityHandler();
         sh.setAuthenticator(new BasicAuthenticator());
-        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] { cm }));
+        sh.setConstraintMappings(List.of(cm));
 
         HashLoginService loginService = new HashLoginService("MyRealm", "src/test/resources/myRealm.properties");
         sh.setLoginService(loginService);
-        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] { cm }));
+        sh.setConstraintMappings(List.of(cm));
 
         return sh;
     }
