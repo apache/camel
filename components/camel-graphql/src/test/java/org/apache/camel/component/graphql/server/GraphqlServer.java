@@ -18,23 +18,22 @@ package org.apache.camel.component.graphql.server;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.ExecutionInput;
 import graphql.ExecutionResult;
 import graphql.GraphQL;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.io.HttpRequestHandler;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.protocol.HttpContext;
 
 public class GraphqlServer {
 
@@ -44,7 +43,7 @@ public class GraphqlServer {
     public GraphqlServer() {
         this.graphql = GraphqlFactory.newGraphQL();
         this.server = ServerBootstrap.bootstrap()
-                .registerHandler("/graphql", new GraphqlHandler())
+                .register("/graphql", new GraphqlHandler())
                 .create();
     }
 
@@ -53,7 +52,7 @@ public class GraphqlServer {
     }
 
     public void shutdown() {
-        server.shutdown(0, TimeUnit.SECONDS);
+        server.close();
     }
 
     public int getPort() {
@@ -64,33 +63,32 @@ public class GraphqlServer {
 
         private final ObjectMapper objectMapper = new ObjectMapper();
 
-        public void handle(HttpRequest request, HttpResponse response, HttpContext context)
-                throws IOException {
-            if (request instanceof HttpEntityEnclosingRequest) {
-                HttpEntity entity = ((HttpEntityEnclosingRequest) request).getEntity();
-                String json = EntityUtils.toString(entity);
+        @SuppressWarnings("unchecked")
+        public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
+                throws HttpException, IOException {
+            HttpEntity entity = request.getEntity();
+            String json = EntityUtils.toString(entity);
 
-                Map<String, Object> map = jsonToMap(json);
-                String query = (String) map.get("query");
-                String operationName = (String) map.get("operationName");
-                Map<String, Object> variables = (Map<String, Object>) map.get("variables");
+            Map<String, Object> map = jsonToMap(json);
+            String query = (String) map.get("query");
+            String operationName = (String) map.get("operationName");
+            Map<String, Object> variables = (Map<String, Object>) map.get("variables");
 
-                ExecutionInput executionInput = ExecutionInput.newExecutionInput()
-                        .query(query)
-                        .operationName(operationName)
-                        .variables(variables)
-                        .build();
-                ExecutionResult executionResult = graphql.execute(executionInput);
-                Map<String, Object> resultMap = executionResult.toSpecification();
-                String result = objectMapper.writeValueAsString(resultMap);
+            ExecutionInput executionInput = ExecutionInput.newExecutionInput()
+                    .query(query)
+                    .operationName(operationName)
+                    .variables(variables)
+                    .build();
+            ExecutionResult executionResult = graphql.execute(executionInput);
+            Map<String, Object> resultMap = executionResult.toSpecification();
+            String result = objectMapper.writeValueAsString(resultMap);
 
-                response.setHeader("Content-Type", "application/json; charset=UTF-8");
-                response.setEntity(new StringEntity(result));
-            }
+            response.setHeader("Content-Type", "application/json; charset=UTF-8");
+            response.setEntity(new StringEntity(result));
         }
 
         private Map<String, Object> jsonToMap(String json) throws IOException {
-            return objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {
+            return objectMapper.readValue(json, new TypeReference<>() {
             });
         }
 

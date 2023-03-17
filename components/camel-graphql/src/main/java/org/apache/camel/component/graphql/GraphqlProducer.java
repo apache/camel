@@ -23,13 +23,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.json.JsonObject;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpHeaders;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 
 public class GraphqlProducer extends DefaultAsyncProducer {
 
@@ -49,7 +49,7 @@ public class GraphqlProducer extends DefaultAsyncProducer {
             URI httpUri = getEndpoint().getHttpUri();
             String requestBody = buildRequestBody(getQuery(exchange), getEndpoint().getOperationName(),
                     getVariables(exchange));
-            HttpEntity requestEntity = new StringEntity(requestBody, ContentType.create("application/json", "UTF-8"));
+            HttpEntity requestEntity = new StringEntity(requestBody, ContentType.APPLICATION_JSON);
 
             HttpPost httpPost = new HttpPost(httpUri);
             httpPost.setHeader(HttpHeaders.ACCEPT, "application/json");
