@@ -1141,7 +1141,7 @@ public interface WeatherEndpointBuilderFactory {
          * proxy).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.http.impl.client.CloseableHttpClient&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hc.client5.http.impl.classic.CloseableHttpClient&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1149,7 +1149,7 @@ public interface WeatherEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWeatherEndpointConsumerBuilder httpClient(
-                org.apache.http.impl.client.CloseableHttpClient httpClient) {
+                org.apache.hc.client5.http.impl.classic.CloseableHttpClient httpClient) {
             doSetProperty("httpClient", httpClient);
             return this;
         }
@@ -1158,7 +1158,7 @@ public interface WeatherEndpointBuilderFactory {
          * proxy).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.impl.client.CloseableHttpClient&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hc.client5.http.impl.classic.CloseableHttpClient&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1662,7 +1662,7 @@ public interface WeatherEndpointBuilderFactory {
          * proxy).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.http.impl.client.CloseableHttpClient&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hc.client5.http.impl.classic.CloseableHttpClient&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -1670,7 +1670,7 @@ public interface WeatherEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWeatherEndpointProducerBuilder httpClient(
-                org.apache.http.impl.client.CloseableHttpClient httpClient) {
+                org.apache.hc.client5.http.impl.classic.CloseableHttpClient httpClient) {
             doSetProperty("httpClient", httpClient);
             return this;
         }
@@ -1679,7 +1679,7 @@ public interface WeatherEndpointBuilderFactory {
          * proxy).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.impl.client.CloseableHttpClient&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hc.client5.http.impl.classic.CloseableHttpClient&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -2136,7 +2136,7 @@ public interface WeatherEndpointBuilderFactory {
          * proxy).
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.http.impl.client.CloseableHttpClient&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hc.client5.http.impl.classic.CloseableHttpClient&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -2144,7 +2144,7 @@ public interface WeatherEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWeatherEndpointBuilder httpClient(
-                org.apache.http.impl.client.CloseableHttpClient httpClient) {
+                org.apache.hc.client5.http.impl.classic.CloseableHttpClient httpClient) {
             doSetProperty("httpClient", httpClient);
             return this;
         }
@@ -2153,7 +2153,7 @@ public interface WeatherEndpointBuilderFactory {
          * proxy).
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.impl.client.CloseableHttpClient&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hc.client5.http.impl.classic.CloseableHttpClient&lt;/code&gt; type.
          * 
          * Group: advanced
          * 

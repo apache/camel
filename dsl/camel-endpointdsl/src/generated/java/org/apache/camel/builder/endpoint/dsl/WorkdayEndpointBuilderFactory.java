@@ -195,7 +195,7 @@ public interface WorkdayEndpointBuilderFactory {
          * Pool connection manager for advanced configuration.
          * 
          * The option is a:
-         * &lt;code&gt;org.apache.http.impl.conn.PoolingHttpClientConnectionManager&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
@@ -203,7 +203,7 @@ public interface WorkdayEndpointBuilderFactory {
          * @return the dsl builder
          */
         default AdvancedWorkdayEndpointBuilder httpConnectionManager(
-                org.apache.http.impl.conn.PoolingHttpClientConnectionManager httpConnectionManager) {
+                org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager httpConnectionManager) {
             doSetProperty("httpConnectionManager", httpConnectionManager);
             return this;
         }
@@ -211,7 +211,7 @@ public interface WorkdayEndpointBuilderFactory {
          * Pool connection manager for advanced configuration.
          * 
          * The option will be converted to a
-         * &lt;code&gt;org.apache.http.impl.conn.PoolingHttpClientConnectionManager&lt;/code&gt; type.
+         * &lt;code&gt;org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager&lt;/code&gt; type.
          * 
          * Group: advanced
          * 
