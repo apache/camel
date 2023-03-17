@@ -56,7 +56,7 @@ public class CMComponent extends DefaultComponent {
         final Set<ConstraintViolation<CMConfiguration>> constraintViolations
                 = getValidator().validate(endpoint.getConfiguration());
         if (!constraintViolations.isEmpty()) {
-            final StringBuffer msg = new StringBuffer();
+            final StringBuilder msg = new StringBuilder();
             for (final ConstraintViolation<CMConfiguration> cv : constraintViolations) {
                 msg.append(String.format("- Invalid value for %s: %s",
                         cv.getPropertyPath().toString(),

@@ -49,11 +49,9 @@ import org.apache.camel.component.cm.exceptions.cmresponse.InvalidProductTokenEx
 import org.apache.camel.component.cm.exceptions.cmresponse.NoAccountFoundForProductTokenException;
 import org.apache.camel.component.cm.exceptions.cmresponse.UnknownErrorException;
 import org.apache.camel.component.cm.exceptions.cmresponse.UnroutableMessageException;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,10 +61,12 @@ public class CMSenderOneMessageImpl implements CMSender {
 
     private final String url;
     private final UUID productToken;
+    private final HttpClient client;
 
-    public CMSenderOneMessageImpl(final String url, final UUID productToken) {
+    public CMSenderOneMessageImpl(final HttpClient client, final String url, final UUID productToken) {
         this.url = url;
         this.productToken = productToken;
+        this.client = client;
     }
 
     /**
@@ -178,71 +178,73 @@ public class CMSenderOneMessageImpl implements CMSender {
 
     private void doHttpPost(final String urlString, final String requestString) {
 
-        final HttpClient client = HttpClientBuilder.create().build();
         final HttpPost post = new HttpPost(urlString);
         post.setEntity(new StringEntity(requestString, StandardCharsets.UTF_8));
 
         try {
+            client.execute(post,
+                    response -> {
+                        final int statusCode = response.getCode();
 
-            final HttpResponse response = client.execute(post);
+                        LOG.debug("Response Code : {}", statusCode);
 
-            final int statusCode = response.getStatusLine().getStatusCode();
+                        if (statusCode == 400) {
+                            throw new CMDirectException(
+                                    "CM Component and CM API show some kind of inconsistency. "
+                                                        + "CM is complaining about not using a post method for the request. And this component only uses POST requests. What happens?");
+                        }
 
-            LOG.debug("Response Code : {}", statusCode);
+                        if (statusCode != 200) {
+                            throw new CMDirectException(
+                                    "CM Component and CM API show some kind of inconsistency. The component expects the status code to be 200 or 400. New api released? ");
+                        }
 
-            if (statusCode == 400) {
-                throw new CMDirectException(
-                        "CM Component and CM API show some kind of inconsistency. "
-                                            + "CM is complaining about not using a post method for the request. And this component only uses POST requests. What happens?");
-            }
+                        // So we have 200 status code...
 
-            if (statusCode != 200) {
-                throw new CMDirectException(
-                        "CM Component and CM API show some kind of inconsistency. The component expects the status code to be 200 or 400. New api released? ");
-            }
+                        // The response type is 'text/plain' and contains the actual
+                        // result of the request processing.
 
-            // So we have 200 status code...
+                        // We obtain the result text
+                        try (BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))) {
+                            final StringBuilder result = new StringBuilder();
+                            String line;
+                            while ((line = rd.readLine()) != null) {
+                                result.append(line);
+                            }
 
-            // The response type is 'text/plain' and contains the actual
-            // result of the request processing.
+                            // ... and process it
 
-            // We obtaing the result text
-            try (BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))) {
-                final StringBuffer result = new StringBuffer();
-                String line = null;
-                while ((line = rd.readLine()) != null) {
-                    result.append(line);
-                }
+                            line = result.toString();
+                            if (!line.isEmpty()) {
 
-                // ... and process it
+                                // Line is not empty = error
+                                LOG.debug("Result of the request processing: FAILED\n{}", line);
 
-                line = result.toString();
-                if (!line.isEmpty()) {
+                                // The response text contains the error description. We will
+                                // throw a custom exception for each.
 
-                    // Line is not empty = error
-                    LOG.debug("Result of the request processing: FAILED\n{}", line);
+                                if (line.contains(CMConstants.ERROR_UNKNOWN)) {
+                                    throw new UnknownErrorException();
+                                } else if (line.contains(CMConstants.ERROR_NO_ACCOUNT)
+                                        || line.contains(CMConstants.ERROR_NO_USER)) {
+                                    throw new NoAccountFoundForProductTokenException();
+                                } else if (line.contains(CMConstants.ERROR_INSUFICIENT_BALANCE)) {
+                                    throw new InsufficientBalanceException();
+                                } else if (line.contains(CMConstants.ERROR_UNROUTABLE_MESSAGE)) {
+                                    throw new UnroutableMessageException();
+                                } else if (line.contains(CMConstants.ERROR_INVALID_PRODUCT_TOKEN)) {
+                                    throw new InvalidProductTokenException();
+                                } else {
+                                    throw new CMResponseException(line);
+                                }
+                            }
 
-                    // The response text contains the error description. We will
-                    // throw a custom exception for each.
+                            // Ok. Line is EMPTY - successfully submitted
+                            LOG.debug("Result of the request processing: Successfully submitted");
+                        }
+                        return null;
+                    });
 
-                    if (line.contains(CMConstants.ERROR_UNKNOWN)) {
-                        throw new UnknownErrorException();
-                    } else if (line.contains(CMConstants.ERROR_NO_ACCOUNT) || line.contains(CMConstants.ERROR_NO_USER)) {
-                        throw new NoAccountFoundForProductTokenException();
-                    } else if (line.contains(CMConstants.ERROR_INSUFICIENT_BALANCE)) {
-                        throw new InsufficientBalanceException();
-                    } else if (line.contains(CMConstants.ERROR_UNROUTABLE_MESSAGE)) {
-                        throw new UnroutableMessageException();
-                    } else if (line.contains(CMConstants.ERROR_INVALID_PRODUCT_TOKEN)) {
-                        throw new InvalidProductTokenException();
-                    } else {
-                        throw new CMResponseException(line);
-                    }
-                }
-
-                // Ok. Line is EMPTY - successfully submitted
-                LOG.debug("Result of the request processing: Successfully submitted");
-            }
         } catch (final IOException io) {
             throw new CMDirectException(io);
         } catch (Exception t) {
