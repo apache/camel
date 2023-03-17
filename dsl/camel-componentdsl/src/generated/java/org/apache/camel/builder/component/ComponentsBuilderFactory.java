@@ -1795,7 +1795,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * HTTP (camel-http)
-     * Send requests to external HTTP servers using Apache HTTP Client 4.x.
+     * Send requests to external HTTP servers using Apache HTTP Client 5.x.
      * 
      * Category: http
      * Since: 2.3
@@ -1808,7 +1808,7 @@ public interface ComponentsBuilderFactory {
     }
     /**
      * HTTPS (Secure) (camel-http)
-     * Send requests to external HTTP servers using Apache HTTP Client 4.x.
+     * Send requests to external HTTP servers using Apache HTTP Client 5.x.
      * 
      * Category: http
      * Since: 2.3
