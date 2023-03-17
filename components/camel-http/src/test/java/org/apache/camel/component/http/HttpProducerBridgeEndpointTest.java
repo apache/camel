@@ -23,8 +23,8 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,8 +33,8 @@ public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
 
     private static final Instant INSTANT = Instant.parse("2021-06-10T14:42:00Z");
     private static final String STRING = "text";
-    private static final Integer INTEGER = Integer.valueOf(1);
-    private static final Long LONG = Long.valueOf(999999999999999L);
+    private static final Integer INTEGER = 1;
+    private static final Long LONG = 999999999999999L;
     private static final Boolean BOOLEAN = true;
     private static final String QUERY
             = "qp1=" + INSTANT + "&qp2=" + STRING + "&qp3=" + INTEGER + "&qp4=" + LONG + "&qp5=" + BOOLEAN;
@@ -54,8 +54,8 @@ public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
 
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/bridged",
+                .setSslContext(getSSLContext())
+                .register("/bridged",
                         new HeaderValidationHandler(
                                 "GET",
                                 QUERY,
@@ -63,7 +63,7 @@ public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
                                 getExpectedContent(),
                                 null,
                                 Arrays.asList(absentHeaders)))
-                .registerHandler("/notbridged",
+                .register("/notbridged",
                         new HeaderValidationHandler(
                                 "GET",
                                 QUERY,
@@ -94,8 +94,7 @@ public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
         component.setConnectionTimeToLive(1000L);
 
         HttpEndpoint endpoint = (HttpEndpoint) component
-                .createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
-                                + localServer.getLocalPort() + "/bridged?bridgeEndpoint=true");
+                .createEndpoint("http://localhost:" + localServer.getLocalPort() + "/bridged?bridgeEndpoint=true");
         HttpProducer producer = new HttpProducer(endpoint);
 
         Exchange exchange = producer.createExchange();
@@ -121,8 +120,7 @@ public class HttpProducerBridgeEndpointTest extends BaseHttpTest {
         component.setConnectionTimeToLive(1000L);
 
         HttpEndpoint endpoint = (HttpEndpoint) component
-                .createEndpoint("http://" + localServer.getInetAddress().getHostName() + ":"
-                                + localServer.getLocalPort() + "/notbridged");
+                .createEndpoint("http://localhost:" + localServer.getLocalPort() + "/notbridged");
         HttpProducer producer = new HttpProducer(endpoint);
 
         Exchange exchange = producer.createExchange();

@@ -25,23 +25,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.EntityTemplate;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
+import org.apache.hc.client5.http.socket.ConnectionSocketFactory;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.client5.http.ssl.SSLConnectionSocketFactory;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.io.entity.EntityTemplate;
+import org.apache.hc.core5.http.message.StatusLine;
+import org.apache.hc.core5.ssl.SSLContextBuilder;
 
 /**
  * The Splunk HEC producer.
  */
 public class SplunkHECProducer extends DefaultProducer {
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private SplunkHECEndpoint endpoint;
+    private final SplunkHECEndpoint endpoint;
     private CloseableHttpClient httpClient;
 
     public SplunkHECProducer(SplunkHECEndpoint endpoint) {
@@ -53,14 +56,22 @@ public class SplunkHECProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         super.doStart();
         HttpClientBuilder builder = HttpClients.custom()
-                .setUserAgent("Camel Splunk HEC/" + getEndpoint().getCamelContext().getVersion()).setMaxConnTotal(10);
+                .setUserAgent("Camel Splunk HEC/" + getEndpoint().getCamelContext().getVersion());
+        PoolingHttpClientConnectionManager connManager;
         if (endpoint.getConfiguration().isSkipTlsVerify()) {
             SSLContextBuilder sslbuilder = new SSLContextBuilder();
             sslbuilder.loadTrustMaterial(null, (chain, authType) -> true);
             SSLConnectionSocketFactory sslsf
                     = new SSLConnectionSocketFactory(sslbuilder.build(), NoopHostnameVerifier.INSTANCE);
-            builder.setSSLSocketFactory(sslsf);
+            RegistryBuilder<ConnectionSocketFactory> registryBuilder = RegistryBuilder.create();
+            registryBuilder.register("https", sslsf);
+
+            connManager = new PoolingHttpClientConnectionManager(registryBuilder.build());
+        } else {
+            connManager = new PoolingHttpClientConnectionManager();
         }
+        connManager.setMaxTotal(10);
+        builder.setConnectionManager(connManager);
         httpClient = builder.build();
     }
 
@@ -73,19 +84,21 @@ public class SplunkHECProducer extends DefaultProducer {
                                          + endpoint.getSplunkURL() + endpoint.getConfiguration().getSplunkEndpoint());
         httppost.addHeader("Authorization", " Splunk " + endpoint.getToken());
 
-        EntityTemplate entityTemplate = new EntityTemplate(outputStream -> MAPPER.writer().writeValue(outputStream, payload));
-        entityTemplate.setContentType(ContentType.APPLICATION_JSON.getMimeType());
+        EntityTemplate entityTemplate = new EntityTemplate(
+                -1, ContentType.APPLICATION_JSON, null, outputStream -> MAPPER.writer().writeValue(outputStream, payload));
 
         httppost.setEntity(entityTemplate);
-        try (CloseableHttpResponse response = httpClient.execute(httppost)) {
-            if (response.getStatusLine().getStatusCode() != 200) {
-                ByteArrayOutputStream output = new ByteArrayOutputStream();
-                response.getEntity().writeTo(output);
+        httpClient.execute(
+                httppost,
+                response -> {
+                    if (response.getCode() != 200) {
+                        ByteArrayOutputStream output = new ByteArrayOutputStream();
+                        response.getEntity().writeTo(output);
 
-                throw new RuntimeException(
-                        response.getStatusLine().toString() + "\n" + new String(output.toByteArray(), StandardCharsets.UTF_8));
-            }
-        }
+                        throw new RuntimeException(new StatusLine(response) + "\n" + output.toString(StandardCharsets.UTF_8));
+                    }
+                    return null;
+                });
     }
 
     @Override

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,25 +23,16 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
+import org.apache.camel.component.http.interceptor.RequestProxyBasicAuth;
+import org.apache.camel.component.http.interceptor.ResponseProxyBasicUnauthorized;
 import org.apache.camel.util.URISupport;
-import org.apache.commons.codec.BinaryDecoder;
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.http.Header;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.HttpStatus;
-import org.apache.http.ProtocolException;
-import org.apache.http.auth.AUTH;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpProcessor;
-import org.apache.http.protocol.ImmutableHttpProcessor;
-import org.apache.http.protocol.ResponseContent;
+import org.apache.hc.core5.http.HttpRequestInterceptor;
+import org.apache.hc.core5.http.HttpResponseInterceptor;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.protocol.DefaultHttpProcessor;
+import org.apache.hc.core5.http.protocol.HttpProcessor;
+import org.apache.hc.core5.http.protocol.ResponseContent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,10 +48,13 @@ public class HttpProxyServerTest extends BaseHttpTest {
     @Override
     public void setUp() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
-        expectedHeaders.put("Proxy-Connection", "Keep-Alive");
+        // Don't test anymore the Proxy-Connection header as it is highly discouraged, so its support has been removed
+        // https://issues.apache.org/jira/browse/HTTPCLIENT-1957
+        //        expectedHeaders.put("Proxy-Connection", "Keep-Alive");
         proxy = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext()).registerHandler("*",
+                .setSslContext(getSSLContext())
+                .register("*",
                         new HeaderValidationHandler(GET.name(), null, null, getExpectedContent(), expectedHeaders))
                 .create();
         proxy.start();
@@ -86,7 +79,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
         List<HttpResponseInterceptor> responseInterceptors = new ArrayList<>();
         responseInterceptors.add(new ResponseContent());
         responseInterceptors.add(new ResponseProxyBasicUnauthorized());
-        return new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);
+        return new DefaultHttpProcessor(requestInterceptors, responseInterceptors);
     }
 
     @Test
@@ -109,7 +102,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
     @Test
     public void httpGetWithProxyAndWithoutUser() throws Exception {
 
-        Exchange exchange = template.request("http://" + getProxyHost() + ":" + getProxyPort() + "?proxyAuthHost="
+        Exchange exchange = template.request("http://" + getHost() + ":" + getProxyPort() + "?proxyAuthHost="
                                              + getProxyHost() + "&proxyAuthPort=" + getProxyPort(),
                 exchange1 -> {
                 });
@@ -120,7 +113,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
     @Test
     public void httpGetWithProxyAndWithoutUserTwo() throws Exception {
 
-        Exchange exchange = template.request("http://" + getProxyHost() + ":" + getProxyPort() + "?proxyHost=" + getProxyHost()
+        Exchange exchange = template.request("http://" + getHost() + ":" + getProxyPort() + "?proxyHost=" + getProxyHost()
                                              + "&proxyPort=" + getProxyPort(),
                 exchange1 -> {
                 });
@@ -134,7 +127,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
         http.setProxyAuthHost(getProxyHost());
         http.setProxyAuthPort(Integer.parseInt(getProxyPort()));
 
-        Exchange exchange = template.request("http://" + getProxyHost() + ":" + getProxyPort(), exchange1 -> {
+        Exchange exchange = template.request("http://" + getHost() + ":" + getProxyPort(), exchange1 -> {
         });
 
         http.setProxyAuthHost(null);
@@ -143,59 +136,16 @@ public class HttpProxyServerTest extends BaseHttpTest {
         assertExchange(exchange);
     }
 
+    private String getHost() {
+        return "127.0.0.1";
+    }
+
     private String getProxyHost() {
-        return proxy.getInetAddress().getHostName();
+        return "localhost";
     }
 
     private String getProxyPort() {
         return "" + proxy.getLocalPort();
     }
 
-    private static class RequestProxyBasicAuth implements HttpRequestInterceptor {
-        @Override
-        public void process(final HttpRequest request, final HttpContext context) throws HttpException, IOException {
-            String auth = null;
-
-            String requestLine = request.getRequestLine().toString();
-            // assert we set a write GET URI
-            if (requestLine.contains("http://localhost")) {
-                throw new HttpException("Get a wrong proxy GET url");
-            }
-            Header h = request.getFirstHeader(AUTH.PROXY_AUTH_RESP);
-            if (h != null) {
-                String s = h.getValue();
-                if (s != null) {
-                    auth = s.trim();
-                }
-            }
-
-            if (auth != null) {
-                int i = auth.indexOf(' ');
-                if (i == -1) {
-                    throw new ProtocolException("Invalid Authorization header: " + auth);
-                }
-                String authscheme = auth.substring(0, i);
-                if (authscheme.equalsIgnoreCase("basic")) {
-                    String s = auth.substring(i + 1).trim();
-                    byte[] credsRaw = s.getBytes("ASCII");
-                    BinaryDecoder codec = new Base64();
-                    try {
-                        String creds = new String(codec.decode(credsRaw), "ASCII");
-                        context.setAttribute("proxy-creds", creds);
-                    } catch (DecoderException ex) {
-                        throw new ProtocolException("Malformed BASIC credentials");
-                    }
-                }
-            }
-        }
-    }
-
-    private static class ResponseProxyBasicUnauthorized implements HttpResponseInterceptor {
-        @Override
-        public void process(final HttpResponse response, final HttpContext context) throws HttpException, IOException {
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED) {
-                response.addHeader(AUTH.PROXY_AUTH, "Basic realm=\"test realm\"");
-            }
-        }
-    }
 }

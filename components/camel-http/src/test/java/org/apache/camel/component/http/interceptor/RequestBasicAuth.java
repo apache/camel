@@ -14,15 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.workday.auth;
+package org.apache.camel.component.http.interceptor;
 
 import java.io.IOException;
 
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.hc.core5.http.EntityDetails;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpRequest;
+import org.apache.hc.core5.http.HttpRequestInterceptor;
+import org.apache.hc.core5.http.protocol.HttpContext;
 
-public interface AutheticationClient {
+public class RequestBasicAuth implements HttpRequestInterceptor {
 
-    void configure(CloseableHttpClient httpClient, HttpRequestBase method) throws IOException;
+    private final BasicAuthTokenExtractor authTokenExtractor;
 
+    public RequestBasicAuth() {
+        this.authTokenExtractor = new BasicAuthTokenExtractor();
+    }
+
+    @Override
+    public void process(HttpRequest request, EntityDetails entity, HttpContext context) throws HttpException, IOException {
+        context.setAttribute("creds", this.authTokenExtractor.extract(request));
+    }
 }

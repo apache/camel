@@ -17,10 +17,10 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
-import org.apache.http.Header;
-import org.apache.http.HttpStatus;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class HttpNoCamelHeaderTest extends BaseHttpTest {
 
@@ -39,15 +40,15 @@ public class HttpNoCamelHeaderTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/hello", (request, response, context) -> {
-                    response.setStatusCode(HttpStatus.SC_OK);
+                .setSslContext(getSSLContext())
+                .register("/hello", (request, response, context) -> {
+                    response.setCode(HttpStatus.SC_OK);
                     Object header = request.getFirstHeader(Exchange.FILE_NAME);
                     assertNull(header, "There should be no Camel header");
 
-                    for (Header h : request.getAllHeaders()) {
+                    for (Header h : request.getHeaders()) {
                         if (h.getName().startsWith("Camel") || h.getName().startsWith("org.apache.camel")) {
-                            assertNull(h, "There should be no Camel header");
+                            fail("There should be no Camel header");
                         }
                     }
 
@@ -73,7 +74,7 @@ public class HttpNoCamelHeaderTest extends BaseHttpTest {
     @Test
     public void testNoCamelHeader() throws Exception {
         Exchange out = template.request(
-                "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/hello",
+                "http://localhost:" + localServer.getLocalPort() + "/hello",
                 exchange -> {
                     exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "text/plain");
                     exchange.getIn().setHeader(Exchange.FILE_NAME, "hello.txt");

@@ -17,21 +17,21 @@
 package org.apache.camel.component.wordpress.api.test;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Map;
 
 import org.apache.cxf.helpers.IOUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.client.methods.HttpRequestWrapper;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.io.HttpRequestHandler;
+import org.apache.hc.core5.http.io.entity.StringEntity;
+import org.apache.hc.core5.http.message.HttpRequestWrapper;
+import org.apache.hc.core5.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,21 +53,19 @@ public class WordpressServerHttpRequestHandler implements HttpRequestHandler {
     }
 
     @Override
-    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws IOException {
+    public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
+            throws IOException {
         LOGGER.debug("received request {}", request);
-        final HttpRequestWrapper requestWrapper = HttpRequestWrapper.wrap(request);
+        final HttpRequestWrapper requestWrapper = new HttpRequestWrapper(request);
         // make sure that our writing operations have authentication header
         if (!authenticate(requestWrapper)) {
-            response.setStatusCode(HttpStatus.SC_FORBIDDEN);
+            response.setCode(HttpStatus.SC_FORBIDDEN);
             response.setEntity(new StringEntity("Forbidden", ContentType.TEXT_PLAIN));
             return;
         }
         final String responseBody = IOUtils
                 .toString(this.getClass().getResourceAsStream(mockResourceJsonResponse.get(requestWrapper.getMethod())));
-        if (responseBody == null) {
-            LOGGER.warn("Resource not found on {}. Response body null.", mockResourceJsonResponse);
-        }
-        response.setStatusCode(HttpStatus.SC_OK);
+        response.setCode(HttpStatus.SC_OK);
         response.setEntity(new StringEntity(responseBody, ContentType.APPLICATION_JSON));
     }
 
@@ -79,7 +77,7 @@ public class WordpressServerHttpRequestHandler implements HttpRequestHandler {
         for (Header authorizationHeader : request.getHeaders("Authorization")) {
             // Authorization: Basic base64credentials
             String base64Credentials = authorizationHeader.getValue().substring("Basic".length()).trim();
-            String credentials = new String(Base64.getDecoder().decode(base64Credentials), Charset.forName("UTF-8"));
+            String credentials = new String(Base64.getDecoder().decode(base64Credentials), StandardCharsets.UTF_8);
             // credentials = username:password
             final String[] values = credentials.split(":", 2);
             return USERNAME.equals(values[0]) && PASSWORD.equals(values[1]);

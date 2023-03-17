@@ -29,12 +29,12 @@ import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.CustomerList;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Order;
 import org.apache.camel.component.cxf.jaxrs.simplebinding.testbean.Product;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -103,8 +103,8 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
     public void testGetCustomerOnlyHeaders() throws Exception {
         HttpGet get = new HttpGet("http://localhost:" + PORT_PATH + "/rest/customerservice/customers/123");
         get.addHeader("Accept", "text/xml");
-        HttpResponse response = httpclient.execute(get);
-        assertEquals(200, response.getStatusLine().getStatusCode());
+        CloseableHttpResponse response = httpclient.execute(get);
+        assertEquals(200, response.getCode());
         Customer entity = (Customer) jaxb.createUnmarshaller().unmarshal(response.getEntity().getContent());
         assertEquals(123, entity.getId());
     }
@@ -117,7 +117,7 @@ public class CxfRsConsumerSimpleBindingImplTest extends CamelTestSupport {
         post.setEntity(new StringEntity(sw.toString()));
         post.addHeader("Content-Type", "text/xml");
         post.addHeader("Accept", "text/xml");
-        HttpResponse response = httpclient.execute(post);
-        assertEquals(200, response.getStatusLine().getStatusCode());
+        CloseableHttpResponse response = httpclient.execute(post);
+        assertEquals(200, response.getCode());
     }
 }

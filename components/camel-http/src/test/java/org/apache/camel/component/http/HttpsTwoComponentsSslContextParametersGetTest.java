@@ -20,9 +20,9 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +54,7 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext()).create();
+                .setSslContext(getSSLContext()).create();
         localServer.start();
 
         super.setUp();
@@ -77,7 +77,7 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
 
     @Test
     public void httpsTwoDifferentSSLContextNotSupported() {
-        assertDoesNotThrow(() -> runTest());
+        assertDoesNotThrow(this::runTest);
     }
 
     private void runTest() throws Exception {
@@ -87,11 +87,11 @@ public class HttpsTwoComponentsSslContextParametersGetTest extends BaseHttpsTest
                 port2 = AvailablePortFinder.getNextAvailable();
 
                 from("direct:foo")
-                        .to("https-foo://127.0.0.1:" + localServer.getLocalPort()
+                        .to("https-foo://localhost:" + localServer.getLocalPort()
                             + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters");
 
                 from("direct:bar")
-                        .to("https-bar://127.0.0.1:" + port2
+                        .to("https-bar://localhost:" + port2
                             + "/mail?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters2");
             }
         });

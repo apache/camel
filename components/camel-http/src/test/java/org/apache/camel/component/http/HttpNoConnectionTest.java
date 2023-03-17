@@ -17,12 +17,12 @@
 package org.apache.camel.component.http;
 
 import java.net.ConnectException;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.util.TimeValue;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,11 +43,11 @@ public class HttpNoConnectionTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+                .setSslContext(getSSLContext())
+                .register("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
-        endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
+        endpointUrl = "http://localhost:" + localServer.getLocalPort();
 
         super.setUp();
     }
@@ -75,7 +75,7 @@ public class HttpNoConnectionTest extends BaseHttpTest {
         String url = endpointUrl + "/search";
         // stop server so there are no connection
         localServer.stop();
-        localServer.awaitTermination(1000, TimeUnit.MILLISECONDS);
+        localServer.awaitTermination(TimeValue.ofSeconds(1));
 
         Exchange reply = template.request(url, null);
         Exception e = reply.getException();

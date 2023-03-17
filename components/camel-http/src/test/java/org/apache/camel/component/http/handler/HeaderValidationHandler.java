@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.http.Header;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.protocol.HttpContext;
 
 public class HeaderValidationHandler extends BasicValidationHandler {
 
@@ -54,7 +54,7 @@ public class HeaderValidationHandler extends BasicValidationHandler {
 
     @Override
     public void handle(
-            final HttpRequest request, final HttpResponse response,
+            final ClassicHttpRequest request, final ClassicHttpResponse response,
             final HttpContext context)
             throws HttpException, IOException {
 
@@ -71,7 +71,7 @@ public class HeaderValidationHandler extends BasicValidationHandler {
                 }
 
                 if (!headerExist) {
-                    response.setStatusCode(HttpStatus.SC_EXPECTATION_FAILED);
+                    response.setCode(HttpStatus.SC_EXPECTATION_FAILED);
                     return;
                 }
             }
@@ -80,7 +80,7 @@ public class HeaderValidationHandler extends BasicValidationHandler {
         if (absentHeaders != null) {
             for (String header : absentHeaders) {
                 if (request.getHeaders(header).length > 0) {
-                    response.setStatusCode(HttpStatus.SC_EXPECTATION_FAILED);
+                    response.setCode(HttpStatus.SC_EXPECTATION_FAILED);
                     return;
                 }
             }

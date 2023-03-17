@@ -16,14 +16,16 @@
  */
 package org.apache.camel.component.http;
 
+import java.nio.charset.StandardCharsets;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,10 +48,10 @@ public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/myapp", (request, response, context) -> {
-                    response.setEntity(new StringEntity("OK", "ASCII"));
-                    response.setStatusCode(HttpStatus.SC_OK);
+                .setSslContext(getSSLContext())
+                .register("/myapp", (request, response, context) -> {
+                    response.setEntity(new StringEntity("OK", StandardCharsets.US_ASCII));
+                    response.setCode(HttpStatus.SC_OK);
                 }).create();
         localServer.start();
 
@@ -71,7 +73,7 @@ public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
         // turn on registering jmx always so the producer is also registered
         context.getManagementStrategy().getManagementAgent().setRegisterAlways(true);
 
-        String uri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myapp";
+        String uri = "http://localhost:" + localServer.getLocalPort() + "/myapp";
 
         Exchange out = template.request(uri, exchange -> exchange.getIn().setBody("Hello World"));
 

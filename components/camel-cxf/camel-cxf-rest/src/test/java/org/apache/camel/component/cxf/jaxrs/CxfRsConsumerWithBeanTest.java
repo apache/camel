@@ -21,12 +21,13 @@ import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.ServiceUtil;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,17 +64,13 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
 
     private void sendPutRequest(String uri) throws Exception {
         HttpPut put = new HttpPut(uri);
-        StringEntity entity = new StringEntity("string");
-        entity.setContentType("text/plain");
+        StringEntity entity = new StringEntity("string", ContentType.TEXT_PLAIN);
         put.setEntity(entity);
-        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
-        try {
-            HttpResponse response = httpclient.execute(put);
-            assertEquals(200, response.getStatusLine().getStatusCode());
+        try (CloseableHttpClient httpclient = HttpClientBuilder.create().build();
+             CloseableHttpResponse response = httpclient.execute(put)) {
+            assertEquals(200, response.getCode());
             assertEquals("c20string", EntityUtils.toString(response.getEntity()));
-        } finally {
-            httpclient.close();
         }
     }
 }

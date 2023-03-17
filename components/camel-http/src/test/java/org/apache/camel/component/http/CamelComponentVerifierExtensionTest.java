@@ -25,15 +25,15 @@ import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.http.handler.AuthenticationValidationHandler;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
-import org.apache.http.HttpStatus;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.localserver.RequestBasicAuth;
-import org.apache.http.localserver.ResponseBasicUnauthorized;
-import org.apache.http.protocol.HttpProcessor;
-import org.apache.http.protocol.HttpRequestHandler;
-import org.apache.http.protocol.ImmutableHttpProcessor;
-import org.apache.http.protocol.ResponseContent;
+import org.apache.camel.component.http.interceptor.RequestBasicAuth;
+import org.apache.camel.component.http.interceptor.ResponseBasicUnauthorized;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.io.HttpRequestHandler;
+import org.apache.hc.core5.http.protocol.DefaultHttpProcessor;
+import org.apache.hc.core5.http.protocol.HttpProcessor;
+import org.apache.hc.core5.http.protocol.ResponseContent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,12 +56,12 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
 
         localServer = ServerBootstrap.bootstrap()
                 .setHttpProcessor(getHttpProcessor())
-                .registerHandler("/basic", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
-                .registerHandler("/auth",
+                .register("/basic", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .register("/auth",
                         new AuthenticationValidationHandler(
                                 GET.name(), null, null, getExpectedContent(), AUTH_USERNAME, AUTH_PASSWORD))
-                .registerHandler("/redirect", redirectTo(HttpStatus.SC_MOVED_PERMANENTLY, "/redirected"))
-                .registerHandler("/redirected", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .register("/redirect", redirectTo(HttpStatus.SC_MOVED_PERMANENTLY, "/redirected"))
+                .register("/redirected", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
                 .create();
 
         localServer.start();
@@ -86,7 +86,7 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     }
 
     private HttpProcessor getHttpProcessor() {
-        return new ImmutableHttpProcessor(
+        return new DefaultHttpProcessor(
                 Collections.singletonList(
                         new RequestBasicAuth()),
                 Arrays.asList(
@@ -99,9 +99,7 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     // *************************************************
 
     protected String getLocalServerUri(String contextPath) {
-        return "http://"
-               + localServer.getInetAddress().getHostName()
-               + ":"
+        return "http://localhost:"
                + localServer.getLocalPort()
                + (contextPath != null
                        ? contextPath.startsWith("/") ? contextPath : "/" + contextPath
@@ -111,7 +109,7 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     private HttpRequestHandler redirectTo(int code, String path) {
         return (request, response, context) -> {
             response.setHeader("location", getLocalServerUri(path));
-            response.setStatusCode(code);
+            response.setCode(code);
         };
     }
 

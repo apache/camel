@@ -33,12 +33,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -69,23 +69,21 @@ public class CustomFiltersTest extends BaseJettyTest {
     }
 
     private void sendRequestAndVerify(String url) throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
-
         HttpPost httppost = new HttpPost(url);
         httppost.setEntity(new StringEntity("This is a test"));
 
-        HttpResponse response = client.execute(httppost);
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(httppost)) {
 
-        assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
-        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            assertEquals(200, response.getCode(), "Get a wrong response status");
+            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
 
-        assertEquals("This is a test response", responseString, "Get a wrong result");
-        assertEquals("true", response.getFirstHeader("MyTestFilter").getValue(), "Did not use custom multipart filter");
+            assertEquals("This is a test response", responseString, "Get a wrong result");
+            assertEquals("true", response.getFirstHeader("MyTestFilter").getValue(), "Did not use custom multipart filter");
 
-        // just make sure the KeyWord header is set
-        assertEquals("KEY", response.getFirstHeader("KeyWord").getValue(), "Did not set the right KeyWord header");
-
-        client.close();
+            // just make sure the KeyWord header is set
+            assertEquals("KEY", response.getFirstHeader("KeyWord").getValue(), "Did not set the right KeyWord header");
+        }
     }
 
     @Test

@@ -22,9 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.camel.http.base.HttpOperationFailedException;
-import org.apache.http.HttpStatus;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,11 +46,11 @@ public class HttpThrowExceptionOnFailureTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+                .setSslContext(getSSLContext())
+                .register("/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
-        baseUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
+        baseUrl = "http://localhost:" + localServer.getLocalPort();
 
         super.setUp();
     }

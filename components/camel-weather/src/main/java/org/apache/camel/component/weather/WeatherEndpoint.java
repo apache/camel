@@ -23,7 +23,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultPollingEndpoint;
-import org.apache.http.client.utils.HttpClientUtils;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 
 /**
  * Poll the weather information from Open Weather Map.
@@ -33,9 +33,9 @@ import org.apache.http.client.utils.HttpClientUtils;
 public class WeatherEndpoint extends DefaultPollingEndpoint {
 
     @UriParam
-    private WeatherConfiguration configuration;
+    private final WeatherConfiguration configuration;
 
-    private WeatherQuery weatherQuery;
+    private final WeatherQuery weatherQuery;
 
     public WeatherEndpoint(String uri, WeatherComponent component, WeatherConfiguration properties) {
         super(uri, component);
@@ -71,7 +71,10 @@ public class WeatherEndpoint extends DefaultPollingEndpoint {
     protected void doStop() throws Exception {
         super.doStop();
 
-        HttpClientUtils.closeQuietly(getConfiguration().getHttpClient());
+        CloseableHttpClient client = getConfiguration().getHttpClient();
+        if (client != null) {
+            client.close();
+        }
     }
 
 }

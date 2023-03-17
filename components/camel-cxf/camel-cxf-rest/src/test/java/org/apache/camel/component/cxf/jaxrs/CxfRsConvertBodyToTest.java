@@ -23,12 +23,13 @@ import org.apache.camel.component.cxf.common.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPut;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPut;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.ContentType;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,18 +64,14 @@ public class CxfRsConvertBodyToTest extends CamelTestSupport {
         mock.message(0).body().isInstanceOf(Customer.class);
 
         HttpPut put = new HttpPut("http://localhost:" + CXT + "/rest/customerservice/customers");
-        StringEntity entity = new StringEntity(PUT_REQUEST, "ISO-8859-1");
-        entity.setContentType("text/xml; charset=ISO-8859-1");
+        StringEntity entity = new StringEntity(PUT_REQUEST, ContentType.parse("text/xml; charset=ISO-8859-1"));
         put.addHeader("test", "header1;header2");
         put.setEntity(entity);
-        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
-        try {
-            HttpResponse response = httpclient.execute(put);
-            assertEquals(200, response.getStatusLine().getStatusCode());
+        try (CloseableHttpClient httpclient = HttpClientBuilder.create().build();
+             CloseableHttpResponse response = httpclient.execute(put)) {
+            assertEquals(200, response.getCode());
             assertEquals("", EntityUtils.toString(response.getEntity()));
-        } finally {
-            httpclient.close();
         }
     }
 

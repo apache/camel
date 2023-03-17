@@ -22,17 +22,17 @@ import java.util.List;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.AuthenticationValidationHandler;
+import org.apache.camel.component.http.interceptor.RequestBasicAuth;
+import org.apache.camel.component.http.interceptor.ResponseBasicUnauthorized;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.localserver.RequestBasicAuth;
-import org.apache.http.localserver.ResponseBasicUnauthorized;
-import org.apache.http.protocol.HttpProcessor;
-import org.apache.http.protocol.ImmutableHttpProcessor;
-import org.apache.http.protocol.ResponseContent;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.core5.http.HttpRequestInterceptor;
+import org.apache.hc.core5.http.HttpResponseInterceptor;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.protocol.DefaultHttpProcessor;
+import org.apache.hc.core5.http.protocol.HttpProcessor;
+import org.apache.hc.core5.http.protocol.ResponseContent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -41,8 +41,8 @@ import static org.apache.camel.component.http.HttpMethods.GET;
 
 public class HttpsAuthenticationTest extends BaseHttpsTest {
 
-    private String user = "camel";
-    private String password = "password";
+    private final String user = "camel";
+    private final String password = "password";
     private HttpServer localServer;
 
     @BindToRegistry("x509HostnameVerifier")
@@ -56,8 +56,8 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/",
+                .setSslContext(getSSLContext())
+                .register("/",
                         new AuthenticationValidationHandler(GET.name(), null, null, getExpectedContent(), user, password))
                 .create();
         localServer.start();
@@ -78,7 +78,7 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
     @Test
     public void httpsGetWithAuthentication() throws Exception {
 
-        Exchange exchange = template.request("https://127.0.0.1:" + localServer.getLocalPort()
+        Exchange exchange = template.request("https://localhost:" + localServer.getLocalPort()
                                              + "/?authUsername=camel&authPassword=password&x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters",
                 exchange1 -> {
                 });
@@ -94,6 +94,6 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
         responseInterceptors.add(new ResponseContent());
         responseInterceptors.add(new ResponseBasicUnauthorized());
 
-        return new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);
+        return new DefaultHttpProcessor(requestInterceptors, responseInterceptors);
     }
 }

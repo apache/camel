@@ -24,13 +24,13 @@ import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.HttpEntity;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -53,21 +53,19 @@ public class HttpBridgeMultipartRouteTest extends BaseJettyTest {
     public void testHttpClient() throws Exception {
         File jpg = new File("src/test/resources/java.jpg");
         String body = "TEST";
-
-        CloseableHttpClient client = HttpClients.createDefault();
         HttpPost method = new HttpPost("http://localhost:" + port2 + "/test/hello");
         HttpEntity entity = MultipartEntityBuilder.create().addTextBody("body", body).addBinaryBody(jpg.getName(), jpg).build();
         method.setEntity(entity);
 
-        HttpResponse response = client.execute(method);
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(method)) {
 
-        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-        assertEquals(body, responseString);
+            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            assertEquals(body, responseString);
 
-        String numAttachments = response.getFirstHeader("numAttachments").getValue();
-        assertEquals("2", numAttachments);
-
-        client.close();
+            String numAttachments = response.getFirstHeader("numAttachments").getValue();
+            assertEquals("2", numAttachments);
+        }
     }
 
     @Override

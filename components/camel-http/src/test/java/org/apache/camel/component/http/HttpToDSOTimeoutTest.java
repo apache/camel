@@ -20,8 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,23 +39,23 @@ public class HttpToDSOTimeoutTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/foo",
+                .setSslContext(getSSLContext())
+                .register("/foo",
                         new BasicValidationHandler(
                                 "/foo", GET.name(), null, null,
                                 getExpectedContent()))
-                .registerHandler("/bar",
+                .register("/bar",
                         new BasicValidationHandler(
                                 "/bar", GET.name(), null, null,
                                 getExpectedContent()))
-                .registerHandler("/baz",
+                .register("/baz",
                         new BasicValidationHandler(
                                 "/baz", GET.name(), null, null,
                                 getExpectedContent()))
                 .create();
         localServer.start();
 
-        baseUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
+        baseUrl = "http://localhost:" + localServer.getLocalPort();
 
         super.setUp();
     }
@@ -100,13 +100,13 @@ public class HttpToDSOTimeoutTest extends BaseHttpTest {
             @Override
             public void configure() throws Exception {
                 from("direct:to")
-                        .to(baseUrl + "/foo?httpClient.SocketTimeout=5000");
+                        .to(baseUrl + "/foo?httpClient.responseTimeout=5000");
 
                 from("direct:toD")
-                        .toD(baseUrl + "/bar?httpClient.SocketTimeout=5000");
+                        .toD(baseUrl + "/bar?httpClient.responseTimeout=5000");
 
                 from("direct:toDoff")
-                        .toD().allowOptimisedComponents(false).uri(baseUrl + "/baz?httpClient.SocketTimeout=5000");
+                        .toD().allowOptimisedComponents(false).uri(baseUrl + "/baz?httpClient.responseTimeout=5000");
             }
         };
     }

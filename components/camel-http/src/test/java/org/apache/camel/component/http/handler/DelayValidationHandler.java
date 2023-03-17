@@ -18,10 +18,10 @@ package org.apache.camel.component.http.handler;
 
 import java.io.IOException;
 
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.protocol.HttpContext;
 
 public class DelayValidationHandler extends BasicValidationHandler {
 
@@ -35,7 +35,7 @@ public class DelayValidationHandler extends BasicValidationHandler {
 
     @Override
     public void handle(
-            final HttpRequest request, final HttpResponse response,
+            final ClassicHttpRequest request, final ClassicHttpResponse response,
             final HttpContext context)
             throws HttpException, IOException {
         try {

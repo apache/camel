@@ -153,3 +153,14 @@ The `keyType` parameter has been removed. The Key for the cache will now be only
 
 The underlying `hapi-fhir` library has been upgraded from 4.2.0 to 6.2.4. Only the `Delete` API method has changed and now returns `ca.uhn.fhir.rest.api.MethodOutcome` instead of `org.hl7.fhir.instance.model.api.IBaseOperationOutcome`. See https://hapifhir.io/hapi-fhir/blog/ for a more detailed list of underlying changes (only the hapi-fhir client is used in Camel).
 
+=== camel-http
+
+The component has been upgraded to use Apache HttpComponents v5 which has an impact on how the underlying client is configured. There are 5 different
+timeouts (`connectionRequestTimeout`, `connectTimeout`, `socketTimeout`, `soTimeout` and `responseTimeout`) instead of initially 3
+(`connectionRequestTimeout`, `connectTimeout` and `socketTimeout`) and their default values have changed for some of them so please refer to the documentation
+for more details.
+
+There is also a noticeable behavior change regarding the `socketTimeout`, it is now needed to configure it with the option `soTimeout` to get the previous behavior.
+
+Finally, the options `connectTimeout` and `socketTimeout` along with any parameters included into `SocketConfig` and `ConnectionConfig`, need to be prefixed by `httpConnection.`,
+the rest of the parameters including those defined into `HttpClientBuilder` and `RequestConfig` still need to be prefixed by `httpClient.` like before.

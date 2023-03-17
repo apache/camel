@@ -17,13 +17,13 @@
 package org.apache.camel.component.http;
 
 import java.net.ConnectException;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.util.TimeValue;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,8 +42,8 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+                .setSslContext(getSSLContext())
+                .register("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
         super.setUp();
@@ -71,7 +71,7 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
         // stop server so there are no connection
         // and wait for it to terminate
         localServer.stop();
-        localServer.awaitTermination(5000, TimeUnit.MILLISECONDS);
+        localServer.awaitTermination(TimeValue.ofSeconds(5));
 
         Exchange exchange = template.request("direct:start", null);
         assertTrue(exchange.isFailed());
@@ -96,7 +96,7 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
                         .maximumRedeliveryDelay(5000)
                         .useExponentialBackOff()
                         .end()
-                        .to("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
+                        .to("http://localhost:" + localServer.getLocalPort()
                             + "/search");
             }
         };

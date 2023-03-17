@@ -27,10 +27,10 @@ import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
-import org.apache.http.conn.ssl.NoopHostnameVerifier;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.ssl.SSLContexts;
+import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.ssl.SSLContexts;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,8 +41,8 @@ import static org.apache.camel.component.http.HttpMethods.GET;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * If SSLContext is created via system properties, is is cached. Automatically created next sslContext (with different
- * system properties) contains values from the first creation. Therefore it is not possible to create different test,
+ * If SSLContext is created via system properties, is cached. Automatically created next sslContext (with different
+ * system properties) contains values from the first creation. Therefore, it is not possible to create different test,
  * which uses systemProperties without forked JVM.
  */
 public class HttpsProducerWithSystemPropertiesTest extends BaseHttpTest {
@@ -97,10 +97,10 @@ public class HttpsProducerWithSystemPropertiesTest extends BaseHttpTest {
 
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(sslcontext)
+                .setSslContext(sslcontext)
                 .setSslSetupHandler(socket -> socket.setNeedClientAuth(true))
-                .registerHandler("/mail/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
-                .registerHandler("/header/",
+                .register("/mail/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .register("/header/",
                         new HeaderValidationHandler(GET.name(), null, null, getExpectedContent(), expectedHeaders))
                 .create();
         localServer.start();
@@ -120,7 +120,7 @@ public class HttpsProducerWithSystemPropertiesTest extends BaseHttpTest {
     @Test
     public void httpGetWithProxyFromSystemProperties() throws Exception {
 
-        String endpointUri = "https://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
+        String endpointUri = "https://localhost:" + localServer.getLocalPort()
                              + "/header/?x509HostnameVerifier=x509HostnameVerifier&useSystemProperties=true";
         Exchange exchange = template.request(endpointUri, exchange1 -> {
         });
@@ -130,7 +130,7 @@ public class HttpsProducerWithSystemPropertiesTest extends BaseHttpTest {
 
     @Test
     public void testTwoWaySuccessfull() throws Exception {
-        Exchange exchange = template.request("https://127.0.0.1:" + localServer.getLocalPort()
+        Exchange exchange = template.request("https://localhost:" + localServer.getLocalPort()
                                              + "/mail/?x509HostnameVerifier=x509HostnameVerifier&useSystemProperties=true",
                 exchange1 -> {
                 });
@@ -140,7 +140,7 @@ public class HttpsProducerWithSystemPropertiesTest extends BaseHttpTest {
 
     @Test
     public void testTwoWayFailure() throws Exception {
-        Exchange exchange = template.request("https://127.0.0.1:" + localServer.getLocalPort()
+        Exchange exchange = template.request("https://localhost:" + localServer.getLocalPort()
                                              + "/mail/?x509HostnameVerifier=x509HostnameVerifier",
                 exchange1 -> {
                 });

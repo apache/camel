@@ -23,10 +23,10 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -59,13 +59,11 @@ public class NettyHttpBridgeEncodedPathTest extends BaseNettyTest {
         mock.message(0).header(Exchange.HTTP_RAW_QUERY).isNull();
 
         // cannot use template as it automatically decodes some chars in the path
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpGet httpGet = new HttpGet("http://localhost:" + port4 + "/nettyTestRouteC/" + path);
-
-            try (CloseableHttpResponse response = client.execute(httpGet)) {
-                assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
-                MockEndpoint.assertIsSatisfied(context);
-            }
+        HttpGet httpGet = new HttpGet("http://localhost:" + port4 + "/nettyTestRouteC/" + path);
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(httpGet)) {
+            assertEquals(200, response.getCode(), "Get a wrong response status");
+            MockEndpoint.assertIsSatisfied(context);
         }
     }
 

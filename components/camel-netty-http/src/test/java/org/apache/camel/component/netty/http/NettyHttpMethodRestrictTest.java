@@ -18,13 +18,13 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.classic.methods.HttpPost;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,26 +37,23 @@ public class NettyHttpMethodRestrictTest extends BaseNettyTest {
 
     @Test
     public void testProperHttpMethod() throws Exception {
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpPost httpPost = new HttpPost(getUrl());
-            httpPost.setEntity(new StringEntity("This is a test"));
+        HttpPost httpPost = new HttpPost(getUrl());
+        httpPost.setEntity(new StringEntity("This is a test"));
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(httpPost)) {
+            assertEquals(200, response.getCode(), "Get a wrong response status");
 
-            try (CloseableHttpResponse response = client.execute(httpPost)) {
-                assertEquals(200, response.getStatusLine().getStatusCode(), "Get a wrong response status");
-
-                String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-                assertEquals("This is a test response", responseString, "Get a wrong result");
-            }
+            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            assertEquals("This is a test response", responseString, "Get a wrong result");
         }
     }
 
     @Test
     public void testImproperHttpMethod() throws Exception {
-        try (CloseableHttpClient client = HttpClients.createDefault()) {
-            HttpGet httpGet = new HttpGet(getUrl());
-            try (CloseableHttpResponse response = client.execute(httpGet)) {
-                assertEquals(405, response.getStatusLine().getStatusCode(), "Get a wrong response status");
-            }
+        HttpGet httpGet = new HttpGet(getUrl());
+        try (CloseableHttpClient client = HttpClients.createDefault();
+             CloseableHttpResponse response = client.execute(httpGet)) {
+            assertEquals(405, response.getCode(), "Get a wrong response status");
         }
     }
 

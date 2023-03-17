@@ -86,7 +86,7 @@ public class HttpProducerSessionTest extends CamelTestSupport {
 
     private String getTestServerEndpointSessionUrl() {
         // session handling will not work for localhost
-        return "http://127.0.0.1:" + PORT + "/session/";
+        return "http://localhost:" + PORT + "/session/";
     }
 
     @Override

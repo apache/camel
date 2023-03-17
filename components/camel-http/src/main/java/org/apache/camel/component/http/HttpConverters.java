@@ -16,27 +16,37 @@
  */
 package org.apache.camel.component.http;
 
-import java.net.URI;
+import org.apache.camel.Converter;
+import org.apache.hc.core5.util.TimeValue;
+import org.apache.hc.core5.util.Timeout;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+/**
+ * Some converter methods to build different types used to configure the component.
+ */
+@Converter(generateLoader = true)
+public final class HttpConverters {
 
-public class HttpGetWithBodyMethod extends HttpEntityEnclosingRequestBase {
-
-    public static final String METHOD_NAME = "GET";
-
-    public HttpGetWithBodyMethod(String uri, HttpEntity entity) {
-        setURI(URI.create(uri));
-        setEntity(entity);
+    private HttpConverters() {
+        // Helper class
     }
 
-    public HttpGetWithBodyMethod(URI uri, HttpEntity entity) {
-        setURI(uri);
-        setEntity(entity);
+    @Converter
+    public static Timeout toTimeout(long millis) {
+        return Timeout.ofMilliseconds(millis);
     }
 
-    @Override
-    public String getMethod() {
-        return METHOD_NAME;
+    @Converter
+    public static Timeout toTimeout(String millis) {
+        return Timeout.ofMilliseconds(Long.parseLong(millis));
+    }
+
+    @Converter
+    public static TimeValue toTimeValue(long millis) {
+        return TimeValue.ofMilliseconds(millis);
+    }
+
+    @Converter
+    public static TimeValue toTimeValue(String millis) {
+        return TimeValue.ofMilliseconds(Long.parseLong(millis));
     }
 }

@@ -26,13 +26,13 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.spi.Registry;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Disabled("TODO: investigate for Camel 3.0.  The test actally works fine, but the "
+@Disabled("TODO: investigate for Camel 3.0.  The test actually works fine, but the "
           + "test needs to be verified as http supports gzip by default, so some tests may "
           + "have to be changed to stay meaningful.")
 public class HttpGZipEncodingTest extends BaseJettyTest {
@@ -95,7 +95,7 @@ public class HttpGZipEncodingTest extends BaseJettyTest {
                         exchange.getMessage().setHeader(Exchange.CONTENT_ENCODING, "gzip");
                         // check the Accept Encoding header
                         String header = exchange.getIn().getHeader("Accept-Encoding", String.class);
-                        if (header != null && header.indexOf("gzip") > -1) {
+                        if (header != null && header.contains("gzip")) {
                             exchange.getMessage().setBody("<b>Hello World for gzip</b>");
                         } else {
                             exchange.getMessage().setBody("<b>Hello World</b>");

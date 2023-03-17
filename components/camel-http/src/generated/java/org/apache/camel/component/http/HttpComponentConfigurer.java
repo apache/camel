@@ -30,11 +30,11 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredenabled":
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "clientconnectionmanager":
-        case "clientConnectionManager": target.setClientConnectionManager(property(camelContext, org.apache.http.conn.HttpClientConnectionManager.class, value)); return true;
+        case "clientConnectionManager": target.setClientConnectionManager(property(camelContext, org.apache.hc.client5.http.io.HttpClientConnectionManager.class, value)); return true;
         case "connecttimeout":
-        case "connectTimeout": target.setConnectTimeout(property(camelContext, int.class, value)); return true;
+        case "connectTimeout": target.setConnectTimeout(property(camelContext, org.apache.hc.core5.util.Timeout.class, value)); return true;
         case "connectionrequesttimeout":
-        case "connectionRequestTimeout": target.setConnectionRequestTimeout(property(camelContext, int.class, value)); return true;
+        case "connectionRequestTimeout": target.setConnectionRequestTimeout(property(camelContext, org.apache.hc.core5.util.Timeout.class, value)); return true;
         case "connectionstatedisabled":
         case "connectionStateDisabled": target.setConnectionStateDisabled(property(camelContext, boolean.class, value)); return true;
         case "connectiontimetolive":
@@ -46,7 +46,7 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "cookiemanagementdisabled":
         case "cookieManagementDisabled": target.setCookieManagementDisabled(property(camelContext, boolean.class, value)); return true;
         case "cookiestore":
-        case "cookieStore": target.setCookieStore(property(camelContext, org.apache.http.client.CookieStore.class, value)); return true;
+        case "cookieStore": target.setCookieStore(property(camelContext, org.apache.hc.client5.http.cookie.CookieStore.class, value)); return true;
         case "copyheaders":
         case "copyHeaders": target.setCopyHeaders(property(camelContext, boolean.class, value)); return true;
         case "defaultuseragentdisabled":
@@ -62,7 +62,7 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "httpconfiguration":
         case "httpConfiguration": target.setHttpConfiguration(property(camelContext, org.apache.camel.http.common.HttpConfiguration.class, value)); return true;
         case "httpcontext":
-        case "httpContext": target.setHttpContext(property(camelContext, org.apache.http.protocol.HttpContext.class, value)); return true;
+        case "httpContext": target.setHttpContext(property(camelContext, org.apache.hc.core5.http.protocol.HttpContext.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxtotalconnections":
@@ -87,12 +87,16 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "redirectHandlingDisabled": target.setRedirectHandlingDisabled(property(camelContext, boolean.class, value)); return true;
         case "responsepayloadstreamingthreshold":
         case "responsePayloadStreamingThreshold": target.setResponsePayloadStreamingThreshold(property(camelContext, int.class, value)); return true;
+        case "responsetimeout":
+        case "responseTimeout": target.setResponseTimeout(property(camelContext, org.apache.hc.core5.util.Timeout.class, value)); return true;
         case "skiprequestheaders":
         case "skipRequestHeaders": target.setSkipRequestHeaders(property(camelContext, boolean.class, value)); return true;
         case "skipresponseheaders":
         case "skipResponseHeaders": target.setSkipResponseHeaders(property(camelContext, boolean.class, value)); return true;
+        case "sotimeout":
+        case "soTimeout": target.setSoTimeout(property(camelContext, org.apache.hc.core5.util.Timeout.class, value)); return true;
         case "sockettimeout":
-        case "socketTimeout": target.setSocketTimeout(property(camelContext, int.class, value)); return true;
+        case "socketTimeout": target.setSocketTimeout(property(camelContext, org.apache.hc.core5.util.Timeout.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "useglobalsslcontextparameters":
@@ -115,11 +119,11 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "autowiredenabled":
         case "autowiredEnabled": return boolean.class;
         case "clientconnectionmanager":
-        case "clientConnectionManager": return org.apache.http.conn.HttpClientConnectionManager.class;
+        case "clientConnectionManager": return org.apache.hc.client5.http.io.HttpClientConnectionManager.class;
         case "connecttimeout":
-        case "connectTimeout": return int.class;
+        case "connectTimeout": return org.apache.hc.core5.util.Timeout.class;
         case "connectionrequesttimeout":
-        case "connectionRequestTimeout": return int.class;
+        case "connectionRequestTimeout": return org.apache.hc.core5.util.Timeout.class;
         case "connectionstatedisabled":
         case "connectionStateDisabled": return boolean.class;
         case "connectiontimetolive":
@@ -131,7 +135,7 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "cookiemanagementdisabled":
         case "cookieManagementDisabled": return boolean.class;
         case "cookiestore":
-        case "cookieStore": return org.apache.http.client.CookieStore.class;
+        case "cookieStore": return org.apache.hc.client5.http.cookie.CookieStore.class;
         case "copyheaders":
         case "copyHeaders": return boolean.class;
         case "defaultuseragentdisabled":
@@ -147,7 +151,7 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "httpconfiguration":
         case "httpConfiguration": return org.apache.camel.http.common.HttpConfiguration.class;
         case "httpcontext":
-        case "httpContext": return org.apache.http.protocol.HttpContext.class;
+        case "httpContext": return org.apache.hc.core5.http.protocol.HttpContext.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "maxtotalconnections":
@@ -172,12 +176,16 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "redirectHandlingDisabled": return boolean.class;
         case "responsepayloadstreamingthreshold":
         case "responsePayloadStreamingThreshold": return int.class;
+        case "responsetimeout":
+        case "responseTimeout": return org.apache.hc.core5.util.Timeout.class;
         case "skiprequestheaders":
         case "skipRequestHeaders": return boolean.class;
         case "skipresponseheaders":
         case "skipResponseHeaders": return boolean.class;
+        case "sotimeout":
+        case "soTimeout": return org.apache.hc.core5.util.Timeout.class;
         case "sockettimeout":
-        case "socketTimeout": return int.class;
+        case "socketTimeout": return org.apache.hc.core5.util.Timeout.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "useglobalsslcontextparameters":
@@ -258,10 +266,14 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "redirectHandlingDisabled": return target.isRedirectHandlingDisabled();
         case "responsepayloadstreamingthreshold":
         case "responsePayloadStreamingThreshold": return target.getResponsePayloadStreamingThreshold();
+        case "responsetimeout":
+        case "responseTimeout": return target.getResponseTimeout();
         case "skiprequestheaders":
         case "skipRequestHeaders": return target.isSkipRequestHeaders();
         case "skipresponseheaders":
         case "skipResponseHeaders": return target.isSkipResponseHeaders();
+        case "sotimeout":
+        case "soTimeout": return target.getSoTimeout();
         case "sockettimeout":
         case "socketTimeout": return target.getSocketTimeout();
         case "sslcontextparameters":

@@ -2,7 +2,7 @@
 :doctitle: HTTP
 :shortname: http
 :artifactid: camel-http
-:description: Send requests to external HTTP servers using Apache HTTP Client 4.x.
+:description: Send requests to external HTTP servers using Apache HTTP Client 5.x.
 :since: 2.3
 :supportlevel: Stable
 :component-header: Only producer is supported
@@ -66,7 +66,7 @@ HTTP response headers as well to the OUT message headers.
 == Using System Properties
 
 When setting useSystemProperties to true, the HTTP Client will look for
-the following System Properties and it will use it:
+the following System Properties, and it will use it:
 
 * ssl.TrustManagerFactory.algorithm
 * http://javax.net/[javax.net].ssl.trustStoreType

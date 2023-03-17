@@ -39,23 +39,23 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.http.HttpHost;
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.conn.HttpClientConnectionManager;
-import org.apache.http.conn.ssl.DefaultHostnameVerifier;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.LaxRedirectStrategy;
-import org.apache.http.pool.ConnPoolControl;
-import org.apache.http.pool.PoolStats;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.config.RequestConfig;
+import org.apache.hc.client5.http.cookie.BasicCookieStore;
+import org.apache.hc.client5.http.cookie.CookieStore;
+import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.io.HttpClientConnectionManager;
+import org.apache.hc.core5.http.HttpHost;
+import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.hc.core5.pool.ConnPoolControl;
+import org.apache.hc.core5.pool.PoolStats;
+import org.apache.hc.core5.util.Timeout;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Send requests to external HTTP servers using Apache HTTP Client 4.x.
+ * Send requests to external HTTP servers using Apache HTTP Client 5.x.
  */
 @UriEndpoint(firstVersion = "2.3.0", scheme = "http,https", title = "HTTP,HTTPS", syntax = "http://httpUri",
              producerOnly = true, category = { Category.HTTP }, lenientProperties = true, headersClass = HttpConstants.class)
@@ -78,6 +78,9 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     @UriParam(label = "advanced", prefix = "httpClient.", multiValue = true,
               description = "To configure the HttpClient using the key/values from the Map.")
     private Map<String, Object> httpClientOptions;
+    @UriParam(label = "advanced", prefix = "httpConnection.", multiValue = true,
+              description = "To configure the connection and the socket using the key/values from the Map.")
+    private Map<String, Object> httpConnectionOptions;
     @UriParam(label = "advanced", description = "To use a custom HttpClientConnectionManager to manage connections")
     private HttpClientConnectionManager clientConnectionManager;
     @UriParam(label = "advanced",
@@ -90,27 +93,33 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     private boolean useSystemProperties;
 
     // timeout
-    @Metadata(label = "timeout", defaultValue = "-1",
-              description = "The timeout in milliseconds used when requesting a connection"
-                            + " from the connection manager. A timeout value of zero is interpreted as an infinite timeout."
-                            + " A timeout value of zero is interpreted as an infinite timeout."
-                            + " A negative value is interpreted as undefined (system default).",
-              javaType = "java.time.Duration")
-    private long connectionRequestTimeout = -1;
-    @Metadata(label = "timeout", defaultValue = "-1",
-              description = "Determines the timeout in milliseconds until a connection is established."
-                            + " A timeout value of zero is interpreted as an infinite timeout."
-                            + " A timeout value of zero is interpreted as an infinite timeout."
-                            + " A negative value is interpreted as undefined (system default).",
-              javaType = "java.time.Duration")
-    private long connectTimeout = -1;
-    @Metadata(label = "timeout", defaultValue = "-1", description = "Defines the socket timeout in milliseconds,"
-                                                                    + " which is the timeout for waiting for data  or, put differently,"
-                                                                    + " a maximum period inactivity between two consecutive data packets)."
-                                                                    + " A timeout value of zero is interpreted as an infinite timeout."
-                                                                    + " A negative value is interpreted as undefined (system default).",
-              javaType = "java.time.Duration")
-    private long socketTimeout = -1;
+    @Metadata(label = "timeout", defaultValue = "3 minutes",
+              description = "Returns the connection lease request timeout used when requesting"
+                            + " a connection from the connection manager."
+                            + " A timeout value of zero is interpreted as a disabled timeout.",
+              javaType = "org.apache.hc.core5.util.Timeout")
+    private Timeout connectionRequestTimeout = Timeout.ofMinutes(3);
+    @Metadata(label = "timeout", defaultValue = "3 minutes",
+              description = "Determines the timeout until a new connection is fully established."
+                            + " A timeout value of zero is interpreted as an infinite timeout.",
+              javaType = "org.apache.hc.core5.util.Timeout")
+    private Timeout connectTimeout = Timeout.ofMinutes(3);
+    @Metadata(label = "timeout", defaultValue = "null (undefined)",
+              description = "Determines the default socket timeout value for I/O operations.",
+              javaType = "org.apache.hc.core5.util.Timeout")
+    private Timeout socketTimeout;
+    @Metadata(label = "timeout", defaultValue = "3 minutes",
+              description = "Determines the default socket timeout value for blocking I/O operations.",
+              javaType = "org.apache.hc.core5.util.Timeout")
+    private Timeout soTimeout = Timeout.ofMinutes(3);
+    @Metadata(label = "timeout", defaultValue = "0",
+              description = "Determines the timeout until arrival of a response from the opposite"
+                            + " endpoint. A timeout value of zero is interpreted as an infinite timeout."
+                            + " Please note that response timeout may be unsupported by HTTP transports "
+                            + "with message multiplexing.",
+              javaType = "org.apache.hc.core5.util.Timeout")
+    private Timeout responseTimeout = Timeout.ofMilliseconds(0);
+
     @UriParam(label = "producer,advanced", description = "To use a custom CookieStore."
                                                          + " By default the BasicCookieStore is used which is an in-memory only cookie store."
                                                          + " Notice if bridgeEndpoint=true then the cookie store is forced to be a noop cookie store as cookie shouldn't be stored as we are just bridging (eg acting as a proxy)."
@@ -167,13 +176,13 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     }
 
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI,
-                        HttpClientConnectionManager clientConnectionManager) throws URISyntaxException {
+                        HttpClientConnectionManager clientConnectionManager) {
         this(endPointURI, component, httpURI, HttpClientBuilder.create(), clientConnectionManager, null);
     }
 
     public HttpEndpoint(String endPointURI, HttpComponent component, HttpClientBuilder clientBuilder,
                         HttpClientConnectionManager clientConnectionManager,
-                        HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+                        HttpClientConfigurer clientConfigurer) {
         this(endPointURI, component, null, clientBuilder, clientConnectionManager, clientConfigurer);
     }
 
@@ -248,7 +257,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                 LOG.debug(
                         "CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}",
                         host, port, scheme);
-                HttpHost proxy = new HttpHost(host, port, scheme);
+                HttpHost proxy = new HttpHost(scheme, host, port);
                 clientBuilder.setProxy(proxy);
             }
         } else {
@@ -256,8 +265,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         }
 
         if (isAuthenticationPreemptive()) {
-            // setup the PreemptiveAuthInterceptor here
-            clientBuilder.addInterceptorFirst(new PreemptiveAuthInterceptor());
+            // setup the preemptive authentication here
+            clientBuilder.addExecInterceptorFirst("preemptive-auth", new PreemptiveAuthExecChainHandler());
         }
         String userAgent = getUserAgent();
         if (userAgent != null) {
@@ -275,7 +284,7 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         }
 
         if (isFollowRedirects()) {
-            clientBuilder.setRedirectStrategy(new LaxRedirectStrategy());
+            clientBuilder.setRedirectStrategy(DefaultRedirectStrategy.INSTANCE);
         }
 
         LOG.debug("Setup the HttpClientBuilder {}", clientBuilder);
@@ -291,10 +300,10 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     protected void doStop() throws Exception {
         if (getComponent() != null && getComponent().getClientConnectionManager() != clientConnectionManager) {
             // need to shutdown the ConnectionManager
-            clientConnectionManager.shutdown();
+            clientConnectionManager.close();
         }
-        if (httpClient instanceof Closeable) {
-            IOHelper.close((Closeable) httpClient);
+        if (httpClient instanceof Closeable closeable) {
+            IOHelper.close(closeable);
         }
     }
 
@@ -431,6 +440,17 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this.httpClientOptions = httpClientOptions;
     }
 
+    public Map<String, Object> getHttpConnectionOptions() {
+        return httpConnectionOptions;
+    }
+
+    /**
+     * To configure the connection and the socket using the key/values from the Map.
+     */
+    public void setHttpConnectionOptions(Map<String, Object> httpConnectionOptions) {
+        this.httpConnectionOptions = httpConnectionOptions;
+    }
+
     public boolean isUseSystemProperties() {
         return useSystemProperties;
     }
@@ -469,8 +489,8 @@ public class HttpEndpoint extends HttpCommonEndpoint {
     }
 
     /**
-     * To use a custom X509HostnameVerifier such as {@link DefaultHostnameVerifier} or
-     * {@link org.apache.http.conn.ssl.NoopHostnameVerifier}.
+     * To use a custom X509HostnameVerifier such as {@link org.apache.hc.client5.http.ssl.DefaultHostnameVerifier} or
+     * {@link org.apache.hc.client5.http.ssl.NoopHostnameVerifier}.
      */
     public void setX509HostnameVerifier(HostnameVerifier x509HostnameVerifier) {
         this.x509HostnameVerifier = x509HostnameVerifier;
@@ -489,61 +509,87 @@ public class HttpEndpoint extends HttpCommonEndpoint {
         this.sslContextParameters = sslContextParameters;
     }
 
-    public long getConnectionRequestTimeout() {
+    public Timeout getConnectionRequestTimeout() {
         return connectionRequestTimeout;
     }
 
     /**
-     * The timeout in milliseconds used when requesting a connection from the connection manager. A timeout value of
-     * zero is interpreted as an infinite timeout.
+     * Returns the connection lease request timeout used when requesting a connection from the connection manager.
      * <p>
-     * A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined
-     * (system default).
+     * A timeout value of zero is interpreted as a disabled timeout.
      * </p>
      * <p>
-     * Default: {@code -1}
+     * Default: 3 minutes
      * </p>
      */
-    public void setConnectionRequestTimeout(long connectionRequestTimeout) {
+    public void setConnectionRequestTimeout(Timeout connectionRequestTimeout) {
         this.connectionRequestTimeout = connectionRequestTimeout;
     }
 
-    public long getConnectTimeout() {
+    public Timeout getConnectTimeout() {
         return connectTimeout;
     }
 
     /**
-     * Determines the timeout in milliseconds until a connection is established. A timeout value of zero is interpreted
-     * as an infinite timeout.
+     * Determines the timeout until a new connection is fully established. This may also include transport security
+     * negotiation exchanges such as {@code SSL} or {@code TLS} protocol negotiation).
      * <p>
-     * A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined
-     * (system default).
+     * A timeout value of zero is interpreted as an infinite timeout.
      * </p>
      * <p>
-     * Default: {@code -1}
+     * Default: 3 minutes
      * </p>
      */
-    public void setConnectTimeout(long connectTimeout) {
+    public void setConnectTimeout(Timeout connectTimeout) {
         this.connectTimeout = connectTimeout;
     }
 
-    public long getSocketTimeout() {
+    public Timeout getSocketTimeout() {
         return socketTimeout;
     }
 
     /**
-     * Defines the socket timeout ({@code SO_TIMEOUT}) in milliseconds, which is the timeout for waiting for data or,
-     * put differently, a maximum period inactivity between two consecutive data packets).
+     * Determines the default socket timeout value for I/O operations.
      * <p>
-     * A timeout value of zero is interpreted as an infinite timeout. A negative value is interpreted as undefined
-     * (system default).
-     * </p>
-     * <p>
-     * Default: {@code -1}
+     * Default: {@code null} (undefined)
      * </p>
      */
-    public void setSocketTimeout(long socketTimeout) {
+    public void setSocketTimeout(Timeout socketTimeout) {
         this.socketTimeout = socketTimeout;
+    }
+
+    public Timeout getSoTimeout() {
+        return soTimeout;
+    }
+
+    /**
+     * Determines the default socket timeout value for blocking I/O operations.
+     * <p>
+     * Default: 3 minutes
+     * </p>
+     */
+    public void setSoTimeout(Timeout soTimeout) {
+        this.soTimeout = soTimeout;
+    }
+
+    public Timeout getResponseTimeout() {
+        return responseTimeout;
+    }
+
+    /**
+     * Determines the timeout until arrival of a response from the opposite endpoint.
+     * <p>
+     * A timeout value of zero is interpreted as an infinite timeout.
+     * </p>
+     * <p>
+     * Please note that response timeout may be unsupported by HTTP transports with message multiplexing.
+     * </p>
+     * <p>
+     * Default: {@code 0}
+     * </p>
+     */
+    public void setResponseTimeout(Timeout responseTimeout) {
+        this.responseTimeout = responseTimeout;
     }
 
     /**

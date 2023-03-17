@@ -18,8 +18,8 @@ package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,15 +37,15 @@ public class HttpPathTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
-                .registerHandler("/test%20/path", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
-                .registerHandler("/testWithQueryParams",
+                .setSslContext(getSSLContext())
+                .register("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .register("/test%20/path", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .register("/testWithQueryParams",
                         new BasicValidationHandler(GET.name(), "abc=123", null, getExpectedContent()))
                 .create();
         localServer.start();
 
-        endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
+        endpointUrl = "http://localhost:" + localServer.getLocalPort();
 
         super.setUp();
     }

@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.http;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.camel.Exchange;
-import org.apache.http.HttpStatus;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.HttpStatus;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,18 +47,18 @@ public class HttpProducerContentTypeWithSemiColonTest extends BaseHttpTest {
 
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/content", (request, response, context) -> {
+                .setSslContext(getSSLContext())
+                .register("/content", (request, response, context) -> {
                     String contentType = request.getFirstHeader(Exchange.CONTENT_TYPE).getValue();
 
                     assertEquals(CONTENT_TYPE.replace(";", "; "), contentType);
 
-                    response.setEntity(new StringEntity(contentType, "ASCII"));
-                    response.setStatusCode(HttpStatus.SC_OK);
+                    response.setEntity(new StringEntity(contentType, StandardCharsets.US_ASCII));
+                    response.setCode(HttpStatus.SC_OK);
                 }).create();
         localServer.start();
 
-        endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
+        endpointUrl = "http://localhost:" + localServer.getLocalPort();
     }
 
     @AfterEach

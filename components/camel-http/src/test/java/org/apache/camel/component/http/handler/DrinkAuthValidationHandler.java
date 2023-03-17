@@ -18,10 +18,12 @@ package org.apache.camel.component.http.handler;
 
 import java.io.IOException;
 
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.protocol.HttpContext;
+import org.apache.hc.core5.http.ClassicHttpRequest;
+import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.Header;
+import org.apache.hc.core5.http.HttpException;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.protocol.HttpContext;
 import org.junit.jupiter.api.Assertions;
 
 public class DrinkAuthValidationHandler extends DrinkValidationHandler {
@@ -31,8 +33,11 @@ public class DrinkAuthValidationHandler extends DrinkValidationHandler {
     }
 
     @Override
-    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-        String auth = request.getFirstHeader("Authorization").getValue();
+    public void handle(ClassicHttpRequest request, ClassicHttpResponse response, HttpContext context)
+            throws HttpException, IOException {
+        Header authorization = request.getFirstHeader(HttpHeaders.AUTHORIZATION);
+        Assertions.assertNotNull(authorization);
+        String auth = authorization.getValue();
         Assertions.assertTrue(auth.startsWith("Basic"));
         super.handle(request, response, context);
     }

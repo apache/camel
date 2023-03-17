@@ -14,26 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http;
+package org.apache.camel.component.workday.auth;
 
-import org.apache.camel.CamelContext;
-import org.junit.jupiter.api.BeforeEach;
+import java.io.IOException;
 
-public class HttpBodyWithOtherProtocalNameTest extends HttpBodyTest {
+import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 
-    @BeforeEach
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        setProtocolString("newHttp://");
-    }
+public interface AuthenticationClient {
 
-    @Override
-    public CamelContext createCamelContext() throws Exception {
-        CamelContext answer = super.createCamelContext();
-        // register the a new HttpComponent with different protocol name
-        answer.addComponent("newHttp", new HttpComponent());
-        return answer;
-    }
+    void configure(CloseableHttpClient httpClient, HttpUriRequest request) throws IOException;
 
 }

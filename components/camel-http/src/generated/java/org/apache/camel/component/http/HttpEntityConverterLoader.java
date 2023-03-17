@@ -41,11 +41,11 @@ public final class HttpEntityConverterLoader implements TypeConverterLoader, Cam
     }
 
     private void registerConverters(TypeConverterRegistry registry) {
-        addTypeConverter(registry, org.apache.http.HttpEntity.class, byte[].class, false,
+        addTypeConverter(registry, org.apache.hc.core5.http.HttpEntity.class, byte[].class, false,
             (type, exchange, value) -> org.apache.camel.component.http.HttpEntityConverter.toHttpEntity((byte[]) value, exchange));
-        addTypeConverter(registry, org.apache.http.HttpEntity.class, java.io.InputStream.class, false,
+        addTypeConverter(registry, org.apache.hc.core5.http.HttpEntity.class, java.io.InputStream.class, false,
             (type, exchange, value) -> org.apache.camel.component.http.HttpEntityConverter.toHttpEntity((java.io.InputStream) value, exchange));
-        addTypeConverter(registry, org.apache.http.HttpEntity.class, java.lang.String.class, false,
+        addTypeConverter(registry, org.apache.hc.core5.http.HttpEntity.class, java.lang.String.class, false,
             (type, exchange, value) -> org.apache.camel.component.http.HttpEntityConverter.toHttpEntity((java.lang.String) value, exchange));
     }
 

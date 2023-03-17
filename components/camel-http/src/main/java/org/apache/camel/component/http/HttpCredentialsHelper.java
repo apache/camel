@@ -18,14 +18,15 @@ package org.apache.camel.component.http;
 
 import java.util.Objects;
 
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.Credentials;
+import org.apache.hc.client5.http.auth.CredentialsProvider;
+import org.apache.hc.client5.http.auth.CredentialsStore;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
 
 final class HttpCredentialsHelper {
 
-    private final CredentialsProvider credentialsProvider;
+    private final CredentialsStore credentialsProvider;
 
     HttpCredentialsHelper() {
         this.credentialsProvider = new BasicCredentialsProvider();
@@ -35,7 +36,7 @@ final class HttpCredentialsHelper {
             String host, Integer port, Credentials credentials) {
         this.credentialsProvider.setCredentials(new AuthScope(
                 host,
-                Objects.requireNonNullElse(port, AuthScope.ANY_PORT)), credentials);
+                Objects.requireNonNullElse(port, -1)), credentials);
         return credentialsProvider;
     }
 

@@ -21,9 +21,9 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
-import org.apache.http.conn.HttpHostConnectException;
-import org.apache.http.impl.bootstrap.HttpServer;
-import org.apache.http.impl.bootstrap.ServerBootstrap;
+import org.apache.hc.client5.http.HttpHostConnectException;
+import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
+import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -44,8 +44,8 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
     public void setUp() throws Exception {
         localServer = ServerBootstrap.bootstrap().setHttpProcessor(getBasicHttpProcessor())
                 .setConnectionReuseStrategy(getConnectionReuseStrategy()).setResponseFactory(getHttpResponseFactory())
-                .setExpectationVerifier(getHttpExpectationVerifier()).setSslContext(getSSLContext())
-                .registerHandler("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
+                .setSslContext(getSSLContext())
+                .register("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
         super.setUp();
@@ -67,9 +67,9 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("http://" + localServer.getInetAddress().getHostName() + "/search");
+                        .to("http://localhost/search");
                 from("direct:dummy")
-                        .to("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
+                        .to("http://localhost:" + localServer.getLocalPort()
                             + "/search");
             }
         });
@@ -87,9 +87,9 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("http://" + localServer.getInetAddress().getHostName() + ":80/search");
+                        .to("http://localhost:80/search");
                 from("direct:dummy")
-                        .to("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
+                        .to("http://localhost:" + localServer.getLocalPort()
                             + "/search");
             }
         });
@@ -107,9 +107,9 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("http://" + localServer.getInetAddress().getHostName() + "/search");
+                        .to("http://localhost/search");
                 from("direct:dummy")
-                        .to("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
+                        .to("http://localhost:" + localServer.getLocalPort()
                             + "/search");
             }
         });
@@ -128,7 +128,7 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("http://" + localServer.getInetAddress().getHostName() + "/search");
+                        .to("http://localhost/search");
             }
         });
 
@@ -152,6 +152,6 @@ public class HttpDefaultPortNumberTest extends BaseHttpTest {
         //and got an exception:
         assertIsInstanceOf(HttpHostConnectException.class, exchange.getException());
         //with message:
-        assertEquals("Connection to http://127.0.0.1" + portExt + " refused", exchange.getException().getMessage());
+        assertEquals("Connection to http://localhost" + portExt + " refused", exchange.getException().getMessage());
     }
 }
