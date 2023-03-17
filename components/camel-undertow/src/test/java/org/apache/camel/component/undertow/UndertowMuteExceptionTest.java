@@ -17,11 +17,11 @@
 package org.apache.camel.component.undertow;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,36 +31,32 @@ public class UndertowMuteExceptionTest extends BaseUndertowTest {
 
     @Test
     public void muteExceptionTest() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
-
         HttpGet get = new HttpGet("http://localhost:" + getPort() + "/test/mute");
         get.addHeader("Accept", "application/text");
-        HttpResponse response = client.execute(get);
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(get)) {
 
-        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-        assertNotNull(responseString);
-        assertEquals("", responseString);
-        assertEquals(500, response.getStatusLine().getStatusCode());
-
-        client.close();
+            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            assertNotNull(responseString);
+            assertEquals("", responseString);
+            assertEquals(500, response.getCode());
+        }
     }
 
     @Test
     public void muteExceptionWithTransferExceptionTest() throws Exception {
-        CloseableHttpClient client = HttpClients.createDefault();
-
         HttpGet get = new HttpGet("http://localhost:" + getPort() + "/test/muteWithTransfer");
         get.addHeader("Accept", "application/text");
 
-        HttpResponse response = client.execute(get);
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(get)) {
 
-        String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
-        assertNotNull(responseString);
-        assertEquals("", responseString);
+            String responseString = EntityUtils.toString(response.getEntity(), "UTF-8");
+            assertNotNull(responseString);
+            assertEquals("", responseString);
 
-        assertEquals(500, response.getStatusLine().getStatusCode());
-
-        client.close();
+            assertEquals(500, response.getCode());
+        }
     }
 
     @Override

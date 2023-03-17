@@ -20,10 +20,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
+import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -33,19 +33,18 @@ public class UndertowTransferExceptionTest extends BaseUndertowTest {
 
     @Test
     public void getSerializedExceptionTest() throws IOException, ClassNotFoundException {
-        CloseableHttpClient client = HttpClients.createDefault();
         HttpGet get = new HttpGet("http://localhost:" + getPort() + "/test/transfer");
         get.addHeader("Accept", "application/x-java-serialized-object");
 
-        HttpResponse response = client.execute(get);
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(get)) {
 
-        ObjectInputStream in = new ObjectInputStream(response.getEntity().getContent());
-        IllegalArgumentException e = (IllegalArgumentException) in.readObject();
-        assertNotNull(e);
-        assertEquals(500, response.getStatusLine().getStatusCode());
-        assertEquals("Camel cannot do this", e.getMessage());
-
-        client.close();
+            ObjectInputStream in = new ObjectInputStream(response.getEntity().getContent());
+            IllegalArgumentException e = (IllegalArgumentException) in.readObject();
+            assertNotNull(e);
+            assertEquals(500, response.getCode());
+            assertEquals("Camel cannot do this", e.getMessage());
+        }
     }
 
     @Override
