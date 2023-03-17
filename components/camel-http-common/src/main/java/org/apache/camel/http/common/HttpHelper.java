@@ -118,7 +118,7 @@ public final class HttpHelper {
             return null;
         }
 
-        Object answer = null;
+        Object answer;
         ObjectInputStream ois = new CamelObjectInputStream(is, context);
         try {
             answer = ois.readObject();
