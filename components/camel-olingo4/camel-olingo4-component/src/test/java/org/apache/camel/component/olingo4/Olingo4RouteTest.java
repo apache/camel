@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.olingo4;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit5.CamelTestSupport;
@@ -29,16 +32,27 @@ public class Olingo4RouteTest extends CamelTestSupport {
     protected static final String TEST_SERVICE_BASE_URL = "http://services.odata.org/TripPinRESTierService";
 
     @SuppressWarnings("unchecked")
-    protected <T> T requestBody(String endpoint, Object body) throws CamelExecutionException {
-        return (T) template().requestBody(endpoint, body);
+    protected <T> T requestBody(String endpoint, Object body, Map<String, Object> headers) throws CamelExecutionException {
+        return (T) template().requestBodyAndHeaders(endpoint, body, headers);
     }
 
     @Test
     public void testRead() {
         // Read entity set of the People object
-        final ClientEntitySet entities = (ClientEntitySet) requestBody("direct:readentities", null);
+        final ClientEntitySet entities = (ClientEntitySet) requestBody("direct:readentities", null, null);
         assertNotNull(entities);
         assertEquals(20, entities.getEntities().size());
+    }
+
+    @Test
+    public void testReadWithQueryParams() {
+        final Map<String, Object> headers = new HashMap<>();
+        headers.put("CamelOlingo4.queryParams", Map.of("$top", "5"));
+
+        // Read entity set of the People object
+        final ClientEntitySet entities = (ClientEntitySet) requestBody("direct:readentities", null, headers);
+        assertNotNull(entities);
+        assertEquals(5, entities.getEntities().size());
     }
 
     @Override
