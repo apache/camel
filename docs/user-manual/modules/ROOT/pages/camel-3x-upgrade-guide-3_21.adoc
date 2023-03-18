@@ -106,6 +106,11 @@ The `certificatePath` parameter can now be specified as resource: for user point
 
 The deprecated option `componentName` was removed. Please use either `producerComponentName` or `consumerComponentName`.
 
+=== camel-micrometer-starter
+
+Camel no longer include `uri` as tag due to potential too many tags generated due to URI with dynamic values.
+This can be enabled again by setting `camel.metrics.uriTagEnabled=true`.
+
 === Deprecated Components
 
 The following components that had been marked as deprecated, were removed in this release:

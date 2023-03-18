@@ -164,3 +164,8 @@ There is also a noticeable behavior change regarding the `socketTimeout`, it is 
 
 Finally, the options `connectTimeout` and `socketTimeout` along with any parameters included into `SocketConfig` and `ConnectionConfig`, need to be prefixed by `httpConnection.`,
 the rest of the parameters including those defined into `HttpClientBuilder` and `RequestConfig` still need to be prefixed by `httpClient.` like before.
+
+=== camel-micrometer-starter
+
+Camel no longer include `uri` as tag due to potential too many tags generated due to URI with dynamic values.
+This can be enabled again by setting `camel.metrics.uriTagEnabled=true`.

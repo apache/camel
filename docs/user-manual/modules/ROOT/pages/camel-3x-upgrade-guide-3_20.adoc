@@ -10,6 +10,11 @@ The option `backlogTracing=true` now automatic enabled the tracer on startup. Th
 was _surprisingly_ that the tracer was only made available, and had to be manually enabled afterwards.
 The old behavior can be archived by setting `backlogTracingStandby=true`.
 
+=== camel-micrometer-starter
+
+Camel no longer include `uri` as tag due to potential too many tags generated due to URI with dynamic values.
+This can be enabled again by setting `camel.metrics.uriTagEnabled=true`.
+
 == Upgrading Camel 3.20.1 to 3.20.2
 
 No changes
