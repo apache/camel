@@ -108,8 +108,8 @@ The deprecated option `componentName` was removed. Please use either `producerCo
 
 === camel-micrometer-starter
 
-Camel no longer include `uri` as tag due to potential too many tags generated due to URI with dynamic values.
-This can be enabled again by setting `camel.metrics.uriTagEnabled=true`.
+The `uri` tags are now static instead of dynamic (by default), as potential too many tags generated due to URI with dynamic values.
+This can be enabled again by setting `camel.metrics.uriTagDynamic=true`.
 
 === Deprecated Components
 
