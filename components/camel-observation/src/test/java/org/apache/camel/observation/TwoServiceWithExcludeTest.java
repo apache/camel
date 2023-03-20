@@ -27,8 +27,9 @@ import org.junit.jupiter.api.Test;
 class TwoServiceWithExcludeTest extends CamelMicrometerObservationTestSupport {
 
     private static SpanTestData[] testdata = {
-            new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("service-a")
-                    .setParentId(1),
+            new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
+                    .setParentId(1)
+                    .setKind(SpanKind.SERVER),
             new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
                     .setKind(SpanKind.CLIENT)
     };

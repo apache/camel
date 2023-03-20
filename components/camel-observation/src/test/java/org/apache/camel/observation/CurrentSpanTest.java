@@ -75,7 +75,8 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
         SpanTestData[] expectedSpans = {
                 new SpanTestData().setLabel("syncmock:result").setUri("syncmock://result").setOperation("syncmock")
                         .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:bar").setUri("direct://bar").setOperation("bar"),
+                new SpanTestData().setLabel("direct:bar").setUri("direct://bar").setOperation("bar")
+                        .setKind(SpanKind.SERVER),
                 new SpanTestData().setLabel("direct:bar").setUri("direct://bar").setOperation("bar").setKind(SpanKind.CLIENT)
         };
 
@@ -94,7 +95,8 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
         SpanTestData[] expectedSpans = {
                 new SpanTestData().setLabel("asyncmock1:result").setUri("asyncmock1://result").setOperation("asyncmock1")
                         .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:foo").setUri("direct://foo").setOperation("foo"),
+                new SpanTestData().setLabel("direct:foo").setUri("direct://foo").setOperation("foo")
+                        .setKind(SpanKind.SERVER),
                 new SpanTestData().setLabel("direct:foo").setUri("direct://foo").setOperation("foo").setKind(SpanKind.CLIENT)
         };
 
@@ -114,7 +116,8 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
         SpanTestData[] expectedSpans = {
                 new SpanTestData().setLabel("syncmock:result").setUri("syncmock://result").setOperation("syncmock")
                         .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("asyncmock1:start").setUri("asyncmock1://start").setOperation("asyncmock1"),
+                new SpanTestData().setLabel("asyncmock1:start").setUri("asyncmock1://start").setOperation("asyncmock1")
+                        .setKind(SpanKind.SERVER),
                 new SpanTestData().setLabel("asyncmock1:start").setUri("asyncmock1://start").setOperation("asyncmock1")
                         .setKind(SpanKind.CLIENT),
         };
@@ -132,7 +135,8 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
         SpanTestData[] expectedSpans = {
                 new SpanTestData().setLabel("asyncmock2:result").setUri("asyncmock2://result").setOperation("asyncmock2")
                         .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("asyncmock2:start").setUri("asyncmock2://start").setOperation("asyncmock2"),
+                new SpanTestData().setLabel("asyncmock2:start").setUri("asyncmock2://start").setOperation("asyncmock2")
+                        .setKind(SpanKind.SERVER),
                 new SpanTestData().setLabel("asyncmock2:start").setUri("asyncmock2://start").setOperation("asyncmock2")
                         .setKind(SpanKind.CLIENT),
         };
@@ -148,7 +152,8 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
     @Test
     void testAsyncFailure() {
         SpanTestData[] expectedSpans = {
-                new SpanTestData().setLabel("asyncmock:fail").setUri("asyncmock://fail").setOperation("asyncmock"),
+                new SpanTestData().setLabel("asyncmock:fail").setUri("asyncmock://fail").setOperation("asyncmock")
+                        .setKind(SpanKind.SERVER),
                 new SpanTestData().setLabel("asyncmock:fail").setUri("asyncmock://fail").setOperation("asyncmock")
                         .setKind(SpanKind.CLIENT),
         };
@@ -173,7 +178,8 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
                         .setKind(SpanKind.CLIENT),
                 new SpanTestData().setLabel("syncmock:result").setUri("syncmock://result").setOperation("syncmock")
                         .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:start").setUri("direct://start").setOperation("start"),
+                new SpanTestData().setLabel("direct:start").setUri("direct://start").setOperation("start")
+                        .setKind(SpanKind.SERVER),
                 new SpanTestData().setLabel("direct:start").setUri("direct://start").setOperation("start")
                         .setKind(SpanKind.CLIENT)
         };
