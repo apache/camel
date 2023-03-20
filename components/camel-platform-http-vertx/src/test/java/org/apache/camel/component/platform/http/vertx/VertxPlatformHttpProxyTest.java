@@ -64,7 +64,14 @@ public class VertxPlatformHttpProxyTest {
                 @Override
                 public void configure() {
                     from("platform-http:proxy")
-                            .toD("${headers." + Exchange.HTTP_URI + "}?bridgeEndpoint=true");
+                            .process(exchange -> {
+                                System.out.println(exchange);
+                                String proxy = exchange.getIn().getHeader(Exchange.HTTP_URI) + "?bridgeEndpoint=true";
+
+                                exchange.getIn().removeHeaders("*");
+                                exchange.getIn().setHeader("PROXY", proxy);
+                            })
+                            .toD("${headers.PROXY}");
                 }
             });
 

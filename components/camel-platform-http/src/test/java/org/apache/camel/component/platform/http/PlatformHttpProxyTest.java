@@ -43,12 +43,17 @@ public class PlatformHttpProxyTest extends AbstractPlatformHttpTest {
             @Override
             public void configure() {
                 from("platform-http:proxy")
-                        .toD("${headers." + Exchange.HTTP_SCHEME + "}://" +
-                             "${headers." + Exchange.HTTP_HOST + "}:" +
-                             "${headers." + Exchange.HTTP_PORT + "}" +
-                             "${headers." + Exchange.HTTP_PATH + "}?bridgeEndpoint=true");
+                        .process(exchange -> {
+                            String proxy = exchange.getIn().getHeader(Exchange.HTTP_SCHEME) + "://" +
+                                           exchange.getIn().getHeader(Exchange.HTTP_HOST) + ":" +
+                                           exchange.getIn().getHeader(Exchange.HTTP_PORT) +
+                                           exchange.getIn().getHeader(Exchange.HTTP_PATH) + "?bridgeEndpoint=true";
+
+                            exchange.getIn().removeHeaders("*");
+                            exchange.getIn().setHeader("PROXY", proxy);
+                        })
+                        .toD("${headers.PROXY}");
             }
         };
     }
-
 }
