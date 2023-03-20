@@ -25,6 +25,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.azure.storage.common.ParallelTransferOptions;
+import com.azure.storage.file.datalake.DataLakeFileClient;
 import com.azure.storage.file.datalake.models.AccessTier;
 import com.azure.storage.file.datalake.models.DataLakeRequestConditions;
 import com.azure.storage.file.datalake.models.FileQueryError;
@@ -115,6 +116,10 @@ public class DataLakeConfigurationOptionsProxy {
 
     public String getLeaseId(final Exchange exchange) {
         return getOption(DataLakeExchangeHeaders::getLeaseIdFromHeaders, () -> null, exchange);
+    }
+
+    public Boolean getFlush(final Exchange exchange) {
+        return getOption(DataLakeExchangeHeaders::getFlushFromHeaders, () -> Boolean.FALSE, exchange);
     }
 
     public Boolean retainUnCommitedData(final Exchange exchange) {
@@ -234,6 +239,10 @@ public class DataLakeConfigurationOptionsProxy {
 
     public PathHttpHeaders getPathHttpHeaders(final Exchange exchange) {
         return DataLakeExchangeHeaders.getPathHttpHeadersFromHeaders(exchange);
+    }
+
+    public DataLakeFileClient getFileClient(final Exchange exchange) {
+        return DataLakeExchangeHeaders.getFileClientFromHeaders(exchange);
     }
 
     public int getMaxRetryRequests() {

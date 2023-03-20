@@ -28,6 +28,7 @@ import java.util.Set;
 
 import com.azure.core.http.rest.Response;
 import com.azure.storage.common.ParallelTransferOptions;
+import com.azure.storage.file.datalake.DataLakeFileClient;
 import com.azure.storage.file.datalake.models.AccessTier;
 import com.azure.storage.file.datalake.models.DataLakeRequestConditions;
 import com.azure.storage.file.datalake.models.DownloadRetryOptions;
@@ -36,6 +37,7 @@ import com.azure.storage.file.datalake.models.FileReadResponse;
 import com.azure.storage.file.datalake.models.PathHttpHeaders;
 import com.azure.storage.file.datalake.models.PathInfo;
 import com.azure.storage.file.datalake.models.PathProperties;
+import com.azure.storage.file.datalake.options.DataLakeFileAppendOptions;
 import com.azure.storage.file.datalake.options.FileParallelUploadOptions;
 import com.azure.storage.file.datalake.options.FileQueryOptions;
 import com.azure.storage.file.datalake.sas.DataLakeServiceSasSignatureValues;
@@ -69,8 +71,9 @@ public class DataLakeFileOperations {
             outputStream = message.getBody(OutputStream.class);
         }
 
+        final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
         if (outputStream == null) {
-            InputStream fileInputStream = client.openInputStream();
+            InputStream fileInputStream = fileClientWrapper.openInputStream();
             return new DataLakeOperationResponse(fileInputStream);
         }
 
@@ -80,9 +83,10 @@ public class DataLakeFileOperations {
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);
 
         try {
-            final FileReadResponse readResponse = client.downloadWithResponse(outputStream, fileRange, downloadRetryOptions,
-                    fileCommonRequestOptions.getRequestConditions(), fileCommonRequestOptions.getContentMD5() != null,
-                    fileCommonRequestOptions.getTimeout());
+            final FileReadResponse readResponse
+                    = fileClientWrapper.downloadWithResponse(outputStream, fileRange, downloadRetryOptions,
+                            fileCommonRequestOptions.getRequestConditions(), fileCommonRequestOptions.getContentMD5() != null,
+                            fileCommonRequestOptions.getTimeout());
 
             final DataLakeExchangeHeaders dataLakeExchangeHeaders = DataLakeExchangeHeaders
                     .createDataLakeExchangeHeadersFromFileReadHeaders(readResponse.getDeserializedHeaders())
@@ -101,17 +105,17 @@ public class DataLakeFileOperations {
         if (ObjectHelper.isEmpty(fileDir)) {
             throw new IllegalArgumentException("to download a file, you need to specify the fileDir in the URI");
         }
-
-        final File recieverFile = new File(fileDir, client.getFileName());
+        final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
+        final File recieverFile = new File(fileDir, fileClientWrapper.getFileName());
         final FileCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
         final FileRange fileRange = configurationProxy.getFileRange(exchange);
         final ParallelTransferOptions parallelTransferOptions = configurationProxy.getParallelTransferOptions(exchange);
         final DownloadRetryOptions downloadRetryOptions = getDownloadRetryOptions(configurationProxy);
         final Set<OpenOption> openOptions = configurationProxy.getOpenOptions(exchange);
-
-        final Response<PathProperties> response = client.downloadToFileWithResponse(recieverFile.toString(), fileRange,
-                parallelTransferOptions, downloadRetryOptions, commonRequestOptions.getRequestConditions(),
-                commonRequestOptions.getContentMD5() != null, openOptions, commonRequestOptions.getTimeout());
+        final Response<PathProperties> response
+                = fileClientWrapper.downloadToFileWithResponse(recieverFile.toString(), fileRange,
+                        parallelTransferOptions, downloadRetryOptions, commonRequestOptions.getRequestConditions(),
+                        commonRequestOptions.getContentMD5() != null, openOptions, commonRequestOptions.getTimeout());
         final DataLakeExchangeHeaders exchangeHeaders
                 = DataLakeExchangeHeaders.createDataLakeExchangeHeadersFromPathProperties(response.getValue())
                         .httpHeaders(response.getHeaders())
@@ -135,14 +139,17 @@ public class DataLakeFileOperations {
 
         final DataLakeServiceSasSignatureValues serviceSasSignatureValues
                 = new DataLakeServiceSasSignatureValues(offsetDateTimeToSet, sasPermission);
-        final String url = client.getFileUrl() + "?" + client.generateSas(serviceSasSignatureValues);
+        final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
+        final String url = fileClientWrapper.getFileUrl() + "?" + fileClientWrapper.generateSas(serviceSasSignatureValues);
         final DataLakeExchangeHeaders headers = DataLakeExchangeHeaders.create().downloadLink(url);
         return new DataLakeOperationResponse(url, headers.toMap());
     }
 
     public DataLakeOperationResponse deleteFile(final Exchange exchange) {
         final FileCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
-        Response<Void> response = client.delete(commonRequestOptions.getRequestConditions(), commonRequestOptions.getTimeout());
+        final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
+        Response<Void> response
+                = fileClientWrapper.delete(commonRequestOptions.getRequestConditions(), commonRequestOptions.getTimeout());
         DataLakeExchangeHeaders exchangeHeaders = DataLakeExchangeHeaders.create();
         exchangeHeaders.httpHeaders(response.getHeaders());
         return new DataLakeOperationResponse(true, exchangeHeaders.toMap());
@@ -151,15 +158,19 @@ public class DataLakeFileOperations {
     public DataLakeOperationResponse appendToFile(final Exchange exchange) throws IOException {
         final FileCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
         final FileStreamAndLength fileStreamAndLength = FileStreamAndLength.createFileStreamAndLengthFromExchangeBody(exchange);
+        final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
         final Long fileOffset;
         if (configurationProxy.getFileOffset(exchange) == null) {
-            fileOffset = client.getFileSize();
+            fileOffset = fileClientWrapper.getFileSize();
         } else {
             fileOffset = configurationProxy.getFileOffset(exchange);
         }
-        final Response<Void> response = client.appendWithResponse(fileStreamAndLength.getInputStream(), fileOffset,
-                fileStreamAndLength.getStreamLength(), commonRequestOptions.getContentMD5(), commonRequestOptions.getLeaseId(),
-                commonRequestOptions.getTimeout());
+        final DataLakeFileAppendOptions options = new DataLakeFileAppendOptions();
+        options.setContentHash(commonRequestOptions.getContentMD5());
+        options.setLeaseId(commonRequestOptions.getLeaseId());
+        options.setFlush(configurationProxy.getFlush(exchange));
+        final Response<Void> response = fileClientWrapper.appendWithResponse(fileStreamAndLength.getInputStream(), fileOffset,
+                fileStreamAndLength.getStreamLength(), commonRequestOptions.getTimeout(), options);
         DataLakeExchangeHeaders exchangeHeaders = DataLakeExchangeHeaders.create();
         exchangeHeaders.httpHeaders(response.getHeaders());
         return new DataLakeOperationResponse(true, exchangeHeaders.toMap());
@@ -170,9 +181,9 @@ public class DataLakeFileOperations {
         final Long position = configurationProxy.getPosition(exchange);
         final Boolean retainUncommitedData = configurationProxy.retainUnCommitedData(exchange);
         final Boolean close = configurationProxy.getClose(exchange);
-
+        final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
         final Response<PathInfo> response
-                = client.flushWithResponse(position + client.getFileSize(), retainUncommitedData, close,
+                = fileClientWrapper.flushWithResponse(position + fileClientWrapper.getFileSize(), retainUncommitedData, close,
                         commonRequestOptions.getPathHttpHeaders(), commonRequestOptions.getRequestConditions(),
                         commonRequestOptions.getTimeout());
         DataLakeExchangeHeaders exchangeHeaders
@@ -185,7 +196,8 @@ public class DataLakeFileOperations {
         final String path = configurationProxy.getPath(exchange);
         final ParallelTransferOptions transferOptions = configurationProxy.getParallelTransferOptions(exchange);
         final FileCommonRequestOptions commonRequestOptions = getCommonRequestOptions(exchange);
-        client.uploadFromFile(path, transferOptions, commonRequestOptions.getPathHttpHeaders(),
+        final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
+        fileClientWrapper.uploadFromFile(path, transferOptions, commonRequestOptions.getPathHttpHeaders(),
                 commonRequestOptions.getMetadata(), commonRequestOptions.getRequestConditions(),
                 commonRequestOptions.getTimeout());
         return new DataLakeOperationResponse(true);
@@ -204,8 +216,9 @@ public class DataLakeFileOperations {
                         .setMetadata(commonRequestOptions.getMetadata()).setPermissions(permission)
                         .setRequestConditions(commonRequestOptions.getRequestConditions())
                         .setRequestConditions(commonRequestOptions.getRequestConditions()).setUmask(umask);
-
-        final Response<PathInfo> response = client.uploadWithResponse(uploadOptions, commonRequestOptions.getTimeout());
+        final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
+        final Response<PathInfo> response
+                = fileClientWrapper.uploadWithResponse(uploadOptions, commonRequestOptions.getTimeout());
         DataLakeExchangeHeaders exchangeHeaders
                 = DataLakeExchangeHeaders.createDataLakeExchangeHeadersFromPathInfo(response.getValue())
                         .httpHeaders(response.getHeaders());
@@ -214,7 +227,8 @@ public class DataLakeFileOperations {
 
     public DataLakeOperationResponse openQueryInputStream(final Exchange exchange) {
         FileQueryOptions queryOptions = configurationProxy.getFileQueryOptions(exchange);
-        final Response<InputStream> response = client.openQueryInputStreamWithResponse(queryOptions);
+        final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
+        final Response<InputStream> response = fileClientWrapper.openQueryInputStreamWithResponse(queryOptions);
         DataLakeExchangeHeaders exchangeHeaders = DataLakeExchangeHeaders.create();
         exchangeHeaders.httpHeaders(response.getHeaders());
         return new DataLakeOperationResponse(response.getValue(), exchangeHeaders.toMap());
@@ -233,5 +247,10 @@ public class DataLakeFileOperations {
 
     private DownloadRetryOptions getDownloadRetryOptions(final DataLakeConfigurationOptionsProxy proxy) {
         return new DownloadRetryOptions().setMaxRetryRequests(proxy.getMaxRetryRequests());
+    }
+
+    private DataLakeFileClientWrapper getFileClientWrapper(final Exchange exchange) {
+        final DataLakeFileClient fileClient = configurationProxy.getFileClient(exchange);
+        return null == fileClient ? client : new DataLakeFileClientWrapper(fileClient);
     }
 }
