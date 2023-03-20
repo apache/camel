@@ -88,6 +88,44 @@ public class HttpHelperTest {
     }
 
     @Test
+    public void createURLShouldReturnTheEndpointURIIfBridgeEndpointWithOneSlashOnly() throws URISyntaxException {
+        String url = HttpHelper.createURL(
+                createExchangeWithOptionalCamelHttpUriHeader("http://apache.org", "/"),
+                createHttpEndpoint(true, "http://camel.apache.org/"));
+
+        assertEquals("http://camel.apache.org/", url);
+    }
+
+    @Test
+    public void createURLShouldReturnTheEndpointURIIfBridgeEndpointWithSubPathAndOneSlashOnly() throws URISyntaxException {
+        String url = HttpHelper.createURL(
+                createExchangeWithOptionalCamelHttpUriHeader("http://apache.org", "/somePath/"),
+                createHttpEndpoint(true, "http://camel.apache.org/"));
+
+        assertEquals("http://camel.apache.org/somePath/", url);
+    }
+
+    @Test
+    public void createURLShouldReturnTheEndpointURIIfBridgeEndpointWithQueryParameterSubPathAndOneSlashOnly()
+            throws URISyntaxException {
+        String url = HttpHelper.createURL(
+                createExchangeWithOptionalCamelHttpUriHeader("http://apache.org", "/"),
+                createHttpEndpoint(true, "http://camel.apache.org/?foo=bar"));
+
+        assertEquals("http://camel.apache.org/?foo=bar", url);
+    }
+
+    @Test
+    public void createURLShouldReturnTheEndpointURIIfBridgeEndpointWithQueryParameterAndOneSlashOnly()
+            throws URISyntaxException {
+        String url = HttpHelper.createURL(
+                createExchangeWithOptionalCamelHttpUriHeader("http://apache.org", "/somePath/"),
+                createHttpEndpoint(true, "http://camel.apache.org/?foo=bar"));
+
+        assertEquals("http://camel.apache.org/somePath/?foo=bar", url);
+    }
+
+    @Test
     public void createURLShouldReturnTheEndpointURIIfNotBridgeEndpoint() throws URISyntaxException {
         String url = HttpHelper.createURL(
                 createExchangeWithOptionalCamelHttpUriHeader(null, null),
