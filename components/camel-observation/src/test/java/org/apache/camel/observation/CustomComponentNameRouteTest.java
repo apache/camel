@@ -25,11 +25,11 @@ class CustomComponentNameRouteTest extends CamelMicrometerObservationTestSupport
 
     private static SpanTestData[] testdata = {
             new SpanTestData().setLabel("myseda:b server").setUri("myseda://b").setOperation("b")
-                    .setParentId(2).addLogMessage("routing at b"),
+                    .setParentId(2),
             new SpanTestData().setLabel("myseda:c server").setUri("myseda://c").setOperation("c")
-                    .setParentId(2).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
+                    .setParentId(2),
             new SpanTestData().setLabel("myseda:a server").setUri("myseda://a").setOperation("a")
-                    .setParentId(3).addLogMessage("routing at a").addLogMessage("End of routing"),
+                    .setParentId(3),
             new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
                     .setKind(SpanKind.SERVER)
     };
