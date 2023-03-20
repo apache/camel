@@ -221,6 +221,11 @@ public final class HttpHelper {
             }
         }
 
+        // remove any ending double slashes
+        if (uri.endsWith("//")) {
+            uri = uri.substring(0, uri.length() - 1);
+        }
+
         // ensure uri is encoded to be valid
         uri = UnsafeUriCharactersEncoder.encodeHttpURI(uri);
 
