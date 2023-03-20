@@ -21,7 +21,7 @@ public class DataLakeEndpointUriFactory extends org.apache.camel.support.compone
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(52);
+        Set<String> props = new HashSet<>(55);
         props.add("accountKey");
         props.add("accountName");
         props.add("backoffErrorThreshold");
@@ -61,6 +61,8 @@ public class DataLakeEndpointUriFactory extends org.apache.camel.support.compone
         props.add("repeatCount");
         props.add("retainUncommitedData");
         props.add("runLoggingLevel");
+        props.add("sasCredential");
+        props.add("sasSignature");
         props.add("scheduledExecutorService");
         props.add("scheduler");
         props.add("schedulerProperties");
@@ -72,10 +74,17 @@ public class DataLakeEndpointUriFactory extends org.apache.camel.support.compone
         props.add("timeUnit");
         props.add("timeout");
         props.add("umask");
+        props.add("useDefaultIdentity");
         props.add("useFixedDelay");
         props.add("userPrincipalNameReturned");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
-        SECRET_PROPERTY_NAMES = Collections.emptySet();
+        Set<String> secretProps = new HashSet<>(5);
+        secretProps.add("accountKey");
+        secretProps.add("clientSecret");
+        secretProps.add("clientSecretCredential");
+        secretProps.add("sasCredential");
+        secretProps.add("sasSignature");
+        SECRET_PROPERTY_NAMES = Collections.unmodifiableSet(secretProps);
         Set<String> prefixes = new HashSet<>(1);
         prefixes.add("scheduler.");
         MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);

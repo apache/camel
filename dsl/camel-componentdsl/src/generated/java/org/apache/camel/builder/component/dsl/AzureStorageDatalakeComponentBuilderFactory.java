@@ -51,21 +51,6 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
             extends
                 ComponentBuilder<DataLakeComponent> {
         /**
-         * account key for authentication.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param accountKey the value to set
-         * @return the dsl builder
-         */
-        default AzureStorageDatalakeComponentBuilder accountKey(
-                java.lang.String accountKey) {
-            doSetProperty("accountKey", accountKey);
-            return this;
-        }
-        /**
          * client id for azure account.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -78,38 +63,6 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
         default AzureStorageDatalakeComponentBuilder clientId(
                 java.lang.String clientId) {
             doSetProperty("clientId", clientId);
-            return this;
-        }
-        /**
-         * client secret for azure account.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param clientSecret the value to set
-         * @return the dsl builder
-         */
-        default AzureStorageDatalakeComponentBuilder clientSecret(
-                java.lang.String clientSecret) {
-            doSetProperty("clientSecret", clientSecret);
-            return this;
-        }
-        /**
-         * client secret credential for authentication.
-         * 
-         * The option is a:
-         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
-         * type.
-         * 
-         * Group: common
-         * 
-         * @param clientSecretCredential the value to set
-         * @return the dsl builder
-         */
-        default AzureStorageDatalakeComponentBuilder clientSecretCredential(
-                com.azure.identity.ClientSecretCredential clientSecretCredential) {
-            doSetProperty("clientSecretCredential", clientSecretCredential);
             return this;
         }
         /**
@@ -577,6 +530,100 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
             doSetProperty("autowiredEnabled", autowiredEnabled);
             return this;
         }
+        /**
+         * account key for authentication.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param accountKey the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageDatalakeComponentBuilder accountKey(
+                java.lang.String accountKey) {
+            doSetProperty("accountKey", accountKey);
+            return this;
+        }
+        /**
+         * client secret for azure account.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param clientSecret the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageDatalakeComponentBuilder clientSecret(
+                java.lang.String clientSecret) {
+            doSetProperty("clientSecret", clientSecret);
+            return this;
+        }
+        /**
+         * client secret credential for authentication.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.identity.ClientSecretCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param clientSecretCredential the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageDatalakeComponentBuilder clientSecretCredential(
+                com.azure.identity.ClientSecretCredential clientSecretCredential) {
+            doSetProperty("clientSecretCredential", clientSecretCredential);
+            return this;
+        }
+        /**
+         * SAS token credential.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.azure.core.credential.AzureSasCredential&lt;/code&gt;
+         * type.
+         * 
+         * Group: security
+         * 
+         * @param sasCredential the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageDatalakeComponentBuilder sasCredential(
+                com.azure.core.credential.AzureSasCredential sasCredential) {
+            doSetProperty("sasCredential", sasCredential);
+            return this;
+        }
+        /**
+         * SAS token signature.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param sasSignature the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageDatalakeComponentBuilder sasSignature(
+                java.lang.String sasSignature) {
+            doSetProperty("sasSignature", sasSignature);
+            return this;
+        }
+        /**
+         * Use default identity.
+         * 
+         * The option is a: &lt;code&gt;java.lang.Boolean&lt;/code&gt; type.
+         * 
+         * Group: security
+         * 
+         * @param useDefaultIdentity the value to set
+         * @return the dsl builder
+         */
+        default AzureStorageDatalakeComponentBuilder useDefaultIdentity(
+                java.lang.Boolean useDefaultIdentity) {
+            doSetProperty("useDefaultIdentity", useDefaultIdentity);
+            return this;
+        }
     }
 
     class AzureStorageDatalakeComponentBuilderImpl
@@ -601,10 +648,7 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
                 String name,
                 Object value) {
             switch (name) {
-            case "accountKey": getOrCreateConfiguration((DataLakeComponent) component).setAccountKey((java.lang.String) value); return true;
             case "clientId": getOrCreateConfiguration((DataLakeComponent) component).setClientId((java.lang.String) value); return true;
-            case "clientSecret": getOrCreateConfiguration((DataLakeComponent) component).setClientSecret((java.lang.String) value); return true;
-            case "clientSecretCredential": getOrCreateConfiguration((DataLakeComponent) component).setClientSecretCredential((com.azure.identity.ClientSecretCredential) value); return true;
             case "close": getOrCreateConfiguration((DataLakeComponent) component).setClose((java.lang.Boolean) value); return true;
             case "closeStreamAfterRead": getOrCreateConfiguration((DataLakeComponent) component).setCloseStreamAfterRead((java.lang.Boolean) value); return true;
             case "configuration": ((DataLakeComponent) component).setConfiguration((org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration) value); return true;
@@ -634,6 +678,12 @@ public interface AzureStorageDatalakeComponentBuilderFactory {
             case "lazyStartProducer": ((DataLakeComponent) component).setLazyStartProducer((boolean) value); return true;
             case "operation": getOrCreateConfiguration((DataLakeComponent) component).setOperation((org.apache.camel.component.azure.storage.datalake.DataLakeOperationsDefinition) value); return true;
             case "autowiredEnabled": ((DataLakeComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "accountKey": getOrCreateConfiguration((DataLakeComponent) component).setAccountKey((java.lang.String) value); return true;
+            case "clientSecret": getOrCreateConfiguration((DataLakeComponent) component).setClientSecret((java.lang.String) value); return true;
+            case "clientSecretCredential": getOrCreateConfiguration((DataLakeComponent) component).setClientSecretCredential((com.azure.identity.ClientSecretCredential) value); return true;
+            case "sasCredential": getOrCreateConfiguration((DataLakeComponent) component).setSasCredential((com.azure.core.credential.AzureSasCredential) value); return true;
+            case "sasSignature": getOrCreateConfiguration((DataLakeComponent) component).setSasSignature((java.lang.String) value); return true;
+            case "useDefaultIdentity": getOrCreateConfiguration((DataLakeComponent) component).setUseDefaultIdentity((java.lang.Boolean) value); return true;
             default: return false;
             }
         }
