@@ -85,6 +85,10 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "retainUncommitedData": target.getConfiguration().setRetainUncommitedData(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "runlogginglevel":
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
+        case "sascredential":
+        case "sasCredential": target.getConfiguration().setSasCredential(property(camelContext, com.azure.core.credential.AzureSasCredential.class, value)); return true;
+        case "sassignature":
+        case "sasSignature": target.getConfiguration().setSasSignature(property(camelContext, java.lang.String.class, value)); return true;
         case "scheduledexecutorservice":
         case "scheduledExecutorService": target.setScheduledExecutorService(property(camelContext, java.util.concurrent.ScheduledExecutorService.class, value)); return true;
         case "scheduler": target.setScheduler(property(camelContext, java.lang.Object.class, value)); return true;
@@ -104,6 +108,8 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "timeUnit": target.setTimeUnit(property(camelContext, java.util.concurrent.TimeUnit.class, value)); return true;
         case "timeout": target.getConfiguration().setTimeout(property(camelContext, java.time.Duration.class, value)); return true;
         case "umask": target.getConfiguration().setUmask(property(camelContext, java.lang.String.class, value)); return true;
+        case "usedefaultidentity":
+        case "useDefaultIdentity": target.getConfiguration().setUseDefaultIdentity(property(camelContext, java.lang.Boolean.class, value)); return true;
         case "usefixeddelay":
         case "useFixedDelay": target.setUseFixedDelay(property(camelContext, boolean.class, value)); return true;
         case "userprincipalnamereturned":
@@ -184,6 +190,10 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "retainUncommitedData": return java.lang.Boolean.class;
         case "runlogginglevel":
         case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
+        case "sascredential":
+        case "sasCredential": return com.azure.core.credential.AzureSasCredential.class;
+        case "sassignature":
+        case "sasSignature": return java.lang.String.class;
         case "scheduledexecutorservice":
         case "scheduledExecutorService": return java.util.concurrent.ScheduledExecutorService.class;
         case "scheduler": return java.lang.Object.class;
@@ -203,6 +213,8 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "timeUnit": return java.util.concurrent.TimeUnit.class;
         case "timeout": return java.time.Duration.class;
         case "umask": return java.lang.String.class;
+        case "usedefaultidentity":
+        case "useDefaultIdentity": return java.lang.Boolean.class;
         case "usefixeddelay":
         case "useFixedDelay": return boolean.class;
         case "userprincipalnamereturned":
@@ -279,6 +291,10 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "retainUncommitedData": return target.getConfiguration().getRetainUncommitedData();
         case "runlogginglevel":
         case "runLoggingLevel": return target.getRunLoggingLevel();
+        case "sascredential":
+        case "sasCredential": return target.getConfiguration().getSasCredential();
+        case "sassignature":
+        case "sasSignature": return target.getConfiguration().getSasSignature();
         case "scheduledexecutorservice":
         case "scheduledExecutorService": return target.getScheduledExecutorService();
         case "scheduler": return target.getScheduler();
@@ -298,6 +314,8 @@ public class DataLakeEndpointConfigurer extends PropertyConfigurerSupport implem
         case "timeUnit": return target.getTimeUnit();
         case "timeout": return target.getConfiguration().getTimeout();
         case "umask": return target.getConfiguration().getUmask();
+        case "usedefaultidentity":
+        case "useDefaultIdentity": return target.getConfiguration().getUseDefaultIdentity();
         case "usefixeddelay":
         case "useFixedDelay": return target.isUseFixedDelay();
         case "userprincipalnamereturned":
