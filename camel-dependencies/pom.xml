@@ -447,7 +447,7 @@
         <smallrye-config-version>3.1.1</smallrye-config-version>
         <smallrye-health-version>4.0.1</smallrye-health-version>
         <smallrye-fault-tolerance-version>6.1.0</smallrye-fault-tolerance-version>
-        <snakeyaml-version>1.33</snakeyaml-version>
+        <snakeyaml-version>2.0</snakeyaml-version>
         <snakeyaml-engine-version>2.3</snakeyaml-engine-version>
         <snmp4j-version>2.8.15</snmp4j-version>
         <!-- solr version aligned with lucene -->

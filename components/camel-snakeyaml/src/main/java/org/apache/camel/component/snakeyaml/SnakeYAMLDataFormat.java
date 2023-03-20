@@ -47,6 +47,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.BaseConstructor;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
+import org.yaml.snakeyaml.inspector.TrustedTagInspector;
 import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.representer.Representer;
 import org.yaml.snakeyaml.resolver.Resolver;
@@ -142,6 +143,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
 
         if (yaml == null) {
             LoaderOptions options = new LoaderOptions();
+            options.setTagInspector(new TrustedTagInspector());
             options.setAllowRecursiveKeys(allowRecursiveKeys);
             options.setMaxAliasesForCollections(maxAliasesForCollections);
 
@@ -389,6 +391,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
         }
 
         LoaderOptions options = new LoaderOptions();
+        options.setTagInspector(new TrustedTagInspector());
         options.setAllowRecursiveKeys(allowRecursiveKeys);
         options.setMaxAliasesForCollections(maxAliasesForCollections);
 
@@ -406,9 +409,9 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
             yamlConstructor = new SafeConstructor(options);
         }
 
-        if (typeDescriptions != null && yamlConstructor instanceof Constructor) {
+        if (typeDescriptions != null && yamlConstructor instanceof Constructor con) {
             for (TypeDescription typeDescription : typeDescriptions) {
-                ((Constructor) yamlConstructor).addTypeDescription(typeDescription);
+                con.addTypeDescription(typeDescription);
             }
         }
 
@@ -416,7 +419,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     }
 
     private Representer defaultRepresenter(CamelContext context) {
-        Representer yamlRepresenter = new Representer();
+        Representer yamlRepresenter = new Representer(new DumperOptions());
 
         if (classTags != null) {
             for (Map.Entry<Class<?>, Tag> entry : classTags.entrySet()) {
@@ -443,7 +446,7 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
     // ***************************
 
     private static Constructor typeFilterConstructor(final Collection<TypeFilter> typeFilters, LoaderOptions options) {
-        Constructor constructor = new Constructor(options) {
+        return new Constructor(options) {
             @Override
             protected Class<?> getClassForName(String name) throws ClassNotFoundException {
                 if (typeFilters.stream().noneMatch(f -> f.test(name))) {
@@ -453,13 +456,12 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
                 return super.getClassForName(name);
             }
         };
-        return constructor;
     }
 
     private static Constructor typeFilterConstructor(
             final ClassLoader classLoader, final Collection<TypeFilter> typeFilters,
             LoaderOptions options) {
-        CustomClassLoaderConstructor constructor = new CustomClassLoaderConstructor(classLoader, options) {
+        return new CustomClassLoaderConstructor(classLoader, options) {
             @Override
             protected Class<?> getClassForName(String name) throws ClassNotFoundException {
                 if (typeFilters.stream().noneMatch(f -> f.test(name))) {
@@ -469,6 +471,5 @@ public final class SnakeYAMLDataFormat extends ServiceSupport implements DataFor
                 return super.getClassForName(name);
             }
         };
-        return constructor;
     }
 }
