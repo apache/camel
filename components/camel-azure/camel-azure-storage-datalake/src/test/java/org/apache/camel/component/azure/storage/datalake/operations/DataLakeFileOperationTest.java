@@ -26,7 +26,9 @@ import java.time.OffsetDateTime;
 
 import com.azure.core.http.HttpHeaders;
 import com.azure.core.http.rest.ResponseBase;
+import com.azure.storage.file.datalake.DataLakeFileClient;
 import com.azure.storage.file.datalake.models.PathInfo;
+import com.azure.storage.file.datalake.models.PathProperties;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConfiguration;
 import org.apache.camel.component.azure.storage.datalake.DataLakeConstants;
@@ -44,6 +46,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -54,6 +58,9 @@ public class DataLakeFileOperationTest extends CamelTestSupport {
 
     @Mock
     private DataLakeFileClientWrapper client;
+
+    @Mock
+    private DataLakeFileClient alternateClient;
 
     @BeforeEach
     public void setup() {
@@ -107,4 +114,25 @@ public class DataLakeFileOperationTest extends CamelTestSupport {
         assertEquals(time, response.getHeaders().get(DataLakeConstants.LAST_MODIFIED));
     }
 
+    @Test
+    void testServiceClientOverride() throws Exception {
+        final HttpHeaders httpHeaders = new HttpHeaders();
+        final byte[] testing = "testing".getBytes(Charset.defaultCharset());
+        when(alternateClient.appendWithResponse(any(), anyLong(), anyLong(), any(), any(), any()))
+                .thenReturn(new ResponseBase<>(null, 200, httpHeaders, null, null));
+        final PathProperties properties = mock(PathProperties.class);
+        when(properties.getFileSize()).thenReturn(Long.valueOf(testing.length));
+        when(alternateClient.getProperties()).thenReturn(properties);
+
+        final Exchange exchange = new DefaultExchange(context);
+        exchange.getIn().setHeader(DataLakeConstants.FILE_CLIENT, alternateClient);
+        exchange.getIn().setBody(new ByteArrayInputStream(testing));
+
+        final DataLakeFileOperations operations = new DataLakeFileOperations(configuration, client);
+        final DataLakeOperationResponse response = operations.appendToFile(exchange);
+
+        assertNotNull(response);
+        assertTrue((boolean) response.getBody());
+        assertNotNull(response.getHeaders());
+    }
 }
