@@ -209,13 +209,17 @@ public final class HttpHelper {
                 // if there are no query params
                 if (idx == -1) {
                     // make sure that there is exactly one "/" between HTTP_URI and HTTP_PATH
-                    uri = uri.endsWith("/") || path.startsWith("/") ? uri : uri + "/";
-                    uri = uri.concat(path);
+                    if (uri.endsWith("/") && path.startsWith("/")) {
+                        uri = uri.concat(path.substring(1));
+                    } else {
+                        uri = uri.endsWith("/") || path.startsWith("/") ? uri : uri + "/";
+                        uri = uri.concat(path);
+                    }
                 } else {
                     // there are query params, so inject the relative path in the right place
                     String base = uri.substring(0, idx);
                     base = base.endsWith("/") ? base : base + "/";
-                    base = base.concat(path);
+                    base = base.concat(path.startsWith("/") ? path.substring(1) : path);
                     uri = base.concat(uri.substring(idx));
                 }
             }
