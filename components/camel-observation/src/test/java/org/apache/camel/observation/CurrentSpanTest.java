@@ -75,7 +75,8 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
         SpanTestData[] expectedSpans = {
                 new SpanTestData().setLabel("syncmock:result").setUri("syncmock://result").setOperation("syncmock")
                         .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:bar").setUri("direct://bar").setOperation("bar").setKind(SpanKind.SERVER)
+                new SpanTestData().setLabel("direct:bar").setUri("direct://bar").setOperation("bar"),
+                new SpanTestData().setLabel("direct:bar").setUri("direct://bar").setOperation("bar").setKind(SpanKind.CLIENT)
         };
 
         // sync pipeline
@@ -93,7 +94,8 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
         SpanTestData[] expectedSpans = {
                 new SpanTestData().setLabel("asyncmock1:result").setUri("asyncmock1://result").setOperation("asyncmock1")
                         .setKind(SpanKind.CLIENT),
-                new SpanTestData().setLabel("direct:foo").setUri("direct://foo").setOperation("foo").setKind(SpanKind.SERVER)
+                new SpanTestData().setLabel("direct:foo").setUri("direct://foo").setOperation("foo"),
+                new SpanTestData().setLabel("direct:foo").setUri("direct://foo").setOperation("foo").setKind(SpanKind.CLIENT)
         };
 
         // sync to async pipeline
@@ -171,8 +173,9 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
                         .setKind(SpanKind.CLIENT),
                 new SpanTestData().setLabel("syncmock:result").setUri("syncmock://result").setOperation("syncmock")
                         .setKind(SpanKind.CLIENT),
+                new SpanTestData().setLabel("direct:start").setUri("direct://start").setOperation("start"),
                 new SpanTestData().setLabel("direct:start").setUri("direct://start").setOperation("start")
-                        .setKind(SpanKind.SERVER)
+                        .setKind(SpanKind.CLIENT)
         };
 
         // sync pipeline
@@ -192,7 +195,7 @@ class CurrentSpanTest extends CamelMicrometerObservationTestSupport {
             assertFalse(Span.current().getSpanContext().isValid());
         }
 
-        verifyTraceSpanNumbers(30, 10);
+        verifyTraceSpanNumbers(30, 11);
     }
 
     @Override

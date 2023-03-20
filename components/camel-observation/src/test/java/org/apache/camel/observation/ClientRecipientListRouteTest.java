@@ -25,13 +25,24 @@ class ClientRecipientListRouteTest extends CamelMicrometerObservationTestSupport
 
     private static SpanTestData[] testdata = {
             new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-                    .setParentId(3),
+                    .setParentId(1),
+            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
+                    .setParentId(6)
+                    .setKind(SpanKind.CLIENT),
             new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
                     .setParentId(3),
+            new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
+                    .setParentId(6)
+                    .setKind(SpanKind.CLIENT),
             new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-                    .setParentId(3),
+                    .setParentId(5),
+            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
+                    .setParentId(6)
+                    .setKind(SpanKind.CLIENT),
             new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
-                    .setKind(SpanKind.SERVER)
+                    .setParentId(7),
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+                    .setKind(SpanKind.CLIENT)
     };
 
     ClientRecipientListRouteTest() {
