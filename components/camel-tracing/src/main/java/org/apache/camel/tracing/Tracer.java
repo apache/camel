@@ -295,7 +295,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
         }
 
         private boolean shouldExclude(SpanDecorator sd, Exchange exchange, Endpoint endpoint) {
-            return sd instanceof AbstractInternalSpanDecorator || !sd.newSpan()
+            return !sd.newSpan()
                     || isExcluded(exchange, endpoint);
         }
     }
