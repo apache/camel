@@ -35,8 +35,10 @@ class RouteConcurrentTest extends CamelMicrometerObservationTestSupport {
                     .setParentId(2)
                     .setKind(SpanKind.CLIENT),
             new SpanTestData().setLabel("seda:foo server").setUri("seda://foo?concurrentConsumers=5").setOperation("foo")
+                    .setKind(SpanKind.SERVER)
                     .setParentId(0),
             new SpanTestData().setLabel("seda:bar server").setUri("seda://bar?concurrentConsumers=5").setOperation("bar")
+                    .setKind(SpanKind.SERVER)
                     .setParentId(1),
     };
 

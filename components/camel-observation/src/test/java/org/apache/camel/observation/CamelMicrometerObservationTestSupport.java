@@ -39,10 +39,13 @@ import io.micrometer.tracing.otel.bridge.OtelBaggageManager;
 import io.micrometer.tracing.otel.bridge.OtelCurrentTraceContext;
 import io.micrometer.tracing.otel.bridge.OtelPropagator;
 import io.micrometer.tracing.otel.bridge.OtelTracer;
+import io.opentelemetry.api.baggage.propagation.W3CBaggagePropagator;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.trace.propagation.W3CTraceContextPropagator;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.context.propagation.ContextPropagators;
+import io.opentelemetry.context.propagation.TextMapPropagator;
 import io.opentelemetry.extension.trace.propagation.B3Propagator;
 import io.opentelemetry.sdk.testing.exporter.InMemorySpanExporter;
 import io.opentelemetry.sdk.trace.ReadWriteSpan;
@@ -99,7 +102,7 @@ class CamelMicrometerObservationTestSupport extends CamelTestSupport {
 
         io.micrometer.tracing.Tracer otelTracer = otelTracer();
         OtelPropagator otelPropagator
-                = new OtelPropagator(ContextPropagators.create(B3Propagator.injectingSingleHeader()), tracer);
+                = new OtelPropagator(ContextPropagators.create(TextMapPropagator.composite(W3CTraceContextPropagator.getInstance(), W3CBaggagePropagator.getInstance())), tracer);
         observationRegistry.observationConfig().observationHandler(
                 new ObservationHandler.FirstMatchingCompositeObservationHandler(
                         new PropagatingSenderTracingObservationHandler<>(otelTracer, otelPropagator),
