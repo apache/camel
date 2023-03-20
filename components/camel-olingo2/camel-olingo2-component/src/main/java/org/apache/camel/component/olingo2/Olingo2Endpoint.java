@@ -166,7 +166,8 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     @Override
     protected void afterConfigureProperties() {
-        olingo2endpointPropertyNames = new HashSet<>(getEndpointPropertyNames());
+        olingo2endpointPropertyNames
+                = new HashSet<>(getPropertiesHelper().getValidEndpointProperties(getCamelContext(), configuration));
         olingo2endpointPropertyNames.add(EDM_PROPERTY);
         olingo2endpointPropertyNames.add(ENDPOINT_HTTP_HEADERS_PROPERTY);
         olingo2endpointPropertyNames.add(SERVICE_URI_PROPERTY);
