@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
@@ -42,14 +43,15 @@ public class SnakeYAMLDoSTest extends CamelTestSupport {
         assertNotNull(mock);
         mock.expectedMessageCount(1);
 
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream("data.yaml");
+        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream("data.yaml")) {
 
-        ProducerTemplate template = context.createProducerTemplate();
-        String result = template.requestBody("direct:back", is, String.class);
-        assertNotNull(result);
-        assertEquals("{name=Colm, location=Dublin}", result.trim());
+            ProducerTemplate template = context.createProducerTemplate();
+            String result = template.requestBody("direct:back", is, String.class);
+            assertNotNull(result);
+            assertEquals("{name=Colm, location=Dublin}", result.trim());
 
-        mock.assertIsSatisfied();
+            mock.assertIsSatisfied();
+        }
     }
 
     @Test
@@ -59,18 +61,19 @@ public class SnakeYAMLDoSTest extends CamelTestSupport {
         assertNotNull(mock);
         mock.expectedMessageCount(0);
 
-        InputStream is = this.getClass().getClassLoader().getResourceAsStream("data-dos.yaml");
+        try (InputStream is = this.getClass().getClassLoader().getResourceAsStream("data-dos.yaml")) {
 
-        ProducerTemplate template = context.createProducerTemplate();
+            ProducerTemplate template = context.createProducerTemplate();
 
-        Exception ex = assertThrows(CamelExecutionException.class,
-                () -> template.requestBody("direct:back", is, String.class),
-                "Failure expected on an alias expansion attack");
+            Exception ex = assertThrows(CamelExecutionException.class,
+                    () -> template.requestBody("direct:back", is, String.class),
+                    "Failure expected on an alias expansion attack");
 
-        Throwable cause = ex.getCause();
-        assertEquals("Number of aliases for non-scalar nodes exceeds the specified max=50", cause.getMessage());
+            Throwable cause = ex.getCause();
+            assertEquals("Number of aliases for non-scalar nodes exceeds the specified max=50", cause.getMessage());
 
-        mock.assertIsSatisfied();
+            mock.assertIsSatisfied();
+        }
     }
 
     @Test
@@ -139,7 +142,7 @@ public class SnakeYAMLDoSTest extends CamelTestSupport {
         f.put(f, "a");
         f.put("g", root);
 
-        Yaml yaml = new Yaml(new SafeConstructor());
+        Yaml yaml = new Yaml(new SafeConstructor(new LoaderOptions()));
         return yaml.dump(f);
     }
 
