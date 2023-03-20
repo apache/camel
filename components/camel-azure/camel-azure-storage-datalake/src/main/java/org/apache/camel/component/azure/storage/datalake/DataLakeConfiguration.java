@@ -20,6 +20,7 @@ import java.nio.file.OpenOption;
 import java.time.Duration;
 import java.util.Set;
 
+import com.azure.core.credential.AzureSasCredential;
 import com.azure.identity.ClientSecretCredential;
 import com.azure.storage.common.StorageSharedKeyCredential;
 import com.azure.storage.file.datalake.DataLakeServiceClient;
@@ -42,16 +43,16 @@ public class DataLakeConfiguration implements Cloneable {
     private String directoryName;
     @UriParam(description = "name of file to be handled in component")
     private String fileName;
-    @UriParam(description = "client secret credential for authentication")
+    @UriParam(label = "security", secret = true, description = "client secret credential for authentication")
     private ClientSecretCredential clientSecretCredential;
     @UriParam(description = "datalake service client for azure storage datalake")
     @Metadata(autowired = true)
     private DataLakeServiceClient serviceClient;
-    @UriParam(description = "account key for authentication")
+    @UriParam(label = "security", secret = true, description = "account key for authentication")
     private String accountKey;
     @UriParam(description = "client id for azure account")
     private String clientId;
-    @UriParam(description = "client secret for azure account")
+    @UriParam(label = "security", secret = true, description = "client secret for azure account")
     private String clientSecret;
     @UriParam(description = "tenant id for azure account")
     private String tenantId;
@@ -93,6 +94,12 @@ public class DataLakeConfiguration implements Cloneable {
     private String umask;
     @UriParam(description = "set open options for creating file")
     private Set<OpenOption> openOptions;
+    @UriParam(label = "security", secret = true, description = "SAS token signature")
+    private String sasSignature;
+    @UriParam(label = "security", secret = true, description = "SAS token credential")
+    private AzureSasCredential sasCredential;
+    @UriParam(label = "security", secret = false, description = "Use default identity")
+    private Boolean useDefaultIdentity = false;
 
     @UriParam(label = "producer", enums = "listFileSystem, listFiles", defaultValue = "listFileSystem",
               description = "operation to be performed")
@@ -344,6 +351,30 @@ public class DataLakeConfiguration implements Cloneable {
 
     public void setOpenOptions(Set<OpenOption> openOptions) {
         this.openOptions = openOptions;
+    }
+
+    public String getSasSignature() {
+        return sasSignature;
+    }
+
+    public void setSasSignature(String sasSignature) {
+        this.sasSignature = sasSignature;
+    }
+
+    public AzureSasCredential getSasCredential() {
+        return sasCredential;
+    }
+
+    public void setSasCredential(AzureSasCredential sasCredential) {
+        this.sasCredential = sasCredential;
+    }
+
+    public Boolean getUseDefaultIdentity() {
+        return useDefaultIdentity;
+    }
+
+    public void setUseDefaultIdentity(Boolean useDefaultIdentity) {
+        this.useDefaultIdentity = useDefaultIdentity;
     }
 
     public DataLakeConfiguration copy() {

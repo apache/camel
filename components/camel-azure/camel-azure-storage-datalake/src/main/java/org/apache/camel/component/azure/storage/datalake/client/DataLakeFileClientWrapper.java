@@ -34,6 +34,7 @@ import com.azure.storage.file.datalake.models.FileReadResponse;
 import com.azure.storage.file.datalake.models.PathHttpHeaders;
 import com.azure.storage.file.datalake.models.PathInfo;
 import com.azure.storage.file.datalake.models.PathProperties;
+import com.azure.storage.file.datalake.options.DataLakeFileAppendOptions;
 import com.azure.storage.file.datalake.options.FileParallelUploadOptions;
 import com.azure.storage.file.datalake.options.FileQueryOptions;
 import com.azure.storage.file.datalake.sas.DataLakeServiceSasSignatureValues;
@@ -104,8 +105,8 @@ public class DataLakeFileClientWrapper {
 
     public Response<Void> appendWithResponse(
             final InputStream stream, final Long fileOffset, final Long length,
-            final byte[] contentMd5, final String leaseId, final Duration timeout) {
-        return client.appendWithResponse(stream, fileOffset, length, contentMd5, leaseId, timeout, Context.NONE);
+            final Duration timeout, final DataLakeFileAppendOptions options) {
+        return client.appendWithResponse(stream, fileOffset, length, options, timeout, Context.NONE);
     }
 
     public Response<PathInfo> uploadWithResponse(final FileParallelUploadOptions uploadOptions, final Duration timeout) {
