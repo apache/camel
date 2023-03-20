@@ -48,7 +48,7 @@ public class SftpMoveWithOutMessageTest extends SftpServerTestSupport {
         template.sendBodyAndHeader("file://" + service.getFtpRootDir(), expected, Exchange.FILE_NAME, "hello2.txt");
 
         ProducerTemplate triggerTemplate = context.createProducerTemplate();
-        triggerTemplate.sendBody("vm:trigger", "");
+        triggerTemplate.sendBody("seda:trigger", "");
 
         File fileInArchive = ftpFile("archive/hello1.txt").toFile();
         await().atMost(15, TimeUnit.SECONDS)
@@ -73,7 +73,7 @@ public class SftpMoveWithOutMessageTest extends SftpServerTestSupport {
         return new RouteBuilder[] { new RouteBuilder() {
             @Override
             public void configure() {
-                from("vm:trigger")
+                from("seda:trigger")
                         .pollEnrich(
                                 "sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin&password=admin&delay=10000&disconnect=true&move=archive")
                         .pollEnrich(

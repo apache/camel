@@ -51,7 +51,7 @@ class SftpPollEnrichConsumeWithDisconnectAndDeleteIT extends SftpServerTestSuppo
         mock.expectedBodiesReceived(expected);
 
         ProducerTemplate triggerTemplate = context.createProducerTemplate();
-        triggerTemplate.sendBody("vm:trigger", "");
+        triggerTemplate.sendBody("seda:trigger", "");
 
         mock.setResultWaitTime(TimeUnit.MINUTES.toMillis(3));
         mock.assertIsSatisfied();
@@ -65,7 +65,7 @@ class SftpPollEnrichConsumeWithDisconnectAndDeleteIT extends SftpServerTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("vm:trigger")
+                from("seda:trigger")
                         .pollEnrich("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                                     + "?username=admin&password=admin&delay=10000&disconnect=true&delete=true")
                         .routeId("foo").to("mock:result");
