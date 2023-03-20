@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.snakeyaml.custom;
 
+import java.util.Objects;
+
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.constructor.Constructor;
 
@@ -24,14 +26,11 @@ import org.yaml.snakeyaml.constructor.Constructor;
  */
 public class CustomClassLoaderConstructor extends Constructor {
 
-    private ClassLoader loader = this.getClass().getClassLoader();
+    private final ClassLoader loader;
 
     public CustomClassLoaderConstructor(ClassLoader theLoader, LoaderOptions options) {
         super(Object.class, options);
-        if (theLoader == null) {
-            throw new NullPointerException("Loader must be provided.");
-        }
-        this.loader = theLoader;
+        this.loader = Objects.requireNonNull(theLoader, "Loader must be provided.");
     }
 
     @Override
