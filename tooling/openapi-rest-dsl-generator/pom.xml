@@ -52,6 +52,12 @@
             <groupId>io.apicurio</groupId>
             <artifactId>apicurio-data-models</artifactId>
             <version>${apicurio-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -59,6 +65,11 @@
             <version>${commons-lang3-version}</version>
         </dependency>
         <!-- yaml dsl (via xml) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson2-version}</version>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
