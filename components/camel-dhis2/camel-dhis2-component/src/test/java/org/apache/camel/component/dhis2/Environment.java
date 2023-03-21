@@ -64,7 +64,7 @@ public final class Environment {
                 .withClasspathResourceMapping("dhis.conf", "/DHIS2_home/dhis.conf", BindMode.READ_ONLY)
                 .withNetwork(NETWORK).withExposedPorts(8080)
                 .waitingFor(
-                        new HttpWaitStrategy().forStatusCode(200).withStartupTimeout(Duration.ofSeconds(120)))
+                        new HttpWaitStrategy().forStatusCode(200).withStartupTimeout(Duration.ofSeconds(360)))
                 .withEnv("WAIT_FOR_DB_CONTAINER", "db" + ":" + 5432 + " -t 0");
 
         DHIS2_CONTAINER.start();
