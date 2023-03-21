@@ -28,12 +28,14 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplatesDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.SetBodyDefinition;
 import org.apache.camel.model.TemplatedRoutesDefinition;
+import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.rest.ParamDefinition;
 import org.apache.camel.model.rest.RestDefinition;
@@ -197,6 +199,34 @@ public class ModelParserTest {
         Assertions.assertEquals(1, verb.getParams().size());
         ParamDefinition param = verb.getParams().get(0);
         Assertions.assertEquals(4, param.getAllowableValues().size());
+    }
+
+    @Test
+    public void testUriLineBreak() throws Exception {
+        final String fromFrag1 = "seda:a?concurrentConsumers=2&amp;";
+        final String fromFrag2 = "defaultPollTimeout=500";
+        final String toFrag1 = "seda:b?";
+        final String toFrag2 = "lazyStartProducer=true&amp;";
+        final String toFrag3 = "defaultBlockWhenFull=true";
+        final String routesXml = "<routes xmlns=\"" + NAMESPACE + "\">\n"
+                                 + "  <route>\n"
+                                 + "    <from uri=\"" + fromFrag1 + "\n"
+                                 + "        " + fromFrag2 + "\n"
+                                 + "        \"/>\n"
+                                 + "    <to uri=\"" + toFrag1 + "\n"
+                                 + "        " + toFrag2 + "\n"
+                                 + "        " + toFrag3 + "\"/>\n"
+                                 + "  </route>\n"
+                                 + "</routes>";
+        final RoutesDefinition routes
+                = new ModelParser(new StringReader(routesXml), NAMESPACE).parseRoutesDefinition().orElse(null);
+        final RouteDefinition route = routes.getRoutes().get(0);
+        final FromDefinition from = route.getInput();
+        final ToDefinition to = (ToDefinition) route.getOutputs().get(0);
+        final String fromUri = (fromFrag1 + fromFrag2).replace("&amp;", "&");
+        final String toUri = (toFrag1 + toFrag2 + toFrag3).replace("&amp;", "&");
+        Assertions.assertEquals(fromUri, from.getEndpointUri());
+        Assertions.assertEquals(toUri, to.getEndpointUri());
     }
 
     private Path getResourceFolder() {
