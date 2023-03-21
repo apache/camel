@@ -52,7 +52,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class WatchUpdatesConsumerTest extends CamelTestSupport {
-    private static List<Issue> issues = new ArrayList<>();
+    private static final List<Issue> ISSUES = new ArrayList<>();
 
     @Mock
     private JiraRestClient jiraClient;
@@ -73,14 +73,14 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
 
     @BeforeAll
     public static void beforeAll() {
-        issues.clear();
-        issues.add(createIssue(1L));
-        issues.add(createIssue(2L));
-        issues.add(createIssue(3L));
+        ISSUES.clear();
+        ISSUES.add(createIssue(1L));
+        ISSUES.add(createIssue(2L));
+        ISSUES.add(createIssue(3L));
     }
 
     public void setMocks() {
-        SearchResult result = new SearchResult(0, 50, 100, issues);
+        SearchResult result = new SearchResult(0, 50, 100, ISSUES);
         Promise<SearchResult> promiseSearchResult = Promises.promise(result);
 
         when(jiraClient.getSearchClient()).thenReturn(searchRestClient);
@@ -118,17 +118,17 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
 
     @Test
     public void singleChangeTest() throws Exception {
-        Issue issue = setPriority(issues.get(0), new Priority(
+        Issue issue = setPriority(ISSUES.get(0), new Priority(
                 null, 4L, "High", null, null, null));
         reset(searchRestClient);
         AtomicBoolean searched = new AtomicBoolean();
         when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
 
             if (!searched.get()) {
-                issues.remove(0);
-                issues.add(0, issue);
+                ISSUES.remove(0);
+                ISSUES.add(0, issue);
             }
-            SearchResult result = new SearchResult(0, 50, 100, issues);
+            SearchResult result = new SearchResult(0, 50, 100, ISSUES);
             return Promises.promise(result);
         });
 
@@ -141,23 +141,23 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
 
     @Test
     public void multipleChangesWithAddedNewIssueTest() throws Exception {
-        final Issue issue = transitionIssueDone(issues.get(1));
-        final Issue issue2 = setPriority(issues.get(2), new Priority(
+        final Issue issue = transitionIssueDone(ISSUES.get(1));
+        final Issue issue2 = setPriority(ISSUES.get(2), new Priority(
                 null, 4L, "High", null, null, null));
 
         reset(searchRestClient);
         AtomicBoolean searched = new AtomicBoolean();
         when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
             if (!searched.get()) {
-                issues.add(createIssue(4L));
-                issues.remove(1);
-                issues.add(1, issue);
-                issues.remove(2);
-                issues.add(2, issue2);
+                ISSUES.add(createIssue(4L));
+                ISSUES.remove(1);
+                ISSUES.add(1, issue);
+                ISSUES.remove(2);
+                ISSUES.add(2, issue2);
                 searched.set(true);
             }
 
-            SearchResult result = new SearchResult(0, 50, 3, issues);
+            SearchResult result = new SearchResult(0, 50, 3, ISSUES);
             return Promises.promise(result);
         });
 
