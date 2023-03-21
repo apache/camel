@@ -48,7 +48,7 @@ class FtpPollEnrichConsumeWithDisconnectAndDeleteIT extends FtpServerTestSupport
         mock.expectedBodiesReceived(expected);
 
         ProducerTemplate triggerTemplate = context.createProducerTemplate();
-        triggerTemplate.sendBody("vm:trigger", "");
+        triggerTemplate.sendBody("seda:trigger", "");
 
         mock.setResultWaitTime(TimeUnit.MINUTES.toMillis(3));
         mock.assertIsSatisfied();
@@ -62,7 +62,7 @@ class FtpPollEnrichConsumeWithDisconnectAndDeleteIT extends FtpServerTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("vm:trigger").pollEnrich("ftp://admin@localhost:{{ftp.server.port}}/poll?password=admin&delete=true")
+                from("seda:trigger").pollEnrich("ftp://admin@localhost:{{ftp.server.port}}/poll?password=admin&delete=true")
                         .routeId("foo").to("mock:result");
             }
         };

@@ -33,7 +33,7 @@ public class PojoVmConsumerTest extends SpringTestSupport {
         String body = "<hello>world!</hello>";
         resultEndpoint.expectedBodiesReceived(body);
 
-        template.sendBody("vm:start", body);
+        template.sendBody("seda:start", body);
 
         resultEndpoint.assertIsSatisfied();
     }

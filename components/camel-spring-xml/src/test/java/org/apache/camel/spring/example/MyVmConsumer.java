@@ -32,7 +32,7 @@ public class MyVmConsumer {
     @EndpointInject("mock:result")
     private ProducerTemplate destination;
 
-    @Consume("vm:start")
+    @Consume("seda:start")
     public void doSomething(String body, Exchange exchange) {
         ObjectHelper.notNull(destination, "destination");
 
