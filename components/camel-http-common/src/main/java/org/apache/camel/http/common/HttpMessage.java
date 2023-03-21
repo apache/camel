@@ -98,7 +98,7 @@ public class HttpMessage extends DefaultMessage {
         }
 
         try {
-            return endpoint.getHttpBinding().parseBody(this);
+            return endpoint.getHttpBinding().parseBody(request, this);
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
         } finally {

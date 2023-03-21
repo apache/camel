@@ -39,18 +39,19 @@ public interface HttpBinding {
      * @param request the request
      * @param message the message to populate with data from request
      */
-    void readRequest(HttpServletRequest request, HttpMessage message);
+    void readRequest(HttpServletRequest request, Message message);
 
     /**
-     * Parses the body from a {@link org.apache.camel.http.common.HttpMessage}
+     * Parses the body from servlet request
      *
-     * @param  httpMessage         the http message
+     * @param  request             the request
+     * @param  message             the message
      * @return                     the parsed body returned as either a {@link java.io.InputStream} or a
      *                             {@link java.io.Reader} depending on the {@link #setUseReaderForPayload(boolean)}
      *                             property.
      * @throws java.io.IOException can be thrown
      */
-    Object parseBody(HttpMessage httpMessage) throws IOException;
+    Object parseBody(HttpServletRequest request, Message message) throws IOException;
 
     /**
      * Writes the exchange to the servlet response.

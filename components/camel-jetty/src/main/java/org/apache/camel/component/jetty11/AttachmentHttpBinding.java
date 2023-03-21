@@ -29,6 +29,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.attachment.Attachment;
 import org.apache.camel.attachment.AttachmentMessage;
@@ -36,7 +37,6 @@ import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.component.jetty.MultiPartFilter;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpHelper;
-import org.apache.camel.http.common.HttpMessage;
 import org.eclipse.jetty.http.HttpFields;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
     }
 
     @Override
-    protected void populateAttachments(HttpServletRequest request, HttpMessage message) {
+    protected void populateAttachments(HttpServletRequest request, Message message) {
         Boolean object = (Boolean) request.getAttribute(MultiPartFilter.MULTIPART);
         if (object != null && object) {
             Collection<Part> parts;
@@ -86,7 +86,7 @@ final class AttachmentHttpBinding extends DefaultHttpBinding {
     }
 
     @Override
-    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) {
+    protected void populateRequestParameters(HttpServletRequest request, Message message) {
         // we populate the http request parameters without checking the request
         // method
         Map<String, Object> headers = message.getHeaders();

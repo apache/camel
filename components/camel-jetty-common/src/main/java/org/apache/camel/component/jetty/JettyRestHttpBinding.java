@@ -18,9 +18,9 @@ package org.apache.camel.component.jetty;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.apache.camel.Message;
 import org.apache.camel.http.common.DefaultHttpBinding;
 import org.apache.camel.http.common.HttpCommonEndpoint;
-import org.apache.camel.http.common.HttpMessage;
 
 import static org.apache.camel.http.base.HttpHelper.evalPlaceholders;
 
@@ -40,7 +40,7 @@ public class JettyRestHttpBinding extends DefaultHttpBinding {
     }
 
     @Override
-    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) {
+    protected void populateRequestParameters(HttpServletRequest request, Message message) {
         super.populateRequestParameters(request, message);
 
         String path = request.getPathInfo();

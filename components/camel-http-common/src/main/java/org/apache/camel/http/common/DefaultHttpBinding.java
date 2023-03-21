@@ -110,7 +110,7 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     @Override
-    public void readRequest(HttpServletRequest request, HttpMessage message) {
+    public void readRequest(HttpServletRequest request, Message message) {
         LOG.trace("readRequest {}", request);
 
         // must read body before headers
@@ -152,7 +152,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
-    protected void readHeaders(HttpServletRequest request, HttpMessage message) {
+    protected void readHeaders(HttpServletRequest request, Message message) {
         LOG.trace("readHeaders {}", request);
 
         Map<String, Object> headers = message.getHeaders();
@@ -194,7 +194,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
-    protected void readBody(HttpServletRequest request, HttpMessage message) {
+    protected void readBody(HttpServletRequest request, Message message) {
         LOG.trace("readBody {}", request);
 
         // lets parse the body
@@ -228,7 +228,7 @@ public class DefaultHttpBinding implements HttpBinding {
         populateAttachments(request, message);
     }
 
-    protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) {
+    protected void populateRequestParameters(HttpServletRequest request, Message message) {
         //we populate the http request parameters without checking the request method
         Map<String, Object> headers = message.getHeaders();
         Enumeration<?> names = request.getParameterNames();
@@ -249,7 +249,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
-    protected void readFormUrlEncodedBody(HttpServletRequest request, HttpMessage message) throws UnsupportedEncodingException {
+    protected void readFormUrlEncodedBody(HttpServletRequest request, Message message) throws UnsupportedEncodingException {
         LOG.trace("readFormUrlEncodedBody {}", request);
         // should we extract key=value pairs from form bodies (application/x-www-form-urlencoded)
         // and map those to Camel headers
@@ -311,7 +311,7 @@ public class DefaultHttpBinding implements HttpBinding {
         return uri.substring(contextPath.length() + servletPath.length());
     }
 
-    protected void populateAttachments(HttpServletRequest request, HttpMessage message) {
+    protected void populateAttachments(HttpServletRequest request, Message message) {
         // check if there is multipart files, if so will put it into DataHandler
         Enumeration<?> names = request.getAttributeNames();
         while (names.hasMoreElements()) {
@@ -633,9 +633,8 @@ public class DefaultHttpBinding implements HttpBinding {
     }
 
     @Override
-    public Object parseBody(HttpMessage httpMessage) throws IOException {
+    public Object parseBody(HttpServletRequest request, Message message) throws IOException {
         // lets assume the body is a reader
-        HttpServletRequest request = httpMessage.getRequest();
         // there is only a body if we have a content length, or its -1 to indicate unknown length
         int len = request.getContentLength();
         LOG.trace("HttpServletRequest content-length: {}", len);
@@ -655,7 +654,7 @@ public class DefaultHttpBinding implements HttpBinding {
                 }
             }
             // read the response body from servlet request
-            return HttpHelper.readRequestBodyFromServletRequest(request, httpMessage.getExchange());
+            return HttpHelper.readRequestBodyFromServletRequest(request, message.getExchange());
         }
     }
 

@@ -26,12 +26,12 @@ import jakarta.activation.DataSource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.Part;
 
+import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.attachment.Attachment;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
 import org.apache.camel.http.common.DefaultHttpBinding;
-import org.apache.camel.http.common.HttpMessage;
 import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ public final class AttachmentHttpBinding extends DefaultHttpBinding {
     }
 
     @Override
-    protected void populateAttachments(HttpServletRequest request, HttpMessage message) {
+    protected void populateAttachments(HttpServletRequest request, Message message) {
         try {
             Collection<Part> parts = request.getParts();
             for (Part part : parts) {
