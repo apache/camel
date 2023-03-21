@@ -104,24 +104,11 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
      * Adds a known http endpoint managed by this component.
      */
     public void addHttpEndpoint(String uri, String verbs, Consumer consumer) {
-        boolean updated = false;
-
-        HttpEndpointModel model = httpEndpoints.stream().filter(e -> e.getUri().equals(uri)).findFirst().orElse(null);
-        if (model == null) {
-            model = new HttpEndpointModel(uri, verbs, consumer);
-            httpEndpoints.add(model);
-        } else {
-            updated = true;
-            model.addVerb(verbs);
-        }
-
+        HttpEndpointModel model = new HttpEndpointModel(uri, verbs, consumer);
+        httpEndpoints.add(model);
         for (PlatformHttpListener listener : listeners) {
             try {
-                if (updated) {
-                    listener.updateHttpEndpoint(model);
-                } else {
-                    listener.registerHttpEndpoint(model);
-                }
+                listener.registerHttpEndpoint(model);
             } catch (Exception e) {
                 LOG.warn("Error adding listener due to " + e.getMessage() + ". This exception is ignored", e);
             }
@@ -132,8 +119,9 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
      * Removes a known http endpoint managed by this component.
      */
     public void removeHttpEndpoint(String uri) {
-        httpEndpoints.stream().filter(e -> e.getUri().equals(uri)).findFirst().ifPresent(model -> {
-            httpEndpoints.remove(model);
+        List<HttpEndpointModel> toRemove = new ArrayList<>();
+        httpEndpoints.stream().filter(e -> e.getUri().equals(uri)).forEach(model -> {
+            toRemove.add(model);
             for (PlatformHttpListener listener : listeners) {
                 try {
                     listener.unregisterHttpEndpoint(model);
@@ -142,6 +130,7 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
                 }
             }
         });
+        httpEndpoints.removeAll(toRemove);
     }
 
     /**
