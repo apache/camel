@@ -117,6 +117,24 @@ The deprecated option `componentName` was removed. Please use either `producerCo
 The `uri` tags are now static instead of dynamic (by default), as potential too many tags generated due to URI with dynamic values.
 This can be enabled again by setting `camel.metrics.uriTagDynamic=true`.
 
+=== camel-platform-http-starter
+
+The `platform-http-starter` has been changed from using `camel-servlet` to use Spring HTTP server directly.
+Therefore, all the HTTP endpoints are no longer prefixed with the servlet context-path (default is `camel`).
+
+For example:
+
+[source,java]
+----
+from("platform-http:myservice")
+  .to("...")
+----
+
+Then calling _myservice_ would before require to include the context-path, such as `http://localhost:8080/camel/myservice`.
+Now the context-path is not in use, and the endpoint can be called with `http://localhost:8080/myservice`.
+
+NOTE: The `platform-http-starter` can also be used with Rest DSL.
+
 === Deprecated Components
 
 The following components that had been marked as deprecated, were removed in this release:
