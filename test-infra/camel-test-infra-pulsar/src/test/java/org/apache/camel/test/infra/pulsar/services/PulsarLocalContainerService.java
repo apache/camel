@@ -16,6 +16,8 @@
  */
 package org.apache.camel.test.infra.pulsar.services;
 
+import java.time.Duration;
+
 import org.apache.camel.test.infra.common.services.ContainerService;
 import org.apache.camel.test.infra.pulsar.common.PulsarProperties;
 import org.slf4j.Logger;
@@ -43,7 +45,8 @@ public class PulsarLocalContainerService implements PulsarService, ContainerServ
     }
 
     protected PulsarContainer initContainer(String imageName) {
-        return new PulsarContainer(DockerImageName.parse(imageName));
+        return new PulsarContainer(DockerImageName.parse(imageName))
+                .withStartupTimeout(Duration.ofMinutes(3L));
     }
 
     @Override
