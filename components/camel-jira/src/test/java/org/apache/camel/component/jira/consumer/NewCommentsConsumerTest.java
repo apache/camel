@@ -57,7 +57,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class NewCommentsConsumerTest extends CamelTestSupport {
 
-    private static List<Issue> issues = new ArrayList<>();
+    private static final List<Issue> ISSUES = new ArrayList<>();
 
     @Mock
     private JiraRestClient jiraClient;
@@ -81,13 +81,13 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
 
     @BeforeAll
     public static void beforeAll() {
-        issues.add(createIssueWithComments(1L, 1));
-        issues.add(createIssueWithComments(2L, 1));
-        issues.add(createIssueWithComments(3L, 1));
+        ISSUES.add(createIssueWithComments(3L, 1));
+        ISSUES.add(createIssueWithComments(2L, 1));
+        ISSUES.add(createIssueWithComments(1L, 1));
     }
 
     public void setMocks() {
-        SearchResult result = new SearchResult(0, 50, 100, issues);
+        SearchResult result = new SearchResult(0, 50, 100, ISSUES);
         Promise<SearchResult> promiseSearchResult = Promises.promise(result);
         Issue issue = createIssueWithComments(4L, 1);
         Promise<Issue> promiseIssue = Promises.promise(issue);
@@ -159,9 +159,9 @@ public class NewCommentsConsumerTest extends CamelTestSupport {
         Issue issue2 = createIssueWithComments(21L, 3000);
         Issue issue3 = createIssueWithComments(22L, 1000);
         List<Issue> newIssues = new ArrayList<>();
-        newIssues.add(issue1);
-        newIssues.add(issue2);
         newIssues.add(issue3);
+        newIssues.add(issue2);
+        newIssues.add(issue1);
         Issue issueWithNoComments = createIssue(31L);
 
         reset(searchRestClient);

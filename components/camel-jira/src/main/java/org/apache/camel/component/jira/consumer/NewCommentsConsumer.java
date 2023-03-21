@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class NewCommentsConsumer extends AbstractJiraConsumer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(NewCommentsConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NewCommentsConsumer.class);
 
     private Long lastCommentId = -1L;
 
