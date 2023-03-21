@@ -122,6 +122,11 @@ public class Sqs2Configuration implements Cloneable {
     @UriParam(defaultValue = "false")
     private boolean useDefaultCredentialsProvider;
 
+    @UriParam(defaultValue = "false")
+    private boolean useProfileCredentialsProvider;
+    @UriParam
+    private String profileCredentialsName;
+
     /**
      * Whether or not the queue is a FIFO queue
      */
@@ -578,6 +583,17 @@ public class Sqs2Configuration implements Cloneable {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
     }
 
+    /**
+     * Set whether the SQS client should expect to load credentials through a profile credentials provider.
+     */
+    public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
+        this.useProfileCredentialsProvider = useProfileCredentialsProvider;
+    }
+
+    public boolean isUseProfileCredentialsProvider() {
+        return useProfileCredentialsProvider;
+    }
+
     public String getBatchSeparator() {
         return batchSeparator;
     }
@@ -627,6 +643,17 @@ public class Sqs2Configuration implements Cloneable {
      */
     public void setUriEndpointOverride(String uriEndpointOverride) {
         this.uriEndpointOverride = uriEndpointOverride;
+    }
+
+    public String getProfileCredentialsName() {
+        return profileCredentialsName;
+    }
+
+    /**
+     * If using a profile credentials provider this parameter will set the profile name
+     */
+    public void setProfileCredentialsName(String profileCredentialsName) {
+        this.profileCredentialsName = profileCredentialsName;
     }
 
     // *************************************************
