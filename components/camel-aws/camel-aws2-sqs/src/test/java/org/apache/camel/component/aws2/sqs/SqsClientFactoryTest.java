@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws2.sqs;
 
-
 import org.apache.camel.component.aws2.sqs.client.Sqs2ClientFactory;
 import org.apache.camel.component.aws2.sqs.client.Sqs2InternalClient;
 import org.apache.camel.component.aws2.sqs.client.impl.Sqs2ClientIAMOptimized;
