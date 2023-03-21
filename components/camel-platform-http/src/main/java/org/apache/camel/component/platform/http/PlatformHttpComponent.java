@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.platform.http;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -48,12 +50,15 @@ import org.slf4j.LoggerFactory;
  */
 @Component("platform-http")
 public class PlatformHttpComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory {
+
     private static final Logger LOG = LoggerFactory.getLogger(PlatformHttpComponent.class);
 
     @Metadata(label = "advanced", description = "An HTTP Server engine implementation to serve the requests")
     private volatile PlatformHttpEngine engine;
 
     private final Set<HttpEndpointModel> httpEndpoints = new TreeSet<>();
+
+    private final List<PlatformHttpListener> listeners = new ArrayList<>();
 
     private volatile boolean localEngine;
 
@@ -84,7 +89,7 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
         // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
         Consumer consumer = doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration,
                 parameters, true);
-        addHttpEndpoint(contextPath, "GET");
+        addHttpEndpoint(contextPath, "GET", consumer);
         return consumer;
     }
 
@@ -99,12 +104,12 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
                         parameters, false);
         if (uriTemplate != null) {
             if (uriTemplate.startsWith("/")) {
-                addHttpEndpoint(basePath + uriTemplate, verb);
+                addHttpEndpoint(basePath + uriTemplate, verb, consumer);
             } else {
-                addHttpEndpoint(basePath + "/" + uriTemplate, verb);
+                addHttpEndpoint(basePath + "/" + uriTemplate, verb, consumer);
             }
         } else {
-            addHttpEndpoint(basePath, verb);
+            addHttpEndpoint(basePath, verb, consumer);
         }
         return consumer;
     }
@@ -112,13 +117,28 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
     /**
      * Adds a known http endpoint managed by this component.
      */
-    public void addHttpEndpoint(String uri, String verbs) {
+    public void addHttpEndpoint(String uri, String verbs, Consumer consumer) {
+        boolean updated = false;
+
         HttpEndpointModel model = httpEndpoints.stream().filter(e -> e.getUri().equals(uri)).findFirst().orElse(null);
         if (model == null) {
-            model = new HttpEndpointModel(uri, verbs);
+            model = new HttpEndpointModel(uri, verbs, consumer);
             httpEndpoints.add(model);
         } else {
+            updated = true;
             model.addVerb(verbs);
+        }
+
+        for (PlatformHttpListener listener : listeners) {
+            try {
+                if (updated) {
+                    listener.updateHttpEndpoint(model);
+                } else {
+                    listener.registerHttpEndpoint(model);
+                }
+            } catch (Exception e) {
+                LOG.warn("Error adding listener due to " + e.getMessage() + ". This exception is ignored", e);
+            }
         }
     }
 
@@ -126,7 +146,30 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
      * Removes a known http endpoint managed by this component.
      */
     public void removeHttpEndpoint(String uri) {
-        httpEndpoints.stream().filter(e -> e.getUri().equals(uri)).findFirst().ifPresent(httpEndpoints::remove);
+        httpEndpoints.stream().filter(e -> e.getUri().equals(uri)).findFirst().ifPresent(model -> {
+            httpEndpoints.remove(model);
+            for (PlatformHttpListener listener : listeners) {
+                try {
+                    listener.unregisterHttpEndpoint(model);
+                } catch (Exception e) {
+                    LOG.warn("Error removing listener due to " + e.getMessage() + ". This exception is ignored", e);
+                }
+            }
+        });
+    }
+
+    /**
+     * Adds a {@link PlatformHttpListener} listener.
+     */
+    public void addPlatformHttpListener(PlatformHttpListener listener) {
+        this.listeners.add(listener);
+    }
+
+    /**
+     * Removes an existing {@link PlatformHttpListener} listener.
+     */
+    public void removePlatformHttpListener(PlatformHttpListener listener) {
+        this.listeners.remove(listener);
     }
 
     /**
