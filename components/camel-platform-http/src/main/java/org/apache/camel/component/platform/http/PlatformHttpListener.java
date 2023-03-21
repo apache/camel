@@ -24,11 +24,6 @@ public interface PlatformHttpListener {
     void registerHttpEndpoint(HttpEndpointModel model);
 
     /**
-     * Callback when an existing HTTP endpoint is updated.
-     */
-    void updateHttpEndpoint(HttpEndpointModel model);
-
-    /**
      * Callback when an existing HTTP endpoint is removed.
      */
     void unregisterHttpEndpoint(HttpEndpointModel model);
