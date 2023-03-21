@@ -86,10 +86,8 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
             throws Exception {
 
         // reuse the createConsumer method we already have. The api need to use GET and match on uri prefix
-        Consumer consumer = doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration,
+        return doCreateConsumer(camelContext, processor, "GET", contextPath, null, null, null, configuration,
                 parameters, true);
-        addHttpEndpoint(contextPath, "GET", consumer);
-        return consumer;
     }
 
     @Override
@@ -98,19 +96,8 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
             String uriTemplate,
             String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters)
             throws Exception {
-        Consumer consumer
-                = doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration,
-                        parameters, false);
-        if (uriTemplate != null) {
-            if (uriTemplate.startsWith("/")) {
-                addHttpEndpoint(basePath + uriTemplate, verb, consumer);
-            } else {
-                addHttpEndpoint(basePath + "/" + uriTemplate, verb, consumer);
-            }
-        } else {
-            addHttpEndpoint(basePath, verb, consumer);
-        }
-        return consumer;
+        return doCreateConsumer(camelContext, processor, verb, basePath, uriTemplate, consumes, produces, configuration,
+                parameters, false);
     }
 
     /**
