@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.component.zookeepermaster.CuratorFactoryBean;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
@@ -68,6 +69,8 @@ public class MasterEndpointFailoverIT {
                 from("direct:start").to("seda:start");
             }
         });
+        SedaComponent sedaComponent = new SedaComponent();
+        producerContext.addComponent("seda", sedaComponent);
 
         template = producerContext.createProducerTemplate();
 
@@ -80,6 +83,7 @@ public class MasterEndpointFailoverIT {
                         .to("mock:result1");
             }
         });
+        consumerContext1.addComponent("seda", sedaComponent);
         consumerContext2 = new DefaultCamelContext(registry);
         consumerContext2.addRoutes(new RouteBuilder() {
             @Override
@@ -89,6 +93,7 @@ public class MasterEndpointFailoverIT {
                         .to("mock:result2");
             }
         });
+        consumerContext2.addComponent("seda", sedaComponent);
         // Need to start at less one consumerContext to enable the seda queue for producerContext
         producerContext.start();
         consumerContext1.start();
