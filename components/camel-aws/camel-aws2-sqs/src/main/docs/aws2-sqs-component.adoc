@@ -64,9 +64,11 @@ aggregate this number of messages.
 
 == Usage
 
-=== Static credentials vs Default Credential Provider
+=== Static credentials, Default Credential Provider and Profile Credentials Provider
 
 You have the possibility of avoiding the usage of explicit static credentials, by specifying the useDefaultCredentialsProvider option and set it to true.
+
+The order of evaluation for Default Credentials Provider is the following:
 
  - Java system properties - aws.accessKeyId and aws.secretKey
  - Environment variables - AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY.
@@ -74,6 +76,10 @@ You have the possibility of avoiding the usage of explicit static credentials, b
  - The shared credentials and config files.
  - Amazon ECS container credentials - loaded from the Amazon ECS if the environment variable AWS_CONTAINER_CREDENTIALS_RELATIVE_URI is set.
  - Amazon EC2 Instance profile credentials. 
+ 
+You have also the possibility of using Profile Credentials Provider, by specifying the useProfileCredentialsProvider option to true and profileCredentialsName to the profile name.
+
+Only one of static, default and profile credentials could be used at the same time.
 
 For more information about this you can look at https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html[AWS credentials documentation]
 
