@@ -290,7 +290,7 @@ public final class VertxHttpServer {
         dev.handler(handler);
         devSub.handler(handler);
 
-        phc.addHttpEndpoint("/q/dev", null);
+        phc.addHttpEndpoint("/q/dev", null, null);
     }
 
     public static void registerHealthCheck(CamelContext camelContext) {
@@ -366,7 +366,7 @@ public final class VertxHttpServer {
         live.handler(handler);
         ready.handler(handler);
 
-        phc.addHttpEndpoint("/q/health", null);
+        phc.addHttpEndpoint("/q/health", null, null);
     }
 
     private static void healthCheckStatus(StringBuilder sb, boolean up) {
