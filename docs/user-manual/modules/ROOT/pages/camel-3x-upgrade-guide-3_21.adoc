@@ -30,6 +30,12 @@ one of each out of the box.
 
 The option `camel.main.routesReloadRestartDuration` has changed its default value from `true` to `false`.
 
+=== camel-http-common
+
+The API in `org.apache.camel.http.common.HttpBinding` has changed slightly to be more reusable.
+The `parseBody` method now takes in `HttpServletRequest` as input parameter. And all `HttpMessage`
+has been changed to generic `Message` types.
+
 === camel-jaxb
 
 When using schema validation, then access to external DTD/Schema is disabled by default.

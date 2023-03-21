@@ -165,6 +165,12 @@ There is also a noticeable behavior change regarding the `socketTimeout`, it is 
 Finally, the options `connectTimeout` and `socketTimeout` along with any parameters included into `SocketConfig` and `ConnectionConfig`, need to be prefixed by `httpConnection.`,
 the rest of the parameters including those defined into `HttpClientBuilder` and `RequestConfig` still need to be prefixed by `httpClient.` like before.
 
+=== camel-http-common
+
+The API in `org.apache.camel.http.common.HttpBinding` has changed slightly to be more reusable.
+The `parseBody` method now takes in `HttpServletRequest` as input parameter. And all `HttpMessage`
+has been changed to generic `Message` types.
+
 === camel-micrometer-starter
 
 The `uri` tags are now static instead of dynamic (by default), as potential too many tags generated due to URI with dynamic values.
