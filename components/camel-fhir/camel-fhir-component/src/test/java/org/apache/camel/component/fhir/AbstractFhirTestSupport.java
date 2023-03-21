@@ -83,7 +83,7 @@ public abstract class AbstractFhirTestSupport extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         final CamelContext context = super.createCamelContext();
         this.fhirContext = new FhirContext(FhirVersionEnum.R4);
-        this.fhirContext.getRestfulClientFactory().setSocketTimeout(20 * 1000);
+        this.fhirContext.getRestfulClientFactory().setSocketTimeout(60 * 1000);
         // Set proxy so that FHIR resource URLs returned by the server are using the correct host and port
         this.fhirContext.getRestfulClientFactory().setProxy(service.getHost(), service.getPort());
         this.fhirClient = this.fhirContext.newRestfulGenericClient(service.getServiceBaseURL());
