@@ -29,6 +29,9 @@ import org.apache.camel.component.cm.client.SMSMessage;
 import org.apache.camel.test.spring.junit5.CamelSpringTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -127,16 +130,6 @@ public class SMSMessageTest {
     }
 
     @Test
-    public void testE164NullNumberIsInValid() {
-
-        final String phoneNumber = null;
-        final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
-
-        final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        assertEquals(1, constraintViolations.size(), "Unexpected number of constraint violations");
-    }
-
-    @Test
     public void testE164IsValid() {
 
         final SMSMessage m = new SMSMessage("Hello world!", validNumber);
@@ -145,10 +138,10 @@ public class SMSMessageTest {
         assertEquals(0, constraintViolations.size(), "Unexpected number of constraint violations");
     }
 
-    @Test
-    public void testE164NoPlusSignedNumberIsInvalid() {
-
-        final String phoneNumber = "34600000000";
+    @ParameterizedTest
+    @ValueSource(strings = { "34600000000", "+34 600 00 00 00", "" })
+    @NullSource
+    public void testIsInvalidNumbers(String phoneNumber) {
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
@@ -160,16 +153,6 @@ public class SMSMessageTest {
 
         final String phoneNumber = new PhoneNumber().setCountryCodeSource(CountryCodeSource.FROM_NUMBER_WITHOUT_PLUS_SIGN)
                 .setNationalNumber(0034600000000).toString();
-        final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
-
-        final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
-        assertEquals(1, constraintViolations.size(), "Unexpected number of constraint violations");
-    }
-
-    @Test
-    public void testE164NumberWithPlusSignIsInvalid() {
-
-        final String phoneNumber = "+34 600 00 00 00";
         final SMSMessage m = new SMSMessage("Hello world!", phoneNumber);
 
         final Set<ConstraintViolation<SMSMessage>> constraintViolations = validator.validate(m);
