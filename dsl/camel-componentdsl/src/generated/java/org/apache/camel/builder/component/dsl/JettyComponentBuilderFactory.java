@@ -378,24 +378,6 @@ public interface JettyComponentBuilderFactory {
             return this;
         }
         /**
-         * To use a custom org.apache.camel.component.jetty.JettyHttpBinding,
-         * which are used to customize how a response should be written for the
-         * producer.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.camel.component.jetty.JettyHttpBinding&lt;/code&gt; type.
-         * 
-         * Group: advanced
-         * 
-         * @param jettyHttpBinding the value to set
-         * @return the dsl builder
-         */
-        default JettyComponentBuilder jettyHttpBinding(
-                org.apache.camel.component.jetty.JettyHttpBinding jettyHttpBinding) {
-            doSetProperty("jettyHttpBinding", jettyHttpBinding);
-            return this;
-        }
-        /**
          * To use a existing configured org.eclipse.jetty.jmx.MBeanContainer if
          * JMX is enabled that Jetty uses for registering mbeans.
          * 
@@ -640,7 +622,6 @@ public interface JettyComponentBuilderFactory {
             case "errorHandler": ((JettyHttpComponent11) component).setErrorHandler((org.eclipse.jetty.server.handler.ErrorHandler) value); return true;
             case "httpBinding": ((JettyHttpComponent11) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;
             case "httpConfiguration": ((JettyHttpComponent11) component).setHttpConfiguration((org.apache.camel.http.common.HttpConfiguration) value); return true;
-            case "jettyHttpBinding": ((JettyHttpComponent11) component).setJettyHttpBinding((org.apache.camel.component.jetty.JettyHttpBinding) value); return true;
             case "mbContainer": ((JettyHttpComponent11) component).setMbContainer((org.eclipse.jetty.jmx.MBeanContainer) value); return true;
             case "headerFilterStrategy": ((JettyHttpComponent11) component).setHeaderFilterStrategy((org.apache.camel.spi.HeaderFilterStrategy) value); return true;
             case "proxyHost": ((JettyHttpComponent11) component).setProxyHost((java.lang.String) value); return true;
