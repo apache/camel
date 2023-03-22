@@ -39,8 +39,6 @@ public class JettyHttpComponent11Configurer extends PropertyConfigurerSupport im
         case "httpBinding": target.setHttpBinding(property(camelContext, org.apache.camel.http.common.HttpBinding.class, value)); return true;
         case "httpconfiguration":
         case "httpConfiguration": target.setHttpConfiguration(property(camelContext, org.apache.camel.http.common.HttpConfiguration.class, value)); return true;
-        case "jettyhttpbinding":
-        case "jettyHttpBinding": target.setJettyHttpBinding(property(camelContext, org.apache.camel.component.jetty.JettyHttpBinding.class, value)); return true;
         case "keystore": target.setKeystore(property(camelContext, java.lang.String.class, value)); return true;
         case "maxthreads":
         case "maxThreads": target.setMaxThreads(property(camelContext, java.lang.Integer.class, value)); return true;
@@ -111,8 +109,6 @@ public class JettyHttpComponent11Configurer extends PropertyConfigurerSupport im
         case "httpBinding": return org.apache.camel.http.common.HttpBinding.class;
         case "httpconfiguration":
         case "httpConfiguration": return org.apache.camel.http.common.HttpConfiguration.class;
-        case "jettyhttpbinding":
-        case "jettyHttpBinding": return org.apache.camel.component.jetty.JettyHttpBinding.class;
         case "keystore": return java.lang.String.class;
         case "maxthreads":
         case "maxThreads": return java.lang.Integer.class;
@@ -184,8 +180,6 @@ public class JettyHttpComponent11Configurer extends PropertyConfigurerSupport im
         case "httpBinding": return target.getHttpBinding();
         case "httpconfiguration":
         case "httpConfiguration": return target.getHttpConfiguration();
-        case "jettyhttpbinding":
-        case "jettyHttpBinding": return target.getJettyHttpBinding();
         case "keystore": return target.getKeystore();
         case "maxthreads":
         case "maxThreads": return target.getMaxThreads();

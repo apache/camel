@@ -259,6 +259,4 @@ public abstract class JettyHttpEndpoint extends HttpCommonEndpoint {
         this.enableCORS = enableCORS;
     }
 
-    public abstract JettyContentExchange createContentExchange();
-
 }

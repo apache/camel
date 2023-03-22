@@ -21,7 +21,6 @@ import java.net.URISyntaxException;
 
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Category;
-import org.apache.camel.component.jetty.JettyContentExchange;
 import org.apache.camel.component.jetty.JettyHttpComponent;
 import org.apache.camel.component.jetty.JettyHttpConstants;
 import org.apache.camel.component.jetty.JettyHttpEndpoint;
@@ -70,8 +69,4 @@ public class JettyHttpEndpoint11 extends JettyHttpEndpoint implements AsyncEndpo
         this.binding = binding;
     }
 
-    @Override
-    public JettyContentExchange createContentExchange() {
-        return new JettyContentExchange11();
-    }
 }

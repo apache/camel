@@ -119,7 +119,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     protected ThreadPool threadPool;
     protected MBeanContainer mbContainer;
     protected boolean enableJmx;
-    protected JettyHttpBinding jettyHttpBinding;
     protected Long continuationTimeout;
     protected boolean useContinuation = true;
     protected SSLContextParameters sslContextParameters;
@@ -777,20 +776,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     @Metadata(description = "If this option is true, Jetty JMX support will be enabled for this endpoint.")
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;
-    }
-
-    public JettyHttpBinding getJettyHttpBinding() {
-        return jettyHttpBinding;
-    }
-
-    /**
-     * To use a custom org.apache.camel.component.jetty.JettyHttpBinding, which are used to customize how a response
-     * should be written for the producer.
-     */
-    @Metadata(description = "To use a custom org.apache.camel.component.jetty.JettyHttpBinding, which are used to customize how a response should be written for the producer.",
-              label = "advanced")
-    public void setJettyHttpBinding(JettyHttpBinding jettyHttpBinding) {
-        this.jettyHttpBinding = jettyHttpBinding;
     }
 
     /**
