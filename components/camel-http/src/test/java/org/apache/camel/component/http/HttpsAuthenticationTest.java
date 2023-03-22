@@ -25,12 +25,20 @@ import org.apache.camel.component.http.handler.AuthenticationValidationHandler;
 import org.apache.camel.component.http.interceptor.RequestBasicAuth;
 import org.apache.camel.component.http.interceptor.ResponseBasicUnauthorized;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.apache.hc.client5.http.auth.AuthScope;
+import org.apache.hc.client5.http.auth.UsernamePasswordCredentials;
+import org.apache.hc.client5.http.impl.auth.BasicAuthCache;
+import org.apache.hc.client5.http.impl.auth.BasicCredentialsProvider;
+import org.apache.hc.client5.http.impl.auth.BasicScheme;
+import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.client5.http.ssl.NoopHostnameVerifier;
+import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.HttpRequestInterceptor;
 import org.apache.hc.core5.http.HttpResponseInterceptor;
 import org.apache.hc.core5.http.impl.bootstrap.HttpServer;
 import org.apache.hc.core5.http.impl.bootstrap.ServerBootstrap;
 import org.apache.hc.core5.http.protocol.DefaultHttpProcessor;
+import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
 import org.apache.hc.core5.http.protocol.ResponseContent;
 import org.junit.jupiter.api.AfterEach;
@@ -50,6 +58,8 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
 
     @BindToRegistry("sslContextParameters")
     private SSLContextParameters sslContextParameters = new SSLContextParameters();
+    @BindToRegistry("basicAuthContext")
+    private HttpContext basicAuthContexts = basicAuthContext();
 
     @BeforeEach
     @Override
@@ -75,11 +85,38 @@ public class HttpsAuthenticationTest extends BaseHttpsTest {
         }
     }
 
+    HttpContext basicAuthContext() {
+        UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(user, password.toCharArray());
+        BasicCredentialsProvider provider = new BasicCredentialsProvider();
+        provider.setCredentials(new AuthScope(null, -1), credentials);
+
+        BasicAuthCache authCache = new BasicAuthCache();
+        BasicScheme basicAuth = new BasicScheme();
+        authCache.put(new HttpHost("localhost", 8083), basicAuth);
+
+        HttpClientContext context = HttpClientContext.create();
+        context.setAuthCache(authCache);
+        context.setCredentialsProvider(provider);
+
+        return context;
+    }
+
     @Test
     public void httpsGetWithAuthentication() throws Exception {
 
         Exchange exchange = template.request("https://localhost:" + localServer.getLocalPort()
                                              + "/?authUsername=camel&authPassword=password&x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters",
+                exchange1 -> {
+                });
+
+        assertExchange(exchange);
+    }
+
+    @Test
+    public void httpsGetWithHttpCache() throws Exception {
+
+        Exchange exchange = template.request("https://localhost:" + localServer.getLocalPort()
+                                             + "?throwExceptionOnFailure=false&httpContext=#basicAuthContext",
                 exchange1 -> {
                 });
 
