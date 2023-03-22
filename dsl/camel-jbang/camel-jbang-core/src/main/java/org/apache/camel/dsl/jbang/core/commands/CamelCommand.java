@@ -102,7 +102,7 @@ public abstract class CamelCommand implements Callable<Integer> {
 
     protected void printConfigurationValues(String header) {
         final Properties configProperties = new Properties();
-        CommandLineHelper.loadProperties(properties -> configProperties.putAll(properties));
+        CommandLineHelper.loadProperties(configProperties::putAll);
         List<String> lines = new ArrayList<>();
         spec.options().forEach(opt -> {
             if (Arrays.stream(opt.names()).anyMatch(name ->
