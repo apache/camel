@@ -111,9 +111,9 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
             } else {
                 setError(true);
             }
-        } else {
-            observation.event(() -> getMessageNameFromFields(fields));
         }
+        // Making a log in spans / creating counters doesn't make a lot of sense
+        // This is a difference between Observation and OTel versions
     }
 
     @Override
@@ -135,15 +135,6 @@ public class MicrometerObservationSpanAdapter implements SpanAdapter {
     @Override
     public AutoCloseable makeCurrent() {
         return observation.openScope();
-    }
-
-    String getMessageNameFromFields(Map<String, ?> fields) {
-        Object eventValue = fields == null ? null : fields.get("message");
-        if (eventValue != null) {
-            return eventValue.toString();
-        }
-
-        return DEFAULT_EVENT_NAME;
     }
 
     public void setCorrelationContextItem(String key, String value) {

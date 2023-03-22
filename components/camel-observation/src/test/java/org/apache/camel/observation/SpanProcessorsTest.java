@@ -29,12 +29,12 @@ class SpanProcessorsTest extends CamelMicrometerObservationTestSupport {
 
     private static final SpanTestData[] TEST_DATA = {
             new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-                    .setParentId(2).addLogMessage("routing at b")
+                    .setParentId(2)
                     .addTag("b-tag", "request-header-value"),
             new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-                    .setParentId(2).addLogMessage("Exchange[ExchangePattern: InOut, BodyType: String, Body: Hello]"),
+                    .setParentId(2),
             new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-                    .setParentId(3).addLogMessage("routing at a").addLogMessage("End of routing"),
+                    .setParentId(3),
             new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
                     .setKind(SpanKind.SERVER)
     };
