@@ -473,6 +473,19 @@ public final class IOHelper {
     }
 
     /**
+     * Appends the text to the file.
+     */
+    public static void appendText(String text, File file) throws IOException {
+        if (!file.exists()) {
+            String path = FileUtil.onlyPath(file.getPath());
+            if (path != null) {
+                new File(path).mkdirs();
+            }
+        }
+        writeText(text, new FileOutputStream(file, true));
+    }
+
+    /**
      * Writes the text to the file.
      */
     public static void writeText(String text, File file) throws IOException {
