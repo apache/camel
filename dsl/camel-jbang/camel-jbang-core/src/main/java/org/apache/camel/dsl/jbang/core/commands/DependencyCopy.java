@@ -40,9 +40,13 @@ public class DependencyCopy extends Export {
     }
 
     @Override
-    protected Integer export() throws Exception {
+    public Integer doCall() throws Exception {
         this.quiet = true; // be quiet and generate from fresh data to ensure the output is up-to-date
+        return super.doCall();
+    }
 
+    @Override
+    protected Integer export() throws Exception {
         Integer answer = doExport();
         if (answer == 0) {
             File buildDir = new File(EXPORT_DIR);
@@ -51,9 +55,12 @@ public class DependencyCopy extends Export {
                           + outputDirectory,
                             null,
                             buildDir);
-            boolean done = p.waitFor(30, TimeUnit.SECONDS);
+            boolean done = p.waitFor(60, TimeUnit.SECONDS);
             if (!done) {
                 answer = 1;
+            }
+            if (p.exitValue() != 0) {
+                answer = p.exitValue();
             }
             // cleanup dir after complete
             FileUtil.removeDir(buildDir);
@@ -75,6 +82,7 @@ public class DependencyCopy extends Export {
             }
             // allow configuring versions from profile
             this.javaVersion = prop.getProperty("camel.jbang.javaVersion", this.javaVersion);
+            this.camelVersion = prop.getProperty("camel.jbang.camelVersion", this.camelVersion);
             this.kameletsVersion = prop.getProperty("camel.jbang.kameletsVersion", this.kameletsVersion);
             this.localKameletDir = prop.getProperty("camel.jbang.localKameletDir", this.localKameletDir);
             this.quarkusGroupId = prop.getProperty("camel.jbang.quarkusGroupId", this.quarkusGroupId);

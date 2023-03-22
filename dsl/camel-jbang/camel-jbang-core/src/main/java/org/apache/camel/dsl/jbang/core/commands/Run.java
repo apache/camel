@@ -222,7 +222,9 @@ public class Run extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
-        printConfigurationValues("Running integration with the following configuration:");
+        if (!silentRun) {
+            printConfigurationValues("Running integration with the following configuration:");
+        }
         // run
         return run();
     }

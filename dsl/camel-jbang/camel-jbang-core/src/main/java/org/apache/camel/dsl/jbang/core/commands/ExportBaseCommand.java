@@ -88,6 +88,10 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--java-version" }, description = "Java version (11 or 17)", defaultValue = "11")
     protected String javaVersion;
 
+    @CommandLine.Option(names = { "--camel-version" },
+                        description = "To export using a different Camel version than the default version.")
+    protected String camelVersion;
+
     @CommandLine.Option(names = {
             "--kamelets-version" }, description = "Apache Camel Kamelets version", defaultValue = "3.20.2")
     protected String kameletsVersion;
@@ -163,7 +167,9 @@ abstract class ExportBaseCommand extends CamelCommand {
             RuntimeUtil.configureLog("off", false, false, false, true);
         }
 
-        printConfigurationValues("Exporting integration with the following configuration:");
+        if (!quiet) {
+            printConfigurationValues("Exporting integration with the following configuration:");
+        }
         // export
         return export();
     }
