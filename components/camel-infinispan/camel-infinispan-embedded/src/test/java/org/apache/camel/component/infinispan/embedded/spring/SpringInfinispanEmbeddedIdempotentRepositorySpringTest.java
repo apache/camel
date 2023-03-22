@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.infinispan.embedded.spring;
 
-import org.junit.jupiter.api.Disabled;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 
-@Disabled("Jakarta Transactions are not yet supported by Infinispan")
 @DirtiesContext
 public class SpringInfinispanEmbeddedIdempotentRepositorySpringTest
         extends SpringInfinispanEmbeddedIdempotentRepositoryTestSupport {

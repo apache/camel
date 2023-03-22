@@ -25,12 +25,10 @@ import org.infinispan.commons.test.TestResourceTracker;
 import org.infinispan.distribution.MagicKey;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-@Disabled("Jakarta Transactions are not yet supported by Infinispan")
 public class InfinispanEmbeddedClusteredConsumerTest extends InfinispanEmbeddedClusteredTestSupport {
 
     private static final long WAIT_TIMEOUT = 5000;
