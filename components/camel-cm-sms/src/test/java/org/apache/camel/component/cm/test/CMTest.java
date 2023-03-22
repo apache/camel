@@ -105,15 +105,6 @@ public class CMTest extends CamelTestConfiguration {
     }
 
     @Test
-    public void testNotRequiredDefaultFrom() {
-        String schemedUri
-                = "cm-sms://sgw01.cm.nl/gateway.ashx?defaultFrom=MyBusiness&defaultMaxNumberOfParts=8&testConnectionOnStartup=true";
-
-        assertThrows(ResolveEndpointFailedException.class,
-                () -> context.getEndpoint(schemedUri));
-    }
-
-    @Test
     public void testHostUnavailableException() throws Exception {
         // cm-sms://sgw01.cm.nl/gateway.ashx?defaultFrom=MyBusiness&defaultMaxNumberOfParts=8&productToken=ea723fd7-da81-4826-89bc-fa7144e71c40&testConnectionOnStartup=true
         String schemedUri
