@@ -87,7 +87,7 @@
         <!-- testing - infinispan -->
         <dependency>
             <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-core</artifactId>
+            <artifactId>infinispan-core-jakarta</artifactId>
             <version>${infinispan-version}</version>
             <type>test-jar</type>
             <scope>test</scope>
@@ -95,6 +95,12 @@
         <dependency>
             <groupId>org.infinispan</groupId>
             <artifactId>infinispan-commons-test</artifactId>
+            <version>${infinispan-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.infinispan</groupId>
+            <artifactId>infinispan-spring6-embedded</artifactId>
             <version>${infinispan-version}</version>
             <scope>test</scope>
         </dependency>
