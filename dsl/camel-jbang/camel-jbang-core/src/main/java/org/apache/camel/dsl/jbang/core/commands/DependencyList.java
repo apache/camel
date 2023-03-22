@@ -49,9 +49,13 @@ public class DependencyList extends Export {
     }
 
     @Override
-    protected Integer export() throws Exception {
+    public Integer doCall() throws Exception {
         this.quiet = true; // be quiet and generate from fresh data to ensure the output is up-to-date
+        return super.doCall();
+    }
 
+    @Override
+    protected Integer export() throws Exception {
         if (!"gav".equals(output) && !"maven".equals(output)) {
             System.err.println("--output must be either gav or maven, was: " + output);
             return 1;
@@ -176,6 +180,7 @@ public class DependencyList extends Export {
             }
             // allow configuring versions from profile
             this.javaVersion = prop.getProperty("camel.jbang.javaVersion", this.javaVersion);
+            this.camelVersion = prop.getProperty("camel.jbang.camelVersion", this.camelVersion);
             this.kameletsVersion = prop.getProperty("camel.jbang.kameletsVersion", this.kameletsVersion);
             this.localKameletDir = prop.getProperty("camel.jbang.localKameletDir", this.localKameletDir);
             this.quarkusGroupId = prop.getProperty("camel.jbang.quarkusGroupId", this.quarkusGroupId);
@@ -193,6 +198,7 @@ public class DependencyList extends Export {
             runtime = "camel-main";
         }
 
+        // turn off noise
         if ("spring-boot".equals(runtime) || "camel-spring-boot".equals(runtime)) {
             return export(new ExportSpringBoot(getMain()));
         } else if ("quarkus".equals(runtime) || "camel-quarkus".equals(runtime)) {
