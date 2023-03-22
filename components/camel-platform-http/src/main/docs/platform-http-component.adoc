@@ -31,19 +31,29 @@ Maven users will need to add the following dependency to their `pom.xml` for thi
 == Platform HTTP Provider
 
 To use Platform HTTP a provider (engine) is required to be available on the classpath.
-The purpose is to have drivers for different runtimes such as Quarkus, VertX, or Spring Boot.
+The purpose is to have drivers for different runtimes such as Quarkus, or Spring Boot.
 
-At this moment there is only support for Quarkus and VertX by `camel-platform-http-vertx`.
-This JAR must be on the classpath otherwise the Platform HTTP component cannot be used and an
-exception will be thrown on startup.
+To use Quarkus:
 
 [source,xml]
 ----
 <dependency>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-platform-http-vertx</artifactId>
+    <groupId>org.apache.camel.quarkus</groupId>
+    <artifactId>camel-quarkus-platform-http</artifactId>
     <version>x.x.x</version>
-    <!-- use the same version as your Camel core version -->
+    <!-- use the same version as your Camel Quarkus version -->
+</dependency>
+----
+
+And for Spring Boot:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel.springboot</groupId>
+    <artifactId>camel-platform-http-starter</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel version -->
 </dependency>
 ----
 
@@ -66,4 +76,4 @@ include::spring-boot:partial$starter.adoc[]
 
 Platform HTTP component can act as a reverse proxy, in that case some headers are populated from the absolute URL received on the request line of the HTTP request. Those headers are specific to the underlining platform.
 
-At this moment, this feature is only supported for Vert.x in `camel-platform-http-vertx` component.
+At this moment, this feature is only supported for Quarkus implemented in `camel-platform-http-vertx` component.
