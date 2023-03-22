@@ -44,9 +44,4 @@
         <module>camel-partial-classpath-test</module>
         <module>camel-typeconverterscan-test</module>
     </modules>
-
-    <build>
-        <plugins>
-        </plugins>
-    </build>
 </project>
