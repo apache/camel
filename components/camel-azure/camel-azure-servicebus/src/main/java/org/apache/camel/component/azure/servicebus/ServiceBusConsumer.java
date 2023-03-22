@@ -30,14 +30,13 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusClientFactory;
 import org.apache.camel.component.azure.servicebus.client.ServiceBusReceiverAsyncClientWrapper;
 import org.apache.camel.component.azure.servicebus.operations.ServiceBusReceiverOperations;
-import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
+import reactor.core.scheduler.Schedulers;
 
 public class ServiceBusConsumer extends DefaultConsumer {
 
-    private Synchronization onCompletion;
     private ServiceBusReceiverAsyncClientWrapper clientWrapper;
     private ServiceBusReceiverOperations operations;
 
@@ -55,7 +54,6 @@ public class ServiceBusConsumer extends DefaultConsumer {
     @Override
     protected void doInit() throws Exception {
         super.doInit();
-        onCompletion = new ConsumerOnCompletion();
     }
 
     @Override
@@ -139,7 +137,7 @@ public class ServiceBusConsumer extends DefaultConsumer {
 
     private void onEventListener(final ServiceBusReceivedMessage message) {
         final Exchange exchange = createServiceBusExchange(message);
-
+        final ConsumerOnCompletion onCompletion = new ConsumerOnCompletion(message);
         // add exchange callback
         exchange.adapt(ExtendedExchange.class).addOnCompletion(onCompletion);
         // use default consumer callback
@@ -202,12 +200,28 @@ public class ServiceBusConsumer extends DefaultConsumer {
     }
 
     private class ConsumerOnCompletion extends SynchronizationAdapter {
+        private final ServiceBusReceivedMessage message;
+
+        public ConsumerOnCompletion(ServiceBusReceivedMessage message) {
+            this.message = message;
+        }
+
+        @Override
+        public void onComplete(Exchange exchange) {
+            super.onComplete(exchange);
+            if (!getConfiguration().isDisableAutoComplete()) {
+                clientWrapper.complete(message).subscribeOn(Schedulers.boundedElastic()).subscribe();
+            }
+        }
 
         @Override
         public void onFailure(Exchange exchange) {
             final Exception cause = exchange.getException();
             if (cause != null) {
                 getExceptionHandler().handleException("Error during processing exchange.", exchange, cause);
+            }
+            if (!getConfiguration().isDisableAutoComplete()) {
+                clientWrapper.abandon(message).subscribeOn(Schedulers.boundedElastic()).subscribe();
             }
         }
     }
