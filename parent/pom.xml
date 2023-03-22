@@ -3369,7 +3369,7 @@
                 </property>
             </activation>
             <properties>
-                <maven.test.skip.exec>true</maven.test.skip.exec>
+                <skipTests>true</skipTests>
                 <archetype.test.skip>true</archetype.test.skip>
                 <assembly.skipAssembly>true</assembly.skipAssembly>
                 <fastinstall>true</fastinstall>
