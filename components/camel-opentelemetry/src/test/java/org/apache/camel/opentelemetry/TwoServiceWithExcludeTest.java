@@ -19,6 +19,7 @@ package org.apache.camel.opentelemetry;
 import java.util.Collections;
 import java.util.Set;
 
+import io.opentelemetry.api.trace.SpanKind;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,9 @@ class TwoServiceWithExcludeTest extends CamelOpenTelemetryTestSupport {
 
     private static SpanTestData[] testdata = {
             new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
+                    .setParentId(1),
+            new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
+                    .setKind(SpanKind.CLIENT)
     };
 
     TwoServiceWithExcludeTest() {
