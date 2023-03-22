@@ -145,9 +145,6 @@ public class ServiceBusConsumer extends DefaultConsumer {
         // use default consumer callback
         AsyncCallback cb = defaultConsumerCallback(exchange, true);
         getAsyncProcessor().process(exchange, cb);
-        if (exchange.getException() != null) {
-            throw RuntimeCamelException.wrapRuntimeException(exchange.getException());
-        }
     }
 
     private Exchange createServiceBusExchange(final ServiceBusReceivedMessage receivedMessage) {
@@ -193,7 +190,6 @@ public class ServiceBusConsumer extends DefaultConsumer {
             getExceptionHandler().handleException("Error processing exchange", exchange,
                     exchange.getException());
         }
-        throw RuntimeCamelException.wrapRuntimeException(errorContext);
     }
 
     private Exchange createServiceBusExchange(final Throwable errorContext) {
