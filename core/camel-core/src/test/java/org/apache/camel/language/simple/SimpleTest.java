@@ -1708,8 +1708,18 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${type:org.apache.camel.ExchangePattern.InOut}", ExchangePattern.InOut);
 
         // non existing fields
-        assertExpression("${type:org.apache.camel.ExchangePattern.}", null);
-        assertExpression("${type:org.apache.camel.ExchangePattern.UNKNOWN}", null);
+        try {
+            assertExpression("${type:org.apache.camel.ExchangePattern.}", null);
+            fail("Should throw exception");
+        } catch (Exception e) {
+            assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
+        }
+        try {
+            assertExpression("${type:org.apache.camel.ExchangePattern.UNKNOWN}", null);
+            fail("Should throw exception");
+        } catch (Exception e) {
+            assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
+        }
     }
 
     @Test

@@ -906,19 +906,37 @@ public final class SimpleExpressionBuilder {
                     String after = text.substring(pos + 1);
                     type = classResolver.resolveClass(before);
                     if (type != null) {
-                        return ObjectHelper.lookupConstantFieldValue(type, after);
+                        // special for enum constants
+                        if (type.isEnum()) {
+                            Class<Enum<?>> enumClass = (Class<Enum<?>>) type;
+                            for (Enum<?> enumValue : enumClass.getEnumConstants()) {
+                                if (enumValue.name().equalsIgnoreCase(after)) {
+                                    return type.cast(enumValue);
+                                }
+                            }
+                            throw CamelExecutionException.wrapCamelExecutionException(exchange,
+                                    new ClassNotFoundException("Cannot find enum: " + after + " on type: " + type));
+                        } else {
+                            // we assume it is a field constant
+                            Object answer = ObjectHelper.lookupConstantFieldValue(type, after);
+                            if (answer != null) {
+                                return answer;
+                            }
+                        }
                     }
                 }
 
                 throw CamelExecutionException.wrapCamelExecutionException(exchange,
-                        new ClassNotFoundException("Cannot find type " + text));
+                        new ClassNotFoundException("Cannot find type: " + text));
             }
 
             @Override
             public String toString() {
                 return "type:" + name;
             }
-        };
+        }
+
+        ;
     }
 
     /**
