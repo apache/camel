@@ -57,7 +57,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.KeyValueHolder;
-import org.apache.camel.util.StringHelper;
+import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
@@ -428,7 +428,7 @@ public final class JaxbHelper {
             final String attName = attr.getName();
 
             if (attName.equals("uri") || attName.endsWith("Uri")) {
-                attr.setValue(removeNoiseFromUri(attr.getValue()));
+                attr.setValue(URISupport.removeNoiseFromUri(attr.getValue()));
             }
         }
 
@@ -443,17 +443,4 @@ public final class JaxbHelper {
         }
     }
 
-    private static String removeNoiseFromUri(String uri) {
-        String before = StringHelper.before(uri, "?");
-        String after = StringHelper.after(uri, "?");
-
-        if (before != null && after != null) {
-            String changed = after.replaceAll("&\\s+", "&").trim();
-            if (!after.equals(changed)) {
-                String newAtr = before.trim() + "?" + changed;
-                return newAtr;
-            }
-        }
-        return uri;
-    }
 }
