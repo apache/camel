@@ -70,7 +70,7 @@ public class CwComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() {
         Cw2Component component = context.getComponent("aws2-cw", Cw2Component.class);
         assertThrows(IllegalArgumentException.class, () -> {
-            component.createEndpoint("aws2-cw://camel.apache.org/test?accessKey=xxx");
+            component.createEndpoint("aws2-cw://camel.apache.org/test");
         });
     }
 
