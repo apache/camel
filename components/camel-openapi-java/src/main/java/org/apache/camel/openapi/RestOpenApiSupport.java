@@ -270,6 +270,16 @@ public class RestOpenApiSupport {
             openApiConfig.setSchemes(new String[] { "http" });
         }
 
+        String defaultConsumes = (String) config.get("api.default.consumes");
+        if (defaultConsumes != null) {
+            openApiConfig.setDefaultConsumes(defaultConsumes);
+        }
+
+        String defaultProduces = (String) config.get("api.default.produces");
+        if (defaultProduces != null) {
+            openApiConfig.setDefaultProduces(defaultProduces);
+        }
+
         String version = (String) config.get("api.version");
         String title = (String) config.get("api.title");
         String description = (String) config.get("api.description");

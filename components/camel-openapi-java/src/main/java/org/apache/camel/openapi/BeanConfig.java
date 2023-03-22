@@ -26,6 +26,8 @@ import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 
 public class BeanConfig {
+    public static final String DEFAULT_MEDIA_TYPE = "application/json";
+
     String[] schemes;
     String title;
     String version;
@@ -35,6 +37,8 @@ public class BeanConfig {
     Info info;
     String host;
     String basePath;
+    String defaultConsumes = DEFAULT_MEDIA_TYPE;
+    String defaultProduces = DEFAULT_MEDIA_TYPE;
 
     public String[] getSchemes() {
         return schemes;
@@ -104,6 +108,22 @@ public class BeanConfig {
                 this.basePath = basePath;
             }
         }
+    }
+
+    public String getDefaultConsumes() {
+        return defaultConsumes;
+    }
+
+    public void setDefaultConsumes(String defaultConsumes) {
+        this.defaultConsumes = defaultConsumes;
+    }
+
+    public String getDefaultProduces() {
+        return defaultProduces;
+    }
+
+    public void setDefaultProduces(String defaultProduces) {
+        this.defaultProduces = defaultProduces;
     }
 
     public OasDocument configure(OasDocument openApi) {
