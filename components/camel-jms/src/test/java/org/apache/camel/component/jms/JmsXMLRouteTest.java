@@ -32,8 +32,9 @@ import org.apache.camel.test.infra.core.annotations.ContextFixture;
 import org.apache.camel.util.xml.StringSource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -52,8 +53,9 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
 
-    @Test
-    public void testLondonWithFileStreamAsObject() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "direct:object", "direct:bytes", "direct:default" })
+    public void testLondonWithFileStream(String endpointUri) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
         mock.message(0).body(String.class).contains("James");
@@ -61,41 +63,14 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
         Source source = new StreamSource(new FileInputStream(TEST_LONDON));
         assertNotNull(source);
 
-        template.sendBody("direct:object", source);
+        template.sendBody(endpointUri, source);
 
         MockEndpoint.assertIsSatisfied(context);
     }
 
-    @Test
-    public void testLondonWithFileStreamAsBytes() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:london");
-        mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).contains("James");
-
-        Source source = new StreamSource(new FileInputStream(TEST_LONDON));
-        assertNotNull(source);
-
-        template.sendBody("direct:bytes", source);
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    public void testLondonWithFileStreamAsDefault() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:london");
-        mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).contains("James");
-
-        Source source = new StreamSource(new FileInputStream(TEST_LONDON));
-        assertNotNull(source);
-
-        template.sendBody("direct:default", source);
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    public void testTampaWithFileStreamAsObject() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "direct:object", "direct:bytes", "direct:default" })
+    public void testTampaWithFileStream(String endpointUri) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:tampa");
         mock.expectedMessageCount(1);
         mock.message(0).body(String.class).contains("Hiram");
@@ -103,41 +78,14 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
         Source source = new StreamSource(new FileInputStream(TEST_TAMPA));
         assertNotNull(source);
 
-        template.sendBody("direct:object", source);
+        template.sendBody(endpointUri, source);
 
         MockEndpoint.assertIsSatisfied(context);
     }
 
-    @Test
-    public void testTampaWithFileStreamAsBytes() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:tampa");
-        mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).contains("Hiram");
-
-        Source source = new StreamSource(new FileInputStream(TEST_TAMPA));
-        assertNotNull(source);
-
-        template.sendBody("direct:bytes", source);
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    public void testTampaWithFileStreamAsDefault() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:tampa");
-        mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).contains("Hiram");
-
-        Source source = new StreamSource(new FileInputStream(TEST_TAMPA));
-        assertNotNull(source);
-
-        template.sendBody("direct:default", source);
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    public void testLondonWithStringSourceAsObject() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "direct:object", "direct:bytes", "direct:default" })
+    public void testLondonWithStringSourceAsObject(String endpointUri) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
         mock.message(0).body(String.class).contains("James");
@@ -151,47 +99,7 @@ public class JmsXMLRouteTest extends AbstractJMSTest {
                                          + "</person>");
         assertNotNull(source);
 
-        template.sendBody("direct:object", source);
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    public void testLondonWithStringSourceAsBytes() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:london");
-        mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).contains("James");
-
-        Source source = new StringSource(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                                         + "<person user=\"james\">\n"
-                                         + "  <firstName>James</firstName>\n"
-                                         + "  <lastName>Strachan</lastName>\n"
-                                         + "  <city>London</city>\n"
-                                         + "</person>");
-        assertNotNull(source);
-
-        template.sendBody("direct:bytes", source);
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    public void testLondonWithStringSourceAsDefault() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:london");
-        mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).contains("James");
-
-        Source source = new StringSource(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                                         + "<person user=\"james\">\n"
-                                         + "  <firstName>James</firstName>\n"
-                                         + "  <lastName>Strachan</lastName>\n"
-                                         + "  <city>London</city>\n"
-                                         + "</person>");
-        assertNotNull(source);
-
-        template.sendBody("direct:default", source);
+        template.sendBody(endpointUri, source);
 
         MockEndpoint.assertIsSatisfied(context);
     }
