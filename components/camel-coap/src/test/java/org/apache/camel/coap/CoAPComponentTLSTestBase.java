@@ -42,7 +42,10 @@ import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.scandium.dtls.pskstore.PskStore;
 import org.eclipse.californium.scandium.dtls.pskstore.StaticPskStore;
 import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
 
@@ -54,6 +57,20 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     private static final int PORT6 = AvailablePortFinder.getNextAvailable();
     private static final int PORT7 = AvailablePortFinder.getNextAvailable();
     private static final int PORT8 = AvailablePortFinder.getNextAvailable();
+
+    @ParameterizedTest
+    @ValueSource(strings = { "direct:start", "direct:selfsigned", "direct:clientauth", "direct:ciphersuites" })
+    @DisplayName("Test calls with/without certificates")
+    void testCall(String endpointUri) throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+        mock.expectedBodiesReceived("Hello Camel CoAP");
+        mock.expectedHeaderReceived(CoAPConstants.CONTENT_TYPE,
+                MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
+        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
+        sendBodyAndHeader(endpointUri, "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        MockEndpoint.assertIsSatisfied(context);
+    }
 
     @Test
     void testSuccessfulCall() throws Exception {
@@ -67,63 +84,13 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
         MockEndpoint.assertIsSatisfied(context);
     }
 
-    @Test
-    void testNoTruststore() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "direct:notruststore", "direct:failedtrust", "direct:failedclientauth" })
+    @DisplayName("Tests different types of trust stores")
+    void testTrustStores(String endpointUri) throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
-        sendBodyAndHeader("direct:notruststore", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    void testTrustValidationFailed() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
-        sendBodyAndHeader("direct:failedtrust", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    void testSelfSigned() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived("Hello Camel CoAP");
-        mock.expectedHeaderReceived(CoAPConstants.CONTENT_TYPE,
-                MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
-        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
-        sendBodyAndHeader("direct:selfsigned", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    void testClientAuthentication() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived("Hello Camel CoAP");
-        mock.expectedHeaderReceived(CoAPConstants.CONTENT_TYPE,
-                MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
-        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
-        sendBodyAndHeader("direct:clientauth", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    void testFailedClientAuthentication() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
-        sendBodyAndHeader("direct:failedclientauth", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    void testCipherSuites() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-        mock.expectedBodiesReceived("Hello Camel CoAP");
-        mock.expectedHeaderReceived(CoAPConstants.CONTENT_TYPE,
-                MediaTypeRegistry.toString(MediaTypeRegistry.APPLICATION_OCTET_STREAM));
-        mock.expectedHeaderReceived(CoAPConstants.COAP_RESPONSE_CODE, CoAP.ResponseCode.CONTENT.toString());
-        sendBodyAndHeader("direct:ciphersuites", "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
+        sendBodyAndHeader(endpointUri, "Camel CoAP", CoAPConstants.COAP_METHOD, "POST");
         MockEndpoint.assertIsSatisfied(context);
     }
 
