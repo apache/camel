@@ -82,7 +82,7 @@ with `api.xxx` is configured using `apiProperty` dsl.
 |Option |Type |Description
 
 |cors |Boolean |Whether to enable CORS. Notice this only enables CORS for the api
-browser, and not the actual access to the REST services. Is default
+browser, and not the actual access to the REST services. The default is
 false.
 
 |openapi.version |String |OpenApi spec version. Is default 3.0.
@@ -120,6 +120,14 @@ So using relative paths is much easier. See above for an example.
 |api.license.name |String |The license name used for the API.
 
 |api.license.url |String |A URL to the license used for the API.
+
+|api.default.consumes |String |Comma separated list of default media types when `RestParamType.body` is used
+without providing any `.consumes()` configuration. The default value is `application/json`. Note that this applies only
+to the generated OpenAPI document and not to the actual REST services.
+
+|api.default.produces |String |Comma separated list of default media types when `outType` is used
+without providing any `.produces()` configuration. The default value is `application/json`. Note that this applies only
+to the generated OpenAPI document and not to the actual REST services
 |===
 
 == Adding Security Definitions in API doc

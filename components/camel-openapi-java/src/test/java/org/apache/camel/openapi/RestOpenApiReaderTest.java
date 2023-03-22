@@ -47,40 +47,95 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                rest("/hello").consumes("application/json").produces("application/json").get("/hi/{name}")
-                        .description("Saying hi").param().name("name").type(RestParamType.path)
-                        .dataType("string").description("Who is it").example("Donald Duck").endParam()
-                        .param().name("filter").description("Filters to apply to the entity.").type(RestParamType.query)
-                        .dataType("array").arrayType("date-time").endParam().to("log:hi")
-                        .get("/bye/{name}").description("Saying bye").param().name("name")
-                        .type(RestParamType.path).dataType("string").description("Who is it").example("Donald Duck").endParam()
-                        .responseMessage().code(200).message("A reply number")
-                        .responseModel(float.class).example("success", "123").example("error", "-1").endResponseMessage()
-                        .to("log:bye").post("/bye")
-                        .description("To update the greeting message").consumes("application/xml").produces("application/xml")
-                        .param().name("greeting").type(RestParamType.body)
-                        .dataType("string").description("Message to use as greeting")
-                        .example("application/xml", "<hello>Hi</hello>").endParam().to("log:bye");
+                rest("/hello")
+                        .consumes("application/json")
+                        .produces("application/json")
+
+                        .get("/hi/{name}")
+                        .description("Saying hi")
+                        .param()
+                        .name("name")
+                        .type(RestParamType.path)
+                        .dataType("string")
+                        .description("Who is it")
+                        .example("Donald Duck")
+                        .endParam()
+                        .param()
+                        .name("filter")
+                        .description("Filters to apply to the entity.")
+                        .type(RestParamType.query)
+                        .dataType("array")
+                        .arrayType("date-time")
+                        .endParam()
+                        .to("log:hi")
+
+                        .get("/bye/{name}")
+                        .description("Saying bye")
+                        .param()
+                        .name("name")
+                        .type(RestParamType.path)
+                        .dataType("string")
+                        .description("Who is it")
+                        .example("Donald Duck")
+                        .endParam()
+                        .responseMessage()
+                        .code(200)
+                        .message("A reply number")
+                        .responseModel(float.class)
+                        .example("success", "123")
+                        .example("error", "-1")
+                        .endResponseMessage()
+                        .to("log:bye")
+
+                        .post("/bye")
+                        .description("To update the greeting message")
+                        .consumes("application/xml")
+                        .produces("application/xml")
+                        .outType(String.class)
+                        .param()
+                        .name("greeting")
+                        .type(RestParamType.body)
+                        .dataType("string")
+                        .description("Message to use as greeting")
+                        .example("application/xml", "<hello>Hi</hello>")
+                        .endParam()
+                        .to("log:bye");
 
                 rest("/tag")
                         .get("single")
                         .tag("Organisation")
-                        .consumes("application/json")
-                        .produces("application/json")
+                        .outType(String.class)
+                        .param()
+                        .name("body")
+                        .type(RestParamType.body)
+                        .dataType("string")
+                        .description("Message body")
+                        .endParam()
                         .to("log:bye");
 
                 rest("/tag")
                         .get("multiple/a")
                         .tag("Organisation,Group A")
-                        .consumes("application/json")
-                        .produces("application/json")
+                        .outType(String.class)
+                        .param()
+                        .name("body")
+                        .type(RestParamType.body)
+                        .dataType("string")
+                        .description("Message body")
+                        .endParam()
+
                         .to("log:bye");
 
                 rest("/tag")
                         .get("multiple/b")
                         .tag("Organisation,Group B")
-                        .consumes("application/json")
-                        .produces("application/json")
+                        .outType(String.class)
+                        .param()
+                        .name("body")
+                        .type(RestParamType.body)
+                        .dataType("string")
+                        .description("Message body")
+                        .endParam()
                         .to("log:bye");
 
             }
@@ -177,9 +232,11 @@ public class RestOpenApiReaderTest extends CamelTestSupport {
         assertTrue(json.contains("\"format\" : \"date-time\""));
 
         assertTrue(flatJson.contains("\"/hello/bye/{name}\" : { \"get\" : { \"tags\" : [ \"/hello\" ],"));
-        assertTrue(flatJson.contains("\"/tag/single\" : { \"get\" : { \"tags\" : [ \"Organisation\" ],"));
-        assertTrue(flatJson.contains("\"/tag/multiple/a\" : { \"get\" : { \"tags\" : [ \"Organisation\", \"Group A\" ],"));
-        assertTrue(flatJson.contains("\"/tag/multiple/b\" : { \"get\" : { \"tags\" : [ \"Organisation\", \"Group B\" ],"));
+        assertTrue(flatJson.matches(".*\"/tag/single\" : \\{ \"get\" : .* \"tags\" : \\[ \"Organisation\" ],.*"));
+        assertTrue(
+                flatJson.matches(".*\"/tag/multiple/a\" : \\{ \"get\" : .* \"tags\" : \\[ \"Organisation\", \"Group A\" ],.*"));
+        assertTrue(
+                flatJson.matches(".*\"/tag/multiple/b\" : \\{ \"get\" : .*\"tags\" : \\[ \"Organisation\", \"Group B\" ],.*"));
         assertTrue(flatJson.contains(
                 "\"tags\" : [ { \"name\" : \"Group B\" }, { \"name\" : \"Organisation\" }, { \"name\" : \"Group A\" }, { \"name\" : \"/hello\" } ]"));
 

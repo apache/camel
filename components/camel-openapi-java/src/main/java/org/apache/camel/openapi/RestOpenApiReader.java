@@ -158,7 +158,7 @@ public class RestOpenApiReader {
         for (RestDefinition rest : rests) {
             Boolean disabled = CamelContextHelper.parseBoolean(camelContext, rest.getDisabled());
             if (disabled == null || !disabled) {
-                parse(camelContext, openApi, rest, camelContextId, classResolver);
+                parse(camelContext, openApi, rest, camelContextId, classResolver, config);
             }
         }
 
@@ -190,7 +190,7 @@ public class RestOpenApiReader {
 
     private void parse(
             CamelContext camelContext, OasDocument openApi, RestDefinition rest, String camelContextId,
-            ClassResolver classResolver)
+            ClassResolver classResolver, BeanConfig config)
             throws ClassNotFoundException {
 
         // only include enabled verbs
@@ -269,7 +269,7 @@ public class RestOpenApiReader {
             appendModels(clazz, openApi);
         }
 
-        doParseVerbs(camelContext, openApi, rest, camelContextId, verbs, pathAsTags);
+        doParseVerbs(camelContext, openApi, rest, camelContextId, verbs, pathAsTags, config);
 
         // setup root security node if necessary
         List<SecurityDefinition> securityRequirements = rest.getSecurityRequirements();
@@ -495,7 +495,7 @@ public class RestOpenApiReader {
 
     private void doParseVerbs(
             CamelContext camelContext, OasDocument openApi, RestDefinition rest, String camelContextId,
-            List<VerbDefinition> verbs, String[] pathAsTags) {
+            List<VerbDefinition> verbs, String[] pathAsTags, BeanConfig config) {
 
         String basePath = buildBasePath(camelContext, rest);
 
@@ -556,7 +556,15 @@ public class RestOpenApiReader {
             path = setPathOperation(path, op, method);
 
             String consumes = getValue(camelContext, verb.getConsumes() != null ? verb.getConsumes() : rest.getConsumes());
+            if (consumes == null) {
+                consumes = config.defaultConsumes;
+            }
+
             String produces = getValue(camelContext, verb.getProduces() != null ? verb.getProduces() : rest.getProduces());
+            if (produces == null) {
+                produces = config.defaultProduces;
+            }
+
             if (openApi instanceof Oas20Document) {
                 doParseVerbOas20(camelContext, (Oas20Document) openApi, verb, (Oas20Operation) op, consumes, produces);
             } else if (openApi instanceof Oas30Document) {
@@ -800,24 +808,9 @@ public class RestOpenApiReader {
     private void doParseVerbOas20(
             CamelContext camelContext, Oas20Document openApi, VerbDefinition verb, Oas20Operation op, String consumes,
             String produces) {
-        if (consumes != null) {
-            String[] parts = consumes.split(",");
-            if (op.consumes == null) {
-                op.consumes = new ArrayList<>();
-            }
-            op.consumes.addAll(Arrays.asList(parts));
-        }
 
         if ("true".equals(verb.getDeprecated())) {
             op.deprecated = Boolean.TRUE;
-        }
-
-        if (produces != null) {
-            String[] parts = produces.split(",");
-            if (op.produces == null) {
-                op.produces = new ArrayList<>();
-            }
-            op.produces.addAll(Arrays.asList(parts));
         }
 
         if (verb.getDescriptionText() != null) {
@@ -931,6 +924,14 @@ public class RestOpenApiReader {
 
                 // set schema on body parameter
                 if (parameter.in.equals("body")) {
+                    if (consumes != null) {
+                        String[] parts = consumes.split(",");
+                        if (op.consumes == null) {
+                            op.consumes = new ArrayList<>();
+                        }
+                        op.consumes.addAll(Arrays.asList(parts));
+                    }
+
                     Oas20Parameter bp = (Oas20Parameter) parameter;
                     String type = getValue(camelContext, param.getDataType() != null ? param.getDataType() : verb.getType());
                     if (type != null) {
@@ -982,6 +983,14 @@ public class RestOpenApiReader {
 
         // if we have an out type then set that as response message
         if (verb.getOutType() != null) {
+            if (produces != null) {
+                String[] parts = produces.split(",");
+                if (op.produces == null) {
+                    op.produces = new ArrayList<>();
+                }
+                op.produces.addAll(Arrays.asList(parts));
+            }
+
             if (op.responses == null) {
                 op.responses = op.createResponses();
             }
