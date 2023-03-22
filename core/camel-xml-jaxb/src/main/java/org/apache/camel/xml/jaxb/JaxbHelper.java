@@ -331,7 +331,7 @@ public final class JaxbHelper {
 
     /**
      * Un-marshals the content of the input stream to an instance of {@link TemplatedRoutesDefinition}.
-     * 
+     *
      * @param  context     the Camel context from which the JAXBContext is extracted
      * @param  inputStream the input stream to unmarshal
      * @return             the content unmarshalled as a {@link TemplatedRoutesDefinition}.
@@ -448,10 +448,9 @@ public final class JaxbHelper {
         String after = StringHelper.after(uri, "?");
 
         if (before != null && after != null) {
-            // remove all double spaces in the uri parameters
-            String changed = after.replaceAll("\\s{2,}", "");
+            String changed = after.replaceAll("&\\s+", "&").trim();
             if (!after.equals(changed)) {
-                String newAtr = before.trim() + "?" + changed.trim();
+                String newAtr = before.trim() + "?" + changed;
                 return newAtr;
             }
         }
