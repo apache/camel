@@ -79,9 +79,7 @@ public final class ServiceBusClientFactory {
             final ServiceBusClientBuilder busClientBuilder, final ServiceBusConfiguration configuration) {
         final ServiceBusClientBuilder.ServiceBusReceiverClientBuilder receiverClientBuilder = busClientBuilder.receiver();
 
-        if (configuration.isDisableAutoComplete()) {
-            receiverClientBuilder.disableAutoComplete();
-        }
+        receiverClientBuilder.disableAutoComplete();
 
         if (configuration.getServiceBusType() == ServiceBusType.queue) {
             return receiverClientBuilder.queueName(configuration.getTopicOrQueueName());
