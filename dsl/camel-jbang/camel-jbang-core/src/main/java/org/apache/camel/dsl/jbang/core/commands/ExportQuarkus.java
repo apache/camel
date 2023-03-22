@@ -243,7 +243,7 @@ class ExportQuarkus extends Export {
         context = context.replaceAll("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
 
-        if (repos == null) {
+        if (repos == null || repos.isEmpty()) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
         } else {
             StringBuilder sb = new StringBuilder();
@@ -350,7 +350,7 @@ class ExportQuarkus extends Export {
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceFirst("\\{\\{ \\.CamelVersion }}", camelVersion);
 
-        if (repos == null) {
+        if (repos == null || repos.isEmpty()) {
             context = context.replaceFirst("\\{\\{ \\.MavenRepositories }}", "");
         } else {
             int i = 1;
