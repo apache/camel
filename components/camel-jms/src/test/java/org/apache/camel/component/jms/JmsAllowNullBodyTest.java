@@ -27,9 +27,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.infra.core.CamelContextExtension;
 import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -47,37 +50,16 @@ public class JmsAllowNullBodyTest extends AbstractJMSTest {
     protected ProducerTemplate template;
     protected ConsumerTemplate consumer;
 
-    @Test
-    public void testAllowNullBodyDefault() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = { "", "?allowNullBody=true", "?allowNullBody=true&jmsMessageType=Text" })
+    @DisplayName("Test correct handling of allowNullBody configuration")
+    public void testAllowNullBody(String option) throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").message(0).body().isNull();
         getMockEndpoint("mock:result").message(0).header("bar").isEqualTo(123);
 
         // allow null body is default enabled
-        template.sendBodyAndHeader("activemq:queue:JmsAllowNullBodyTest", null, "bar", 123);
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    public void testAllowNullBody() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:result").message(0).body().isNull();
-        getMockEndpoint("mock:result").message(0).header("bar").isEqualTo(123);
-
-        template.sendBodyAndHeader("activemq:queue:JmsAllowNullBodyTest?allowNullBody=true", null, "bar", 123);
-
-        MockEndpoint.assertIsSatisfied(context);
-    }
-
-    @Test
-    public void testAllowNullTextBody() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-        getMockEndpoint("mock:result").message(0).body().isNull();
-        getMockEndpoint("mock:result").message(0).header("bar").isEqualTo(123);
-
-        template.sendBodyAndHeader("activemq:queue:JmsAllowNullBodyTest?allowNullBody=true&jmsMessageType=Text", null, "bar",
-                123);
+        template.sendBodyAndHeader("activemq:queue:JmsAllowNullBodyTest" + option, null, "bar", 123);
 
         MockEndpoint.assertIsSatisfied(context);
     }
