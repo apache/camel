@@ -110,10 +110,9 @@ public class BaseParser {
                 String before = StringHelper.before(val, "?");
                 String after = StringHelper.after(val, "?");
                 if (before != null && after != null) {
-                    // remove all double spaces in the uri parameters
-                    String changed = after.replaceAll("\\s{2,}", "");
+                    String changed = after.replaceAll("&\\s+", "&").trim();
                     if (!after.equals(changed)) {
-                        String newAtr = before.trim() + "?" + changed.trim();
+                        String newAtr = before.trim() + "?" + changed;
                         val = newAtr;
                     }
                 }

@@ -205,6 +205,9 @@ public class ModelParserTest {
     public void testUriLineBreak() throws Exception {
         final String fromFrag1 = "seda:a?concurrentConsumers=2&amp;";
         final String fromFrag2 = "defaultPollTimeout=500";
+        final String jpaFrag1 = "jpa:SomeClass?query=update Object o";
+        final String jpaSpaces = "        ";
+        final String jpaFrag2 = "set o.status = 0";
         final String toFrag1 = "seda:b?";
         final String toFrag2 = "lazyStartProducer=true&amp;";
         final String toFrag3 = "defaultBlockWhenFull=true";
@@ -213,6 +216,8 @@ public class ModelParserTest {
                                  + "    <from uri=\"" + fromFrag1 + "\n"
                                  + "        " + fromFrag2 + "\n"
                                  + "        \"/>\n"
+                                 + "    <to uri=\"" + jpaFrag1 + "\n"
+                                 + jpaSpaces + jpaFrag2 + "\"/>\n"
                                  + "    <to uri=\"" + toFrag1 + "\n"
                                  + "        " + toFrag2 + "\n"
                                  + "        " + toFrag3 + "\"/>\n"
@@ -222,10 +227,16 @@ public class ModelParserTest {
                 = new ModelParser(new StringReader(routesXml), NAMESPACE).parseRoutesDefinition().orElse(null);
         final RouteDefinition route = routes.getRoutes().get(0);
         final FromDefinition from = route.getInput();
-        final ToDefinition to = (ToDefinition) route.getOutputs().get(0);
+
+        final ToDefinition jpa = (ToDefinition) route.getOutputs().get(0);
+        final ToDefinition to = (ToDefinition) route.getOutputs().get(1);
+
         final String fromUri = (fromFrag1 + fromFrag2).replace("&amp;", "&");
+        final String jpaUri = jpaFrag1 + " " + jpaSpaces + jpaFrag2; // \n is changed to a single space
         final String toUri = (toFrag1 + toFrag2 + toFrag3).replace("&amp;", "&");
+
         Assertions.assertEquals(fromUri, from.getEndpointUri());
+        Assertions.assertEquals(jpaUri, jpa.getEndpointUri());
         Assertions.assertEquals(toUri, to.getEndpointUri());
     }
 
