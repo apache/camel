@@ -130,8 +130,10 @@ class ExportCamelMain extends Export {
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
-        CamelCatalog catalog = new DefaultCamelCatalog();
-        String camelVersion = catalog.getCatalogVersion();
+        if (camelVersion == null) {
+            CamelCatalog catalog = new DefaultCamelCatalog();
+            camelVersion = catalog.getCatalogVersion();
+        }
 
         context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
         context = context.replaceFirst("\\{\\{ \\.ArtifactId }}", ids[1]);
