@@ -161,7 +161,7 @@ public interface ExtendedCamelContext {
      * @param  uri the URI of the endpoint
      * @return     the endpoint
      *
-     * @see        #getEndpoint(String)
+     * @see        CamelContext#getEndpoint(String)
      */
     Endpoint getPrototypeEndpoint(String uri);
 
@@ -176,7 +176,7 @@ public interface ExtendedCamelContext {
      * @param  uri the URI of the endpoint
      * @return     the endpoint
      *
-     * @see        #getEndpoint(String)
+     * @see        CamelContext#getEndpoint(String)
      */
     Endpoint getPrototypeEndpoint(NormalizedEndpointUri uri);
 
