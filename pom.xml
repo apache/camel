@@ -470,7 +470,7 @@
               files for modules -->
             <properties>
                 <eclipse.workspace.dir>${basedir}/../workspace</eclipse.workspace.dir>
-                <maven.test.skip.exec>true</maven.test.skip.exec>
+                <skipTests>true</skipTests>
             </properties>
             <build>
                 <defaultGoal>package</defaultGoal>
