@@ -4,7 +4,7 @@
 :artifactid: camel-observation
 :description: Observability using Micrometer Observation
 :since: 3.21
-:supportlevel: Preview
+:supportlevel: Stable
 //Manually maintained attributes
 :camel-spring-boot-name: observation
 
