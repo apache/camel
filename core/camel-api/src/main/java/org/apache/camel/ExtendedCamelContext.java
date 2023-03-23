@@ -61,6 +61,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
+import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ReactiveExecutor;
@@ -910,4 +911,26 @@ public interface ExtendedCamelContext {
      */
     void setPeriodTaskResolver(PeriodTaskResolver periodTaskResolver);
 
+    /**
+     * Gets access to the internal plugin manager
+     * @return the internal plugin manager
+     */
+    @Deprecated
+    PluginManager getPluginManager();
+
+    /**
+     * Gets a plugin of the given type.
+     *
+     * @param  type the type of the extension
+     * @return      the extension, or <tt>null</tt> if no extension has been installed.
+     */
+    <T> T getContextPlugin(Class<T> type);
+
+    /**
+     * Allows installation of custom plugins to the Camel context.
+     *
+     * @param type   the type of the extension
+     * @param module the instance of the extension
+     */
+    <T> void addContextPlugin(Class<T> type, T module);
 }

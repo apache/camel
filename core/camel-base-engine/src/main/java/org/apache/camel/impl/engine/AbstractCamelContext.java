@@ -40,6 +40,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
@@ -133,6 +134,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
+import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
@@ -271,8 +273,8 @@ public abstract class AbstractCamelContext extends BaseService
     private final InternalRouteStartupManager internalRouteStartupManager = new InternalRouteStartupManager(this);
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<>();
     private final StopWatch stopWatch = new StopWatch(false);
-    private final Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
-    private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(HashSet::new);
+    private final PluginManager pluginManager;
+    private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(() -> new HashSet<>());
     private VetoCamelContextStartException vetoed;
     private String managementName;
     private ClassLoader applicationContextClassLoader;
@@ -387,6 +389,7 @@ public abstract class AbstractCamelContext extends BaseService
         this.bootstraps.add(bootstrapFactories::clear);
 
         this.internalServiceManager = new InternalServiceManager(this, internalRouteStartupManager, startupListeners);
+        this.pluginManager = new DefaultContextPluginManager(internalServiceManager);
 
         if (build) {
             try {
@@ -444,38 +447,12 @@ public abstract class AbstractCamelContext extends BaseService
             return type.cast(this);
         }
 
-        // lookup by direct implementatiin
-        Object extension = extensions.get(type);
-        if (extension == null) {
-            // fallback and lookup via interfaces
-            for (Object e : extensions.values()) {
-                if (type.isInstance(e)) {
-                    return type.cast(e);
-                }
-            }
-        }
-        if (extension instanceof Supplier) {
-            extension = ((Supplier) extension).get();
-            setExtension(type, (T) extension);
-        }
-        return (T) extension;
+        return pluginManager.getContextPlugin(type);
     }
 
     @Override
     public <T> void setExtension(Class<T> type, T module) {
-        if (module != null) {
-            try {
-                extensions.put(type, internalServiceManager.addService(module));
-            } catch (Exception e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            }
-        }
-    }
-
-    public <T> void setDefaultExtension(Class<T> type, Supplier<T> module) {
-        if (module != null) {
-            extensions.putIfAbsent(type, module);
-        }
+        pluginManager.addContextPlugin(type, module);
     }
 
     @Override

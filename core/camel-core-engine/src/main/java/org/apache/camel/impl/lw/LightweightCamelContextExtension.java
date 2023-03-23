@@ -75,6 +75,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
+import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
@@ -891,6 +892,21 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setPeriodTaskResolver(PeriodTaskResolver periodTaskResolver) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public PluginManager getPluginManager() {
+        return camelContext.getCamelContextExtension().getPluginManager();
+    }
+
+    @Override
+    public <T> T getContextPlugin(Class<T> type) {
+        return camelContext.getCamelContextExtension().getPluginManager().getContextPlugin(type);
+    }
+
+    @Override
+    public <T> void addContextPlugin(Class<T> type, T module) {
+        camelContext.getCamelContextExtension().addContextPlugin(type, module);
     }
 
     Endpoint doGetEndpoint(String uri, boolean normalized, boolean prototype) {
