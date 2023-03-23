@@ -80,6 +80,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
+import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
@@ -108,6 +109,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
     private final Set<LogListener> logListeners = new LinkedHashSet<>();
+    private final PluginManager pluginManager = new DefaultContextPluginManager();
     private volatile String description;
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
@@ -1149,5 +1151,30 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     public String getTestExcludeRoutes() {
         return camelContext.getTestExcludeRoutes();
+    }
+
+    @Override
+    public PluginManager getPluginManager() {
+        return pluginManager;
+    }
+
+    @Override
+    public <T> T getContextPlugin(Class<T> type) {
+        T ret = pluginManager.getContextPlugin(type);
+
+        // Note: this is because of interfaces like Model which are still tightly coupled with the context
+        if (ret == null) {
+            if (type.isInstance(camelContext)) {
+                return type.cast(camelContext);
+            }
+        }
+
+        return ret;
+    }
+
+    @Override
+    public <T> void addContextPlugin(Class<T> type, T module) {
+        final T addedModule = camelContext.getInternalServiceManager().addService(module);
+        pluginManager.addContextPlugin(type, addedModule);
     }
 }
