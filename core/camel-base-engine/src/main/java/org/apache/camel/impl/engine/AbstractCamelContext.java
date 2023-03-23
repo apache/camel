@@ -61,7 +61,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
-import org.apache.camel.RouteAware;
 import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
@@ -1403,7 +1402,8 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void addService(Object object, boolean stopOnShutdown, boolean forceStart) throws Exception {
-        internalAddService(object, stopOnShutdown, forceStart, true);
+        InternalServiceHelper.internalAddService(object, stopOnShutdown, forceStart, true, this,
+                internalRouteStartupManager, servicesToStop, deferStartupListener);
     }
 
     @Override
@@ -1421,78 +1421,12 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected <T> T doAddService(T object, boolean stopOnShutdown, boolean forceStart, boolean useLifecycleStrategies) {
         try {
-            internalAddService(object, stopOnShutdown, forceStart, useLifecycleStrategies);
+            InternalServiceHelper.internalAddService(object, stopOnShutdown, forceStart, useLifecycleStrategies, this,
+                    internalRouteStartupManager, servicesToStop, deferStartupListener);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
         return object;
-    }
-
-    private void internalAddService(
-            Object object, boolean stopOnShutdown,
-            boolean forceStart, boolean useLifecycleStrategies)
-            throws Exception {
-
-        if (object == null) {
-            return;
-        }
-
-        // inject CamelContext
-        CamelContextAware.trySetCamelContext(object, getCamelContextReference());
-
-        if (object instanceof Service) {
-            Service service = (Service) object;
-
-            if (useLifecycleStrategies) {
-                for (LifecycleStrategy strategy : lifecycleStrategies) {
-                    if (service instanceof Endpoint) {
-                        // use specialized endpoint add
-                        strategy.onEndpointAdd((Endpoint) service);
-                    } else {
-                        Route route;
-                        if (service instanceof RouteAware) {
-                            route = ((RouteAware) service).getRoute();
-                        } else {
-                            // if the service is added while creating a new route then grab the route from the startup manager
-                            route = internalRouteStartupManager.getSetupRoute();
-                        }
-                        strategy.onServiceAdd(getCamelContextReference(), service, route);
-                    }
-                }
-            }
-
-            if (!forceStart) {
-                ServiceHelper.initService(service);
-                // now start the service (and defer starting if CamelContext is
-                // starting up itself)
-                deferStartService(object, stopOnShutdown);
-            } else {
-                // only add to services to close if its a singleton
-                // otherwise we could for example end up with a lot of prototype
-                // scope endpoints
-                boolean singleton = true; // assume singleton by default
-                if (object instanceof IsSingleton) {
-                    singleton = ((IsSingleton) service).isSingleton();
-                }
-                // do not add endpoints as they have their own list
-                if (singleton && !(service instanceof Endpoint)) {
-                    // only add to list of services to stop if its not already there
-                    if (stopOnShutdown && !hasService(service)) {
-                        // special for type converter / type converter registry which is stopped manual later
-                        boolean tc = service instanceof TypeConverter || service instanceof TypeConverterRegistry;
-                        if (!tc) {
-                            servicesToStop.add(service);
-                        }
-                    }
-                }
-                if (isStartingOrStarted()) {
-                    ServiceHelper.startService(service);
-                } else {
-                    ServiceHelper.initService(service);
-                    deferStartService(object, stopOnShutdown, true);
-                }
-            }
-        }
     }
 
     @Override
