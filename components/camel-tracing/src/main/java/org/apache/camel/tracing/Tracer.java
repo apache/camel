@@ -27,7 +27,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
@@ -80,6 +79,8 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
 
     protected abstract SpanAdapter startSendingEventSpan(
             String operationName, SpanKind kind, SpanAdapter parent, Exchange exchange, InjectAdapter injectAdapter);
+
+    protected abstract void initContextPropagators();
 
     protected abstract SpanAdapter startExchangeBeginSpan(
             Exchange exchange, SpanDecorator sd, String operationName, SpanKind kind, SpanAdapter parent);
@@ -180,6 +181,7 @@ public abstract class Tracer extends ServiceSupport implements RoutePolicyFactor
             camelContext.getCamelContextExtension().addInterceptStrategy(tracingStrategy);
         }
         initTracer();
+        initContextPropagators();
         ServiceHelper.startService(eventNotifier);
     }
 

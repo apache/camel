@@ -141,6 +141,11 @@ public class MicrometerObservationTracer extends org.apache.camel.tracing.Tracer
         return new MicrometerObservationSpanAdapter(observation.start(), tracer);
     }
 
+    @Override
+    protected void initContextPropagators() {
+
+    }
+
     private static Observation getParentObservation(SpanAdapter parentObservation) {
         MicrometerObservationSpanAdapter observationWrapper = (MicrometerObservationSpanAdapter) parentObservation;
         return observationWrapper.getMicrometerObservation();
