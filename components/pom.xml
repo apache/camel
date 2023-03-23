@@ -221,6 +221,7 @@
         <module>camel-netty</module>
         <module>camel-nitrite</module>
         <module>camel-oaipmh</module>
+        <module>camel-observation</module>
         <module>camel-ognl</module>
         <module>camel-olingo2</module>
         <module>camel-olingo4</module>
