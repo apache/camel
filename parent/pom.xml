@@ -207,7 +207,7 @@
         <google-cloud-guava-version>${google-cloud-guava-version-prefix}-jre</google-cloud-guava-version>
         <google-cloud-secretmanager-bom-version>2.2.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>22.3.0</graaljs-version>
-        <graphql-java-version>18.3</graphql-java-version>
+        <graphql-java-version>18.4</graphql-java-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <grpc-version>1.48.2</grpc-version>
         <!-- keep grpc-google-auth-library-version in sync with that used by grpc-auth -->
@@ -231,7 +231,7 @@
         <hbase-version>2.5.2</hbase-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
         <hibernate-validator-version>6.2.5.Final</hibernate-validator-version>
-        <hibernate-version>5.6.14.Final</hibernate-version>
+        <hibernate-version>5.6.15.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.7.1</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
