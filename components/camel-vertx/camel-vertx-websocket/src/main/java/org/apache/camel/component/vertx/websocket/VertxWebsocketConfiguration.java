@@ -182,8 +182,9 @@ public class VertxWebsocketConfiguration {
     }
 
     /**
-     * To send to all websocket subscribers. Can be used to configure on endpoint level, instead of having to use the
-     * {@code VertxWebsocketConstants.SEND_TO_ALL} header on the message.
+     * To send to all websocket subscribers. Can be used to configure at the endpoint level, instead of providing the
+     * {@code VertxWebsocketConstants.SEND_TO_ALL} header on the message. Note that when using this option, the host
+     * name specified for the vertx-websocket producer URI must match one used for an existing vertx-websocket consumer.
      */
     public void setSendToAll(boolean sendToAll) {
         this.sendToAll = sendToAll;

@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import io.vertx.core.http.impl.HttpUtils;
+import org.apache.camel.util.ObjectHelper;
+
 public final class VertxWebsocketHelper {
 
     private VertxWebsocketHelper() {
@@ -52,5 +55,53 @@ public final class VertxWebsocketHelper {
             value = list;
         }
         headers.put(key, value);
+    }
+
+    /**
+     * Determines whether the path of a WebSocket host (the vertx-websocket consumer) matches a target path (the
+     * vertx-websocket producer), taking path parameters and wildcard paths into consideration.
+     */
+    public static boolean webSocketHostPathMatches(String hostPath, String targetPath) {
+        boolean exactPathMatch = true;
+
+        if (ObjectHelper.isEmpty(hostPath) || ObjectHelper.isEmpty(targetPath)) {
+            // This scenario should not really be possible as the input args come from the vertx-websocket consumer / producer URI
+            return false;
+        }
+
+        // Paths ending with '*' are Vert.x wildcard routes so match on the path prefix
+        if (hostPath.endsWith("*")) {
+            exactPathMatch = false;
+            hostPath = hostPath.substring(0, hostPath.lastIndexOf('*'));
+        }
+
+        String normalizedHostPath = HttpUtils.normalizePath(hostPath + "/");
+        String normalizedTargetPath = HttpUtils.normalizePath(targetPath + "/");
+        String[] hostPathElements = normalizedHostPath.split("/");
+        String[] targetPathElements = normalizedTargetPath.split("/");
+
+        if (exactPathMatch && hostPathElements.length != targetPathElements.length) {
+            return false;
+        }
+
+        if (normalizedHostPath.contains("{")) {
+            // For a parameterized paths verify the non-parameterized elements match
+            for (int i = 0; i < hostPathElements.length; i++) {
+                String hostPathElement = hostPathElements[i];
+                String targetPathElement = targetPathElements[i];
+                if (!hostPathElement.startsWith("{") && !hostPathElement.endsWith("}")
+                        && !hostPathElement.equals(targetPathElement)) {
+                    return false;
+                }
+            }
+        } else {
+            if (exactPathMatch) {
+                return normalizedHostPath.equals(normalizedTargetPath);
+            } else {
+                return normalizedTargetPath.startsWith(normalizedHostPath);
+            }
+        }
+
+        return true;
     }
 }

@@ -523,9 +523,12 @@ public interface VertxWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To send to all websocket subscribers. Can be used to configure on
-         * endpoint level, instead of having to use the
-         * VertxWebsocketConstants.SEND_TO_ALL header on the message.
+         * To send to all websocket subscribers. Can be used to configure at the
+         * endpoint level, instead of providing the
+         * VertxWebsocketConstants.SEND_TO_ALL header on the message. Note that
+         * when using this option, the host name specified for the
+         * vertx-websocket producer URI must match one used for an existing
+         * vertx-websocket consumer.
          * 
          * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
          * 
@@ -541,9 +544,12 @@ public interface VertxWebsocketEndpointBuilderFactory {
             return this;
         }
         /**
-         * To send to all websocket subscribers. Can be used to configure on
-         * endpoint level, instead of having to use the
-         * VertxWebsocketConstants.SEND_TO_ALL header on the message.
+         * To send to all websocket subscribers. Can be used to configure at the
+         * endpoint level, instead of providing the
+         * VertxWebsocketConstants.SEND_TO_ALL header on the message. Note that
+         * when using this option, the host name specified for the
+         * vertx-websocket producer URI must match one used for an existing
+         * vertx-websocket consumer.
          * 
          * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
          * type.

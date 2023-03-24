@@ -39,6 +39,7 @@ import org.apache.camel.test.junit5.CamelTestSupport;
 public class VertxWebSocketTestSupport extends CamelTestSupport {
 
     protected final int port = AvailablePortFinder.getNextAvailable();
+    protected final int port2 = AvailablePortFinder.getNextAvailable();
 
     /**
      * Returns the randomized port used for the Vert.x server if no port was provided to the consumer.
@@ -49,6 +50,7 @@ public class VertxWebSocketTestSupport extends CamelTestSupport {
         return registry.values()
                 .stream()
                 .filter(wsHost -> wsHost.getPort() != port)
+                .filter(wsHost -> wsHost.getPort() != port2)
                 .findFirst()
                 .get()
                 .getPort();
