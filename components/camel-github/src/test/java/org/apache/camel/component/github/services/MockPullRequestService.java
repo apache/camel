@@ -66,7 +66,7 @@ public class MockPullRequestService extends PullRequestService {
 
         User author = createAuthor();
         commitComment.setUser(author);
-        commitComment.setCommitId("" + pullRequestId);
+        commitComment.setCommitId(Long.toString(pullRequestId));
         commitComment.setId(commentId.getAndIncrement());
         commitComment.setBody(bodyText);
         commitComment.setBodyText(bodyText);
