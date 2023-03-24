@@ -259,9 +259,7 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
             }
 
             String[] elements = item.split(",");
-            for (String element : elements) {
-                answer.add(element);
-            }
+            answer.addAll(Arrays.asList(elements));
         }
 
         return answer.stream();

@@ -167,9 +167,7 @@ public final class ServerAnnotationProcessor {
             }
 
             List<String> realms = new ArrayList<String>();
-            for (String s : createLdapServer.saslRealms()) {
-                realms.add(s);
-            }
+            Collections.addAll(realms, createLdapServer.saslRealms());
 
             ldapServer.setSaslRealms(realms);
 

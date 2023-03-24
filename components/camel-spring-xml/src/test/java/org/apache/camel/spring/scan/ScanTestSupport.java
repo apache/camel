@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.scan;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,9 +37,7 @@ public abstract class ScanTestSupport {
 
     protected void validateMatchingSetContains(Set<Class<?>> scannedClasses, Class<?>... matchingClasses) {
         HashSet<Class<?>> expectedSet = new HashSet<>();
-        for (Class<?> expected : matchingClasses) {
-            expectedSet.add(expected);
-        }
+        Collections.addAll(expectedSet, matchingClasses);
         validateMatchingSetContains(scannedClasses, expectedSet);
     }
 
