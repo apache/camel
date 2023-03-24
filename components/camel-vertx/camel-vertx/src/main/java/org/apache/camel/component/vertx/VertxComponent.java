@@ -21,7 +21,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import io.vertx.core.AsyncResult;
-import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.impl.VertxBuilder;
@@ -170,19 +169,16 @@ public class VertxComponent extends DefaultComponent {
                 LOG.info("Creating Clustered Vertx {}:{}", vertxOptions.getEventBusOptions().getHost(),
                         vertxOptions.getEventBusOptions().getPort());
                 // use the async api as we want to wait for the eventbus to be ready before we are in started state
-                vertxFactory.clusteredVertx(new Handler<AsyncResult<Vertx>>() {
-                    @Override
-                    public void handle(AsyncResult<Vertx> event) {
-                        if (event.cause() != null) {
-                            LOG.warn("Error creating Clustered Vertx {}:{} due {}", host, port,
-                                    event.cause().getMessage(), event.cause());
-                        } else if (event.succeeded()) {
-                            vertx = event.result();
-                            LOG.info("EventBus is ready: {}", vertx);
-                        }
-
-                        latch.countDown();
+                vertxFactory.clusteredVertx((AsyncResult<Vertx> event) -> {
+                    if (event.cause() != null) {
+                        LOG.warn("Error creating Clustered Vertx {}:{} due {}", host, port,
+                                event.cause().getMessage(), event.cause());
+                    } else if (event.succeeded()) {
+                        vertx = event.result();
+                        LOG.info("EventBus is ready: {}", vertx);
                     }
+
+                    latch.countDown();
                 });
             } else {
                 LOG.info("Creating Non-Clustered Vertx");
