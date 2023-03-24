@@ -170,7 +170,7 @@ public class FakeAWSDaemon {
         private List<TestSubsegment> convertSubsegments(JsonArray jsonSubsegments) {
             List<TestSubsegment> subsegments = new ArrayList<>(jsonSubsegments.size());
             for (int i = 0; i < jsonSubsegments.size(); i++) {
-                JsonObject jsonSubsegment = jsonSubsegments.toArray(new JsonObject[jsonSubsegments.size()])[i];
+                JsonObject jsonSubsegment = jsonSubsegments.toArray(new JsonObject[0])[i];
                 subsegments.add(convertSubsegment(jsonSubsegment));
             }
             return subsegments;

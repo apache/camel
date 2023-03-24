@@ -199,7 +199,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         }
 
         // return the packages which is not FQN classes
-        return packages.toArray(new String[packages.size()]);
+        return packages.toArray(new String[0]);
     }
 
     /**
@@ -220,7 +220,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             findPackages(packages, ccl);
         }
         findPackages(packages, getClass().getClassLoader());
-        return packages.toArray(new String[packages.size()]);
+        return packages.toArray(new String[0]);
     }
 
     protected void findPackages(Set<String> packages, ClassLoader classLoader) throws IOException {
@@ -435,7 +435,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             }
         }
 
-        return packages.toArray(new String[packages.size()]);
+        return packages.toArray(new String[0]);
     }
 
 }

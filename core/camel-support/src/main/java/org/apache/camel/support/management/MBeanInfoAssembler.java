@@ -141,11 +141,11 @@ public class MBeanInfoAssembler implements Service {
         String name = getName(customManagedBean != null ? customManagedBean : defaultManagedBean, objectName);
         String description = getDescription(customManagedBean != null ? customManagedBean : defaultManagedBean, objectName);
         ModelMBeanAttributeInfo[] arrayAttributes
-                = mBeanAttributes.toArray(new ModelMBeanAttributeInfo[mBeanAttributes.size()]);
+                = mBeanAttributes.toArray(new ModelMBeanAttributeInfo[0]);
         ModelMBeanOperationInfo[] arrayOperations
-                = mBeanOperations.toArray(new ModelMBeanOperationInfo[mBeanOperations.size()]);
+                = mBeanOperations.toArray(new ModelMBeanOperationInfo[0]);
         ModelMBeanNotificationInfo[] arrayNotifications
-                = mBeanNotifications.toArray(new ModelMBeanNotificationInfo[mBeanNotifications.size()]);
+                = mBeanNotifications.toArray(new ModelMBeanNotificationInfo[0]);
 
         ModelMBeanInfo info
                 = new ModelMBeanInfoSupport(name, description, arrayAttributes, null, arrayOperations, arrayNotifications);

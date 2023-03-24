@@ -92,7 +92,7 @@ public class DefaultKeyAccessor extends DefaultKeySelector implements KeyAccesso
                 certList.add((X509Certificate) cert);
             }
         }
-        return certList.toArray(new X509Certificate[certList.size()]);
+        return certList.toArray(new X509Certificate[0]);
     }
 
 }

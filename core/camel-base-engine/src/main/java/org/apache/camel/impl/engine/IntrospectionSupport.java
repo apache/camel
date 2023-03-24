@@ -328,7 +328,7 @@ final class IntrospectionSupport {
             }
         }
 
-        answer.methods = found.toArray(new BeanIntrospection.MethodInfo[found.size()]);
+        answer.methods = found.toArray(new BeanIntrospection.MethodInfo[0]);
         return answer;
     }
 

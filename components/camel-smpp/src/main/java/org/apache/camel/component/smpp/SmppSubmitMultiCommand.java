@@ -264,12 +264,12 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
         Map<java.lang.Short, Object> optinalParamater = in.getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
         if (optinalParamater != null) {
             List<OptionalParameter> optParams = createOptionalParametersByCode(optinalParamater);
-            submitMulti.setOptionalParameters(optParams.toArray(new OptionalParameter[optParams.size()]));
+            submitMulti.setOptionalParameters(optParams.toArray(new OptionalParameter[0]));
         } else {
             Map<String, String> optinalParamaters = in.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
             if (optinalParamaters != null) {
                 List<OptionalParameter> optParams = createOptionalParametersByName(optinalParamaters);
-                submitMulti.setOptionalParameters(optParams.toArray(new OptionalParameter[optParams.size()]));
+                submitMulti.setOptionalParameters(optParams.toArray(new OptionalParameter[0]));
             } else {
                 submitMulti.setOptionalParameters(new OptionalParameter[] {});
             }

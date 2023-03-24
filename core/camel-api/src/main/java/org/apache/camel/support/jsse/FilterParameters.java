@@ -140,9 +140,9 @@ public class FilterParameters extends JsseParameters {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("FilterParameters[include=");
-        builder.append(Arrays.toString(getInclude().toArray(new String[getInclude().size()])));
+        builder.append(Arrays.toString(getInclude().toArray(new String[0])));
         builder.append(", exclude=");
-        builder.append(Arrays.toString(getExclude().toArray(new String[getExclude().size()])));
+        builder.append(Arrays.toString(getExclude().toArray(new String[0])));
         builder.append("]");
         return builder.toString();
     }

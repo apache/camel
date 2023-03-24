@@ -478,7 +478,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         final List<String> argNames = method.getArgNames();
         final Object[] values = new Object[argNames.size()];
         final List<Class<?>> argTypes = method.getArgTypes();
-        final Class<?>[] types = argTypes.toArray(new Class[argTypes.size()]);
+        final Class<?>[] types = argTypes.toArray(new Class[0]);
         int index = 0;
         for (String name : argNames) {
             Object value = properties.get(name);

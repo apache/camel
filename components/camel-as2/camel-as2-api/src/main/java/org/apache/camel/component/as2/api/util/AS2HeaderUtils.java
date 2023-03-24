@@ -141,7 +141,7 @@ public final class AS2HeaderUtils {
             }
         }
 
-        return new Parameter(name, importance, values.toArray(new String[values.size()]));
+        return new Parameter(name, importance, values.toArray(new String[0]));
     }
 
     public static String getParameterValue(Header[] headers, String headerName, String parameterName) {

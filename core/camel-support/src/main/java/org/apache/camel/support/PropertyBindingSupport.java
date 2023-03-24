@@ -1620,7 +1620,7 @@ public final class PropertyBindingSupport {
             parts.add(sb.toString());
         }
 
-        return parts.toArray(new String[parts.size()]);
+        return parts.toArray(new String[0]);
     }
 
     @FunctionalInterface

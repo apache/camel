@@ -357,7 +357,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
                 }
             }
         }
-        return msgs.toArray(new Message[msgs.size()]);
+        return msgs.toArray(new Message[0]);
     }
 
     private boolean isValidMessage(String key, Message msg) {

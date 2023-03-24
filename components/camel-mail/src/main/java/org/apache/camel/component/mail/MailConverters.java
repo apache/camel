@@ -249,7 +249,7 @@ public final class MailConverters {
             }
         }
         if (!result.isEmpty()) {
-            return result.toArray(new SortTerm[result.size()]);
+            return result.toArray(new SortTerm[0]);
         } else {
             return null;
         }

@@ -53,7 +53,7 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
         result.add(test);
 
         // TODO test ZIP_XML and ZIP_CSV
-        return result.toArray(new BatchTest[result.size()]);
+        return result.toArray(new BatchTest[0]);
     }
 
     @ParameterizedTest

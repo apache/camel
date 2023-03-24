@@ -73,7 +73,7 @@ public class AnnotatedDataSetCallback implements org.apache.camel.component.flin
                 }
             }
 
-            Object[] args = arguments.toArray(new Object[arguments.size()]);
+            Object[] args = arguments.toArray(new Object[0]);
             return invokeMethodSafe(callbackMethod, objectWithCallback, args);
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeCamelException(e);

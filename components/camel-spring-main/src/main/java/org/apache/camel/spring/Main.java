@@ -282,7 +282,7 @@ public class Main extends MainCommandLineSupport {
                     }
                 }
                 LOG.info("Using Spring annotation scanning in packages: {}", packages);
-                ac.scan(packages.toArray(new String[packages.size()]));
+                ac.scan(packages.toArray(new String[0]));
                 ac.refresh();
                 return ac;
             } else {
@@ -298,7 +298,7 @@ public class Main extends MainCommandLineSupport {
         if (!locations.isEmpty()) {
             LOG.info("Found locations for additional Spring XML files: {}", locations);
 
-            String[] locs = locations.toArray(new String[locations.size()]);
+            String[] locs = locations.toArray(new String[0]);
             return new ClassPathXmlApplicationContext(locs);
         } else {
             return null;

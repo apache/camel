@@ -130,7 +130,7 @@ public class FacebookProducer extends DefaultAsyncProducer {
             // filter candidates based on endpoint and exchange properties
             final Set<String> argNames = properties.keySet();
             final List<FacebookMethodsType> filteredMethods = filterMethods(candidates, MatchType.SUPER_SET,
-                    argNames.toArray(new String[argNames.size()]));
+                    argNames.toArray(new String[0]));
 
             // get the method to call
             if (filteredMethods.isEmpty()) {

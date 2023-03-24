@@ -216,7 +216,7 @@ public class DisruptorReference {
 
         LOGGER.debug("Disruptor created with {} event handlers", eventHandlers.size());
         handleEventsWith(newDisruptor,
-                eventHandlers.toArray(new LifecycleAwareExchangeEventHandler[eventHandlers.size()]));
+                eventHandlers.toArray(new LifecycleAwareExchangeEventHandler[0]));
 
         return newDisruptor;
     }

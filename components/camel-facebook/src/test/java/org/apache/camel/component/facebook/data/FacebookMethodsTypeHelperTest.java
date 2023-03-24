@@ -56,7 +56,7 @@ public class FacebookMethodsTypeHelperTest {
             final String name = method.getName();
             final String shortName = getShortName(method.getName());
 
-            final String[] argNames = method.getArgNames().toArray(new String[method.getArgNames().size()]);
+            final String[] argNames = method.getArgNames().toArray(new String[0]);
             List<FacebookMethodsType> candidates = FacebookMethodsTypeHelper.getCandidateMethods(name, argNames);
             assertFalse(candidates.isEmpty(), "No candidate methods for " + name);
 

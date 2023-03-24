@@ -184,7 +184,7 @@ public abstract class AbstractClientBase extends ServiceSupport
             for (ByteBuffer buffer : content) {
                 buffers.add(buffer);
             }
-            request.content(new ByteBufferContentProvider(buffers.toArray(new ByteBuffer[buffers.size()])));
+            request.content(new ByteBufferContentProvider(buffers.toArray(new ByteBuffer[0])));
             buffers.clear();
         }
 
