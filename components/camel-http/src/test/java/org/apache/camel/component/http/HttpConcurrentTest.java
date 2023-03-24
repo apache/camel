@@ -54,7 +54,7 @@ public class HttpConcurrentTest extends BaseHttpTest {
                         // ignore
                     }
                     response.setCode(HttpStatus.SC_OK);
-                    response.setEntity(new StringEntity("" + counter.incrementAndGet()));
+                    response.setEntity(new StringEntity(Integer.toString(counter.incrementAndGet())));
                 }).create();
         localServer.start();
 
