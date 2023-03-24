@@ -109,7 +109,7 @@ public class CMSenderOneMessageImpl implements CMSender {
             final Element authenticationElement = doc.createElement("AUTHENTICATION");
             final Element productTokenElement = doc.createElement("PRODUCTTOKEN");
             authenticationElement.appendChild(productTokenElement);
-            final Text productTokenValue = doc.createTextNode("" + productToken);
+            final Text productTokenValue = doc.createTextNode(productToken.toString());
             productTokenElement.appendChild(productTokenValue);
             root.appendChild(authenticationElement);
 
@@ -144,7 +144,7 @@ public class CMSenderOneMessageImpl implements CMSender {
             final String id = message.getIdAsString();
             if (id != null && !id.isEmpty()) {
                 final Element refElement = doc.createElement("REFERENCE");
-                refElement.appendChild(doc.createTextNode("" + message.getIdAsString()));
+                refElement.appendChild(doc.createTextNode(message.getIdAsString()));
                 msgElement.appendChild(refElement);
             }
 
