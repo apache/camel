@@ -109,7 +109,7 @@ public class ResponseMessageDefinition {
      * The response code such as a HTTP status code
      */
     public ResponseMessageDefinition code(int code) {
-        setCode("" + code);
+        setCode(Integer.toString(code));
         return this;
     }
 

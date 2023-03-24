@@ -538,7 +538,7 @@ public class RestConfigurationDefinition {
      * To specify the port number to use for the REST service
      */
     public RestConfigurationDefinition port(int port) {
-        setPort("" + port);
+        setPort(Integer.toString(port));
         return this;
     }
 
