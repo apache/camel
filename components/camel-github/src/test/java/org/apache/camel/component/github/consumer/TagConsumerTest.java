@@ -45,7 +45,7 @@ public class TagConsumerTest extends GitHubComponentTestBase {
         RepositoryTag tag2 = repositoryService.addTag("TAG2");
         RepositoryTag tag3 = repositoryService.addTag("TAG3");
         mockResultEndpoint.expectedBodiesReceivedInAnyOrder(tag1, tag2, tag3);
-        Thread.sleep(1 * 1000);
+        Thread.sleep(1000);
 
         mockResultEndpoint.assertIsSatisfied();
     }

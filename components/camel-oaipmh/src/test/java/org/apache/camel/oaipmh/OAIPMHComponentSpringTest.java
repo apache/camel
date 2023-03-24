@@ -46,7 +46,7 @@ public class OAIPMHComponentSpringTest extends CamelSpringTestSupport {
 
         template.sendBodyAndHeader("direct:start", "", "port", mockOaipmhServer.getHttpPort());
         resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.assertIsSatisfied(3 * 1);
+        resultEndpoint.assertIsSatisfied(3);
     }
 
     @Override

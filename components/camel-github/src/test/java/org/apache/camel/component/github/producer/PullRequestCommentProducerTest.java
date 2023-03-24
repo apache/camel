@@ -64,7 +64,7 @@ public class PullRequestCommentProducerTest extends GitHubComponentTestBase {
         exchange.getIn().setBody(commentText);
         template.send(commentProducerEndpoint, exchange);
 
-        Thread.sleep(1 * 1000);
+        Thread.sleep(1000);
 
         // Verify that the mock pull request service received this comment.
         List<CommitComment> commitComments = pullRequestService.getComments(null, (int) pullRequest.getId());

@@ -57,7 +57,7 @@ public class CreateIssueProducerTest extends GitHubComponentTestBase {
         exchange.getIn().setBody(issueBody);
         template.send(issueProducerEndpoint, exchange);
 
-        Thread.sleep(1 * 1000);
+        Thread.sleep(1000);
 
         // Verify that the mock pull request service received this comment.
         Issue issue = issueService.getIssue(repository, 1);

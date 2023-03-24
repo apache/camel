@@ -66,8 +66,8 @@ public class MailSearchTermUriConfigLast24HoursTest extends CamelTestSupport {
         folder.expunge();
 
         long twoDaysAgo = new Date().getTime() - 2 * 24 * 60 * 60 * 1000L;
-        long twentyHoursAgo = new Date().getTime() - 1 * 20 * 60 * 60 * 1000L;
-        long oneHourAgo = new Date().getTime() - 1 * 1 * 60 * 60 * 1000L;
+        long twentyHoursAgo = new Date().getTime() - 20 * 60 * 60 * 1000L;
+        long oneHourAgo = new Date().getTime() - 60 * 60 * 1000L;
 
         // inserts 5 new messages
         Message[] messages = new Message[6];

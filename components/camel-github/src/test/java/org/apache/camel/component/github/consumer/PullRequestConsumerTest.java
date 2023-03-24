@@ -49,7 +49,7 @@ public class PullRequestConsumerTest extends GitHubComponentTestBase {
         PullRequest pr2 = pullRequestService.addPullRequest("Second");
         mockResultEndpoint.expectedMessageCount(2);
         mockResultEndpoint.expectedBodiesReceivedInAnyOrder(pr1, pr2);
-        Thread.sleep(1 * 1000);
+        Thread.sleep(1000);
 
         mockResultEndpoint.assertIsSatisfied();
     }

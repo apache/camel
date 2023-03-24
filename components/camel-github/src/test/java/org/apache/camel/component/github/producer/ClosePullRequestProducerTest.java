@@ -64,7 +64,7 @@ public class ClosePullRequestProducerTest extends GitHubComponentTestBase {
         Exchange exchange = closePullRequestEndpoint.createExchange();
         template.send(closePullRequestEndpoint, exchange);
 
-        Thread.sleep(1 * 1000);
+        Thread.sleep(1000);
 
         // Verify that it was closed
 

@@ -52,7 +52,7 @@ public class PullRequestCommentConsumerTest extends GitHubComponentTestBase {
         CommitComment commitComment2 = pullRequestService.addComment(pr2.getId(), "Second comment");
         mockResultEndpoint.expectedBodiesReceivedInAnyOrder(commitComment1, commitComment2);
 
-        Thread.sleep(1 * 1000);         // TODO do I need this?
+        Thread.sleep(1000);         // TODO do I need this?
 
         mockResultEndpoint.assertIsSatisfied();
     }
