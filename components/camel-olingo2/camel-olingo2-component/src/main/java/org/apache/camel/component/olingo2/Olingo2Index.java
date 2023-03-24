@@ -160,8 +160,7 @@ public class Olingo2Index {
             return odataFeed;
         }
 
-        List<ODataEntry> copyEntries = new ArrayList<>();
-        copyEntries.addAll(entries);
+        List<ODataEntry> copyEntries = new ArrayList<>(entries);
 
         for (ODataEntry entry : copyEntries) {
             if (resultIndex.contains(hash(entry))) {

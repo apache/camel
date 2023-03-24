@@ -89,8 +89,7 @@ class ShardList {
 
     Shard atAfterSeq(String sequenceNumber, BigIntComparisons condition) {
         BigInteger atAfter = new BigInteger(sequenceNumber);
-        List<Shard> sorted = new ArrayList<>();
-        sorted.addAll(shards.values());
+        List<Shard> sorted = new ArrayList<>(shards.values());
         Collections.sort(sorted, StartingSequenceNumberComparator.INSTANCE);
         for (Shard shard : sorted) {
             if (shard.sequenceNumberRange().endingSequenceNumber() != null) {
