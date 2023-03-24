@@ -562,7 +562,7 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
         if (-1 != endOfMshSegment) {
             String mshSegment = hl7Message.substring(0, endOfMshSegment);
             char fieldSeparator = mshSegment.charAt(3);
-            String fieldSeparatorPattern = Pattern.quote("" + fieldSeparator);
+            String fieldSeparatorPattern = Pattern.quote(String.valueOf(fieldSeparator));
             String[] mshFields = mshSegment.split(fieldSeparatorPattern);
             if (mshFields.length == 0) {
                 log.error("Failed to split MSH Segment into fields");
