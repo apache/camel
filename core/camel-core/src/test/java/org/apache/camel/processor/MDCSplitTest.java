@@ -97,7 +97,7 @@ public class MDCSplitTest extends ContextTestSupport {
             }
 
             if (threadId != null) {
-                Long currId = Thread.currentThread().getId();
+                long currId = Thread.currentThread().getId();
                 assertEquals(threadId, (Object) currId);
             } else {
                 threadId = Thread.currentThread().getId();

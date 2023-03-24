@@ -60,7 +60,7 @@ public class FloatFormatFactory extends AbstractFormatFactory {
 
         @Override
         public Float parse(String string) throws Exception {
-            Float value;
+            float value;
             if (!super.hasImpliedDecimalPosition()) {
                 value = Float.parseFloat(string.trim());
             } else {

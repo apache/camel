@@ -48,10 +48,10 @@ public class TypeConverterRegistryStatisticsEnabledNoStreamCachingTest extends C
         TypeConverterRegistry reg = context.getTypeConverterRegistry();
         assertTrue(reg.getStatistics().isStatisticsEnabled(), "Should be enabled");
 
-        Long failed = reg.getStatistics().getFailedCounter();
-        assertEquals(0, failed.intValue());
-        Long miss = reg.getStatistics().getMissCounter();
-        assertEquals(0, miss.intValue());
+        long failed = reg.getStatistics().getFailedCounter();
+        assertEquals(0, (int) failed);
+        long miss = reg.getStatistics().getMissCounter();
+        assertEquals(0, (int) miss);
 
         try {
             template.sendBody("direct:start", "foo");
@@ -62,17 +62,17 @@ public class TypeConverterRegistryStatisticsEnabledNoStreamCachingTest extends C
 
         // should now have a failed
         failed = reg.getStatistics().getFailedCounter();
-        assertEquals(1, failed.intValue());
+        assertEquals(1, (int) failed);
         miss = reg.getStatistics().getMissCounter();
-        assertEquals(0, miss.intValue());
+        assertEquals(0, (int) miss);
 
         // reset
         reg.getStatistics().reset();
 
         failed = reg.getStatistics().getFailedCounter();
-        assertEquals(0, failed.intValue());
+        assertEquals(0, (int) failed);
         miss = reg.getStatistics().getMissCounter();
-        assertEquals(0, miss.intValue());
+        assertEquals(0, (int) miss);
     }
 
     @Override

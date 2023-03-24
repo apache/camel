@@ -77,18 +77,18 @@ public abstract class CamelTestConfiguration extends CamelSpringTestSupport {
         }
 
         // Defaults to false
-        final Boolean testConnectionOnStartup = Boolean.parseBoolean(
+        final boolean testConnectionOnStartup = Boolean.parseBoolean(
                 prop.getProperty("cm.testConnectionOnStartup", "false"));
         if (testConnectionOnStartup) {
             cmUri.append("&testConnectionOnStartup=")
-                    .append(testConnectionOnStartup.toString());
+                    .append(Boolean.toString(testConnectionOnStartup));
         }
 
         // Defaults to 8
-        final Integer defaultMaxNumberOfParts = Integer
+        final int defaultMaxNumberOfParts = Integer
                 .parseInt(prop.getProperty("defaultMaxNumberOfParts", "8"));
         cmUri.append("&defaultMaxNumberOfParts=")
-                .append(defaultMaxNumberOfParts.toString());
+                .append(Integer.toString(defaultMaxNumberOfParts));
 
         uri = cmUri.toString();
     }

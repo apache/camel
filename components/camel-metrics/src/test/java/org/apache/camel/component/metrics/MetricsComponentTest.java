@@ -113,7 +113,7 @@ public class MetricsComponentTest {
         when(ecc.getConfigurerResolver()).thenReturn((name, context) -> null);
 
         Map<String, Object> params = new HashMap<>();
-        Long value = System.currentTimeMillis();
+        long value = System.currentTimeMillis();
         params.put("mark", value);
         component.init();
         Endpoint result = component.createEndpoint("metrics:meter:long.meter", "meter:long.meter", params);

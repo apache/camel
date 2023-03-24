@@ -128,7 +128,7 @@ public class AmazonSQSClientMock implements SqsClient {
 
     @Override
     public ReceiveMessageResponse receiveMessage(ReceiveMessageRequest receiveMessageRequest) {
-        Integer maxNumberOfMessages = receiveMessageRequest.maxNumberOfMessages() != null
+        int maxNumberOfMessages = receiveMessageRequest.maxNumberOfMessages() != null
                 ? receiveMessageRequest.maxNumberOfMessages() : Integer.MAX_VALUE;
         ReceiveMessageResponse.Builder result = ReceiveMessageResponse.builder();
         Collection<Message> resultMessages = new ArrayList<>();

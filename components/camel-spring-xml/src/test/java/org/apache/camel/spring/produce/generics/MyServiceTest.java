@@ -31,7 +31,7 @@ public class MyServiceTest extends SpringRunWithTestSupport {
 
     @Test
     public void testInvokeMyService() throws Exception {
-        Double value = 31.7D;
+        double value = 31.7D;
         Double actual = invoker.invokeService(value);
         Double expected = Math.sqrt(value);
 
