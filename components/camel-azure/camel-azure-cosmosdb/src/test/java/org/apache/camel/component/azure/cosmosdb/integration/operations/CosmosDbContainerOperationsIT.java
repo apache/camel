@@ -289,7 +289,7 @@ class CosmosDbContainerOperationsIT {
                 .blockFirst();
 
         // should only have two keys
-        assertEquals(2, actualItem.keySet().stream().count());
+        assertEquals(2, (long) actualItem.keySet().size());
         assertEquals("test-id-2", actualItem.get("id"));
         assertEquals("super awesome!", actualItem.get("field2"));
     }
