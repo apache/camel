@@ -135,7 +135,7 @@ public class XChangeEndpoint extends DefaultEndpoint {
                 if (metaData != null) {
                     int scale = metaData.getScale();
                     double total = aux.getTotal().doubleValue();
-                    double scaledTotal = total * Math.pow(10, scale / 2);
+                    double scaledTotal = total * Math.pow(10, scale /(double) 2);
                     if (1 <= scaledTotal) {
                         balances.add(aux);
                     }
