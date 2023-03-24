@@ -17,6 +17,7 @@
 package org.apache.camel.component.jira.consumer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -34,6 +35,7 @@ import org.apache.camel.component.jira.JiraComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,7 +54,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class NewIssuesConsumerTest extends CamelTestSupport {
 
-    private static List<Issue> issues = new ArrayList<>();
+    private static final List<Issue> ISSUES = new ArrayList<>();
 
     @Mock
     private JiraRestClient jiraClient;
@@ -73,13 +75,13 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
 
     @BeforeAll
     public static void beforeAll() {
-        issues.add(createIssue(1L));
-        issues.add(createIssue(2L));
-        issues.add(createIssue(3L));
+        ISSUES.add(createIssue(3L));
+        ISSUES.add(createIssue(2L));
+        ISSUES.add(createIssue(1L));
     }
 
     public void setMocks() {
-        SearchResult result = new SearchResult(0, 50, 100, issues);
+        SearchResult result = new SearchResult(0, 50, 3, ISSUES);
         Promise<SearchResult> promiseSearchResult = Promises.promise(result);
 
         when(jiraClient.getSearchClient()).thenReturn(searchRestClient);
@@ -102,7 +104,7 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("jira://newIssues?jiraUrl=" + JIRA_CREDENTIALS + "&jql=project=" + PROJECT + "&delay=5000")
+                from("jira://newIssues?jiraUrl=" + JIRA_CREDENTIALS + "&jql=project=" + PROJECT + "&delay=1000")
                         .to(mockResult);
             }
         };
@@ -121,12 +123,12 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
         reset(searchRestClient);
         AtomicBoolean searched = new AtomicBoolean();
         when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
-            List<Issue> newIissues = new ArrayList<>();
+            List<Issue> newIssues = new ArrayList<>();
             if (!searched.get()) {
-                newIissues.add(issue);
+                newIssues.add(issue);
                 searched.set(true);
             }
-            SearchResult result = new SearchResult(0, 50, 100, newIissues);
+            SearchResult result = new SearchResult(0, 50, 100, newIssues);
             return Promises.promise(result);
         });
         mockResult.expectedBodiesReceived(issue);
@@ -144,9 +146,9 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
         when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
             List<Issue> newIssues = new ArrayList<>();
             if (!searched.get()) {
-                newIssues.add(issue1);
-                newIssues.add(issue2);
                 newIssues.add(issue3);
+                newIssues.add(issue2);
+                newIssues.add(issue1);
                 searched.set(true);
             }
             SearchResult result = new SearchResult(0, 50, 3, newIssues);
@@ -157,4 +159,88 @@ public class NewIssuesConsumerTest extends CamelTestSupport {
         mockResult.assertIsSatisfied();
     }
 
+    @Test
+    public void multipleIssuesPaginationTest() throws Exception {
+        Issue issue1 = createIssue(31);
+        Issue issue2 = createIssue(32);
+        Issue issue3 = createIssue(33);
+        Issue issue4 = createIssue(34);
+        Issue issue5 = createIssue(35);
+
+        reset(searchRestClient);
+        when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
+            int startAt = invocation.getArgument(2);
+            Assertions.assertEquals(0, startAt);
+
+            // return getTotal=100 to force next page query
+            SearchResult result = new SearchResult(0, 50, 100, List.of(issue5, issue4, issue3));
+            return Promises.promise(result);
+        }).then(invocation -> {
+            int startAt = invocation.getArgument(2);
+            Assertions.assertEquals(50, startAt);
+            SearchResult result = new SearchResult(0, 50, 100, List.of(issue2, issue1));
+            return Promises.promise(result);
+        }).then(invocation -> {
+            int startAt = invocation.getArgument(2);
+            Assertions.assertEquals(100, startAt);
+            SearchResult result = new SearchResult(0, 50, 0, Collections.emptyList());
+            return Promises.promise(result);
+        });
+
+        mockResult.expectedBodiesReceived(issue5, issue4, issue3, issue2, issue1);
+        mockResult.assertIsSatisfied();
+    }
+
+    @Test
+    public void multipleIssuesAvoidDuplicatesTest() throws Exception {
+        Issue issue1 = createIssue(41);
+        Issue issue2 = createIssue(42);
+        Issue issue3 = createIssue(43);
+
+        reset(searchRestClient);
+        when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
+            // return getTotal=100 to force next page query
+            SearchResult result = new SearchResult(0, 50, 100, List.of(issue3, issue2));
+            return Promises.promise(result);
+        }).then(invocation -> {
+            SearchResult result = new SearchResult(0, 50, 100, List.of(issue3, issue2, issue1));
+            return Promises.promise(result);
+        }).then(invocation -> {
+            SearchResult result = new SearchResult(0, 50, 0, Collections.emptyList());
+            return Promises.promise(result);
+        });
+
+        mockResult.expectedBodiesReceived(issue3, issue2, issue1);
+        mockResult.assertIsSatisfied();
+    }
+
+    @Test
+    public void multipleQueriesOffsetFilterTest() throws Exception {
+        Issue issue1 = createIssue(51);
+        Issue issue2 = createIssue(52);
+        Issue issue3 = createIssue(53);
+        Issue issue4 = createIssue(54);
+
+        reset(searchRestClient);
+        when(searchRestClient.searchJql(any(), any(), any(), any())).then(invocation -> {
+            SearchResult result = new SearchResult(0, 50, 3, List.of(issue3, issue2, issue1));
+            return Promises.promise(result);
+        }).then(invocation -> {
+            int startAt = invocation.getArgument(2);
+            Assertions.assertEquals(0, startAt);
+
+            String jqlFilter = invocation.getArgument(0);
+            Assertions.assertTrue(jqlFilter.startsWith("id > 53"));
+            SearchResult result = new SearchResult(0, 50, 1, Collections.singletonList(issue4));
+            return Promises.promise(result);
+        });
+
+        mockResult.expectedBodiesReceived(issue3, issue2, issue1);
+        mockResult.assertIsSatisfied();
+
+        mockResult.reset();
+
+        mockResult.expectedBodiesReceived(issue4);
+        mockResult.assertIsSatisfied();
+    }
 }
