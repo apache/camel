@@ -81,7 +81,7 @@ public class LoggerAction extends ActionBaseCommand {
         for (long pid : pids) {
             JsonObject root = new JsonObject();
             root.put("action", "logger");
-            File f = getActionFile("" + pid);
+            File f = getActionFile(Long.toString(pid));
             root.put("command", "set-logging-level");
             root.put("logger-name", logger);
             root.put("logging-level", loggingLevel);

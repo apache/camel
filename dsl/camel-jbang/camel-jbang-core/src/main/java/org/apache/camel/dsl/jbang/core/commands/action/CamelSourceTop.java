@@ -68,12 +68,12 @@ public class CamelSourceTop extends ActionWatchCommand {
         this.pid = pids.get(0);
 
         // ensure output file is deleted before executing action
-        File outputFile = getOutputFile("" + pid);
+        File outputFile = getOutputFile(Long.toString(pid));
         FileUtil.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
         root.put("action", "top-processors");
-        File f = getActionFile("" + pid);
+        File f = getActionFile(Long.toString(pid));
         try {
             IOHelper.writeText(root.toJson(), f);
         } catch (Exception e) {

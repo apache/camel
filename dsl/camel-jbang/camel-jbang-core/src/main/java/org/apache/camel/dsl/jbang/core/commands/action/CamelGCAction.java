@@ -41,7 +41,7 @@ public class CamelGCAction extends ActionBaseCommand {
         for (long pid : pids) {
             JsonObject root = new JsonObject();
             root.put("action", "gc");
-            File f = getActionFile("" + pid);
+            File f = getActionFile(Long.toString(pid));
             IOHelper.writeText(root.toJson(), f);
         }
 
