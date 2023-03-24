@@ -109,7 +109,7 @@ public final class JsonParser {
                             || ('"' == c && curToken.length() > 0 && curToken.charAt(curToken.length() - 1) != '\\')) {
                         inWord = !inWord;
                     }
-                    if (!inWord && !doNotIncludeSymbols.contains("" + c)) {
+                    if (!inWord && !doNotIncludeSymbols.contains(String.valueOf(c))) {
                         curToken.append(c);
                     } else if ('"' != c || (curToken.length() > 0 && curToken.charAt(curToken.length() - 1) == '\\')) {
                         curToken.append(c);
