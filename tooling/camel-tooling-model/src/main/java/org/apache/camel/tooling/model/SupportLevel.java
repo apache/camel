@@ -45,7 +45,7 @@ public enum SupportLevel {
      */
     Stable;
 
-    public static SupportLevel baseStability = Stable;
+    public static final SupportLevel baseStability = Stable;
 
     public static SupportLevel safeValueOf(String level) {
         if (level == null) {

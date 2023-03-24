@@ -66,7 +66,7 @@ public enum HazelcastOperation {
     READ_ONCE_TAIL("readOnceTail"),
     CAPACITY("capacity");
 
-    private static HazelcastOperation[] values = values();
+    private static final HazelcastOperation[] values = values();
     private final String operation;
 
     HazelcastOperation(String operation) {

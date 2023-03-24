@@ -59,7 +59,7 @@ public enum SmppCommandType {
         }
     };
 
-    private String commandName;
+    private final String commandName;
 
     SmppCommandType(String commandName) {
         this.commandName = commandName;

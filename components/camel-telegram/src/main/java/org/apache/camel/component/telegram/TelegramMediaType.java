@@ -29,7 +29,7 @@ public enum TelegramMediaType {
     VIDEO("mp4"),
     DOCUMENT("-");
 
-    private String fileExtension;
+    private final String fileExtension;
 
     TelegramMediaType(String fileExtension) {
         this.fileExtension = fileExtension;

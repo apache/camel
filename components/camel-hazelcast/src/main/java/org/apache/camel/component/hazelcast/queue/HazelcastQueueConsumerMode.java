@@ -21,7 +21,7 @@ public enum HazelcastQueueConsumerMode {
     LISTEN("listen"),
     POLL("poll");
 
-    private static HazelcastQueueConsumerMode[] values = values();
+    private static final HazelcastQueueConsumerMode[] values = values();
     private final String mode;
 
     HazelcastQueueConsumerMode(String mode) {
