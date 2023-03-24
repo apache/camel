@@ -35,7 +35,7 @@ public class JCacheProducerClearTest extends JCacheComponentTestSupport {
 
         cache.putAll(generateRandomMap(4));
 
-        headers.clear();
+
         headers.put(JCacheConstants.ACTION, "CLEAR");
         sendBody("direct:clear", null, headers);
 

@@ -86,7 +86,6 @@ public final class TwilioApiCollection extends ApiCollection<TwilioApiName, Twil
 
         List<String> nullableArgs;
 
-        aliases.clear();
         aliases.put("^creator$", "create");
         aliases.put("^deleter$", "delete");
         aliases.put("^fetcher$", "fetch");

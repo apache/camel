@@ -43,7 +43,6 @@ public class JCacheProducerReplaceTest extends JCacheComponentTestSupport {
 
         cache.put(key, val);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "REPLACE");
         headers.put(JCacheConstants.KEY, key);
         sendBody("direct:replace", val1, headers);
@@ -76,7 +75,6 @@ public class JCacheProducerReplaceTest extends JCacheComponentTestSupport {
 
         cache.put(key, val);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "REPLACE");
         headers.put(JCacheConstants.KEY, key);
         headers.put(JCacheConstants.OLD_VALUE, val);
@@ -110,7 +108,6 @@ public class JCacheProducerReplaceTest extends JCacheComponentTestSupport {
 
         cache.put(key, val);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "REPLACE");
         headers.put(JCacheConstants.KEY, key);
         headers.put(JCacheConstants.OLD_VALUE, val1);
@@ -143,7 +140,6 @@ public class JCacheProducerReplaceTest extends JCacheComponentTestSupport {
 
         assertFalse(cache.containsKey(key));
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "REPLACE");
         headers.put(JCacheConstants.KEY, key);
         sendBody("direct:replace-fail", val, headers);

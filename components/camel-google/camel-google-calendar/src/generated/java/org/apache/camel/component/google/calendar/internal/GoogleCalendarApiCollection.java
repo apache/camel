@@ -38,7 +38,6 @@ public final class GoogleCalendarApiCollection extends ApiCollection<GoogleCalen
 
         List<String> nullableArgs;
 
-        aliases.clear();
         nullableArgs = Arrays.asList();
         apiHelpers.put(GoogleCalendarApiName.ACL, new ApiMethodHelper<CalendarAclApiMethod>(CalendarAclApiMethod.class, aliases, nullableArgs));
         apiMethods.put(CalendarAclApiMethod.class, GoogleCalendarApiName.ACL);

@@ -26,13 +26,13 @@ public final class GoogleSheetsApiCollection extends ApiCollection<GoogleSheetsA
     private static GoogleSheetsApiCollection collection;
 
     private GoogleSheetsApiCollection() {
-        final Map<String, String> aliases = new HashMap<String, String>();
+        final Map<String, String> aliases = new HashMap<>();
         final Map<GoogleSheetsApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
         final Map<Class<? extends ApiMethod>, GoogleSheetsApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;
 
-        aliases.clear();
+
         nullableArgs = Arrays.asList();
         apiHelpers.put(GoogleSheetsApiName.SPREADSHEETS, new ApiMethodHelper<SheetsSpreadsheetsApiMethod>(SheetsSpreadsheetsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(SheetsSpreadsheetsApiMethod.class, GoogleSheetsApiName.SPREADSHEETS);

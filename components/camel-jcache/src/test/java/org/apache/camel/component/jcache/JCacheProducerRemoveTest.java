@@ -40,7 +40,6 @@ public class JCacheProducerRemoveTest extends JCacheComponentTestSupport {
 
         cache.put(key, val);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "REMOVE");
         headers.put(JCacheConstants.KEY, key);
         sendBody("direct:remove", null, headers);
@@ -64,7 +63,6 @@ public class JCacheProducerRemoveTest extends JCacheComponentTestSupport {
 
         cache.put(key, val);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "REMOVE");
         headers.put(JCacheConstants.KEY, key);
         headers.put(JCacheConstants.OLD_VALUE, val);
@@ -89,7 +87,6 @@ public class JCacheProducerRemoveTest extends JCacheComponentTestSupport {
 
         cache.put(key, val);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "REMOVE");
         headers.put(JCacheConstants.KEY, key);
         headers.put(JCacheConstants.OLD_VALUE, "x");
@@ -112,7 +109,6 @@ public class JCacheProducerRemoveTest extends JCacheComponentTestSupport {
         Map<Object, Object> values = generateRandomMap(2);
         cache.putAll(values);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "REMOVEALL");
         sendBody("direct:remove-all", null, headers);
 
@@ -132,7 +128,6 @@ public class JCacheProducerRemoveTest extends JCacheComponentTestSupport {
         cache.putAll(values1);
         cache.putAll(values2);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "REMOVEALL");
         headers.put(JCacheConstants.KEYS, values2.keySet());
         sendBody("direct:remove-subset", null, headers);

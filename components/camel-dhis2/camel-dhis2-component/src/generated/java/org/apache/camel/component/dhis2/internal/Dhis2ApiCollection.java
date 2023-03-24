@@ -33,7 +33,6 @@ public final class Dhis2ApiCollection extends ApiCollection<Dhis2ApiName, Dhis2C
 
         List<String> nullableArgs;
 
-        aliases.clear();
         nullableArgs = Arrays.asList("resource", "queryParams");
         apiHelpers.put(Dhis2ApiName.POST, new ApiMethodHelper<Dhis2PostApiMethod>(Dhis2PostApiMethod.class, aliases, nullableArgs));
         apiMethods.put(Dhis2PostApiMethod.class, Dhis2ApiName.POST);

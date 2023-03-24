@@ -41,13 +41,13 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
     private static BraintreeApiCollection collection;
 
     private BraintreeApiCollection() {
-        final Map<String, String> aliases = new HashMap<String, String>();
+        final Map<String, String> aliases = new HashMap<>();
         final Map<BraintreeApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
         final Map<Class<? extends ApiMethod>, BraintreeApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;
 
-        aliases.clear();
+
         nullableArgs = Arrays.asList();
         apiHelpers.put(BraintreeApiName.ADD_ON, new ApiMethodHelper<AddOnGatewayApiMethod>(AddOnGatewayApiMethod.class, aliases, nullableArgs));
         apiMethods.put(AddOnGatewayApiMethod.class, BraintreeApiName.ADD_ON);

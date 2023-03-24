@@ -25,13 +25,12 @@ public final class ZendeskApiCollection extends ApiCollection<ZendeskApiName, Ze
     private static ZendeskApiCollection collection;
 
     private ZendeskApiCollection() {
-        final Map<String, String> aliases = new HashMap<String, String>();
+        final Map<String, String> aliases = new HashMap<>();
         final Map<ZendeskApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
         final Map<Class<? extends ApiMethod>, ZendeskApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;
 
-        aliases.clear();
         nullableArgs = Arrays.asList();
         apiHelpers.put(ZendeskApiName.DEFAULT, new ApiMethodHelper<ZendeskApiMethod>(ZendeskApiMethod.class, aliases, nullableArgs));
         apiMethods.put(ZendeskApiMethod.class, ZendeskApiName.DEFAULT);

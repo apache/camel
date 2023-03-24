@@ -121,7 +121,6 @@ public class SoapDataFormat extends JaxbDataFormat {
             final Object inputObject, String soapAction,
             List<Object> headerElements) {
         List<Object> bodyParts = new ArrayList<>();
-        List<Object> headerParts = new ArrayList<>();
         bodyParts.add(inputObject);
 
         List<Object> bodyElements = new ArrayList<>();
@@ -129,22 +128,8 @@ public class SoapDataFormat extends JaxbDataFormat {
             QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, bodyObj.getClass());
             if (name == null) {
                 LOG.warn("Could not find QName for class {}", bodyObj.getClass().getName());
-                continue;
             } else {
                 bodyElements.add(getElement(bodyObj, name));
-            }
-        }
-
-        for (Object headerObj : headerParts) {
-            QName name = elementNameStrategy.findQNameForSoapActionOrType(soapAction, headerObj.getClass());
-            if (name == null) {
-                LOG.warn("Could not find QName for class {}", headerObj.getClass().getName());
-                continue;
-            } else {
-                JAXBElement<?> headerElem = getElement(headerObj, name);
-                if (null != headerElem) {
-                    headerElements.add(headerElem);
-                }
             }
         }
 

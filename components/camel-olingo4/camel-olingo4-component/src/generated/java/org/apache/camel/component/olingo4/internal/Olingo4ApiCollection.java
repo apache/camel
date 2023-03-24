@@ -25,13 +25,12 @@ public final class Olingo4ApiCollection extends ApiCollection<Olingo4ApiName, Ol
     private static Olingo4ApiCollection collection;
 
     private Olingo4ApiCollection() {
-        final Map<String, String> aliases = new HashMap<String, String>();
+        final Map<String, String> aliases = new HashMap<>();
         final Map<Olingo4ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
         final Map<Class<? extends ApiMethod>, Olingo4ApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;
 
-        aliases.clear();
         nullableArgs = Arrays.asList("queryParams", "endpointHttpHeaders", "edm", "responseHandler", "data");
         apiHelpers.put(Olingo4ApiName.DEFAULT, new ApiMethodHelper<Olingo4AppApiMethod>(Olingo4AppApiMethod.class, aliases, nullableArgs));
         apiMethods.put(Olingo4AppApiMethod.class, Olingo4ApiName.DEFAULT);

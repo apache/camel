@@ -34,13 +34,13 @@ public final class BoxApiCollection extends ApiCollection<BoxApiName, BoxConfigu
     private static BoxApiCollection collection;
 
     private BoxApiCollection() {
-        final Map<String, String> aliases = new HashMap<String, String>();
+        final Map<String, String> aliases = new HashMap<>();
         final Map<BoxApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
         final Map<Class<? extends ApiMethod>, BoxApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;
 
-        aliases.clear();
+
         aliases.put("addFolderCollaboration", "add");
         aliases.put("addFolderCollaborationByEmail", "addByEmail");
         aliases.put("deleteCollaboration", "delete");

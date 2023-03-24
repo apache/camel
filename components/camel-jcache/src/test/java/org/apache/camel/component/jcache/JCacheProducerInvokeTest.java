@@ -52,7 +52,6 @@ public class JCacheProducerInvokeTest extends JCacheComponentTestSupport {
 
         cache.put(key, val);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "INVOKE");
         headers.put(JCacheConstants.KEY, key);
         headers.put(JCacheConstants.ENTRY_PROCESSOR, ENTRY_PROCESSOR);
@@ -86,7 +85,6 @@ public class JCacheProducerInvokeTest extends JCacheComponentTestSupport {
         cache.putAll(values1);
         cache.putAll(values2);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "INVOKE");
         headers.put(JCacheConstants.KEYS, values2.keySet());
         headers.put(JCacheConstants.ENTRY_PROCESSOR, ENTRY_PROCESSOR);

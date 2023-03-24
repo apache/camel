@@ -37,13 +37,12 @@ public final class FhirApiCollection extends ApiCollection<FhirApiName, FhirConf
     private static FhirApiCollection collection;
 
     private FhirApiCollection() {
-        final Map<String, String> aliases = new HashMap<String, String>();
+        final Map<String, String> aliases = new HashMap<>();
         final Map<FhirApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
         final Map<Class<? extends ApiMethod>, FhirApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;
 
-        aliases.clear();
         nullableArgs = Arrays.asList("extraParameters");
         apiHelpers.put(FhirApiName.CAPABILITIES, new ApiMethodHelper<FhirCapabilitiesApiMethod>(FhirCapabilitiesApiMethod.class, aliases, nullableArgs));
         apiMethods.put(FhirCapabilitiesApiMethod.class, FhirApiName.CAPABILITIES);

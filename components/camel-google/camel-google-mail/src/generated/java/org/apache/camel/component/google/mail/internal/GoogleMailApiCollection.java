@@ -37,7 +37,6 @@ public final class GoogleMailApiCollection extends ApiCollection<GoogleMailApiNa
 
         List<String> nullableArgs;
 
-        aliases.clear();
         nullableArgs = Arrays.asList();
         apiHelpers.put(GoogleMailApiName.THREADS, new ApiMethodHelper<GmailUsersThreadsApiMethod>(GmailUsersThreadsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(GmailUsersThreadsApiMethod.class, GoogleMailApiName.THREADS);

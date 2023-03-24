@@ -1362,9 +1362,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
      * Strategy to install all available routes into the context
      */
     protected void installRoutes() throws Exception {
-        List<RouteBuilder> builders = new ArrayList<>();
 
-        // lets add RoutesBuilder's added from references
+        // let's add RoutesBuilder's added from references
         if (getBuilderRefs() != null) {
             for (RouteBuilderDefinition builderRef : getBuilderRefs()) {
                 RoutesBuilder routes = builderRef.createRoutes(getContext());
@@ -1381,12 +1380,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             getContext().addRoutes(routeBuilder);
         }
 
-        // install builders
-        for (RouteBuilder builder : builders) {
-            // Inject the annotated resource
-            postProcessBeforeInit(builder);
-            getContext().addRoutes(builder);
-        }
     }
 
     protected abstract void postProcessBeforeInit(RouteBuilder builder);

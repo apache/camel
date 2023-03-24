@@ -46,7 +46,6 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
 
         cache.put(key, val);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "GET");
         headers.put(JCacheConstants.KEY, key);
         sendBody("direct:get", null, headers);
@@ -75,7 +74,6 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
 
         cache.put(key, val);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "GETANDREMOVE");
         headers.put(JCacheConstants.KEY, key);
         sendBody("direct:get-and-remove", null, headers);
@@ -107,7 +105,6 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
 
         cache.put(key, val);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "GETANDREPLACE");
         headers.put(JCacheConstants.KEY, key);
         sendBody("direct:get-and-replace", val2, headers);
@@ -137,7 +134,6 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
         final String key = randomString();
         final String val2 = randomString();
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "GETANDPUT");
         headers.put(JCacheConstants.KEY, key);
         sendBody("direct:get-and-put", val2, headers);
@@ -169,7 +165,6 @@ public class JCacheProducerGetTest extends JCacheComponentTestSupport {
 
         cache.putAll(values);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "GETALL");
         headers.put(JCacheConstants.KEYS, values.keySet());
 

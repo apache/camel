@@ -41,7 +41,6 @@ public class JCacheProducerPutTest extends JCacheComponentTestSupport {
         final String key = randomString();
         final String val = randomString();
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "PUT");
         headers.put(JCacheConstants.KEY, key);
         sendBody("direct:put", val, headers);
@@ -58,7 +57,6 @@ public class JCacheProducerPutTest extends JCacheComponentTestSupport {
         final String key = randomString();
         final String val = randomString();
 
-        headers.clear();
         headers.put(JCacheConstants.KEY, key);
         sendBody("direct:put-with-default-action", val, headers);
 
@@ -74,7 +72,6 @@ public class JCacheProducerPutTest extends JCacheComponentTestSupport {
         final String key = randomString();
         final String val = randomString();
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "PUTIFABSENT");
         headers.put(JCacheConstants.KEY, key);
         sendBody("direct:put-if-absent", val, headers);
@@ -107,7 +104,6 @@ public class JCacheProducerPutTest extends JCacheComponentTestSupport {
 
         cache.put(key, val);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "PUTIFABSENT");
         headers.put(JCacheConstants.KEY, key);
         sendBody("direct:put-if-absent", val, headers);
@@ -134,7 +130,6 @@ public class JCacheProducerPutTest extends JCacheComponentTestSupport {
 
         Map<Object, Object> values = generateRandomMap(2);
 
-        headers.clear();
         headers.put(JCacheConstants.ACTION, "PUTALL");
         headers.put(JCacheConstants.KEY, values);
 
