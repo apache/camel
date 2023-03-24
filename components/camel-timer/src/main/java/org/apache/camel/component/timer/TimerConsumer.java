@@ -110,14 +110,12 @@ public class TimerConsumer extends DefaultConsumer implements StartupListener, S
             executorService = endpoint.getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this,
                     endpoint.getEndpointUri());
 
-            executorService.execute(new Runnable() {
-                public void run() {
-                    final AtomicLong counter = new AtomicLong();
-                    long count = counter.incrementAndGet();
-                    while ((endpoint.getRepeatCount() <= 0 || count <= endpoint.getRepeatCount()) && isRunAllowed()) {
-                        sendTimerExchange(count);
-                        count = counter.incrementAndGet();
-                    }
+            executorService.execute(() -> {
+                final AtomicLong counter = new AtomicLong();
+                long count = counter.incrementAndGet();
+                while ((endpoint.getRepeatCount() <= 0 || count <= endpoint.getRepeatCount()) && isRunAllowed()) {
+                    sendTimerExchange(count);
+                    count = counter.incrementAndGet();
                 }
             });
         }

@@ -34,11 +34,7 @@ public class VertxConsumer extends DefaultConsumer {
     private final VertxEndpoint endpoint;
     private transient MessageConsumer messageConsumer;
 
-    private Handler<Message<Object>> handler = new Handler<Message<Object>>() {
-        public void handle(Message event) {
-            onEventBusEvent(event);
-        }
-    };
+    private Handler<Message<Object>> handler = VertxConsumer.this::onEventBusEvent;
 
     public VertxConsumer(VertxEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
