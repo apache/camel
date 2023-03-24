@@ -113,8 +113,7 @@ public class MockPullRequestService extends PullRequestService {
     public synchronized List<PullRequest> getPullRequests(IRepositoryIdProvider repository, String state) {
         List<PullRequest> result = new ArrayList<>();
 
-        for (Long id : pullRequests.keySet()) {
-            PullRequest pr = pullRequests.get(id);
+        for (PullRequest pr : pullRequests.values()) {
             if (pr.getState().equals(state)) {
                 result.add(pr);
             }

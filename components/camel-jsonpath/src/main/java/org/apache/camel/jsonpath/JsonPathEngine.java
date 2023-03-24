@@ -151,12 +151,12 @@ public class JsonPathEngine {
                 return list;
             } else if (answer instanceof Map) {
                 Map map = (Map) answer;
-                for (Object key : map.keySet()) {
-                    Object value = map.get(key);
+                for (Object entry : map.entrySet()) {
+                    Object value = entry.getValue();
                     if (adapter != null) {
                         String json = adapter.writeAsString(value, exchange);
                         if (json != null) {
-                            map.put(key, json);
+                            map.put((Object) entry.getKey(), json);
                         }
                     }
                 }

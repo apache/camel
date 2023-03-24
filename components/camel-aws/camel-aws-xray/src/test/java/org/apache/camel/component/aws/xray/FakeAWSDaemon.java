@@ -202,9 +202,9 @@ public class FakeAWSDaemon {
             if (json.has("metadata")) {
                 JsonObject rawMetadata = (JsonObject) json.get("metadata");
                 Map<String, Map<String, Object>> metadata = parseMetadata(rawMetadata);
-                for (String namespace : metadata.keySet()) {
-                    for (String key : metadata.get(namespace).keySet()) {
-                        entity.withMetadata(namespace, key, metadata.get(namespace).get(key));
+                for (Map.Entry<String, Map<String, Object>> entry : metadata.entrySet()) {
+                    for (String key : entry.getValue().keySet()) {
+                        entity.withMetadata(entry.getKey(), key, entry.getValue().get(key));
                     }
                 }
             }

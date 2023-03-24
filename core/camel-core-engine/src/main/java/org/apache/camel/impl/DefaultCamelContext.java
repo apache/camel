@@ -881,12 +881,13 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                             }
                         }
                         // the remainder of the local beans must also have their ids made global unique
-                        for (String oldKey : bbr.keySet()) {
+                        for (Map.Entry<String, Map<Class<?>, Object>> entry : bbr.entrySet()) {
+                            String oldKey = entry.getKey();
                             String newKey = oldKey + "-" + UUID.generateUuid();
                             LOG.debug(
                                     "Route: {} re-assigning local-bean id: {} to: {} to ensure ids are globally unique",
                                     routeDefinition.getId(), oldKey, newKey);
-                            bbrCopy.put(newKey, bbr.get(oldKey));
+                            bbrCopy.put(newKey, entry.getValue());
                             if (!params.containsKey(oldKey)) {
                                 // if a bean was bound as local bean with a key and it was not defined as template parameter
                                 // then store it as if it was a template parameter with same key=value which allows us

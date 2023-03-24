@@ -454,9 +454,9 @@ public class CaseInsensitiveMapTest {
 
         Map<String, Object> other = new HashMap<>();
 
-        for (String key : map.keySet()) {
-            Object value = map.get(key);
-            other.put(key, value);
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            Object value = entry.getValue();
+            other.put(entry.getKey(), value);
         }
 
         // the original case of the keys should be preserved
