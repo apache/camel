@@ -160,8 +160,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
             values = values.limit(limit);
         }
 
-        List<InflightExchange> answer = values.map(InflightExchangeEntry::new).collect(Collectors.toList());
-        return Collections.unmodifiableCollection(answer);
+        return values.map(InflightExchangeEntry::new).collect(Collectors.toUnmodifiableList());
     }
 
     @Override

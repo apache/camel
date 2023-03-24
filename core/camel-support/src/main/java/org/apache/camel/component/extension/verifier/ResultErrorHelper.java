@@ -154,8 +154,7 @@ public final class ResultErrorHelper {
     }
 
     static Set<String> parameters(final Set<String> options) {
-        final Set<String> withoutExclusionMark = options.stream().map(o -> o.replaceFirst("!", "")).collect(Collectors.toSet());
 
-        return new TreeSet<>(withoutExclusionMark);
+        return options.stream().map(o -> o.replaceFirst("!", "")).distinct().collect(Collectors.toCollection(TreeSet::new));
     }
 }

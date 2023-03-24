@@ -72,11 +72,9 @@ public abstract class ApiCollection<E extends Enum<E> & ApiName, T> {
     protected final void setApiHelpers(Map<E, ApiMethodHelper<? extends ApiMethod>> apiHelpers) {
         this.apiHelpers = Collections.unmodifiableMap(apiHelpers);
 
-        this.apiNames = Collections.unmodifiableSet(
-                apiHelpers.keySet()
-                        .stream()
-                        .map(api -> api.getName())
-                        .collect(Collectors.toSet()));
+        this.apiNames = apiHelpers.keySet()
+                .stream()
+                .map(ApiName::getName).collect(Collectors.toUnmodifiableSet());
     }
 
     protected final void setApiMethods(Map<Class<? extends ApiMethod>, E> apiMethods) {

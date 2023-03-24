@@ -152,9 +152,8 @@ public final class SObjectTree implements Serializable {
     }
 
     public Class[] objectTypes() {
-        final Set<Class> types = records.stream().flatMap(n -> n.objectTypes()).collect(Collectors.toSet());
 
-        return types.toArray(new Class[types.size()]);
+        return records.stream().flatMap(SObjectNode::objectTypes).distinct().toArray(Class[]::new);
     }
 
     /**
