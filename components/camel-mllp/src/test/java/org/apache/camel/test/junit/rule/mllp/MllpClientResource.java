@@ -97,7 +97,7 @@ public class MllpClientResource implements BeforeEachCallback, AfterEachCallback
                 clientSocket.close();
             }
         } catch (IOException e) {
-            log.warn(String.format("Exception encountered closing connection to {}:{}", mllpHost, mllpPort), e);
+            log.warn(String.format("Exception encountered closing connection to %s:%s", mllpHost, mllpPort), e);
         } finally {
             inputStream = null;
             outputStream = null;
