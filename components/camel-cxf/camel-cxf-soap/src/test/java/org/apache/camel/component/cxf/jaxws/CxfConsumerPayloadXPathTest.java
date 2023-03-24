@@ -226,7 +226,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
 
         //check for data loss in received input (after xpath)
         String headerSize = exchgOut.getMessage().getHeader(HEADER_SIZE, String.class);
-        assertEquals("" + repeat, headerSize);
+        assertEquals(Integer.toString(repeat), headerSize);
 
         assertTrue(result.length() > repeat, "dataloss in output occurred");
 
