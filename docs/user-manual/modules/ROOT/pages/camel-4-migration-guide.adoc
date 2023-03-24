@@ -156,14 +156,14 @@ The underlying `hapi-fhir` library has been upgraded from 4.2.0 to 6.2.4. Only t
 
 === camel-http
 
-The component has been upgraded to use Apache HttpComponents v5 which has an impact on how the underlying client is configured. There are 5 different
-timeouts (`connectionRequestTimeout`, `connectTimeout`, `socketTimeout`, `soTimeout` and `responseTimeout`) instead of initially 3
-(`connectionRequestTimeout`, `connectTimeout` and `socketTimeout`) and their default values have changed for some of them so please refer to the documentation
+The component has been upgraded to use Apache HttpComponents v5 which has an impact on how the underlying client is configured. There are 4 different
+timeouts (`connectionRequestTimeout`, `connectTimeout`, `soTimeout` and `responseTimeout`) instead of initially 3
+(`connectionRequestTimeout`, `connectTimeout` and `socketTimeout`) and the default value of some of them has changed so please refer to the documentation
 for more details.
 
-There is also a noticeable behavior change regarding the `socketTimeout`, it is now needed to configure it with the option `soTimeout` to get the previous behavior.
+Please note that the `socketTimeout` has been removed from the possible configuration parameters of `HttpClient`, use `responseTimeout` instead.
 
-Finally, the options `connectTimeout` and `socketTimeout` along with any parameters included into `SocketConfig` and `ConnectionConfig`, need to be prefixed by `httpConnection.`,
+Finally, the option `soTimeout` along with any parameters included into `SocketConfig`, need to be prefixed by `httpConnection.`,
 the rest of the parameters including those defined into `HttpClientBuilder` and `RequestConfig` still need to be prefixed by `httpClient.` like before.
 
 === camel-http-common
