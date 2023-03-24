@@ -716,23 +716,6 @@ public interface HttpComponentBuilderFactory {
             return this;
         }
         /**
-         * Determines the default socket timeout value for I/O operations.
-         * 
-         * The option is a:
-         * &lt;code&gt;org.apache.hc.core5.util.Timeout&lt;/code&gt; type.
-         * 
-         * Default: null (undefined)
-         * Group: timeout
-         * 
-         * @param socketTimeout the value to set
-         * @return the dsl builder
-         */
-        default HttpComponentBuilder socketTimeout(
-                org.apache.hc.core5.util.Timeout socketTimeout) {
-            doSetProperty("socketTimeout", socketTimeout);
-            return this;
-        }
-        /**
          * Determines the default socket timeout value for blocking I/O
          * operations.
          * 
@@ -806,7 +789,6 @@ public interface HttpComponentBuilderFactory {
             case "connectionRequestTimeout": ((HttpComponent) component).setConnectionRequestTimeout((org.apache.hc.core5.util.Timeout) value); return true;
             case "connectTimeout": ((HttpComponent) component).setConnectTimeout((org.apache.hc.core5.util.Timeout) value); return true;
             case "responseTimeout": ((HttpComponent) component).setResponseTimeout((org.apache.hc.core5.util.Timeout) value); return true;
-            case "socketTimeout": ((HttpComponent) component).setSocketTimeout((org.apache.hc.core5.util.Timeout) value); return true;
             case "soTimeout": ((HttpComponent) component).setSoTimeout((org.apache.hc.core5.util.Timeout) value); return true;
             default: return false;
             }
