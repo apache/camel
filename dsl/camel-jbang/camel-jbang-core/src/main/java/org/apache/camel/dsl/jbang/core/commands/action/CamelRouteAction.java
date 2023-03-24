@@ -55,7 +55,7 @@ public abstract class CamelRouteAction extends ActionBaseCommand {
             JsonObject root = new JsonObject();
             root.put("action", "route");
             root.put("id", id);
-            File f = getActionFile("" + pid);
+            File f = getActionFile(Long.toString(pid));
             onAction(root);
             IOHelper.writeText(root.toJson(), f);
         }
