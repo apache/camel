@@ -129,9 +129,8 @@ public class DefaultCamelContextExtension extends AbstractCamelContextExtension 
 
     @Override
     public MockEndpoint getMockEndpoint(String uri) {
-        MockEndpoint mock = getMockEndpoint(uri, true);
 
-        return mock;
+        return getMockEndpoint(uri, true);
     }
 
     @Override

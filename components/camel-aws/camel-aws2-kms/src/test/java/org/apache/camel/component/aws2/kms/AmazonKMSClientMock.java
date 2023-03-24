@@ -63,14 +63,12 @@ public class AmazonKMSClientMock implements KmsClient {
 
     @Override
     public DisableKeyResponse disableKey(DisableKeyRequest disableKeyRequest) {
-        DisableKeyResponse res = DisableKeyResponse.builder().build();
-        return res;
+        return DisableKeyResponse.builder().build();
     }
 
     @Override
     public EnableKeyResponse enableKey(EnableKeyRequest enableKeyRequest) {
-        EnableKeyResponse res = EnableKeyResponse.builder().build();
-        return res;
+        return EnableKeyResponse.builder().build();
     }
 
     @Override

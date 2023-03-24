@@ -184,8 +184,7 @@ public final class CassandraUtils {
      * Generate delete where columns = ? CQL.
      */
     public static Truncate generateTruncate(String table) {
-        Truncate truncate = QueryBuilder.truncate(table);
-        return truncate;
+        return QueryBuilder.truncate(table);
     }
 
     /**

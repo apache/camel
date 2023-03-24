@@ -164,7 +164,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String address, Map<String, Object> parameters) throws Exception {
 
         // must extract well known parameters before we create the endpoint
         List<Handler> handlerList = resolveAndRemoveReferenceListParameter(parameters, "handlers", Handler.class);
@@ -189,7 +189,6 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         // extract filterInit. parameters
         Map filterInitParameters = PropertiesHelper.extractProperties(parameters, "filterInit.");
 
-        String address = remaining;
         URI addressUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(address));
         URI endpointUri = URISupport.createRemainingURI(addressUri, parameters);
         // need to keep the httpMethodRestrict parameter for the endpointUri

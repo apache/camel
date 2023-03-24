@@ -89,7 +89,7 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
             throws Exception {
         HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
         // set the service account user when provided
-        GoogleCredential credential = new GoogleCredential.Builder()
+        return new GoogleCredential.Builder()
                 .setTransport(httpTransport)
                 .setJsonFactory(jsonFactory)
                 .setServiceAccountId(emailAddress)
@@ -97,7 +97,6 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
                 .setServiceAccountScopes(scopes)
                 .setServiceAccountUser(user)
                 .build();
-        return credential;
     }
 
     @Override

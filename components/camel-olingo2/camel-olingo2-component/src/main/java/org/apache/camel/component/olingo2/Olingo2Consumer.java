@@ -99,8 +99,7 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
             if (result[0] == null || result[0] instanceof ODataFeed && (((ODataFeed) result[0]).getEntries().isEmpty())) {
                 return 0;
             } else {
-                int processed = ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
-                return processed;
+                return ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
             }
 
         } catch (Throwable t) {

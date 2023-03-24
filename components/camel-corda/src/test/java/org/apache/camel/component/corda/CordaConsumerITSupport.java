@@ -37,27 +37,22 @@ public class CordaConsumerITSupport extends CordaITSupport {
 
     @BindToRegistry("arguments")
     public String[] addArgs() {
-        String[] args = new String[] { "Hello" };
-        return args;
+        return new String[] { "Hello" };
     }
 
     @BindToRegistry("flowLociClass")
     public Class<FlowLogic<String>> addFlowLociClass() throws Exception {
-        Class<FlowLogic<String>> flowLociClass
-                = (Class<FlowLogic<String>>) Class.forName("org.apache.camel.component.corda.CamelFlow");
-        return flowLociClass;
+        return (Class<FlowLogic<String>>) Class.forName("org.apache.camel.component.corda.CamelFlow");
     }
 
     @BindToRegistry("queryCriteria")
     public QueryCriteria addCriteria() {
-        QueryCriteria.VaultQueryCriteria criteria = new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.CONSUMED);
-        return criteria;
+        return new QueryCriteria.VaultQueryCriteria(Vault.StateStatus.CONSUMED);
     }
 
     @BindToRegistry("pageSpecification")
     public PageSpecification addPageSpec() {
-        PageSpecification pageSpec = new PageSpecification(DEFAULT_PAGE_NUM, MAX_PAGE_SIZE);
-        return pageSpec;
+        return new PageSpecification(DEFAULT_PAGE_NUM, MAX_PAGE_SIZE);
     }
 
     @BindToRegistry("contractStateClass")
@@ -67,8 +62,6 @@ public class CordaConsumerITSupport extends CordaITSupport {
 
     @BindToRegistry("sort")
     public Sort.SortColumn addSort() {
-        Sort.SortColumn sortByUid
-                = new Sort.SortColumn(new SortAttribute.Standard(Sort.LinearStateAttribute.UUID), Sort.Direction.DESC);
-        return sortByUid;
+        return new Sort.SortColumn(new SortAttribute.Standard(Sort.LinearStateAttribute.UUID), Sort.Direction.DESC);
     }
 }

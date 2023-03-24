@@ -133,8 +133,7 @@ public class PulsarConfiguration implements Cloneable {
      */
     public PulsarConfiguration copy() {
         try {
-            PulsarConfiguration copy = (PulsarConfiguration) clone();
-            return copy;
+            return (PulsarConfiguration) clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

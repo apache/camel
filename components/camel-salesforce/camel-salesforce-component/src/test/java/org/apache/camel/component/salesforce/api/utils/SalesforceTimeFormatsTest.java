@@ -109,8 +109,7 @@ public class SalesforceTimeFormatsTest {
     public void shouldSerializeJson(DateTransferObject<?> dto, String json, Class<?> parameterType)
             throws JsonProcessingException {
         String actual = objectMapper.writeValueAsString(dto).replaceAll("000\\+00:00", "000+0000");
-        String expected = json;
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isEqualTo(json);
     }
 
     private void assertDeserializationResult(DateTransferObject<?> dto, final DateTransferObject<?> deserialized) {

@@ -254,10 +254,9 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     public SalesforceEndpointConfig copy() {
         try {
-            final SalesforceEndpointConfig copy = (SalesforceEndpointConfig) super.clone();
             // nothing to deep copy, getApexQueryParams() is readonly, so no
             // need to deep copy
-            return copy;
+            return (SalesforceEndpointConfig) super.clone();
         } catch (CloneNotSupportedException ex) {
             throw new RuntimeCamelException(ex);
         }

@@ -429,8 +429,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         }
         XMLStructure structure = structures.get(0);
         // only dom currently supported
-        DOMStructure domStruc = (DOMStructure) structure;
-        return domStruc;
+        return (DOMStructure) structure;
     }
 
     protected List<XMLObject> getReferencedSameDocumentObjects(

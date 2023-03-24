@@ -49,10 +49,9 @@ public final class JettySolrFactory {
     }
 
     private static SSLConfig buildSSLConfig(boolean useSsl, boolean sslClientAuth) {
-        SSLConfig sslConfig = new SSLConfig(
+        return new SSLConfig(
                 useSsl, false, TEST_KEYSTORE_PATH, TEST_KEYSTORE_PASSWORD,
                 TEST_KEYSTORE_PATH, TEST_KEYSTORE_PASSWORD);
-        return sslConfig;
     }
 
     private static void installAllTrustingClientSsl()

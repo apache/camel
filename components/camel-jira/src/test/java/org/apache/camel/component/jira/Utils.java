@@ -192,8 +192,7 @@ public final class Utils {
         // avatar Id
         sb.append("avatarId=").append(avatarId);
         String relativeAvatarUrl = sb.toString();
-        URI avatarUrl = new URL(TEST_JIRA_URL + "/" + relativeAvatarUrl).toURI();
-        return avatarUrl;
+        return new URL(TEST_JIRA_URL + "/" + relativeAvatarUrl).toURI();
     }
 
 }

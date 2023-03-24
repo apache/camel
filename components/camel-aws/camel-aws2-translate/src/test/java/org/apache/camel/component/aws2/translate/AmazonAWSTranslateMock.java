@@ -24,8 +24,7 @@ public class AmazonAWSTranslateMock implements TranslateClient {
 
     @Override
     public TranslateTextResponse translateText(TranslateTextRequest request) {
-        TranslateTextResponse result = TranslateTextResponse.builder().translatedText("Hello").build();
-        return result;
+        return TranslateTextResponse.builder().translatedText("Hello").build();
     }
 
     @Override

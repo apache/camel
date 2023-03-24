@@ -62,8 +62,7 @@ public final class GraphqlDataFetchers {
             String id = "book-" + (BOOKS.size() + 1);
             String name = (String) bookInput.get("name");
             String authorId = (String) bookInput.get("authorId");
-            Book book = new Book(id, name, authorId);
-            return book;
+            return new Book(id, name, authorId);
         };
     }
 }

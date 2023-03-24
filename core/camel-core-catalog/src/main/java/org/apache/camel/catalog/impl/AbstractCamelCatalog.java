@@ -775,19 +775,18 @@ public abstract class AbstractCamelCatalog {
 
         // and covert the values to String so its JMX friendly
         parameters.forEach((k, v) -> {
-            String key = k;
             String value = v != null ? v.toString() : "";
 
             // is the key a prefix property
-            int dot = key.indexOf('.');
+            int dot = k.indexOf('.');
             if (dot != -1) {
-                String prefix = key.substring(0, dot + 1); // include dot in prefix
+                String prefix = k.substring(0, dot + 1); // include dot in prefix
                 String option = getPropertyNameFromNameWithPrefix(rows, prefix);
                 if (option == null || !rows.get(option).isMultiValue()) {
-                    answer.put(key, value);
+                    answer.put(k, value);
                 }
-            } else if (!names.contains(key)) {
-                answer.put(key, value);
+            } else if (!names.contains(k)) {
+                answer.put(k, value);
             }
         });
 

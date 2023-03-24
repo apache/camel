@@ -28,9 +28,8 @@ public class SmnClientMock extends SmnClient {
 
     @Override
     public PublishMessageResponse publishMessage(PublishMessageRequest request) {
-        PublishMessageResponse response = new PublishMessageResponse()
+        return new PublishMessageResponse()
                 .withRequestId("6a63a18b8bab40ffb71ebd9cb80d0085")
                 .withMessageId("bf94b63a5dfb475994d3ac34664e24f2");
-        return response;
     }
 }

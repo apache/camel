@@ -84,8 +84,7 @@ public class CometdConsumerTest {
         testObj.setBayeux(bayeuxServerImpl);
 
         Set<String> attributeNames = new HashSet<>();
-        String attributeKey = USER_NAME;
-        attributeNames.add(attributeKey);
+        attributeNames.add(USER_NAME);
     }
 
     @Test

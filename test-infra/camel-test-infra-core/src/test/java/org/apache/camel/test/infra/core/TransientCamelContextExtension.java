@@ -145,9 +145,8 @@ public class TransientCamelContextExtension extends AbstractCamelContextExtensio
 
     @Override
     public MockEndpoint getMockEndpoint(String uri) {
-        MockEndpoint mock = getMockEndpoint(uri, true);
 
-        return mock;
+        return getMockEndpoint(uri, true);
     }
 
     @Override

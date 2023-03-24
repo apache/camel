@@ -101,8 +101,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         // parameter type is com.google.api.client.http.AbstractInputStreamContent
         headers.put("CamelGoogleDrive.mediaContent", mediaContent);
 
-        File result = requestBodyAndHeaders("google-drive://drive-files/insert", null, headers);
-        return result;
+        return requestBodyAndHeaders("google-drive://drive-files/insert", null, headers);
     }
 
     protected File uploadTestFolder() {
@@ -110,8 +109,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         fileMetadata.setTitle("testfolder");
         fileMetadata.setMimeType("application/vnd.google-apps.folder");
 
-        File result = requestBody("google-drive://drive-files/insert?inBody=content", fileMetadata);
-        return result;
+        return requestBody("google-drive://drive-files/insert?inBody=content", fileMetadata);
     }
 
     @Override

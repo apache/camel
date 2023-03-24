@@ -69,9 +69,8 @@ public final class MyCustomCodec {
 
         @Override
         protected void encode(ChannelHandlerContext ctx, byte[] msg, List<Object> out) {
-            byte[] bytes = msg;
-            ByteBuf buf = ByteBufAllocator.DEFAULT.buffer(bytes.length);
-            buf.writeBytes(bytes);
+            ByteBuf buf = ByteBufAllocator.DEFAULT.buffer(msg.length);
+            buf.writeBytes(msg);
             out.add(buf);
         }
     }

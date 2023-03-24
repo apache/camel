@@ -169,8 +169,7 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
         }
 
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory().disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER));
-        String yaml = mapper.writeValueAsString(node);
-        return yaml;
+        return mapper.writeValueAsString(node);
     }
 
     private static JsonNode fixRootNode(XmlMapper xmlMapper, JsonNode node) {

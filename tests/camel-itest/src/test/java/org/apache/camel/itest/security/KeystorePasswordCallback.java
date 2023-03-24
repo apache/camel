@@ -103,8 +103,7 @@ public class KeystorePasswordCallback implements CallbackHandler {
             if (getType == null) {
                 getType = pc.getClass().getMethod("getType");
             }
-            String result = (String) getType.invoke(pc);
-            return result;
+            return (String) getType.invoke(pc);
 
         } catch (Exception ex) {
             return null;

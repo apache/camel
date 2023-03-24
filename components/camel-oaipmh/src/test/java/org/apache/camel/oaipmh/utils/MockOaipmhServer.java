@@ -57,8 +57,7 @@ public final class MockOaipmhServer {
     public static MockOaipmhServer create() {
         int httpPort = AvailablePortFinder.getNextAvailable();
         int httpsPort = AvailablePortFinder.getNextAvailable();
-        MockOaipmhServer server = new MockOaipmhServer(httpPort, httpsPort);
-        return server;
+        return new MockOaipmhServer(httpPort, httpsPort);
     }
 
     /**

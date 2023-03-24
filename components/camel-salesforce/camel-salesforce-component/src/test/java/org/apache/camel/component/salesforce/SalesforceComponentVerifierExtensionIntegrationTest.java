@@ -66,10 +66,8 @@ public class SalesforceComponentVerifierExtensionIntegrationTest extends CamelTe
 
     protected ComponentVerifierExtension getExtension() {
         Component component = context().getComponent("salesforce");
-        ComponentVerifierExtension verifier
-                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
-        return verifier;
+        return component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
     }
 
     // *********************************

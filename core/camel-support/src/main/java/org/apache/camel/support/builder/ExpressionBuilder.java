@@ -1292,8 +1292,7 @@ public class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 String text = token.evaluate(exchange, String.class);
                 Object value = expression.evaluate(exchange, Object.class);
-                Scanner scanner = ExchangeHelper.getScanner(exchange, value, text);
-                return scanner;
+                return ExchangeHelper.getScanner(exchange, value, text);
             }
 
             @Override
@@ -1352,8 +1351,7 @@ public class ExpressionBuilder {
             @Override
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange, Object.class);
-                Scanner scanner = ExchangeHelper.getScanner(exchange, value, regexTokenizer);
-                return scanner;
+                return ExchangeHelper.getScanner(exchange, value, regexTokenizer);
             }
 
             @Override

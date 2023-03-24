@@ -75,10 +75,9 @@ public class AbstractOlingo4TestSupport extends CamelTestSupport {
         httpclient.execute(httpGet, httpContext);
         HttpUriRequest currentReq = (HttpUriRequest) httpContext.getAttribute(ExecutionContext.HTTP_REQUEST);
         HttpHost currentHost = (HttpHost) httpContext.getAttribute(ExecutionContext.HTTP_TARGET_HOST);
-        String currentUrl = (currentReq.getURI().isAbsolute())
-                ? currentReq.getURI().toString() : (currentHost.toURI() + currentReq.getURI());
 
-        return currentUrl;
+        return (currentReq.getURI().isAbsolute())
+                ? currentReq.getURI().toString() : (currentHost.toURI() + currentReq.getURI());
     }
 
     @SuppressWarnings("unchecked")

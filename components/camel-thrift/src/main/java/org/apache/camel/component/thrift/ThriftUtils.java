@@ -134,8 +134,7 @@ public final class ThriftUtils {
                     "Thrift service client method not found: " + syncClient.getClass().getName() + "." + invokeMethod
                                                + printParamsTypes(paramsTypes));
         }
-        Object result = ObjectHelper.invokeMethod(method, syncClient, paramsValues);
-        return result;
+        return ObjectHelper.invokeMethod(method, syncClient, paramsValues);
     }
 
     @SuppressWarnings({ "rawtypes" })

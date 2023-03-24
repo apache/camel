@@ -201,8 +201,7 @@ public abstract class ContextTestSupport extends TestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context;
         if (useLightweightContext) {
-            LightweightCamelContext ctx = new LightweightCamelContext(createRegistry());
-            context = ctx;
+            context = new LightweightCamelContext(createRegistry());
         } else {
             DefaultCamelContext ctx = new DefaultCamelContext(true);
             ctx.getCamelContextExtension().setRegistry(createRegistry());

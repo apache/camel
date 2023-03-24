@@ -118,8 +118,7 @@ public class AtomGoodBlogsTest {
             String title = entry.getTitle();
 
             // We like blogs about Camel
-            boolean good = title.toLowerCase().contains("camel");
-            return good;
+            return title.toLowerCase().contains("camel");
         }
 
     }

@@ -794,8 +794,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
     public static PGPPassphraseAccessor getPassphraseAccessor() {
         Map<String, String> userId2Passphrase = Collections.singletonMap("Super <sdude@nowhere.net>", "sdude");
-        PGPPassphraseAccessor passphraseAccessor = new DefaultPGPPassphraseAccessor(userId2Passphrase);
-        return passphraseAccessor;
+        return new DefaultPGPPassphraseAccessor(userId2Passphrase);
     }
 
     public static void checkThrownException(
@@ -835,8 +834,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         PrintWriter w = new PrintWriter(os);
         e.printStackTrace(w);
         w.close();
-        String stackTrace = new String(os.toByteArray(), "UTF-8");
-        return stackTrace;
+        return new String(os.toByteArray(), "UTF-8");
     }
 
 }

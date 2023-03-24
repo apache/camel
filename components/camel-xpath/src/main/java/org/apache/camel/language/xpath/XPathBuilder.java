@@ -770,8 +770,7 @@ public class XPathBuilder extends ServiceSupport
                         try {
                             // use the property placeholder resolver to lookup
                             // the property for us
-                            Object answer = exchange.get().getContext().resolvePropertyPlaceholders("{{" + propertyText + "}}");
-                            return answer;
+                            return exchange.get().getContext().resolvePropertyPlaceholders("{{" + propertyText + "}}");
                         } catch (Exception e) {
                             throw new XPathFunctionException(e);
                         }
@@ -809,8 +808,7 @@ public class XPathBuilder extends ServiceSupport
                         String exprText = exchange.get().getContext().getTypeConverter().convertTo(String.class, value);
                         Language simple = exchange.get().getContext().resolveLanguage("simple");
                         Expression exp = simple.createExpression(exprText);
-                        Object answer = exp.evaluate(exchange.get(), Object.class);
-                        return answer;
+                        return exp.evaluate(exchange.get(), Object.class);
                     }
                 }
                 return null;

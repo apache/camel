@@ -82,13 +82,12 @@ public class GitTestSupport extends CamelTestSupport {
         Git.init().setDirectory(new File(gitLocalRepo, "")).setInitialBranch("master").setBare(false).call();
         // now open the resulting repository with a FileRepositoryBuilder
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
-        Repository repo = builder.setGitDir(gitRepo).readEnvironment() // scan
+        return builder.setGitDir(gitRepo).readEnvironment() // scan
                 // environment
                 // GIT_*
                 // variables
                 .findGitDir() // scan up the file system tree
                 .build();
-        return repo;
     }
 
     protected Git getGitTestRepository() throws IOException, IllegalStateException, GitAPIException, ConfigInvalidException {

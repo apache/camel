@@ -386,8 +386,7 @@ public class SplunkEvent implements Serializable {
             }
         }
         // trim off trailing pair delim char(s)
-        String result = event.substring(0, event.length() - PAIRDELIM.length()) + LINEBREAK;
-        return result;
+        return event.substring(0, event.length() - PAIRDELIM.length()) + LINEBREAK;
     }
 
     public void setCommonCategory(String commonCategory) {

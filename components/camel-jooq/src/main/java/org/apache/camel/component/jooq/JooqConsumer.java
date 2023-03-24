@@ -85,8 +85,7 @@ public class JooqConsumer extends ScheduledBatchPollingConsumer {
 
     private Table getTable(Class<?> entityType) {
         UpdatableRecord object = (UpdatableRecord) ObjectHelper.newInstance(entityType);
-        Table table = object.getTable();
-        return table;
+        return object.getTable();
     }
 
     @Override

@@ -357,35 +357,34 @@ public final class DefaultConfigurationConfigurer {
     public static void afterConfigure(final CamelContext camelContext) throws Exception {
         final Registry registry = camelContext.getRegistry();
         final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
-        final CamelContext ecc = camelContext;
 
         StartupStepRecorder ssr = getSingleBeanOfType(registry, StartupStepRecorder.class);
         if (ssr != null) {
-            ecc.getCamelContextExtension().setStartupStepRecorder(ssr);
+            camelContext.getCamelContextExtension().setStartupStepRecorder(ssr);
         }
         CliConnectorFactory ccf = getSingleBeanOfType(registry, CliConnectorFactory.class);
         if (ccf != null) {
-            ecc.getCamelContextExtension().setCliConnectorFactory(ccf);
+            camelContext.getCamelContextExtension().setCliConnectorFactory(ccf);
         }
         PropertiesComponent pc = getSingleBeanOfType(registry, PropertiesComponent.class);
         if (pc != null) {
-            ecc.setPropertiesComponent(pc);
+            camelContext.setPropertiesComponent(pc);
         }
         BacklogTracer bt = getSingleBeanOfType(registry, BacklogTracer.class);
         if (bt != null) {
-            ecc.setExtension(BacklogTracer.class, bt);
+            camelContext.setExtension(BacklogTracer.class, bt);
         }
         InflightRepository ir = getSingleBeanOfType(registry, InflightRepository.class);
         if (ir != null) {
-            ecc.setInflightRepository(ir);
+            camelContext.setInflightRepository(ir);
         }
         AsyncProcessorAwaitManager apam = getSingleBeanOfType(registry, AsyncProcessorAwaitManager.class);
         if (apam != null) {
-            ecc.getCamelContextExtension().setAsyncProcessorAwaitManager(apam);
+            camelContext.getCamelContextExtension().setAsyncProcessorAwaitManager(apam);
         }
         ManagementStrategy ms = getSingleBeanOfType(registry, ManagementStrategy.class);
         if (ms != null) {
-            ecc.setManagementStrategy(ms);
+            camelContext.setManagementStrategy(ms);
         }
         ManagementObjectNameStrategy mons = getSingleBeanOfType(registry, ManagementObjectNameStrategy.class);
         if (mons != null) {
@@ -397,67 +396,67 @@ public final class DefaultConfigurationConfigurer {
         }
         UnitOfWorkFactory uowf = getSingleBeanOfType(registry, UnitOfWorkFactory.class);
         if (uowf != null) {
-            ecc.getCamelContextExtension().setUnitOfWorkFactory(uowf);
+            camelContext.getCamelContextExtension().setUnitOfWorkFactory(uowf);
         }
         RuntimeEndpointRegistry rer = getSingleBeanOfType(registry, RuntimeEndpointRegistry.class);
         if (rer != null) {
-            ecc.setRuntimeEndpointRegistry(rer);
+            camelContext.setRuntimeEndpointRegistry(rer);
         }
         ModelJAXBContextFactory mjcf = getSingleBeanOfType(registry, ModelJAXBContextFactory.class);
         if (mjcf != null) {
-            ecc.getCamelContextExtension().setModelJAXBContextFactory(mjcf);
+            camelContext.getCamelContextExtension().setModelJAXBContextFactory(mjcf);
         }
         ClassResolver cr = getSingleBeanOfType(registry, ClassResolver.class);
         if (cr != null) {
-            ecc.setClassResolver(cr);
+            camelContext.setClassResolver(cr);
         }
         FactoryFinderResolver ffr = getSingleBeanOfType(registry, FactoryFinderResolver.class);
         if (ffr != null) {
-            ecc.getCamelContextExtension().setFactoryFinderResolver(ffr);
+            camelContext.getCamelContextExtension().setFactoryFinderResolver(ffr);
         }
         RouteController rc = getSingleBeanOfType(registry, RouteController.class);
         if (rc != null) {
-            ecc.setRouteController(rc);
+            camelContext.setRouteController(rc);
         }
         UuidGenerator ug = getSingleBeanOfType(registry, UuidGenerator.class);
         if (ug != null) {
-            ecc.setUuidGenerator(ug);
+            camelContext.setUuidGenerator(ug);
         }
         ExecutorServiceManager esm = getSingleBeanOfType(registry, ExecutorServiceManager.class);
         if (esm != null) {
-            ecc.setExecutorServiceManager(esm);
+            camelContext.setExecutorServiceManager(esm);
         }
         ThreadPoolFactory tpf = getSingleBeanOfType(registry, ThreadPoolFactory.class);
         if (tpf != null) {
-            ecc.getExecutorServiceManager().setThreadPoolFactory(tpf);
+            camelContext.getExecutorServiceManager().setThreadPoolFactory(tpf);
         }
         ProcessorFactory pf = getSingleBeanOfType(registry, ProcessorFactory.class);
         if (pf != null) {
-            ecc.getCamelContextExtension().setProcessorFactory(pf);
+            camelContext.getCamelContextExtension().setProcessorFactory(pf);
         }
         Debugger debugger = getSingleBeanOfType(registry, Debugger.class);
         if (debugger != null) {
-            ecc.setDebugger(debugger);
+            camelContext.setDebugger(debugger);
         }
         NodeIdFactory nif = getSingleBeanOfType(registry, NodeIdFactory.class);
         if (nif != null) {
-            ecc.getCamelContextExtension().setNodeIdFactory(nif);
+            camelContext.getCamelContextExtension().setNodeIdFactory(nif);
         }
         MessageHistoryFactory mhf = getSingleBeanOfType(registry, MessageHistoryFactory.class);
         if (mhf != null) {
-            ecc.setMessageHistoryFactory(mhf);
+            camelContext.setMessageHistoryFactory(mhf);
         }
         ReactiveExecutor re = getSingleBeanOfType(registry, ReactiveExecutor.class);
         if (re != null) {
-            ecc.getCamelContextExtension().setReactiveExecutor(re);
+            camelContext.getCamelContextExtension().setReactiveExecutor(re);
         }
         ShutdownStrategy ss = getSingleBeanOfType(registry, ShutdownStrategy.class);
         if (ss != null) {
-            ecc.setShutdownStrategy(ss);
+            camelContext.setShutdownStrategy(ss);
         }
         ExchangeFactory exf = getSingleBeanOfType(registry, ExchangeFactory.class);
         if (exf != null) {
-            ecc.getCamelContextExtension().setExchangeFactory(exf);
+            camelContext.getCamelContextExtension().setExchangeFactory(exf);
         }
         Set<TypeConverters> tcs = registry.findByType(TypeConverters.class);
         if (!tcs.isEmpty()) {
@@ -465,7 +464,7 @@ public final class DefaultConfigurationConfigurer {
         }
         Set<EndpointStrategy> ess = registry.findByType(EndpointStrategy.class);
         if (!ess.isEmpty()) {
-            ess.forEach(ecc.getCamelContextExtension()::registerEndpointCallback);
+            ess.forEach(camelContext.getCamelContextExtension()::registerEndpointCallback);
         }
         Set<CamelClusterService> csss = registry.findByType(CamelClusterService.class);
         if (!csss.isEmpty()) {
@@ -497,10 +496,10 @@ public final class DefaultConfigurationConfigurer {
         Map<String, LogListener> logListeners = registry.findByTypeWithName(LogListener.class);
         if (logListeners != null && !logListeners.isEmpty()) {
             for (LogListener logListener : logListeners.values()) {
-                boolean contains = ecc.getCamelContextExtension().getLogListeners() != null
-                        && ecc.getCamelContextExtension().getLogListeners().contains(logListener);
+                boolean contains = camelContext.getCamelContextExtension().getLogListeners() != null
+                        && camelContext.getCamelContextExtension().getLogListeners().contains(logListener);
                 if (!contains) {
-                    ecc.getCamelContextExtension().addLogListener(logListener);
+                    camelContext.getCamelContextExtension().addLogListener(logListener);
                 }
             }
         }

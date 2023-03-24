@@ -104,8 +104,7 @@ public class AmazonEC2ClientMock implements Ec2Client {
             AwsErrorDetails.Builder builderError = AwsErrorDetails.builder();
             builderError.errorMessage("The image-id doesn't exists");
             builder.awsErrorDetails(builderError.build());
-            AwsServiceException ase = builder.build();
-            throw ase;
+            throw builder.build();
         }
         return result.build();
 
@@ -133,8 +132,7 @@ public class AmazonEC2ClientMock implements Ec2Client {
             AwsErrorDetails.Builder builderError = AwsErrorDetails.builder();
             builderError.errorMessage("The image-id doesn't exists");
             builder.awsErrorDetails(builderError.build());
-            AwsServiceException ase = builder.build();
-            throw ase;
+            throw builder.build();
         }
         return result.build();
     }
@@ -161,8 +159,7 @@ public class AmazonEC2ClientMock implements Ec2Client {
             AwsErrorDetails.Builder builderError = AwsErrorDetails.builder();
             builderError.errorMessage("The image-id doesn't exists");
             exc.awsErrorDetails(builderError.build());
-            AwsServiceException ase = exc.build();
-            throw ase;
+            throw exc.build();
         }
         return builder.build();
     }
@@ -189,8 +186,7 @@ public class AmazonEC2ClientMock implements Ec2Client {
             AwsErrorDetails.Builder builderError = AwsErrorDetails.builder();
             builderError.errorMessage("The image-id doesn't exists");
             exc.awsErrorDetails(builderError.build());
-            AwsServiceException ase = exc.build();
-            throw ase;
+            throw exc.build();
         }
         return result.build();
     }

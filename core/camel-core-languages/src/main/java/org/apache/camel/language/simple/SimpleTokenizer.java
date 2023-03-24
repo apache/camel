@@ -228,8 +228,7 @@ public final class SimpleTokenizer {
 
         // fallback and create a character token
         char ch = expression.charAt(index);
-        SimpleToken token = new SimpleToken(new SimpleTokenType(TokenType.character, "" + ch), index);
-        return token;
+        return new SimpleToken(new SimpleTokenType(TokenType.character, "" + ch), index);
     }
 
     private static boolean acceptType(TokenType type, TokenType... filters) {

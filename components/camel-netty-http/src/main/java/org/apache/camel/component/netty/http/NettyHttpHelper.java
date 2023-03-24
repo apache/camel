@@ -126,16 +126,15 @@ public final class NettyHttpHelper {
 
     public static Exception populateNettyHttpOperationFailedException(
             Exchange exchange, String url, FullHttpResponse response, int responseCode, boolean transferException) {
-        String uri = url;
         String statusText = response.status().reasonPhrase();
 
         if (responseCode >= 300 && responseCode < 400) {
             String redirectLocation = response.headers().get("location");
             if (redirectLocation != null) {
-                return new NettyHttpOperationFailedException(uri, responseCode, statusText, redirectLocation, response);
+                return new NettyHttpOperationFailedException(url, responseCode, statusText, redirectLocation, response);
             } else {
                 // no redirect location
-                return new NettyHttpOperationFailedException(uri, responseCode, statusText, null, response);
+                return new NettyHttpOperationFailedException(url, responseCode, statusText, null, response);
             }
         }
 
@@ -160,7 +159,7 @@ public final class NettyHttpHelper {
         }
 
         // internal server error (error code 500)
-        return new NettyHttpOperationFailedException(uri, responseCode, statusText, null, response);
+        return new NettyHttpOperationFailedException(url, responseCode, statusText, null, response);
     }
 
     public static Object deserializeJavaObjectFromStream(InputStream is) throws ClassNotFoundException, IOException {

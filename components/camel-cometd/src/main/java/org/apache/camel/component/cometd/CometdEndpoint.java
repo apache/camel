@@ -93,8 +93,7 @@ public class CometdEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         ObjectHelper.notNull(component, "component");
-        CometdProducer producer = new CometdProducer(this);
-        return producer;
+        return new CometdProducer(this);
     }
 
     @Override

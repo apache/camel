@@ -60,8 +60,7 @@ public class JcrConsumer extends DefaultConsumer {
     }
 
     protected JcrEndpoint getJcrEndpoint() {
-        JcrEndpoint endpoint = (JcrEndpoint) getEndpoint();
-        return endpoint;
+        return (JcrEndpoint) getEndpoint();
     }
 
     private synchronized void createSessionAndRegisterListener() throws RepositoryException {

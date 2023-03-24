@@ -888,10 +888,9 @@ public final class EntityParser {
             if (contentTransferEncoding != null) {
                 ediMessageBodyPartContent = EntityUtils.decode(ediMessageBodyPartContent, charset, contentTransferEncoding);
             }
-            ApplicationEDIEntity applicationEDIEntity = EntityUtils.createEDIEntity(ediMessageBodyPartContent,
-                    ediMessageContentType, contentTransferEncoding, false, filename);
 
-            return applicationEDIEntity;
+            return EntityUtils.createEDIEntity(ediMessageBodyPartContent,
+                    ediMessageContentType, contentTransferEncoding, false, filename);
         } catch (Exception e) {
             ParseException parseException = new ParseException("failed to parse EDI entity");
             parseException.initCause(e);

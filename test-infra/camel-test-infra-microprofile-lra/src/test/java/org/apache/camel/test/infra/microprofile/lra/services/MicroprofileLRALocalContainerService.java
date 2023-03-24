@@ -98,12 +98,10 @@ public class MicroprofileLRALocalContainerService implements MicroprofileLRAServ
                 .withNetworkId("bridge")
                 .exec();
 
-        String networkGateway = bridgeNetwork.getIpam().getConfig().stream()
+        return bridgeNetwork.getIpam().getConfig().stream()
                 .filter(config -> config.getGateway() != null)
                 .findAny()
                 .map(Network.Ipam.Config::getGateway)
                 .orElseThrow(() -> new IllegalStateException("Gateway cannot be found in the bridge network"));
-
-        return networkGateway;
     }
 }

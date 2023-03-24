@@ -37,10 +37,8 @@ public class MongoDbVerifierExtensionIT extends AbstractMongoDbITSupport {
 
     protected ComponentVerifierExtension getExtension() {
         Component component = context.getComponent(SCHEME);
-        ComponentVerifierExtension verifier
-                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
-        return verifier;
+        return component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
     }
 
     @Test

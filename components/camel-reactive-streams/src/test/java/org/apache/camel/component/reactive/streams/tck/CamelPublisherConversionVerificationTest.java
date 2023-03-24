@@ -55,8 +55,7 @@ public class CamelPublisherConversionVerificationTest extends PublisherVerificat
             throw new RuntimeCamelException(e);
         }
 
-        Publisher<Long> pub = CamelReactiveStreams.get(context).fromStream("prod", Long.class);
-        return pub;
+        return CamelReactiveStreams.get(context).fromStream("prod", Long.class);
     }
 
     @Override

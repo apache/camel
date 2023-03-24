@@ -64,18 +64,15 @@ public final class TelegramTestUtil {
     }
 
     public static byte[] createSampleAudio() throws IOException {
-        byte[] audio = readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.mp3"));
-        return audio;
+        return readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.mp3"));
     }
 
     public static byte[] createSampleVideo() throws IOException {
-        byte[] video = readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.mp4"));
-        return video;
+        return readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.mp4"));
     }
 
     public static byte[] createSampleDocument() throws IOException {
-        byte[] document = readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.txt"));
-        return document;
+        return readBytesFromStream(TelegramTestUtil.class.getResourceAsStream("/attachments/sample.txt"));
     }
 
     public static String stringResource(String path) {

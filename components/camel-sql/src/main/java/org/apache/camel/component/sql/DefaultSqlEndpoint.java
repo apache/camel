@@ -455,13 +455,11 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
             Class<?> outputClazz = getCamelContext().getClassResolver().resolveClass(outputClass);
             RowMapper rowMapper = new BeanPropertyRowMapper(outputClazz);
             RowMapperResultSetExtractor<?> mapper = new RowMapperResultSetExtractor(rowMapper);
-            List<?> data = mapper.extractData(rs);
-            return data;
+            return mapper.extractData(rs);
         } else {
             ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
             RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<>(rowMapper);
-            List<Map<String, Object>> data = mapper.extractData(rs);
-            return data;
+            return mapper.extractData(rs);
         }
     }
 

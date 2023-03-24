@@ -43,10 +43,8 @@ public class ServiceNowComponentVerifierExtensionIT extends ServiceNowITSupport 
 
     protected ComponentVerifierExtension getExtension() {
         Component component = context().getComponent("servicenow");
-        ComponentVerifierExtension verifier
-                = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 
-        return verifier;
+        return component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
     }
 
     // *********************************

@@ -123,7 +123,6 @@ public class JsonStreamTest {
         byte[] buffer = new byte[2048];
         int len = js.read(buffer);
         js.close();
-        byte[] result = Arrays.copyOf(buffer, len);
-        return result;
+        return Arrays.copyOf(buffer, len);
     }
 }

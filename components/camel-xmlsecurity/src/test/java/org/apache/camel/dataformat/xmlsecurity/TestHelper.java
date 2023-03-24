@@ -202,8 +202,7 @@ public class TestHelper {
             ((StreamCache) body).reset();
         }
         byte[] arr = exchange.getIn().getBody(byte[].class);
-        Document d = createDocumentFromInputStream(new ByteArrayInputStream(arr), exchange.getContext());
-        return d;
+        return createDocumentFromInputStream(new ByteArrayInputStream(arr), exchange.getContext());
     }
 
     private Document createDocumentFromInputStream(InputStream is, CamelContext context) {

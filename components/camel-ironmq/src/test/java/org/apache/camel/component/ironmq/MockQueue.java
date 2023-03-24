@@ -129,8 +129,7 @@ public class MockQueue extends Queue {
                 list.add(next.getValue());
                 i++;
             }
-            Messages messages = new Messages(list.toArray(new Message[list.size()]));
-            return messages;
+            return new Messages(list.toArray(new Message[list.size()]));
         }
         throw new EmptyQueueException();
     }

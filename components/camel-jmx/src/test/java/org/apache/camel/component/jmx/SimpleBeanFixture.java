@@ -131,8 +131,7 @@ public class SimpleBeanFixture {
      * Makes an ObjectName for the given domain using our domain and the name attribute.
      */
     protected ObjectName makeObjectName(String aName) throws MalformedObjectNameException {
-        ObjectName objectName = new ObjectName(DOMAIN, NAME, aName);
-        return objectName;
+        return new ObjectName(DOMAIN, NAME, aName);
     }
 
     /**
@@ -172,9 +171,8 @@ public class SimpleBeanFixture {
      * Override this to control the properties that make up the endpoint
      */
     protected JMXUriBuilder buildFromURI() {
-        JMXUriBuilder uri = new JMXUriBuilder().withObjectDomain(DOMAIN)
+        return new JMXUriBuilder().withObjectDomain(DOMAIN)
                 .withObjectName("simpleBean");
-        return uri;
     }
 
     /**

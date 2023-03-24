@@ -47,10 +47,9 @@ class LogTestBase {
             values.add(now);
         }
 
-        LogEntry entry = new LogEntry(
+        return new LogEntry(
                 LogEntry.EntryState.NEW, 0,
                 keyData.getBytes(), 0, value.array());
-        return entry;
     }
 
     protected List<Instant> generateDataFilePredictable(

@@ -545,9 +545,8 @@ public class GenerateExecution extends AbstractSalesforceExecution {
         velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADERS, "cloader");
         velocityProperties.setProperty("resource.loader.cloader.class", ClasspathResourceLoader.class.getName());
         velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, LOG.getName());
-        final VelocityEngine engine = new VelocityEngine(velocityProperties);
 
-        return engine;
+        return new VelocityEngine(velocityProperties);
     }
 
     private static Set<String> defineBaseFields() {

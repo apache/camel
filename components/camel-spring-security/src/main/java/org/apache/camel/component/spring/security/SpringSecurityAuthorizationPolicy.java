@@ -72,9 +72,7 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType
         try {
             Authentication authToken = getAuthentication(exchange.getIn());
             if (authToken == null) {
-                CamelAuthorizationException authorizationException
-                        = new CamelAuthorizationException("Cannot find the Authentication instance.", exchange);
-                throw authorizationException;
+                throw new CamelAuthorizationException("Cannot find the Authentication instance.", exchange);
             }
 
             Authentication authenticated = authenticateIfRequired(authToken);
@@ -94,9 +92,8 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType
 
         } catch (RuntimeException exception) {
             exchange.getIn().setHeader(Exchange.AUTHENTICATION_FAILURE_POLICY_ID, getId());
-            CamelAuthorizationException authorizationException = new CamelAuthorizationException(
+            throw new CamelAuthorizationException(
                     "Cannot access the processor which has been protected.", exchange, exception);
-            throw authorizationException;
         }
     }
 

@@ -41,8 +41,7 @@ public class MockIssueService extends IssueService {
 
     @Override
     public Comment createComment(IRepositoryIdProvider repository, int issueNumber, String commentText) {
-        Comment addedComment = mockPullRequestService.addComment((long) issueNumber, commentText);
-        return addedComment;
+        return mockPullRequestService.addComment((long) issueNumber, commentText);
     }
 
     @Override

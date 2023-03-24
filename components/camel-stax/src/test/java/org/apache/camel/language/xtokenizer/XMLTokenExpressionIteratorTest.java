@@ -324,8 +324,7 @@ public class XMLTokenExpressionIteratorTest {
 
     @Test
     public void testExtractChildInjected() throws Exception {
-        String[] result = RESULTS_CHILD;
-        invokeAndVerify("//C:child", 'i', new ByteArrayInputStream(TEST_BODY), result);
+        invokeAndVerify("//C:child", 'i', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD);
     }
 
     @Test
@@ -335,8 +334,7 @@ public class XMLTokenExpressionIteratorTest {
 
     @Test
     public void testExtractChildNSMixedInjected() throws Exception {
-        String[] result = RESULTS_CHILD_MIXED;
-        invokeAndVerify("//*:child", 'i', new ByteArrayInputStream(TEST_BODY_NS_MIXED), result);
+        invokeAndVerify("//*:child", 'i', new ByteArrayInputStream(TEST_BODY_NS_MIXED), RESULTS_CHILD_MIXED);
     }
 
     @Test
@@ -346,8 +344,7 @@ public class XMLTokenExpressionIteratorTest {
 
     @Test
     public void testExtractCxxxd() throws Exception {
-        String[] result = RESULTS_CHILD;
-        invokeAndVerify("//C:c*d", 'i', new ByteArrayInputStream(TEST_BODY), result);
+        invokeAndVerify("//C:c*d", 'i', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD);
     }
 
     @Test
@@ -362,8 +359,7 @@ public class XMLTokenExpressionIteratorTest {
 
     @Test
     public void testExtractSomeUnqualifiedChildInjected() throws Exception {
-        String[] result = RESULTS_CHILD_NO_NS_MIXED;
-        invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), result);
+        invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), RESULTS_CHILD_NO_NS_MIXED);
     }
 
     @Test
@@ -375,15 +371,13 @@ public class XMLTokenExpressionIteratorTest {
     @Test
     public void testExtractSomeQualifiedChildInjected() throws Exception {
         nsmap.put("", "urn:c");
-        String[] result = RESULTS_CHILD_NS_MIXED;
-        invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), result);
+        invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), RESULTS_CHILD_NS_MIXED);
     }
 
     @Test
     public void testExtractWithNullNamespaceMap() throws Exception {
         nsmap = null;
-        String[] result = RESULTS_CHILD_NO_NS_MIXED;
-        invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), result);
+        invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), RESULTS_CHILD_NO_NS_MIXED);
     }
 
     @Test

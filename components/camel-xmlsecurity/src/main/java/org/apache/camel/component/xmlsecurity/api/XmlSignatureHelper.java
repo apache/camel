@@ -142,11 +142,10 @@ public final class XmlSignatureHelper {
     }
 
     public static XPathFilterParameterSpec getXpathFilter(String xpath, Map<String, String> namespaceMap) {
-        XPathFilterParameterSpec params = namespaceMap == null
+        return namespaceMap == null
                 ? new XPathFilterParameterSpec(xpath) : new XPathFilterParameterSpec(
                         xpath,
                         namespaceMap);
-        return params;
     }
 
     public static XPathFilterParameterSpec getXpathFilter(String xpath) {

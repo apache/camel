@@ -127,8 +127,7 @@ public class CamelSalesforceMojoOutputTest {
     }
 
     static GenerateMojo createMojo() {
-        final GenerateMojo mojo = new GenerateMojo();
-        return mojo;
+        return new GenerateMojo();
     }
 
     static SObjectDescription createSObjectDescription(final String name) throws IOException {

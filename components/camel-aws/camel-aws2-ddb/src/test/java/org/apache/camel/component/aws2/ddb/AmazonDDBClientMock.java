@@ -94,8 +94,7 @@ public class AmazonDDBClientMock implements DynamoDbClient {
         AwsErrorDetails.Builder builderError = AwsErrorDetails.builder();
         builderError.errorMessage("Resource not found");
         builder.awsErrorDetails(builderError.build());
-        AwsServiceException ase = builder.build();
-        throw ase;
+        throw builder.build();
     }
 
     private DescribeTableResponse tableWithStatus(TableStatus active) {

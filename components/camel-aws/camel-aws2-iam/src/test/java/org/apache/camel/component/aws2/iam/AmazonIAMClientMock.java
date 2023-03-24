@@ -87,20 +87,17 @@ public class AmazonIAMClientMock implements IamClient {
 
     @Override
     public DeleteAccessKeyResponse deleteAccessKey(DeleteAccessKeyRequest deleteAccessKeyRequest) {
-        DeleteAccessKeyResponse res = DeleteAccessKeyResponse.builder().build();
-        return res;
+        return DeleteAccessKeyResponse.builder().build();
     }
 
     @Override
     public DeleteGroupResponse deleteGroup(DeleteGroupRequest deleteGroupRequest) {
-        DeleteGroupResponse result = DeleteGroupResponse.builder().build();
-        return result;
+        return DeleteGroupResponse.builder().build();
     }
 
     @Override
     public DeleteUserResponse deleteUser(DeleteUserRequest deleteUserRequest) {
-        DeleteUserResponse res = DeleteUserResponse.builder().build();
-        return res;
+        return DeleteUserResponse.builder().build();
     }
 
     @Override
@@ -149,14 +146,12 @@ public class AmazonIAMClientMock implements IamClient {
 
     @Override
     public RemoveUserFromGroupResponse removeUserFromGroup(RemoveUserFromGroupRequest removeUserFromGroupRequest) {
-        RemoveUserFromGroupResponse res = RemoveUserFromGroupResponse.builder().build();
-        return res;
+        return RemoveUserFromGroupResponse.builder().build();
     }
 
     @Override
     public UpdateAccessKeyResponse updateAccessKey(UpdateAccessKeyRequest updateAccessKeyRequest) {
-        UpdateAccessKeyResponse result = UpdateAccessKeyResponse.builder().build();
-        return result;
+        return UpdateAccessKeyResponse.builder().build();
     }
 
     @Override

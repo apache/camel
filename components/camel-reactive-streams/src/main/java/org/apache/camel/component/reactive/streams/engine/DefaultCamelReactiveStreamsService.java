@@ -345,7 +345,6 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
 
             subscribers.forEach((k, v) -> {
                 try {
-                    String name = k;
                     long inflight = v.getInflightCount();
                     long requested = v.getRequested();
 
@@ -353,7 +352,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
                     CompositeData data = new CompositeDataSupport(
                             ct,
                             new String[] { "name", "inflight", "requested" },
-                            new Object[] { name, inflight, requested });
+                            new Object[] {k, inflight, requested });
                     answer.put(data);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -373,7 +372,6 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
 
             publishers.forEach((k, v) -> {
                 try {
-                    String name = k;
                     List<CamelSubscription> subscriptions = v.getSubscriptions();
                     int subscribers = subscriptions.size();
 
@@ -394,7 +392,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
                     CompositeData data = new CompositeDataSupport(
                             ct,
                             new String[] { "name", "subscribers", "subscriptions" },
-                            new Object[] { name, subscribers, subscriptionData });
+                            new Object[] {k, subscribers, subscriptionData });
                     answer.put(data);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);

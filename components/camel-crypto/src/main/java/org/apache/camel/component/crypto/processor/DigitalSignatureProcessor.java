@@ -78,8 +78,7 @@ public abstract class DigitalSignatureProcessor implements Processor {
     protected Signature createSignatureService() throws NoSuchAlgorithmException, NoSuchProviderException {
         String algorithm = config.getAlgorithm();
         String provider = config.getProvider();
-        Signature signer = provider == null ? Signature.getInstance(algorithm) : Signature.getInstance(algorithm, provider);
-        return signer;
+        return provider == null ? Signature.getInstance(algorithm) : Signature.getInstance(algorithm, provider);
     }
 
     protected void clearMessageHeaders(Message in) {

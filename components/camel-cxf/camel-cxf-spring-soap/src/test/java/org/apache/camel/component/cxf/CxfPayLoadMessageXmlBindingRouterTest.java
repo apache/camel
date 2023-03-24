@@ -80,8 +80,7 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelSpringTestSuppor
         clientBean.setServiceClass(HelloService.class);
         clientBean.setBindingId(getBindingId());
 
-        HelloService client = (HelloService) proxyFactory.create();
-        return client;
+        return (HelloService) proxyFactory.create();
     }
 
     @Override

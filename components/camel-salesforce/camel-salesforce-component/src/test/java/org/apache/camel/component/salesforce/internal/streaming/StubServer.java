@@ -274,8 +274,7 @@ class StubServer {
     }
 
     private AbstractNetworkConnector connector() {
-        final AbstractNetworkConnector connector = (AbstractNetworkConnector) server.getConnectors()[0];
-        return connector;
+        return (AbstractNetworkConnector) server.getConnectors()[0];
     }
 
     private static String messageIdFrom(final String body) {

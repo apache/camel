@@ -28,7 +28,6 @@ public class SoapPayloadBean {
         ObjectHelper.notNull(payload, "@XQuery payload");
 
         // and convert it to a String which contains the xml tags
-        String xml = converter.convertTo(String.class, payload);
-        return xml;
+        return converter.convertTo(String.class, payload);
     }
 }

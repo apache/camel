@@ -110,8 +110,7 @@ public class MockEndpointFixture {
      */
     protected Message getMessage(int aIndex) {
         Exchange exchange = getExchange(aIndex);
-        Message in = exchange.getIn();
-        return in;
+        return exchange.getIn();
     }
 
     /**
@@ -119,7 +118,6 @@ public class MockEndpointFixture {
      */
     protected Exchange getExchange(int aIndex) {
         List<Exchange> exchanges = mMockEndpoint.getReceivedExchanges();
-        Exchange exchange = exchanges.get(aIndex);
-        return exchange;
+        return exchanges.get(aIndex);
     }
 }

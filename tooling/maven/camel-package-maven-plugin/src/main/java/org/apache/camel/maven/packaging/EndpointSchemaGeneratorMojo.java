@@ -1051,9 +1051,8 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                             .filter(opt -> name.equals(opt.getName())).findAny();
                     if (prev.isPresent()) {
                         String prv = prev.get().getJavaType();
-                        String cur = fieldTypeName;
                         if (prv.equals("java.lang.String")
-                                || prv.equals("java.lang.String[]") && cur.equals("java.util.Collection<java.lang.String>")) {
+                                || prv.equals("java.lang.String[]") && fieldTypeName.equals("java.util.Collection<java.lang.String>")) {
                             componentModel.getComponentOptions().remove(prev.get());
                         } else {
                             accept = false;
@@ -1123,7 +1122,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private List<Method> findCandidateClassMethods(Class<?> classElement) {
-        List<Method> methods = Stream.of(classElement.getDeclaredMethods()).filter(method -> {
+        return Stream.of(classElement.getDeclaredMethods()).filter(method -> {
             Metadata metadata = method.getAnnotation(Metadata.class);
             String methodName = method.getName();
             if (metadata != null && metadata.skip()) {
@@ -1151,7 +1150,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
             return true;
         }).collect(Collectors.toList());
-        return methods;
     }
 
     private void processMetadataClassAnnotation(ComponentModel componentModel, Class<?> classElement, Set<String> excludes) {

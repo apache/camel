@@ -1387,12 +1387,11 @@ public abstract class BaseMainSupport extends BaseService {
         // then create beans first (beans with #class values etc)
         for (String key : keys) {
             if (key.indexOf('.') == -1 && key.indexOf('[') == -1) {
-                String name = key;
                 Object value = properties.remove(key);
                 Object bean = PropertyBindingSupport.resolveBean(camelContext, value);
                 if (bean == null) {
                     throw new IllegalArgumentException(
-                            "Cannot create/resolve bean with name " + name + " from value: " + value);
+                            "Cannot create/resolve bean with name " + key + " from value: " + value);
                 }
                 // register bean
                 if (logSummary) {
@@ -1400,7 +1399,7 @@ public abstract class BaseMainSupport extends BaseService {
                 } else {
                     LOG.debug("Binding bean: {} (type: {}) to the registry", key, ObjectHelper.classCanonicalName(bean));
                 }
-                camelContext.getRegistry().bind(name, bean);
+                camelContext.getRegistry().bind(key, bean);
             }
         }
         // create map beans if none already exists

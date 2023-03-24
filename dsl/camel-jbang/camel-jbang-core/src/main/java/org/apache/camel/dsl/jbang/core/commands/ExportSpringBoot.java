@@ -171,9 +171,8 @@ class ExportSpringBoot extends Export {
             String properties = Arrays.stream(additionalProperties.split(","))
                     .map(property -> {
                         String[] keyValueProperty = property.split("=");
-                        String mavenProperty = String.format("\t\t<%s>%s</%s>", keyValueProperty[0], keyValueProperty[1],
+                        return String.format("\t\t<%s>%s</%s>", keyValueProperty[0], keyValueProperty[1],
                                 keyValueProperty[0]);
-                        return mavenProperty;
                     })
                     .map(property -> property + System.lineSeparator())
                     .collect(Collectors.joining());

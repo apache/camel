@@ -33,19 +33,18 @@ public class SendDynamicAwareResolver {
     private FactoryFinder factoryFinder;
 
     public SendDynamicAware resolve(CamelContext context, String scheme) {
-        String name = scheme;
 
         // use factory finder to find a custom implementations
         Class<?> type = null;
         try {
-            type = findFactory(name, context);
+            type = findFactory(scheme, context);
         } catch (Exception e) {
             // ignore
         }
 
         if (type != null) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Found SendDynamicAware: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), name);
+                LOG.debug("Found SendDynamicAware: {} via: {}{}", type.getName(), factoryFinder.getResourcePath(), scheme);
             }
             if (SendDynamicAware.class.isAssignableFrom(type)) {
                 SendDynamicAware answer = (SendDynamicAware) context.getInjector().newInstance(type, false);

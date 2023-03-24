@@ -31,9 +31,8 @@ public final class JDBCServiceBuilder {
     }
 
     public static JDBCServiceBuilder newBuilder() {
-        JDBCServiceBuilder jdbcServiceBuilder = new JDBCServiceBuilder();
 
-        return jdbcServiceBuilder;
+        return new JDBCServiceBuilder();
     }
 
     public JDBCServiceBuilder withContainer(JdbcDatabaseContainer<?> container) {

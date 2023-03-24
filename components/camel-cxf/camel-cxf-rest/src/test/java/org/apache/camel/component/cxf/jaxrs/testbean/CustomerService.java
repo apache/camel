@@ -48,24 +48,21 @@ public class CustomerService {
     @Path("/customers/{id}/")
     public Customer getCustomer(@PathParam("id") String id) {
         long idNumber = Long.parseLong(id);
-        Customer c = customers.get(idNumber);
-        return c;
+        return customers.get(idNumber);
     }
 
     @GET
     @Path("/customers")
     public Customer getCustomerByQueryParam(@QueryParam("id") String id) {
         long idNumber = Long.parseLong(id);
-        Customer c = customers.get(idNumber);
-        return c;
+        return customers.get(idNumber);
     }
 
     @GET
     @Path("/customers/")
     @Produces("application/xml")
     public List<Customer> getCustomers() {
-        List<Customer> list = new ArrayList<>(customers.values());
-        return list;
+        return new ArrayList<>(customers.values());
     }
 
     @PUT
@@ -129,8 +126,7 @@ public class CustomerService {
     @Path("/orders/{orderId}/")
     public Order getOrder(@PathParam("orderId") String orderId) {
         long idNumber = Long.parseLong(orderId);
-        Order c = orders.get(idNumber);
-        return c;
+        return orders.get(idNumber);
     }
 
     final void init() {

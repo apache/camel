@@ -70,8 +70,7 @@ public final class SchematronProcessorFactory {
         fac.setValidating(false);
 
         final SAXParser parser = fac.newSAXParser();
-        XMLReader reader = parser.getXMLReader();
-        return reader;
+        return parser.getXMLReader();
     }
 
 }

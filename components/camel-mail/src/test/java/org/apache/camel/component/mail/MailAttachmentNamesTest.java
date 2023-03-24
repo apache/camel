@@ -249,8 +249,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
         ClassLoader classLoader = getClass().getClassLoader();
         String path = classLoader.getResource(filename).getFile();
         InputStream is = new FileInputStream(path);
-        MimeMessage message = new MimeMessage(session, is);
-        return message;
+        return new MimeMessage(session, is);
     }
 
     private boolean isUUID(String id) {

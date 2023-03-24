@@ -85,8 +85,7 @@ public class TelegramTestSupport extends CamelTestSupport {
     public static <T> T getJSONResource(String fileName, Class<T> clazz) {
         ObjectMapper mapper = new ObjectMapper();
         try (InputStream stream = TelegramTestSupport.class.getClassLoader().getResourceAsStream(fileName)) {
-            T value = mapper.readValue(stream, clazz);
-            return value;
+            return mapper.readValue(stream, clazz);
         } catch (IOException e) {
             throw new IllegalArgumentException("Unable to load file " + fileName, e);
         }

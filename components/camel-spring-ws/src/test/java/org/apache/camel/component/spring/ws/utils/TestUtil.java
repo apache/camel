@@ -62,8 +62,7 @@ public final class TestUtil {
 
         for (AddressingVersion version : versions) {
             if (supports(version, soapMessage)) {
-                MessageAddressingProperties requestMap = version.getMessageAddressingProperties(soapMessage);
-                return requestMap;
+                return version.getMessageAddressingProperties(soapMessage);
             }
         }
         return null;

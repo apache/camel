@@ -210,8 +210,7 @@ public class Bind extends CamelCommand {
     static class FileConsumer extends ParameterConsumer<Bind> {
         @Override
         protected void doConsumeParameters(Stack<String> args, Bind cmd) {
-            String arg = args.pop();
-            cmd.file = arg;
+            cmd.file = args.pop();
         }
     }
 

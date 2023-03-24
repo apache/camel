@@ -124,7 +124,7 @@ public final class EmbeddedConfigurationBuilder {
         final EmbeddedConfiguration.User.UserInfo writableUser = new EmbeddedConfiguration.User.UserInfo(null, true);
         final EmbeddedConfiguration.User.UserInfo nonWritableUser = new EmbeddedConfiguration.User.UserInfo(null, false);
 
-        EmbeddedConfigurationBuilder builder = new EmbeddedConfigurationBuilder()
+        return new EmbeddedConfigurationBuilder()
                 .withTestDirectory("res/home")
                 .addUser("admin", "admin", writableUser)
                 .addUser("scott", "tiger", writableUser)
@@ -135,8 +135,6 @@ public final class EmbeddedConfigurationBuilder {
                 .addUser("jane", "%j#7%c6i", writableUser)
                 .withAdmin("admin", null, null)
                 .withServerAddress("localhost");
-
-        return builder;
     }
 
     public static EmbeddedConfiguration defaultConfiguration() {
@@ -147,7 +145,7 @@ public final class EmbeddedConfigurationBuilder {
         final EmbeddedConfiguration.User.UserInfo writableUser = new EmbeddedConfiguration.User.UserInfo(null, true);
         final EmbeddedConfiguration.User.UserInfo nonWritableUser = new EmbeddedConfiguration.User.UserInfo(null, false);
 
-        EmbeddedConfigurationBuilder builder = new EmbeddedConfigurationBuilder()
+        return new EmbeddedConfigurationBuilder()
                 .withTestDirectory("res/home")
                 .addUser("admin", "admin", writableUser)
                 .addUser("scott", "tiger", writableUser)
@@ -162,8 +160,6 @@ public final class EmbeddedConfigurationBuilder {
                 .withKeyStorePassword("password")
                 .withKeyStoreType("JKS")
                 .withKeyStoreAlgorithm("SunX509");
-
-        return builder;
     }
 
     public static EmbeddedConfiguration defaultFtpsConfiguration() {

@@ -662,8 +662,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
             throws InvalidAlgorithmParameterException, XmlSignatureException {
         try {
             List<Transform> transforms = getTransforms(fac, sigType, message);
-            Reference ref = fac.newReference(uri, fac.newDigestMethod(getDigestAlgorithmUri(), null), transforms, type, id);
-            return ref;
+            return fac.newReference(uri, fac.newDigestMethod(getDigestAlgorithmUri(), null), transforms, type, id);
         } catch (NoSuchAlgorithmException e) {
             throw new XmlSignatureException("Wrong algorithm specified in the configuration.", e);
         }

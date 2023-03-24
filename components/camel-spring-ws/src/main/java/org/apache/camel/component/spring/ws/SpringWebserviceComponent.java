@@ -131,8 +131,7 @@ public class SpringWebserviceComponent extends DefaultComponent implements SSLCo
         if (xpathExpression == null) {
             throw new RuntimeCamelException("Expression parameter is required when using XPath endpoint mapping");
         }
-        XPathExpression expression = XPathExpressionFactory.createXPathExpression(xpathExpression);
-        return expression;
+        return XPathExpressionFactory.createXPathExpression(xpathExpression);
     }
 
     private void addEndpointMappingToConfiguration(
