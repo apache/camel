@@ -408,7 +408,7 @@ public final class PGPDataFormatUtil {
             return true;
         }
         String keyUserId = null;
-        for (; verifyingPublicKeyUserIds.hasNext();) {
+        while (verifyingPublicKeyUserIds.hasNext()) {
             keyUserId = verifyingPublicKeyUserIds.next();
             for (String userid : allowedUserIds) {
                 if (keyUserId != null && keyUserId.contains(userid)) {

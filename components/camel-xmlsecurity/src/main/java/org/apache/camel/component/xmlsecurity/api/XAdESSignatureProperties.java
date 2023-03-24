@@ -1006,7 +1006,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         List<Element> childElements = getChildElements(el);
 
         List<Element> collectedNewChildElements = new ArrayList<>();
-        for (; !childElements.isEmpty();) {
+        while (!childElements.isEmpty()) {
             collectedNewChildElements.clear();
             for (Element child : childElements) {
                 replacePrefix(child, input);
