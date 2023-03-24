@@ -16,13 +16,31 @@
  */
 package org.apache.camel.component.paho;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.infra.artemis.services.ArtemisService;
 import org.apache.camel.test.infra.artemis.services.ArtemisServiceFactory;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.CamelTestSupportHelper;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
-public class PahoTestSupport extends CamelTestSupport {
+public abstract class PahoTestSupport implements CamelTestSupportHelper, ConfigurableRoute {
 
+    @Order(1)
     @RegisterExtension
     public static ArtemisService service = ArtemisServiceFactory.createSingletonMQTTService();
+
+    @RouteFixture
+    @Override
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
+    protected abstract RouteBuilder createRouteBuilder();
 }
