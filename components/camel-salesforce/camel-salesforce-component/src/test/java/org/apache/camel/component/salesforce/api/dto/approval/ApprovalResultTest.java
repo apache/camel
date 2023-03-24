@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ApprovalResultTest {
 
     @Test
-    public void shouldDeserializeFromJson() throws JsonProcessingException, IOException {
+    public void shouldDeserializeFromJson() throws IOException {
         final String json = "["//
                             + "{"//
                             + "\"actorIds\":[\"0050Y000000u5NOQAY\"],"//

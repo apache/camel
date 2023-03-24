@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class RecentItemTest {
 
     @Test
-    public void shouldDeserializeFromJSON() throws JsonProcessingException, IOException {
+    public void shouldDeserializeFromJSON() throws IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final Object read = mapper.readerFor(RecentItem.class).readValue("{ \n" + //

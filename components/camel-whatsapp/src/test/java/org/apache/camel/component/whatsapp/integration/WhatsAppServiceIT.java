@@ -210,7 +210,7 @@ public class WhatsAppServiceIT extends WhatsAppTestSupport {
     }
 
     @Test
-    public void testTemplateMessage() throws StreamReadException, DatabindException, IOException {
+    public void testTemplateMessage() throws IOException {
         TemplateMessageRequest request
                 = MAPPER.readValue(WhatsAppServiceIT.class.getResourceAsStream("/template-message.json"),
                         TemplateMessageRequest.class);

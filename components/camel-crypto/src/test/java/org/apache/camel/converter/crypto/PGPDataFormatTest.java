@@ -330,8 +330,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     }
 
     void createEncryptedNonCompressedData(ByteArrayOutputStream bos, String keyringPath)
-            throws Exception, IOException, PGPException,
-            UnsupportedEncodingException {
+            throws Exception {
         PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(
                 new JcePGPDataEncryptorBuilder(SymmetricKeyAlgorithmTags.CAST5)
                         .setSecureRandom(new SecureRandom()).setProvider(getProvider()));

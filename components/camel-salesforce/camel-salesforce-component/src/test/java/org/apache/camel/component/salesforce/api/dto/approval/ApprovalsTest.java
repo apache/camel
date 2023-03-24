@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class ApprovalsTest {
 
     @Test
-    public void shouldDeserialize() throws JsonProcessingException, IOException {
+    public void shouldDeserialize() throws IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final Object read = mapper.readerFor(Approvals.class).readValue("{\n" + //

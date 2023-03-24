@@ -208,7 +208,7 @@ public class AmazonSQSClientMock implements SqsClient {
 
     @Override
     public DeleteQueueResponse deleteQueue(DeleteQueueRequest deleteQueueRequest)
-            throws AwsServiceException, SdkClientException, SqsException {
+            throws AwsServiceException, SdkClientException {
         if (deleteQueueRequest.queueUrl() == null) {
             throw SqsException.builder().message("Queue name must be specified.").build();
         }
@@ -271,7 +271,7 @@ public class AmazonSQSClientMock implements SqsClient {
 
     @Override
     public GetQueueUrlResponse getQueueUrl(GetQueueUrlRequest getQueueUrlRequest)
-            throws QueueDoesNotExistException, AwsServiceException, SdkClientException, SqsException {
+            throws AwsServiceException, SdkClientException {
         return GetQueueUrlResponse.builder()
                 .queueUrl("https://queue.amazonaws.com/queue/camel-836")
                 .build();

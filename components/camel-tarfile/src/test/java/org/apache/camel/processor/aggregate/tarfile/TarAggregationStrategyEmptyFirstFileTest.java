@@ -122,7 +122,7 @@ public class TarAggregationStrategyEmptyFirstFileTest extends CamelTestSupport {
         };
     }
 
-    private static Map<String, String> readTar(File file) throws FileNotFoundException, IOException {
+    private static Map<String, String> readTar(File file) throws IOException {
         Map<String, String> content = new TreeMap<>();
         TarArchiveInputStream tin = new TarArchiveInputStream(new FileInputStream(file));
         try {

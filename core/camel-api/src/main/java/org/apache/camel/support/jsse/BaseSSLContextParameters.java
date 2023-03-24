@@ -1043,12 +1043,12 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         public Socket createSocket(
                 Socket s, String host,
                 int port, boolean autoClose)
-                throws IOException, UnknownHostException {
+                throws IOException {
             return configureSocket(sslSocketFactory.createSocket(s, host, port, autoClose));
         }
 
         @Override
-        public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+        public Socket createSocket(String host, int port) throws IOException {
             return configureSocket(sslSocketFactory.createSocket(host, port));
         }
 
@@ -1056,7 +1056,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
         public Socket createSocket(
                 String host, int port,
                 InetAddress localHost, int localPort)
-                throws IOException, UnknownHostException {
+                throws IOException {
             return configureSocket(sslSocketFactory.createSocket(host, port, localHost, localPort));
         }
 

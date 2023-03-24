@@ -41,12 +41,12 @@ public class SharedSingletonObjectPool<T> implements ObjectPool<T> {
     }
 
     @Override
-    public void addObject() throws Exception, IllegalStateException, UnsupportedOperationException {
+    public void addObject() throws Exception {
         // noop
     }
 
     @Override
-    public synchronized T borrowObject() throws Exception, NoSuchElementException, IllegalStateException {
+    public synchronized T borrowObject() throws Exception {
         if (t != null) {
             // ensure the object is validate before we borrow it
             if (!factory.validateObject(t)) {
@@ -62,7 +62,7 @@ public class SharedSingletonObjectPool<T> implements ObjectPool<T> {
     }
 
     @Override
-    public void clear() throws Exception, UnsupportedOperationException {
+    public void clear() throws Exception {
         t = null;
     }
 
