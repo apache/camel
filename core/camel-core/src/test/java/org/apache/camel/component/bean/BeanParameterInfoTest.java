@@ -30,8 +30,8 @@ public class BeanParameterInfoTest extends ContextTestSupport {
 
     @Test
     public void testMethodPatternUsingMethodAnnotations() throws Exception {
-        Class<?> foo = Foo.class.getClass();
-        ParameterInfo info = new ParameterInfo(1, foo.getClass(), foo.getAnnotations(), null);
+        Class<?> foo = Foo.class;
+        ParameterInfo info = new ParameterInfo(1, foo, foo.getAnnotations(), null);
 
         assertNotNull(info);
         assertNotNull(info.toString());
