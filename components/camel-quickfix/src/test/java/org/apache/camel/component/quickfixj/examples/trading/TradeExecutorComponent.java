@@ -50,7 +50,7 @@ import quickfix.field.TargetSubID;
 
 /**
  * Adapts the TradeExecutor for use as a Camel endpoint.
- * 
+ *
  * @see TradeExecutor
  */
 public class TradeExecutorComponent extends DefaultComponent {

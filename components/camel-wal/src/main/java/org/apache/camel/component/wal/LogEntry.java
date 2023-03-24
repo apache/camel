@@ -103,7 +103,7 @@ class LogEntry {
     /**
      * Returns the size of this record (sum of the sizes of: entry state, key metadata, key length, key, value metadata,
      * value length and value)
-     * 
+     *
      * @return the size in bytes
      */
     public int size() {

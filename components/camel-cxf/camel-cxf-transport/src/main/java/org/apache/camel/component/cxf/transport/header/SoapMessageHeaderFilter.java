@@ -69,7 +69,7 @@ public class SoapMessageHeaderFilter implements MessageHeaderFilter {
                 if (soapHeader.getActor() != null
                         && soapHeader.getActor().equals(version.getNextRole())) {
                     // dropping headers if actor/role equals to {ns}/role|actor/next
-                    // cxf SoapHeader needs to have soap:header@relay attribute, 
+                    // cxf SoapHeader needs to have soap:header@relay attribute,
                     // then we can check for it here as well
                     LOG.trace("Filtered header: {}", header);
                     iterator.remove();

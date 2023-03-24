@@ -31,7 +31,7 @@ public interface ResumeStrategy extends Service {
     interface UpdateCallBack {
         /**
          * The method to execute after the last offset is updated
-         * 
+         *
          * @param throwable an instance of a Throwable if an exception was thrown during the update process
          */
         void onUpdate(Throwable throwable);
@@ -41,7 +41,7 @@ public interface ResumeStrategy extends Service {
 
     /**
      * Sets an adapter for resuming operations with this strategy
-     * 
+     *
      * @param adapter the component-specific resume adapter
      */
     void setAdapter(ResumeAdapter adapter);
@@ -53,7 +53,7 @@ public interface ResumeStrategy extends Service {
 
     /**
      * Gets and adapter for resuming operations
-     * 
+     *
      * @param  clazz the class of the adapter
      * @return       the adapter or null if it can't be cast to the requested class
      * @param  <T>   the type of the adapter
@@ -64,7 +64,7 @@ public interface ResumeStrategy extends Service {
 
     /**
      * Loads the cache with the data currently available in this strategy
-     * 
+     *
      * @throws Exception
      */
     default void loadCache() throws Exception {

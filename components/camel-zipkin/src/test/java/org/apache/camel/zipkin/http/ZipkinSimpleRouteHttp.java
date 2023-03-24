@@ -26,7 +26,7 @@ import zipkin2.reporter.urlconnection.URLConnectionSender;
  *
  * <p>
  * The easiest way to run is locally:
- * 
+ *
  * <pre>
  * {@code
  * curl -sSL https://zipkin.io/quickstart.sh | bash -s

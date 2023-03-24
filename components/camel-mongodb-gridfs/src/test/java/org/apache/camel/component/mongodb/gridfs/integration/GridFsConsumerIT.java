@@ -54,10 +54,10 @@ public class GridFsConsumerIT extends AbstractMongoDbITSupport {
                         .convertBodyTo(String.class).to("mock:test");
                 from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=" + getBucket()
                      + "-pts&queryStrategy=PersistentTimestamp")
-                             .convertBodyTo(String.class).to("mock:test");
+                        .convertBodyTo(String.class).to("mock:test");
                 from("mongodb-gridfs:myDb?database={{mongodb.testDb}}&bucket=customFileFilterTest&queryStrategy=TimeStampAndFileAttribute&query="
                      + String.format("{'%s': '%s'}", GRIDFS_FILE_KEY_FILENAME, FILE_NAME))
-                             .convertBodyTo(String.class).to("mock:test");
+                        .convertBodyTo(String.class).to("mock:test");
             }
         };
     }

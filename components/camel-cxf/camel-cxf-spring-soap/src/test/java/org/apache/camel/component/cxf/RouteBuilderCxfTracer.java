@@ -31,7 +31,7 @@ public class RouteBuilderCxfTracer extends RouteBuilder {
              + "&serviceName={http://camel.apache.org/non-wrapper}PersonService"
              + "&portName={http://camel.apache.org/non-wrapper}soap"
              + "&dataFormat=POJO")
-                     .process(new BeforeProcessor()).to("direct:something").process(new AfterProcessor());
+                .process(new BeforeProcessor()).to("direct:something").process(new AfterProcessor());
 
         from("direct:something")
                 .process(new DoSomethingProcessor())

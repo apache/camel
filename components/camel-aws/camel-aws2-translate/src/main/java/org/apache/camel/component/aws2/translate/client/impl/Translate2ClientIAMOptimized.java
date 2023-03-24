@@ -50,7 +50,7 @@ public class Translate2ClientIAMOptimized implements Translate2InternalClient {
 
     /**
      * Getting the Translate aws client that is used.
-     * 
+     *
      * @return Amazon Translate Client.
      */
     @Override

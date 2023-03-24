@@ -71,7 +71,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
 
     /**
      * Initializes a new instance with the specified type as the {@link FlexibleAggregationStrategy#castAs} type.
-     * 
+     *
      * @param type The castAs type.
      */
     public FlexibleAggregationStrategy(Class<E> type) {
@@ -83,7 +83,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
      * cast to the {@link FlexibleAggregationStrategy#castAs} type (or the type specified in the constructor).
      * <p/>
      * By default, it picks the full IN message body of the incoming exchange.
-     * 
+     *
      * @param  expression The picking expression.
      * @return            This instance.
      */
@@ -95,7 +95,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     /**
      * Set a filter condition such as only results satisfying it will be aggregated. By default, all picked values will
      * be processed.
-     * 
+     *
      * @param  predicate The condition.
      * @return           This instance.
      */
@@ -107,7 +107,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     /**
      * Accumulate the result of the <i>pick expression</i> in a collection of the designated type. No <tt>null</tt>s
      * will stored unless the {@link FlexibleAggregationStrategy#storeNulls()} option is enabled.
-     * 
+     *
      * @param  collectionType The type of the Collection to aggregate into.
      * @return                This instance.
      */
@@ -120,7 +120,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     /**
      * Store the result of this Aggregation Strategy (whether an atomic element or a Collection) in a property with the
      * designated name.
-     * 
+     *
      * @param  propertyName The property name.
      * @return              This instance.
      */
@@ -132,7 +132,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     /**
      * Store the result of this Aggregation Strategy (whether an atomic element or a Collection) in an IN message header
      * with the designated name.
-     * 
+     *
      * @param  headerName The header name.
      * @return            This instance.
      */
@@ -144,7 +144,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     /**
      * Store the result of this Aggregation Strategy (whether an atomic element or a Collection) in the body of the IN
      * message.
-     * 
+     *
      * @return This instance.
      */
     public FlexibleAggregationStrategy<E> storeInBody() {
@@ -154,7 +154,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
 
     /**
      * Cast the result of the <i>pick expression</i> to this type.
-     * 
+     *
      * @param  castAs Type for the cast.
      * @return        This instance.
      */
@@ -167,7 +167,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     /**
      * Enables storing null values in the resulting collection. By default, this aggregation strategy will drop null
      * values.
-     * 
+     *
      * @return This instance.
      */
     public FlexibleAggregationStrategy<E> storeNulls() {
@@ -178,7 +178,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
     /**
      * Ignores invalid casts instead of throwing an exception if the <i>pick expression</i> result cannot be casted to
      * the specified type. By default, this aggregation strategy will throw an exception if an invalid cast occurs.
-     * 
+     *
      * @return This instance.
      */
     public FlexibleAggregationStrategy<E> ignoreInvalidCasts() {
@@ -188,7 +188,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
 
     /**
      * Plugs in logic to execute when a timeout occurs.
-     * 
+     *
      * @param  timeoutMixin custom logic on timeout
      * @return              This instance.
      */
@@ -199,7 +199,7 @@ public class FlexibleAggregationStrategy<E> implements AggregationStrategy {
 
     /**
      * Plugs in logic to execute when an aggregation batch completes.
-     * 
+     *
      * @param  completionMixin custom logic on completion
      * @return                 This instance.
      */

@@ -232,7 +232,7 @@ public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseList
 
     /**
      * processes the pdu message
-     * 
+     *
      * @param pdu the pdu
      */
     public void processPDU(PDU pdu) {

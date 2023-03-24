@@ -229,13 +229,12 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * <pre>
      * {@code
      * from("jms:queue:orders")
-     *     .marshal(
-     *         dataFormat()
-     *             .swiftMt()
-     *                 .writeInJson(true)
-     *             .end()
-     *     )
-     *     .to("file:data");
+     *         .marshal(
+     *                 dataFormat()
+     *                         .swiftMt()
+     *                         .writeInJson(true)
+     *                         .end())
+     *         .to("file:data");
      * }
      * </pre>
      *
@@ -251,13 +250,12 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * <pre>
      * {@code
      * from("file:data")
-     *     .split(
-     *         expression()
-     *             .tokenize()
-     *                 .token("\n")
-     *             .end()
-     *     )
-     *     .process("processEntry");
+     *         .split(
+     *                 expression()
+     *                         .tokenize()
+     *                         .token("\n")
+     *                         .end())
+     *         .process("processEntry");
      * }
      * </pre>
      *

@@ -23,7 +23,7 @@ public class NullFaultListener implements FaultListener {
 
     @Override
     public boolean faultOccurred(Exception exception, String description, Message message) {
-        // will disable the default logging 
+        // will disable the default logging
         return false;
     }
 

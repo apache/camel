@@ -40,7 +40,7 @@ public interface CdiCamelConfiguration {
 
     /**
      * Overrides the Camel CDI behavior to automatically start all Camel contexts.
-     * 
+     *
      * @return                       this Camel CDI configuration
      * @throws IllegalStateException if called outside of the observer method invocation
      */

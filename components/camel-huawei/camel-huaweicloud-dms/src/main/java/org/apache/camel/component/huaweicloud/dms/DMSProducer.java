@@ -93,7 +93,7 @@ public class DMSProducer extends DefaultProducer {
 
     /**
      * Perform create instance operation
-     * 
+     *
      * @param  exchange
      * @param  clientConfigurations
      * @throws JsonProcessingException
@@ -203,7 +203,7 @@ public class DMSProducer extends DefaultProducer {
 
     /**
      * Perform delete instance operation
-     * 
+     *
      * @param exchange
      * @param clientConfigurations
      */
@@ -221,7 +221,7 @@ public class DMSProducer extends DefaultProducer {
 
     /**
      * Perform list instances operation
-     * 
+     *
      * @param  exchange
      * @param  clientConfigurations
      * @throws JsonProcessingException
@@ -235,7 +235,7 @@ public class DMSProducer extends DefaultProducer {
 
     /**
      * Perform query instance operation
-     * 
+     *
      * @param  exchange
      * @param  clientConfigurations
      * @throws JsonProcessingException
@@ -254,7 +254,7 @@ public class DMSProducer extends DefaultProducer {
 
     /**
      * Perform update instance operation
-     * 
+     *
      * @param  exchange
      * @param  clientConfigurations
      * @throws JsonProcessingException
@@ -289,7 +289,7 @@ public class DMSProducer extends DefaultProducer {
      * Update dynamic client configurations. Some endpoint parameters (operation, user ID, and group ID) can also be
      * passed via exchange properties, so they can be updated between each transaction. Since they can change, we must
      * clear the previous transaction and update these parameters with their new values
-     * 
+     *
      * @param exchange
      * @param clientConfigurations
      */

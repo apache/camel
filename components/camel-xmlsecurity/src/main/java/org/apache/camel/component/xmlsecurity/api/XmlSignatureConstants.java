@@ -49,7 +49,7 @@ public final class XmlSignatureConstants {
      * Possible values of the header are {@link Boolean#TRUE} or {@link Boolean#FALSE}.
      * <p>
      * Overwrites the configuration parameter XmlSignatureConfiguration#setOmitXmlDeclaration(Boolean).
-     * 
+     *
      */
     @Metadata(javaType = "Boolean")
     public static final String HEADER_OMIT_XML_DECLARATION = "CamelXmlSignatureOmitXmlDeclaration";
@@ -77,14 +77,14 @@ public final class XmlSignatureConstants {
     /*------------------------- headers for XAdES signer ----------------------------------------------------------*/
     /**
      * Header for the 'Id' attribute value of the XAdES element 'QualifyingProperties'
-     * 
+     *
      */
     @Metadata(description = "for the 'Id' attribute value of `QualifyingProperties` element", javaType = "String")
     public static final String HEADER_XADES_QUALIFYING_PROPERTIES_ID = "CamelXmlSignatureXAdESQualifyingPropertiesId";
 
     /**
      * Header for the 'Id' attribute value of the XAdES element 'SignedDataObjectProperties'
-     * 
+     *
      */
     @Metadata(description = "for the 'Id' attribute value of `SignedDataObjectProperties` element", javaType = "String")
     public static final String HEADER_XADES_SIGNED_DATA_OBJECT_PROPERTIES_ID
@@ -92,7 +92,7 @@ public final class XmlSignatureConstants {
 
     /**
      * Header for the 'Id' attribute value of the XAdES element 'SignedSignatureProperties'
-     * 
+     *
      */
     @Metadata(description = "for the 'Id' attribute value of `SignedSignatureProperties` element", javaType = "String")
     public static final String HEADER_XADES_SIGNED_SIGNATURE_PROPERTIES_ID
@@ -107,13 +107,13 @@ public final class XmlSignatureConstants {
     /**
      * Header for the XAdES namespace. Different namespaces represent different XAdES specification versions. Currently
      * supported namespaces are:
-     * 
+     *
      * http://uri.etsi.org/01903/v1.1.1#,
-     * 
+     *
      * http://uri.etsi.org/01903/v1.2.2#,
-     * 
+     *
      * http://uri.etsi.org/01903/v1.3.2#.
-     * 
+     *
      */
     @Metadata(description = "overwrites the XAdES namespace parameter value", javaType = "String")
     public static final String HEADER_XADES_NAMESPACE = "CamelXmlSignatureXAdESNamespace";
@@ -121,7 +121,7 @@ public final class XmlSignatureConstants {
     /**
      * Header for the XAdES namespace prefix. An empty string means that no prefix shall be used. A <code>null</code>
      * header value will have no effect.
-     * 
+     *
      */
     @Metadata(description = "overwrites the XAdES prefix parameter value", javaType = "String")
     public static final String HEADER_XADES_PREFIX = "CamelXmlSignatureXAdESPrefix";

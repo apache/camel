@@ -63,7 +63,7 @@ public class CombinedServiceCallServiceDiscoveryConfiguration extends ServiceCal
 
     /**
      * List of ServiceDiscovery configuration to use
-     * 
+     *
      * @param serviceDiscoveryConfigurations
      */
     public void setServiceDiscoveryConfigurations(

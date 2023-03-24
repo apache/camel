@@ -28,7 +28,7 @@ import org.apache.camel.util.StringHelper;
  * string representation is 'model:name' connected with colon. For example 'java:com.example.Order', 'xml:ABCOrder' or
  * 'json:XYZOrder'. These type name other than java class name allows the message to carry the name of the message data
  * structure even if it's marshaled.
- * 
+ *
  * @see DataTypeAware
  * @see Transformer
  * @see Validator

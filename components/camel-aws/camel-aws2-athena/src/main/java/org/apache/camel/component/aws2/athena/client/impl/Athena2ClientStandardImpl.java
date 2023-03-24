@@ -49,7 +49,7 @@ public class Athena2ClientStandardImpl implements Athena2InternalClient {
 
     /**
      * Getting the Athena AWS client that is used.
-     * 
+     *
      * @return Amazon Athena Client.
      */
     @Override

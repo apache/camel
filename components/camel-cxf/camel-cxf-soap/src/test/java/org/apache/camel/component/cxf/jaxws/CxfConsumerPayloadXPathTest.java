@@ -136,7 +136,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
         @Override
         public void process(Exchange exchange) throws Exception {
             Object obj = exchange.getIn().getBody();
-            //xpath expression directly results in a: String  
+            //xpath expression directly results in a: String
             String content = (String) XPathBuilder.xpath("//xml/text()").stringResult().evaluate(context, obj, Object.class);
             exchange.getMessage().setBody(content);
             exchange.getMessage().setHeaders(exchange.getIn().getHeaders());

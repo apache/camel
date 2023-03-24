@@ -48,11 +48,11 @@ public class AtomEntryPollingConsumerWithBasicAuthTest extends AtomEntryPollingC
             public void configure() {
                 from("atom:http://localhost:" + PORT
                      + "/?splitEntries=true&delay=500&username=camel&password=camelPass")
-                             .to("mock:result1");
+                        .to("mock:result1");
 
                 from("atom:http://localhost:" + PORT
                      + "/?splitEntries=true&filter=false&delay=500&username=camel&password=camelPass")
-                             .to("mock:result2");
+                        .to("mock:result2");
             }
         };
     }

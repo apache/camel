@@ -153,7 +153,7 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
 
     /**
      * Strategy to delete the message after being processed.
-     * 
+     *
      * @param exchange the exchange
      */
     protected void processCommit(Exchange exchange, String messageid, String reservationId) {
@@ -169,7 +169,7 @@ public class IronMQConsumer extends ScheduledBatchPollingConsumer {
 
     /**
      * Strategy when processing the exchange failed.
-     * 
+     *
      * @param exchange the exchange
      */
     protected void processRollback(Exchange exchange) {

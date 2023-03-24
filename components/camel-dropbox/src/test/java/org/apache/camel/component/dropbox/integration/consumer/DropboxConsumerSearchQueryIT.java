@@ -51,8 +51,8 @@ class DropboxConsumerSearchQueryIT extends DropboxTestSupport {
                       "&apiKey={{apiKey}}&apiSecret={{apiSecret}}" +
                       "&remotePath=%s&query=%s",
                         workdir, FILE_NAME)
-                                .id("consumer").autoStartup(false)
-                                .to("mock:result");
+                        .id("consumer").autoStartup(false)
+                        .to("mock:result");
             }
         };
     }

@@ -751,7 +751,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     /**
      * The database name associated with the user's credentials.
-     * 
+     *
      * @param authSource
      */
     public void setAuthSource(String authSource) {

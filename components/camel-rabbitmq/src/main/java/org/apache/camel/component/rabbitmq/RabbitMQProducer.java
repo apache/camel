@@ -134,7 +134,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
     /**
      * This will reconnect only if the connection is closed.
-     * 
+     *
      * @throws Exception
      */
     private synchronized void checkConnectionAndChannelPool() throws Exception {
@@ -162,7 +162,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
     /**
      * If needed, close Connection and Channel
-     * 
+     *
      * @throws IOException
      */
     private synchronized void closeConnectionAndChannel() throws IOException {

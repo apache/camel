@@ -25,7 +25,7 @@ public interface AWS2EC2InternalClient {
 
     /**
      * Returns an EC2 client after a factory method determines which one to return.
-     * 
+     *
      * @return Ec2Client Ec2Client
      */
     Ec2Client getEc2Client();

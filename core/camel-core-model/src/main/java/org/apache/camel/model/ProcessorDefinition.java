@@ -3049,7 +3049,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <pre>
      * {@code
      * fom("direct:start")
-     *     .enrichWith("direct:resource")
+     *         .enrichWith("direct:resource")
      *         .body(String.class, (o, n) -> n + o);
      * }
      * </pre>
@@ -3097,7 +3097,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <pre>
      * {@code
      * fom("direct:start")
-     *     .enrichWith("direct:resource")
+     *         .enrichWith("direct:resource")
      *         .body(String.class, (o, n) -> n + o);
      * }
      * </pre>

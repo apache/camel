@@ -79,7 +79,7 @@ public class CxfDispatchPayloadTest extends CxfDispatchTestSupport {
                         name, exchange);
                 exchange.getIn().setBody(request, CxfPayload.class);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAMESPACE, DISPATCH_NS);
-                // set the operation for oneway; otherwise use the default operation                
+                // set the operation for oneway; otherwise use the default operation
                 if (oneway) {
                     exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, INVOKE_ONEWAY_NAME);
                 }

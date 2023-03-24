@@ -21,7 +21,7 @@ import quickfix.SessionID;
 
 /**
  * Listens for FIX messages forwarded from the QuickfixjEngine
- * 
+ *
  * @see QuickfixjEngine
  */
 public interface QuickfixjEventListener {

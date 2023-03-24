@@ -30,7 +30,7 @@ public final class IAM2ClientFactory {
 
     /**
      * Return the correct AWS IAM client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               IamClient
      */

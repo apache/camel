@@ -191,20 +191,20 @@ public class GrpcConsumerSecurityTest extends CamelTestSupport {
                      + "/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&"
                      + "negotiationType=TLS&keyCertChainResource=file:src/test/resources/certs/server.pem&"
                      + "keyResource=file:src/test/resources/certs/server.key&trustCertCollectionResource=file:src/test/resources/certs/ca.pem")
-                             .to("mock:tls-enable")
-                             .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
+                        .to("mock:tls-enable")
+                        .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
 
                 from("grpc://localhost:" + GRPC_JWT_CORRECT_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&"
                      + "authenticationType=JWT&jwtSecret=" + GRPC_JWT_CORRECT_SECRET)
-                             .to("mock:jwt-correct-secret")
-                             .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
+                        .to("mock:jwt-correct-secret")
+                        .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
 
                 from("grpc://localhost:" + GRPC_JWT_INCORRECT_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?consumerStrategy=PROPAGATION&"
                      + "authenticationType=JWT&jwtSecret=" + GRPC_JWT_CORRECT_SECRET)
-                             .to("mock:jwt-incorrect-secret")
-                             .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
+                        .to("mock:jwt-incorrect-secret")
+                        .bean(new GrpcMessageBuilder(), "buildAsyncPongResponse");
             }
         };
     }

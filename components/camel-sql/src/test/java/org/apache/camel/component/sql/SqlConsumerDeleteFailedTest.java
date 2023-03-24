@@ -100,16 +100,16 @@ public class SqlConsumerDeleteFailedTest extends CamelTestSupport {
                      + "?initialDelay=0&delay=50"
                      + "&consumer.onConsume=delete from projects where id = :#id"
                      + "&consumer.onConsumeFailed=update projects set license = 'BAD' where id = :#id")
-                             .process(new Processor() {
-                                 @Override
-                                 public void process(Exchange exchange) {
-                                     Object project = exchange.getIn().getBody(Map.class).get("PROJECT");
-                                     if ("AMQ".equals(project)) {
-                                         throw new IllegalArgumentException("Cannot handled AMQ");
-                                     }
-                                 }
-                             })
-                             .to("mock:result");
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) {
+                                Object project = exchange.getIn().getBody(Map.class).get("PROJECT");
+                                if ("AMQ".equals(project)) {
+                                    throw new IllegalArgumentException("Cannot handled AMQ");
+                                }
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }

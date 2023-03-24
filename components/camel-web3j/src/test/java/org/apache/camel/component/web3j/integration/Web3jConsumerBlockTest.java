@@ -42,7 +42,7 @@ public class Web3jConsumerBlockTest extends Web3jIntegrationTestSupport {
 
                 from("web3j://" + getUrl()
                      + OPERATION.toLowerCase() + "=" + BLOCK_OBSERVABLE)
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

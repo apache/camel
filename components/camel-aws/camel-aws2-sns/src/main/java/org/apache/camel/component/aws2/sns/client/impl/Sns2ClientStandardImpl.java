@@ -52,7 +52,7 @@ public class Sns2ClientStandardImpl implements Sns2InternalClient {
 
     /**
      * Getting the SNS aws client that is used.
-     * 
+     *
      * @return Amazon SNS Client.
      */
     @Override

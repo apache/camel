@@ -33,7 +33,7 @@ import javax.xml.bind.annotation.XmlType;
  * The following schema fragment specifies the expected content contained within
  * this class.
  * <p/>
- * 
+ *
  * <pre>
  * &lt;complexType name="ResultError">
  *   &lt;complexContent>
@@ -70,7 +70,7 @@ public class ResultError {
      * <p/>
      * <p/>
      * For example, to add a new item, do as follows:
-     * 
+     *
      * <pre>
      * getFields().add(newItem);
      * </pre>

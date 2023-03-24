@@ -69,7 +69,7 @@ public class FtpSimpleConsumeStreamingStepwiseFalseIT extends FtpServerTestSuppo
                 from("ftp://localhost:{{ftp.server.port}}"
                      + "/tmp/mytemp?username=admin&password=admin&delay=10000&disconnect=true&streamDownload=true&stepwise="
                      + isStepwise()).routeId("foo").noAutoStartup()
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

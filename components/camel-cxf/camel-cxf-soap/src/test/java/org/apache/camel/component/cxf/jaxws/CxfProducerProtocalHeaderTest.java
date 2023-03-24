@@ -52,7 +52,7 @@ public class CxfProducerProtocalHeaderTest extends CamelTestSupport {
                                 //check the headers
                                 exchange.getMessage().setHeader("Content-Type", "text/xml");
                                 exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 200);
-                                //send the response back 
+                                //send the response back
                                 exchange.getMessage().setBody(RESPONSE);
                             }
                         });

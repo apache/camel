@@ -30,7 +30,7 @@ public final class Ddb2ClientFactory {
 
     /**
      * Return the correct AWS DynamoDB client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               DynamoDBClient
      */

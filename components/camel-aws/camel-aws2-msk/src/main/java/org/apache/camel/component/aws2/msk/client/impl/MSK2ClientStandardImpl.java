@@ -52,7 +52,7 @@ public class MSK2ClientStandardImpl implements MSK2InternalClient {
 
     /**
      * Getting the MQ AWS client that is used.
-     * 
+     *
      * @return Amazon MQ Client.
      */
     @Override

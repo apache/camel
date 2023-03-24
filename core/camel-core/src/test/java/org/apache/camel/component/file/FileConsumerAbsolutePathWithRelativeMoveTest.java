@@ -43,7 +43,7 @@ public class FileConsumerAbsolutePathWithRelativeMoveTest extends ContextTestSup
             public void configure() throws Exception {
                 from("file://" + testDirectory("dir").toAbsolutePath()
                      + "?initialDelay=0&delay=10&move=../done/${file:onlyname}").convertBodyTo(String.class)
-                             .to("mock:report");
+                        .to("mock:report");
             }
         };
     }

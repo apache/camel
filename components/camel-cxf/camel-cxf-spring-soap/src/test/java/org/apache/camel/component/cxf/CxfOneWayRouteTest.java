@@ -81,7 +81,7 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
         Greeter client = getCXFClient();
         client.greetMeOneWay("lemac");
 
-        // may need to wait until the oneway call completes 
+        // may need to wait until the oneway call completes
         long waitUntil = System.currentTimeMillis() + 10000;
         while (!bindingDone && System.currentTimeMillis() < waitUntil) {
             Thread.sleep(1000);

@@ -38,7 +38,7 @@ import org.apache.camel.StaticService;
  * which we want to run to completion as well, otherwise they will get lost.
  * <p/>
  * Camel provides a default strategy which supports all that that can be used as inspiration for your own strategy.
- * 
+ *
  * @see org.apache.camel.spi.ShutdownAware
  * @see RouteController
  */

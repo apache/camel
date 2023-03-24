@@ -69,7 +69,7 @@ public class RabbitMQConsumerReplyToIT extends AbstractRabbitMQIT {
 
                 fromF("rabbitmq:localhost:%d/%s?username=%s&password=%s&routingKey=%s", connectionProperties.port(),
                         EXCHANGE, connectionProperties.username(), connectionProperties.password(), ROUTING_KEY)
-                                .log(body().toString()).setBody(simple(REPLY));
+                        .log(body().toString()).setBody(simple(REPLY));
             }
         };
     }

@@ -24,7 +24,7 @@ public interface WordpressServicePosts extends WordpressCrudService<Post, PostSe
 
     /**
      * Default endpoint.
-     * 
+     *
      * @param  postId
      * @param  context
      * @param  password

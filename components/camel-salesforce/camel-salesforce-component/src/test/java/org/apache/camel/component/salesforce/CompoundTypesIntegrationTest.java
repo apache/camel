@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Test support for Salesforce compound data types. This test requires a custom field in the <code>Account</code> object
  * called <code>"Shipping Location"</code> of type <code>Geolocation</code> in decimal units.
- * 
+ *
  * @see <a href=
  *      "https://www.salesforce.com/developer/docs/api/index_Left.htm#CSHID=compound_fields.htm|StartTopic=Content%2Fcompound_fields.htm|SkinName=webhelp">Compound
  *      data types</a>

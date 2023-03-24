@@ -38,7 +38,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * 
+ *
  */
 public class ActiveMQJmsHeaderRouteTest extends ActiveMQTestSupport {
 

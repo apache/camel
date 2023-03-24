@@ -52,7 +52,7 @@ public final class ReadingBuilder {
 
     /**
      * Sets Reading properties.
-     * 
+     *
      * @param reading           Reading object to populate
      * @param readingProperties Map to extract properties
      */

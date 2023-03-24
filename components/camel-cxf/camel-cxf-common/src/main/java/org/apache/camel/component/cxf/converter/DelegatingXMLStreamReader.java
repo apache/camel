@@ -35,7 +35,7 @@ class DelegatingXMLStreamReader implements XMLStreamReader {
     DelegatingXMLStreamReader(XMLStreamReader reader, Map<String, String> nsmap) {
         this.reader = reader;
         this.nsmap = nsmap;
-        //the original nsmap will be mutated if some of its declarations are redundantly present at the current reader 
+        //the original nsmap will be mutated if some of its declarations are redundantly present at the current reader
         Set<String> prefixes = nsmap.keySet();
         for (int i = 0; i < reader.getNamespaceCount(); i++) {
             prefixes.remove(reader.getNamespacePrefix(i));

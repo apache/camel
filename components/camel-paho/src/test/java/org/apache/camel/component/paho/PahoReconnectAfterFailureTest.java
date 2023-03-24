@@ -71,7 +71,7 @@ public class PahoReconnectAfterFailureTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        // Setup supervisor to restart routes because paho consumer 
+        // Setup supervisor to restart routes because paho consumer
         // is not able to recover automatically on startup
         SupervisingRouteController supervising = context.getRouteController().supervising();
         supervising.setBackOffDelay(500);

@@ -280,7 +280,7 @@ public class QuickfixjComponentTest {
 
         writeSettings(settings, false);
 
-        // will use connector's lazyCreateEngines setting 
+        // will use connector's lazyCreateEngines setting
         component.createEndpoint(getEndpointUri(settingsFile2.getName(), sessionID));
         assertThat(component.getEngines().get(settingsFile2.getName()).isInitialized(), is(true));
         assertThat(component.getEngines().get(settingsFile2.getName()).isStarted(), is(true));

@@ -49,7 +49,7 @@ public class FtpSimpleConsumeDirectoryParseWithAbsoluteDepthNoStepwiseIT extends
             public void configure() {
                 from("ftp://localhost:{{ftp.server.port}}//tmp/mytemp?username=admin&password=admin&delay=10000"
                      + "&disconnect=true&download=true&stepwise=false&delete=false&handleDirectoryParserAbsoluteResult=true")
-                             .routeId("foo").noAutoStartup().to("mock:result");
+                        .routeId("foo").noAutoStartup().to("mock:result");
             }
         };
     }

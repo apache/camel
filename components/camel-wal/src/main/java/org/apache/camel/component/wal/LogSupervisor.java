@@ -25,7 +25,7 @@ public interface LogSupervisor {
 
     /**
      * Starts the flush policy
-     * 
+     *
      * @param runnable the code to be executed by the log supervisor
      */
     void start(Runnable runnable);

@@ -49,7 +49,7 @@ import static java.util.stream.Collectors.joining;
  *
  * The {@code CdiEventEndpoint<T>} bean can be used to observe / consume CDI events whose event type is {@code T}, for
  * example:
- * 
+ *
  * <pre>
  * <code>
  * {@literal @}Inject
@@ -61,7 +61,7 @@ import static java.util.stream.Collectors.joining;
  *
  * Conversely, the {@code CdiEventEndpoint<T>} bean can be used to produce / fire CDI events whose event type is
  * {@code T}, for example:
- * 
+ *
  * <pre>
  * <code>
  * {@literal @}Inject
@@ -74,7 +74,7 @@ import static java.util.stream.Collectors.joining;
  * The type variable {@code T}, respectively the qualifiers, of a particular {@code CdiEventEndpoint<T>} injection point
  * are automatically translated into the parameterized <i>event type</i>, respectively into the <i>event qualifiers</i>,
  * e.g.:
- * 
+ *
  * <pre>
  * <code>
  * {@literal @}Inject

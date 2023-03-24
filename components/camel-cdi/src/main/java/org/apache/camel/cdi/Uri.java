@@ -29,7 +29,7 @@ import javax.inject.Qualifier;
  * A CDI qualifier to define the <a href="http://camel.apache.org/uris.html">Camel URI</a> associated to the annotated
  * resource. This annotation can be used to annotate an {@code @Inject} injection point for values of type
  * {@link org.apache.camel.Endpoint} or {@link org.apache.camel.ProducerTemplate}. For example:
- * 
+ *
  * <pre>
  * <code>
  * {@literal @}Inject

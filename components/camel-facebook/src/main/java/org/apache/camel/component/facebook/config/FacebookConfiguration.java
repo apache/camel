@@ -185,7 +185,7 @@ public class FacebookConfiguration implements Cloneable {
 
     /**
      * Returns {@link Facebook} instance. If needed, creates one from configuration.
-     * 
+     *
      * @return {@link Facebook} instance
      */
     public Facebook getFacebook() throws FacebookException {

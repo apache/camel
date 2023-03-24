@@ -50,7 +50,7 @@ public class WorkdayComponent extends DefaultComponent {
 
     /**
      * Parses the configuration
-     * 
+     *
      * @return the parsed and valid configuration to use
      */
     protected WorkdayConfiguration parseConfiguration(

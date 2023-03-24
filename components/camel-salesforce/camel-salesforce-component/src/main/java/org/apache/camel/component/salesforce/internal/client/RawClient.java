@@ -27,7 +27,7 @@ public interface RawClient {
 
     /**
      * Make a raw HTTP request to salesforce
-     * 
+     *
      * @param method   HTTP method. "GET", "POST", etc.
      * @param path     the path of the URL. Must begin with a "/"
      * @param body     Optional HTTP body

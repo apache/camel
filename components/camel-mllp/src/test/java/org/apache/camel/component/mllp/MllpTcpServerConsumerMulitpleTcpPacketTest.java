@@ -71,12 +71,12 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
 
                 fromF("mllp://%s:%d",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort())
-                                .routeId(routeId)
-                                .process(new PassthroughProcessor("Before send to result"))
-                                .to(result)
-                                .toF("log://%s?level=INFO&groupInterval=%d&groupActiveOnly=%b", routeId, groupInterval,
-                                        groupActiveOnly)
-                                .log(LoggingLevel.DEBUG, routeId, "Test route received message");
+                        .routeId(routeId)
+                        .process(new PassthroughProcessor("Before send to result"))
+                        .to(result)
+                        .toF("log://%s?level=INFO&groupInterval=%d&groupActiveOnly=%b", routeId, groupInterval,
+                                groupActiveOnly)
+                        .log(LoggingLevel.DEBUG, routeId, "Test route received message");
 
             }
         };

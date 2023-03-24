@@ -50,7 +50,7 @@ public class EventbridgeClientIAMOptimizedImpl implements EventbridgeInternalCli
 
     /**
      * Getting the Eventbridge aws client that is used.
-     * 
+     *
      * @return Eventbridge Client.
      */
     @Override

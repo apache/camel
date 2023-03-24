@@ -37,7 +37,7 @@ public interface ServletResolveConsumerStrategy {
 
     /**
      * Checks if the http request method (GET, POST, etc) would be allow among the registered consumers.
-     * 
+     *
      * @param  request   the http request
      * @param  method    the http method
      * @param  consumers the map of registered consumers

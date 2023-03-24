@@ -34,12 +34,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * See the Servlet 3.0 spec, section 8.2.4 for implementation and processing the details of ServletContainerInitializer.
- * 
+ *
  * Resteasy's implementation of ServletContainerInitializer is declared in the META-INF/services directory of archive
  * org.jboss.resteasy:resteasy-servlet-initializer as required by the spec. This archive MUST be included in the
  * generated WAR file so the server can find and call it. Shrinkwrap's Maven class and .addAsLibraries method is used to
  * achieve this.
- * 
+ *
  * This test checks that the implementation properly handles a jaxrs app that provides resource and provider classes as
  * well as no web.xml file.
  */

@@ -52,7 +52,7 @@ public class FhirMeta {
 
     /**
      * Fetch the current metadata from a specific resource
-     * 
+     *
      * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
      * @param  metaType        the {@link IBaseMetaType} class
      * @param  id              the id
@@ -68,7 +68,7 @@ public class FhirMeta {
 
     /**
      * Fetch the current metadata from a specific type
-     * 
+     *
      * @param  <T>             extends {@link IBaseMetaType}
      * @param  metaType        the {@link IBaseMetaType} class
      * @param  resourceType    the resource type e.g "Patient"
@@ -84,7 +84,7 @@ public class FhirMeta {
 
     /**
      * Add the elements in the given metadata to the already existing set (do not remove any)
-     * 
+     *
      * @param  <T>             extends {@link IBaseMetaType}
      * @param  id              the id
      * @param  meta            the {@link IBaseMetaType} class
@@ -99,7 +99,7 @@ public class FhirMeta {
 
     /**
      * Delete the elements in the given metadata from the given id
-     * 
+     *
      * @param  <T>             extends {@link IBaseMetaType}
      * @param  id              the id
      * @param  meta            the {@link IBaseMetaType} class

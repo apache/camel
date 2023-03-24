@@ -107,7 +107,7 @@ public class Web3jConsumerReplyTransactionsObservableMockTest extends Web3jMockT
                 errorHandler(deadLetterChannel("mock:error"));
                 from(getUrl() + OPERATION.toLowerCase() + "=" + REPLAY_TRANSACTIONS_OBSERVABLE
                      + "&fromBlock=5499965&toBlock=5499967")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

@@ -47,7 +47,7 @@ public class WebsocketTestClient {
 
     /**
      * Creates a new client instance for the given URL
-     * 
+     *
      * @param url the url to connect to
      */
     public WebsocketTestClient(String url) {
@@ -56,7 +56,7 @@ public class WebsocketTestClient {
 
     /**
      * Creates a new client instance for the given URL
-     * 
+     *
      * @param url   the url to connect to
      * @param count the number of expected messages
      */
@@ -66,7 +66,7 @@ public class WebsocketTestClient {
 
     /**
      * Creates a new client instance for the given URL
-     * 
+     *
      * @param url     the url to connect to
      * @param count   the number of expected messages
      * @param builder a builder used to configure the client
@@ -80,7 +80,7 @@ public class WebsocketTestClient {
 
     /**
      * Creates a new client instance for the given URL
-     * 
+     *
      * @param url     the url to connect to
      * @param count   the number of expected messages
      * @param context the SSL context for the client
@@ -102,7 +102,7 @@ public class WebsocketTestClient {
 
     /**
      * Sends a text message
-     * 
+     *
      * @param message the message to send
      */
     public void sendTextMessage(String message) {
@@ -111,7 +111,7 @@ public class WebsocketTestClient {
 
     /**
      * Sends a binary / bytes message
-     * 
+     *
      * @param message the message to send
      */
     public void sendBytesMessage(byte[] message) {
@@ -120,7 +120,7 @@ public class WebsocketTestClient {
 
     /**
      * Waits for the expected number of messages to arrive
-     * 
+     *
      * @param  secs                 seconds to wait
      * @return                      true if all the messages arrive in time or false otherwise
      * @throws InterruptedException
@@ -131,7 +131,7 @@ public class WebsocketTestClient {
 
     /**
      * Waits for the expected number of messages to arrive
-     * 
+     *
      * @param  duration             seconds to wait
      * @param  timeUnit             the duration time unit
      * @return                      true if all the messages arrive in time or false otherwise
@@ -148,7 +148,7 @@ public class WebsocketTestClient {
 
     /**
      * Gets all the received messages
-     * 
+     *
      * @return
      */
     public List<Object> getReceived() {

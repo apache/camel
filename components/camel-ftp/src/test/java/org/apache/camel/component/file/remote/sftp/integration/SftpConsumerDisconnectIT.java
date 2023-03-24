@@ -89,22 +89,22 @@ public class SftpConsumerDisconnectIT extends SftpServerTestSupport {
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&delete=true")
-                             .routeId("foo").noAutoStartup().process(new Processor() {
-                                 @Override
-                                 public void process(Exchange exchange) throws Exception {
-                                     service.disconnectAllSessions(); // disconnect all Sessions from
-                                     // the SFTP server
-                                 }
-                             }).to("mock:result");
+                        .routeId("foo").noAutoStartup().process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                service.disconnectAllSessions(); // disconnect all Sessions from
+                                // the SFTP server
+                            }
+                        }).to("mock:result");
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&noop=false&move=.camel").routeId("bar").noAutoStartup()
-                             .process(new Processor() {
-                                 @Override
-                                 public void process(Exchange exchange) throws Exception {
-                                     service.disconnectAllSessions(); // disconnect all Sessions
-                                     // from the SFTP server
-                                 }
-                             }).to("mock:result");
+                        .process(new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                service.disconnectAllSessions(); // disconnect all Sessions
+                                // from the SFTP server
+                            }
+                        }).to("mock:result");
             }
         };
     }

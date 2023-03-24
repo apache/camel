@@ -31,7 +31,7 @@ public class AtmosScheduledPollGetConsumer extends AtmosScheduledPollConsumer {
 
     /**
      * Poll from an atmos remote path and put the result in the message exchange
-     * 
+     *
      * @return number of messages polled
      */
     @Override

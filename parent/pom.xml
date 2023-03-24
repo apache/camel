@@ -172,7 +172,7 @@
         <flatpack-version>4.0.5</flatpack-version>
         <flink-version>1.16.0</flink-version>
         <fop-version>2.7</fop-version>
-        <formatter-maven-plugin-version>2.17.1</formatter-maven-plugin-version>
+        <formatter-maven-plugin-version>2.21.0</formatter-maven-plugin-version>
         <ftpserver-version>1.1.2</ftpserver-version>
         <freemarker-version>2.3.32</freemarker-version>
         <geronimo-annotation-1.0-spec-version>1.1.1</geronimo-annotation-1.0-spec-version>
@@ -209,7 +209,7 @@
         <google-cloud-guava-version>${google-cloud-guava-version-prefix}-jre</google-cloud-guava-version>
         <google-cloud-secretmanager-bom-version>2.2.0</google-cloud-secretmanager-bom-version>
         <graaljs-version>22.3.0</graaljs-version>
-        <graphql-java-version>18.3</graphql-java-version>
+        <graphql-java-version>18.4</graphql-java-version>
         <grizzly-websockets-version>2.4.4</grizzly-websockets-version>
         <grpc-version>1.48.2</grpc-version>
         <!-- keep grpc-google-auth-library-version in sync with that used by grpc-auth -->
@@ -233,7 +233,7 @@
         <hbase-version>2.5.2</hbase-version>
         <hdrhistrogram-version>2.1.11</hdrhistrogram-version>
         <hibernate-validator-version>6.2.5.Final</hibernate-validator-version>
-        <hibernate-version>5.6.14.Final</hibernate-version>
+        <hibernate-version>5.6.15.Final</hibernate-version>
         <hk2-version>2.6.1</hk2-version>
         <hsqldb-version>2.7.1</hsqldb-version>
         <httpunit-version>1.7</httpunit-version>
@@ -245,7 +245,7 @@
         <ical4j-version>1.0.7</ical4j-version>
         <icu4j-version>72.1</icu4j-version>
         <ignite-version>2.12.0</ignite-version>
-        <impsort-maven-plugin-version>1.6.0</impsort-maven-plugin-version>
+        <impsort-maven-plugin-version>1.8.0</impsort-maven-plugin-version>
         <infinispan-version>14.0.3.Final</infinispan-version>
         <influx-java-driver-version>2.22</influx-java-driver-version>
         <influx-client-java-driver-version>6.7.0</influx-client-java-driver-version>
@@ -418,7 +418,7 @@
         <nessus-ipfs-version>1.0.0.Beta4</nessus-ipfs-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.87.Final</netty-version>
+        <netty-version>4.1.90.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.73</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
@@ -503,7 +503,7 @@
         <spock-version>2.1-groovy-3.0</spock-version>
         <spring-batch-version>4.3.8</spring-batch-version>
         <spring-data-redis-version>2.6.2</spring-data-redis-version>
-        <spring-integration-version>5.5.16</spring-integration-version>
+        <spring-integration-version>5.5.17</spring-integration-version>
         <spring-ldap-version>2.4.1</spring-ldap-version>
         <spring-vault-core-version>2.3.3</spring-vault-core-version>
         <spring-version-range>[5,6)</spring-version-range>

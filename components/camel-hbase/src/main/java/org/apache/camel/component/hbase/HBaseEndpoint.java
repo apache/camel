@@ -264,7 +264,7 @@ public class HBaseEndpoint extends DefaultEndpoint {
     /**
      * Gets connection to the table (secured or not, depends on the object initialization) please remember to close the
      * table after use
-     * 
+     *
      * @return table, remember to close!
      */
     public Table getTable() throws IOException {

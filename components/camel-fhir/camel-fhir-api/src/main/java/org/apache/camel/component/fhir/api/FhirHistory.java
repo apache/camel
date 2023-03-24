@@ -91,7 +91,7 @@ public class FhirHistory {
     /**
      * Perform the operation across all versions of a specific resource (by ID and type) on the server. Note that
      * <code>theId</code> must be populated with both a resource type and a resource ID at a minimum.
-     * 
+     *
      * @param  id                       the {@link IIdType} which must be populated with both a resource type and a
      *                                  resource ID at
      * @param  returnType               Request that the method return a Bundle resource (such as

@@ -180,7 +180,7 @@ public enum BinaryOperatorType {
         public boolean isNullValueSupported() {
             return this == NullValue;
         }
-        
+
         public boolean isMinusValueSupported() {
             return this == MinusValue;
         }

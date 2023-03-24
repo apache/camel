@@ -55,7 +55,7 @@ public abstract class AdviceWithRouteBuilder extends RouteBuilder {
 
     /**
      * Advices this route with the route builder using a lambda expression. It can be used as following:
-     * 
+     *
      * <pre>
      * AdviceWithRouteBuilder.adviceWith(context, "myRoute", a ->
      *     a.weaveAddLast().to("mock:result");

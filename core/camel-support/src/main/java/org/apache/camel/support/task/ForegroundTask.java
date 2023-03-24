@@ -41,7 +41,7 @@ public class ForegroundTask implements BlockingTask {
 
         /**
          * Sets the name of the task
-         * 
+         *
          * @param  name the name
          * @return      an instance of this builder
          */
@@ -114,7 +114,7 @@ public class ForegroundTask implements BlockingTask {
 
     /**
      * Run a task until it produces a result
-     * 
+     *
      * @param  supplier  the supplier of the result
      * @param  predicate a predicate to test if the result is acceptable
      * @param  <T>       the type for the result

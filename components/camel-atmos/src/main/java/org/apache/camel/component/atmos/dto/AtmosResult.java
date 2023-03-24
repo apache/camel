@@ -24,7 +24,7 @@ public abstract class AtmosResult {
 
     /**
      * Populate the camel exchange with the results from atmos method invocations.
-     * 
+     *
      * @param exchange
      */
     public abstract void populateExchange(Exchange exchange);

@@ -36,7 +36,7 @@ public class SpringLdapComponent extends DefaultComponent {
 
     /**
      * creates a Spring LDAP endpoint
-     * 
+     *
      * @param remaining  name of the Spring LDAP template bean to be used for the LDAP operation
      * @param parameters key-value pairs to be set on @see org.apache.camel.component.springldap.SpringLdapEndpoint.
      *                   Currently supported keys are operation and scope. 'operation' is defined in

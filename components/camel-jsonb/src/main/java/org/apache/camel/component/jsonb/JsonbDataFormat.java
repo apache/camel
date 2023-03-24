@@ -107,7 +107,7 @@ public class JsonbDataFormat extends ServiceSupport implements DataFormat, DataF
 
     /**
      * Set a custom Jsonb instance, potentially initialized with a custom JsonbConfig.
-     * 
+     *
      * @param objectMapper the Jsonb instance to set.
      */
     public void setObjectMapper(Jsonb objectMapper) {

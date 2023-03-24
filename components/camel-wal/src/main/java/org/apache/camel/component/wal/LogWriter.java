@@ -165,7 +165,7 @@ public final class LogWriter implements AutoCloseable {
 
     /**
      * Persists an entry to the log
-     * 
+     *
      * @param  layerInfo   the in-memory layer information about the record being persisted
      * @param  entry       the entry to persist
      * @param  position    the position in the channel where the entry will be persisted
@@ -189,7 +189,7 @@ public final class LogWriter implements AutoCloseable {
 
     /**
      * Persists an entry to the log
-     * 
+     *
      * @param  layerInfo   the in-memory layer information about the record being persisted
      * @param  entry       the entry to persist
      * @return             an {@link EntryInfo} instance with details of the entry that was just persisted
@@ -210,7 +210,7 @@ public final class LogWriter implements AutoCloseable {
 
     /**
      * A wrapper for {@link LogWriter#persist(TransactionLog.LayerInfo, LogEntry)} that throws runtime errors on failure
-     * 
+     *
      * @param  layerInfo the in-memory layer information about the record being persisted
      * @param  entry     the entry to persist
      * @return           an {@link EntryInfo} instance with details of the entry that was just persisted
@@ -225,7 +225,7 @@ public final class LogWriter implements AutoCloseable {
 
     /**
      * Updates the state of af entry (i.e.: to mark them after they have seen successfully processed)
-     * 
+     *
      * @param  entryInfo   the entry information about the entry being updated
      * @param  state       the state to update the entry to
      * @throws IOException in case of lower-level I/O errors
@@ -236,7 +236,7 @@ public final class LogWriter implements AutoCloseable {
         /*
          If it has layer information, then it's a hot record kept in the cache. In this case, just
          update the cache and let the LogSupervisor flush to disk.
-        
+
          Trying to update a persisted entry here is not acceptable
          */
         assert layerInfo != null;
@@ -251,7 +251,7 @@ public final class LogWriter implements AutoCloseable {
     /**
      * Updates the state of af entry that has been already persisted to disk. Wraps any lower-level I/O errors in
      * runtime exceptions
-     * 
+     *
      * @param  entry       the entry to update
      * @param  state       the state to update the entry to
      * @throws IOException if the buffer is too small for the entry or in case of lower-level I/O errors

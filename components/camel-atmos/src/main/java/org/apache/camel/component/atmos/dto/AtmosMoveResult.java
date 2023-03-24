@@ -23,7 +23,7 @@ public class AtmosMoveResult extends AtmosResult {
 
     /**
      * Object payload contained in Exchange Header and Body contains the moved path
-     * 
+     *
      * @param exchange
      */
     @Override

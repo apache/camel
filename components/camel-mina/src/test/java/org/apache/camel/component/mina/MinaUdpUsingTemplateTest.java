@@ -96,7 +96,8 @@ public class MinaUdpUsingTemplateTest extends BaseMinaTest {
         int i = 0;
         for (int n = hexstr.length(); i < n; i += 2) {
             data[i / 2] = (Integer.decode("0x" + hexstr.charAt(i)
-                                          + hexstr.charAt(i + 1))).byteValue();
+                                          + hexstr.charAt(i + 1)))
+                    .byteValue();
         }
         return data;
     }

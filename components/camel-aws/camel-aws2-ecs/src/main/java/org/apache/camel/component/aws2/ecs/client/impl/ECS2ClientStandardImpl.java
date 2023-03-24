@@ -52,7 +52,7 @@ public class ECS2ClientStandardImpl implements ECS2InternalClient {
 
     /**
      * Getting the ECS AWS client that is used.
-     * 
+     *
      * @return Amazon ECS Client.
      */
     @Override

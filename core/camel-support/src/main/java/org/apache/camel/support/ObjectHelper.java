@@ -811,7 +811,7 @@ public final class ObjectHelper {
 
     /**
      * Returns true if the collection contains the specified value
-     * 
+     *
      * @deprecated use {@link #typeCoerceContains(TypeConverter, Object, Object, boolean)}
      */
     @Deprecated

@@ -61,7 +61,7 @@ public final class NodeIds {
 
     /**
      * Create an attribute value for the "node" attribute
-     * 
+     *
      * @param  namespace the namespace to use
      * @param  node      the node ID
      * @return           the value ready to append to a "node" URI attribute
@@ -80,7 +80,7 @@ public final class NodeIds {
 
     /**
      * Create an attribute value for the "node" attribute
-     * 
+     *
      * @param  namespace the namespace to use
      * @param  node      the node ID
      * @return           the value ready to append to a "node" URI attribute
@@ -98,7 +98,7 @@ public final class NodeIds {
 
     /**
      * Create an attribute value for the "node" attribute
-     * 
+     *
      * @param  namespace the namespace to use
      * @param  node      the node ID
      * @return           the value ready to append to a "node" URI attribute
@@ -117,7 +117,7 @@ public final class NodeIds {
 
     /**
      * Create an attribute value for the "node" attribute
-     * 
+     *
      * @param  namespace the namespace to use
      * @param  node      the node ID
      * @return           the value ready to append to a "node" URI attribute
@@ -136,7 +136,7 @@ public final class NodeIds {
 
     /**
      * Create an attribute value for the "node" attribute
-     * 
+     *
      * @param  namespace the namespace to use
      * @param  node      the node ID
      * @return           the value ready to append to a "node" URI attribute
@@ -155,7 +155,7 @@ public final class NodeIds {
 
     /**
      * Create an attribute value for the "node" attribute
-     * 
+     *
      * @param  namespace the namespace to use
      * @param  node      the node ID
      * @return           the value ready to append to a "node" URI attribute
@@ -173,7 +173,7 @@ public final class NodeIds {
 
     /**
      * Create an attribute value for the "node" attribute
-     * 
+     *
      * @param  namespace the namespace to use
      * @param  node      the node ID
      * @return           the value ready to append to a "node" URI attribute
@@ -192,7 +192,7 @@ public final class NodeIds {
 
     /**
      * Create an attribute value for the "node" attribute
-     * 
+     *
      * @param  namespace the namespace to use
      * @param  node      the node ID
      * @return           the value ready to append to a "node" URI attribute

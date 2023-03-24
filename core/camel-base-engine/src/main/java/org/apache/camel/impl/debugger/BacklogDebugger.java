@@ -599,7 +599,7 @@ public final class BacklogDebugger extends ServiceSupport {
     /**
      * Refresh the content of the existing backlog tracer event message corresponding to the given node id with the new
      * content of exchange.
-     * 
+     *
      * @param nodeId            the node id for the breakpoint
      * @param suspendedExchange the content of the new suspended exchange to use to refresh the backlog tracer event
      *                          message.

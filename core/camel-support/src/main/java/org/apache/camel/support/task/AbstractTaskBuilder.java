@@ -19,7 +19,7 @@ package org.apache.camel.support.task;
 
 /**
  * Provides common logic for task builders
- * 
+ *
  * @param <T> the type of the task
  */
 public abstract class AbstractTaskBuilder<T extends Task> implements TaskBuilder<T> {
@@ -28,7 +28,7 @@ public abstract class AbstractTaskBuilder<T extends Task> implements TaskBuilder
 
     /**
      * Assigns a name to the task being built
-     * 
+     *
      * @param  name the name of the task
      * @return      A reference to this object
      */

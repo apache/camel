@@ -25,7 +25,7 @@ public interface SequenceElementComparator<E> extends Comparator<E> {
 
     /**
      * Returns <code>true</code> if <code>o1</code> is an immediate predecessor of <code>o2</code>.
-     * 
+     *
      * @param  o1 a sequence element.
      * @param  o2 a sequence element.
      * @return    true if its an immediate predecessor
@@ -34,7 +34,7 @@ public interface SequenceElementComparator<E> extends Comparator<E> {
 
     /**
      * Returns <code>true</code> if <code>o1</code> is an immediate successor of <code>o2</code>.
-     * 
+     *
      * @param  o1 a sequence element.
      * @param  o2 a sequence element.
      * @return    true if it's an immediate successor

@@ -97,7 +97,7 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
 
     /**
      * Create a SampleWS JAXWS-Proxy to a specified route
-     * 
+     *
      * @param  camelEndpoint
      * @return
      */
@@ -129,7 +129,7 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
 
     /**
      * Create a SampleWS Server to a specified route
-     * 
+     *
      * @param camelEndpoint
      */
 
@@ -140,7 +140,7 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
 
     /**
      * Create a SampleWS Server with Gzip enabled to a specified route
-     * 
+     *
      * @param camelEndpoint
      */
 

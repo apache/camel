@@ -944,7 +944,7 @@ public class BeanInfo {
 
     /**
      * Wrapper loosely checking the bean type for overrides
-     * 
+     *
      * @see org.apache.camel.util.ObjectHelper#isOverridingMethod(Class, Method, Method, boolean)
      */
     private boolean isOverridingMethod(Method source, Method target) {

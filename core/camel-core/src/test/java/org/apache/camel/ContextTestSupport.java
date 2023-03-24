@@ -54,7 +54,7 @@ public abstract class ContextTestSupport extends TestSupport {
 
     /**
      * Use the RouteBuilder or not
-     * 
+     *
      * @return If the return value is true, the camel context will be started in the setup method. If the return value
      *         is false, the camel context will not be started in the setup method.
      */
@@ -165,7 +165,7 @@ public abstract class ContextTestSupport extends TestSupport {
 
     /**
      * Whether or not JMX should be used during testing.
-     * 
+     *
      * @return <tt>false</tt> by default.
      */
     protected boolean useJmx() {

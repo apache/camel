@@ -49,8 +49,8 @@ public class SftpUseListFalseIT extends SftpServerTestSupport {
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&delay=10000&disconnect=true&stepwise=false&useList=false&fileName=report.txt&delete=true")
-                             .routeId("foo").noAutoStartup()
-                             .to("mock:result");
+                        .routeId("foo").noAutoStartup()
+                        .to("mock:result");
             }
         };
     }

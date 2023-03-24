@@ -31,42 +31,42 @@ public interface Olingo4App {
 
     /**
      * Sets Service base URI.
-     * 
+     *
      * @param serviceUri
      */
     void setServiceUri(String serviceUri);
 
     /**
      * Returns Service base URI.
-     * 
+     *
      * @return service base URI.
      */
     String getServiceUri();
 
     /**
      * Sets custom Http headers to add to every service request.
-     * 
+     *
      * @param httpHeaders custom Http headers.
      */
     void setHttpHeaders(Map<String, String> httpHeaders);
 
     /**
      * Returns custom Http headers.
-     * 
+     *
      * @return custom Http headers.
      */
     Map<String, String> getHttpHeaders();
 
     /**
      * Returns content type for service calls. Defaults to <code>application/json;charset=utf-8</code>.
-     * 
+     *
      * @return content type.
      */
     String getContentType();
 
     /**
      * Set default service call content type.
-     * 
+     *
      * @param contentType content type.
      */
     void setContentType(String contentType);
@@ -78,7 +78,7 @@ public interface Olingo4App {
 
     /**
      * Reads an OData resource and invokes callback with appropriate result.
-     * 
+     *
      * @param edm                 Service Edm, read from calling
      *                            <code>read(null, "$metdata", null, responseHandler)</code>
      * @param resourcePath        OData Resource path
@@ -93,7 +93,7 @@ public interface Olingo4App {
 
     /**
      * Reads an OData resource and invokes callback with the unparsed input stream.
-     * 
+     *
      * @param edm                 Service Edm, read from calling
      *                            <code>read(null, "$metdata", null, responseHandler)</code>
      * @param resourcePath        OData Resource path
@@ -109,7 +109,7 @@ public interface Olingo4App {
     /**
      * Deletes an OData resource and invokes callback with {@link org.apache.olingo.commons.api.http.HttpStatusCode} on
      * success, or with exception on failure.
-     * 
+     *
      * @param resourcePath        resource path for Entry
      * @param endpointHttpHeaders HTTP Headers to add/override the component versions
      * @param responseHandler     {@link org.apache.olingo.commons.api.http.HttpStatusCode} callback handler
@@ -120,7 +120,7 @@ public interface Olingo4App {
 
     /**
      * Creates a new OData resource.
-     * 
+     *
      * @param edm                 service Edm
      * @param resourcePath        resource path to create
      * @param endpointHttpHeaders HTTP Headers to add/override the component versions
@@ -133,7 +133,7 @@ public interface Olingo4App {
 
     /**
      * Updates an OData resource.
-     * 
+     *
      * @param edm                 service Edm
      * @param resourcePath        resource path to update
      * @param endpointHttpHeaders HTTP Headers to add/override the component versions
@@ -146,7 +146,7 @@ public interface Olingo4App {
 
     /**
      * Patches/merges an OData resource using HTTP PATCH.
-     * 
+     *
      * @param edm                 service Edm
      * @param resourcePath        resource path to update
      * @param endpointHttpHeaders HTTP Headers to add/override the component versions
@@ -159,7 +159,7 @@ public interface Olingo4App {
 
     /**
      * Patches/merges an OData resource using HTTP MERGE.
-     * 
+     *
      * @param edm                 service Edm
      * @param resourcePath        resource path to update
      * @param endpointHttpHeaders HTTP Headers to add/override the component versions
@@ -172,7 +172,7 @@ public interface Olingo4App {
 
     /**
      * Executes a batch request.
-     * 
+     *
      * @param edm                 service Edm
      * @param endpointHttpHeaders HTTP Headers to add/override the component versions
      * @param data                ordered {@link org.apache.camel.component.olingo4.api.batch.Olingo4BatchRequest} list
@@ -184,7 +184,7 @@ public interface Olingo4App {
 
     /**
      * Calls a OData action
-     * 
+     *
      * @param edm                 service Edm
      * @param resourcePath        resource path to action
      * @param endpointHttpHeaders HTTP Headers to add/override the component versions

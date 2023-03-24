@@ -50,7 +50,7 @@ public class SftpKeyUriConsumeIT extends SftpServerTestSupport {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}?username=admin"
                      + "&knownHostsUri=file:" + service.getKnownHostsFile()
                      + "&privateKeyUri=file:./src/test/resources/id_rsa&privateKeyPassphrase=secret&useUserKnownHostsFile=false&delay=10000&disconnect=true")
-                             .routeId("foo").noAutoStartup().to("mock:result");
+                        .routeId("foo").noAutoStartup().to("mock:result");
             }
         };
     }

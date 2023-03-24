@@ -50,7 +50,7 @@ public class IAM2ClientOptimizedImpl implements IAM2InternalClient {
 
     /**
      * Getting the IAM aws client that is used.
-     * 
+     *
      * @return IAM Client.
      */
     @Override

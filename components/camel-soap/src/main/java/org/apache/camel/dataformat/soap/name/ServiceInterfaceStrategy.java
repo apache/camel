@@ -50,7 +50,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
 
     /**
      * Init with JAX-WS service interface
-     * 
+     *
      * @param serviceInterface
      * @param isClient         determines if marhalling looks at input or output of method
      */
@@ -197,7 +197,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
     /**
      * Determine the QName of the method parameter of the method that matches either soapAction and type or if not
      * possible only the type
-     * 
+     *
      * @param  soapAction
      * @param  type
      * @return            matching QName throws RuntimeException if no matching QName was found

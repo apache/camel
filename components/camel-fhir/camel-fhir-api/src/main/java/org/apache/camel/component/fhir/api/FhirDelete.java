@@ -63,7 +63,7 @@ public class FhirDelete {
 
     /**
      * Deletes the resource by resource type e.g "Patient" and it's id
-     * 
+     *
      * @param  type            the resource type e.g "Patient"
      * @param  stringId        it's id
      * @param  extraParameters see {@link ExtraParameters} for a full list of parameters that can be passed, may be NULL
@@ -77,7 +77,7 @@ public class FhirDelete {
 
     /**
      * Specifies deleting should be performed as a conditional delete against a given search URL.
-     * 
+     *
      * @param  url             The search URL to use. The format of this URL should be of the form
      *                         <code>[ResourceType]?[Parameters]</code>, for example:
      *                         <code>Patient?name=Smith&amp;identifier=13.2.4.11.4%7C847366</code>

@@ -116,7 +116,7 @@ public class SmppConsumer extends DefaultConsumer {
 
     /**
      * Factory method to easily instantiate a SMPPSession
-     * 
+     *
      * @return the SMPPSession
      */
     SMPPSession createSMPPSession() {
@@ -212,7 +212,7 @@ public class SmppConsumer extends DefaultConsumer {
 
     /**
      * Returns the smpp configuration
-     * 
+     *
      * @return the configuration
      */
     public SmppConfiguration getConfiguration() {

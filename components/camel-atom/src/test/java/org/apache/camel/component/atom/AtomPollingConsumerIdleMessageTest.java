@@ -53,7 +53,7 @@ public class AtomPollingConsumerIdleMessageTest extends CamelTestSupport {
             public void configure() {
                 from("atom:file:src/test/data/empty-feed.atom?splitEntries=true&delay=50&initialDelay=0"
                      + "&feedHeader=false&sendEmptyMessageWhenIdle=true")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

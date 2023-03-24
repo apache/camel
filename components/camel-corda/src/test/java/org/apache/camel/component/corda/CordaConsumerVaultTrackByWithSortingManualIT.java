@@ -44,7 +44,7 @@ public class CordaConsumerVaultTrackByWithSortingManualIT extends CordaConsumerI
                      + "&contractStateClass=#contractStateClass"
                      + "&queryCriteria=#queryCriteria"
                      + "&sort=#sort")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

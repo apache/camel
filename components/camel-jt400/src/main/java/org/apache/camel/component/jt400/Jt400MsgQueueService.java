@@ -49,7 +49,7 @@ class Jt400MsgQueueService implements Service {
 
     /**
      * Creates a {@code Jt400MsgQueueService} that connects to the specified endpoint.
-     * 
+     *
      * @param endpoint endpoint which this service connects to
      */
     Jt400MsgQueueService(Jt400Endpoint endpoint) {
@@ -85,7 +85,7 @@ class Jt400MsgQueueService implements Service {
 
     /**
      * Returns the message queue object that this service connects to. Returns {@code null} if the service is stopped.
-     * 
+     *
      * @return the message queue object that this service connects to, or {@code null} if stopped
      */
     public MessageQueue getMsgQueue() {

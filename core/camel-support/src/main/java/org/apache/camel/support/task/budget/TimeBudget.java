@@ -24,7 +24,7 @@ public interface TimeBudget extends Budget {
 
     /**
      * The maximum length of time that the task can execute
-     * 
+     *
      * @return the length of time in milliseconds
      */
     long maxDuration();

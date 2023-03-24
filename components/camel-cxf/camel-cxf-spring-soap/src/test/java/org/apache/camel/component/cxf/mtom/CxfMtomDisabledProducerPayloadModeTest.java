@@ -57,10 +57,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * 
+ *
  * Unit test for exercising SOAP with Attachment (SwA) feature of a CxfProducer in PAYLOAD mode. That is, testing
  * attachment with MTOM optimization off.
- * 
+ *
  */
 @ContextConfiguration
 public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPayloadModeTest {

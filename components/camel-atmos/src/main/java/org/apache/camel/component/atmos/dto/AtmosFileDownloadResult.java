@@ -30,7 +30,7 @@ public class AtmosFileDownloadResult extends AtmosResult {
      * downloaded In case of a single file Exchange Body is populated with the ByteArrayOutputStream downloaded from
      * atmos. In case of multiple files Exchange Body is populated with a map containing as key the remote path and as
      * value the linked ByteArrayOutputStream
-     * 
+     *
      * @param exchange
      */
     @Override

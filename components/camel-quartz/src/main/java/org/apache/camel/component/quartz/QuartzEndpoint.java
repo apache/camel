@@ -272,7 +272,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     /**
      * Whether the job name should be prefixed with endpoint id
-     * 
+     *
      * @param prefixJobNameWithEndpointId
      */
     public void setPrefixJobNameWithEndpointId(boolean prefixJobNameWithEndpointId) {

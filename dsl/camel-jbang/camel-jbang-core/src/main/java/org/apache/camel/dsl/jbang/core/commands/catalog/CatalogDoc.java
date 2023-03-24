@@ -33,7 +33,6 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CatalogLoader;
-import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.main.download.MavenGav;
 import org.apache.camel.main.util.SuggestSimilarHelper;
 import org.apache.camel.tooling.model.BaseOptionModel;

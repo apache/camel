@@ -87,7 +87,7 @@ public class FileConsumerCustomExceptionHandlerTest extends ContextTestSupport {
                 // is from an unit test, so we use that to simulate exceptions
                 from(fileUri(
                         "?exclusiveReadLockStrategy=#myReadLockStrategy&exceptionHandler=#myExceptionHandler&initialDelay=0&delay=10"))
-                                .convertBodyTo(String.class).to("mock:result");
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

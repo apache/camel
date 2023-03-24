@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 /**
  * LineItem
  * <p>
- * 
+ *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
@@ -44,7 +44,7 @@ public class LineItem {
     private double cost;
 
     /**
-     * 
+     *
      * @return The itemId
      */
     @JsonProperty("itemId")
@@ -53,7 +53,7 @@ public class LineItem {
     }
 
     /**
-     * 
+     *
      * @param itemId The itemId
      */
     @JsonProperty("itemId")
@@ -62,7 +62,7 @@ public class LineItem {
     }
 
     /**
-     * 
+     *
      * @return The amount
      */
     @JsonProperty("amount")
@@ -71,7 +71,7 @@ public class LineItem {
     }
 
     /**
-     * 
+     *
      * @param amount The amount
      */
     @JsonProperty("amount")
@@ -80,7 +80,7 @@ public class LineItem {
     }
 
     /**
-     * 
+     *
      * @return The cost
      */
     @JsonProperty("cost")
@@ -89,7 +89,7 @@ public class LineItem {
     }
 
     /**
-     * 
+     *
      * @param cost The cost
      */
     @JsonProperty("cost")

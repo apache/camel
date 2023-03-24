@@ -84,7 +84,7 @@ public interface GenericFileOperations<T> {
 
     /**
      * Releases the resources consumed by a retrieved file
-     * 
+     *
      * @param  exchange                            exchange with the content of the file
      * @throws GenericFileOperationFailedException can be thrown
      */

@@ -23,7 +23,7 @@ import com.github.dozermapper.core.ConfigurableCustomConverter;
  * the parameter being used by another thread since setParameter() is called first and convert() is called separately.
  * This implementation holds a copy of the parameter in thread-local storage which eliminates the possibility of
  * collision between threads on a single converter instance.
- * 
+ *
  * Any converter which is referenced by ID with the Dozer component should extend this class. It is recommended to call
  * done() in a finally block in the implementation of convert() to clean up the value stored in the thread local.
  */

@@ -35,7 +35,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * The {@link WordpressServicePosts} implementation. Aggregates the {@link PostsSPI} interface using
  * {@link JAXRSClientFactory} to make the API calls.
- * 
+ *
  * @since 0.0.1
  */
 public class WordpressServicePagesAdapter extends AbstractWordpressCrudServiceAdapter<PagesSPI, Page, PageSearchCriteria>

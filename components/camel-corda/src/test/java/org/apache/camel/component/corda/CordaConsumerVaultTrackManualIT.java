@@ -42,7 +42,7 @@ public class CordaConsumerVaultTrackManualIT extends CordaConsumerITSupport {
 
                 from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + VAULT_TRACK
                      + "&contractStateClass=#contractStateClass")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

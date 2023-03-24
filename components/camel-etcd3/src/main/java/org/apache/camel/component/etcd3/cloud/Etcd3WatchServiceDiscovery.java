@@ -123,7 +123,7 @@ public class Etcd3WatchServiceDiscovery extends Etcd3ServiceDiscovery
 
     /**
      * Gets the list of service definitions from the etcd then update the current list.
-     * 
+     *
      * @return list of all service definitions that could be found.
      */
     private List<ServiceDefinition> reloadServices() {

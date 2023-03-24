@@ -59,7 +59,7 @@ public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefini
         // put the bean id into the property map
         Map<String, Object> map = getPropertyMap(bean, true);
         map.put("beanId", resolveId(element, bean.getBeanDefinition(), ctx));
-        // set the bean scope to be prototype, then we can get a new instance in each look up 
+        // set the bean scope to be prototype, then we can get a new instance in each look up
         bean.setScope(BeanDefinition.SCOPE_PROTOTYPE);
     }
 

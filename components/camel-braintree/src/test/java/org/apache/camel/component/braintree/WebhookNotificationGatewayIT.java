@@ -183,19 +183,19 @@ public class WebhookNotificationGatewayIT extends AbstractBraintreeTestSupport {
         runParseIdealPaymentTest(WebhookNotification.Kind.IDEAL_PAYMENT_COMPLETE);
         runParseIdealPaymentTest(WebhookNotification.Kind.IDEAL_PAYMENT_FAILED);
     }
-    
+
     private void runParseIdealPaymentTest(WebhookNotification.Kind kind) throws Exception {
         final WebhookNotification result = sendSampleNotification(kind, "my_id");
         assertNotNull(result, "parse result");
         assertEquals(kind, result.getKind());
         assertEquals("my_id", result.getIdealPayment().getId());
     }
-    
+
     @Test
     public void testParsePaymentInstrument() throws Exception {
         runParsePaymentInstrumentTest(WebhookNotification.Kind.GRANTED_PAYMENT_INSTRUMENT_UPDATE);
     }
-    
+
     private void runParsePaymentInstrumentTest(WebhookNotification.Kind kind) throws Exception {
         final WebhookNotification result = sendSampleNotification(kind, "my_id");
         assertNotNull(result, "parse result");

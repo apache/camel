@@ -23,11 +23,11 @@ import org.apache.cxf.message.Exchange;
 /**
  * An strategy interface for implementing binding between CXF {@link Exchange} and Camel
  * {@link org.apache.camel.Exchange}.
- * 
+ *
  * Assumptions: CxfProducer and CxfConsumer set {@link DataFormat} and
  * {@link org.apache.cxf.service.model.BindingOperationInfo} in Camel Exchange property before calling into these
  * methods.
- * 
+ *
  * @since 2.0
  */
 public interface CxfBinding {
@@ -40,19 +40,19 @@ public interface CxfBinding {
      * request context, which are passed as arguments to the CXF API's Client.invoke() method. The arguments to the web
      * service operation are extracted from the Camel IN message body by CxfProducer.
      * </p>
-     * 
+     *
      * <p>
      * Exchange is passed in this direction: Camel route => CxfProducer => <b>apply this binding method </b>=> CXF
      * server
      * </p>
-     * 
+     *
      * @param cxfExchange    exchange to be populated
      * @param camelExchange  exchange that contains a request
      * @param requestContext a map contains request contexts. <b>This parameter must not be null</b>. The
      *                       Client.invoke() method does not allow caller to pass in a CXF Message. The request context
      *                       are copied to the CXF Message by the Client.invoke() method. This is how caller can set
      *                       properties on the CXF message.
-     * 
+     *
      */
     void populateCxfRequestFromExchange(
             Exchange cxfExchange,
@@ -65,12 +65,12 @@ public interface CxfBinding {
      * method is called by {@link CxfProducer} after it makes an invocation to the Client.invoke() method. It calls this
      * method to translate the CXF response message to Camel message.
      * </p>
-     * 
+     *
      * <p>
      * Exchange is passed in this direction: Camel route <= <b>apply this binding method</b> <= CxfProducer <= CXF
      * Server
      * </p>
-     * 
+     *
      * @param camelExchange   exchanged to be populated
      * @param cxfExchange     exchange that contains a response
      * @param responseContext map contains response context from CXF
@@ -85,12 +85,12 @@ public interface CxfBinding {
      * is called by {@link CxfConsumer} to handle a CXF request arrives at an endpoint. It translates a CXF request to a
      * Camel Exchange for Camel route to process the exchange.
      * </p>
-     * 
+     *
      * <p>
      * Exchange is passed in this direction: CXF Endpoint => CxfConsumer => <b>apply this binding method </b> => Camel
      * route
      * </p>
-     * 
+     *
      * @param cxfExchange   CXF exchange that contains a request
      * @param camelExchange Camel exchange to be populated
      */
@@ -104,12 +104,12 @@ public interface CxfBinding {
      * sent back to the CXF client. This method is called by {@link CxfConsumer} to translate a Camel Exchange to a CXF
      * response Exchange.
      * </p>
-     * 
+     *
      * <p>
      * Exchange is passed in this direction: CXF Endpoint <= <b>apply this binding method</b> <= CxfConsumer <= Camel
      * route
      * </p>
-     * 
+     *
      * @param camelExchange Camel exchange that contains an out message
      * @param cxfExchange   CXF exchange to be populated
      */
@@ -122,8 +122,8 @@ public interface CxfBinding {
      * Extract the message headers which key are start from javax.xml.ws* from the CXF exchange's inMessage, and put
      * these headers into the context
      * </p>
-     * 
-     * 
+     *
+     *
      * @param cxfExchange CXF exchange to be populated
      * @param context     The map which used to store the message headers
      */
@@ -134,7 +134,7 @@ public interface CxfBinding {
      * Copy the javax.xml.ws* headers into cxfExchange's outMessage, if the cxfExchange has no outMessage, skip this
      * copy
      * </p>
-     * 
+     *
      * @param cxfExchange CXF exchange to be populated
      * @param context     The map which used to store the message headers
      */

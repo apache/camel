@@ -63,7 +63,7 @@ public abstract class AbstractMiloServerTest extends CamelTestSupport {
 
     /**
      * Replace the port placeholder with the dynamic server port
-     * 
+     *
      * @param  uri the URI to process
      * @return     the result, may be {@code null} if the input is {@code null}
      */

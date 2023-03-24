@@ -63,7 +63,7 @@ public class RabbitMQConsumerIT extends AbstractRabbitMQIT {
             public void configure() {
                 fromF("rabbitmq:localhost:%d/%s?username=%s&password=%s&arg.queue.x-single-active-consumer=true",
                         connectionProperties.port(), EXCHANGE, connectionProperties.username(), connectionProperties.password())
-                                .to(to);
+                        .to(to);
                 fromF("rabbitmq:localhost:%d/%s?username=%s&password=%s&exchangeType=headers&queue=%s&args=#args",
                         connectionProperties.port(), HEADERS_EXCHANGE, connectionProperties.username(),
                         connectionProperties.password(), QUEUE).to(to);

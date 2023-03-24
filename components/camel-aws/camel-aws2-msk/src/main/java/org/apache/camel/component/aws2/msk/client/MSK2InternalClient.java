@@ -25,7 +25,7 @@ public interface MSK2InternalClient {
 
     /**
      * Returns an Kafka client after a factory method determines which one to return.
-     * 
+     *
      * @return KafkaClient KafkaClient
      */
     KafkaClient getKafkaClient();
