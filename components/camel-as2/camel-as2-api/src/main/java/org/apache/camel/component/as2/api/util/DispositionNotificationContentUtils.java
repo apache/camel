@@ -101,7 +101,7 @@ public final class DispositionNotificationContentUtils {
             for (int i = 0; i < elements.length; i++) {
                 Element element = elements[i];
                 if (i > 0) {
-                    builder.append("; " + element);
+                    builder.append("; ").append(element);
                 } else {
                     builder.append(element);
                 }
@@ -113,11 +113,11 @@ public final class DispositionNotificationContentUtils {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(name + ": ");
+            sb.append(name).append(": ");
             for (int i = 0; i < elements.length; i++) {
                 Element element = elements[i];
                 if (i > 0) {
-                    sb.append("; " + element);
+                    sb.append("; ").append(element);
                 } else {
                     sb.append(element);
                 }

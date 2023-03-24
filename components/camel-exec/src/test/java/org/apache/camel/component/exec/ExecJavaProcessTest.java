@@ -386,7 +386,7 @@ public class ExecJavaProcessTest extends CamelTestSupport {
         final StringBuilder builder = new StringBuilder();
         int lines = 10;
         for (int t = 1; t < lines; t++) {
-            builder.append("Line" + t + System.lineSeparator());
+            builder.append("Line").append(t).append(System.lineSeparator());
         }
         String whiteSpaceSeparatedLines = builder.toString();
         String expected = builder.toString();

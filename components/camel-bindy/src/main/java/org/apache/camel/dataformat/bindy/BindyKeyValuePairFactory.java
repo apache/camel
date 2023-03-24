@@ -565,7 +565,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     LOG.debug("Value added at the position ({}) : {}{}", posit, value, separator);
                 }
 
-                builder.append(value + separator);
+                builder.append(value).append(separator);
             }
         }
 
