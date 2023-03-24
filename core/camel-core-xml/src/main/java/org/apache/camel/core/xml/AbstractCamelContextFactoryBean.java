@@ -519,6 +519,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                     FromDefinition from = route.getInput();
                     if (from.getUri() != null && from.getUri().startsWith("rest-api:")) {
                         hasRestApi = true;
+                        break;
                     }
                 }
                 if (!hasRestApi) {
