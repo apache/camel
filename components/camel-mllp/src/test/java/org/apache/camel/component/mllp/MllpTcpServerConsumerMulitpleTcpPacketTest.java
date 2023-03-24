@@ -95,7 +95,7 @@ public class MllpTcpServerConsumerMulitpleTcpPacketTest extends CamelTestSupport
         MockEndpoint.assertIsSatisfied(context, 10, TimeUnit.SECONDS);
 
         assertThat("Should be acknowledgment for message 1", acknowledgement,
-                CoreMatchers.containsString(String.format("MSA|AA|00001")));
+                CoreMatchers.containsString("MSA|AA|00001"));
     }
 
     @Test

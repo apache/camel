@@ -103,7 +103,7 @@ public class MllpProducerConsumerLoopbackTest extends CamelTestSupport {
 
         String acknowledgement = source.requestBody((Object) testMessage, String.class);
         assertThat("Should be acknowledgment for message 1", acknowledgement,
-                CoreMatchers.containsString(String.format("MSA|AA|00001")));
+                CoreMatchers.containsString("MSA|AA|00001"));
 
         MockEndpoint.assertIsSatisfied(context, 60, TimeUnit.SECONDS);
     }
