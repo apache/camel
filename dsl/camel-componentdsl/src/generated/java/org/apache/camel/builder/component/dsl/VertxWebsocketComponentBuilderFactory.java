@@ -120,6 +120,37 @@ public interface VertxWebsocketComponentBuilderFactory {
             return this;
         }
         /**
+         * Default value for host name that the WebSocket should bind to.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: 0.0.0.0
+         * Group: advanced
+         * 
+         * @param defaultHost the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketComponentBuilder defaultHost(
+                java.lang.String defaultHost) {
+            doSetProperty("defaultHost", defaultHost);
+            return this;
+        }
+        /**
+         * Default value for the port that the WebSocket should bind to.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 0
+         * Group: advanced
+         * 
+         * @param defaultPort the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketComponentBuilder defaultPort(int defaultPort) {
+            doSetProperty("defaultPort", defaultPort);
+            return this;
+        }
+        /**
          * To provide a custom vertx router to use on the WebSocket server.
          * 
          * The option is a: &lt;code&gt;io.vertx.ext.web.Router&lt;/code&gt;
@@ -201,6 +232,8 @@ public interface VertxWebsocketComponentBuilderFactory {
             case "bridgeErrorHandler": ((VertxWebsocketComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((VertxWebsocketComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((VertxWebsocketComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "defaultHost": ((VertxWebsocketComponent) component).setDefaultHost((java.lang.String) value); return true;
+            case "defaultPort": ((VertxWebsocketComponent) component).setDefaultPort((int) value); return true;
             case "router": ((VertxWebsocketComponent) component).setRouter((io.vertx.ext.web.Router) value); return true;
             case "vertx": ((VertxWebsocketComponent) component).setVertx((io.vertx.core.Vertx) value); return true;
             case "vertxOptions": ((VertxWebsocketComponent) component).setVertxOptions((io.vertx.core.VertxOptions) value); return true;
