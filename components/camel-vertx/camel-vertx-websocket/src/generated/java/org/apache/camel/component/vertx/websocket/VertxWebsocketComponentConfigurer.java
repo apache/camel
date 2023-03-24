@@ -25,6 +25,10 @@ public class VertxWebsocketComponentConfigurer extends PropertyConfigurerSupport
         case "autowiredEnabled": target.setAutowiredEnabled(property(camelContext, boolean.class, value)); return true;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": target.setBridgeErrorHandler(property(camelContext, boolean.class, value)); return true;
+        case "defaulthost":
+        case "defaultHost": target.setDefaultHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "defaultport":
+        case "defaultPort": target.setDefaultPort(property(camelContext, int.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "router": target.setRouter(property(camelContext, io.vertx.ext.web.Router.class, value)); return true;
@@ -44,6 +48,10 @@ public class VertxWebsocketComponentConfigurer extends PropertyConfigurerSupport
         case "autowiredEnabled": return boolean.class;
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return boolean.class;
+        case "defaulthost":
+        case "defaultHost": return java.lang.String.class;
+        case "defaultport":
+        case "defaultPort": return int.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "router": return io.vertx.ext.web.Router.class;
@@ -64,6 +72,10 @@ public class VertxWebsocketComponentConfigurer extends PropertyConfigurerSupport
         case "autowiredEnabled": return target.isAutowiredEnabled();
         case "bridgeerrorhandler":
         case "bridgeErrorHandler": return target.isBridgeErrorHandler();
+        case "defaulthost":
+        case "defaultHost": return target.getDefaultHost();
+        case "defaultport":
+        case "defaultPort": return target.getDefaultPort();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "router": return target.getRouter();

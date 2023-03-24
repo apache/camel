@@ -210,7 +210,7 @@ public class VertxWebsocketHost {
     }
 
     /**
-     * Starts a previously started Vert.x HTTP server
+     * Stops a previously started Vert.x HTTP server
      */
     public void stop() throws ExecutionException, InterruptedException {
         if (server != null) {
@@ -248,5 +248,19 @@ public class VertxWebsocketHost {
      */
     public int getPort() {
         return port;
+    }
+
+    /**
+     * Determines whether the specified host name is one that is managed by this host.
+     */
+    public boolean isManagedHost(String host) {
+        return hostKey.getHost().equals(host);
+    }
+
+    /**
+     * Determines whether the specified port is one that is managed by this host.
+     */
+    public boolean isManagedPort(int port) {
+        return getPort() == port;
     }
 }

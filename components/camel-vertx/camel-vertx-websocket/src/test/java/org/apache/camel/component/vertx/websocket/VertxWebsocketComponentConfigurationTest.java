@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
+import java.net.URI;
+
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.metrics.MetricsOptions;
@@ -24,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -80,6 +83,39 @@ public class VertxWebsocketComponentConfigurationTest {
             assertTrue(vertx.isMetricsEnabled());
         } finally {
             context.stop();
+        }
+    }
+
+    @Test
+    void testDefaultHost() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            String defaultHostName = "foo.bar.com";
+
+            VertxWebsocketComponent component = new VertxWebsocketComponent();
+            component.setDefaultHost(defaultHostName);
+            context.addComponent("vertx-websocket", component);
+            context.start();
+
+            VertxWebsocketEndpoint endpoint = context.getEndpoint("vertx-websocket:/test", VertxWebsocketEndpoint.class);
+            URI websocketURI = endpoint.getConfiguration().getWebsocketURI();
+            assertEquals(defaultHostName, websocketURI.getHost());
+        }
+    }
+
+    @Test
+    void testDefaultPort() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            int defaultPort = 8888;
+
+            VertxWebsocketComponent component = new VertxWebsocketComponent();
+            component.setDefaultPort(defaultPort);
+            context.addComponent("vertx-websocket", component);
+            context.start();
+
+            VertxWebsocketEndpoint endpoint
+                    = context.getEndpoint("vertx-websocket:foo.bar.com/test", VertxWebsocketEndpoint.class);
+            URI websocketURI = endpoint.getConfiguration().getWebsocketURI();
+            assertEquals(defaultPort, websocketURI.getPort());
         }
     }
 }

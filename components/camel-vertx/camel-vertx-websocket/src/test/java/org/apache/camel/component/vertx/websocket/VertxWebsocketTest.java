@@ -28,6 +28,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import io.vertx.core.http.ServerWebSocket;
+import io.vertx.core.http.UpgradeRejectedException;
 import io.vertx.core.http.WebSocket;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -37,6 +38,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class VertxWebsocketTest extends VertxWebSocketTestSupport {
@@ -179,13 +182,16 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             });
         }
 
+        // Open a connection on path /test on another port to ensure the 'send to all' operation
+        // only targeted peers connected on path /test
+        openWebSocketConnection("localhost", port2, "/test", message -> {
+            results.add("/test on port " + port2 + " should not have been called");
+        });
+
         // Open a connection on path /test-other to ensure the 'send to all' operation
         // only targeted peers connected on path /test
         openWebSocketConnection("localhost", port, "/test-other", message -> {
-            synchronized (latch) {
-                results.add(message + " " + latch.getCount());
-                latch.countDown();
-            }
+            results.add("/test-other should not have been called");
         });
 
         template.sendBody("vertx-websocket:localhost:" + port + "/test?sendToAll=true", "Hello World");
@@ -218,13 +224,16 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
             });
         }
 
+        // Open a connection on path /test on another port to ensure the 'send to all' operation
+        // only targeted peers connected on path /test
+        openWebSocketConnection("localhost", port2, "/test", message -> {
+            results.add("/test on port " + port2 + " should not have been called");
+        });
+
         // Open a connection on path /test-other to ensure the 'send to all' operation
         // only targeted peers connected on path /test
         openWebSocketConnection("localhost", port, "/test-other", message -> {
-            synchronized (latch) {
-                results.add(message + " " + latch.getCount());
-                latch.countDown();
-            }
+            results.add("/test-other should not have been called");
         });
 
         template.sendBodyAndHeader("vertx-websocket:localhost:" + port + "/test", "Hello World",
@@ -244,16 +253,9 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
     public void testEchoRoute() throws Exception {
         CountDownLatch latch = new CountDownLatch(1);
         List<String> results = new ArrayList<>();
+        int wsPort = getVertxServerRandomPort();
 
-        VertxWebsocketComponent component = context.getComponent("vertx-websocket", VertxWebsocketComponent.class);
-        Map<VertxWebsocketHostKey, VertxWebsocketHost> registry = component.getVertxHostRegistry();
-        VertxWebsocketHost host = registry.values()
-                .stream()
-                .filter(wsHost -> wsHost.getPort() != port)
-                .findFirst()
-                .get();
-
-        WebSocket webSocket = openWebSocketConnection("localhost", host.getPort(), "/greeting", message -> {
+        WebSocket webSocket = openWebSocketConnection("localhost", wsPort, "/greeting", message -> {
             synchronized (latch) {
                 results.add(message);
                 latch.countDown();
@@ -265,6 +267,42 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         assertTrue(latch.await(10, TimeUnit.SECONDS));
         assertEquals(1, results.size());
         assertEquals("Hello Camel", results.get(0));
+    }
+
+    @Test
+    void echoRouteWithPathParams() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        List<String> results = new ArrayList<>();
+
+        WebSocket webSocket = openWebSocketConnection("localhost", port, "/testA/echo/testB", message -> {
+            synchronized (latch) {
+                results.add(message);
+                latch.countDown();
+            }
+        });
+        webSocket.writeTextMessage("Hello");
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        assertEquals(1, results.size());
+        assertEquals("Hello testA testB", results.get(0));
+    }
+
+    @Test
+    void echoRouteWithWildcardPath() throws Exception {
+        CountDownLatch latch = new CountDownLatch(1);
+        List<String> results = new ArrayList<>();
+
+        WebSocket webSocket = openWebSocketConnection("localhost", port, "/wildcard/echo/foo/bar", message -> {
+            synchronized (latch) {
+                results.add(message);
+                latch.countDown();
+            }
+        });
+        webSocket.writeTextMessage("Hello");
+
+        assertTrue(latch.await(10, TimeUnit.SECONDS));
+        assertEquals(1, results.size());
+        assertEquals("Hello World", results.get(0));
     }
 
     @Test
@@ -317,6 +355,45 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
         mockEndpoint.assertIsSatisfied(5000);
     }
 
+    @Test
+    void defaultPath() throws InterruptedException {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:defaultPath");
+        mockEndpoint.expectedBodiesReceived("Hello World from the default path");
+
+        template.sendBody("vertx-websocket:localhost:" + port, "World");
+
+        mockEndpoint.assertIsSatisfied(5000);
+    }
+
+    @Test
+    void wildcardPath() throws InterruptedException {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:wildcardPath");
+        mockEndpoint.expectedBodiesReceived("Hello World from the wildcard path");
+
+        template.sendBody("vertx-websocket:localhost:" + port + "/wild/card/foo/bar", "World");
+
+        mockEndpoint.assertIsSatisfied(5000);
+    }
+
+    @Test
+    void nonManagedPathReturns404() {
+        Exchange exchange = template.request("vertx-websocket:localhost:" + port + "/invalid", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getMessage().setBody("Test");
+            }
+        });
+
+        Exception exception = exchange.getException();
+        assertNotNull(exception);
+
+        Throwable cause = exception.getCause();
+        assertNotNull(exception);
+        assertInstanceOf(UpgradeRejectedException.class, cause);
+
+        assertEquals(404, ((UpgradeRejectedException) cause).getStatus());
+    }
+
     @Override
     protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -329,12 +406,21 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
                         .setBody(simple("Hello ${body}"))
                         .to("mock:result");
 
+                fromF("vertx-websocket:localhost:%d/test", port2)
+                        .setBody(simple("Hello ${body}"))
+                        .to("mock:result");
+
                 fromF("vertx-websocket:localhost:%d/test-other", port)
-                        .setBody(simple("Hello ${body}"));
+                        .setBody(simple("Hello ${body}"))
+                        .to("mock:result");
 
                 fromF("vertx-websocket:localhost:%d/path/params/{firstParam}/{secondParam}", port)
                         .setBody(simple("${header.firstParam} ${header.secondParam}"))
                         .to("mock:pathParamResult");
+
+                fromF("vertx-websocket:localhost:%d/{firstParam}/echo/{secondParam}", port)
+                        .setBody(simple("${body} ${header.firstParam} ${header.secondParam}"))
+                        .toF("vertx-websocket:localhost:%d/testA/echo/testB", port);
 
                 fromF("vertx-websocket:localhost:%d/query/params", port)
                         .setBody(simple("${header.firstParam} ${header.secondParam}"))
@@ -350,6 +436,18 @@ public class VertxWebsocketTest extends VertxWebSocketTestSupport {
                             }
                         })
                         .toD("vertx-websocket:localhost:${header.port}/greeting");
+
+                fromF("vertx-websocket:localhost:%d", port)
+                        .setBody().simple("Hello ${body} from the default path")
+                        .to("mock:defaultPath");
+
+                fromF("vertx-websocket:localhost:%d/wild/card*", port)
+                        .setBody().simple("Hello ${body} from the wildcard path")
+                        .to("mock:wildcardPath");
+
+                fromF("vertx-websocket:localhost:%d/wildcard/echo*", port)
+                        .setBody().simple("${body} World")
+                        .toF("vertx-websocket:localhost:%d/wildcard/echo/foo/bar", port);
             }
         };
     }
