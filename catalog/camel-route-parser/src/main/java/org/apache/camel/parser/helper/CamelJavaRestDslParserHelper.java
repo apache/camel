@@ -83,12 +83,12 @@ public final class CamelJavaRestDslParserHelper {
                             int pos = exp.getStartPosition();
                             int line = findLineNumber(fullyQualifiedFileName, pos);
                             if (line > -1) {
-                                node.setLineNumber("" + line);
+                                node.setLineNumber(Integer.toString(line));
                             }
                             pos = exp.getStartPosition() + exp.getLength();
                             line = findLineNumber(fullyQualifiedFileName, pos);
                             if (line > -1) {
-                                node.setLineNumberEnd("" + line);
+                                node.setLineNumberEnd(Integer.toString(line));
                             }
                             node.setFileName(fullyQualifiedFileName);
                             node.setClassName(clazz.getQualifiedName());
@@ -128,12 +128,12 @@ public final class CamelJavaRestDslParserHelper {
                             int pos = exp.getStartPosition();
                             int line = findLineNumber(fullyQualifiedFileName, pos);
                             if (line > -1) {
-                                node.setLineNumber("" + line);
+                                node.setLineNumber(Integer.toString(line));
                             }
                             pos = exp.getStartPosition() + exp.getLength();
                             line = findLineNumber(fullyQualifiedFileName, pos);
                             if (line > -1) {
-                                node.setLineNumberEnd("" + line);
+                                node.setLineNumberEnd(Integer.toString(line));
                             }
                             node.setFileName(fullyQualifiedFileName);
                             node.setClassName(clazz.getQualifiedName());
@@ -242,7 +242,7 @@ public final class CamelJavaRestDslParserHelper {
             int pos = mi.getStartPosition() + mi.getLength();
             int line = findLineNumber(fullyQualifiedFileName, pos);
             if (line > -1) {
-                node.setLineNumberEnd("" + line);
+                node.setLineNumberEnd(Integer.toString(line));
             }
         }
 
@@ -320,7 +320,7 @@ public final class CamelJavaRestDslParserHelper {
             int pos = mi.getStartPosition() + mi.getLength();
             int line = findLineNumber(fullyQualifiedFileName, pos);
             if (line > -1) {
-                node.setLineNumberEnd("" + line);
+                node.setLineNumberEnd(Integer.toString(line));
             }
         }
 

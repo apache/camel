@@ -155,11 +155,11 @@ public final class RouteBuilderParser {
                     int len = ((ASTNode) internal).getLength();
                     int line = findLineNumber(clazz.toUnformattedString(), pos);
                     if (line > -1) {
-                        detail.setLineNumber("" + line);
+                        detail.setLineNumber(Integer.toString(line));
                     }
                     int endLine = findLineNumber(clazz.toUnformattedString(), pos + len);
                     if (endLine > -1) {
-                        detail.setLineNumberEnd("" + endLine);
+                        detail.setLineNumberEnd(Integer.toString(endLine));
                     }
                     detail.setAbsolutePosition(pos);
                     int linePos = findLinePosition(clazz.toUnformattedString(), pos);
@@ -242,11 +242,11 @@ public final class RouteBuilderParser {
         detail.setEndpointUri(result.getElement());
         int line = findLineNumber(clazz.toUnformattedString(), result.getPosition());
         if (line > -1) {
-            detail.setLineNumber("" + line);
+            detail.setLineNumber(Integer.toString(line));
         }
         int lineEnd = findLineNumber(clazz.toUnformattedString(), result.getPosition() + result.getLength());
         if (lineEnd > -1) {
-            detail.setLineNumberEnd("" + lineEnd);
+            detail.setLineNumberEnd(Integer.toString(lineEnd));
         }
         detail.setAbsolutePosition(result.getPosition());
         int linePos = findLinePosition(clazz.toUnformattedString(), result.getPosition());
@@ -289,11 +289,11 @@ public final class RouteBuilderParser {
                     detail.setMethodName("configure");
                     int line = findLineNumber(clazz.toUnformattedString(), result.getPosition());
                     if (line > -1) {
-                        detail.setLineNumber("" + line);
+                        detail.setLineNumber(Integer.toString(line));
                     }
                     int endLine = findLineNumber(clazz.toUnformattedString(), result.getPosition() + result.getLength());
                     if (endLine > -1) {
-                        detail.setLineNumberEnd("" + endLine);
+                        detail.setLineNumberEnd(Integer.toString(endLine));
                     }
                     detail.setAbsolutePosition(result.getPosition());
                     int linePos = findLinePosition(clazz.toUnformattedString(), result.getPosition());
@@ -337,11 +337,11 @@ public final class RouteBuilderParser {
                     detail.setMethodName("configure");
                     int line = findLineNumber(clazz.toUnformattedString(), result.getPosition());
                     if (line > -1) {
-                        detail.setLineNumber("" + line);
+                        detail.setLineNumber(Integer.toString(line));
                     }
                     int endLine = findLineNumber(clazz.toUnformattedString(), result.getPosition() + result.getLength());
                     if (endLine > -1) {
-                        detail.setLineNumberEnd("" + endLine);
+                        detail.setLineNumberEnd(Integer.toString(endLine));
                     }
                     detail.setAbsolutePosition(result.getPosition());
                     int linePos = findLinePosition(clazz.toUnformattedString(), result.getPosition());
@@ -387,11 +387,11 @@ public final class RouteBuilderParser {
                     detail.setMethodName("configure");
                     int line = findLineNumber(clazz.toUnformattedString(), result.getPosition());
                     if (line > -1) {
-                        detail.setLineNumber("" + line);
+                        detail.setLineNumber(Integer.toString(line));
                     }
                     int endLine = findLineNumber(clazz.toUnformattedString(), result.getPosition() + result.getLength());
                     if (endLine > -1) {
-                        detail.setLineNumberEnd("" + endLine);
+                        detail.setLineNumberEnd(Integer.toString(endLine));
                     }
                     detail.setRouteId(result.getElement());
 
