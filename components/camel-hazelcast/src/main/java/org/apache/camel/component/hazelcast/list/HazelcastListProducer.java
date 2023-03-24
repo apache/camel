@@ -149,9 +149,9 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
     private void addAll(Integer pos, Exchange exchange) {
         final Object body = exchange.getIn().getBody();
         if (null == pos) {
-            list.addAll((Collection<? extends Object>) body);
+            list.addAll((Collection<?>) body);
         } else {
-            list.addAll(pos, (Collection<? extends Object>) body);
+            list.addAll(pos, (Collection<?>) body);
         }
     }
 

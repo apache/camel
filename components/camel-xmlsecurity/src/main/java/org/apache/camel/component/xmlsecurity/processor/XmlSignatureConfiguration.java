@@ -81,7 +81,7 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
         this.baseUri = baseUri;
     }
 
-    public Map<String, ? extends Object> getCryptoContextProperties() {
+    public Map<String, ?> getCryptoContextProperties() {
         return cryptoContextProperties;
     }
 
@@ -96,7 +96,7 @@ public abstract class XmlSignatureConfiguration implements Cloneable {
      * <li><code>"javax.xml.crypto.dsig.cacheReference"</code></li>
      * </ul>
      */
-    public void setCryptoContextProperties(Map<String, ? extends Object> cryptoContextProperties) {
+    public void setCryptoContextProperties(Map<String, ?> cryptoContextProperties) {
         this.cryptoContextProperties = cryptoContextProperties;
     }
 

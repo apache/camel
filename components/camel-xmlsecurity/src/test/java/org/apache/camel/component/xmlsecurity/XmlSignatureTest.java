@@ -1609,7 +1609,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         }
     }
 
-    public static Map<String, ? extends Object> getCrytoContextProperties() {
+    public static Map<String, ?> getCrytoContextProperties() {
         return Collections.singletonMap("org.jcp.xml.dsig.validateManifests", Boolean.FALSE);
     }
 

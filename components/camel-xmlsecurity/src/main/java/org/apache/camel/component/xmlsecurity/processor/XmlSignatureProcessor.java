@@ -87,7 +87,7 @@ public abstract class XmlSignatureProcessor implements Processor {
     }
 
     protected void setCryptoContextProperties(XMLCryptoContext cryptoContext) {
-        Map<String, ? extends Object> props = getConfiguration().getCryptoContextProperties();
+        Map<String, ?> props = getConfiguration().getCryptoContextProperties();
         if (props == null) {
             return;
         }

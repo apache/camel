@@ -99,7 +99,7 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
 
         continuousQuery.setLocalListener(new CacheEntryUpdatedListener<Object, Object>() {
             @Override
-            public void onUpdated(Iterable<CacheEntryEvent<? extends Object, ? extends Object>> events)
+            public void onUpdated(Iterable<CacheEntryEvent<?, ?>> events)
                     throws CacheEntryListenerException {
                 if (LOG.isTraceEnabled()) {
                     LOG.info("Processing Continuous Query event(s): {}.", events);
@@ -110,7 +110,7 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
                     return;
                 }
 
-                for (CacheEntryEvent<? extends Object, ? extends Object> entry : events) {
+                for (CacheEntryEvent<?, ?> entry : events) {
                     fireSingleExchange(entry);
                 }
             }
@@ -133,7 +133,7 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
                 endpoint.getQuery());
     }
 
-    private void fireSingleExchange(CacheEntryEvent<? extends Object, ? extends Object> entry) {
+    private void fireSingleExchange(CacheEntryEvent<?, ?> entry) {
         Exchange exchange = createExchange(entry.getValue());
         exchange.getIn().setHeader(IgniteConstants.IGNITE_CACHE_EVENT_TYPE, entry.getEventType());
         exchange.getIn().setHeader(IgniteConstants.IGNITE_CACHE_OLD_VALUE, entry.getOldValue());
@@ -141,7 +141,7 @@ public class IgniteCacheContinuousQueryConsumer extends DefaultConsumer {
         getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
     }
 
-    private void fireGroupedExchange(Iterable<CacheEntryEvent<? extends Object, ? extends Object>> events) {
+    private void fireGroupedExchange(Iterable<CacheEntryEvent<?, ?>> events) {
         Exchange exchange = createExchange(events);
         getAsyncProcessor().process(exchange, EmptyAsyncCallback.get());
     }

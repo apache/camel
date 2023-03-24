@@ -55,7 +55,7 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
 
             case ADD:
                 if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
-                    out.setBody(queue.addAll((Collection<? extends Object>) body));
+                    out.setBody(queue.addAll((Collection<?>) body));
                 } else {
                     out.setBody(queue.add(body));
                 }
@@ -63,7 +63,7 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
 
             case CONTAINS:
                 if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
-                    out.setBody(queue.containsAll((Collection<? extends Object>) body));
+                    out.setBody(queue.containsAll((Collection<?>) body));
                 } else {
                     out.setBody(queue.contains(body));
                 }
@@ -75,7 +75,7 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
 
             case REMOVE:
                 if (Collection.class.isAssignableFrom(body.getClass()) && !endpoint.isTreatCollectionsAsCacheObjects()) {
-                    out.setBody(queue.removeAll((Collection<? extends Object>) body));
+                    out.setBody(queue.removeAll((Collection<?>) body));
                 } else {
                     out.setBody(queue.remove(body));
                 }
@@ -99,7 +99,7 @@ public class IgniteQueueProducer extends DefaultAsyncProducer {
 
             case RETAIN_ALL:
                 if (Collection.class.isAssignableFrom(body.getClass())) {
-                    out.setBody(queue.retainAll((Collection<? extends Object>) body));
+                    out.setBody(queue.retainAll((Collection<?>) body));
                 } else {
                     out.setBody(queue.retainAll(Collections.singleton(body)));
                 }

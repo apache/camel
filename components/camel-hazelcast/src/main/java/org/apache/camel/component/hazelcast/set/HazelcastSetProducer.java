@@ -101,7 +101,7 @@ public class HazelcastSetProducer extends HazelcastDefaultProducer {
 
     private void addAll(Exchange exchange) {
         final Object body = exchange.getIn().getBody();
-        set.addAll((Collection<? extends Object>) body);
+        set.addAll((Collection<?>) body);
     }
 
     private void removeAll(Exchange exchange) {

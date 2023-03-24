@@ -248,7 +248,7 @@ public final class SObjectTree implements Serializable {
     }
 
     boolean updateGeneralObjectId(final String id, final Object object) {
-        final Class<? extends Object> clazz = object.getClass();
+        final Class<?> clazz = object.getClass();
         final BeanInfo beanInfo;
         try {
             beanInfo = Introspector.getBeanInfo(clazz);
