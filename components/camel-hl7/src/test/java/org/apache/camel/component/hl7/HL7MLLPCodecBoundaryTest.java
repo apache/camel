@@ -60,17 +60,17 @@ public class HL7MLLPCodecBoundaryTest extends HL7TestSupport {
     public void testSendHL7Message() throws Exception {
         BufferedReader in = IOHelper.buffered(new InputStreamReader(getClass().getResourceAsStream("/mdm_t02-1022.txt")));
         String line = "";
-        String message = "";
+        StringBuilder message = new StringBuilder();
         while (line != null) {
             if ((line = in.readLine()) != null) {
-                message += line + "\r";
+                message.append(line).append("\r");
             }
         }
-        message = message.substring(0, message.length() - 1);
+        message = new StringBuilder(message.substring(0, message.length() - 1));
         assertEquals(1022, message.length());
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
-        template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", message);
+        template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", message.toString());
         mockEndpoint.assertIsSatisfied();
     }
 

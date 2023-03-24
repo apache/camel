@@ -47,11 +47,11 @@ public class RestJettyBindingModeOffWithContractTest extends BaseJettyTest {
         assertNotNull(answer);
         BufferedReader reader = new BufferedReader(new InputStreamReader((InputStream) answer));
         String line;
-        String answerString = "";
+        StringBuilder answerString = new StringBuilder();
         while ((line = reader.readLine()) != null) {
-            answerString += line;
+            answerString.append(line);
         }
-        assertTrue(answerString.contains("\"active\":true"), "Unexpected response: " + answerString);
+        assertTrue(answerString.toString().contains("\"active\":true"), "Unexpected response: " + answerString);
 
         MockEndpoint.assertIsSatisfied(context);
 

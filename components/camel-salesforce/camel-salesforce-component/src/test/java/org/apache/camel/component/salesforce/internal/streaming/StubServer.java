@@ -279,16 +279,16 @@ class StubServer {
 
     private static String messageIdFrom(final String body) {
         int idx = body.indexOf("\"id\":\"");
-        String id = "";
+        StringBuilder id = new StringBuilder();
 
         if (idx > 0) {
             idx += 6;
             char ch;
             while (Character.isDigit(ch = body.charAt(idx++))) {
-                id += ch;
+                id.append(ch);
             }
         }
-        return id;
+        return id.toString();
     }
 
 }

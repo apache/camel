@@ -261,17 +261,17 @@ public class WebsocketRouteWithInitParamTest extends WebsocketCamelRouterWithIni
         List<String> connectionKeyList = new ArrayList<>();
         Object msg = exchange.getIn().getBody();
 
-        String additionalMessage = "";
+        StringBuilder additionalMessage = new StringBuilder();
 
         //send the message only to selected connections
         for (String element : broadcastMessageTo) {
             connectionKeyList.add(connectionKeyUserMap.get(element));
-            additionalMessage += element + " ";
+            additionalMessage.append(element).append(" ");
         }
 
-        additionalMessage += " Received the message: ";
+        additionalMessage.append(" Received the message: ");
 
-        exchange.getIn().setBody(additionalMessage + msg);
+        exchange.getIn().setBody(additionalMessage.toString() + msg);
         exchange.getIn().setHeader(WebsocketConstants.CONNECTION_KEY_LIST, connectionKeyList);
     }
 

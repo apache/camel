@@ -748,15 +748,15 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     }
 
     protected String getContentTypeString(List<String> values) {
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for (String value : values) {
             if (result.length() == 0) {
-                result = value;
+                result = new StringBuilder(value);
             } else {
-                result = result + "; " + value;
+                result.append("; ").append(value);
             }
         }
-        return result;
+        return result.toString();
     }
 
     @SuppressWarnings("unchecked")

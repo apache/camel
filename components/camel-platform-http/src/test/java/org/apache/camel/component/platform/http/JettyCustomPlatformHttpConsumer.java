@@ -73,12 +73,12 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
                 Exchange exchg = null;
                 try {
                     BufferedReader reader = httpServletRequest.getReader();
-                    String bodyRequest = "";
+                    StringBuilder bodyRequest = new StringBuilder();
                     String strCurrentLine = "";
                     while ((strCurrentLine = reader.readLine()) != null) {
-                        bodyRequest += strCurrentLine;
+                        bodyRequest.append(strCurrentLine);
                     }
-                    final Exchange exchange = exchg = toExchange(request, bodyRequest);
+                    final Exchange exchange = exchg = toExchange(request, bodyRequest.toString());
                     if (getEndpoint().isHttpProxy()) {
                         exchange.getMessage().removeHeader("Proxy-Connection");
                     }

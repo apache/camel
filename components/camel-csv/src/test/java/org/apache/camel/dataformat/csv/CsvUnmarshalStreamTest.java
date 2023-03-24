@@ -47,12 +47,12 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
         result.reset();
         result.expectedMessageCount(EXPECTED_COUNT);
 
-        String message = "";
+        StringBuilder message = new StringBuilder();
         for (int i = 0; i < EXPECTED_COUNT; ++i) {
-            message += i + "|\"" + i + LS + i + "\"\n";
+            message.append(i).append("|\"").append(i).append(LS).append(i).append("\"\n");
         }
 
-        template.sendBody("direct:start", message);
+        template.sendBody("direct:start", message.toString());
 
         MockEndpoint.assertIsSatisfied(context);
 

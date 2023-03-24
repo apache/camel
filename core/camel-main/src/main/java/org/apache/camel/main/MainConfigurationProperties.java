@@ -376,19 +376,19 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     @SuppressWarnings("unchecked")
     private void addConfigurationClass(Class<? extends CamelConfiguration>... configuration) {
-        String existing = configurationClasses;
+        StringBuilder existing = new StringBuilder(configurationClasses);
         if (existing == null) {
-            existing = "";
+            existing = new StringBuilder();
         }
         if (configuration != null) {
             for (Class<? extends CamelConfiguration> clazz : configuration) {
-                if (!existing.isEmpty()) {
-                    existing = existing + ",";
+                if (existing.length() > 0) {
+                    existing.append(",");
                 }
-                existing = existing + clazz.getName();
+                existing.append(clazz.getName());
             }
         }
-        setConfigurationClasses(existing);
+        setConfigurationClasses(existing.toString());
     }
 
     /**
@@ -452,19 +452,19 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * Add an additional {@link RoutesBuilder} class to the known list of builders.
      */
     public void addRoutesBuilder(Class<?>... routeBuilder) {
-        String existing = routesBuilderClasses;
+        StringBuilder existing = new StringBuilder(routesBuilderClasses);
         if (existing == null) {
-            existing = "";
+            existing = new StringBuilder();
         }
         if (routeBuilder != null) {
             for (Class<?> clazz : routeBuilder) {
-                if (!existing.isEmpty()) {
-                    existing = existing + ",";
+                if (existing.length() > 0) {
+                    existing.append(",");
                 }
-                existing = existing + clazz.getName();
+                existing.append(clazz.getName());
             }
         }
-        setRoutesBuilderClasses(existing);
+        setRoutesBuilderClasses(existing.toString());
     }
 
     /**
