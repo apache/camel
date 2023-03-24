@@ -40,20 +40,20 @@ public final class MicrometerConstants {
     @Metadata(description = "To augment meter tags defined as URI parameters", javaType = "java.lang.Iterable<Tag>")
     public static final String HEADER_METRIC_TAGS = HEADER_PREFIX + "Tags";
 
-    public static final String DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME = "CamelMessageHistory";
-    public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME = "CamelExchangesFailed";
-    public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME = "CamelExchangesSucceeded";
-    public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME = "CamelExchangesTotal";
+    public static final String DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME = "camel.message.history";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILED_METER_NAME = "camel.exchanges.failed";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_SUCCEEDED_METER_NAME = "camel.exchanges.succeeded";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_TOTAL_METER_NAME = "camel.exchanges.total";
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_FAILURES_HANDLED_METER_NAME
-            = "CamelExchangesFailuresHandled";
+            = "camel.exchanges.failures.handled";
     public static final String DEFAULT_CAMEL_ROUTE_POLICY_EXCHANGES_EXTERNAL_REDELIVERIES_METER_NAME
-            = "CamelExchangesExternalRedeliveries";
-    public static final String DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME = "CamelRoutePolicy";
-    public static final String DEFAULT_CAMEL_ROUTE_POLICY_LONGMETER_NAME = "CamelRoutePolicyLongTask";
-    public static final String DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME = "CamelExchangeEventNotifier";
-    public static final String DEFAULT_CAMEL_ROUTES_ADDED = "CamelRoutesAdded";
-    public static final String DEFAULT_CAMEL_ROUTES_RUNNING = "CamelRoutesRunning";
-    public static final String DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT = "CamelExchangesInflight";
+            = "camel.exchanges.external.redeliveries";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_METER_NAME = "camel.route.policy";
+    public static final String DEFAULT_CAMEL_ROUTE_POLICY_LONGMETER_NAME = "camel.route.policy.long.task";
+    public static final String DEFAULT_CAMEL_EXCHANGE_EVENT_METER_NAME = "camel.exchange.event.notifier";
+    public static final String DEFAULT_CAMEL_ROUTES_ADDED = "camel.routes.added";
+    public static final String DEFAULT_CAMEL_ROUTES_RUNNING = "camel.routes.running";
+    public static final String DEFAULT_CAMEL_ROUTES_EXCHANGES_INFLIGHT = "camel.exchanges.inflight";
 
     public static final String ROUTE_ID_TAG = "routeId";
     public static final String ROUTE_DESCRIPTION_TAG = "routeDescription";
