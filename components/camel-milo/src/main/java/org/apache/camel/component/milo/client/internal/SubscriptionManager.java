@@ -789,7 +789,7 @@ public class SubscriptionManager {
      * Optionally override the host of the endpoint URL with the configured one. <br>
      * The method will call {@link #overrideHost(String)} if the endpoint is not {@code null} and
      * {@link MiloClientConfiguration#isOverrideHost()} returns {@code true}.
-     * 
+     *
      * @param  desc               The endpoint descriptor to work on
      * @return                    Either the provided or updated endpoint descriptor. Only returns {@code null} when the
      *                            input was {@code null}.
@@ -812,7 +812,7 @@ public class SubscriptionManager {
 
     /**
      * Override host part of the endpoint URL with the configured one.
-     * 
+     *
      * @param  endpointUrl        the server provided endpoint URL
      * @return                    A new endpoint URL with the host part exchanged by the configured host. Will be
      *                            {@code null} when the input is {@code null}.

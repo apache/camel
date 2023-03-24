@@ -60,9 +60,9 @@ public class DownloadMoveFunctionalTest extends CamelTestSupport {
                      "&includeFolders=" + INCLUDE_FOLDERS +
                      "&deleteAfterRead=false" +
                      "&moveAfterRead=true")
-                             .log("Download objects successful")
-                             .to("log:LOG?showAll=true")
-                             .to("mock:download_objects_result");
+                        .log("Download objects successful")
+                        .to("log:LOG?showAll=true")
+                        .to("mock:download_objects_result");
             }
         };
     }

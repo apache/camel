@@ -31,11 +31,11 @@ import org.apache.camel.Message;
  * <p/>
  * A method is only asynchronously executed if the method has {@link AsyncCallback} as a parameter. In this situation
  * then the method should not return a value (void). And its the responsible of the method to invoke
- * 
+ *
  * <pre>
  * callback.done(false)
  * </pre>
- * 
+ *
  * when to continue routing.
  * <p/>
  * Synchronous methods can either be void or return a value. If a value is returned then the value will be set as the

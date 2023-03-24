@@ -30,7 +30,7 @@ public final class SlackHelper {
 
     /**
      * Creates a {@link SlackConfig} instance.
-     * 
+     *
      * @param  serverUrl The Slack server URL to use as prefix for API requests. If null or empty then the default
      *                   SlackConfig instance is returned.
      * @return           A new {@link SlackConfig} instance.

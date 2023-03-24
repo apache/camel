@@ -82,7 +82,7 @@ public class KafkaSpanDecorator extends AbstractMessagingSpanDecorator {
 
     /**
      * Extracts header value from the exchange for given header
-     * 
+     *
      * @param exchange the {@link Exchange}
      * @param header   the header name
      * @param type     the class type of the exchange header

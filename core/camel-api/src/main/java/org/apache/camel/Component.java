@@ -33,7 +33,7 @@ public interface Component extends CamelContextAware, Service {
      * Attempt to resolve an endpoint for the given URI if the component is capable of handling the URI.
      * <p/>
      * See {@link #useRawUri()} for controlling whether the passed in uri should be as-is (raw), or encoded (default).
-     * 
+     *
      * @param  uri       the URI to create; either raw or encoded (default)
      * @return           a newly created {@link Endpoint} or null if this component cannot create {@link Endpoint}
      *                   instances using the given uri

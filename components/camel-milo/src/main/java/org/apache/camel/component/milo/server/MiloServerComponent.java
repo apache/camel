@@ -344,7 +344,7 @@ public class MiloServerComponent extends DefaultComponent {
 
     /**
      * Get the user token policy for using with username authentication
-     * 
+     *
      * @return the user token policy to use for username authentication
      */
     private UserTokenPolicy getUsernamePolicy() {

@@ -25,7 +25,7 @@ public interface EventbridgeInternalClient {
 
     /**
      * Returns an Eventbridge client after a factory method determines which one to return.
-     * 
+     *
      * @return EventBridgeClient EventBridgeClient
      */
     EventBridgeClient getEventbridgeClient();

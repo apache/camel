@@ -171,35 +171,35 @@ public class AntPathMatcherGenericFileFilterTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from(fileUri(
                         "files/ant-path-1?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antFilterCaseSensitive=true"))
-                                .convertBodyTo(String.class)
-                                .to("mock:result1");
+                        .convertBodyTo(String.class)
+                        .to("mock:result1");
                 from(fileUri(
                         "files/ant-path-5?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antFilterCaseSensitive=false"))
-                                .convertBodyTo(String.class)
-                                .to("mock:result5");
+                        .convertBodyTo(String.class)
+                        .to("mock:result5");
 
                 from(fileUri("files/ant-path-2?initialDelay=0&delay=10&recursive=true&antExclude=**/*.bak"))
                         .convertBodyTo(String.class).to("mock:result2");
                 from(fileUri(
                         "files/ant-path-6?initialDelay=0&delay=10&recursive=true&antExclude=**/*.bak&antFilterCaseSensitive=false"))
-                                .convertBodyTo(String.class)
-                                .to("mock:result6");
+                        .convertBodyTo(String.class)
+                        .to("mock:result6");
 
                 from(fileUri(
                         "files/ant-path-3?initialDelay=0&delay=10&recursive=true&antInclude=**/*.pdf,**/*.txt&antExclude=**/a*,**/b*"))
-                                .convertBodyTo(String.class)
-                                .to("mock:result3");
+                        .convertBodyTo(String.class)
+                        .to("mock:result3");
                 from(fileUri(
                         "files/ant-path-7?initialDelay=0&delay=10&recursive=true&antInclude=**/*.Pdf,**/*.txt&antExclude=**/a*,**/b*&antFilterCaseSensitive=false"))
-                                .convertBodyTo(String.class).to("mock:result7");
+                        .convertBodyTo(String.class).to("mock:result7");
 
                 from(fileUri(
                         "files/ant-path-4?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antExclude=**/a*&filter=#filter"))
-                                .convertBodyTo(String.class)
-                                .to("mock:result4");
+                        .convertBodyTo(String.class)
+                        .to("mock:result4");
                 from(fileUri(
                         "files/ant-path-8?initialDelay=0&delay=10&recursive=true&antInclude=**/*.txt&antExclude=**/a*&filter=#caseInsensitiveFilter"))
-                                .convertBodyTo(String.class).to("mock:result8");
+                        .convertBodyTo(String.class).to("mock:result8");
             }
         };
     }

@@ -30,7 +30,7 @@ public final class AWS2S3ClientFactory {
 
     /**
      * Return the correct aws s3 client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               AWSS3Client
      */

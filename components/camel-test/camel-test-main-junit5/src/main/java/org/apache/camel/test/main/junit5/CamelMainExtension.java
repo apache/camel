@@ -163,7 +163,7 @@ final class CamelMainExtension
      * system property {@link org.apache.camel.test.junit5.CamelTestSupport#ROUTE_COVERAGE_ENABLED}.
      * <p/>
      * In case of {@code @Nested} test classes, the value is always extracted from the annotation of the outer class.
-     * 
+     *
      * @return {@code true} if the route coverage is enabled, {@code false} otherwise.
      */
     private boolean isRouteCoverageEnabled(ExtensionContext context) {

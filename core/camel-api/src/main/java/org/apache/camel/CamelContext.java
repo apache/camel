@@ -1011,7 +1011,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
 
     /**
      * Gets the {@link org.apache.camel.spi.TransformerRegistry}
-     * 
+     *
      * @return the TransformerRegistry
      */
     TransformerRegistry getTransformerRegistry();
@@ -1026,7 +1026,7 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
 
     /**
      * Gets the {@link org.apache.camel.spi.ValidatorRegistry}
-     * 
+     *
      * @return the ValidatorRegistry
      */
     ValidatorRegistry getValidatorRegistry();

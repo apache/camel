@@ -24,7 +24,7 @@ public class HttpProtocolHeaderFilterStrategy extends DefaultHeaderFilterStrateg
         initialize();
     }
 
-    // Just add the http headers here 
+    // Just add the http headers here
     protected void initialize() {
         getInFilter().add("host");
 

@@ -52,7 +52,7 @@ public class MQ2ClientStandardImpl implements MQ2InternalClient {
 
     /**
      * Getting the MQ AWS client that is used.
-     * 
+     *
      * @return Amazon MQ Client.
      */
     @Override

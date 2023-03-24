@@ -52,7 +52,7 @@ public class Lambda2ClientStandardImpl implements Lambda2InternalClient {
 
     /**
      * Getting the Lambda AWS client that is used.
-     * 
+     *
      * @return Amazon Lambda Client.
      */
     @Override

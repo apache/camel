@@ -45,7 +45,7 @@ public class Web3jConsumerLogTest extends Web3jIntegrationTestSupport {
                      + "fromBlock=earliest&"
                      + "toBlock=latest&"
                      + "address=0xc8CDceCE5d006dAB638029EBCf6Dd666efF5A952")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

@@ -23,7 +23,7 @@ public class AtmosDelResult extends AtmosResult {
 
     /**
      * Object payload contained in Exchange Body is populated with the remote path deleted on atmos.
-     * 
+     *
      * @param exchange
      */
     @Override

@@ -42,7 +42,7 @@ public interface TransformerRegistry<K> extends Map<K, Transformer>, StaticServi
     /**
      * Lookup a {@link Transformer} in the registry which supports the transformation for the data types represented by
      * the key.
-     * 
+     *
      * @param  key a key represents the from/to data types to transform
      * @return     {@link Transformer} if matched, otherwise null
      */

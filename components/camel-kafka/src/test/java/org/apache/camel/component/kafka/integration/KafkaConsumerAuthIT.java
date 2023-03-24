@@ -101,9 +101,9 @@ public class KafkaConsumerAuthIT extends BaseEmbeddedKafkaAuthTestSupport {
                       + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&interceptorClasses=%s"
                       + "&saslMechanism=PLAIN&securityProtocol=SASL_PLAINTEXT&saslJaasConfig=%s", TOPIC,
                         "KafkaConsumerAuthIT", "org.apache.camel.component.kafka.MockConsumerInterceptor", simpleSaslJaasConfig)
-                                .process(
-                                        exchange -> LOG.trace("Captured on the processor: {}", exchange.getMessage().getBody()))
-                                .routeId("full-it").to(to);
+                        .process(
+                                exchange -> LOG.trace("Captured on the processor: {}", exchange.getMessage().getBody()))
+                        .routeId("full-it").to(to);
             }
         };
     }

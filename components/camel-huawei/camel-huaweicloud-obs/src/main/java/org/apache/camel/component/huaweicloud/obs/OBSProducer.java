@@ -167,7 +167,7 @@ public class OBSProducer extends DefaultProducer {
 
     /**
      * downloads an object from remote OBS bucket
-     * 
+     *
      * @param exchange
      * @param clientConfigurations
      */
@@ -190,7 +190,7 @@ public class OBSProducer extends DefaultProducer {
 
     /**
      * Perform list buckets operation
-     * 
+     *
      * @param  exchange
      * @throws ObsException
      */
@@ -203,7 +203,7 @@ public class OBSProducer extends DefaultProducer {
 
     /**
      * Perform create bucket operation
-     * 
+     *
      * @param  exchange
      * @param  clientConfigurations
      * @throws ObsException
@@ -251,7 +251,7 @@ public class OBSProducer extends DefaultProducer {
 
     /**
      * Perform delete bucket operation
-     * 
+     *
      * @param  exchange
      * @param  clientConfigurations
      * @throws ObsException
@@ -270,7 +270,7 @@ public class OBSProducer extends DefaultProducer {
 
     /**
      * Perform check bucket exists operation
-     * 
+     *
      * @param  exchange
      * @param  clientConfigurations
      * @throws ObsException
@@ -289,7 +289,7 @@ public class OBSProducer extends DefaultProducer {
 
     /**
      * Perform get bucket metadata operation
-     * 
+     *
      * @param  exchange
      * @param  clientConfigurations
      * @throws ObsException
@@ -309,7 +309,7 @@ public class OBSProducer extends DefaultProducer {
 
     /**
      * Perform list objects operation
-     * 
+     *
      * @param  exchange
      * @param  clientConfigurations
      * @throws ObsException
@@ -357,7 +357,7 @@ public class OBSProducer extends DefaultProducer {
      * Update dynamic client configurations. Some endpoint parameters (operation, and bucket name and location) can also
      * be passed via exchange properties, so they can be updated between each transaction. Since they can change, we
      * must clear the previous transaction and update these parameters with their new values
-     * 
+     *
      * @param exchange
      * @param clientConfigurations
      */

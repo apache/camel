@@ -48,7 +48,7 @@ public class SftpSimpleConsumeRecursiveIT extends SftpServerTestSupport {
             public void configure() {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&delay=10000&disconnect=true&recursive=true").routeId("foo")
-                             .noAutoStartup().to("log:result", "mock:result");
+                        .noAutoStartup().to("log:result", "mock:result");
             }
         };
     }

@@ -30,7 +30,7 @@ public final class Translate2ClientFactory {
 
     /**
      * Return the correct aws Translate client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               TranslateClient
      */

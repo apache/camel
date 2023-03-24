@@ -35,21 +35,21 @@ public @interface KeyValuePairField {
 
     /**
      * tag identifying the field in the message (mandatory) - must be unique
-     * 
+     *
      * @return int
      */
     int tag();
 
     /**
      * name of the field (optional)
-     * 
+     *
      * @return String
      */
     String name() default "";
 
     /**
      * pattern that the formater will use to transform the data (optional)
-     * 
+     *
      * @return String
      */
     String pattern() default "";
@@ -64,14 +64,14 @@ public @interface KeyValuePairField {
     /**
      * Position of the field in the message generated - must be used when the position of the key/tag in the FIX message
      * must be different
-     * 
+     *
      * @return int
      */
     int position() default 0;
 
     /**
      * precision of the BigDecimal number to be created
-     * 
+     *
      * @return int
      */
     int precision() default 0;

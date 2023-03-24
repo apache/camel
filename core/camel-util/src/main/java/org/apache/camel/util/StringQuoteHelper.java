@@ -198,7 +198,7 @@ public final class StringQuoteHelper {
                     answer.add(text);
                     sb.setLength(0);
                 }
-                // we should avoid adding the separator 
+                // we should avoid adding the separator
                 continue;
             }
 

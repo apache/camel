@@ -51,7 +51,8 @@ public class XMLTokenExpressionIteratorTest {
                                              + "<c:child some_attr='f' anotherAttr='f'/>"
                                              + "</c:parent>"
                                              + "</grandparent>"
-                                             + "</g:greatgrandparent>").getBytes();
+                                             + "</g:greatgrandparent>")
+            .getBytes();
 
     // mixing a default namespace with an explicit namespace for child
     private static final byte[] TEST_BODY_NS_MIXED = ("<?xml version='1.0' encoding='UTF-8'?>"
@@ -65,7 +66,8 @@ public class XMLTokenExpressionIteratorTest {
                                                       + "<c:child some_attr='d' anotherAttr='d'/>"
                                                       + "</c:parent>"
                                                       + "</grandparent>"
-                                                      + "</g:greatgrandparent>").getBytes();
+                                                      + "</g:greatgrandparent>")
+            .getBytes();
 
     // mixing a no namespace with an explicit namespace for child
     private static final byte[] TEST_BODY_NO_NS_MIXED = ("<?xml version='1.0' encoding='UTF-8'?>"
@@ -79,7 +81,8 @@ public class XMLTokenExpressionIteratorTest {
                                                          + "<c:child some_attr='d' anotherAttr='d'/>"
                                                          + "</c:parent>"
                                                          + "</grandparent>"
-                                                         + "</g:greatgrandparent>").getBytes();
+                                                         + "</g:greatgrandparent>")
+            .getBytes();
 
     // mixing different namespaces within a tag
     private static final byte[] TEST_BODY_MIXED_CHILDREN = ("<?xml version='1.0' encoding='UTF-8'?>"
@@ -106,7 +109,8 @@ public class XMLTokenExpressionIteratorTest {
                                                             + "<c:child some_attr='f' anotherAttr='f' />"
                                                             + "</c:parent>"
                                                             + "</grandparent>"
-                                                            + "</greatgrandparent>").getBytes();
+                                                            + "</greatgrandparent>")
+            .getBytes();
 
     private static final String RESULTS_CW1 = "<?xml version='1.0' encoding='UTF-8'?>"
                                               + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"

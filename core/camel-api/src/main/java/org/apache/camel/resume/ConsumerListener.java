@@ -36,7 +36,7 @@ public interface ConsumerListener<C, P> {
 
     /**
      * This is an event that runs after data consumption.
-     * 
+     *
      * @param  consumePayload the resume payload if any
      * @return                true if the consumer should processing or false otherwise.
      */
@@ -44,7 +44,7 @@ public interface ConsumerListener<C, P> {
 
     /**
      * This is an event that runs after data processing.
-     * 
+     *
      * @param  processingPayload the resume payload if any
      * @return                   true if the consumer should continue or false otherwise.
      */

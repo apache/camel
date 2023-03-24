@@ -30,7 +30,7 @@ public final class MSK2ClientFactory {
 
     /**
      * Return the correct AWS Kafka client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               MqClient
      */

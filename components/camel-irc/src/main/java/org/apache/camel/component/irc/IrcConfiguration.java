@@ -349,7 +349,7 @@ public class IrcConfiguration implements Cloneable {
 
     /**
      * Use persistent messages.
-     * 
+     *
      * @deprecated not in use
      */
     @Deprecated
@@ -504,7 +504,7 @@ public class IrcConfiguration implements Cloneable {
 
     /**
      * Delay in milliseconds before sending commands after the connection is established.
-     * 
+     *
      * @param timeout timeout value in milliseconds
      */
     public void setCommandTimeout(long timeout) {

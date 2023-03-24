@@ -43,7 +43,7 @@ public class BoxEventLogsManager {
 
     /**
      * Create event logs manager to manage the event logs of Box connection's authenticated user.
-     * 
+     *
      * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxEventLogsManager(BoxAPIConnection boxConnection) {
@@ -53,13 +53,13 @@ public class BoxEventLogsManager {
     /**
      * Create an event stream with optional starting initial position and add listener that will be notified when an
      * event is received.
-     * 
+     *
      * @param  position - the starting position of the event stream. May be <code>null</code> in which case all events
      *                  within bounds returned.
      * @param  after    - the lower bound on the timestamp of the events returned.
      * @param  before   - the upper bound on the timestamp of the events returned.
      * @param  types    - an optional list of event types to filter by.
-     * 
+     *
      * @return          A list of all the events that met the given criteria.
      */
     public List<BoxEvent> getEnterpriseEvents(String position, Date after, Date before, BoxEvent.Type... types) {

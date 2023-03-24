@@ -26,7 +26,7 @@ import java.util.List;
  * <p>
  * For example:
  * </p>
- * 
+ *
  * <pre>
  * {@code
  *     public enum HelloWorldMethod implements ApiMethod {

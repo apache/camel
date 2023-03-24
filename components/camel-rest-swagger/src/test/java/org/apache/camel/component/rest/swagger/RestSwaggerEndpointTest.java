@@ -88,7 +88,7 @@ public class RestSwaggerEndpointTest {
                         .filter(p -> "offset".equals(p.getName()))
                         .findAny()
                         .orElse(null))
-                                .isNotNull();
+                .isNotNull();
     }
 
     @Test
@@ -255,7 +255,7 @@ public class RestSwaggerEndpointTest {
 
         assertThat(
                 RestSwaggerEndpoint.determineOption(Arrays.asList("specification"), Arrays.asList("operation"), null, null))
-                        .isEqualTo("operation");
+                .isEqualTo("operation");
 
         assertThat(RestSwaggerEndpoint.determineOption(Arrays.asList("specification"), Arrays.asList("operation"),
                 "component", null)).isEqualTo("component");
@@ -358,7 +358,7 @@ public class RestSwaggerEndpointTest {
         assertThat(
                 RestSwaggerEndpoint.loadSpecificationFrom(camelContext, RestSwaggerComponent.DEFAULT_SPECIFICATION_URI, null,
                         false))
-                                .isNotNull();
+                .isNotNull();
     }
 
     @Test

@@ -32,7 +32,7 @@ import org.apache.camel.spi.CamelEvent.ExchangeEvent;
  * If any exceptions is thrown from the callback methods then the {@link org.apache.camel.spi.Debugger} will catch and
  * log those at <tt>WARN</tt> level and continue. This ensures Camel can continue to route the message without having
  * breakpoints causing issues.
- * 
+ *
  * @see org.apache.camel.spi.Debugger
  * @see org.apache.camel.spi.Condition
  */
@@ -65,7 +65,7 @@ public interface Breakpoint {
 
     /**
      * Callback invoked when the breakpoint was hit and the {@link Exchange} is about to be processed (before).
-     * 
+     *
      * @param exchange   the {@link Exchange}
      * @param processor  the {@link Processor} about to be processed
      * @param definition the {@link NamedNode} definition of the processor
@@ -74,7 +74,7 @@ public interface Breakpoint {
 
     /**
      * Callback invoked when the breakpoint was hit and the {@link Exchange} has been processed (after).
-     * 
+     *
      * @param exchange   the {@link Exchange}
      * @param processor  the {@link Processor} which was processed
      * @param definition the {@link NamedNode} definition of the processor

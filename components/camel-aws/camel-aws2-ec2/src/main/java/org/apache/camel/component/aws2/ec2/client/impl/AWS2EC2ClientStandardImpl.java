@@ -52,7 +52,7 @@ public class AWS2EC2ClientStandardImpl implements AWS2EC2InternalClient {
 
     /**
      * Getting the EC2 AWS client that is used.
-     * 
+     *
      * @return Amazon EC2 Client.
      */
     @Override

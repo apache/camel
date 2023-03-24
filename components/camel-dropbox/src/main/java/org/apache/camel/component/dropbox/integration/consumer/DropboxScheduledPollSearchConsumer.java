@@ -35,7 +35,7 @@ public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollCons
 
     /**
      * Poll from a dropbox remote path and put the result in the message exchange
-     * 
+     *
      * @return number of messages polled
      */
     @Override

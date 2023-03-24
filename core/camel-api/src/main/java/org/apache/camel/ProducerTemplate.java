@@ -98,7 +98,7 @@ public interface ProducerTemplate extends Service {
      * Reports if async* methods will dispatch processing from the calling thread (false) or through executor (true). In
      * both cases asynchronous engine will be used, so this non-threaded can be useful for high-speed non-blocking
      * processing.
-     * 
+     *
      * @return if async* methods will dispatch processing with the executor
      */
     boolean isThreadedAsyncMode();
@@ -107,28 +107,28 @@ public interface ProducerTemplate extends Service {
      * Reports if async* methods will dispatch processing from the calling thread (false) or through executor (true). In
      * both cases asynchronous engine will be used, so this non-threaded can be useful for high-speed non-blocking
      * processing.
-     * 
+     *
      * @param useExecutor if async* methods will dispatch processing with the executor
      */
     void setThreadedAsyncMode(boolean useExecutor);
 
     /**
      * Get the default endpoint to use if none is specified
-     * 
+     *
      * @return the default endpoint instance
      */
     Endpoint getDefaultEndpoint();
 
     /**
      * Sets the default endpoint to use if none is specified
-     * 
+     *
      * @param defaultEndpoint the default endpoint instance
      */
     void setDefaultEndpoint(Endpoint defaultEndpoint);
 
     /**
      * Sets the default endpoint uri to use if none is specified
-     * 
+     *
      * @param endpointUri the default endpoint uri
      */
     void setDefaultEndpointUri(String endpointUri);
@@ -1028,7 +1028,7 @@ public interface ProducerTemplate extends Service {
      * <b>Important:</b> The transformer processor is invoked by a thread from the underlying thread pool, when the task
      * is running to send the exchange asynchronously. In other words mind about thread-safety when using the
      * transformer processor.
-     * 
+     *
      * @param  endpoint  the endpoint to send the exchange to
      * @param  processor the transformer used to populate the new exchange
      * @return           a handle to be used to get the response in the future

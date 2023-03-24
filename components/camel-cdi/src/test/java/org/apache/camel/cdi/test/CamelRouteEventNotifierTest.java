@@ -162,32 +162,32 @@ public class CamelRouteEventNotifierTest {
                 contains(
                         both(
                                 instanceOf(RouteAddedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
                         both(
                                 instanceOf(RouteAddedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
                         both(
                                 instanceOf(RouteStartedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
                         both(
                                 instanceOf(RouteStartedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other")))))));
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("other")))))));
         assertThat("Events fired are incorrect!", simple,
                 contains(
                         both(
                                 instanceOf(RouteAddedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
                         both(
                                 instanceOf(RouteStartedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple")))))));
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("simple")))))));
         assertThat("Events fired are incorrect!", other,
                 contains(
                         both(
                                 instanceOf(RouteAddedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
                         both(
                                 instanceOf(RouteStartedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other")))))));
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("other")))))));
     }
 
     @Test
@@ -203,55 +203,55 @@ public class CamelRouteEventNotifierTest {
                 contains(
                         both(
                                 instanceOf(RouteAddedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
                         both(
                                 instanceOf(RouteAddedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
                         both(
                                 instanceOf(RouteStartedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
                         both(
                                 instanceOf(RouteStartedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
                         both(
                                 instanceOf(RouteStoppedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
                         both(
                                 instanceOf(RouteRemovedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
                         both(
                                 instanceOf(RouteStoppedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
                         both(
                                 instanceOf(RouteRemovedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple")))))));
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("simple")))))));
         assertThat("Events fired are incorrect!", simple,
                 contains(
                         both(
                                 instanceOf(RouteAddedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
                         both(
                                 instanceOf(RouteStartedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
                         both(
                                 instanceOf(RouteStoppedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("simple"))))),
                         both(
                                 instanceOf(RouteRemovedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("simple")))))));
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("simple")))))));
         assertThat("Events fired are incorrect!", other,
                 contains(
                         both(
                                 instanceOf(RouteAddedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
                         both(
                                 instanceOf(RouteStartedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
                         both(
                                 instanceOf(RouteStoppedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("other"))))),
                         both(
                                 instanceOf(RouteRemovedEvent.class))
-                                        .and(hasProperty("route", hasProperty("id", is(equalTo("other")))))));
+                                .and(hasProperty("route", hasProperty("id", is(equalTo("other")))))));
     }
 }

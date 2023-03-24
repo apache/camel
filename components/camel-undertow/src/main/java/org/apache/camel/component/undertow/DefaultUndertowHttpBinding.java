@@ -406,7 +406,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
         if (codeToUse != 500) {
             if (body == null || body instanceof String && ((String) body).trim().isEmpty()) {
-                // no content 
+                // no content
                 codeToUse = currentCode == null ? 204 : currentCode;
             }
         }

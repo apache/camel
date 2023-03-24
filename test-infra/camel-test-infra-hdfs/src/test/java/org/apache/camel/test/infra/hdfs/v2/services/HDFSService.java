@@ -26,14 +26,14 @@ public interface HDFSService extends TestService, BeforeAllCallback, AfterAllCal
 
     /**
      * Gets the hostname of the HDFS server
-     * 
+     *
      * @return
      */
     String getHDFSHost();
 
     /**
      * Gets the port used by the HDFS server
-     * 
+     *
      * @return
      */
     int getPort();

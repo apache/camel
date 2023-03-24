@@ -254,7 +254,7 @@ public class SplunkConfiguration {
 
     /**
      * Set the ssl protocol to use
-     * 
+     *
      * @param sslProtocol
      */
     public void setSslProtocol(SSLSecurityProtocol sslProtocol) {

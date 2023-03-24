@@ -21,20 +21,20 @@ import java.nio.ByteBuffer;
 
 /**
  * An interface to represent offset keys (addressable for an offset)
- * 
+ *
  * @param <K> the type of the offset key
  */
 public interface OffsetKey<K> extends Serializable {
     /**
      * Sets the key value
-     * 
+     *
      * @param key the key value
      */
     void setValue(K key);
 
     /**
      * Gets the key value
-     * 
+     *
      * @return the key instance
      */
     K getValue();

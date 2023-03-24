@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
  * In the next example, the annotation {@code ReplaceInRegistry} on the field {@code myGreetings} of type
  * {@code Greetings} indicates that the bean with the same name and type should be replaced by an instance of
  * {@code CustomGreetings}.
- * 
+ *
  * <pre>
  * <code>
  *
@@ -57,7 +57,7 @@ import java.lang.annotation.Target;
  * In the next example, the annotation {@code ReplaceInRegistry} on the method {@code myGreetings} whose return type is
  * {@code Greetings} indicates that the bean with the same name and type should be replaced by an instance of
  * {@code CustomGreetings}.
- * 
+ *
  * <pre>
  * <code>
  *

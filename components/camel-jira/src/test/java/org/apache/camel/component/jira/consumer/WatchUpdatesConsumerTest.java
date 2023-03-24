@@ -105,7 +105,7 @@ public class WatchUpdatesConsumerTest extends CamelTestSupport {
             public void configure() {
                 from("jira://watchUpdates?jiraUrl=" + JIRA_CREDENTIALS
                      + "&jql=project=" + PROJECT + "&delay=5000&watchedFields=" + WATCHED_COMPONENTS)
-                             .to(mockResult);
+                        .to(mockResult);
             }
         };
     }

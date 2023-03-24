@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Splitter for messages use National Language Lock Table
  * <p/>
- * 
+ *
  * @see 3GPP 23.038 Reference
  */
 public class SmppNLSTSplitter extends SmppSplitter {

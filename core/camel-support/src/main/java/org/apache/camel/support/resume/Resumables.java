@@ -32,7 +32,7 @@ public final class Resumables {
 
     /**
      * An anonymous resumable type
-     * 
+     *
      * @param <K> the type of the key, name or object that can be addressed by the given offset (aka addressable)
      * @param <V> the type of offset
      */
@@ -42,7 +42,7 @@ public final class Resumables {
 
         /**
          * Creates a new anonymous resumable type
-         * 
+         *
          * @param addressable the key, name or object that can be addressed by the given offset
          */
         public AnonymousResumable(K addressable) {
@@ -51,7 +51,7 @@ public final class Resumables {
 
         /**
          * Creates a new anonymous resumable type
-         * 
+         *
          * @param addressable the key, name or object that can be addressed by the given offset
          * @param offset      the offset value
          */
@@ -89,7 +89,7 @@ public final class Resumables {
 
     /**
      * Creates a new resumable for an addressable
-     * 
+     *
      * @param  addressable the key, name or object that can be addressed by the given offset
      * @param  offset      the offset value
      * @param  <K>         the type of the key, name or object that can be addressed by the given offset (aka

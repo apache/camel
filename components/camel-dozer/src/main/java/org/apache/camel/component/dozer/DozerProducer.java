@@ -38,7 +38,7 @@ public class DozerProducer extends DefaultProducer {
 
     /**
      * Create a new producer for dozer endpoints.
-     * 
+     *
      * @param endpoint endpoint requiring a producer
      */
     public DozerProducer(DozerEndpoint endpoint) {
@@ -139,8 +139,8 @@ public class DozerProducer extends DefaultProducer {
                 throw new Exception("Unable to resolve data format for unmarshalling: " + dataFormatId);
             }
 
-            // Wrap the data format in a processor and start/configure it.  
-            // Stop/shutdown is handled when the corresponding methods are 
+            // Wrap the data format in a processor and start/configure it.
+            // Stop/shutdown is handled when the corresponding methods are
             // called on this producer.
             unmarshaller = new UnmarshalProcessor(dataFormat);
             unmarshaller.setCamelContext(exchange.getContext());
@@ -162,8 +162,8 @@ public class DozerProducer extends DefaultProducer {
                 throw new Exception("Unable to resolve data format for marshalling: " + dataFormatId);
             }
 
-            // Wrap the data format in a processor and start/configure it.  
-            // Stop/shutdown is handled when the corresponding methods are 
+            // Wrap the data format in a processor and start/configure it.
+            // Stop/shutdown is handled when the corresponding methods are
             // called on this producer.
             marshaller = new MarshalProcessor(dataFormat);
             marshaller.setCamelContext(exchange.getContext());

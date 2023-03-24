@@ -51,7 +51,7 @@ public class Ddb2StreamClientIAMOptimizedImpl implements Ddb2StreamInternalClien
 
     /**
      * Getting the DynamoDB Streams aws client that is used.
-     * 
+     *
      * @return DynamoDB Streams Client.
      */
     @Override

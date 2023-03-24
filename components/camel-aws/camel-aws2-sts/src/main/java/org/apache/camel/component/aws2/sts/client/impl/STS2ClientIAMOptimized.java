@@ -50,7 +50,7 @@ public class STS2ClientIAMOptimized implements STS2InternalClient {
 
     /**
      * Getting the STS aws client that is used.
-     * 
+     *
      * @return Amazon STS Client.
      */
     @Override

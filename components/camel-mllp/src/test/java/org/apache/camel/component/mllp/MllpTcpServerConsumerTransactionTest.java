@@ -108,9 +108,9 @@ public class MllpTcpServerConsumerTransactionTest extends CamelTestSupport {
 
                 fromF("mllp://%s:%d?autoAck=true&connectTimeout=%d&receiveTimeout=%d",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort(), connectTimeout, responseTimeout)
-                                .routeId(routeId)
-                                .log(LoggingLevel.INFO, routeId, "Test route received message")
-                                .to("target://test-queue?transacted=true");
+                        .routeId(routeId)
+                        .log(LoggingLevel.INFO, routeId, "Test route received message")
+                        .to("target://test-queue?transacted=true");
 
                 from("target://test-queue")
                         .routeId("jms-consumer")

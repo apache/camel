@@ -30,7 +30,7 @@ public final class Sqs2ClientFactory {
 
     /**
      * Return the correct aws SQS client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               SqsClient
      */

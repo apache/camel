@@ -48,7 +48,7 @@ public abstract class ResumeStrategyConfiguration {
      * Allows the implementation to provide custom strategy service factories. It binds to service name provided in the
      * {@link org.apache.camel.spi.annotations.JdkService} strategy .This allows the strategy to be resolved
      * automatically in runtime while also allowing fallback to manually constructed strategies when necessary
-     * 
+     *
      * @return
      */
     public abstract String resumeStrategyService();

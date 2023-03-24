@@ -252,7 +252,7 @@ public class RedisAggregationRepository extends ServiceSupport
 
     /**
      * Checks if the key in question is in the repository.
-     * 
+     *
      * @param key Object - key in question
      */
     public boolean containsKey(Object key) {

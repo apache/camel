@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.XmlType;
  * <p>
  * The following schema fragment specifies the expected content contained within this class.
  * <p/>
- * 
+ *
  * <pre>
  * &lt;complexType name="QueryResult">
  *   &lt;complexContent>
@@ -61,7 +61,7 @@ public class QueryResult {
      * <p/>
      * <p/>
      * For example, to add a new item, do as follows:
-     * 
+     *
      * <pre>
      * getRecords().add(newItem);
      * </pre>

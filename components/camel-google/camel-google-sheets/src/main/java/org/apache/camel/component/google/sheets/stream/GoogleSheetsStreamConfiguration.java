@@ -221,7 +221,7 @@ public class GoogleSheetsStreamConfiguration implements Cloneable {
 
     /**
      * Sets "*.json" file with credentials for Service account
-     * 
+     *
      * @param serviceAccountKey String file, classpath, or http url
      */
     public void setServiceAccountKey(String serviceAccountKey) {

@@ -106,8 +106,8 @@ public class SpringWebserviceConsumer extends DefaultConsumer implements Message
                 if (mimeHeaders != null) {
                     String[] breadcrumbIdHeaderValues = mimeHeaders.getHeader(SpringWebserviceConstants.BREADCRUMB_ID);
                     // expected to get one token
-                    // if more than one token expected, 
-                    // presumably breadcrumb generation strategy 
+                    // if more than one token expected,
+                    // presumably breadcrumb generation strategy
                     // may be required to implement
                     if (breadcrumbIdHeaderValues != null && breadcrumbIdHeaderValues.length >= 1) {
                         exchange.getIn().setHeader(SpringWebserviceConstants.BREADCRUMB_ID, breadcrumbIdHeaderValues[0]);

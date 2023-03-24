@@ -30,7 +30,7 @@ public final class AWS2EC2ClientFactory {
 
     /**
      * Return the correct AWS EC2 client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               Ec2Client
      */

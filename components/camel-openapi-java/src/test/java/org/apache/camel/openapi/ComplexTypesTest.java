@@ -202,8 +202,8 @@ public class ComplexTypesTest extends CamelTestSupport {
         assertNotNull(is);
         String expected = new BufferedReader(
                 new InputStreamReader(is, StandardCharsets.UTF_8))
-                        .lines()
-                        .collect(Collectors.joining("\n"));
+                .lines()
+                .collect(Collectors.joining("\n"));
         is.close();
 
         assertEquals(expected, json);

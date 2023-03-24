@@ -189,10 +189,10 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
 
     /**
      * Manages the temporary file for the file input stream caches.
-     * 
+     *
      * Collects all FileInputStreamCache instances of the temporary file. Counts the number of exchanges which have a
      * FileInputStreamCache instance of the temporary file. Deletes the temporary file, if all exchanges are done.
-     * 
+     *
      * @see CachedOutputStream
      */
     static class TempFileManager {
@@ -272,7 +272,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                     // are aggregated later in the main route. Here, the cached streams of the sub-routes must be closed with
                     // the Unit of Work of the main route.
                     // streamCacheUnitOfWork.getRoute() != null means that the unit of work is still active and the done method
-                    // was not yet called: It can happen that streamCacheUnitOfWork.getRoute() == null in the split or 
+                    // was not yet called: It can happen that streamCacheUnitOfWork.getRoute() == null in the split or
                     // multi-cast case when there is a timeout on the main route and an exchange of the sub-route is added after
                     // the timeout. This we have to avoid because the stream cache would never be closed then.
                     streamCacheUnitOfWork.addSynchronization(onCompletion);

@@ -40,7 +40,7 @@ public @interface Beans {
      * <p/>
      * Note that the declared alternatives are globally selected for the entire application. For example, if you have
      * the following named bean in your application:
-     * 
+     *
      * <pre>
      * <code>
      * {@literal @}Named("foo")
@@ -51,7 +51,7 @@ public @interface Beans {
      * </pre>
      *
      * It can be replaced in your test by declaring the following alternative bean:
-     * 
+     *
      * <pre>
      * <code>
      * {@literal @}Alternative
@@ -63,7 +63,7 @@ public @interface Beans {
      * </pre>
      *
      * And adding the {@code @Beans} annotation to you test class to activate it:
-     * 
+     *
      * <pre>
      * <code>
      * {@literal @}ExtendWith(CamelCdiExtension.class)

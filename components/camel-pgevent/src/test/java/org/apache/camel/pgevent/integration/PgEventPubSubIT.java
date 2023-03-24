@@ -50,7 +50,7 @@ public class PgEventPubSubIT extends PgEventITSupport {
 
                 from(String.format("pgevent://%s:%s/%s/testchannel?user=%s&pass=%s",
                         getHost(), getMappedPort(), POSTGRES_DB, POSTGRES_USER, POSTGRES_PASSWORD))
-                                .to(mockEndpoint);
+                        .to(mockEndpoint);
             }
         };
     }

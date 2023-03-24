@@ -27,7 +27,7 @@ import zipkin2.reporter.libthrift.LibthriftSender;
  *
  * <p>
  * The easiest way to run is locally:
- * 
+ *
  * <pre>
  * {@code
  * curl -sSL https://zipkin.io/quickstart.sh | bash -s

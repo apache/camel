@@ -46,7 +46,7 @@ public class NettyHttpSSLHandshakeErrorTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:https://localhost:{{port}}?ssl=true&needClientAuth=true&keyStoreFormat=JKS"
                      + "&passphrase=storepassword&keyStoreResource=jsse/server-keystore.jks&trustStoreResource=jsse/server-truststore.jks")
-                             .to("mock:target");
+                        .to("mock:target");
             }
         });
         context.start();

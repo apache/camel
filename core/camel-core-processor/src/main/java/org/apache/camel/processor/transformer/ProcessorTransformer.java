@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A {@link Transformer} implementation which leverages {@link Processor} to perform transformation.
- * 
+ *
  * {@see Transformer}
  */
 public class ProcessorTransformer extends Transformer {
@@ -47,7 +47,7 @@ public class ProcessorTransformer extends Transformer {
 
     /**
      * Perform data transformation with specified from/to type using Processor.
-     * 
+     *
      * @param message message to apply transformation
      * @param from    'from' data type
      * @param to      'to' data type

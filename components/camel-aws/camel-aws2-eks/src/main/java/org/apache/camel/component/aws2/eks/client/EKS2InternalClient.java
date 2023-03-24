@@ -25,7 +25,7 @@ public interface EKS2InternalClient {
 
     /**
      * Returns an EKS client after a factory method determines which one to return.
-     * 
+     *
      * @return EksClient EksClient
      */
     EksClient getEksClient();

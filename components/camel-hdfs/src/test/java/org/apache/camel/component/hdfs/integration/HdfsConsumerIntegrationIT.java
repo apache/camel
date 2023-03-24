@@ -240,7 +240,7 @@ public class HdfsConsumerIntegrationIT extends CamelTestSupport {
             public void configure() {
                 from(dir.toUri()
                      + "?scheduler=#myScheduler&pattern=*&fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0&readSuffix=handled")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         });
         ScheduledExecutorService pool = context.getExecutorServiceManager().newScheduledThreadPool(null, "unitTestPool", 1);

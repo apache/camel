@@ -52,7 +52,7 @@ public class STS2ClientStandardImpl implements STS2InternalClient {
 
     /**
      * Getting the STS aws client that is used.
-     * 
+     *
      * @return Amazon STS Client.
      */
     @Override

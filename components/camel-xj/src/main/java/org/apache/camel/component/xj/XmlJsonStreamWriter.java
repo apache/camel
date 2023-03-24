@@ -55,7 +55,7 @@ public class XmlJsonStreamWriter implements XMLStreamWriter {
 
     /**
      * Creates a new XmlJsonStreamWriter instance
-     * 
+     *
      * @param jsonGenerator the {@link JsonGenerator} to use to write the json document
      */
     public XmlJsonStreamWriter(JsonGenerator jsonGenerator) {

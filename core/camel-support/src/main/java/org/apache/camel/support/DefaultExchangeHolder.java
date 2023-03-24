@@ -327,9 +327,9 @@ public class DefaultExchangeHolder implements Serializable {
      * <li>Number</li>
      * <li>java.util.Date</li>
      * </ul>
-     * 
+     *
      * We make possible store serialized headers by the boolean field allowSerializedHeaders
-     * 
+     *
      * @param  headerName             the header name
      * @param  headerValue            the header value
      * @param  allowSerializedHeaders the header value

@@ -65,8 +65,8 @@ public class CamelJmxConsumerObserveAttributeMatchStringTest extends CamelTestSu
 
                 fromF("jmx:platform?objectDomain=org.apache.camel&key.context=%s&key.type=routes&key.name=\"foo\"&observedAttribute=Tracing&stringToCompare=false",
                         id).routeId("jmxRoute")
-                                .to("log:jmx")
-                                .to("mock:result");
+                        .to("log:jmx")
+                        .to("mock:result");
 
                 from("direct:foo").routeId("foo").to("log:foo", "mock:foo");
             }

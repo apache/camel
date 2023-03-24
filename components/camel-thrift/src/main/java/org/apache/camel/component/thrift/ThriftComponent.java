@@ -53,7 +53,7 @@ public class ThriftComponent extends DefaultComponent implements SSLContextParam
 
     /**
      * Parses the configuration
-     * 
+     *
      * @return the parsed and valid configuration to use
      */
     protected ThriftConfiguration parseConfiguration(

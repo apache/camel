@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
  * <code>CamelEndpointId</code> is passed to the constructor, the handler will send all requests to the Camel route that
  * is consuming from that endpoint, unless the endpoint is overridden by passing a the <code>CamelEndpointId</code> in
  * the {@link WorkItem} parameters.
- * 
+ *
  */
 public abstract class AbstractCamelWorkItemHandler extends AbstractLogOrThrowWorkItemHandler implements Cacheable {
 

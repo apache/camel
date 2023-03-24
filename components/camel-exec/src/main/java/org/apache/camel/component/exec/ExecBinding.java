@@ -42,7 +42,7 @@ public interface ExecBinding {
     /**
      * The header value overrides the existing command arguments in the {@link ExecEndpoint} URI. The arguments may be a
      * <code>List<String></code>. In this case no parsing of the arguments is necessary.
-     * 
+     *
      * @see #EXEC_COMMAND_EXECUTABLE
      */
     @Metadata(label = "in", description = "Command-line argument(s) to pass to the executed process. The argument(s)\n" +
@@ -54,7 +54,7 @@ public interface ExecBinding {
     /**
      * Specifies the file name of a file, created by the executable, that should be considered as output of the
      * executable, e.g. a log file.
-     * 
+     *
      * @see ExecResultConverter#toInputStream(ExecResult)
      */
     @Metadata(label = "in", description = "The name of a file, created by the executable, that should be considered\n" +
@@ -132,7 +132,7 @@ public interface ExecBinding {
     /**
      * Creates a {@link ExecCommand} from the headers in the <code>exchange</code> and the settings of the
      * <code>endpoint</code>.
-     * 
+     *
      * @param  exchange a Camel {@link Exchange}
      * @param  endpoint an {@link ExecEndpoint} instance
      * @return          an {@link ExecCommand} object
@@ -142,7 +142,7 @@ public interface ExecBinding {
 
     /**
      * Populates the exchange form the {@link ExecResult}.
-     * 
+     *
      * @param exchange a Camel {@link Exchange}, in which to write the <code>result</code>
      * @param result   the result of a command execution
      * @see            ExecCommandExecutor

@@ -37,7 +37,7 @@ public interface JettyService extends BeforeAllCallback, AfterAllCallback, TestS
 
     /**
      * Gets the port used to run the service
-     * 
+     *
      * @return the port number
      */
     int getPort();

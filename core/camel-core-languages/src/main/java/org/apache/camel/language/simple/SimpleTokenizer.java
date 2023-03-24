@@ -91,7 +91,7 @@ public final class SimpleTokenizer {
         KNOWN_TOKENS[44] = new SimpleTokenType(TokenType.logicalOperator, "&&");
         KNOWN_TOKENS[45] = new SimpleTokenType(TokenType.logicalOperator, "||");
 
-        //binary operator 
+        //binary operator
         // it is added as the last item because unary -- has the priority
         // if unary not found it is highly possible - operator is run into.
         KNOWN_TOKENS[46] = new SimpleTokenType(TokenType.minusValue, "-");

@@ -114,12 +114,12 @@ public class GrpcConsumerServerInterceptorTest extends CamelTestSupport {
             public void configure() {
                 from("grpc://localhost:" + GRPC_REQUEST_INTERCEPT_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION")
-                             .bean(new GrpcMessageBuilder(), "buildPongResponse");
+                        .bean(new GrpcMessageBuilder(), "buildPongResponse");
 
                 from("grpc://localhost:" + GRPC_REQUEST_NO_INTERCEPT_TEST_PORT
                      + "/org.apache.camel.component.grpc.PingPong?synchronous=true&consumerStrategy=AGGREGATION"
                      + "&autoDiscoverServerInterceptors=false")
-                             .bean(new GrpcMessageBuilder(), "buildPongResponse");
+                        .bean(new GrpcMessageBuilder(), "buildPongResponse");
             }
         };
     }

@@ -120,7 +120,7 @@ public class CxfMtomProducerPayloadModeTest {
 
         });
 
-        // process response 
+        // process response
 
         CxfPayload<SoapHeader> out = exchange.getMessage().getBody(CxfPayload.class);
         assertEquals(1, out.getBody().size());

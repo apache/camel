@@ -36,7 +36,7 @@ import static org.apache.camel.component.ignite.IgniteConstants.SCHEME_COMPUTE;
 
 /**
  * Run <a href="https://apacheignite.readme.io/docs/compute-grid">compute operations</a> on an Ignite cluster.
- * 
+ *
  * You can pass an IgniteCallable, an IgniteRunnable, an IgniteClosure, or collections of them, along with their
  * parameters if necessary. This endpoint only supports producers.
  */

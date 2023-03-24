@@ -588,7 +588,7 @@ public class JdbcAggregationRepository extends ServiceSupport
      * Sets propagation behavior to use with spring transaction templates which are used for database access. The
      * default is TransactionDefinition.PROPAGATION_REQUIRED. This setter accepts names of the constants, like
      * "PROPAGATION_REQUIRED".
-     * 
+     *
      * @param propagationBehaviorName
      */
     public void setPropagationBehaviorName(String propagationBehaviorName) {

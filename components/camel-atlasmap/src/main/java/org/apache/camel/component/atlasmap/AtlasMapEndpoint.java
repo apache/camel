@@ -108,7 +108,7 @@ public class AtlasMapEndpoint extends ResourceEndpoint {
      * The Exchange property name for a source message map which hold <code>java.util.Map&lt;String, Message&gt;</code>
      * where the key is AtlasMap Document ID. AtlasMap consumes Message bodies as source documents, as well as message
      * headers as source properties where the scope equals to Document ID.
-     * 
+     *
      * @param name Exchange property name for source map
      */
     public void setSourceMapName(String name) {
@@ -122,7 +122,7 @@ public class AtlasMapEndpoint extends ResourceEndpoint {
     /**
      * The Exchange property name for a target document map which hold <code>java.util.Map&lt;String, Object&gt;</code>
      * where the key is AtlasMap Document ID. AtlasMap populates multiple target documents into this map.
-     * 
+     *
      * @param name Exchange property name for target map
      */
     public void setTargetMapName(String name) {
@@ -142,7 +142,7 @@ public class AtlasMapEndpoint extends ResourceEndpoint {
      * <li>'EXCHANGE_PROPERTY': Stores them into exchange properties.</li>
      * </ul>
      * ")
-     * 
+     *
      * @param mode {@link TargetMapMode}
      */
     public void setTargetMapMode(TargetMapMode mode) {
@@ -157,7 +157,7 @@ public class AtlasMapEndpoint extends ResourceEndpoint {
      * Whether to enable or disable force reload mode. This is set to false by default and ADM file is loaded from a
      * file only on a first Exchange, and AtlasContext will be reused after that until endpoint is recreated. If this is
      * set to true, ADM file will be loaded from a file on every Exchange.
-     * 
+     *
      * @param forceReload true to enable force reload
      */
     public void setForceReload(boolean forceReload) {

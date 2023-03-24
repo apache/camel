@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 /**
  * XYZOrder
  * <p>
- * 
+ *
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("org.jsonschema2pojo")
@@ -50,7 +50,7 @@ public class XYZOrder {
     private List<LineItem> lineItems = new ArrayList<>();
 
     /**
-     * 
+     *
      * @return The custId
      */
     @JsonProperty("custId")
@@ -59,7 +59,7 @@ public class XYZOrder {
     }
 
     /**
-     * 
+     *
      * @param custId The custId
      */
     @JsonProperty("custId")
@@ -68,7 +68,7 @@ public class XYZOrder {
     }
 
     /**
-     * 
+     *
      * @return The priority
      */
     @JsonProperty("priority")
@@ -77,7 +77,7 @@ public class XYZOrder {
     }
 
     /**
-     * 
+     *
      * @param priority The priority
      */
     @JsonProperty("priority")
@@ -86,7 +86,7 @@ public class XYZOrder {
     }
 
     /**
-     * 
+     *
      * @return The orderId
      */
     @JsonProperty("orderId")
@@ -95,7 +95,7 @@ public class XYZOrder {
     }
 
     /**
-     * 
+     *
      * @param orderId The orderId
      */
     @JsonProperty("orderId")
@@ -104,7 +104,7 @@ public class XYZOrder {
     }
 
     /**
-     * 
+     *
      * @return The lineItems
      */
     @JsonProperty("lineItems")
@@ -113,7 +113,7 @@ public class XYZOrder {
     }
 
     /**
-     * 
+     *
      * @param lineItems The lineItems
      */
     @JsonProperty("lineItems")

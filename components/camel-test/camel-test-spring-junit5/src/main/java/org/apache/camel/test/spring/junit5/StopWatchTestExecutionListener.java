@@ -33,7 +33,7 @@ public class StopWatchTestExecutionListener extends AbstractTestExecutionListene
 
     /**
      * Returns the precedence that is used by Spring to choose the appropriate execution order of test listeners.
-     * 
+     *
      * See {@link SpringTestExecutionListenerSorter#getPrecedence(Class)} for more.
      */
     @Override

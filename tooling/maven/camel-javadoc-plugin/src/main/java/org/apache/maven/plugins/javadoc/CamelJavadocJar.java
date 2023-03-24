@@ -86,7 +86,7 @@ public class CamelJavadocJar extends AbstractJavadocMojo {
 
     /**
      * Specifies the destination directory where javadoc saves the generated HTML files. <br>
-     * 
+     *
      * @see <a href= "http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javadoc.html#d">d</a> option
      */
     @Parameter(defaultValue = "${project.build.directory}/apidocstmp", required = true)

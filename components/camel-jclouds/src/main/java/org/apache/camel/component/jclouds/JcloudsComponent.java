@@ -67,7 +67,7 @@ public class JcloudsComponent extends DefaultComponent {
 
     /**
      * Returns the {@link BlobStore} that matches the given providerOrApi.
-     * 
+     *
      * @param  predicate The blobstore context name, provider or api.
      * @return           The matching {@link BlobStore}
      */
@@ -96,7 +96,7 @@ public class JcloudsComponent extends DefaultComponent {
 
     /**
      * Returns the {@link ComputeService} that matches the given predicate.
-     * 
+     *
      * @param  predicate The compute context name, provider or api.
      * @return           The matching {@link ComputeService}
      */

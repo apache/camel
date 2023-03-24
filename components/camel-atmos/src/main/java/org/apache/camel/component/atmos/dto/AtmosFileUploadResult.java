@@ -30,7 +30,7 @@ public class AtmosFileUploadResult extends AtmosResult {
      * uploaded In case of a single file Exchange Body is populated with the result code of the upload operation for the
      * remote path. In case of multiple files Exchange Body is populated with a map containing as key the remote path
      * uploaded and as value the result code of the upload operation
-     * 
+     *
      * @param exchange
      */
     @Override
