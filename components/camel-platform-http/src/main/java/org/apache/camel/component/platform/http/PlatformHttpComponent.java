@@ -130,7 +130,7 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
                 }
             }
         });
-        httpEndpoints.removeAll(toRemove);
+        toRemove.forEach(httpEndpoints::remove);
     }
 
     /**
