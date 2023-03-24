@@ -17,6 +17,7 @@
 package org.apache.camel.component.cassandra;
 
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -165,7 +166,7 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
 
         if (extraTypeCodecs != null) {
             String[] c = extraTypeCodecs.split(",");
-            System.err.println(c.toString());
+            System.err.println(Arrays.toString(c));
             for (String codec : c) {
                 if (ObjectHelper.isNotEmpty(CassandraExtraCodecs.valueOf(codec))) {
                     sessionBuilder.addTypeCodecs(CassandraExtraCodecs.valueOf(codec).codec());

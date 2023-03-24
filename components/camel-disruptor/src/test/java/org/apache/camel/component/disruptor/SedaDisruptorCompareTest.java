@@ -16,10 +16,7 @@
  */
 package org.apache.camel.component.disruptor;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -208,7 +205,7 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
 
         final String sedaOptions = sizeOptionSeda.isEmpty() ? options : options + sizeOptionSeda;
         // Using { ... } because there is a bug in JUnit 4.11 and Eclipse: https://bugs.eclipse.org/bugs/show_bug.cgi?id=102512
-        final String testDescription = " { P=" + producers + ", C=" + consumers + ", CCT="
+        final String testDescription = " { P=" + producers + ", C=" + Arrays.toString(consumers) + ", CCT="
                                        + parallelConsumerThreads + ", SIZE=" + SIZE_PARAMETER_VALUE + " }";
         parameters.add(new Object[] {
                 "SEDA" + testDescription, "seda:speedtest" + sedaOptions, producers,

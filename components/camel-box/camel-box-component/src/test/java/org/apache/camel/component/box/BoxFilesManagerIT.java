@@ -18,6 +18,7 @@ package org.apache.camel.component.box;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -288,7 +289,7 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
         final byte[] result = requestBodyAndHeaders("direct://GETFILETHUMBNAIL", null, headers);
 
         assertNotNull(result, "getFileThumbnail result");
-        LOG.debug("getFileThumbnail: " + result);
+        LOG.debug("getFileThumbnail: " + Arrays.toString(result));
     }
 
     @Test
