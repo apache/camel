@@ -215,7 +215,7 @@ public class DIRegistry extends SupplierRegistry {
 
     /**
      * Make an {@code alias} point to the same target bean as existing {@code key}.
-     * 
+     *
      * @param alias
      * @param key
      */

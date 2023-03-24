@@ -50,7 +50,7 @@ public class Lambda2ClientOptimizedImpl implements Lambda2InternalClient {
 
     /**
      * Getting the Lambda aws client that is used.
-     * 
+     *
      * @return Lambda Client.
      */
     @Override

@@ -66,7 +66,7 @@ public class BoxComponent extends AbstractApiComponent<BoxApiName, BoxConfigurat
 
     /**
      * To use a shared connection
-     * 
+     *
      * @return the shared connection
      */
     public BoxAPIConnection getBoxConnection() {

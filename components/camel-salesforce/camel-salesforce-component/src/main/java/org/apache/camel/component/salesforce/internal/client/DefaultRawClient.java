@@ -66,7 +66,7 @@ public class DefaultRawClient extends AbstractClientBase implements RawClient {
 
     /**
      * Make a raw HTTP request to salesforce
-     * 
+     *
      * @param method   HTTP method. "GET", "POST", etc.
      * @param path     The path of the URL. Must begin with a "/"
      * @param format   Encoding format

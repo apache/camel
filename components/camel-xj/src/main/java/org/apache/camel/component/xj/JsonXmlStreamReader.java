@@ -78,7 +78,7 @@ public class JsonXmlStreamReader implements XMLStreamReader {
 
     /**
      * Creates a new JsonXmlStreamReader instance
-     * 
+     *
      * @param jsonParser the {@link JsonParser} to use to read the json document.
      */
     public JsonXmlStreamReader(JsonParser jsonParser) {

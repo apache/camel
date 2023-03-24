@@ -30,7 +30,7 @@ public final class Cw2ClientFactory {
 
     /**
      * Return the correct AWS Cloud Watch client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               CloudWatchClient
      */

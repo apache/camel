@@ -40,7 +40,7 @@ public abstract class ApiCollection<E extends Enum<E> & ApiName, T> {
 
     /**
      * Returns a {@link ApiMethodHelper} for a particular API.
-     * 
+     *
      * @param  apiName name of the API
      * @return         helper class to work with {@link ApiMethod}
      */
@@ -50,7 +50,7 @@ public abstract class ApiCollection<E extends Enum<E> & ApiName, T> {
 
     /**
      * Returns a list of API name strings.
-     * 
+     *
      * @return list of API names.
      */
     public final Set<String> getApiNames() {
@@ -63,7 +63,7 @@ public abstract class ApiCollection<E extends Enum<E> & ApiName, T> {
 
     /**
      * Creates an endpoint configuration for a particular API
-     * 
+     *
      * @param  apiName name of the API.
      * @return         Endpoint configuration object for the API.
      */

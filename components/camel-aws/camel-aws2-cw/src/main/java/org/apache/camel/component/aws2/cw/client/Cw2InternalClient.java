@@ -25,7 +25,7 @@ public interface Cw2InternalClient {
 
     /**
      * Returns an CloudWatch client after a factory method determines which one to return.
-     * 
+     *
      * @return CloudWatchClient CloudWatchClient
      */
     CloudWatchClient getCloudWatchClient();

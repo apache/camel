@@ -95,7 +95,7 @@ public class CamelSpringDelegatingTestContextLoader extends DelegatingSmartConte
     /**
      * Returns the class under test in order to enable inspection of annotations while the Spring context is being
      * created.
-     * 
+     *
      * @return the test class that is being executed
      * @see    CamelSpringTestHelper
      */

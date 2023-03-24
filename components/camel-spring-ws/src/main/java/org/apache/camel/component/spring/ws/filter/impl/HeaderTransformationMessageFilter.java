@@ -77,7 +77,7 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
 
     /**
      * Transform the header
-     * 
+     *
      * @param context
      * @param inOrOut
      * @param webServiceMessage
@@ -166,7 +166,7 @@ public class HeaderTransformationMessageFilter implements MessageFilter {
 
     /**
      * Loading the saxon transformer class
-     * 
+     *
      * @param  context
      * @return
      */

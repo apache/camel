@@ -40,7 +40,7 @@ public class BoxCommentsManager {
 
     /**
      * Create comments manager to manage the comments of Box connection's authenticated user.
-     * 
+     *
      * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxCommentsManager(BoxAPIConnection boxConnection) {
@@ -49,7 +49,7 @@ public class BoxCommentsManager {
 
     /**
      * Add comment to file.
-     * 
+     *
      * @param  fileId  - the id of file.
      * @param  message - the comment's message.
      * @return         The commented file.
@@ -75,7 +75,7 @@ public class BoxCommentsManager {
 
     /**
      * Get a list of any comments on this file.
-     * 
+     *
      * @param  fileId - the id of file.
      * @return        The list of comments on this file.
      */
@@ -98,7 +98,7 @@ public class BoxCommentsManager {
 
     /**
      * Get comment information.
-     * 
+     *
      * @param  commentId - the id of comment.
      * @return           The comment information.
      */
@@ -120,7 +120,7 @@ public class BoxCommentsManager {
 
     /**
      * Reply to a comment.
-     * 
+     *
      * @param  commentId - the id of comment to reply to.
      * @param  message   - the message for the reply.
      * @return           The newly created reply comment.
@@ -144,7 +144,7 @@ public class BoxCommentsManager {
 
     /**
      * Change comment message.
-     * 
+     *
      * @param  commentId - the id of comment to change.
      * @param  message   - the new message for the comment.
      * @return           The comment with changed message.
@@ -168,7 +168,7 @@ public class BoxCommentsManager {
 
     /**
      * Delete comment.
-     * 
+     *
      * @param commentId - the id of comment to delete.
      */
     public void deleteComment(String commentId) {

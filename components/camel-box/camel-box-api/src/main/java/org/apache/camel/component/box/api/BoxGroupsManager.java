@@ -42,7 +42,7 @@ public class BoxGroupsManager {
 
     /**
      * Create groups manager to manage the users of Box connection's authenticated user.
-     * 
+     *
      * @param boxConnection - Box connection to authenticated user account.
      */
     public BoxGroupsManager(BoxAPIConnection boxConnection) {
@@ -51,7 +51,7 @@ public class BoxGroupsManager {
 
     /**
      * Get all the groups in the enterprise.
-     * 
+     *
      * @return Collection containing all the enterprise's groups.
      */
     public Collection<BoxGroup> getAllGroups() {
@@ -71,7 +71,7 @@ public class BoxGroupsManager {
 
     /**
      * Create a new group with a specified name and optional additional parameters. Optional parameters may be null.
-     * 
+     *
      * @param  name                   - the name of the new group.
      * @param  provenance             - the provenance of the new group.
      * @param  externalSyncIdentifier - the external_sync_identifier of the new group.
@@ -101,7 +101,7 @@ public class BoxGroupsManager {
 
     /**
      * Delete group.
-     * 
+     *
      * @param groupId - the id of group to delete.
      */
     public void deleteGroup(String groupId) {
@@ -121,7 +121,7 @@ public class BoxGroupsManager {
 
     /**
      * Get group information.
-     * 
+     *
      * @param  groupId - the id of group.
      * @return         The group information.
      */
@@ -169,7 +169,7 @@ public class BoxGroupsManager {
 
     /**
      * Get information about all of the group memberships for this group.
-     * 
+     *
      * @param  groupId - the id of group.
      * @return         The group information.
      */
@@ -191,7 +191,7 @@ public class BoxGroupsManager {
 
     /**
      * Add a member to group with the specified role.
-     * 
+     *
      * @param  groupId - the id of group.
      * @param  userId  - the id of user to be added to group.
      * @param  role    - the role of the user in this group. Can be <code>null</code> to assign the default role.
@@ -220,7 +220,7 @@ public class BoxGroupsManager {
 
     /**
      * Delete group membership.
-     * 
+     *
      * @param groupMembershipId - the id of group membership to delete.
      */
     public void deleteGroupMembership(String groupMembershipId) {
@@ -241,7 +241,7 @@ public class BoxGroupsManager {
 
     /**
      * Get group membership information.
-     * 
+     *
      * @param  groupMembershipId - the id of group membership.
      * @return                   The group information.
      */
@@ -263,7 +263,7 @@ public class BoxGroupsManager {
 
     /**
      * Update group membership information.
-     * 
+     *
      * @param  groupMembershipId - the id of group membership to update.
      * @param  info              - the updated information.
      * @return                   The group information.

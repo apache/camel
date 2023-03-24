@@ -134,7 +134,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
     /**
      * Duplicate filenames are ignored, same as handleDuplicateAttachmentNames=never
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -151,7 +151,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
     /**
      * Attachment with empty filename are ignored, same as generateMissingAttachmentNames=never
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -166,7 +166,7 @@ public class MailAttachmentNamesTest extends CamelTestSupport {
 
     /**
      * Attachment with no filename are ignored, same as generateMissingAttachmentNames=never
-     * 
+     *
      * @throws Exception
      */
     @Test

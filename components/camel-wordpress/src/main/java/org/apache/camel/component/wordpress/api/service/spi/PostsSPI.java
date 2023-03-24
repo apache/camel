@@ -38,7 +38,7 @@ import org.apache.camel.component.wordpress.api.model.PublishableStatus;
 
 /**
  * Describes the Wordpress Posts API.
- * 
+ *
  * @see   <a href= "https://developer.wordpress.org/rest-api/reference/posts/">Posts API Reference</a>
  * @since 0.0.1
  */

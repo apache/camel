@@ -84,7 +84,7 @@ public class FtpsConfiguration extends FtpConfiguration {
      * This allows you to be in full control what the execPbsz and execProt setting should be used.
      * <p/>
      * Default is <tt>false</tt>
-     * 
+     *
      * @see #setExecPbsz(Long)
      * @see #setExecProt(String)
      */

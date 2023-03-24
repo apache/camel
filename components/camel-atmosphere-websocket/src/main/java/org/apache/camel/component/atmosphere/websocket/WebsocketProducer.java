@@ -67,8 +67,8 @@ public class WebsocketProducer extends DefaultProducer {
             message = in.getBody(String.class);
         }
 
-        // REVISIT Reader and InputStream handling at Producer 
-        // special conversion for Reader and InputStream for now 
+        // REVISIT Reader and InputStream handling at Producer
+        // special conversion for Reader and InputStream for now
         if (message instanceof Reader) {
             message = in.getBody(String.class);
         } else if (message instanceof InputStream) {

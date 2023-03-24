@@ -38,7 +38,7 @@ public class ExecResult implements Serializable {
 
     /**
      * Creates a <code>ExecResult</code> instance.
-     * 
+     *
      * @param command   A not-null reference of {@link ExecCommand}, that produced the result.
      * @param stdout    InputStream with the stdout of the command executable. If there was no stdout, the value must be
      *                  <code>null</code>.
@@ -57,7 +57,7 @@ public class ExecResult implements Serializable {
 
     /**
      * The executed command, that produced this result. The returned object is never <code>null</code>.
-     * 
+     *
      * @return The executed command, that produced this result.
      */
     public ExecCommand getCommand() {
@@ -66,7 +66,7 @@ public class ExecResult implements Serializable {
 
     /**
      * The exit value of the command executable.
-     * 
+     *
      * @return The exit value of the command executable
      */
     public int getExitValue() {
@@ -76,7 +76,7 @@ public class ExecResult implements Serializable {
     /**
      * Returns the content of the standart output (stdout) of the executed command or <code>null</code>, if no output
      * was produced in the stdout.
-     * 
+     *
      * @return The standart output (stdout) of the command executable.
      */
     public InputStream getStdout() {
@@ -86,7 +86,7 @@ public class ExecResult implements Serializable {
     /**
      * Returns the content of the standart error output (stderr) of the executed command or <code>null</code>, if no
      * output was produced in the stderr.
-     * 
+     *
      * @return The standart error output (stderr) of the command executable.
      */
     public InputStream getStderr() {

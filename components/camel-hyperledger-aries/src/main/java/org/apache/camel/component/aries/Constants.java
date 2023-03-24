@@ -18,7 +18,7 @@ package org.apache.camel.component.aries;
 
 public final class Constants {
 
-    // The ACA-Py API path 
+    // The ACA-Py API path
     public static final String HEADER_SERVICE = "service";
 
     public static final String HEADER_DID = "did";
@@ -29,10 +29,10 @@ public final class Constants {
     public static final String HEADER_SCHEMA_NAME = "SchemaName";
     public static final String HEADER_SCHEMA_VERSION = "SchemaVersion";
 
-    // Properties on the Exchange 
+    // Properties on the Exchange
     public static final String PROPERTY_HYPERLEDGER_ARIES_COMPONENT = HyperledgerAriesComponent.class.getSimpleName();
 
-    // The name of the TRUSTEE wallet that can onboard others to the ledger 
+    // The name of the TRUSTEE wallet that can onboard others to the ledger
     public static final String HEADER_MULTITENANCY_TRUSTEE_WALLET = "multitenancy/trustee-wallet";
 
     // The Indy ledger role for this wallet

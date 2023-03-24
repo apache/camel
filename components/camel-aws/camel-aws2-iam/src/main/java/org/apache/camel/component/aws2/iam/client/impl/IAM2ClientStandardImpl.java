@@ -52,7 +52,7 @@ public class IAM2ClientStandardImpl implements IAM2InternalClient {
 
     /**
      * Getting the IAM AWS client that is used.
-     * 
+     *
      * @return Amazon IAM Client.
      */
     @Override

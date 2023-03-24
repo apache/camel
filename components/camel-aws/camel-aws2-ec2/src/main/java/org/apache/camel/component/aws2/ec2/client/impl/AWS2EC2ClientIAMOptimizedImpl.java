@@ -50,7 +50,7 @@ public class AWS2EC2ClientIAMOptimizedImpl implements AWS2EC2InternalClient {
 
     /**
      * Getting the EC2 aws client that is used.
-     * 
+     *
      * @return Ec2Client Client.
      */
     @Override

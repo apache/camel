@@ -42,7 +42,7 @@ public class Web3jConsumerTransactionsTest extends Web3jIntegrationTestSupport {
 
                 from("web3j://" + getUrl()
                      + OPERATION.toLowerCase() + "=" + TRANSACTION_OBSERVABLE)
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

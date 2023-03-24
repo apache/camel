@@ -58,7 +58,7 @@ public class AnnotationModelLoader {
         Set<Class<?>> results = resolver.findAnnotated(annotations, packageNames);
 
         //TODO;  this logic could be moved into the PackageScanClassResolver by creating:
-        //          findAnnotated(annotations, packageNames, filter) 
+        //          findAnnotated(annotations, packageNames, filter)
         Set<Class<?>> resultsToRemove = new HashSet<>();
         if (filter != null) {
             for (Class<?> clazz : results) {

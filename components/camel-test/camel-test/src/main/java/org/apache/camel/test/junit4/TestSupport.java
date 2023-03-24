@@ -65,7 +65,7 @@ public abstract class TestSupport extends Assert {
 
     /**
      * Returns a value builder for the given property
-     * 
+     *
      * @deprecated use {@link #exchangeProperty(String)}
      */
     @Deprecated
@@ -531,7 +531,7 @@ public abstract class TestSupport extends Assert {
      * Returns the current major Java version e.g 8.
      * <p/>
      * Uses <tt>java.specification.version</tt> from the system properties to determine the major version.
-     * 
+     *
      * @return the current major Java version.
      */
     public static int getJavaMajorVersion() {

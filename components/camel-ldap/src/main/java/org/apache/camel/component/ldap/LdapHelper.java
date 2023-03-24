@@ -31,7 +31,7 @@ public final class LdapHelper {
      * <li>\ = \5c</li>
      * <li>\0 = \00</li>
      * </ul>
-     * 
+     *
      * @param  filter string to escape according to RFC 2254 guidelines
      * @return        String the escaped/encoded result
      */

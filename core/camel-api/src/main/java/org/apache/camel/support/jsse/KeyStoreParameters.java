@@ -75,7 +75,7 @@ public class KeyStoreParameters extends JsseParameters {
      * Sets the type of the key store to create and load. See Appendix A in the
      * <a href="http://download.oracle.com/javase/6/docs/technotes/guides/security/StandardNames.html#KeyStore" >Java
      * Cryptography Architecture Standard Algorithm Name Documentation</a> for more information on standard names.
-     * 
+     *
      * @param value the key store type identifier (may be {@code null})
      */
     public void setType(String value) {
@@ -91,7 +91,7 @@ public class KeyStoreParameters extends JsseParameters {
 
     /**
      * Set the optional password for reading/opening/verifying the key store.
-     * 
+     *
      * @param value the password value (may be {@code null})
      */
     public void setPassword(String value) {
@@ -125,7 +125,7 @@ public class KeyStoreParameters extends JsseParameters {
 
     /**
      * Sets the optional file path, class path resource, or URL of the resource used to load the key store.
-     * 
+     *
      * @param value the resource (may be {@code null})
      */
     public void setResource(String value) {

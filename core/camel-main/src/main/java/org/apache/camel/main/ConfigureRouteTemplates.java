@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 
 /**
  * Used for configuring and adding route templates such as using {@link org.apache.camel.builder.TemplatedRouteBuilder}.
- * 
+ *
  * @deprecated please consider using {@code templatedRoute} from the Java DSL instead.
  * @see        org.apache.camel.builder.RouteBuilder#templatedRoute(String)
  */

@@ -98,7 +98,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
             public void configure() {
                 from("olingo2://read/Manufacturers?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=true&"
                      + "splitResult=false")
-                             .to("mock:consumer-alreadyseen");
+                        .to("mock:consumer-alreadyseen");
             }
         };
         addRouteAndStartContext(builder);
@@ -150,7 +150,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
             public void configure() {
                 from("olingo2://read/Manufacturers?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=false&"
                      + "splitResult=false")
-                             .to("mock:consumer-alreadyseen");
+                        .to("mock:consumer-alreadyseen");
             }
         };
         addRouteAndStartContext(builder);
@@ -188,7 +188,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
             public void configure() {
                 from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=true&"
                      + "splitResult=true")
-                             .to("mock:consumer-splitresult-kp-manufacturer");
+                        .to("mock:consumer-splitresult-kp-manufacturer");
             }
         };
         addRouteAndStartContext(builder);
@@ -238,7 +238,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
             public void configure() {
                 from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=false&"
                      + "splitResult=true")
-                             .to("mock:consumer-splitresult-kp-manufacturer");
+                        .to("mock:consumer-splitresult-kp-manufacturer");
             }
         };
         addRouteAndStartContext(builder);

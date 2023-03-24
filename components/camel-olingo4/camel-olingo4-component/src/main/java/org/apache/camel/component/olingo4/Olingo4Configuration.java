@@ -205,7 +205,7 @@ public class Olingo4Configuration {
 
     /**
      * Set this to true to filter out results that have already been communicated by this component.
-     * 
+     *
      * @param filterAlreadySeen
      */
     public void setFilterAlreadySeen(boolean filterAlreadySeen) {

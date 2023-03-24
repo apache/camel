@@ -62,7 +62,7 @@ public class ThreadPoolTest extends JmsTestSupport {
 
     /**
      * Test that only 2 thread pools are created on start
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -73,7 +73,7 @@ public class ThreadPoolTest extends JmsTestSupport {
 
     /**
      * Test that ThreadPool is removed when producer is removed
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -84,7 +84,7 @@ public class ThreadPoolTest extends JmsTestSupport {
 
     /**
      * Test that ThreadPool is removed when consumer is removed
-     * 
+     *
      * @throws Exception
      */
     @Test

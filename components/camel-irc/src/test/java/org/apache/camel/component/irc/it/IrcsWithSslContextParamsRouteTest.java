@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Disabled;
 @Disabled
 public class IrcsWithSslContextParamsRouteTest extends IrcRouteTest {
 
-    // TODO This test is disabled until we can find a public SSL enabled IRC 
+    // TODO This test is disabled until we can find a public SSL enabled IRC
     // server to test against. To use this test, follow the following procedures:
     // 1) Download and install UnrealIRCd 3.2.9 from http://www.unrealircd.com/
     // 2) Copy the contents of the src/test/unrealircd folder into the installation

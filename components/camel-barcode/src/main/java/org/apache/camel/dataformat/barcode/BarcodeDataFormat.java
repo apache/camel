@@ -200,7 +200,7 @@ public class BarcodeDataFormat extends ServiceSupport implements DataFormat, Dat
         // set values
         final String type = this.params.getType().toString();
 
-        // create code image  
+        // create code image
         final BitMatrix matrix = writer.encode(
                 payload,
                 this.params.getFormat(),

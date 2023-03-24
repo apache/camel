@@ -161,7 +161,7 @@ public class KafkaResumeStrategyConfigurationBuilder
 
     /**
      * Creates the most basic builder possible
-     * 
+     *
      * @return a pre-configured basic builder
      */
     public static KafkaResumeStrategyConfigurationBuilder newBuilder() {
@@ -183,7 +183,7 @@ public class KafkaResumeStrategyConfigurationBuilder
 
     /**
      * Creates an empty builder
-     * 
+     *
      * @return an empty configuration builder
      */
     public static KafkaResumeStrategyConfigurationBuilder newEmptyBuilder() {

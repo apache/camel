@@ -33,14 +33,14 @@ public class ObjectFactory {
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package:
      * example.abc
-     * 
+     *
      */
     public ObjectFactory() {
     }
 
     /**
      * Create an instance of {@link ABCOrder }
-     * 
+     *
      */
     public ABCOrder createABCOrder() {
         return new ABCOrder();
@@ -48,7 +48,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ABCOrder.OrderItems }
-     * 
+     *
      */
     public ABCOrder.OrderItems createABCOrderOrderItems() {
         return new ABCOrder.OrderItems();
@@ -56,7 +56,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ABCOrder.Header }
-     * 
+     *
      */
     public ABCOrder.Header createABCOrderHeader() {
         return new ABCOrder.Header();
@@ -64,7 +64,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link ABCOrder.OrderItems.Item }
-     * 
+     *
      */
     public ABCOrder.OrderItems.Item createABCOrderOrderItemsItem() {
         return new ABCOrder.OrderItems.Item();

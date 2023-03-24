@@ -33,7 +33,7 @@ import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComp
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 /**
- * 
+ *
  */
 public class AdvisoryConsumerExampleTest extends ActiveMQTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(AdvisoryConsumerExampleTest.class);

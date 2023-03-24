@@ -83,7 +83,7 @@ public final class Budgets {
 
     /**
      * Some components use 0 to disable retrying the task. This sanitizes it to run at least once
-     * 
+     *
      * @param  iterations the number of iterations
      * @return            an integer greater than or equal to 1 equivalent to the maximum number of iterations allowed
      */

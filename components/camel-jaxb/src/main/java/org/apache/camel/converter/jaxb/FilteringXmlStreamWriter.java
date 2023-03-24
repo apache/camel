@@ -29,7 +29,7 @@ import javax.xml.stream.XMLStreamWriter;
  * <li>Attributes</li>
  * <li>Comments</li>
  * </ul>
- * 
+ *
  * @see XMLStreamWriter
  */
 public class FilteringXmlStreamWriter implements XMLStreamWriter {

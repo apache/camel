@@ -54,7 +54,7 @@ public class StompComponent extends HeaderFilterStrategyComponent implements SSL
 
         StompEndpoint endpoint = new StompEndpoint(uri, this, config, remaining);
 
-        // set header filter strategy and then call set properties 
+        // set header filter strategy and then call set properties
         // if user wants to add CustomHeaderFilterStrategy
         endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
 

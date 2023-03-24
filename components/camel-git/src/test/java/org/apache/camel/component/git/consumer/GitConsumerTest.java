@@ -195,8 +195,8 @@ public class GitConsumerTest extends GitTestSupport {
                         .to("mock:result-branch-configfile");
                 from("git://" + gitLocalRepo
                      + "?type=branch&gitConfigFile=https://gist.githubusercontent.com/gilvansfilho/a61f6ab811a5e8e9d46c4fba1235abc1/raw/a1f614c90e29f1cdd83534aa913f5d276beace2c/gitconfig")
-                             .id("injectConfigFileFromHttp")
-                             .to("mock:result-branch-configfile");
+                        .id("injectConfigFileFromHttp")
+                        .to("mock:result-branch-configfile");
                 from("git://" + gitLocalRepo + "?type=branch").id("defaultBranchTest").to("mock:result-branch");
             }
         };

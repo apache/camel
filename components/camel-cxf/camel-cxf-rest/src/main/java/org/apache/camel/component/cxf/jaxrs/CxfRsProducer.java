@@ -650,7 +650,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             throws Exception {
         Object body = null;
         if (!"GET".equals(httpMethod)) {
-            // need to check the request object if the http Method is not GET      
+            // need to check the request object if the http Method is not GET
             if ("DELETE".equals(httpMethod) && cxfRsEndpoint.isIgnoreDeleteMethodMessageBody()) {
                 // just ignore the message body if the ignoreDeleteMethodMessageBody is true
             } else {

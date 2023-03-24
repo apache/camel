@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * {@link org.apache.camel.Component} to provide integration with IBM i objects (IBM i is the replacement for AS/400 and
  * iSeries servers).
- * 
+ *
  * Current implementation supports working with data queues (*DTAQ), message queues (*MSGQ), and Program calls (*PGM)
  */
 @Component("jt400")
@@ -83,7 +83,7 @@ public class Jt400Component extends DefaultComponent {
 
     /**
      * Returns the default connection pool used by this component.
-     * 
+     *
      * @return the default connection pool used by this component
      */
     public synchronized AS400ConnectionPool getConnectionPool() {

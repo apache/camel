@@ -68,7 +68,7 @@ public final class DefaultFactoryRegistry implements FactoryRegistry {
      * <li>Factories that support one or more classes</li>
      * <li>Factories that support no specific class (e.g. {@link EnumFormatFactory})</li>
      * </ul>
-     * 
+     *
      * @param  formatFactories
      * @return                 the DefaultFactoryRegistry instance
      */

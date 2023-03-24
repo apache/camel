@@ -176,7 +176,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
         binding.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);
 
         // REVISIT: It can be done inside a binding but a propagateContext would need to be passed along as
-        // the CXF in message property. Question: where should this property name be set up ? 
+        // the CXF in message property. Question: where should this property name be set up ?
         if (endpoint.isPropagateContexts()) {
             camelExchange.setProperty(UriInfo.class.getName(), new UriInfoImpl(cxfExchange.getInMessage()));
             camelExchange.setProperty(Request.class.getName(), new RequestImpl(cxfExchange.getInMessage()));

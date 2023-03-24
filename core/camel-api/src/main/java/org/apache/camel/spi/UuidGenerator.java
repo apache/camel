@@ -23,7 +23,7 @@ public interface UuidGenerator {
 
     /**
      * Generates an UUID string representation.
-     * 
+     *
      * @return the unique id.
      */
     String generateUuid();

@@ -53,7 +53,7 @@ public final class CamelJmsTestHelper {
         connectionFactory.setOptimizedMessageDispatch(true);
         connectionFactory.setTrustAllPackages(true);
 
-        // When using asyncSend, producers will not be guaranteed to send in the order we 
+        // When using asyncSend, producers will not be guaranteed to send in the order we
         // have in the tests (which may be confusing for queues) so we need this set to false.
         // Another way of guaranteeing order is to use persistent messages or transactions.
         connectionFactory.setUseAsyncSend(false);

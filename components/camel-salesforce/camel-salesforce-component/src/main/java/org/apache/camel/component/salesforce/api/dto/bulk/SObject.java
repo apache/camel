@@ -32,7 +32,7 @@ import javax.xml.bind.annotation.XmlType;
  * <p>
  * The following schema fragment specifies the expected content contained within this class.
  * <p/>
- * 
+ *
  * <pre>
  * &lt;complexType name="sObject">
  *   &lt;complexContent>
@@ -104,7 +104,7 @@ public class SObject {
      * <p/>
      * <p/>
      * For example, to add a new item, do as follows:
-     * 
+     *
      * <pre>
      * getAny().add(newItem);
      * </pre>

@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test that verifies JMX can be disabled via Spring.
- * 
+ *
  *
  */
 public class DisableJmxAgentTest extends DefaultJMXAgentTest {

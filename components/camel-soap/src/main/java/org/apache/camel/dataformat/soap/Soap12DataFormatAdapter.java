@@ -112,7 +112,7 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
     /**
      * Creates a SOAP fault from the exception and populates the message as well as the detail. The detail object is
      * read from the method getFaultInfo of the throwable if present
-     * 
+     *
      * @param  exception the cause exception
      * @return           SOAP fault from given Throwable
      */
@@ -198,7 +198,7 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
      * Creates an exception and eventually an embedded bean that contains the fault detail. The exception class is
      * determined by using the elementNameStrategy. The qName of the fault detail should match the WebFault annotation
      * of the Exception class. If no fault detail is set a {@link javax.xml.ws.soap.SOAPFaultException} is created.
-     * 
+     *
      * @param  fault Soap fault
      * @return       created Exception
      */

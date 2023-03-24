@@ -47,7 +47,7 @@ public class FromJmsToJdbcIdempotentConsumerToJmsXaTest extends FromJmsToJdbcIde
     public void tearDown() throws Exception {
         super.tearDown();
 
-        // shutdown the embedded Derby database so that the next test becomes a clean initial state 
+        // shutdown the embedded Derby database so that the next test becomes a clean initial state
         try {
             DriverManager.getConnection("jdbc:derby:target/testdb;shutdown=true");
             fail("Should have thrown exception");

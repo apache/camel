@@ -61,8 +61,8 @@ public class FileMarkerFileRecursiveFilterDeleteOldLockFilesIncludeTest extends 
             public void configure() throws Exception {
                 from(fileUri(
                         "?initialDelay=0&delay=10&recursive=true&sortBy=file:name&include=.*(hello.txt|bye.txt|gooday.txt)$"))
-                                .routeId("foo").noAutoStartup()
-                                .convertBodyTo(String.class).to("mock:result");
+                        .routeId("foo").noAutoStartup()
+                        .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -52,7 +52,7 @@ public class MinaMaxLineLengthTest extends BaseMinaTest {
                 // and we let the request-reply be processed in the MyServerProcessor
                 fromF("mina:tcp://localhost:%1$s?sync=true&textline=true&encoderMaxLineLength=5000&decoderMaxLineLength=5000",
                         getPort())
-                                .process(new MyServerProcessor());
+                        .process(new MyServerProcessor());
                 // END SNIPPET: e1
             }
         };

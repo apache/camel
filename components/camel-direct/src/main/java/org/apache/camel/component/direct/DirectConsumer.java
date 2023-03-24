@@ -74,7 +74,7 @@ public class DirectConsumer extends DefaultConsumer implements ShutdownAware, Su
     @Override
     public int getPendingExchangesSize() {
         // return 0 as we do not have an internal memory queue with a variable size
-        // of inflight messages. 
+        // of inflight messages.
         return 0;
     }
 

@@ -62,7 +62,7 @@ public final class FacebookPropertiesHelper {
 
     /**
      * Apply properties for {@link Reading} type to the supplied {@link FacebookEndpointConfiguration}.
-     * 
+     *
      * @param configuration endpoint configuration to update
      * @param options       properties to apply to the reading field in configuration
      */

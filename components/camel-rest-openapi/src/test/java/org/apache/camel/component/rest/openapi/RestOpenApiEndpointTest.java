@@ -250,7 +250,7 @@ public class RestOpenApiEndpointTest {
 
         assertThat(
                 RestOpenApiEndpoint.determineOption(Arrays.asList("specification"), Arrays.asList("operation"), null, null))
-                        .isEqualTo("operation");
+                .isEqualTo("operation");
 
         assertThat(RestOpenApiEndpoint.determineOption(Arrays.asList("specification"), Arrays.asList("operation"),
                 "component", null)).isEqualTo("component");

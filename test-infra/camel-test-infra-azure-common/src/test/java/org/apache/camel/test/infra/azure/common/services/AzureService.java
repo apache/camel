@@ -27,7 +27,7 @@ public interface AzureService extends TestService, BeforeAllCallback, AfterAllCa
 
     /**
      * Gets the credentials for the test service
-     * 
+     *
      * @return
      */
     AzureCredentialsHolder azureCredentials();

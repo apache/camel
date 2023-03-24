@@ -830,7 +830,7 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     /**
      * Default replayId setting if no value is found in {@link #initialReplayIdMap}
-     * 
+     *
      * @param defaultReplayId
      */
     public void setDefaultReplayId(Long defaultReplayId) {
@@ -865,7 +865,7 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     /**
      * Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation.
-     * 
+     *
      * @param limit
      */
     public void setLimit(final Integer limit) {
@@ -1054,7 +1054,7 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     /**
      * The portion of the endpoint URL after the domain name. E.g., " + "'/services/data/v52.0/sobjects/Account/'
-     * 
+     *
      * @param rawPath the path
      */
     public void setRawPath(String rawPath) {
@@ -1067,7 +1067,7 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     /**
      * HTTP method to use for the Raw operation
-     * 
+     *
      * @param rawMethod http method
      */
     public void setRawMethod(String rawMethod) {
@@ -1081,7 +1081,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     /**
      * Comma separated list of message headers to include as query parameters for Raw operation. Do not url-encode
      * values as this will be done automatically.
-     * 
+     *
      * @param rawQueryParameters
      */
     public void setRawQueryParameters(String rawQueryParameters) {
@@ -1094,7 +1094,7 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     /**
      * Comma separated list of message headers to include as HTTP parameters for Raw operation.
-     * 
+     *
      * @param
      */
     public void setRawHttpHeaders(String rawHttpHeaders) {

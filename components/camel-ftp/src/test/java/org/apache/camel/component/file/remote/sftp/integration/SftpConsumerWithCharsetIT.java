@@ -75,7 +75,7 @@ public class SftpConsumerWithCharsetIT extends SftpServerTestSupport {
                 from("sftp://localhost:{{ftp.server.port}}/{{ftp.root.dir}}"
                      + "?username=admin&password=admin&charset="
                      + SAMPLE_FILE_CHARSET).routeId("foo").noAutoStartup()
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

@@ -99,7 +99,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Gets the prefix used when creating the ZIP file name.
-     * 
+     *
      * @return the prefix
      */
     public String getFilePrefix() {
@@ -108,7 +108,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Sets the prefix that will be used when creating the ZIP filename.
-     * 
+     *
      * @param filePrefix prefix to use on ZIP file.
      */
     public void setFilePrefix(String filePrefix) {
@@ -117,7 +117,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Gets the suffix used when creating the ZIP file name.
-     * 
+     *
      * @return the suffix
      */
     public String getFileSuffix() {
@@ -126,7 +126,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     /**
      * Sets the suffix that will be used when creating the ZIP filename.
-     * 
+     *
      * @param fileSuffix suffix to use on ZIP file.
      */
     public void setFileSuffix(String fileSuffix) {

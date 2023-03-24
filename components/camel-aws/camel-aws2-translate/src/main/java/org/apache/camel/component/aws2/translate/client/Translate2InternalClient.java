@@ -22,7 +22,7 @@ public interface Translate2InternalClient {
 
     /**
      * Returns an sts client after a factory method determines which one to return.
-     * 
+     *
      * @return TranslateClient stsClient
      */
     TranslateClient getTranslateClient();

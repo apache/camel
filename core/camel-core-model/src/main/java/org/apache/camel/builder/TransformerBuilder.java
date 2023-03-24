@@ -146,7 +146,7 @@ public class TransformerBuilder {
     /**
      * Configure a Transformer according to the configurations built on this builder and register it into given
      * {@code CamelContext}.
-     * 
+     *
      * @param camelContext {@code CamelContext}
      */
     public void configure(CamelContext camelContext) {

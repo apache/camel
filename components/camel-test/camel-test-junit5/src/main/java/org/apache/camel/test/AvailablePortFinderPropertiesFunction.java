@@ -31,22 +31,22 @@ import org.apache.camel.util.StringHelper;
  * port will be returned.
  * <p/>
  * This is useful for testing purpose where you can write a route like:
- * 
+ *
  * <pre>
  * {@code
  * from("undertow:http://0.0.0.0:{{available-port:server-port}}")
- *     .to("mock:result");
+ *         .to("mock:result");
  * }
  * </pre>
- * 
+ *
  * And then you can invoke with {@link org.apache.camel.ProducerTemplate} like:
- * 
+ *
  * <pre>
  * {@code
  * template.sendBody("undertow:http://0.0.0.0:{{available-port:server-port}}", "the body");
  * }
  * </pre>
- * 
+ *
  * Doing so avoid the need to compute the port and pass it to the various method or store it as a global variable in the
  * test class.
  *

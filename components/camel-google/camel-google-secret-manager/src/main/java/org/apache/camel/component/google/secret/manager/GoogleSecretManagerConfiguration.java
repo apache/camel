@@ -50,7 +50,7 @@ public class GoogleSecretManagerConfiguration implements Cloneable {
 
     /**
      * Service account key
-     * 
+     *
      * @param serviceAccountKey
      */
     public void setServiceAccountKey(String serviceAccountKey) {
@@ -63,7 +63,7 @@ public class GoogleSecretManagerConfiguration implements Cloneable {
 
     /**
      * The project to work with.
-     * 
+     *
      * @param project
      */
     public void setProject(String project) {
@@ -98,7 +98,7 @@ public class GoogleSecretManagerConfiguration implements Cloneable {
 
     /**
      * Configure the input type. If true the message will be POJO type.
-     * 
+     *
      * @param pojoRequest
      */
     public void setPojoRequest(boolean pojoRequest) {

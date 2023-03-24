@@ -127,7 +127,7 @@ public class ExpressionMapper extends BaseConverter {
     /**
      * Sets the Camel exchange reference for this mapping. The exchange reference is stored in a thread-local which is
      * cleaned up after the mapping has been performed via the done() method.
-     * 
+     *
      * @param exchange
      */
     public void setCurrentExchange(Exchange exchange) {

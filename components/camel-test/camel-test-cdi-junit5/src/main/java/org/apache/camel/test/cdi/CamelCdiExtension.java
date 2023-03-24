@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
  * The JUnit 5 extension of Camel CDI, this extension allows to inject any existing beans in the test class but also the
  * Camel specific beans directly as parameter of the test methods. The non Camel specific beans cannot be injected as
  * parameter to avoid conflicts with the parameters of JUnit 5 or other extensions.
- * 
+ *
  * <pre>
  * {@code
  *   &#64;ExtendWith(CamelCdiExtension.class)
@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.extension.ExtensionContext.Namespace.create;
  * <p>
  * Additional alternatives, bean types or packages to scan that are specific to the test class can be provided thanks to
  * the annotation {@link Beans}.
- * 
+ *
  * <pre>
  * {@code
  *   &#64;ExtendWith(CamelCdiExtension.class)

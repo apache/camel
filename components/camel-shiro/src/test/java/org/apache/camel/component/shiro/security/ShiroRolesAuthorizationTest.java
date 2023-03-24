@@ -75,7 +75,7 @@ public class ShiroRolesAuthorizationTest extends CamelTestSupport {
 
     @Test
     public void testSuccessfulAuthorizationForHigherScope() throws Exception {
-        // The user john has role sec-level3 
+        // The user john has role sec-level3
         ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("john", "lennon");
         TestShiroSecurityTokenInjector shiroSecurityTokenInjector
                 = new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);

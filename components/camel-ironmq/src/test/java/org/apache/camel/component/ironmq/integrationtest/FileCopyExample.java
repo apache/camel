@@ -54,9 +54,9 @@ public class FileCopyExample extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                //copies test.txt from test/data to ironmq 
+                //copies test.txt from test/data to ironmq
                 from("file:src/test/data?noop=true").convertBodyTo(String.class).log("sending : ${body}").to(ironMQEndpoint);
-                //Receives test.txt from ironmq and writes it to target/out 
+                //Receives test.txt from ironmq and writes it to target/out
                 from(ironMQEndpoint).log("got message : ${body}").to("file:target/out").to("mock:result");
             }
         };

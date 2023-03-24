@@ -267,7 +267,7 @@ public class ConsulRegistry implements Registry {
 
         /**
          * Encodes using Base64.
-         * 
+         *
          * @param  binaryData the data to encode
          * @return            an encoded data as a {@link String}
          */
@@ -302,7 +302,7 @@ public class ConsulRegistry implements Registry {
 
         /**
          * Serializes the given {@code serializable} using Java Serialization
-         * 
+         *
          * @param  serializable
          * @return              the serialized object as a byte array
          */

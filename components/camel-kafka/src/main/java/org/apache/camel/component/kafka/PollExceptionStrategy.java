@@ -34,7 +34,7 @@ public interface PollExceptionStrategy {
     /**
      * This method provides an "answer" to whether the consumer can continue polling or not. This is specific to each
      * polling exception strategy and must be implemented accordingly
-     * 
+     *
      * @return true if polling should continue or false otherwise
      */
     boolean canContinue();

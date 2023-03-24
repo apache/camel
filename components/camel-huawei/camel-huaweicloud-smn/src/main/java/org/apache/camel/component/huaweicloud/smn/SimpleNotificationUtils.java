@@ -33,7 +33,7 @@ public final class SimpleNotificationUtils {
 
     /**
      * resolves endpoint url for the given region
-     * 
+     *
      * @param  region
      * @return
      */

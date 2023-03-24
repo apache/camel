@@ -52,7 +52,7 @@ public class KinesisClientStandardImpl implements KinesisInternalClient {
 
     /**
      * Getting the Kinesis client that is used.
-     * 
+     *
      * @return Amazon Kinesis Client.
      */
     @Override

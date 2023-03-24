@@ -71,10 +71,10 @@ public class CXFWsdlOnlyPayloadModeMultiPartNoSpringTest extends CamelTestSuppor
                      + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&"
                      + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat="
                      + getDataFormat() + "&loggingFeatureEnabled=true")
-                             .to("cxf://http://localhost:" + port1
-                                 + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&"
-                                 + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat="
-                                 + getDataFormat() + "&loggingFeatureEnabled=true");
+                        .to("cxf://http://localhost:" + port1
+                            + "/CXFWsdlOnlyPayloadModeMultiPartNoSpringTest/PersonMultiPart?" + PORT_NAME_PROP + "&"
+                            + SERVICE_NAME_PROP + getServiceName() + "&" + WSDL_URL_PROP + "&dataFormat="
+                            + getDataFormat() + "&loggingFeatureEnabled=true");
             }
         };
     }

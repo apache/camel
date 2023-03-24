@@ -36,7 +36,7 @@ public class RecipientListCxf2Test extends CamelSpringTestSupport {
     private static int port2 = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts 
+        //things to set them into the URL's in the spring contexts
         System.setProperty("RecipientListCxf2Test.port1", Integer.toString(port1));
         System.setProperty("RecipientListCxf2Test.port2", Integer.toString(port2));
     }

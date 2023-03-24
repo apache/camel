@@ -210,7 +210,7 @@ public class HeaderTesterImpl implements HeaderTester {
                                 iter.remove(); //mark it processed
                             } else if ("dontProcess".equals(ob.getHdrAttribute())) {
                                 //we won't remove it so we won't let the runtime know
-                                //it's processed.   It SHOULD throw an exception 
+                                //it's processed.   It SHOULD throw an exception
                                 //saying the mustunderstand wasn't processed
                                 success = true;
                             }

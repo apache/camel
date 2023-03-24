@@ -30,7 +30,7 @@ public final class CloudtrailClientFactory {
 
     /**
      * Return the correct aws Cloudtrail client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               CloudTrailClient
      */

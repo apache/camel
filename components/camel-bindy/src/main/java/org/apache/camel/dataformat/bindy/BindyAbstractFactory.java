@@ -76,7 +76,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
 
     /**
      * Recursively load model.
-     * 
+     *
      * @param root
      */
     @SuppressWarnings("rawtypes")
@@ -173,7 +173,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
 
     /**
      * Indicates whether this factory can support a row comprised of the identified classes
-     * 
+     *
      * @param  classes the names of the classes in the row
      * @return         true if the model supports the identified classes
      */

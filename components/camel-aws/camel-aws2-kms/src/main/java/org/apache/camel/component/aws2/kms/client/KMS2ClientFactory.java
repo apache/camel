@@ -30,7 +30,7 @@ public final class KMS2ClientFactory {
 
     /**
      * Return the correct AWS KMS client (based on remote vs local).
-     * 
+     *
      * @param  configuration configuration
      * @return               KMSClient
      */

@@ -25,14 +25,14 @@ import java.time.Duration;
 public interface Budget {
     /**
      * Defines an initial delay before running the task
-     * 
+     *
      * @return the initial delay, in milliseconds, before running the task
      */
     long initialDelay();
 
     /**
      * The interval between each task execution
-     * 
+     *
      * @return the interval, in milliseconds, for each task execution
      */
     long interval();
@@ -56,7 +56,7 @@ public interface Budget {
      * time it took to run a task. The precision should be withing a few microseconds/milliseconds due to the start time
      * being created along with the budget instance. We do so to avoid the overhead of checking it the next or
      * canContinue methods because they could be part of the hot path for some components.
-     * 
+     *
      * @return The amount of time that has elapsed since the budget was created
      */
     Duration elapsed();

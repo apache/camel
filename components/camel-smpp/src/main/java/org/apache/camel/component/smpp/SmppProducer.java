@@ -124,7 +124,7 @@ public class SmppProducer extends DefaultProducer {
 
     /**
      * Factory method to easily instantiate a mock SMPPSession
-     * 
+     *
      * @return the SMPPSession
      */
     SMPPSession createSMPPSession() {
@@ -164,7 +164,7 @@ public class SmppProducer extends DefaultProducer {
             }
         }
 
-        // only possible by trying to reconnect 
+        // only possible by trying to reconnect
         if (this.session == null) {
             throw new IOException("Lost connection to " + getEndpoint().getConnectionString() + " and yet not reconnected");
         }
@@ -250,7 +250,7 @@ public class SmppProducer extends DefaultProducer {
 
     /**
      * Returns the smppConfiguration for this producer
-     * 
+     *
      * @return the configuration
      */
     public SmppConfiguration getConfiguration() {

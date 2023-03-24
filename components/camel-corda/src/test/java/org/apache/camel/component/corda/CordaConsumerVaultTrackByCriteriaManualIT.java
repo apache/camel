@@ -43,7 +43,7 @@ public class CordaConsumerVaultTrackByCriteriaManualIT extends CordaConsumerITSu
                 from(getUrl() + "&" + OPERATION.toLowerCase() + "=" + VAULT_TRACK_BY_CRITERIA
                      + "&contractStateClass=#contractStateClass"
                      + "&queryCriteria=#queryCriteria")
-                             .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

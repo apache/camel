@@ -41,7 +41,7 @@ import static org.apache.camel.test.junit5.TestSupport.assertMessageHeader;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * 
+ *
  */
 public class ActiveMQReplyToHeaderUsingConverterTest extends ActiveMQTestSupport {
 

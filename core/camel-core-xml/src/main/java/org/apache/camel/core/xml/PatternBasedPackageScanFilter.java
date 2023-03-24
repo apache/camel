@@ -26,7 +26,7 @@ import org.apache.camel.util.AntPathMatcher;
 /**
  * {@link PatternBasedPackageScanFilter} uses an underlying {@link AntPathMatcher} to filter scanned files according to
  * include and exclude patterns.
- * 
+ *
  * @see AntPathMatcher
  */
 public class PatternBasedPackageScanFilter implements PackageScanFilter {
@@ -83,7 +83,7 @@ public class PatternBasedPackageScanFilter implements PackageScanFilter {
      * if this contains both include and exclude filters, then the above rules apply with excludes taking precedence
      * over includes i.e. an include pattern of java.util.* and an exclude pattern of java.util.jar.* will include a
      * file only if it is in the util pkg and not in the util.jar package.
-     * 
+     *
      * @return true if candidate class matches according to the above rules
      */
     @Override

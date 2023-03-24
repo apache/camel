@@ -50,7 +50,7 @@ public class Sqs2ClientIAMOptimized implements Sqs2InternalClient {
 
     /**
      * Getting the sqs aws client that is used.
-     * 
+     *
      * @return Amazon SQS Client.
      */
     @Override

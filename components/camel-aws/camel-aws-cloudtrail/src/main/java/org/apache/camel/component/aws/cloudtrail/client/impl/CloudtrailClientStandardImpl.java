@@ -52,7 +52,7 @@ public class CloudtrailClientStandardImpl implements CloudtrailInternalClient {
 
     /**
      * Getting the Cloudtrail client that is used.
-     * 
+     *
      * @return Amazon Cloudtrail Client.
      */
     @Override

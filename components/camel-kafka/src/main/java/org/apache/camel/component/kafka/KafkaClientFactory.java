@@ -28,7 +28,7 @@ public interface KafkaClientFactory {
 
     /**
      * Creates a new instance of the Kafka {@link Producer} class.
-     * 
+     *
      * @param  kafkaProps The producer configs.
      * @return            an instance of Kafka producer.
      */
@@ -36,7 +36,7 @@ public interface KafkaClientFactory {
 
     /**
      * Creates a new instance of the Kafka {@link Consumer} class.
-     * 
+     *
      * @param  kafkaProps The consumer configs.
      * @return            an instance of Kafka consumer.
      */

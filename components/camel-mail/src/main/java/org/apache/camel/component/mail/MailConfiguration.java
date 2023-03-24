@@ -857,7 +857,7 @@ public class MailConfiguration implements Cloneable {
 
     /**
      * Set this to 'uuid' to set a UUID for the filename of the attachment if no filename was set
-     * 
+     *
      * @param generateMissingAttachmentNames
      */
     public void setGenerateMissingAttachmentNames(String generateMissingAttachmentNames) {

@@ -74,7 +74,7 @@ public class CxfRsProducerHttpMethodHeaderTest extends CamelTestSupport {
             public void configure() throws Exception {
                 fromF("jetty://http://localhost:%s/CxfRsProducerHttpMethodHeaderTest/?matchOnUriPrefix=true",
                         CXFTestSupport.getPort7())
-                                .to("mock:result");
+                        .to("mock:result");
             }
         };
     }

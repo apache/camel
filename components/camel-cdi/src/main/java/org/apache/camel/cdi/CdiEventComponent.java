@@ -31,20 +31,20 @@ import org.apache.camel.support.DefaultComponent;
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) {
         /* The CDI event endpoint URI follows the format hereafter:
-        
+
         cdi-event://PayloadType<T1,...,Tn>[?qualifiers=QualifierType1[,...[,QualifierTypeN]...]]
-        
+
         with the authority PayloadType (respectively the QualifierType) being the URI escaped fully
         qualified name of the payload (respectively qualifier) raw type followed by the type parameters
         section delimited by angle brackets for payload parameterized type.
-        
+
         Which leads to unfriendly URIs, e.g.:
-        
+
         cdi-event://org.apache.camel.cdi.se.pojo.EventPayload%3Cjava.lang.Integer%3E?qualifiers=org.apache.camel.cdi.se.qualifier.FooQualifier%2Corg.apache.camel.cdi.se.qualifier.BarQualifier
-        
+
         From the conceptual standpoint, that shows the high impedance between the typesafe nature of CDI
         and the dynamic nature of the Camel component model.
-        
+
         From the implementation standpoint, that would prevent efficient binding between the endpoint
         instances and observer methods as the CDI container doesn't have any ways of discovering the
         Camel context model during the deployment phase.

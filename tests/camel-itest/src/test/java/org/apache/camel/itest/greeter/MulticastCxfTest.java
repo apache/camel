@@ -31,7 +31,7 @@ public class MulticastCxfTest extends CamelSpringTestSupport {
     private static int port = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property placeholder
-        //things to set them into the URL's in the spring contexts 
+        //things to set them into the URL's in the spring contexts
         System.setProperty("MulticastCxfTest.port", Integer.toString(port));
     }
 

@@ -152,7 +152,7 @@ public class GoogleDriveConfiguration {
     /**
      * Service account key in json format to authenticate an application as a service account. Accept base64 adding the
      * prefix "base64:"
-     * 
+     *
      * @param serviceAccountKey String file, classpath, base64, or http url
      */
     public void setServiceAccountKey(String serviceAccountKey) {

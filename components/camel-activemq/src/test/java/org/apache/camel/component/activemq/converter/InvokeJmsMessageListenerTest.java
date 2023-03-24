@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * 
+ *
  */
 public class InvokeJmsMessageListenerTest extends CamelTestSupport {
     protected MyMessageListener messageListener = new MyMessageListener();

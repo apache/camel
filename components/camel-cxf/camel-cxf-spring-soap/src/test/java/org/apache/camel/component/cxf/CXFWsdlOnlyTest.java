@@ -60,7 +60,7 @@ public class CXFWsdlOnlyTest extends CamelSpringTestSupport {
         System.setProperty("CXFWsdlOnlyTest.port4", Integer.toString(port4));
 
         // When the Application is closed, the camel-cxf endpoint will be shutdown,
-        // this will cause the issue of the new http server doesn't send the response back. 
+        // this will cause the issue of the new http server doesn't send the response back.
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlOnlyBeans.xml");
     }
 

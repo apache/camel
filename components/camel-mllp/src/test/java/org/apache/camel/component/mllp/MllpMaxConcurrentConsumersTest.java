@@ -113,9 +113,9 @@ public class MllpMaxConcurrentConsumersTest extends CamelTestSupport {
 
                 fromF("mllp://%s:%d?maxConcurrentConsumers=%d&autoAck=true&connectTimeout=100&receiveTimeout=1000",
                         mllpClient.getMllpHost(), mllpClient.getMllpPort(), maxConcurrentConsumers)
-                                .routeId(routeId)
-                                .log(LoggingLevel.INFO, routeId, "Test route received message")
-                                .to(result);
+                        .routeId(routeId)
+                        .log(LoggingLevel.INFO, routeId, "Test route received message")
+                        .to(result);
 
             }
         };

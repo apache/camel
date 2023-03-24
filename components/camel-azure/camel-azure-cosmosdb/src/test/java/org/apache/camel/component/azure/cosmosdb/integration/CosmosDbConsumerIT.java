@@ -127,9 +127,9 @@ class CosmosDbConsumerIT extends BaseCamelCosmosDbTestSupport {
                 from(String.format(
                         "azure-cosmosdb://%s/%s?leaseDatabaseName=%s&createLeaseDatabaseIfNotExists=true&createLeaseContainerIfNotExists=true",
                         DATABASE_NAME, containerName, leaseDatabaseName))
-                                .routeId("readEventsRoute")
-                                .to("mock:readEvents")
-                                .setAutoStartup("false");
+                        .routeId("readEventsRoute")
+                        .to("mock:readEvents")
+                        .setAutoStartup("false");
             }
         };
     }

@@ -74,7 +74,7 @@ public class CxfDispatchMessageTest extends CxfDispatchTestSupport {
                 InputStream request
                         = encodeRequestInMessage(oneway ? MESSAGE_ONEWAY_TEMPLATE : MESSAGE_TEMPLATE, name, exchange);
                 exchange.getIn().setBody(request, InputStream.class);
-                // set the operation for oneway; otherwise use the default operation                
+                // set the operation for oneway; otherwise use the default operation
                 if (oneway) {
                     exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, INVOKE_ONEWAY_NAME);
                 }

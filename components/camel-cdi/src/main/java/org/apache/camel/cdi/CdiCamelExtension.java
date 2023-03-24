@@ -379,14 +379,14 @@ public class CdiCamelExtension implements Extension {
                 // Or a bean with Camel annotations?
                 || concat(camelBeans.stream().map(AnnotatedType::getFields),
                         camelBeans.stream().map(AnnotatedType::getMethods))
-                                .flatMap(Set::stream)
-                                .map(Annotated::getAnnotations)
-                                .flatMap(Set::stream)
-                                .anyMatch(isAnnotationType(Consume.class)
-                                        .or(isAnnotationType(BeanInject.class))
-                                        .or(isAnnotationType(EndpointInject.class))
-                                        .or(isAnnotationType(Produce.class))
-                                        .or(isAnnotationType(PropertyInject.class)))
+                        .flatMap(Set::stream)
+                        .map(Annotated::getAnnotations)
+                        .flatMap(Set::stream)
+                        .anyMatch(isAnnotationType(Consume.class)
+                                .or(isAnnotationType(BeanInject.class))
+                                .or(isAnnotationType(EndpointInject.class))
+                                .or(isAnnotationType(Produce.class))
+                                .or(isAnnotationType(PropertyInject.class)))
                 // Or an injection point for Camel primitives?
                 || beans.stream()
                         // Excluding internal components...
@@ -482,7 +482,7 @@ public class CdiCamelExtension implements Extension {
 
     /**
      * Gives an action that adds the templated routes defined in the given builder to the given context.
-     * 
+     *
      * @return a {@link BooleanSupplier} that gives {@code true} if the addition was successful, {@code false}
      *         otherwise.
      */

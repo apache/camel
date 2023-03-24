@@ -63,7 +63,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
 
     /**
      * Get test report developer names as data points.
-     * 
+     *
      * @return           test report developer names in test-salesforce-login.properties
      * @throws Exception
      */

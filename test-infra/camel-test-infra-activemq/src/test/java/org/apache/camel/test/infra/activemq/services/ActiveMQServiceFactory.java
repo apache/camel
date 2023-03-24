@@ -96,7 +96,7 @@ public final class ActiveMQServiceFactory {
 
     /**
      * Creates a new instance of an embedded ActiveMQ
-     * 
+     *
      * @return a new instance of an embedded ActiveMQ
      */
     public static synchronized ActiveMQService createVMService() {
@@ -105,7 +105,7 @@ public final class ActiveMQServiceFactory {
 
     /**
      * Creates a new instance of an embedded ActiveMQ. It may use a single instance if possible/supported.
-     * 
+     *
      * @return a new instance of an embedded ActiveMQ
      */
     public static synchronized ActiveMQService createVMServiceInstance() {
@@ -117,7 +117,7 @@ public final class ActiveMQServiceFactory {
 
     /**
      * Creates or reuses a new singleton instance of an embedded ActiveMQ
-     * 
+     *
      * @return an instance of an embedded ActiveMQ
      */
     public static synchronized ActiveMQService createSingletonVMService() {
@@ -137,7 +137,7 @@ public final class ActiveMQServiceFactory {
 
     /**
      * Creates a new instance of a persistent embedded ActiveMQ. It may use a single instance if possible/supported.
-     * 
+     *
      * @return a new instance of a persistent embedded ActiveMQ
      */
     public static synchronized ActiveMQService createPersistentVMService() {
@@ -146,7 +146,7 @@ public final class ActiveMQServiceFactory {
 
     /**
      * Creates a new instance of a persistent embedded ActiveMQ
-     * 
+     *
      * @return a new instance of a persistent embedded ActiveMQ
      */
     public static synchronized ActiveMQService createPersistentVMServiceInstance() {
@@ -159,7 +159,7 @@ public final class ActiveMQServiceFactory {
 
     /**
      * Creates or reuses a new singleton instance of a persistent embedded ActiveMQ
-     * 
+     *
      * @return an instance of a persistent embedded ActiveMQ
      */
     public static synchronized ActiveMQService createSingletonPersistentVMService() {

@@ -92,7 +92,7 @@ public class HdfsInputStream implements Closeable {
 
     /**
      * Reads next record/chunk specific to give file type.
-     * 
+     *
      * @param  key
      * @param  value
      * @return       number of bytes read. 0 is correct number of bytes (empty file), -1 indicates no record was read

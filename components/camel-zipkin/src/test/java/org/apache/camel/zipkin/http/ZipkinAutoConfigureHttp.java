@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
  *
  * <p>
  * The easiest way to run is locally:
- * 
+ *
  * <pre>
  * {@code
  * curl -sSL https://zipkin.io/quickstart.sh | bash -s
@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test;
  *
  * <p>
  * This test has to be run with environment variables set. For example:
- * 
+ *
  * <pre>
  * {@code
  * ZIPKIN_COLLECTOR_HTTP_SERVICE_HOST=localhost

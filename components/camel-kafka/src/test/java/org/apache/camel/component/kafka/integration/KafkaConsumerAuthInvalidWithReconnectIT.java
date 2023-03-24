@@ -129,9 +129,9 @@ public class KafkaConsumerAuthInvalidWithReconnectIT extends AbstractKafkaTestSu
                       + "&autoCommitIntervalMs=1000&pollTimeoutMs=1000&autoCommitEnable=true&pollOnError=RECONNECT"
                       + "&saslMechanism=PLAIN&securityProtocol=SASL_PLAINTEXT&saslJaasConfig=%s", TOPIC,
                         "KafkaConsumerAuthInvalidWithReconnectIT", simpleSaslJaasConfig)
-                                .process(
-                                        exchange -> LOG.trace("Captured on the processor: {}", exchange.getMessage().getBody()))
-                                .routeId("full-it").to(to);
+                        .process(
+                                exchange -> LOG.trace("Captured on the processor: {}", exchange.getMessage().getBody()))
+                        .routeId("full-it").to(to);
             }
         };
     }
