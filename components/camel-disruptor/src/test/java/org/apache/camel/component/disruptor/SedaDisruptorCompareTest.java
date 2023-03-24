@@ -331,7 +331,7 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         for (final int observation : endpointSizeQueue) {
             histogram.recordValue(observation);
         }
-        System.out.printf("%82s %s%n", "Endpoint size (# exchanges pending):", histogram.toString());
+        System.out.printf("%82s %s%n", "Endpoint size (# exchanges pending):", histogram);
     }
 
     @Override

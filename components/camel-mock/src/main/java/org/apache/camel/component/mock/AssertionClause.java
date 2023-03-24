@@ -89,7 +89,7 @@ public abstract class AssertionClause extends MockExpressionClauseSupport<MockVa
 
             @Override
             public String toString() {
-                return "arrives " + clause.toString() + " exchange";
+                return "arrives " + clause + " exchange";
             }
         });
         return clause;

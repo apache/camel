@@ -70,7 +70,7 @@ public class DefaultKeyAccessor extends DefaultKeySelector implements KeyAccesso
             return null;
         }
         X509Data x509D = kif.newX509Data(Arrays.asList(chain));
-        return kif.newKeyInfo(Collections.singletonList(x509D), "_" + UUID.randomUUID().toString());
+        return kif.newKeyInfo(Collections.singletonList(x509D), "_" + UUID.randomUUID());
     }
 
     private X509Certificate[] getCertificateChain() throws Exception {

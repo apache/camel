@@ -222,7 +222,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     protected URI getDefaultResponseAction(Object endpoint, MessageAddressingProperties requestMap) {
         URI requestAction = requestMap.getAction();
         if (requestAction != null) {
-            return URI.create(requestAction.toString() + getOutputActionSuffix());
+            return URI.create(requestAction + getOutputActionSuffix());
         } else {
             return null;
         }
@@ -231,7 +231,7 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping i
     protected URI getDefaultFaultAction(Object endpoint, MessageAddressingProperties requestMap) {
         URI requestAction = requestMap.getAction();
         if (requestAction != null) {
-            return URI.create(requestAction.toString() + getFaultActionSuffix());
+            return URI.create(requestAction + getFaultActionSuffix());
         } else {
             return null;
         }

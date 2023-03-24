@@ -60,7 +60,7 @@ public final class AS2HeaderUtils {
             StringBuilder sb = new StringBuilder();
             sb.append(attribute);
             if (importance != null) {
-                sb.append("=" + importance.toString());
+                sb.append("=" + importance);
             }
             if (values != null) {
                 for (String value : values) {

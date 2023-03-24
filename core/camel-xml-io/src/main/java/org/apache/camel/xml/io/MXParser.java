@@ -2878,7 +2878,7 @@ public class MXParser implements XmlPullParser {
                         }
                         expectedTagStack.append(", parser stopped on");
                     }
-                    throw new EOFException("no more data available" + expectedTagStack.toString() + getPositionDescription());
+                    throw new EOFException("no more data available" + expectedTagStack + getPositionDescription());
                 }
             }
         } else {

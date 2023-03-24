@@ -50,7 +50,7 @@ public final class XmlFixture {
                 .ignoreComments().ignoreWhitespace()
                 .checkForSimilar().build();
         try {
-            assertFalse(diff.hasDifferences(), aMessage + ":\n" + diff.toString());
+            assertFalse(diff.hasDifferences(), aMessage + ":\n" + diff);
         } catch (Throwable t) {
             dump(aActual);
             throw t;

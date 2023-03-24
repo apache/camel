@@ -414,7 +414,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
             throw new XmlSignatureException(
                     String.format(
                             "Unsupported XML signature document: More than one content objects found. Object IDs: %s",
-                            sb.toString()));
+                            sb));
         }
 
         @SuppressWarnings("unchecked")

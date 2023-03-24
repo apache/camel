@@ -165,7 +165,7 @@ public class TestHelper {
         Diff xmlDiff = DiffBuilder.compare(fragment).withTest(inDoc).checkForIdentical().build();
 
         assertFalse(xmlDiff.hasDifferences(),
-                "The decrypted document does not match the control document:\n" + xmlDiff.toString());
+                "The decrypted document does not match the control document:\n" + xmlDiff);
     }
 
     protected void testDecryption(CamelContext context) throws Exception {

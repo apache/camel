@@ -58,7 +58,7 @@ public class CamelHttpTransportServlet extends CamelServlet {
             httpRegistry = DefaultHttpRegistry.getHttpRegistry(name);
             HttpRegistryProvider existing = httpRegistry.getCamelServlet(name);
             if (existing != null) {
-                String msg = "Duplicate ServletName detected: " + name + ". Existing: " + existing + " This: " + this.toString()
+                String msg = "Duplicate ServletName detected: " + name + ". Existing: " + existing + " This: " + this
                              + ". Its advised to use unique ServletName per Camel application.";
                 // always log so people can see it easier
                 if (isIgnoreDuplicateServletName()) {

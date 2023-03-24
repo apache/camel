@@ -39,7 +39,7 @@ public class TransactedStackSizeBreakOnExceptionTest extends TransactionClientDa
             sb.append(",");
         }
 
-        template.sendBody("seda:start", "" + sb.toString());
+        template.sendBody("seda:start", "" + sb);
 
         assertMockEndpointsSatisfied();
 

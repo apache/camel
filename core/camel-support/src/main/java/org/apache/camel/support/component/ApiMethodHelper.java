@@ -165,7 +165,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         if (!tmpValidArguments.keySet().containsAll(this.nullableArguments)) {
             List<String> unknowns = new ArrayList<>(this.nullableArguments);
             unknowns.removeAll(tmpValidArguments.keySet());
-            throw new IllegalArgumentException("Unknown nullable arguments " + unknowns.toString());
+            throw new IllegalArgumentException("Unknown nullable arguments " + unknowns);
         }
 
         // validate aliases

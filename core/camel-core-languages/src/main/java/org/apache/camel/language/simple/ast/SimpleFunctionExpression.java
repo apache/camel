@@ -764,9 +764,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             ref = ref.trim();
             if (method != null && scope != null) {
-                return "bean(exchange, bean, \"" + ref + "\", \"" + method.toString() + "\", \"" + scope.toString() + "\")";
+                return "bean(exchange, bean, \"" + ref + "\", \"" + method + "\", \"" + scope + "\")";
             } else if (method != null) {
-                return "bean(exchange, bean, \"" + ref + "\", \"" + method.toString() + "\", null)";
+                return "bean(exchange, bean, \"" + ref + "\", \"" + method + "\", null)";
             } else {
                 return "bean(exchange, bean, \"" + ref + "\", null, null)";
             }

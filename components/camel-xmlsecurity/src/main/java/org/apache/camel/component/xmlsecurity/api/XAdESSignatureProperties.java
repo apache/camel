@@ -589,7 +589,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
             LOG.debug("XAdES signature properties are empty. Therefore no XAdES element will be added to the signature.");
             return result;
         }
-        String signedPropertiesId = "_" + UUID.randomUUID().toString();
+        String signedPropertiesId = "_" + UUID.randomUUID();
         List<Transform> transforms = Collections.emptyList();
         Reference ref = input.getSignatureFactory().newReference("#" + signedPropertiesId,
                 input.getSignatureFactory().newDigestMethod(input.getContentDigestAlgorithm(), null), transforms,
@@ -609,7 +609,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         if (signatureId == null || signatureId.isEmpty()) {
             LOG.debug("No signature Id configured. Therefore a value is generated.");
             // generate one
-            signatureId = "_" + UUID.randomUUID().toString();
+            signatureId = "_" + UUID.randomUUID();
             // and set to output
             result.setSignatureId(signatureId);
         }
@@ -723,7 +723,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         }
         Element dataObjectFormat = createElement("DataObjectFormat", doc, input);
         signedDataObjectProperties.appendChild(dataObjectFormat);
-        String contentReferenceId = "_" + UUID.randomUUID().toString();
+        String contentReferenceId = "_" + UUID.randomUUID();
         setAttribute(dataObjectFormat, "ObjectReference", "#" + contentReferenceId);
 
         if (getDataObjectFormatDescription() != null && !getDataObjectFormatDescription().isEmpty()) {

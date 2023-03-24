@@ -48,7 +48,7 @@ public class FileMoveAndMoveFailedIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://" + testDirectory().toAbsolutePath().toString() + "/input?move=${file:parent}.bak/somedate/${file:onlyname}&moveFailed=${file:parent}.err/somedate/${file:onlyname}&initialDelay=0&delay=10")
+                from("file://" + testDirectory().toAbsolutePath() + "/input?move=${file:parent}.bak/somedate/${file:onlyname}&moveFailed=${file:parent}.err/somedate/${file:onlyname}&initialDelay=0&delay=10")
                         .convertBodyTo(String.class)
                         .filter(body().contains("Kaboom"))
                             .throwException(new IllegalArgumentException("Forced"))

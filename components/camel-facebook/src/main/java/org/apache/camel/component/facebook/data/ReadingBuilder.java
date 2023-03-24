@@ -100,7 +100,7 @@ public final class ReadingBuilder {
                     throw new IllegalArgumentException(
                             String.format("Invalid value for property 'locale' %s, "
                                           + "must be of the form [language][,country][,variant]",
-                                    locale.toString()));
+                                    locale));
             }
         }
         final Object with = readingProperties.remove("with");

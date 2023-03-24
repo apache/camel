@@ -223,7 +223,7 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
     public String getContentObjectId() {
         if (contentObjectId == null) {
             // content object ID must always be set, because it is only used in enveloping case.
-            contentObjectId = "_" + UUID.randomUUID().toString();
+            contentObjectId = "_" + UUID.randomUUID();
         }
         return contentObjectId;
     }

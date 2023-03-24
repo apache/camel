@@ -51,7 +51,7 @@ public class UserProducerInOutIT extends CamelTwitterITSupport {
     @Test
     public void testPostStatusUpdateRequestResponse() throws Exception {
         Date now = new Date();
-        String tweet = "UserProducerInOutTest: This is a tweet posted on " + now.toString();
+        String tweet = "UserProducerInOutTest: This is a tweet posted on " + now;
         LOG.info("Tweet: " + tweet);
         ProducerTemplate producerTemplate = context.createProducerTemplate();
         // send tweet to the twitter endpoint

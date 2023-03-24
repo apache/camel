@@ -138,7 +138,7 @@ final class TestDataBuilder {
                     }
                     sb.append(sub);
                 }
-                ret += sb.toString() + "]";
+                ret += sb + "]";
             }
             if (!annotations.isEmpty()) {
                 ret += ", annotations: {";
@@ -149,7 +149,7 @@ final class TestDataBuilder {
                     }
                     sb.append(key).append("->").append(annotations.get(key));
                 }
-                ret += sb.toString() + "}";
+                ret += sb + "}";
             }
             if (!metadata.isEmpty()) {
                 ret += ", metadata: {";
@@ -169,7 +169,7 @@ final class TestDataBuilder {
                     }
                     sb.append("]");
                 }
-                ret += sb.toString() + "}";
+                ret += sb + "}";
             }
             ret += ")";
             return ret;

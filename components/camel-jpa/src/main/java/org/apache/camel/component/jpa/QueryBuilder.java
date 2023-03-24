@@ -173,7 +173,7 @@ public abstract class QueryBuilder implements QueryFactory {
         if (parameterBuilder == null) {
             return "";
         } else {
-            return " " + parameterBuilder.toString();
+            return " " + parameterBuilder;
         }
     }
 

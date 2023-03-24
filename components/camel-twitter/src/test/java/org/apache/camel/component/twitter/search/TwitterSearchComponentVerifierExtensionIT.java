@@ -63,7 +63,7 @@ public class TwitterSearchComponentVerifierExtensionIT extends AbstractComponent
                 expected.removeAll(error.getParameterKeys());
             }
 
-            assertTrue(expected.isEmpty(), "Missing expected params: " + expected.toString());
+            assertTrue(expected.isEmpty(), "Missing expected params: " + expected);
         }
 
         {

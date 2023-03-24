@@ -263,7 +263,7 @@ public final class ThriftUtils {
         for (Class paramType : paramsTypes) {
             joiner.add(paramType == null ? "null" : paramType.getName());
         }
-        return "(" + joiner.toString() + ")";
+        return "(" + joiner + ")";
     }
 
     /**

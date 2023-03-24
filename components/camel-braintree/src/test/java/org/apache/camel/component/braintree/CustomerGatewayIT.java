@@ -119,7 +119,7 @@ public class CustomerGatewayIT extends AbstractBraintreeTestSupport {
 
     @Test
     public void testUpdateUnknownCustomer() {
-        String id = "unknown-" + UUID.randomUUID().toString();
+        String id = "unknown-" + UUID.randomUUID();
 
         HashMap<String, Object> headers = new HashMap<>();
         headers.put("CamelBraintree.id", id);
@@ -134,7 +134,7 @@ public class CustomerGatewayIT extends AbstractBraintreeTestSupport {
 
     @Test
     public void testSearchUnknownCustomer() {
-        String uuid = "unknown-" + UUID.randomUUID().toString();
+        String uuid = "unknown-" + UUID.randomUUID();
 
         Exception ex = assertThrows(CamelExecutionException.class,
                 () -> requestBody("direct://FIND_IN_BODY", uuid));

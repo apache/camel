@@ -262,7 +262,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
 
                 String signatureId = getConfiguration().getSignatureId();
                 if (signatureId == null) {
-                    signatureId = "_" + UUID.randomUUID().toString();
+                    signatureId = "_" + UUID.randomUUID();
                 } else if (signatureId.isEmpty()) {
                     // indicator that no signature Id attribute shall be generated
                     signatureId = null;

@@ -33,7 +33,7 @@ public final class CamelInfluxDbConverters {
     public static Point fromMapToPoint(Map<String, Object> map) {
         Object measurementName = map.get(InfluxDbConstants.MEASUREMENT_NAME);
         if (measurementName == null) {
-            String format = String.format("Unable to find the header for the measurement in: %s", map.keySet().toString());
+            String format = String.format("Unable to find the header for the measurement in: %s", map.keySet());
             throw new CamelInfluxDbException(format);
         }
 

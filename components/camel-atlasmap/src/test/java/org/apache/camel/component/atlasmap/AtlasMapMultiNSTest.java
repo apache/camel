@@ -65,7 +65,7 @@ public class AtlasMapMultiNSTest extends CamelSpringTestSupport {
         Diff d = DiffBuilder.compare(Input.fromString(XML_EXPECTED).build())
                 .withTest(Input.fromString(out).build())
                 .ignoreWhitespace().build();
-        Assertions.assertFalse(d.hasDifferences(), d.toString() + ": " + out);
+        Assertions.assertFalse(d.hasDifferences(), d + ": " + out);
     }
 
 }

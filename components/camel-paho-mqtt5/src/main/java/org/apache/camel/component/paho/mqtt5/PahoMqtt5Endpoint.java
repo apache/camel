@@ -121,7 +121,7 @@ public class PahoMqtt5Endpoint extends DefaultEndpoint {
     }
 
     protected static String generateClientId() {
-        return "camel-paho-" + UUID.randomUUID().toString();
+        return "camel-paho-" + UUID.randomUUID();
     }
 
     protected static MqttClientPersistence createMqttClientPersistence(PahoMqtt5Configuration configuration) {

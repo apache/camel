@@ -516,7 +516,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
                                     if (LOG.isDebugEnabled()) {
                                         LOG.debug(
                                                 "Autowired property: {} on endpoint: {} as exactly one instance of type: {} ({}) found in the registry",
-                                                name, toString(), type.getName(), value.getClass().getName());
+                                                name, this, type.getName(), value.getClass().getName());
                                     }
                                 }
                             }

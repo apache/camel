@@ -100,7 +100,7 @@ public class DirectoryExtension implements BeforeAllCallback, AfterAllCallback, 
                 classDirectoryService = dsf.getDirectoryService();
                 // enable CL explicitly cause we are not using DSAnnotationProcessor
                 classDirectoryService.getChangeLog().setEnabled(true);
-                dsf.init("default" + UUID.randomUUID().toString());
+                dsf.init("default" + UUID.randomUUID());
                 // Load the schemas
                 DSAnnotationProcessor.loadSchemas(description, classDirectoryService);
             }

@@ -292,7 +292,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
             value = CamelContextHelper.mandatoryLookup(component.getCamelContext(), name);
         }
         if (value instanceof File) {
-            return "file:" + value.toString();
+            return "file:" + value;
         } else if (value != null) {
             return value.toString();
         } else {

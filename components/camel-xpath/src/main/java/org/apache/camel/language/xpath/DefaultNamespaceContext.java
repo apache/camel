@@ -128,7 +128,7 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
         // Get the parent's namespace mappings
         if (parent != null) {
             sb.append(", [parent: ");
-            sb.append(parent.toString());
+            sb.append(parent);
             sb.append("]");
         }
         return sb.toString();

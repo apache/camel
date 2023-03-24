@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 })
 public class AthenaComponentManualIT extends CamelTestSupport {
 
-    private final String s3Bucket = "s3://your-s3-bucket/" + UUID.randomUUID().toString() + "/";
+    private final String s3Bucket = "s3://your-s3-bucket/" + UUID.randomUUID() + "/";
 
     @Test
     public void athenaGetQueryExecutionTest() {

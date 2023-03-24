@@ -196,11 +196,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             }
             if (length < 1 && delimiter == null && dataField.lengthPos() == 0) {
                 throw new IllegalArgumentException(
-                        "Either length or delimiter must be specified for the field : " + dataField.toString());
+                        "Either length or delimiter must be specified for the field : " + dataField);
             }
             if (offset - 1 <= -1) {
                 throw new IllegalArgumentException(
-                        "Offset/Position of the field " + dataField.toString()
+                        "Offset/Position of the field " + dataField
                                                    + " cannot be negative");
             }
 

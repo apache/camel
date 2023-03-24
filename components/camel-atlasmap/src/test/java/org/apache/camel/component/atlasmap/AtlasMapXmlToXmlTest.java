@@ -60,7 +60,7 @@ public class AtlasMapXmlToXmlTest extends CamelSpringTestSupport {
         Diff d = DiffBuilder.compare(Input.fromString(XML_EXPECTED).build())
                 .withTest(Input.fromString(body).build())
                 .ignoreWhitespace().build();
-        assertFalse(d.hasDifferences(), d.toString() + ": " + body);
+        assertFalse(d.hasDifferences(), d + ": " + body);
     }
 
 }

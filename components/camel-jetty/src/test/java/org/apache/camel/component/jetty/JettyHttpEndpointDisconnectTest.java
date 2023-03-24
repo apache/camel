@@ -49,7 +49,7 @@ public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
                         try (PrintWriter pw = new PrintWriter(sw)) {
                             t.printStackTrace(pw);
                         }
-                        sb.append(key).append(": ").append(sw.toString());
+                        sb.append(key).append(": ").append(sw);
                     }
                     return sb.toString();
                 });

@@ -989,7 +989,7 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
                         if (characterReceived != MllpProtocolConstants.END_OF_DATA) {
                             log.error(
                                     "Received {} when expecting END_OF_DATA after END_OF_BLOCK.  Discarding Hl7TestMessageGenerator: {}",
-                                    characterReceived, parsedMessage.toString());
+                                    characterReceived, parsedMessage);
                             return null;
                         }
                         endOfMessage = true;

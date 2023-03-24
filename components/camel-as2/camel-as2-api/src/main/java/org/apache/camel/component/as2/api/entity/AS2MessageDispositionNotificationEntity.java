@@ -221,7 +221,7 @@ public class AS2MessageDispositionNotificationEntity extends MimeEntity {
 
             String as2Disposition = dispositionMode.toString() + ";" + dispositionType.toString();
             if (dispositionModifier != null) {
-                as2Disposition = as2Disposition + "/" + dispositionModifier.toString();
+                as2Disposition = as2Disposition + "/" + dispositionModifier;
             }
             Header as2DispositionField = new BasicHeader(AS2_DISPOSITION, as2Disposition);
             canonicalOutstream.writeln(as2DispositionField.toString());

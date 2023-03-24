@@ -143,7 +143,7 @@ public final class MailSorter {
             String sub2 = msg2.getSubject();
             return sub1.compareTo(sub2);
         }
-        throw new IllegalArgumentException(String.format("Unknown sort term: %s", property.toString()));
+        throw new IllegalArgumentException(String.format("Unknown sort term: %s", property));
     }
 
     /**

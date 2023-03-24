@@ -50,7 +50,7 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
 
         Path file = testFile(".filestore.dat");
         try (Writer w = Files.newBufferedWriter(file)) {
-            w.write(testFile("report.txt").toAbsolutePath().toString() + LS);
+            w.write(testFile("report.txt").toAbsolutePath() + LS);
         }
 
         // add a file to the repo

@@ -256,7 +256,7 @@ public final class DispositionNotificationContentUtils {
     public static Field parseDispositionField(CharArrayBuffer fieldLine) {
         final int colon = fieldLine.indexOf(':');
         if (colon == -1) {
-            throw new ParseException("Invalid field: " + fieldLine.toString());
+            throw new ParseException("Invalid field: " + fieldLine);
         }
         final String fieldName = fieldLine.substringTrimmed(0, colon);
 

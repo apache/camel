@@ -53,7 +53,7 @@ public class ServiceNowIT extends ServiceNowITSupport {
                     kvBuilder()
                             .put(ServiceNowConstants.RESOURCE, "table")
                             .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                            .put(ServiceNowParams.SYSPARM_QUERY, "number=" + UUID.randomUUID().toString())
+                            .put(ServiceNowParams.SYSPARM_QUERY, "number=" + UUID.randomUUID())
                             .put(ServiceNowParams.PARAM_TABLE_NAME, "incident")
                             .build());
         } catch (CamelExecutionException e) {
@@ -73,7 +73,7 @@ public class ServiceNowIT extends ServiceNowITSupport {
                     kvBuilder()
                             .put(ServiceNowConstants.RESOURCE, "table")
                             .put(ServiceNowConstants.ACTION, ServiceNowConstants.ACTION_RETRIEVE)
-                            .put(ServiceNowParams.SYSPARM_QUERY, "number=" + UUID.randomUUID().toString())
+                            .put(ServiceNowParams.SYSPARM_QUERY, "number=" + UUID.randomUUID())
                             .put(ServiceNowParams.PARAM_TABLE_NAME, "notExistingTable")
                             .build());
         } catch (CamelExecutionException e) {

@@ -91,7 +91,7 @@ public class SlackProducer extends DefaultAsyncProducer {
         }
 
         if (!response.isOk()) {
-            exchange.setException(new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange));
+            exchange.setException(new CamelExchangeException("Error POSTing to Slack API: " + response, exchange));
         }
 
         return false;
@@ -141,7 +141,7 @@ public class SlackProducer extends DefaultAsyncProducer {
         }
 
         if (response.getCode() < 200 || response.getCode() > 299) {
-            exchange.setException(new CamelExchangeException("Error POSTing to Slack API: " + response.toString(), exchange));
+            exchange.setException(new CamelExchangeException("Error POSTing to Slack API: " + response, exchange));
         }
 
         return false;

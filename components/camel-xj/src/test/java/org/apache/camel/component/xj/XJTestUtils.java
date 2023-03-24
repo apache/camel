@@ -179,6 +179,6 @@ final class XJTestUtils {
                 .checkForIdentical()
                 .build();
 
-        assertFalse(diff.hasDifferences(), "\nExpected: " + expected + "\n\nGot: " + result + "\n\nDiff: " + diff.toString());
+        assertFalse(diff.hasDifferences(), "\nExpected: " + expected + "\n\nGot: " + result + "\n\nDiff: " + diff);
     }
 }

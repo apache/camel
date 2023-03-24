@@ -173,7 +173,7 @@ public class ConsulRegistry implements Registry {
     public void remove(String key) {
         // create session to avoid conflicts (not sure if that is safe enough)
         SessionClient sessionClient = consul.sessionClient();
-        String sessionName = "session_" + UUID.randomUUID().toString();
+        String sessionName = "session_" + UUID.randomUUID();
 
         SessionCreatedResponse response = sessionClient.createSession(ImmutableSession.builder().name(sessionName).build());
         String sessionId = response.getId();
@@ -196,7 +196,7 @@ public class ConsulRegistry implements Registry {
         // create session to avoid conflicts
         // (not sure if that is safe enough, again)
         SessionClient sessionClient = consul.sessionClient();
-        String sessionName = "session_" + UUID.randomUUID().toString();
+        String sessionName = "session_" + UUID.randomUUID();
         SessionCreatedResponse response = sessionClient.createSession(ImmutableSession.builder().name(sessionName).build());
         String sessionId = response.getId();
         kvClient = consul.keyValueClient();

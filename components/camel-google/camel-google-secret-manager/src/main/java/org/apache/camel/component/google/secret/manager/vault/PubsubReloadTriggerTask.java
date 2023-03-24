@@ -232,7 +232,7 @@ public class PubsubReloadTriggerTask extends ServiceSupport implements CamelCont
                     updates.put(secretId.substring(secretNameBeginInd),
                             Instant.ofEpochSecond(message.getPublishTime().getSeconds(), message.getPublishTime().getNanos()));
                     if (isReloadEnabled()) {
-                        LOG.info("Update for GCP secret: {} detected, triggering CamelContext reload", secretId.toString());
+                        LOG.info("Update for GCP secret: {} detected, triggering CamelContext reload", secretId);
                         triggerReloading = true;
                     }
                 }

@@ -36,7 +36,7 @@ public class SplunkEventTest {
         event.addPair("key2", "value2 with whitespace");
         event.addPair(SplunkEvent.COMMON_DVC_TIME, now);
         assertEquals("name=\"testevent\" event_id=\"123\" key1=\"value1\" key2=\"value2 with whitespace\" dvc_time=\""
-                     + now.toString() + "\"\n",
+                     + now + "\"\n",
                 event.toString(), "Values should be quoted");
         assertEquals(5, event.getEventData().size());
         assertEquals("value2 with whitespace", event.getEventData().get("key2"));
