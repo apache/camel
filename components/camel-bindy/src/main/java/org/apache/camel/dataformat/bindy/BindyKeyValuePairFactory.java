@@ -490,7 +490,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     Integer keyGenerated = generateKey(key1, key2);
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key generated: {}, for section: {}", String.valueOf(keyGenerated), key1);
+                        LOG.debug("Key generated: {}, for section: {}", keyGenerated, key1);
                     }
 
                     // Add value to the list if not null

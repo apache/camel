@@ -117,7 +117,7 @@ public class Order {
     @Override
     public String toString() {
         return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-               + String.valueOf(this.amount) + ", " + ", " + this.instrumentType + ", "
-               + this.currency + ", " + String.valueOf(this.orderDate);
+               + this.amount + ", " + ", " + this.instrumentType + ", "
+               + this.currency + ", " + this.orderDate;
     }
 }

@@ -146,7 +146,7 @@ public class BindyDatePatternCsvUnmarshallTest {
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.firstName + ", " + this.lastName
-                   + ", " + String.valueOf(this.orderDate);
+                   + ", " + this.orderDate;
         }
 
         public LocalDate getDeliveryDate() {

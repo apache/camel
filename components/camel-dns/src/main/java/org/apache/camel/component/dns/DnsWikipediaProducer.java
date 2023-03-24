@@ -44,7 +44,7 @@ public class DnsWikipediaProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         SimpleResolver resolver = new SimpleResolver();
         int type = Type.TXT;
-        Name name = Name.fromString(String.valueOf(exchange.getIn().getHeader(DnsConstants.TERM)) + ".wp.dg.cx", Name.root);
+        Name name = Name.fromString(exchange.getIn().getHeader(DnsConstants.TERM) + ".wp.dg.cx", Name.root);
         Record rec = Record.newRecord(name, type, DClass.IN);
         Message query = Message.newQuery(rec);
         Message response = resolver.send(query);

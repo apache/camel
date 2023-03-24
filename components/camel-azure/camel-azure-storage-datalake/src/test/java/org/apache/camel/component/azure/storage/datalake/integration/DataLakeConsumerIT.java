@@ -100,14 +100,14 @@ public class DataLakeConsumerIT extends Base {
             for (int i = 0; i < 3; i++) {
                 final int index = i;
                 batchFileSystemClient2.getFileClient(generateRandomFileName("pdf")).upload(
-                        new ByteArrayInputStream(("PDF with regex :" + Integer.toString(index)).getBytes()),
+                        new ByteArrayInputStream(("PDF with regex :" + index).getBytes()),
                         17L);
             }
 
             for (int i = 0; i < 3; i++) {
                 final int index = i;
                 batchFileSystemClient2.getFileClient(generateRandomFileName("docx")).upload(
-                        new ByteArrayInputStream(("DOCX with regex :" + Integer.toString(index)).getBytes()),
+                        new ByteArrayInputStream(("DOCX with regex :" + index).getBytes()),
                         18L);
             }
 

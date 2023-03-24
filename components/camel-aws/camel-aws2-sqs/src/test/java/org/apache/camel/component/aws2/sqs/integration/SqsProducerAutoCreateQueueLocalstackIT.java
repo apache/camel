@@ -47,7 +47,7 @@ public class SqsProducerAutoCreateQueueLocalstackIT extends Aws2SQSBaseTest {
 
         SqsClient client = AWSSDKClientUtils.newSQSClient();
         for (int i = 0; i < 2000; i++) {
-            client.createQueue(CreateQueueRequest.builder().queueName("queue-" + String.valueOf(i)).build());
+            client.createQueue(CreateQueueRequest.builder().queueName("queue-" + i).build());
         }
     }
 

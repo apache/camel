@@ -557,7 +557,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         int size = lengthField - lengthString;
 
         for (int i = 0; i < size; i++) {
-            buffer.append(Character.toString(pad));
+            buffer.append(pad);
         }
         return buffer.toString();
     }

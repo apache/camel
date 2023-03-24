@@ -195,7 +195,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         // BigIntegerFormatFactory added for ticket - camel-2773
         if (key1 != null && key2 != null) {
             key2Formatted = getNumberFormat().format((long) key2);
-            keyGenerated = String.valueOf(key1) + key2Formatted;
+            keyGenerated = key1 + key2Formatted;
         } else {
             throw new IllegalArgumentException("@Section and/or @KeyValuePairDataField have not been defined");
         }

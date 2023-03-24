@@ -520,7 +520,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     Integer keyGenerated = generateKey(key1, key2);
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key generated: {}, for section: {}", String.valueOf(keyGenerated), key1);
+                        LOG.debug("Key generated: {}, for section: {}", keyGenerated, key1);
                     }
 
                     key = keyGenerated;

@@ -240,10 +240,10 @@ public class BindySimpleSkipFieldsTest extends CamelTestSupport {
         @Override
         public String toString() {
             return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", "
-                   + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
+                   + this.amount + ", " + this.instrumentCode + ", "
                    + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", "
                    + this.firstName + ", " + this.lastName + ", "
-                   + String.valueOf(this.orderDate);
+                   + this.orderDate;
         }
     }
 

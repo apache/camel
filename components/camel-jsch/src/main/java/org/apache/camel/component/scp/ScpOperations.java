@@ -106,7 +106,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
         int timeout = cfg.getConnectTimeout();
         if (LOG.isTraceEnabled()) {
             LOG.trace("Opening channel to {} with {} timeout...", cfg.remoteServerInformation(),
-                    timeout > 0 ? (Integer.toString(timeout) + " ms") : "no");
+                    timeout > 0 ? (timeout + " ms") : "no");
         }
         String file = getRemoteFile(name, cfg);
 

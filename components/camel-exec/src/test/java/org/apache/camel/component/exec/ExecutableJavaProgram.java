@@ -104,7 +104,7 @@ public class ExecutableJavaProgram {
         // being destroyed for that time. The process is killed namely when
         // sleep returns(observed on Windows XP)
         int t = 0;
-        System.out.println("Sleeping every " + String.valueOf(sleepInterval) + " ms");
+        System.out.println("Sleeping every " + sleepInterval + " ms");
         for (; t < SLEEP_TIME % sleepInterval; t += sleepInterval) {
             Thread.sleep(sleepInterval);
         }
