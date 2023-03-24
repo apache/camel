@@ -172,6 +172,12 @@ The API in `org.apache.camel.http.common.HttpBinding` has changed slightly to be
 The `parseBody` method now takes in `HttpServletRequest` as input parameter. And all `HttpMessage`
 has been changed to generic `Message` types.
 
+
+== Camel Spring Boot
+
+The `camel-spring-boot` dependency no longer includes `camel-spring-xml`. To use legacy Spring XML files `<beans>`
+with Camel on Spring Boot, then include the `camel-spring-boot-xml-starter` dependency.
+
 === camel-micrometer-starter
 
 The `uri` tags are now static instead of dynamic (by default), as potential too many tags generated due to URI with dynamic values.
