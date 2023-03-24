@@ -59,12 +59,7 @@ public final class XmlRouteParser {
         List<CamelNodeDetails> answer = new ArrayList<>();
 
         // try parse it as dom
-        Document dom = null;
-        try {
-            dom = XmlLineNumberParser.parseXml(xml);
-        } catch (Exception e) {
-            // ignore as the xml file may not be valid at this point
-        }
+        Document dom = getDocument(xml);
         if (dom != null) {
 
             // find any from which is the start of the route
@@ -80,10 +75,7 @@ public final class XmlRouteParser {
                 String lineNumberEnd = (String) route.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
 
                 // we only want the relative dir name from the resource directory, eg META-INF/spring/foo.xml
-                String fileName = fullyQualifiedFileName;
-                if (fileName.startsWith(baseDir)) {
-                    fileName = fileName.substring(baseDir.length() + 1);
-                }
+                String fileName = getFileName(baseDir, fullyQualifiedFileName);
 
                 CamelNodeDetails node = nodeFactory.newNode(null, "route");
                 node.setRouteId(routeId);
@@ -105,6 +97,16 @@ public final class XmlRouteParser {
         return answer;
     }
 
+    private static Document getDocument(InputStream xml) {
+        Document dom = null;
+        try {
+            dom = XmlLineNumberParser.parseXml(xml);
+        } catch (Exception e) {
+            // ignore as the xml file may not be valid at this point
+        }
+        return dom;
+    }
+
     /**
      * Parses the XML source to discover Camel endpoints.
      *
@@ -119,12 +121,7 @@ public final class XmlRouteParser {
 
         // find all the endpoints (currently only <endpoint> and within <route>)
         // try parse it as dom
-        Document dom = null;
-        try {
-            dom = XmlLineNumberParser.parseXml(xml);
-        } catch (Exception e) {
-            // ignore as the xml file may not be valid at this point
-        }
+        Document dom = getDocument(xml);
         if (dom != null) {
             List<Node> nodes = CamelXmlHelper.findAllEndpoints(dom);
             for (Node node : nodes) {
@@ -139,10 +136,7 @@ public final class XmlRouteParser {
                     String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
 
                     // we only want the relative dir name from the resource directory, eg META-INF/spring/foo.xml
-                    String fileName = fullyQualifiedFileName;
-                    if (fileName.startsWith(baseDir)) {
-                        fileName = fileName.substring(baseDir.length() + 1);
-                    }
+                    String fileName = getFileName(baseDir, fullyQualifiedFileName);
 
                     boolean consumerOnly = false;
                     boolean producerOnly = false;
@@ -188,12 +182,7 @@ public final class XmlRouteParser {
 
         // find all the simple expressions
         // try parse it as dom
-        Document dom = null;
-        try {
-            dom = XmlLineNumberParser.parseXml(xml);
-        } catch (Exception e) {
-            // ignore as the xml file may not be valid at this point
-        }
+        Document dom = getDocument(xml);
         if (dom != null) {
             List<Node> nodes = CamelXmlHelper.findAllLanguageExpressions(dom, "simple");
             for (Node node : nodes) {
@@ -201,11 +190,7 @@ public final class XmlRouteParser {
                 String lineNumber = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER);
                 String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
 
-                // we only want the relative dir name from the resource directory, eg META-INF/spring/foo.xml
-                String fileName = fullyQualifiedFileName;
-                if (fileName.startsWith(baseDir)) {
-                    fileName = fileName.substring(baseDir.length() + 1);
-                }
+                String fileName = getFileName(baseDir, fullyQualifiedFileName);
 
                 CamelSimpleExpressionDetails detail = new CamelSimpleExpressionDetails();
                 detail.setFileName(fileName);
@@ -228,6 +213,15 @@ public final class XmlRouteParser {
         }
     }
 
+    private static String getFileName(String baseDir, String fullyQualifiedFileName) {
+        // we only want the relative dir name from the resource directory, eg META-INF/spring/foo.xml
+        String fileName = fullyQualifiedFileName;
+        if (fileName.startsWith(baseDir)) {
+            fileName = fileName.substring(baseDir.length() + 1);
+        }
+        return fileName;
+    }
+
     /**
      * Parses the XML source to discover Camel compiled simple language.
      *
@@ -242,12 +236,7 @@ public final class XmlRouteParser {
 
         // find all the simple expressions
         // try parse it as dom
-        Document dom = null;
-        try {
-            dom = XmlLineNumberParser.parseXml(xml);
-        } catch (Exception e) {
-            // ignore as the xml file may not be valid at this point
-        }
+        Document dom = getDocument(xml);
         if (dom != null) {
             List<Node> nodes = CamelXmlHelper.findAllLanguageExpressions(dom, "csimple");
             for (Node node : nodes) {
@@ -256,10 +245,7 @@ public final class XmlRouteParser {
                 String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
 
                 // we only want the relative dir name from the resource directory, eg META-INF/spring/foo.xml
-                String fileName = fullyQualifiedFileName;
-                if (fileName.startsWith(baseDir)) {
-                    fileName = fileName.substring(baseDir.length() + 1);
-                }
+                String fileName = getFileName(baseDir, fullyQualifiedFileName);
 
                 CamelCSimpleExpressionDetails detail = new CamelCSimpleExpressionDetails();
                 detail.setFileName(fileName);
@@ -296,12 +282,7 @@ public final class XmlRouteParser {
 
         // find all the endpoints (currently only <route> and within <route>)
         // try parse it as dom
-        Document dom = null;
-        try {
-            dom = XmlLineNumberParser.parseXml(xml);
-        } catch (Exception e) {
-            // ignore as the xml file may not be valid at this point
-        }
+        Document dom = getDocument(xml);
         if (dom != null) {
             List<Node> nodes = CamelXmlHelper.findAllRoutes(dom);
             for (Node node : nodes) {
@@ -310,10 +291,7 @@ public final class XmlRouteParser {
                 String lineNumberEnd = (String) node.getUserData(XmlLineNumberParser.LINE_NUMBER_END);
 
                 // we only want the relative dir name from the resource directory, eg META-INF/spring/foo.xml
-                String fileName = fullyQualifiedFileName;
-                if (fileName.startsWith(baseDir)) {
-                    fileName = fileName.substring(baseDir.length() + 1);
-                }
+                String fileName = getFileName(baseDir, fullyQualifiedFileName);
 
                 CamelRouteDetails detail = new CamelRouteDetails();
                 detail.setFileName(fileName);
