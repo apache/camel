@@ -97,7 +97,8 @@ public class ConsulServiceDiscoveryIT extends ConsulTestSupport {
             Assertions.assertThat(service.getMetadata()).containsEntry("key1", "value1");
             Assertions.assertThat(service.getMetadata()).containsEntry("key2", "value2");
             Assertions.assertThat(service.getMetadata()).containsEntry("meta-key", "meta-val");
-            Assertions.assertThat("" + service.getHealth().isHealthy()).isEqualTo(service.getMetadata().get("healthy"));
+            Assertions.assertThat(Boolean.toString(service.getHealth().isHealthy()))
+                    .isEqualTo(service.getMetadata().get("healthy"));
         }
     }
 }
