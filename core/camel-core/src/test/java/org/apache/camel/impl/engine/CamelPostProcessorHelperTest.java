@@ -375,7 +375,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
         Class<?> type = field.getType();
         Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "timeout", bean, "foo");
-        assertEquals(Integer.valueOf("2000"), (Object) Integer.valueOf("" + value));
+        assertEquals(Integer.valueOf(2000), (Object) Integer.valueOf(String.valueOf(value)));
 
         field = bean.getClass().getField("greeting");
         propertyInject = field.getAnnotation(PropertyInject.class);
@@ -396,7 +396,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
         Class<?> type = field.getType();
         Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "5000", "timeout", bean, "foo");
-        assertEquals(Integer.valueOf("5000"), (Object) Integer.valueOf("" + value));
+        assertEquals(Integer.valueOf(5000), (Object) Integer.valueOf(String.valueOf(value)));
 
         field = bean.getClass().getField("greeting");
         propertyInject = field.getAnnotation(PropertyInject.class);
@@ -418,7 +418,7 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         PropertyInject propertyInject = method.getAnnotation(PropertyInject.class);
         Class<?> type = method.getParameterTypes()[0];
         Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "", "timeout", bean, "foo");
-        assertEquals(Integer.valueOf("2000"), (Object) Integer.valueOf("" + value));
+        assertEquals(Integer.valueOf(2000), (Object) Integer.valueOf(String.valueOf(value)));
 
         method = bean.getClass().getMethod("setGreeting", String.class);
         propertyInject = method.getAnnotation(PropertyInject.class);
