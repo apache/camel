@@ -104,10 +104,6 @@ public class HttpEndpoint extends HttpCommonEndpoint {
                             + " A timeout value of zero is interpreted as an infinite timeout.",
               javaType = "org.apache.hc.core5.util.Timeout")
     private Timeout connectTimeout = Timeout.ofMinutes(3);
-    @Metadata(label = "timeout", defaultValue = "null (undefined)",
-              description = "Determines the default socket timeout value for I/O operations.",
-              javaType = "org.apache.hc.core5.util.Timeout")
-    private Timeout socketTimeout;
     @Metadata(label = "timeout", defaultValue = "3 minutes",
               description = "Determines the default socket timeout value for blocking I/O operations.",
               javaType = "org.apache.hc.core5.util.Timeout")
@@ -542,20 +538,6 @@ public class HttpEndpoint extends HttpCommonEndpoint {
      */
     public void setConnectTimeout(Timeout connectTimeout) {
         this.connectTimeout = connectTimeout;
-    }
-
-    public Timeout getSocketTimeout() {
-        return socketTimeout;
-    }
-
-    /**
-     * Determines the default socket timeout value for I/O operations.
-     * <p>
-     * Default: {@code null} (undefined)
-     * </p>
-     */
-    public void setSocketTimeout(Timeout socketTimeout) {
-        this.socketTimeout = socketTimeout;
     }
 
     public Timeout getSoTimeout() {

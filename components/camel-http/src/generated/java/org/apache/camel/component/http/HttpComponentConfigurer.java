@@ -95,8 +95,6 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "skipResponseHeaders": target.setSkipResponseHeaders(property(camelContext, boolean.class, value)); return true;
         case "sotimeout":
         case "soTimeout": target.setSoTimeout(property(camelContext, org.apache.hc.core5.util.Timeout.class, value)); return true;
-        case "sockettimeout":
-        case "socketTimeout": target.setSocketTimeout(property(camelContext, org.apache.hc.core5.util.Timeout.class, value)); return true;
         case "sslcontextparameters":
         case "sslContextParameters": target.setSslContextParameters(property(camelContext, org.apache.camel.support.jsse.SSLContextParameters.class, value)); return true;
         case "useglobalsslcontextparameters":
@@ -184,8 +182,6 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "skipResponseHeaders": return boolean.class;
         case "sotimeout":
         case "soTimeout": return org.apache.hc.core5.util.Timeout.class;
-        case "sockettimeout":
-        case "socketTimeout": return org.apache.hc.core5.util.Timeout.class;
         case "sslcontextparameters":
         case "sslContextParameters": return org.apache.camel.support.jsse.SSLContextParameters.class;
         case "useglobalsslcontextparameters":
@@ -274,8 +270,6 @@ public class HttpComponentConfigurer extends PropertyConfigurerSupport implement
         case "skipResponseHeaders": return target.isSkipResponseHeaders();
         case "sotimeout":
         case "soTimeout": return target.getSoTimeout();
-        case "sockettimeout":
-        case "socketTimeout": return target.getSocketTimeout();
         case "sslcontextparameters":
         case "sslContextParameters": return target.getSslContextParameters();
         case "useglobalsslcontextparameters":
