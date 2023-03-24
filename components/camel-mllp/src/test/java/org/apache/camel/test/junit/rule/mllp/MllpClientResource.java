@@ -141,7 +141,7 @@ public class MllpClientResource implements BeforeEachCallback, AfterEachCallback
                 clientSocket.close();
             }
         } catch (IOException e) {
-            log.warn(String.format("Exception encountered resetting connection to {}:{}", mllpHost, mllpPort), e);
+            log.warn(String.format("Exception encountered resetting connection to %s:%s", mllpHost, mllpPort), e);
         } finally {
             inputStream = null;
             outputStream = null;
