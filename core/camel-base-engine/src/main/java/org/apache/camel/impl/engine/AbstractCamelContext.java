@@ -47,14 +47,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.CatalogCamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.FailedToStartComponentException;
 import org.apache.camel.FluentProducerTemplate;
 import org.apache.camel.GlobalEndpointConfiguration;
-import org.apache.camel.IsSingleton;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
@@ -201,8 +199,9 @@ public abstract class AbstractCamelContext extends BaseService
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContext.class);
 
+    protected final InternalServiceManager internalServiceManager;
+
     // start auto assigning route ids using numbering 1000 and upwards
-    final List<Service> servicesToStop = new CopyOnWriteArrayList<>();
     final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
     final Map<String, FactoryFinder> bootstrapFactories = new ConcurrentHashMap<>();
     volatile FactoryFinder bootstrapFactoryFinder;
@@ -264,7 +263,6 @@ public abstract class AbstractCamelContext extends BaseService
     private final Map<String, Component> components = new ConcurrentHashMap<>();
     private final Set<Route> routes = new LinkedHashSet<>();
     private final List<StartupListener> startupListeners = new CopyOnWriteArrayList<>();
-    private final DeferServiceStartupListener deferStartupListener = new DeferServiceStartupListener();
     private final Map<String, Language> languages = new ConcurrentHashMap<>();
     private final Map<String, DataFormat> dataformats = new ConcurrentHashMap<>();
     private final List<LifecycleStrategy> lifecycleStrategies = new CopyOnWriteArrayList<>();
@@ -375,9 +373,6 @@ public abstract class AbstractCamelContext extends BaseService
         // DefaultEndpointRegistry later, but we do this to startup Camel faster.
         this.endpoints = new ProvisionalEndpointRegistry();
 
-        // add the defer service startup listener
-        this.startupListeners.add(deferStartupListener);
-
         // add a default LifecycleStrategy that discover strategies on the registry and invoke them
         this.lifecycleStrategies.add(new OnCamelContextLifecycleStrategy());
 
@@ -397,6 +392,8 @@ public abstract class AbstractCamelContext extends BaseService
                 bootstrapFactories.clear();
             }
         });
+
+        this.internalServiceManager = new InternalServiceManager(this, internalRouteStartupManager, startupListeners);
 
         if (build) {
             try {
@@ -475,7 +472,7 @@ public abstract class AbstractCamelContext extends BaseService
     public <T> void setExtension(Class<T> type, T module) {
         if (module != null) {
             try {
-                extensions.put(type, doAddService(module));
+                extensions.put(type, internalServiceManager.addService(module));
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
@@ -507,7 +504,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setNameStrategy(CamelContextNameStrategy nameStrategy) {
-        this.nameStrategy = doAddService(nameStrategy);
+        this.nameStrategy = internalServiceManager.addService(nameStrategy);
     }
 
     @Override
@@ -524,7 +521,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setManagementNameStrategy(ManagementNameStrategy managementNameStrategy) {
-        this.managementNameStrategy = doAddService(managementNameStrategy);
+        this.managementNameStrategy = internalServiceManager.addService(managementNameStrategy);
     }
 
     @Override
@@ -1003,7 +1000,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setRouteController(RouteController routeController) {
-        this.routeController = doAddService(routeController);
+        this.routeController = internalServiceManager.addService(routeController);
     }
 
     @Override
@@ -1402,31 +1399,12 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void addService(Object object, boolean stopOnShutdown, boolean forceStart) throws Exception {
-        InternalServiceHelper.internalAddService(object, stopOnShutdown, forceStart, true, this,
-                internalRouteStartupManager, servicesToStop, deferStartupListener);
+        internalServiceManager.doAddService(object, stopOnShutdown, forceStart, true);
     }
 
     @Override
     public void addPrototypeService(Object object) throws Exception {
-        doAddService(object, false, true, false);
-    }
-
-    protected <T> T doAddService(T object) {
-        return doAddService(object, true);
-    }
-
-    protected <T> T doAddService(T object, boolean stopOnShutdown) {
-        return doAddService(object, stopOnShutdown, true, true);
-    }
-
-    protected <T> T doAddService(T object, boolean stopOnShutdown, boolean forceStart, boolean useLifecycleStrategies) {
-        try {
-            InternalServiceHelper.internalAddService(object, stopOnShutdown, forceStart, useLifecycleStrategies, this,
-                    internalRouteStartupManager, servicesToStop, deferStartupListener);
-        } catch (Exception e) {
-            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-        }
-        return object;
+        internalServiceManager.addService(object, false, true, false);
     }
 
     @Override
@@ -1440,81 +1418,30 @@ public abstract class AbstractCamelContext extends BaseService
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 strategy.onServiceRemove(this, service, null);
             }
-            return servicesToStop.remove(service);
+
+            return internalServiceManager.removeService(service);
         }
         return false;
     }
 
     @Override
     public boolean hasService(Object object) {
-        if (servicesToStop.isEmpty()) {
-            return false;
-        }
-        if (object instanceof Service) {
-            Service service = (Service) object;
-            return servicesToStop.contains(service);
-        }
-        return false;
+        return internalServiceManager.hasService(object);
     }
 
     @Override
     public <T> T hasService(Class<T> type) {
-        if (servicesToStop.isEmpty()) {
-            return null;
-        }
-        for (Service service : servicesToStop) {
-            if (type.isInstance(service)) {
-                return type.cast(service);
-            }
-        }
-        return null;
+        return internalServiceManager.hasService(type);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public <T> Set<T> hasServices(Class<T> type) {
-        if (servicesToStop.isEmpty()) {
-            return Collections.emptySet();
-        }
-        Set<T> set = new HashSet<>();
-        for (Service service : servicesToStop) {
-            if (type.isInstance(service)) {
-                set.add((T) service);
-            }
-        }
-        return set;
+        return internalServiceManager.hasServices(type);
     }
 
     @Override
     public void deferStartService(Object object, boolean stopOnShutdown) throws Exception {
-        deferStartService(object, stopOnShutdown, false);
-    }
-
-    public void deferStartService(Object object, boolean stopOnShutdown, boolean startEarly) throws Exception {
-        if (object instanceof Service) {
-            Service service = (Service) object;
-
-            // only add to services to close if its a singleton
-            // otherwise we could for example end up with a lot of prototype
-            // scope endpoints
-            boolean singleton = true; // assume singleton by default
-            if (object instanceof IsSingleton) {
-                singleton = ((IsSingleton) service).isSingleton();
-            }
-            // do not add endpoints as they have their own list
-            if (singleton && !(service instanceof Endpoint)) {
-                // only add to list of services to stop if its not already there
-                if (stopOnShutdown && !hasService(service)) {
-                    servicesToStop.add(service);
-                }
-            }
-            // are we already started?
-            if (isStarted()) {
-                ServiceHelper.startService(service);
-            } else {
-                deferStartupListener.addService(service, startEarly);
-            }
-        }
+        internalServiceManager.deferStartService(object, stopOnShutdown, false);
     }
 
     protected List<StartupListener> getStartupListeners() {
@@ -1712,7 +1639,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     public void setTypeConverter(TypeConverter typeConverter) {
-        this.typeConverter = doAddService(typeConverter);
+        this.typeConverter = internalServiceManager.addService(typeConverter);
     }
 
     protected TypeConverter getOrCreateTypeConverter() {
@@ -1740,7 +1667,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry) {
-        this.typeConverterRegistry = doAddService(typeConverterRegistry);
+        this.typeConverterRegistry = internalServiceManager.addService(typeConverterRegistry);
         // some registries are also a type converter implementation
         if (typeConverterRegistry instanceof TypeConverter) {
             this.typeConverter = (TypeConverter) typeConverterRegistry;
@@ -1761,7 +1688,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setInjector(Injector injector) {
-        this.injector = doAddService(injector);
+        this.injector = internalServiceManager.addService(injector);
     }
 
     @Override
@@ -1778,11 +1705,11 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setPropertiesComponent(PropertiesComponent propertiesComponent) {
-        this.propertiesComponent = doAddService(propertiesComponent);
+        this.propertiesComponent = internalServiceManager.addService(propertiesComponent);
     }
 
     public void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
-        this.managementMBeanAssembler = doAddService(managementMBeanAssembler, false);
+        this.managementMBeanAssembler = internalServiceManager.addService(managementMBeanAssembler, false);
     }
 
     public void setAutoCreateComponents(boolean autoCreateComponents) {
@@ -2018,7 +1945,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry) {
-        this.runtimeEndpointRegistry = doAddService(runtimeEndpointRegistry);
+        this.runtimeEndpointRegistry = internalServiceManager.addService(runtimeEndpointRegistry);
     }
 
     @Override
@@ -2480,7 +2407,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // re-create endpoint registry as the cache size limit may be set after the constructor of this instance was called.
         // and we needed to create endpoints up-front as it may be accessed before this context is started
-        endpoints = doAddService(createEndpointRegistry(endpoints));
+        endpoints = internalServiceManager.addService(createEndpointRegistry(endpoints));
 
         // optimised to not include runtimeEndpointRegistry unless startServices
         // is enabled or JMX statistics is in extended mode
@@ -3024,7 +2951,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // shutdown await manager to trigger interrupt of blocked threads to
         // attempt to free these threads graceful
-        shutdownServices(asyncProcessorAwaitManager);
+        InternalServiceManager.shutdownServices(this, asyncProcessorAwaitManager);
 
         // we need also to include routes which failed to start to ensure all resources get stopped when stopping Camel
         for (RouteService routeService : routeServices.values()) {
@@ -3042,7 +2969,7 @@ public abstract class AbstractCamelContext extends BaseService
             RouteService routeService = order.getRouteService();
             list.add(routeService);
         }
-        shutdownServices(list, false);
+        InternalServiceManager.shutdownServices(this, list, false);
 
         if (startupSummaryLevel != StartupSummaryLevel.Oneline
                 && startupSummaryLevel != StartupSummaryLevel.Off) {
@@ -3062,11 +2989,7 @@ public abstract class AbstractCamelContext extends BaseService
         // consumer (eg @Consumer)
         // which we need to stop after the routes, as a POJO consumer is
         // essentially a route also
-        for (Service service : servicesToStop) {
-            if (service instanceof Consumer) {
-                shutdownServices(service);
-            }
-        }
+        internalServiceManager.stopConsumers();
 
         // the stop order is important
 
@@ -3080,18 +3003,17 @@ public abstract class AbstractCamelContext extends BaseService
         // shutdown debugger
         ServiceHelper.stopAndShutdownService(getDebugger());
 
-        shutdownServices(endpoints.values());
+        InternalServiceManager.shutdownServices(this, endpoints.values());
         endpoints.clear();
 
-        shutdownServices(components.values());
+        InternalServiceManager.shutdownServices(this, components.values());
         components.clear();
 
-        shutdownServices(languages.values());
+        InternalServiceManager.shutdownServices(this, languages.values());
         languages.clear();
 
         // shutdown services as late as possible (except type converters as they may be needed during the remainder of the stopping)
-        shutdownServices(servicesToStop);
-        servicesToStop.clear();
+        internalServiceManager.shutdownServices();
 
         try {
             for (LifecycleStrategy strategy : lifecycleStrategies) {
@@ -3107,20 +3029,20 @@ public abstract class AbstractCamelContext extends BaseService
         // stop the notifier service
         if (getManagementStrategy() != null) {
             for (EventNotifier notifier : getManagementStrategy().getEventNotifiers()) {
-                shutdownServices(notifier);
+                InternalServiceManager.shutdownServices(this, notifier);
             }
         }
 
         // shutdown management and lifecycle after all other services
-        shutdownServices(managementStrategy);
-        shutdownServices(managementMBeanAssembler);
-        shutdownServices(lifecycleStrategies);
+        InternalServiceManager.shutdownServices(this, managementStrategy);
+        InternalServiceManager.shutdownServices(this, managementMBeanAssembler);
+        InternalServiceManager.shutdownServices(this, lifecycleStrategies);
         // do not clear lifecycleStrategies as we can start Camel again and get
         // the route back as before
 
         // shutdown executor service, reactive executor last
-        shutdownServices(executorServiceManager);
-        shutdownServices(reactiveExecutor);
+        InternalServiceManager.shutdownServices(this, executorServiceManager);
+        InternalServiceManager.shutdownServices(this, reactiveExecutor);
 
         // shutdown type converter and registry as late as possible
         ServiceHelper.stopService(typeConverter);
@@ -3233,42 +3155,6 @@ public abstract class AbstractCamelContext extends BaseService
             return routeService.getRoute().supportsSuspension();
         }
         return false;
-    }
-
-    private void shutdownServices(Object service) {
-        // do not rethrow exception as we want to keep shutting down in case of
-        // problems
-
-        // allow us to do custom work before delegating to service helper
-        try {
-            if (service instanceof Service) {
-                ServiceHelper.stopAndShutdownService(service);
-            } else if (service instanceof Collection) {
-                ServiceHelper.stopAndShutdownServices((Collection<?>) service);
-            }
-        } catch (Throwable e) {
-            LOG.warn("Error occurred while shutting down service: " + service + ". This exception will be ignored.", e);
-            // fire event
-            EventHelper.notifyServiceStopFailure(this, service, e);
-        }
-    }
-
-    private void shutdownServices(Collection<?> services) {
-        // reverse stopping by default
-        shutdownServices(services, true);
-    }
-
-    private void shutdownServices(Collection<?> services, boolean reverse) {
-        Collection<?> list = services;
-        if (reverse) {
-            List<Object> reverseList = new ArrayList<>(services);
-            Collections.reverse(reverseList);
-            list = reverseList;
-        }
-
-        for (Object service : list) {
-            shutdownServices(service);
-        }
     }
 
     void startService(Service service) throws Exception {
@@ -3562,7 +3448,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setClassResolver(ClassResolver classResolver) {
-        this.classResolver = doAddService(classResolver);
+        this.classResolver = internalServiceManager.addService(classResolver);
     }
 
     @Override
@@ -3639,7 +3525,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setInflightRepository(InflightRepository repository) {
-        this.inflightRepository = doAddService(repository);
+        this.inflightRepository = internalServiceManager.addService(repository);
     }
 
     @Override
@@ -3846,7 +3732,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setShutdownStrategy(ShutdownStrategy shutdownStrategy) {
-        this.shutdownStrategy = doAddService(shutdownStrategy);
+        this.shutdownStrategy = internalServiceManager.addService(shutdownStrategy);
     }
 
     @Override
@@ -3915,7 +3801,7 @@ public abstract class AbstractCamelContext extends BaseService
     public void setExecutorServiceManager(ExecutorServiceManager executorServiceManager) {
         // special for executorServiceManager as want to stop it manually so
         // false in stopOnShutdown
-        this.executorServiceManager = doAddService(executorServiceManager, false);
+        this.executorServiceManager = internalServiceManager.addService(executorServiceManager, false);
     }
 
     @Override
@@ -3932,7 +3818,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setMessageHistoryFactory(MessageHistoryFactory messageHistoryFactory) {
-        this.messageHistoryFactory = doAddService(messageHistoryFactory);
+        this.messageHistoryFactory = internalServiceManager.addService(messageHistoryFactory);
         // enable message history if we set a custom factory
         setMessageHistory(true);
     }
@@ -3949,7 +3835,7 @@ public abstract class AbstractCamelContext extends BaseService
         if (isStartingOrStarted()) {
             throw new IllegalStateException("Cannot set debugger on a started CamelContext");
         }
-        this.debugger = doAddService(debugger, true, false, true);
+        this.debugger = internalServiceManager.addService(debugger, true, false, true);
     }
 
     @Override
@@ -3970,7 +3856,7 @@ public abstract class AbstractCamelContext extends BaseService
         if (!isTracingStandby() && isStartingOrStarted()) {
             throw new IllegalStateException("Cannot set tracer on a started CamelContext");
         }
-        this.tracer = doAddService(tracer, true, false, true);
+        this.tracer = internalServiceManager.addService(tracer, true, false, true);
     }
 
     @Override
@@ -4007,7 +3893,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setUuidGenerator(UuidGenerator uuidGenerator) {
-        this.uuidGenerator = doAddService(uuidGenerator);
+        this.uuidGenerator = internalServiceManager.addService(uuidGenerator);
     }
 
     @Override
@@ -4024,7 +3910,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy) {
-        this.streamCachingStrategy = doAddService(streamCachingStrategy, true, false, true);
+        this.streamCachingStrategy = internalServiceManager.addService(streamCachingStrategy, true, false, true);
     }
 
     @Override
@@ -4041,7 +3927,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void setRestRegistry(RestRegistry restRegistry) {
-        this.restRegistry = doAddService(restRegistry);
+        this.restRegistry = internalServiceManager.addService(restRegistry);
     }
 
     protected RestRegistry createRestRegistry() {
@@ -4061,7 +3947,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     public void setRestRegistryFactory(RestRegistryFactory restRegistryFactory) {
-        this.restRegistryFactory = doAddService(restRegistryFactory);
+        this.restRegistryFactory = internalServiceManager.addService(restRegistryFactory);
     }
 
     @Override
@@ -4100,7 +3986,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     public void setTransformerRegistry(TransformerRegistry transformerRegistry) {
-        this.transformerRegistry = doAddService(transformerRegistry);
+        this.transformerRegistry = internalServiceManager.addService(transformerRegistry);
     }
 
     @Override
@@ -4121,7 +4007,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     public void setValidatorRegistry(ValidatorRegistry validatorRegistry) {
-        this.validatorRegistry = doAddService(validatorRegistry);
+        this.validatorRegistry = internalServiceManager.addService(validatorRegistry);
     }
 
     @Override
@@ -4145,11 +4031,11 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     public void setBeanProxyFactory(BeanProxyFactory beanProxyFactory) {
-        this.beanProxyFactory = doAddService(beanProxyFactory);
+        this.beanProxyFactory = internalServiceManager.addService(beanProxyFactory);
     }
 
     public void setBeanProcessorFactory(BeanProcessorFactory beanProcessorFactory) {
-        this.beanProcessorFactory = doAddService(beanProcessorFactory);
+        this.beanProcessorFactory = internalServiceManager.addService(beanProcessorFactory);
     }
 
     public boolean isLogJvmUptime() {
@@ -4532,5 +4418,9 @@ public abstract class AbstractCamelContext extends BaseService
 
     List<RouteStartupOrder> getRouteStartupOrder() {
         return routeStartupOrder;
+    }
+
+    InternalServiceManager getInternalServiceManager() {
+        return internalServiceManager;
     }
 }
