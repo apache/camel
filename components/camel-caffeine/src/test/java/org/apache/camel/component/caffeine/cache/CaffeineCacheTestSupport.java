@@ -94,7 +94,7 @@ public class CaffeineCacheTestSupport extends CamelTestSupport {
 
         @Override
         public void onRemoval(Object key, Object value, RemovalCause cause) {
-            LOG.info("Key %s was removed (%s)%n", key, cause);
+            LOG.info("Key {} was removed ({})%n", key, cause);
         }
 
     }

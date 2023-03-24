@@ -191,8 +191,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
         // defaults
         String convertResults = template.requestBody("direct:convertResults", asyncReportResults, String.class);
         assertNotNull(convertResults, "default convertResults");
-        LOG.debug("Default options", convertResults);
-        LOG.debug("{}", convertResults);
+        LOG.debug("Default options {}", convertResults);
 
         // permutations of include details, include headers, include summary
         final boolean[] values = new boolean[NUM_OPTIONS];

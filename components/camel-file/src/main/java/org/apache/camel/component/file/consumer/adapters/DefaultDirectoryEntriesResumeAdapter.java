@@ -51,7 +51,7 @@ class DefaultDirectoryEntriesResumeAdapter extends AbstractFileResumeAdapter imp
     }
 
     private boolean processed(ResumeCache<File> cache, File directory, File file) {
-        LOG.trace("Checking if file {} with key {} is cached: {}, {}", file, directory);
+        LOG.trace("Checking if file {} from directory {} is cached", file, directory);
         FileSet cached = cache.get(directory, FileSet.class);
         if (cached == null) {
             LOG.trace("FileSet is not cached, therefore has not been processed yet");
