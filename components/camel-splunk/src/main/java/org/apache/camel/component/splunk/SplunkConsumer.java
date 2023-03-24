@@ -27,7 +27,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.splunk.event.SplunkEvent;
 import org.apache.camel.component.splunk.support.SplunkDataReader;
-import org.apache.camel.component.splunk.support.SplunkResultProcessor;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
@@ -63,18 +62,14 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
     protected int poll() throws Exception {
         try {
             if (endpoint.getConfiguration().isStreaming()) {
-                dataReader.read(new SplunkResultProcessor() {
+                dataReader.read(splunkEvent -> {
+                    final Exchange exchange = createExchange(true);
+                    Message message = exchange.getIn();
+                    message.setBody(splunkEvent);
 
-                    @Override
-                    public void process(SplunkEvent splunkEvent) {
-                        final Exchange exchange = createExchange(true);
-                        Message message = exchange.getIn();
-                        message.setBody(splunkEvent);
-
-                        // use default consumer callback
-                        AsyncCallback cb = defaultConsumerCallback(exchange, true);
-                        getAsyncProcessor().process(exchange, cb);
-                    }
+                    // use default consumer callback
+                    AsyncCallback cb = defaultConsumerCallback(exchange, true);
+                    getAsyncProcessor().process(exchange, cb);
                 });
                 // Return 0: no exchanges returned by poll, as exchanges have been returned asynchronously
                 return 0;
