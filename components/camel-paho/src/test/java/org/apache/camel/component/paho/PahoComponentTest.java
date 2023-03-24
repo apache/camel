@@ -77,7 +77,7 @@ public class PahoComponentTest extends PahoTestSupport {
         // Then
         assertEquals("/test/topic", endpoint.getTopic());
         assertEquals("sampleClient", endpoint.getConfiguration().getClientId());
-        assertEquals("" + service.serviceAddress(), endpoint.getConfiguration().getBrokerUrl());
+        assertEquals(service.serviceAddress(), endpoint.getConfiguration().getBrokerUrl());
         assertEquals(2, endpoint.getConfiguration().getQos());
         assertEquals(PahoPersistence.FILE, endpoint.getConfiguration().getPersistence());
     }
