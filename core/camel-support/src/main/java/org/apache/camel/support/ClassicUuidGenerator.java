@@ -82,7 +82,7 @@ public class ClassicUuidGenerator implements UuidGenerator {
             this.seed = prefix + UNIQUE_STUB + (instanceCount++) + "-";
             // let the ID be friendly for URL and file systems
             this.seed = generateSanitizedId(this.seed);
-            this.length = seed.length() + ("" + Long.MAX_VALUE).length();
+            this.length = seed.length() + (Long.toString(Long.MAX_VALUE)).length();
         }
     }
 
