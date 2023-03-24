@@ -37,8 +37,8 @@ public class IronMQBatchDeleteConsumerTest extends CamelTestSupport {
         for (int counter = 0; counter <= 5; counter++) {
             Message message = new Message();
             message.setBody("{\"body\": \"Message " + counter + "\"}");
-            message.setId("" + counter);
-            message.setReservationId("" + counter);
+            message.setId(Integer.toString(counter));
+            message.setReservationId(Integer.toString(counter));
             ((MockQueue) endpoint.getClient().queue("testqueue22")).add(message);
         }
 
