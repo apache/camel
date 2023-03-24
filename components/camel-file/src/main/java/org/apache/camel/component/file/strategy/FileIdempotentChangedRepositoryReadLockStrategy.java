@@ -137,6 +137,10 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
             }
         };
 
+        delayOrScheduleLockRelease(r);
+    }
+
+    private void delayOrScheduleLockRelease(Runnable r) throws InterruptedException {
         if (readLockIdempotentReleaseDelay > 0 && readLockIdempotentReleaseExecutorService != null) {
             LOG.debug("Scheduling read lock release task to run asynchronous delayed after {} millis",
                     readLockIdempotentReleaseDelay);
@@ -170,17 +174,7 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
             }
         };
 
-        if (readLockIdempotentReleaseDelay > 0 && readLockIdempotentReleaseExecutorService != null) {
-            LOG.debug("Scheduling read lock release task to run asynchronous delayed after {} millis",
-                    readLockIdempotentReleaseDelay);
-            readLockIdempotentReleaseExecutorService.schedule(r, readLockIdempotentReleaseDelay, TimeUnit.MILLISECONDS);
-        } else if (readLockIdempotentReleaseDelay > 0) {
-            LOG.debug("Delaying read lock release task {} millis", readLockIdempotentReleaseDelay);
-            Thread.sleep(readLockIdempotentReleaseDelay);
-            r.run();
-        } else {
-            r.run();
-        }
+        delayOrScheduleLockRelease(r);
     }
 
     @Override
