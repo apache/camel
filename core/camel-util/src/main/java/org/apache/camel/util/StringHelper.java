@@ -1024,7 +1024,7 @@ public final class StringHelper {
      */
     public static boolean startsWithIgnoreCase(String text, String prefix) {
         if (text != null && prefix != null) {
-            return prefix.length() > text.length() ? false : text.regionMatches(true, 0, prefix, 0, prefix.length());
+            return prefix.length() <= text.length() && text.regionMatches(true, 0, prefix, 0, prefix.length());
         } else {
             return text == null && prefix == null;
         }

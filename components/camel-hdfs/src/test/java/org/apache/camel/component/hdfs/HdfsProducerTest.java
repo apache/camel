@@ -82,7 +82,7 @@ public class HdfsProducerTest extends HdfsTestSupport {
     public void testProducerClose() throws Exception {
         for (int i = 0; i < 10; ++i) {
             // send 10 messages, and mark to close in last message
-            template.sendBodyAndHeader("direct:start1", "PAPPO" + i, HdfsConstants.HDFS_CLOSE, i == 9 ? true : false);
+            template.sendBodyAndHeader("direct:start1", "PAPPO" + i, HdfsConstants.HDFS_CLOSE, i == 9);
         }
 
         Configuration conf = new Configuration();

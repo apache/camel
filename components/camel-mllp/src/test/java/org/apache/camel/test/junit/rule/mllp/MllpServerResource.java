@@ -270,7 +270,7 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
             case 1:
                 return true;
             default:
-                return (messageCount % modulus == 0) ? true : false;
+                return messageCount % modulus == 0;
         }
     }
 

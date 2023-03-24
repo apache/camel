@@ -603,11 +603,11 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 LOG.debug("Skip Footer: {}", skipFooter);
 
                 // Get isHeader parameter
-                isHeader = hasHeader ? cl.equals(header) : false;
+                isHeader = hasHeader && cl.equals(header);
                 LOG.debug("Is Header: {}", isHeader);
 
                 // Get isFooter parameter
-                isFooter = hasFooter ? cl.equals(footer) : false;
+                isFooter = hasFooter && cl.equals(footer);
                 LOG.debug("Is Footer: {}", isFooter);
 
                 // Get padding character

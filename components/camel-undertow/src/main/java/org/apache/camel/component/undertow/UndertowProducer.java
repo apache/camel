@@ -84,7 +84,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
     boolean isSendToAll(Message in) {
         // header may be null; have to be careful here (and fallback to use sendToAll option configured from endpoint)
         Boolean value = in.getHeader(UndertowConstants.SEND_TO_ALL, endpoint.getSendToAll(), Boolean.class);
-        return value == null ? false : value;
+        return value != null && value;
     }
 
     @Override

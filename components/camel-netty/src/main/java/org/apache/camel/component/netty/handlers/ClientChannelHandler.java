@@ -113,7 +113,7 @@ public class ClientChannelHandler extends SimpleChannelInboundHandler<Object> {
         Exchange exchange = state != null ? state.getExchange() : null;
         // this channel is maybe closing graceful and the callback could already have been called
         // and if so we should not trigger an exception nor invoke callback second time
-        boolean doneUoW = state != null ? state.isDone() : false;
+        boolean doneUoW = state != null && state.isDone();
 
         // remove state
         producer.getCorrelationManager().removeState(ctx, ctx.channel());
