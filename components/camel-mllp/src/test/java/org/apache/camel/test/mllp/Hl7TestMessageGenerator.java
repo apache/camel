@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public final class Hl7TestMessageGenerator {
-    static SimpleDateFormat timestampFormat = new SimpleDateFormat("YYYYMMddHHmmss");
+    static SimpleDateFormat timestampFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     static String messageControlIdFormat = "%05d";
 
     static String hl7MessageTemplate
