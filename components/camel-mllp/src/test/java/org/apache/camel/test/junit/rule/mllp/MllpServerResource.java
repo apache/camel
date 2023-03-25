@@ -618,8 +618,8 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
      * Nested class to accept TCP connections
      */
     class AcceptSocketThread extends Thread {
-        final long bindTimeout = 30000;
-        final long bindRetryDelay = 1000;
+        static final long bindTimeout = 30000;
+        static final long bindRetryDelay = 1000;
         Logger log = LoggerFactory.getLogger(this.getClass());
         ServerSocket serverSocket;
         List<ClientSocketThread> clientSocketThreads = new LinkedList<>();

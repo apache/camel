@@ -60,7 +60,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected Destination replyTo;
     protected AbstractMessageListenerContainer listenerContainer;
     protected final CountDownLatch replyToLatch = new CountDownLatch(1);
-    protected final long replyToTimeout = 10000;
+    protected static final long replyToTimeout = 10000;
     protected CorrelationTimeoutMap correlation;
     protected String correlationProperty;
 

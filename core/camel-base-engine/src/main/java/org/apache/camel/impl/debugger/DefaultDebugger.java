@@ -51,7 +51,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
 
     private final EventNotifier debugEventNotifier = new DebugEventNotifier();
     private final List<BreakpointConditions> breakpoints = new CopyOnWriteArrayList<>();
-    private final int maxConcurrentSingleSteps = 1;
+    private static final int maxConcurrentSingleSteps = 1;
     private final Map<String, Breakpoint> singleSteps = new HashMap<>(maxConcurrentSingleSteps);
     private CamelContext camelContext;
 

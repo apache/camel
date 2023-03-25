@@ -46,9 +46,9 @@ public final class PubNubSensor2Example {
     }
 
     static class SimulatedDeviceEventGeneratorRoute extends RouteBuilder {
-        private final String deviceEP
+        private static final String deviceEP
                 = "pubnub:iot?uuid=device2&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY;
-        private final String devicePrivateEP = "pubnub:device2private?uuid=device2&publishKey=" + PUBNUB_PUBLISH_KEY
+        private static final String devicePrivateEP = "pubnub:device2private?uuid=device2&publishKey=" + PUBNUB_PUBLISH_KEY
                                                + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY;
 
         @Override

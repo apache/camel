@@ -72,7 +72,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
     private final SalesforceComponent component;
     private SalesforceSession session;
-    private final long timeout = 60 * 1000L;
+    private static final long timeout = 60 * 1000L;
 
     private final Map<SalesforceConsumer, ClientSessionChannel.MessageListener> listenerMap;
     private final long maxBackoff;

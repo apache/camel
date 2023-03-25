@@ -40,10 +40,10 @@ public class JmsToHttpWithOnExceptionRoute extends RouteBuilder {
     @Resource(name = "PROPAGATION_REQUIRED")
     protected SpringTransactionPolicy required;
 
-    protected final String nok = "<?xml version=\"1.0\"?><reply><status>nok</status></reply>";
-    protected final String ok = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
+    protected static final String nok = "<?xml version=\"1.0\"?><reply><status>nok</status></reply>";
+    protected static final String ok = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
 
-    private final String noAccess = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
+    private static final String noAccess = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
 
     @Override
     public void configure() {
