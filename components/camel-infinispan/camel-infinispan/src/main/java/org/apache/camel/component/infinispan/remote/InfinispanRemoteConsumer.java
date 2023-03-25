@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.infinispan.remote;
 
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -121,7 +122,7 @@ public class InfinispanRemoteConsumer
 
             listener = configuration.getCustomListener();
             if (listener == null) {
-                Set<ClientEvent.Type> events = new HashSet<>();
+                Set<ClientEvent.Type> events = EnumSet.noneOf(ClientEvent.Type.class);
                 if (configuration.getEventTypes() != null) {
                     String eventTypes = configuration.getEventTypes();
                     for (String event : eventTypes.split(",")) {

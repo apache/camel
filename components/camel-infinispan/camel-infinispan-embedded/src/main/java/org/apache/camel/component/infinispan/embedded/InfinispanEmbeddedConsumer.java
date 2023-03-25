@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.infinispan.embedded;
 
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -121,7 +122,7 @@ public class InfinispanEmbeddedConsumer
             this.listener = configuration.getCustomListener();
 
             if (this.listener == null) {
-                Set<Event.Type> events = new HashSet<>();
+                Set<Event.Type> events = EnumSet.noneOf(Event.Type.class);
                 if (configuration.getEventTypes() != null) {
                     String eventTypes = configuration.getEventTypes();
                     for (String event : eventTypes.split(",")) {
