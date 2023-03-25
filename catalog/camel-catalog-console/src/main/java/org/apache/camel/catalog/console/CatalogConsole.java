@@ -55,7 +55,7 @@ public class CatalogConsole extends AbstractDevConsole {
         String suffix = "-" + getCamelContext().getVersion() + ".jar";
         for (String c : cp) {
             if (c.endsWith(suffix)) {
-                int pos = Math.max(c.lastIndexOf("/"), c.lastIndexOf("\\"));
+                int pos = Math.max(c.lastIndexOf('/'), c.lastIndexOf('\\'));
                 if (pos > 0) {
                     c = c.substring(pos + 1, c.length() - suffix.length());
                     appendModel(findOtherModel(c), sb);
@@ -87,7 +87,7 @@ public class CatalogConsole extends AbstractDevConsole {
         String suffix = "-" + getCamelContext().getVersion() + ".jar";
         for (String c : cp) {
             if (c.endsWith(suffix)) {
-                int pos = Math.max(c.lastIndexOf("/"), c.lastIndexOf("\\"));
+                int pos = Math.max(c.lastIndexOf('/'), c.lastIndexOf('\\'));
                 if (pos > 0) {
                     c = c.substring(pos + 1, c.length() - suffix.length());
                     appendModel(findOtherModel(c), others);

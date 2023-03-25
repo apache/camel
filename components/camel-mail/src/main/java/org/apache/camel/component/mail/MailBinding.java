@@ -486,8 +486,8 @@ public class MailBinding {
     }
 
     private String suffixWithUUID(String string) {
-        if (string.lastIndexOf(".") > 0) {
-            string = new StringBuilder(string).insert(string.lastIndexOf("."), "_" + UUID.randomUUID()).toString();
+        if (string.lastIndexOf('.') > 0) {
+            string = new StringBuilder(string).insert(string.lastIndexOf('.'), "_" + UUID.randomUUID()).toString();
         } else {
             string = string + "_" + UUID.randomUUID();
         }

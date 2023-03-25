@@ -397,7 +397,7 @@ public class BomGeneratorMojo extends AbstractMojo {
     private String resolveVersion(MavenProject project, String version) {
         if (version.contains("${")) {
             int start = version.indexOf("${");
-            int end = version.indexOf("}");
+            int end = version.indexOf('}');
             if (end > start) {
                 String prop = version.substring(start + 2, end);
                 String resolved = project.getProperties().getProperty(prop);

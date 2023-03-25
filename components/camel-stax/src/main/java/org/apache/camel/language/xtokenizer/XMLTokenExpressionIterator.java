@@ -412,7 +412,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 }
                 sb.append(token, stag.length() - (empty ? 2 : 1), token.length());
             } else if (mode == 'u') {
-                int bp = token.indexOf(">");
+                int bp = token.indexOf('>');
                 int ep = token.lastIndexOf("</");
                 if (bp > 0 && ep > 0) {
                     sb.append(token, bp + 1, ep);

@@ -204,7 +204,7 @@ public class LevelDBCustomSerializationTest extends CamelTestSupport {
 
             String s = treeNode.textValue();
 
-            return new ObjectWithBinaryField(s.substring(0, s.indexOf(":")), s.substring(s.indexOf(":") + 1).getBytes());
+            return new ObjectWithBinaryField(s.substring(0, s.indexOf(':')), s.substring(s.indexOf(':') + 1).getBytes());
         }
     }
 }

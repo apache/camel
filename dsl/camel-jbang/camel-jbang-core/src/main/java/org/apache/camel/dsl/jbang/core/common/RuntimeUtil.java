@@ -95,7 +95,7 @@ public final class RuntimeUtil {
                 deps = deps.substring(1);
             }
             if (deps.length() > 0 && deps.charAt(deps.length() - 1) == ',') {
-                deps = deps.substring(0, deps.lastIndexOf(","));
+                deps = deps.substring(0, deps.lastIndexOf(','));
             }
         } else {
             deps = "";

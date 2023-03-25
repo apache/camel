@@ -99,7 +99,7 @@ public final class ProcessHelper {
     private static String extractCamelName(String cl, String mvn) {
         if (cl != null) {
             if (cl.contains("camel-spring-boot") && mvn != null) {
-                int pos = cl.lastIndexOf(" ");
+                int pos = cl.lastIndexOf(' ');
                 if (pos != -1) {
                     String after = cl.substring(pos);
                     after = after.trim();
@@ -111,7 +111,7 @@ public final class ProcessHelper {
             } else if (cl.contains("camel-quarkus") && mvn != null) {
                 return mvn;
             } else {
-                int pos = cl.lastIndexOf(" ");
+                int pos = cl.lastIndexOf(' ');
                 if (pos != -1) {
                     String after = cl.substring(pos);
                     after = after.trim();

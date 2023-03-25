@@ -53,7 +53,7 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String wsUri = remaining;
         if (wsUri.matches("^wss?:.*")) {
-            int schemeSeparatorIndex = remaining.indexOf(":");
+            int schemeSeparatorIndex = remaining.indexOf(':');
             String scheme = remaining.substring(0, schemeSeparatorIndex);
             wsUri = scheme + "://" + wsUri.replaceFirst("wss?:/*", "");
         } else {

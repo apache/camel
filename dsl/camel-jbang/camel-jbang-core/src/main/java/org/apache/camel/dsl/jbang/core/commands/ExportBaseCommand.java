@@ -181,7 +181,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     protected abstract Integer export() throws Exception;
 
     protected static String getScheme(String name) {
-        int pos = name.indexOf(":");
+        int pos = name.indexOf(':');
         if (pos != -1) {
             return name.substring(0, pos);
         }

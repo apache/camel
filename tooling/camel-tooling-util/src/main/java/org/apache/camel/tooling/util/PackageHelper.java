@@ -150,9 +150,9 @@ public final class PackageHelper {
     public static String getSchemaKind(String json) {
         int i = json.indexOf("\"kind\"");
         if (i >= 0) {
-            int s = json.indexOf("\"", i + 6);
+            int s = json.indexOf('"', i + 6);
             if (s >= 0) {
-                int e = json.indexOf("\"", s + 1);
+                int e = json.indexOf('"', s + 1);
                 if (e >= 0) {
                     return json.substring(s + 1, e);
                 }

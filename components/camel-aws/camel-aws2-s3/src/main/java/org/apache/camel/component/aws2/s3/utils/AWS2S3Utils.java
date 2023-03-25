@@ -66,7 +66,7 @@ public final class AWS2S3Utils {
     }
 
     public static String determineFileExtension(String keyName) {
-        int extPosition = keyName.lastIndexOf(".");
+        int extPosition = keyName.lastIndexOf('.');
         if (extPosition == -1) {
             return "";
         } else {
@@ -75,7 +75,7 @@ public final class AWS2S3Utils {
     }
 
     public static String determineFileName(String keyName) {
-        int extPosition = keyName.lastIndexOf(".");
+        int extPosition = keyName.lastIndexOf('.');
         if (extPosition == -1) {
             return keyName;
         } else {
