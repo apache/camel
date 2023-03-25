@@ -4,10 +4,7 @@
  */
 package org.apache.camel.component.as2.internal;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.HashMap;
 
 import org.apache.camel.component.as2.AS2Configuration;
@@ -27,7 +24,7 @@ public final class AS2ApiCollection extends ApiCollection<AS2ApiName, AS2Configu
 
     private AS2ApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
-        final Map<AS2ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<AS2ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(AS2ApiName.class);
         final Map<Class<? extends ApiMethod>, AS2ApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;

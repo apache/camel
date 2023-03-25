@@ -4,10 +4,7 @@
  */
 package org.apache.camel.component.olingo4.internal;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.HashMap;
 
 import org.apache.camel.component.olingo4.Olingo4Configuration;
@@ -26,7 +23,7 @@ public final class Olingo4ApiCollection extends ApiCollection<Olingo4ApiName, Ol
 
     private Olingo4ApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
-        final Map<Olingo4ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<Olingo4ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(Olingo4ApiName.class);
         final Map<Class<? extends ApiMethod>, Olingo4ApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;

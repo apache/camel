@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class ServiceBusProducer extends DefaultAsyncProducer {
     private ServiceBusSenderOperations serviceBusSenderOperations;
 
     private final Map<ServiceBusProducerOperationDefinition, BiConsumer<Exchange, AsyncCallback>> operationsToExecute
-            = new HashMap<>();
+            = new EnumMap<>(ServiceBusProducerOperationDefinition.class);
 
     {
         bind(ServiceBusProducerOperationDefinition.sendMessages, sendMessages());

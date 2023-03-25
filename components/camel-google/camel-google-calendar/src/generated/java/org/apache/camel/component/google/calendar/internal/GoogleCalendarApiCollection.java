@@ -4,10 +4,7 @@
  */
 package org.apache.camel.component.google.calendar.internal;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.HashMap;
 
 import org.apache.camel.component.google.calendar.GoogleCalendarConfiguration;
@@ -33,7 +30,7 @@ public final class GoogleCalendarApiCollection extends ApiCollection<GoogleCalen
 
     private GoogleCalendarApiCollection() {
         final Map<String, String> aliases = new HashMap<String, String>();
-        final Map<GoogleCalendarApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<GoogleCalendarApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(GoogleCalendarApiName.class);
         final Map<Class<? extends ApiMethod>, GoogleCalendarApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;

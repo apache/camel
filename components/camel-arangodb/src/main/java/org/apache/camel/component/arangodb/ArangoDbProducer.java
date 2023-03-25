@@ -17,6 +17,7 @@
 package org.apache.camel.component.arangodb;
 
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -49,7 +50,7 @@ import static org.apache.camel.component.arangodb.ArangoDbConstants.RESULT_CLASS
 
 public class ArangoDbProducer extends DefaultProducer {
     private final ArangoDbEndpoint endpoint;
-    private final Map<ArangoDbOperation, Processor> operations = new HashMap<>();
+    private final Map<ArangoDbOperation, Processor> operations = new EnumMap<ArangoDbOperation, Processor>(ArangoDbOperation.class);
 
     {
         bind(ArangoDbOperation.SAVE_DOCUMENT, saveDocument());

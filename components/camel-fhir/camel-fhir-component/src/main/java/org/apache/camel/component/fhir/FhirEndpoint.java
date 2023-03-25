@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.fhir;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -164,7 +165,7 @@ public class FhirEndpoint extends AbstractApiEndpoint<FhirApiName, FhirConfigura
     private Map<ExtraParameters, Object> getExtraParameters(Map<String, Object> properties) {
         Object extraParameters = properties.get(EXTRA_PARAMETERS_PROPERTY);
         if (extraParameters == null) {
-            return new HashMap<>();
+            return new EnumMap<>(ExtraParameters.class);
         }
         return (Map<ExtraParameters, Object>) extraParameters;
     }

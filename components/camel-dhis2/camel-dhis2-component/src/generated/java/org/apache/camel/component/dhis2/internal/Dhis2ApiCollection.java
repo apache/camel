@@ -4,10 +4,7 @@
  */
 package org.apache.camel.component.dhis2.internal;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.HashMap;
 
 import org.apache.camel.component.dhis2.Dhis2Configuration;
@@ -28,7 +25,7 @@ public final class Dhis2ApiCollection extends ApiCollection<Dhis2ApiName, Dhis2C
 
     private Dhis2ApiCollection() {
         final Map<String, String> aliases = new HashMap<String, String>();
-        final Map<Dhis2ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<Dhis2ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(Dhis2ApiName.class);
         final Map<Class<? extends ApiMethod>, Dhis2ApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;

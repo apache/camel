@@ -4,10 +4,7 @@
  */
 package org.apache.camel.component.fhir.internal;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.HashMap;
 
 import org.apache.camel.component.fhir.FhirConfiguration;
@@ -38,7 +35,7 @@ public final class FhirApiCollection extends ApiCollection<FhirApiName, FhirConf
 
     private FhirApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
-        final Map<FhirApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<FhirApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(FhirApiName.class);
         final Map<Class<? extends ApiMethod>, FhirApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;

@@ -4,10 +4,7 @@
  */
 package org.apache.camel.component.google.mail.internal;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.HashMap;
 
 import org.apache.camel.component.google.mail.GoogleMailConfiguration;
@@ -32,7 +29,7 @@ public final class GoogleMailApiCollection extends ApiCollection<GoogleMailApiNa
 
     private GoogleMailApiCollection() {
         final Map<String, String> aliases = new HashMap<String, String>();
-        final Map<GoogleMailApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<GoogleMailApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(GoogleMailApiName.class);
         final Map<Class<? extends ApiMethod>, GoogleMailApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;

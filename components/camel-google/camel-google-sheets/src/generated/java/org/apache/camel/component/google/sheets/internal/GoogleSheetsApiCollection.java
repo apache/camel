@@ -4,10 +4,7 @@
  */
 package org.apache.camel.component.google.sheets.internal;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.HashMap;
 
 import org.apache.camel.component.google.sheets.GoogleSheetsConfiguration;
@@ -27,7 +24,7 @@ public final class GoogleSheetsApiCollection extends ApiCollection<GoogleSheetsA
 
     private GoogleSheetsApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
-        final Map<GoogleSheetsApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<GoogleSheetsApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(GoogleSheetsApiName.class);
         final Map<Class<? extends ApiMethod>, GoogleSheetsApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;

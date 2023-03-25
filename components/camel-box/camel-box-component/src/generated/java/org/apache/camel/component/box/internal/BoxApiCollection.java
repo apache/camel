@@ -4,10 +4,7 @@
  */
 package org.apache.camel.component.box.internal;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.HashMap;
 
 import org.apache.camel.component.box.BoxConfiguration;
@@ -35,7 +32,7 @@ public final class BoxApiCollection extends ApiCollection<BoxApiName, BoxConfigu
 
     private BoxApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
-        final Map<BoxApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<BoxApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(BoxApiName.class);
         final Map<Class<? extends ApiMethod>, BoxApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;

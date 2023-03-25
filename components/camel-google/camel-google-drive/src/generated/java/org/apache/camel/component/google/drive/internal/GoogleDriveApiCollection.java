@@ -4,10 +4,7 @@
  */
 package org.apache.camel.component.google.drive.internal;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.HashMap;
 
 import org.apache.camel.component.google.drive.GoogleDriveConfiguration;
@@ -39,7 +36,7 @@ public final class GoogleDriveApiCollection extends ApiCollection<GoogleDriveApi
 
     private GoogleDriveApiCollection() {
         final Map<String, String> aliases = new HashMap<String, String>();
-        final Map<GoogleDriveApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<GoogleDriveApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(GoogleDriveApiName.class);
         final Map<Class<? extends ApiMethod>, GoogleDriveApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;

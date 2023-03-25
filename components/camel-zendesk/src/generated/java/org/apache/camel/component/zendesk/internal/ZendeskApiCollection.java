@@ -4,10 +4,7 @@
  */
 package org.apache.camel.component.zendesk.internal;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.HashMap;
 
 import org.apache.camel.component.zendesk.ZendeskConfiguration;
@@ -26,7 +23,7 @@ public final class ZendeskApiCollection extends ApiCollection<ZendeskApiName, Ze
 
     private ZendeskApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
-        final Map<ZendeskApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<ZendeskApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(ZendeskApiName.class);
         final Map<Class<? extends ApiMethod>, ZendeskApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;

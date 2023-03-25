@@ -4,10 +4,7 @@
  */
 package org.apache.camel.component.braintree.internal;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.HashMap;
 
 import org.apache.camel.component.braintree.BraintreeConfiguration;
@@ -42,7 +39,7 @@ public final class BraintreeApiCollection extends ApiCollection<BraintreeApiName
 
     private BraintreeApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
-        final Map<BraintreeApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<BraintreeApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(BraintreeApiName.class);
         final Map<Class<? extends ApiMethod>, BraintreeApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;

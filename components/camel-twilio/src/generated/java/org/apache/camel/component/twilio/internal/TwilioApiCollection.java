@@ -4,10 +4,7 @@
  */
 package org.apache.camel.component.twilio.internal;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.HashMap;
 
 import org.apache.camel.component.twilio.TwilioConfiguration;
@@ -81,7 +78,7 @@ public final class TwilioApiCollection extends ApiCollection<TwilioApiName, Twil
 
     private TwilioApiCollection() {
         final Map<String, String> aliases = new HashMap<String, String>();
-        final Map<TwilioApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<TwilioApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(TwilioApiName.class);
         final Map<Class<? extends ApiMethod>, TwilioApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;
