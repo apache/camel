@@ -114,8 +114,8 @@ public class CamelThreadDump extends ActionWatchCommand {
         JsonObject jo = waitForOutputFile(outputFile);
         if (jo != null) {
             JsonArray arr = (JsonArray) jo.get("threads");
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject jt = (JsonObject) arr.get(i);
+            for (Object o : arr) {
+                JsonObject jt = (JsonObject) o;
 
                 Row row = new Row();
                 row.id = jt.getLong("id");
