@@ -116,7 +116,10 @@ public class DynamicRouterTestSupport extends CamelTestSupport {
     protected DynamicRouterControlProducer controlProducer;
 
     @Mock
-    protected PrioritizedFilterProcessor filterProcessor;
+    protected PrioritizedFilterProcessor filterProcessorLowPriority;
+
+    @Mock
+    protected PrioritizedFilterProcessor filterProcessorLowestPriority;
 
     @Mock
     protected DynamicRouterControlMessage controlMessage;
@@ -186,8 +189,10 @@ public class DynamicRouterTestSupport extends CamelTestSupport {
 
         lenient().when(simpleLanguage.createPredicate(anyString())).thenReturn(predicate);
 
-        lenient().when(filterProcessor.getId()).thenReturn(TEST_ID);
-        lenient().when(filterProcessor.getPriority()).thenReturn(Integer.MAX_VALUE);
+        lenient().when(filterProcessorLowPriority.getId()).thenReturn(TEST_ID);
+        lenient().when(filterProcessorLowPriority.getPriority()).thenReturn(Integer.MAX_VALUE - 1000);
+
+        lenient().when(filterProcessorLowestPriority.getPriority()).thenReturn(Integer.MAX_VALUE);
 
         lenient().doNothing().when(asyncCallback).done(anyBoolean());
 
@@ -252,7 +257,7 @@ public class DynamicRouterTestSupport extends CamelTestSupport {
             @Override
             public PrioritizedFilterProcessor getInstance(
                     String id, int priority, CamelContext context, Predicate predicate, Processor processor) {
-                return filterProcessor;
+                return filterProcessorLowPriority;
             }
         };
     }
