@@ -220,13 +220,13 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
             // Check if content of the field is empty
             // This is not possible for mandatory fields
-            if (data.equals("")) {
+            if (data.isEmpty()) {
                 throw new IllegalArgumentException(
                         "The mandatory field defined at the position " + pos + " is empty for the line: " + line);
             }
         }
 
-        // Get Field to be setted
+        // Get Field to be set
         Field field = annotatedFields.get(pos);
         field.setAccessible(true);
 
@@ -247,7 +247,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         // format the data received
         Object value = null;
 
-        if (!data.equals("")) {
+        if (!data.isEmpty()) {
             try {
                 if (quoting && quote != null && (data.contains("\\" + quote) || data.contains(quote)) && quotingEscaped) {
                     value = format.parse(data.replaceAll("\\\\" + quote, "\\" + quote));
@@ -591,7 +591,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
             // Get dataField
             final String res;
-            if (!dataField.columnName().equals("")) {
+            if (!dataField.columnName().isEmpty()) {
                 res = dataField.columnName();
             } else {
                 res = field.getName();

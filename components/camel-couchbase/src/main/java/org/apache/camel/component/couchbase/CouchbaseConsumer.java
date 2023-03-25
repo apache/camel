@@ -87,7 +87,7 @@ public class CouchbaseConsumer extends DefaultScheduledPollConsumer implements R
 
         String rangeStartKey = endpoint.getRangeStartKey();
         String rangeEndKey = endpoint.getRangeEndKey();
-        if ("".equals(rangeStartKey) || "".equals(rangeEndKey)) {
+        if (rangeStartKey.isEmpty() || rangeEndKey.isEmpty()) {
             return;
         }
         viewOptions.startKey(rangeEndKey).endKey(rangeEndKey);

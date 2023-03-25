@@ -101,7 +101,7 @@ public final class CxfUtilsTestHelper {
                     declareNamespace = false;
                 }
             } else {
-                if ("xmlns".equals(name) && "".equals(attrPrefix)) {
+                if ("xmlns".equals(name) && attrPrefix.isEmpty()) {
                     writer.writeNamespace("", attr.getNodeValue());
                     if (attr.getNodeValue().equals(ns)) {
                         declareNamespace = false;
@@ -114,7 +114,7 @@ public final class CxfUtilsTestHelper {
                     String value = attr.getNodeValue();
                     if (attns == null || attns.length() == 0) {
                         writer.writeAttribute(name, value);
-                    } else if (attrPrefix == null || attrPrefix.length() == 0) {
+                    } else if (attrPrefix.length() == 0) {
                         writer.writeAttribute(attns, name, value);
                     } else {
                         writer.writeAttribute(attrPrefix, attns, name, value);

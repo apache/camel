@@ -221,7 +221,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                     token = record.substring(offset - 1, endIndex);
                 }
                 offset += length;
-            } else if (!delimiter.equals("")) {
+            } else if (!delimiter.isEmpty()) {
                 final UnicodeHelper tempToken = new UnicodeHelper(
                         record.substring(offset - 1, record.length()),
                         (this.countGrapheme) ? UnicodeHelper.Method.GRAPHEME : UnicodeHelper.Method.CODEPOINTS);
@@ -246,7 +246,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
                 // Check if content of the field is empty
                 // This is not possible for mandatory fields
-                if (token.equals("")) {
+                if (token.isEmpty()) {
                     throw new IllegalArgumentException(
                             "The mandatory field defined at the position " + pos
                                                        + " is empty for the line: " + line);
@@ -274,10 +274,10 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
             // format the data received
             Object value = null;
 
-            if ("".equals(token)) {
+            if (token.isEmpty()) {
                 token = dataField.defaultValue();
             }
-            if (!"".equals(token)) {
+            if (!token.isEmpty()) {
                 try {
                     value = format.parse(token);
                 } catch (FormatException ie) {
@@ -324,7 +324,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         }
 
         // check for unmapped non-whitespace data at the end of the line
-        if (offset <= record.length() && !(record.substring(offset - 1, record.length())).trim().equals("")
+        if (offset <= record.length() && !(record.substring(offset - 1, record.length())).trim().isEmpty()
                 && !isIgnoreTrailingChars()) {
             throw new IllegalArgumentException(
                     "Unexpected / unmapped characters found at the end of the fixed-length record at line : " + line);
@@ -467,13 +467,13 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                         fieldLength = Integer.parseInt(resultVals.get(0));
                     }
 
-                    if (fieldLength <= 0 && datafield.delimiter().equals("") && datafield.lengthPos() == 0) {
+                    if (fieldLength <= 0 && datafield.delimiter().isEmpty() && datafield.lengthPos() == 0) {
                         throw new IllegalArgumentException(
                                 "Either a delimiter value or length for the field: "
                                                            + field.getName() + " is mandatory.");
                     }
 
-                    if (!datafield.delimiter().equals("")) {
+                    if (!datafield.delimiter().isEmpty()) {
                         result = result + datafield.delimiter();
                     } else {
                         // Get length of the field, alignment (LEFT or RIGHT), pad
