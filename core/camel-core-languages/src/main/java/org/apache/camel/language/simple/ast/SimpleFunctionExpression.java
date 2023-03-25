@@ -1431,8 +1431,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
 
         if (remainder != null) {
             List<String> methods = splitOgnl(remainder);
-            for (int i = 0; i < methods.size(); i++) {
-                String m = methods.get(i);
+            for (String m : methods) {
                 if (m.startsWith("(")) {
                     // its parameters for the function so add as-is and continue
                     sb.append(m);

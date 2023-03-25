@@ -76,9 +76,9 @@ public class ListBlocked extends ProcessWatchCommand {
                         if (jo != null) {
                             JsonArray arr = (JsonArray) jo.get("exchanges");
                             if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
+                                for (Object o : arr) {
                                     row = row.copy();
-                                    jo = (JsonObject) arr.get(i);
+                                    jo = (JsonObject) o;
                                     row.exchangeId = jo.getString("exchangeId");
                                     row.routeId = jo.getString("routeId");
                                     row.nodeId = jo.getString("nodeId");

@@ -163,14 +163,15 @@ public final class SmppUtils {
      * @return          true if the characters can be represented in GSM 3.38
      */
     public static boolean isGsm0338Encodeable(byte[] aMessage) {
-        outer: for (int i = 0; i < aMessage.length; i++) {
+        outer:
+        for (byte b : aMessage) {
             for (int j = 0; j < ISO_GSM_0338.length; j++) {
-                if (ISO_GSM_0338[j] == aMessage[i]) {
+                if (ISO_GSM_0338[j] == b) {
                     continue outer;
                 }
             }
             for (int j = 0; j < ISO_GSM_0338_EXT.length; j++) {
-                if (ISO_GSM_0338_EXT[j][1] == aMessage[i]) {
+                if (ISO_GSM_0338_EXT[j][1] == b) {
                     continue outer;
                 }
             }

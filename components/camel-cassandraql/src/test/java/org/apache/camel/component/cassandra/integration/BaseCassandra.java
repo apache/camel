@@ -70,9 +70,9 @@ public abstract class BaseCassandra implements ConfigurableRoute, CamelTestSuppo
     public void executeScript(String pathToScript) throws IOException {
         String s = IOUtils.toString(getClass().getResourceAsStream("/" + pathToScript), "UTF-8");
         String[] statements = s.split(";");
-        for (int i = 0; i < statements.length; i++) {
-            if (!statements[i].isEmpty()) {
-                executeCql(statements[i]);
+        for (String statement : statements) {
+            if (!statement.isEmpty()) {
+                executeCql(statement);
             }
         }
     }

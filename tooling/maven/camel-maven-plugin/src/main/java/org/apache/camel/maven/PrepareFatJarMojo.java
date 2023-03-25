@@ -220,9 +220,7 @@ public class PrepareFatJarMojo extends AbstractMojo {
     private Collection<Artifact> getAllDependencies() throws MojoExecutionException {
         List<Artifact> artifacts = new ArrayList<>();
 
-        for (Iterator<?> dependencies = project.getDependencies().iterator(); dependencies.hasNext();) {
-            Dependency dependency = (Dependency) dependencies.next();
-
+        for (Dependency dependency : project.getDependencies()) {
             String groupId = dependency.getGroupId();
             String artifactId = dependency.getArtifactId();
 

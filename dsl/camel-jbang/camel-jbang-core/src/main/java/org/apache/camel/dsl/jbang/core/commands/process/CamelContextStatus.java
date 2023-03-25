@@ -109,8 +109,8 @@ public class CamelContextStatus extends ProcessWatchCommand {
                             }
                         }
                         JsonArray array = (JsonArray) root.get("routes");
-                        for (int i = 0; i < array.size(); i++) {
-                            JsonObject o = (JsonObject) array.get(i);
+                        for (Object value : array) {
+                            JsonObject o = (JsonObject) value;
                             String state = o.getString("state");
                             row.routeTotal++;
                             if ("Started".equals(state)) {

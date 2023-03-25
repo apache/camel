@@ -139,9 +139,9 @@ class CamelOpenTelemetryTestSupport extends CamelTestSupport {
 
         List<SpanData> finishedSpans = inMemorySpanExporter.getFinishedSpanItems();
         // Sort spans into separate traces
-        for (int i = 0; i < finishedSpans.size(); i++) {
-            List<SpanData> spans = traces.computeIfAbsent(finishedSpans.get(i).getTraceId(), k -> new ArrayList<>());
-            spans.add(finishedSpans.get(i));
+        for (SpanData finishedSpan : finishedSpans) {
+            List<SpanData> spans = traces.computeIfAbsent(finishedSpan.getTraceId(), k -> new ArrayList<>());
+            spans.add(finishedSpan);
         }
 
         assertEquals(numOfTraces, traces.size());

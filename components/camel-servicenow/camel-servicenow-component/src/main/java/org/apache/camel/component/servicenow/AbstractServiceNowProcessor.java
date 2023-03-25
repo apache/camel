@@ -202,8 +202,8 @@ public abstract class AbstractServiceNowProcessor implements Processor {
 
     protected final ServiceNowDispatcher findDispatcher(Exchange exchange) {
         ServiceNowDispatcher dispatcher = null;
-        for (int i = 0; i < dispatchers.size(); i++) {
-            dispatcher = dispatchers.get(i);
+        for (ServiceNowDispatcher serviceNowDispatcher : dispatchers) {
+            dispatcher = serviceNowDispatcher;
             if (dispatcher.match(exchange)) {
                 return dispatcher;
             }

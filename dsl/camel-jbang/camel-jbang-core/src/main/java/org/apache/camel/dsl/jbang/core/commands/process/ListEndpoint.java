@@ -99,8 +99,8 @@ public class ListEndpoint extends ProcessWatchCommand {
                         JsonObject jo = (JsonObject) root.get("endpoints");
                         if (context != null && jo != null) {
                             JsonArray array = (JsonArray) jo.get("endpoints");
-                            for (int i = 0; i < array.size(); i++) {
-                                JsonObject o = (JsonObject) array.get(i);
+                            for (Object value : array) {
+                                JsonObject o = (JsonObject) value;
                                 Row row = new Row();
                                 row.name = context.getString("name");
                                 if ("CamelJBang".equals(row.name)) {

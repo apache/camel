@@ -79,8 +79,8 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                             return;
                         }
                         JsonArray array = (JsonArray) root.get("routes");
-                        for (int i = 0; i < array.size(); i++) {
-                            JsonObject o = (JsonObject) array.get(i);
+                        for (Object value : array) {
+                            JsonObject o = (JsonObject) value;
                             Row row = new Row();
                             row.name = context.getString("name");
                             if ("CamelJBang".equals(row.name)) {

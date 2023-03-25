@@ -153,8 +153,7 @@ public final class DispositionNotificationContentUtils {
         Map<String, String> extensionFields = new HashMap<>();
         ReceivedContentMic receivedContentMic = null;
 
-        for (int i = 0; i < dispositionNotificationFields.size(); i++) {
-            final CharArrayBuffer fieldLine = dispositionNotificationFields.get(i);
+        for (final CharArrayBuffer fieldLine : dispositionNotificationFields) {
             final Field field = parseDispositionField(fieldLine);
             switch (field.getName().toLowerCase()) {
                 case REPORTING_UA: {
@@ -194,7 +193,7 @@ public final class DispositionNotificationContentUtils {
                     if (dispositionMode == null) {
                         throw new ParseException(
                                 "Invalid '" + MDNField.DISPOSITION + "' field: invalid disposition mode '"
-                                                 + elements[0].getValue() + "'");
+                                        + elements[0].getValue() + "'");
                     }
 
                     String dispositionTypeString = elements[1].getValue();

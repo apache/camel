@@ -83,8 +83,8 @@ public class CamelSourceTop extends ActionWatchCommand {
         JsonObject jo = waitForOutputFile(outputFile);
         if (jo != null) {
             JsonArray arr = (JsonArray) jo.get("processors");
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject o = (JsonObject) arr.get(i);
+            for (Object value : arr) {
+                JsonObject o = (JsonObject) value;
                 Row row = new Row();
                 row.id = o.getString("processorId");
                 row.routeId = o.getString("routeId");

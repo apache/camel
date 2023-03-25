@@ -88,8 +88,8 @@ public class CamelSourceAction extends ActionBaseCommand {
         JsonObject jo = waitForOutputFile(outputFile);
         if (jo != null) {
             JsonArray arr = (JsonArray) jo.get("routes");
-            for (int i = 0; i < arr.size(); i++) {
-                JsonObject o = (JsonObject) arr.get(i);
+            for (Object value : arr) {
+                JsonObject o = (JsonObject) value;
                 Row row = new Row();
                 row.location = extractSourceName(o.getString("source"));
                 // if there are 2+ routes in the same source then we would have duplicates

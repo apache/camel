@@ -76,8 +76,8 @@ public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery
         final int portSize = ports.size();
 
         EndpointPort port;
-        for (int p = 0; p < portSize; p++) {
-            port = ports.get(p);
+        for (EndpointPort endpointPort : ports) {
+            port = endpointPort;
             if (ObjectHelper.isEmpty(this.portName) || this.portName.endsWith(port.getName())) {
                 addServers(name, result, port, subset);
             }
@@ -88,8 +88,8 @@ public class KubernetesClientServiceDiscovery extends KubernetesServiceDiscovery
         final List<EndpointAddress> addresses = subset.getAddresses();
         final int size = addresses.size();
 
-        for (int i = 0; i < size; i++) {
-            servers.add(new DefaultServiceDefinition(name, addresses.get(i).getIp(), port.getPort()));
+        for (EndpointAddress address : addresses) {
+            servers.add(new DefaultServiceDefinition(name, address.getIp(), port.getPort()));
         }
     }
 

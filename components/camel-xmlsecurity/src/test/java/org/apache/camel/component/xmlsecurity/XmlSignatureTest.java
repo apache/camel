@@ -1572,8 +1572,8 @@ public class XmlSignatureTest extends CamelTestSupport {
             @SuppressWarnings("rawtypes")
             List list = keyInfo.getContent();
 
-            for (int i = 0; i < list.size(); i++) {
-                XMLStructure xmlStructure = (XMLStructure) list.get(i);
+            for (Object o : list) {
+                XMLStructure xmlStructure = (XMLStructure) o;
                 if (xmlStructure instanceof KeyValue) {
                     PublicKey pk = null;
                     try {

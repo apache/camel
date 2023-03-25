@@ -89,9 +89,9 @@ public class ListMetric extends ProcessWatchCommand {
                         if (mo != null) {
                             JsonArray arr = (JsonArray) mo.get("counters");
                             if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
+                                for (Object o : arr) {
                                     row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
+                                    JsonObject jo = (JsonObject) o;
                                     row.type = "counter";
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");
@@ -111,9 +111,9 @@ public class ListMetric extends ProcessWatchCommand {
                             }
                             arr = (JsonArray) mo.get("timers");
                             if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
+                                for (Object o : arr) {
                                     row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
+                                    JsonObject jo = (JsonObject) o;
                                     row.type = "timer";
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");
@@ -136,9 +136,9 @@ public class ListMetric extends ProcessWatchCommand {
                             }
                             arr = (JsonArray) mo.get("gauges");
                             if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
+                                for (Object o : arr) {
                                     row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
+                                    JsonObject jo = (JsonObject) o;
                                     row.type = "gauge";
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");
@@ -158,9 +158,9 @@ public class ListMetric extends ProcessWatchCommand {
                             }
                             arr = (JsonArray) mo.get("distribution");
                             if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
+                                for (Object o : arr) {
                                     row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
+                                    JsonObject jo = (JsonObject) o;
                                     row.type = "distribution";
                                     row.metricName = jo.getString("name");
                                     row.metricDescription = jo.getString("description");

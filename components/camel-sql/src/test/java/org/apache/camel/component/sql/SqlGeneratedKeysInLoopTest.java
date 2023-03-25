@@ -95,8 +95,7 @@ public class SqlGeneratedKeysInLoopTest extends CamelTestSupport {
     }
 
     private void checkResults() {
-        for (int i = 0; i < results.length; i++) {
-            Exchange out = results[i];
+        for (Exchange out : results) {
             int id = (Integer) out.getProperty(Exchange.LOOP_INDEX) * 2 + 3;
             @SuppressWarnings("unchecked")
             List<Map<String, Object>> generatedKeys

@@ -105,8 +105,8 @@ public final class ApiConsumerHelper {
 
                     // access elements by position rather than with iterator to
                     // reduce garbage
-                    for (int i = 0; i < size; i++) {
-                        processResult(consumer, result, list.get(i));
+                    for (Object o : list) {
+                        processResult(consumer, result, o);
                     }
 
                     return size;

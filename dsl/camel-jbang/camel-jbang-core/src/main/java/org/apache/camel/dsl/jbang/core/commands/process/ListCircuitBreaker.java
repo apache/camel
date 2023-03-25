@@ -77,9 +77,9 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
                         if (mo != null) {
                             JsonArray arr = (JsonArray) mo.get("circuitBreakers");
                             if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
+                                for (Object o : arr) {
                                     row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
+                                    JsonObject jo = (JsonObject) o;
                                     row.component = "resilience4j";
                                     row.id = jo.getString("id");
                                     row.routeId = jo.getString("routeId");
@@ -97,9 +97,9 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
                         if (mo != null) {
                             JsonArray arr = (JsonArray) mo.get("circuitBreakers");
                             if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
+                                for (Object o : arr) {
                                     row = baseRow.copy();
-                                    JsonObject jo = (JsonObject) arr.get(i);
+                                    JsonObject jo = (JsonObject) o;
                                     row.component = "fault-tolerance";
                                     row.id = jo.getString("id");
                                     row.routeId = jo.getString("routeId");

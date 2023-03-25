@@ -168,9 +168,9 @@ public class ReplyKeyboardMarkup implements Serializable, ReplyMarkup {
 
             public KeyboardBuilder addOneRowByEachButton(List<InlineKeyboardButton> inlineKeyboardButtons) {
 
-                for (Iterator<InlineKeyboardButton> iterator = inlineKeyboardButtons.iterator(); iterator.hasNext();) {
+                for (InlineKeyboardButton inlineKeyboardButton : inlineKeyboardButtons) {
 
-                    keyboard.add(Arrays.asList(iterator.next()));
+                    keyboard.add(Arrays.asList(inlineKeyboardButton));
                 }
 
                 return this;

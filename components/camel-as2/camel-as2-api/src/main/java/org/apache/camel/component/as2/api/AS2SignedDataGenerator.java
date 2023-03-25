@@ -101,9 +101,8 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
         Set<String> micAlgSet = new HashSet<>();
 
         // Collect algorithm names used by pre-calculated signers
-        for (@SuppressWarnings("rawtypes")
-        Iterator it = _signers.iterator(); it.hasNext();) {
-            SignerInformation signer = (SignerInformation) it.next();
+        for (Object o : _signers) {
+            SignerInformation signer = (SignerInformation) o;
             ASN1ObjectIdentifier digestOID = signer.getDigestAlgorithmID().getAlgorithm();
 
             String micAlg = STANDARD_MICALGS.get(digestOID);
@@ -116,9 +115,8 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
         }
 
         // Collect algorithm names used by signer generators
-        for (@SuppressWarnings("rawtypes")
-        Iterator it = signerGens.iterator(); it.hasNext();) {
-            SignerInfoGenerator signerInfoGen = (SignerInfoGenerator) it.next();
+        for (Object signerGen : signerGens) {
+            SignerInfoGenerator signerInfoGen = (SignerInfoGenerator) signerGen;
             ASN1ObjectIdentifier digestOID = signerInfoGen.getDigestAlgorithm().getAlgorithm();
 
             String micAlg = STANDARD_MICALGS.get(digestOID);

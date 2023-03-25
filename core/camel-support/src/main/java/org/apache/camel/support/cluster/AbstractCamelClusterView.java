@@ -111,9 +111,7 @@ public abstract class AbstractCamelClusterView extends ServiceSupport implements
         LockHelper.doWithReadLock(
                 lock,
                 () -> {
-                    for (int i = 0; i < listeners.size(); i++) {
-                        CamelClusterEventListener listener = listeners.get(i);
-
+                    for (CamelClusterEventListener listener : listeners) {
                         if (type.isInstance(listener)) {
                             consumer.accept(type.cast(listener));
                         }

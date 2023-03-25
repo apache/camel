@@ -375,8 +375,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         private String createContextualToken(String token) {
             StringBuilder sb = new StringBuilder();
             if (mode == 'w' && group == 1) {
-                for (int i = 0; i < segments.size(); i++) {
-                    sb.append(segments.get(i));
+                for (String segment : segments) {
+                    sb.append(segment);
                 }
                 sb.append(token);
                 for (int i = path.size() - 1; i >= 0; i--) {
@@ -438,8 +438,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             StringBuilder sb = new StringBuilder();
             if (mode == 'w') {
                 // for wrapped
-                for (int i = 0; i < segments.size(); i++) {
-                    sb.append(segments.get(i));
+                for (String segment : segments) {
+                    sb.append(segment);
                 }
                 for (String s : tokens) {
                     sb.append(s);

@@ -80,9 +80,9 @@ public class ListService extends ProcessWatchCommand {
                         if (jo != null) {
                             JsonArray arr = (JsonArray) jo.get("endpoints");
                             if (arr != null) {
-                                for (int i = 0; i < arr.size(); i++) {
+                                for (Object o : arr) {
                                     row = row.copy();
-                                    jo = (JsonObject) arr.get(i);
+                                    jo = (JsonObject) o;
                                     row.component = "platform-http";
                                     row.protocol = "http";
                                     row.service = jo.getString("url");

@@ -205,8 +205,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             int size = col.size();
             List<ProcessorExchangePair> result = new ArrayList<>(size);
             int index = 0;
-            for (int i = 0; i < size; i++) {
-                Object recipient = col.get(i);
+            for (Object recipient : col) {
                 index = doCreateProcessorExchangePairs(exchange, recipient, result, index);
             }
             return result;

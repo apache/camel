@@ -1248,10 +1248,10 @@ public class MXParser implements XmlPullParser {
                     // assert usePC == true;
                     // write into PC replacement text - do merge for replacement
                     // text!!!!
-                    for (int i = 0; i < resolvedEntity.length; i++) {
+                    for (char c : resolvedEntity) {
                         if (pcEnd >= pc.length)
                             ensurePC(pcEnd);
-                        pc[pcEnd++] = resolvedEntity[i];
+                        pc[pcEnd++] = c;
 
                     }
                     hadCharData = true;
@@ -1972,10 +1972,10 @@ public class MXParser implements XmlPullParser {
                 }
                 // write into PC replacement text - do merge for replacement
                 // text!!!!
-                for (int i = 0; i < resolvedEntity.length; i++) {
+                for (char c : resolvedEntity) {
                     if (pcEnd >= pc.length)
                         ensurePC(pcEnd);
-                    pc[pcEnd++] = resolvedEntity[i];
+                    pc[pcEnd++] = c;
                 }
             } else if (ch == '\t' || ch == '\n' || ch == '\r') {
                 // do attribute value normalization
@@ -2942,9 +2942,9 @@ public class MXParser implements XmlPullParser {
     }
 
     protected char requireInput(char ch, char[] input) throws XmlPullParserException, IOException {
-        for (int i = 0; i < input.length; i++) {
-            if (ch != input[i]) {
-                throw new XmlPullParserException("expected " + printable(input[i]) + " in " + new String(input) + " and not " + printable(ch), this, null);
+        for (char c : input) {
+            if (ch != c) {
+                throw new XmlPullParserException("expected " + printable(c) + " in " + new String(input) + " and not " + printable(ch), this, null);
             }
             ch = more();
         }

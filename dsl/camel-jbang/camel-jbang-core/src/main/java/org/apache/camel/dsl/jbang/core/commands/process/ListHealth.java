@@ -99,8 +99,8 @@ public class ListHealth extends ProcessWatchCommand {
                             return;
                         }
                         JsonArray array = (JsonArray) hc.get("checks");
-                        for (int i = 0; i < array.size(); i++) {
-                            JsonObject o = (JsonObject) array.get(i);
+                        for (Object value : array) {
+                            JsonObject o = (JsonObject) value;
                             Row row = new Row();
                             row.pid = "" + ph.pid();
                             row.uptime = extractSince(ph);
