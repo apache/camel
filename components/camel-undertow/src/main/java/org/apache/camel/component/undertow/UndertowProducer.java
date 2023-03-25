@@ -236,7 +236,7 @@ public class UndertowProducer extends DefaultAsyncProducer {
         super.doStart();
 
         // as in Undertow tests
-        pool = new DefaultByteBufferPool(true, 17 * 1024);
+        pool = new DefaultByteBufferPool(true, 17408); // 17*1024
 
         final Xnio xnio = Xnio.getInstance();
         worker = xnio.createWorker(options);

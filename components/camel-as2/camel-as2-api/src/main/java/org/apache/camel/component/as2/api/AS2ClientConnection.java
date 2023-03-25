@@ -92,7 +92,7 @@ public class AS2ClientConnection {
                 .add(new RequestExpectContinue(true)).build();
 
         HttpConnectionFactory<HttpRoute, ManagedHttpClientConnection> connFactory = (route, config) -> {
-            return new AS2BHttpClientConnection(UUID.randomUUID().toString(), 8 * 1024);
+            return new AS2BHttpClientConnection(UUID.randomUUID().toString(), 8192);
         };
 
         connectionPoolManager = new PoolingHttpClientConnectionManager(connFactory);
@@ -121,7 +121,7 @@ public class AS2ClientConnection {
         };
 
         // Check if a connection can be established
-        try (AS2BHttpClientConnection testConnection = new AS2BHttpClientConnection("test", 8 * 1024)) {
+        try (AS2BHttpClientConnection testConnection = new AS2BHttpClientConnection("test", 8192)) {
             testConnection.bind(new Socket(targetHost.getHostName(), targetHost.getPort()));
         }
 

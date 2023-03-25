@@ -43,8 +43,8 @@ public class ConditionalExceptionProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         setCount(getCount() + 1);
 
-        if (getCount() > maxCalls * 2) {
-            errorMsg = "Expected only " + maxCalls * 2 + " calls to process() but encountered "
+        if (getCount() > maxCalls << 1) {
+            errorMsg = "Expected only " + (maxCalls << 1) + " calls to process() but encountered "
                        + getCount()
                        + ". There should be 1 for intentionally triggered rollback, and 1 for redelivery for each call.";
         }

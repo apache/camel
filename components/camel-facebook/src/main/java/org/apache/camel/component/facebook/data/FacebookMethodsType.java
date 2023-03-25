@@ -839,8 +839,8 @@ public enum FacebookMethodsType {
         this.argNames = new ArrayList<>(nArgs);
         this.argTypes = new ArrayList<>(nArgs);
         for (int i = 0; i < nArgs; i++) {
-            this.argTypes.add((Class<?>) args[i * 2]);
-            this.argNames.add((String) args[i * 2 + 1]);
+            this.argTypes.add((Class<?>) args[(i << 1)]);
+            this.argNames.add((String) args[(i << 1) + 1]);
         }
 
         // find method in Facebook type

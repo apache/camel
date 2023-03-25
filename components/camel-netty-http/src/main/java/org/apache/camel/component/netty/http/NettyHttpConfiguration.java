@@ -65,8 +65,8 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private boolean disableStreamCache;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean send503whenSuspended = true;
-    @UriParam(label = "consumer,advanced", defaultValue = "" + 1024 * 1024)
-    private int chunkedMaxContentLength = 1024 * 1024;
+    @UriParam(label = "consumer,advanced", defaultValue = "1048576")
+    private int chunkedMaxContentLength = 1048576; // 1024 * 1024
     @UriParam(label = "consumer,advanced", defaultValue = "8192")
     private int maxHeaderSize = 8192;
     @UriParam(label = "consumer,advanced", defaultValue = "4096")

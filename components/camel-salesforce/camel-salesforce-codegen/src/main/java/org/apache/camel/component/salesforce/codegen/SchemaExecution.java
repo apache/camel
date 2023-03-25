@@ -73,15 +73,14 @@ public class SchemaExecution extends AbstractSalesforceExecution {
 
         final Path schemaFilePath = outputDirectory.toPath().resolve(jsonSchemaFilename);
         try {
-            Files.write(schemaFilePath,
-                    JsonUtils.getJsonSchemaString(schemaObjectMapper, allSchemas, jsonSchemaId)
-                            .getBytes(StandardCharsets.UTF_8));
+            Files.writeString(schemaFilePath,
+                    JsonUtils.getJsonSchemaString(schemaObjectMapper, allSchemas, jsonSchemaId));
         } catch (final IOException e) {
             throw new RuntimeException("Unable to generate JSON Schema source file: " + schemaFilePath, e);
         }
 
         getLog().info(
-                String.format("Successfully generated %s JSON Types in file %s", descriptions.count() * 2, schemaFilePath));
+                String.format("Successfully generated %s JSON Types in file %s", descriptions.count() << 1, schemaFilePath));
     }
 
     @Override

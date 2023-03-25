@@ -459,7 +459,7 @@ public final class EntityParser {
                 // Determine content transfer encoding
                 String contentTransferEncoding = HttpMessageUtils.getHeaderValue(message, AS2Header.CONTENT_TRANSFER_ENCODING);
 
-                AS2SessionInputBuffer inBuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), 8 * 1024);
+                AS2SessionInputBuffer inBuffer = new AS2SessionInputBuffer(new HttpTransportMetricsImpl(), DEFAULT_BUFFER_SIZE);
                 inBuffer.bind(entity.getContent());
 
                 switch (contentType.getMimeType().toLowerCase()) {

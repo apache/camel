@@ -309,7 +309,7 @@ class Yylex {
         /* is the buffer big enough? */
         if (zzCurrentPos >= zzBuffer.length) {
             /* if not: blow it up */
-            char newBuffer[] = new char[zzCurrentPos * 2];
+            char newBuffer[] = new char[(zzCurrentPos << 1)];
             System.arraycopy(zzBuffer, 0, newBuffer, 0, zzBuffer.length);
             zzBuffer = newBuffer;
         }

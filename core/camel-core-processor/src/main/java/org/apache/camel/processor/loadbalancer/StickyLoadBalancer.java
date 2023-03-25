@@ -30,7 +30,7 @@ import org.apache.camel.Expression;
 public class StickyLoadBalancer extends QueueLoadBalancer {
     private Expression correlationExpression;
     private RoundRobinLoadBalancer loadBalancer;
-    private int numberOfHashGroups = 64 * 1024;
+    private int numberOfHashGroups = 65536; // 64 * 1024
     private final Map<Object, AsyncProcessor> stickyMap = new ConcurrentHashMap<>();
 
     public StickyLoadBalancer(Expression correlationExpression) {

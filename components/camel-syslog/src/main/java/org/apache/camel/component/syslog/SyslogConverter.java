@@ -96,7 +96,7 @@ public final class SyslogConverter {
                 message.setHostname("UNKNOWN_HOST");
             }
         }
-        sbr.append(message.getFacility().ordinal() * 8 + message.getSeverity().ordinal());
+        sbr.append((message.getFacility().ordinal() << 3) + message.getSeverity().ordinal());
         sbr.append(">");
 
         // version number

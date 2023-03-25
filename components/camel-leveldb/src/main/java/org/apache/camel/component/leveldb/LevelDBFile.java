@@ -49,7 +49,7 @@ public class LevelDBFile implements Service {
     private int writeBufferSize = 4 << 20;
     private int maxOpenFiles = 1000;
     private int blockRestartInterval = 16;
-    private int blockSize = 4 * 1024;
+    private int blockSize = 4096; // 4 * 1024
     private String compressionType;
     private boolean verifyChecksums = true;
     private boolean paranoidChecks;

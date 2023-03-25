@@ -116,7 +116,7 @@ public class Hl7UtilTest {
     @Test
     public void testGenerateInvalidPayloadExceptionMessageWithLengthLargerThanArraySize() {
         byte[] payload = TEST_MESSAGE.getBytes();
-        String message = hl7util.generateInvalidPayloadExceptionMessage(payload, payload.length * 2);
+        String message = hl7util.generateInvalidPayloadExceptionMessage(payload, payload.length << 1);
 
         assertNull(message, "Valid payload should result in a null message");
     }

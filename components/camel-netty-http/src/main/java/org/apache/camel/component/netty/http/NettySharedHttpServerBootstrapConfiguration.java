@@ -20,7 +20,7 @@ import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 
 public class NettySharedHttpServerBootstrapConfiguration extends NettyServerBootstrapConfiguration {
 
-    private int chunkedMaxContentLength = 1024 * 1024;
+    private int chunkedMaxContentLength = 1048576; // 1024 * 1024
     private boolean chunked = true;
     private boolean compression;
     private int maxHeaderSize = 8192;

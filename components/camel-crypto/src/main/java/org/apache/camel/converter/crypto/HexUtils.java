@@ -37,7 +37,7 @@ public final class HexUtils {
     public static String byteArrayToHexString(byte in[], int start, int length) {
         String asHexString = null;
         if (in != null) {
-            StringBuilder out = new StringBuilder(in.length * 2);
+            StringBuilder out = new StringBuilder(in.length << 1);
             for (int x = start; x < length; x++) {
                 int nybble = in[x] & 0xF0;
                 nybble = nybble >>> 4;

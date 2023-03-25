@@ -154,7 +154,7 @@ public class NettyComponent extends DefaultComponent implements SSLContextParame
     protected void doStart() throws Exception {
         //Only setup the executorService if it is needed
         if (configuration.isUsingExecutorService() && executorService == null) {
-            int netty = SystemPropertyUtil.getInt("io.netty.eventLoopThreads", NettyRuntime.availableProcessors() * 2);
+            int netty = SystemPropertyUtil.getInt("io.netty.eventLoopThreads", NettyRuntime.availableProcessors() << 1);
             // we want one more thread than netty uses for its event loop
             // and if there is a custom size for maximum pool size then use it, unless netty event loops has more threads
             // and therefore we use math.max to find the highest value

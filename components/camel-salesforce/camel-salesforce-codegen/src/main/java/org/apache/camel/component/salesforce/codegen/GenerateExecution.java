@@ -524,7 +524,7 @@ public class GenerateExecution extends AbstractSalesforceExecution {
             }
         }
 
-        getLog().info(String.format("Successfully generated %s Java Classes", descriptions.count() * 2));
+        getLog().info(String.format("Successfully generated %s Java Classes", descriptions.count() << 1));
     }
 
     @Override

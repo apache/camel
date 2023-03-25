@@ -455,7 +455,7 @@ public final class MessageHelper {
      * @return             the XML
      */
     public static String dumpAsXml(Message message, boolean includeBody, int indent) {
-        return dumpAsXml(message, includeBody, indent, false, true, 128 * 1024);
+        return dumpAsXml(message, includeBody, indent, false, true, 131072);
     }
 
     /**
@@ -832,7 +832,7 @@ public final class MessageHelper {
      * @return             the JSon
      */
     public static String dumpAsJSon(Message message, boolean includeBody, int indent) {
-        return dumpAsJSon(message, includeBody, indent, false, true, 128 * 1024, true);
+        return dumpAsJSon(message, includeBody, indent, false, true, 131072, true);
     }
 
     /**

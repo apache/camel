@@ -123,7 +123,7 @@ public class AS2ServerConnection {
         private HttpServerConnection serverConnection;
 
         public RequestHandlerThread(HttpService httpService, Socket inSocket) throws IOException {
-            final int bufSize = 8 * 1024;
+            final int bufSize = 8192;
             final AS2BHttpServerConnection inConn = new AS2BHttpServerConnection(bufSize);
             LOG.info("Incoming connection from {}", inSocket.getInetAddress());
             inConn.bind(inSocket);
