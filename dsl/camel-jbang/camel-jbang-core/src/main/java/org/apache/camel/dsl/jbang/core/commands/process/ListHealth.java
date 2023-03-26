@@ -273,7 +273,7 @@ public class ListHealth extends ProcessWatchCommand {
 
     protected String getId(Row r) {
         if (r.group != null) {
-            return r.group + "/" + r.id;
+            return r.group + '/' + r.id;
         } else {
             return r.id;
         }
@@ -294,14 +294,14 @@ public class ListHealth extends ProcessWatchCommand {
         String s1 = r.total != null && !"0".equals(r.total) ? r.total : "-";
         String s2 = r.success != null && !"0".equals(r.success) ? r.success : "-";
         String s3 = r.failure != null && !"0".equals(r.failure) ? r.failure : "-";
-        return s1 + "/" + s2 + "/" + s3;
+        return s1 + '/' + s2 + '/' + s3;
     }
 
     protected String getSince(Row r) {
         String s1 = r.sinceLast != null ? r.sinceLast : "-";
         String s2 = r.sinceStartSuccess != null ? r.sinceStartSuccess : "-";
         String s3 = r.sinceStartFailure != null ? r.sinceStartFailure : "-";
-        return s1 + "/" + s2 + "/" + s3;
+        return s1 + '/' + s2 + '/' + s3;
     }
 
     private static class Row {

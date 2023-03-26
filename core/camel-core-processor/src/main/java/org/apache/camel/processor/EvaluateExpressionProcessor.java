@@ -52,12 +52,12 @@ public class EvaluateExpressionProcessor extends AsyncProcessorSupport implement
 
     @Override
     public String toString() {
-        return "EvalExpression[" + expression + "]";
+        return "EvalExpression[" + expression + ']';
     }
 
     @Override
     public String getTraceLabel() {
-        return "eval[" + expression + "]";
+        return "eval[" + expression + ']';
     }
 
 }

@@ -173,7 +173,7 @@ public class TrustManagersParameters extends JsseParameters {
         if (trustManager != null) {
             builder.append("TrustManagerType[trustManager=");
             builder.append(trustManager);
-            builder.append("]");
+            builder.append(']');
         } else {
             builder.append("TrustManagerType[keyStore=");
             builder.append(keyStore);
@@ -181,7 +181,7 @@ public class TrustManagersParameters extends JsseParameters {
             builder.append(provider);
             builder.append(", algorithm=");
             builder.append(algorithm);
-            builder.append("]");
+            builder.append(']');
         }
         return builder.toString();
     }

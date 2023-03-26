@@ -84,7 +84,7 @@ public class KameletMain extends MainCommandLineSupport {
     public KameletMain(String overrides) {
         Objects.requireNonNull(overrides);
 
-        String locations = overrides + "," + DEFAULT_KAMELETS_LOCATION;
+        String locations = overrides + ',' + DEFAULT_KAMELETS_LOCATION;
 
         configureInitialProperties(locations);
     }

@@ -155,7 +155,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     @Override
     protected String createEndpointUri() {
-        return "xmpp://" + host + ":" + port + "/" + getParticipant() + "?serviceName=" + serviceName;
+        return "xmpp://" + host + ':' + port + '/' + getParticipant() + "?serviceName=" + serviceName;
     }
 
     public synchronized XMPPTCPConnection createConnection()
@@ -241,7 +241,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
             return participant;
         }
 
-        return participant + "@" + connection.getXMPPServiceDomain().toString();
+        return participant + '@' + connection.getXMPPServiceDomain().toString();
     }
 
     /*
@@ -266,19 +266,19 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
                             .build());
         }
 
-        return room + "@" + xmppServiceDomains.iterator().next();
+        return room + '@' + xmppServiceDomains.iterator().next();
     }
 
     public String getConnectionDescription() {
-        return host + ":" + port + "/" + serviceName;
+        return host + ':' + port + '/' + serviceName;
     }
 
     public static String getConnectionMessage(XMPPConnection connection) {
-        return connection.getHost() + ":" + connection.getPort() + "/" + connection.getXMPPServiceDomain();
+        return connection.getHost() + ':' + connection.getPort() + '/' + connection.getXMPPServiceDomain();
     }
 
     public String getChatId() {
-        return "Chat:" + getParticipant() + ":" + getUser();
+        return "Chat:" + getParticipant() + ':' + getUser();
     }
 
     // Properties

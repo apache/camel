@@ -55,6 +55,6 @@ public class HeaderDto implements Cloneable, Serializable {
 
     @Override
     public String toString() {
-        return "HeaderDto [org=" + org + ", type=" + type + ", key=" + key + "]";
+        return "HeaderDto [org=" + org + ", type=" + type + ", key=" + key + ']';
     }
 }

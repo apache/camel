@@ -1474,15 +1474,15 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
                 char next = appendChars.charAt(i + 1);
                 // special for new line, tabs and carriage return
                 if ('n' == next) {
-                    sb.append("\n");
+                    sb.append('\n');
                     i++;
                     continue;
                 } else if ('t' == next) {
-                    sb.append("\t");
+                    sb.append('\t');
                     i++;
                     continue;
                 } else if ('r' == next) {
-                    sb.append("\r");
+                    sb.append('\r');
                     i++;
                     continue;
                 }

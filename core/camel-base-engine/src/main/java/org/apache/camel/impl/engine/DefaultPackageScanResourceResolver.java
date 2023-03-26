@@ -114,7 +114,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
         // If the URL is a jar, the URLClassloader.getResources() seems to require a trailing slash.
         // The trailing slash is harmless for other URLs
         if (!packageName.endsWith("/")) {
-            packageName = packageName + "/";
+            packageName = packageName + '/';
         }
 
         Set<ClassLoader> set = getClassLoaders();
@@ -313,7 +313,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             builder = new StringBuilder(100);
             String name = file.getName();
             name = name.trim();
-            builder.append(parent).append("/").append(name);
+            builder.append(parent).append('/').append(name);
             String packageOrClass = parent == null ? name : builder.toString();
 
             if (file.isDirectory()) {

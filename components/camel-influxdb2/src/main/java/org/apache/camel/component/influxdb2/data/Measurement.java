@@ -44,7 +44,7 @@ public final class Measurement {
         if (!measurement.getClass().isAnnotationPresent(com.influxdb.annotations.Measurement.class)) {
             throw new IllegalArgumentException(
                     "There is no " + com.influxdb.annotations.Measurement.class.getCanonicalName() + " annotation for "
-                                               + measurement + "[" + measurement.getClass() + "]");
+                                               + measurement + '[' + measurement.getClass() + ']');
         }
     }
 

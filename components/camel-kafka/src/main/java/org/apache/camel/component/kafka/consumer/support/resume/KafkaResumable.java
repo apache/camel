@@ -55,7 +55,7 @@ public final class KafkaResumable implements Resumable {
         Integer partition = exchange.getMessage().getHeader(KafkaConstants.PARTITION, Integer.class);
         Long offset = exchange.getMessage().getHeader(KafkaConstants.OFFSET, Long.class);
 
-        String topicPartition = topic + "/" + partition;
+        String topicPartition = topic + '/' + partition;
 
         return new KafkaResumable(topicPartition, offset);
     }

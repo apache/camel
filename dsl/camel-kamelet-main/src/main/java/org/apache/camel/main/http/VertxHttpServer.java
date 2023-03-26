@@ -145,7 +145,7 @@ public final class VertxHttpServer {
                                 for (HttpEndpointModel u : endpoints) {
                                     String line = "http://0.0.0.0:" + port + u.getUri();
                                     if (u.getVerbs() != null) {
-                                        line += " (" + u.getVerbs() + ")";
+                                        line += " (" + u.getVerbs() + ')';
                                     }
                                     LOG.info("    {}", line);
                                 }
@@ -265,7 +265,7 @@ public final class VertxHttpServer {
                         if (include && c.supportMediaType(mediaType)) {
                             Object out = c.call(mediaType, params);
                             if (out != null && mediaType == DevConsole.MediaType.TEXT) {
-                                sb.append(c.getDisplayName()).append(":");
+                                sb.append(c.getDisplayName()).append(':');
                                 sb.append("\n\n");
                                 sb.append(out);
                                 sb.append("\n\n");
@@ -421,11 +421,11 @@ public final class VertxHttpServer {
                     v = ""; // in case of null value
                 }
                 boolean last = !it.hasNext();
-                sb.append("                 \"").append(k).append("\": \"").append(v).append("\"");
+                sb.append("                 \"").append(k).append("\": \"").append(v).append('"');
                 if (!last) {
-                    sb.append(",");
+                    sb.append(',');
                 }
-                sb.append("\n");
+                sb.append('\n');
             }
             sb.append("            }\n");
         }

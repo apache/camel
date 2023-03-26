@@ -93,7 +93,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
 
             StringBuilder sb = new StringBuilder();
             sb.append(String.format(tracingFormat, "   ", routeId, label));
-            sb.append(" ");
+            sb.append(' ');
             String data = exchangeFormatter.format(exchange);
             sb.append(data);
             String out = sb.toString();
@@ -117,7 +117,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         // 33 characters, anyway. Cut this to 50 characters. This will give enough space for removing
         // characters in the sanitizeUri method and will be reasonably fast
         String uri = route.getEndpointUrl();
-        String label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(uri, 50) + "]");
+        String label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(uri, 50) + ']');
 
         // the arrow has a * if its a new exchange that is starting
         boolean original = route.getRouteId().equals(exchange.getFromRouteId());
@@ -125,7 +125,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
 
         StringBuilder sb = new StringBuilder();
         sb.append(String.format(tracingFormat, arrow, route.getRouteId(), label));
-        sb.append(" ");
+        sb.append(' ');
         String data = exchangeFormatter.format(exchange);
         sb.append(data);
         String out = sb.toString();
@@ -143,7 +143,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
         // 33 characters, anyway. Cut this to 50 characters. This will give enough space for removing
         // characters in the sanitizeUri method and will be reasonably fast
         String uri = route.getEndpointUrl();
-        String label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(uri, 50) + "]");
+        String label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(uri, 50) + ']');
 
         // the arrow has a * if its an exchange that is done
         boolean original = route.getRouteId().equals(exchange.getFromRouteId());
@@ -151,7 +151,7 @@ public class DefaultTracer extends ServiceSupport implements CamelContextAware, 
 
         StringBuilder sb = new StringBuilder();
         sb.append(String.format(tracingFormat, arrow, route.getRouteId(), label));
-        sb.append(" ");
+        sb.append(' ');
         String data = exchangeFormatter.format(exchange);
         sb.append(data);
         String out = sb.toString();

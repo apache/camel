@@ -83,8 +83,8 @@ public class Annotation {
             if (c == '"' || c == '\\') {
                 if (sb == null) {
                     sb = new StringBuilder();
-                    sb.append("\"");
-                    sb.append("\\");
+                    sb.append('"');
+                    sb.append('\\');
                     sb.append(c);
                 }
             } else {
@@ -94,9 +94,9 @@ public class Annotation {
             }
         }
         if (sb == null) {
-            return "\"" + value + "\"";
+            return '"' + value + '"';
         } else {
-            sb.append("\"");
+            sb.append('"');
             return sb.toString();
         }
     }

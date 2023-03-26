@@ -72,6 +72,6 @@ public class OgnlExpression extends ExpressionSupport {
 
     @Override
     public String toString() {
-        return "OGNL[" + expressionString + "]";
+        return "OGNL[" + expressionString + ']';
     }
 }

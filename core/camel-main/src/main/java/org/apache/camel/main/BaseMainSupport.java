@@ -1322,8 +1322,8 @@ public abstract class BaseMainSupport extends BaseService {
                         "Cannot resolve DevConsole with id: " + name);
             }
             // configure all the properties on the console at once (to ensure they are configured in right order)
-            OrderedLocationProperties config = MainHelper.extractProperties(properties, name + ".");
-            setPropertiesOnTarget(camelContext, console, config, "camel.devConsole." + name + ".", failIfNotSet, true,
+            OrderedLocationProperties config = MainHelper.extractProperties(properties, name + '.');
+            setPropertiesOnTarget(camelContext, console, config, "camel.devConsole." + name + '.', failIfNotSet, true,
                     autoConfiguredProperties);
         }
     }
@@ -1356,8 +1356,8 @@ public abstract class BaseMainSupport extends BaseService {
                 target = target.hashicorp();
             }
             // configure all the properties on the vault at once (to ensure they are configured in right order)
-            OrderedLocationProperties config = MainHelper.extractProperties(properties, name + ".");
-            setPropertiesOnTarget(camelContext, target, config, "camel.vault." + name + ".", failIfNotSet, true,
+            OrderedLocationProperties config = MainHelper.extractProperties(properties, name + '.');
+            setPropertiesOnTarget(camelContext, target, config, "camel.vault." + name + '.', failIfNotSet, true,
                     autoConfiguredProperties);
         }
     }
@@ -1407,7 +1407,7 @@ public abstract class BaseMainSupport extends BaseService {
             if (camelContext.getRegistry().lookupByName(name) == null) {
 
                 // is the config list or map style
-                OrderedLocationProperties config = MainHelper.extractProperties(properties, name + "[", "]", false);
+                OrderedLocationProperties config = MainHelper.extractProperties(properties, name + '[', "]", false);
                 boolean list = config.keySet().stream().map(Object::toString).allMatch(StringHelper::isDigit);
 
                 // register bean as a list or map
@@ -1429,8 +1429,8 @@ public abstract class BaseMainSupport extends BaseService {
                         "Cannot resolve bean with name " + name);
             }
             // configure all the properties on the bean at once (to ensure they are configured in right order)
-            OrderedLocationProperties config = MainHelper.extractProperties(properties, name + ".");
-            setPropertiesOnTarget(camelContext, bean, config, optionPrefix + name + ".", failIfNotSet, ignoreCase,
+            OrderedLocationProperties config = MainHelper.extractProperties(properties, name + '.');
+            setPropertiesOnTarget(camelContext, bean, config, optionPrefix + name + '.', failIfNotSet, ignoreCase,
                     autoConfiguredProperties);
         }
         // then set properties per bean (map/list style)
@@ -1441,16 +1441,16 @@ public abstract class BaseMainSupport extends BaseService {
                         "Cannot resolve bean with name " + name);
             }
             // configure all the properties on the bean at once (to ensure they are configured in right order)
-            OrderedLocationProperties config = MainHelper.extractProperties(properties, name + "[", "]", true, key -> {
+            OrderedLocationProperties config = MainHelper.extractProperties(properties, name + '[', "]", true, key -> {
                 // when configuring map/list we want the keys to include the square brackets
                 // (so we know it is a map/list style and not dot style syntax)
                 // and therefore only remove the option prefix name
-                if (key.startsWith(name + "[")) {
+                if (key.startsWith(name + '[')) {
                     return key.substring(name.length());
                 }
                 return key;
             });
-            setPropertiesOnTarget(camelContext, bean, config, optionPrefix + name + ".", failIfNotSet, ignoreCase,
+            setPropertiesOnTarget(camelContext, bean, config, optionPrefix + name + '.', failIfNotSet, ignoreCase,
                     autoConfiguredProperties);
         }
     }
@@ -1755,7 +1755,7 @@ public abstract class BaseMainSupport extends BaseService {
                 values.forEach((k, v) -> {
                     String stringValue = v != null ? v.toString() : null;
                     LOG.warn("Property ({}={}) not auto-configured with name: {} on bean: {} with value: {}",
-                            pok.getOptionPrefix() + "." + k, stringValue, k, pok.getInstance(), stringValue);
+                            pok.getOptionPrefix() + '.' + k, stringValue, k, pok.getInstance(), stringValue);
                 });
             }
         }

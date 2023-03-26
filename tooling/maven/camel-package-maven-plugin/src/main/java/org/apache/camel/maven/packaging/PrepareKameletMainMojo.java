@@ -142,7 +142,7 @@ public class PrepareKameletMainMojo extends AbstractMojo {
             throw new MojoFailureException("Error loading license-header.txt file", e);
         }
 
-        String source = String.join("\n", lines) + "\n";
+        String source = String.join("\n", lines) + '\n';
         writeSourceIfChanged(source, "resources", "camel-component-known-dependencies.properties", genDir);
     }
 

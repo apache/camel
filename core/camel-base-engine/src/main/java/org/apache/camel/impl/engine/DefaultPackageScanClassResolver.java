@@ -304,7 +304,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver
             String name = file.getName();
             if (name != null) {
                 name = name.trim();
-                builder.append(parent).append("/").append(name);
+                builder.append(parent).append('/').append(name);
                 String packageOrClass = parent == null ? name : builder.toString();
 
                 if (file.isDirectory()) {

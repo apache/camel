@@ -73,7 +73,7 @@ public final class CatalogHelper {
             String line;
             while ((line = reader.readLine()) != null) {
                 builder.append(line);
-                builder.append("\n");
+                builder.append('\n');
             }
             return builder.toString();
         }

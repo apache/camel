@@ -675,7 +675,7 @@ public final class Olingo2AppImpl implements Olingo2App {
                                     if (request instanceof Olingo2BatchChangeRequest
                                             && ((Olingo2BatchChangeRequest) request).getContentId() != null) {
 
-                                        contentIdLocationMap.put("$" + ((Olingo2BatchChangeRequest) request).getContentId(),
+                                        contentIdLocationMap.put('$' + ((Olingo2BatchChangeRequest) request).getContentId(),
                                                 response.getHeader(HttpHeaders.LOCATION));
                                     }
 
@@ -964,7 +964,7 @@ public final class Olingo2AppImpl implements Olingo2App {
 
         final String contentId = batchRequest.getContentId();
         if (contentId != null) {
-            contentIdMap.put("$" + contentId, resourcePath);
+            contentIdMap.put('$' + contentId, resourcePath);
         }
         return BatchChangeSetPart.uri(createBatchUri(batchRequest)).method(batchRequest.getOperation().getHttpMethod())
                 .contentId(contentId).headers(headers)
@@ -1022,7 +1022,7 @@ public final class Olingo2AppImpl implements Olingo2App {
         if (keyProperties.size() == 1) {
             referencedEntity.append("('dummy')");
         } else {
-            referencedEntity.append("(");
+            referencedEntity.append('(');
             for (EdmProperty keyProperty : keyProperties) {
                 referencedEntity.append(keyProperty.getName()).append('=').append("'dummy',");
             }
@@ -1135,7 +1135,7 @@ public final class Olingo2AppImpl implements Olingo2App {
 
         final StringBuilder absolutUri = new StringBuilder(serviceUri).append(SEPARATOR).append(resourcePath);
         if (queryParams != null && !queryParams.isEmpty()) {
-            absolutUri.append("?");
+            absolutUri.append('?');
             int nParams = queryParams.size();
             int index = 0;
             for (Map.Entry<String, String> entry : queryParams.entrySet()) {

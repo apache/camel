@@ -105,7 +105,7 @@ public class MethodInfo {
 
         @Override
         public String toString() {
-            return "DynamicRouter[invoking: " + method + " on bean: " + pojo + "]";
+            return "DynamicRouter[invoking: " + method + " on bean: " + pojo + ']';
         }
     }
 

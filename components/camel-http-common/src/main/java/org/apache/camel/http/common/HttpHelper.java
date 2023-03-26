@@ -212,13 +212,13 @@ public final class HttpHelper {
                     if (uri.endsWith("/") && path.startsWith("/")) {
                         uri = uri.concat(path.substring(1));
                     } else {
-                        uri = uri.endsWith("/") || path.startsWith("/") ? uri : uri + "/";
+                        uri = uri.endsWith("/") || path.startsWith("/") ? uri : uri + '/';
                         uri = uri.concat(path);
                     }
                 } else {
                     // there are query params, so inject the relative path in the right place
                     String base = uri.substring(0, idx);
-                    base = base.endsWith("/") ? base : base + "/";
+                    base = base.endsWith("/") ? base : base + '/';
                     base = base.concat(path.startsWith("/") ? path.substring(1) : path);
                     uri = base.concat(uri.substring(idx));
                 }

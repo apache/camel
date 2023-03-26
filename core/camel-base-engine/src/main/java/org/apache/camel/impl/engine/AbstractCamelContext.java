@@ -976,7 +976,7 @@ public abstract class AbstractCamelContext extends BaseService
     protected NormalizedUri getEndpointKey(String uri, Endpoint endpoint) {
         if (endpoint != null && !endpoint.isSingleton()) {
             int counter = endpointKeyCounter.incrementAndGet();
-            return NormalizedUri.newNormalizedUri(uri + ":" + counter, false);
+            return NormalizedUri.newNormalizedUri(uri + ':' + counter, false);
         } else {
             return NormalizedUri.newNormalizedUri(uri, false);
         }
@@ -1617,7 +1617,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         String packageName = clazz.getPackage().getName();
         packageName = packageName.replace('.', '/');
-        String path = packageName + "/" + componentName + ".json";
+        String path = packageName + '/' + componentName + ".json";
 
         ClassResolver resolver = getClassResolver();
         InputStream inputStream = resolver.loadResourceAsStream(path);
@@ -1645,7 +1645,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         String packageName = clazz.getPackage().getName();
         packageName = packageName.replace('.', '/');
-        String path = packageName + "/" + dataFormatName + ".json";
+        String path = packageName + '/' + dataFormatName + ".json";
 
         ClassResolver resolver = getClassResolver();
         InputStream inputStream = resolver.loadResourceAsStream(path);
@@ -1673,7 +1673,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         String packageName = clazz.getPackage().getName();
         packageName = packageName.replace('.', '/');
-        String path = packageName + "/" + languageName + ".json";
+        String path = packageName + '/' + languageName + ".json";
 
         ClassResolver resolver = getClassResolver();
         InputStream inputStream = resolver.loadResourceAsStream(path);
@@ -1696,7 +1696,7 @@ public abstract class AbstractCamelContext extends BaseService
         // we find it
         String[] subPackages = new String[] { "", "/config", "/dataformat", "/language", "/loadbalancer", "/rest" };
         for (String sub : subPackages) {
-            String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + sub + "/" + eipName + ".json";
+            String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + sub + '/' + eipName + ".json";
             ClassResolver resolver = getClassResolver();
             InputStream inputStream = resolver.loadResourceAsStream(path);
             if (inputStream != null) {
@@ -4235,7 +4235,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public String toString() {
-        return "CamelContext(" + camelContextExtension.getName() + ")";
+        return "CamelContext(" + camelContextExtension.getName() + ')';
     }
 
     protected void failOnStartup(Exception e) {

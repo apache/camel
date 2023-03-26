@@ -783,7 +783,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             String chmod = endpoint.getConfiguration().getChmod();
             if (org.apache.camel.util.ObjectHelper.isNotEmpty(chmod)) {
                 log.debug("Setting chmod: {} on file: {}", chmod, targetName);
-                String command = "chmod " + chmod + " " + targetName;
+                String command = "chmod " + chmod + ' ' + targetName;
                 log.trace("Client sendSiteCommand: {}", command);
                 boolean success = client.sendSiteCommand(command);
                 log.trace("Client sendSiteCommand successful: {}", success);

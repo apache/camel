@@ -170,7 +170,7 @@ public class ClusteredJdbcAggregationRepository extends JdbcAggregationRepositor
                 final List<String> keys = jdbcTemplate.query(
                         "SELECT " + ID + " FROM " + getRepositoryNameCompleted()
                                                              + (isRecoveryByInstance()
-                                                                     ? " WHERE INSTANCE_ID='" + instanceId + "'" : ""),
+                                                                     ? " WHERE INSTANCE_ID='" + instanceId + '\'' : ""),
                         new RowMapper<String>() {
                             public String mapRow(final ResultSet rs, final int rowNum) throws SQLException {
                                 final String id = rs.getString(ID);

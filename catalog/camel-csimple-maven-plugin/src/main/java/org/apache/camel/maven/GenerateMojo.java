@@ -245,8 +245,8 @@ public class GenerateMojo extends AbstractExecMojo {
             if (!classes.isEmpty()) {
                 // generate .properties file
                 StringWriter w = new StringWriter();
-                w.append("# " + GENERATED_MSG + "\n");
-                classes.forEach(c -> w.write(c.getFqn() + "\n"));
+                w.append("# " + GENERATED_MSG + '\n');
+                classes.forEach(c -> w.write(c.getFqn() + '\n'));
                 String fileName = RESOURCE_FILE;
                 outputResourceDir.mkdirs();
                 boolean saved = updateResource(outputResourceDir.toPath().resolve(RESOURCE_FILE), w.toString());

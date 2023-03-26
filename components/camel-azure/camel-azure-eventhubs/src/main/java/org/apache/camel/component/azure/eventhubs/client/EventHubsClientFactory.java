@@ -180,6 +180,6 @@ public final class EventHubsClientFactory {
     }
 
     private static String getFullyQualifiedNamespace(EventHubsConfiguration configuration) {
-        return configuration.getNamespace() + "." + SERVICE_URI_SEGMENT;
+        return configuration.getNamespace() + '.' + SERVICE_URI_SEGMENT;
     }
 }

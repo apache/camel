@@ -69,7 +69,7 @@ public class TraceDevConsole extends AbstractDevConsole {
             }
             for (BacklogTracerEventMessage t : queue) {
                 String xml = t.toXml(0);
-                sb.append(xml).append("\n");
+                sb.append(xml).append('\n');
             }
         }
 

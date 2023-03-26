@@ -48,7 +48,7 @@ public class RouteBuilderDefinition extends IdentifiedType {
 
     @Override
     public String toString() {
-        return "RouteBuilderRef[" + getRef() + "]";
+        return "RouteBuilderRef[" + getRef() + ']';
     }
 
     public String getRef() {

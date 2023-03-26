@@ -69,16 +69,16 @@ public class EasyPredicateParser {
                     before = prev.substring(0, pos);
                     after = prev.substring(pos + 1);
                 }
-                sb.append("$");
+                sb.append('$');
                 if (!before.startsWith(".")) {
-                    sb.append(".");
+                    sb.append('.');
                 }
                 sb.append(before);
                 sb.append("[?(@.");
                 sb.append(after);
-                sb.append(" ");
+                sb.append(' ');
                 sb.append(op);
-                sb.append(" ");
+                sb.append(' ');
                 sb.append(next);
                 sb.append(")]");
             }

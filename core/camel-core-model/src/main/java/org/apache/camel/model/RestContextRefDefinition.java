@@ -47,7 +47,7 @@ public class RestContextRefDefinition {
 
     @Override
     public String toString() {
-        return "RestContextRef[" + getRef() + "]";
+        return "RestContextRef[" + getRef() + ']';
     }
 
     public String getRef() {

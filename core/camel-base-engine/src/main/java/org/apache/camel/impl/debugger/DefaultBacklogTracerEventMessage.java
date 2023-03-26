@@ -170,7 +170,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
 
     @Override
     public String toString() {
-        return "DefaultBacklogTracerEventMessage[" + exchangeId + " at " + toNode + "]";
+        return "DefaultBacklogTracerEventMessage[" + exchangeId + " at " + toNode + ']';
     }
 
     /**
@@ -184,11 +184,11 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     public String toXml(int indent) {
         StringBuilder prefix = new StringBuilder();
         for (int i = 0; i < indent; i++) {
-            prefix.append(" ");
+            prefix.append(' ');
         }
 
         StringBuilder sb = new StringBuilder();
-        sb.append(prefix).append("<").append(ROOT_TAG).append(">\n");
+        sb.append(prefix).append('<').append(ROOT_TAG).append(">\n");
         sb.append(prefix).append("  <uid>").append(uid).append("</uid>\n");
         sb.append(prefix).append("  <first>").append(first).append("</first>\n");
         sb.append(prefix).append("  <last>").append(last).append("</last>\n");
@@ -210,11 +210,11 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
             sb.append(prefix).append("  <toNode>").append(routeId).append("</toNode>\n");
         }
         sb.append(prefix).append("  <exchangeId>").append(exchangeId).append("</exchangeId>\n");
-        sb.append(prefix).append(messageAsXml).append("\n");
+        sb.append(prefix).append(messageAsXml).append('\n');
         if (exceptionAsXml != null) {
-            sb.append(prefix).append(exceptionAsXml).append("\n");
+            sb.append(prefix).append(exceptionAsXml).append('\n');
         }
-        sb.append(prefix).append("</").append(ROOT_TAG).append(">");
+        sb.append(prefix).append("</").append(ROOT_TAG).append('>');
         return sb.toString();
     }
 

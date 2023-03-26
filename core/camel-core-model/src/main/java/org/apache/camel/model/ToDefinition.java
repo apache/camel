@@ -78,7 +78,7 @@ public class ToDefinition extends SendDefinition<ToDefinition> {
 
     @Override
     public String toString() {
-        return "To[" + getLabel() + "]";
+        return "To[" + getLabel() + ']';
     }
 
     @Override

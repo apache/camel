@@ -113,7 +113,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     private int reconnectInterval = 10000;
 
     public String getAddress() {
-        return host + ":" + port;
+        return host + ':' + port;
     }
 
     public boolean isTcp() {

@@ -545,7 +545,7 @@ public class AWS2S3Producer extends DefaultProducer {
             }
 
             GetObjectRequest.Builder req = GetObjectRequest.builder().bucket(bucketName).key(sourceKey)
-                    .range("bytes=" + Long.parseLong(rangeStart) + "-" + Long.parseLong(rangeEnd));
+                    .range("bytes=" + Long.parseLong(rangeStart) + '-' + Long.parseLong(rangeEnd));
             ResponseInputStream<GetObjectResponse> res = s3Client.getObject(req.build(), ResponseTransformer.toInputStream());
 
             Message message = getMessageForResponse(exchange);

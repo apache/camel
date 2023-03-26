@@ -180,7 +180,7 @@ public class HashicorpVaultPropertiesFunction extends ServiceSupport implements 
     private String getSecretFromSource(String key, String subkey, String defaultValue, String version) {
         String returnValue = null;
         try {
-            String completePath = engine + "/" + "data" + "/" + key;
+            String completePath = engine + '/' + "data" + '/' + key;
             if (ObjectHelper.isNotEmpty(version)) {
                 completePath = completePath + "?version=" + version;
             }

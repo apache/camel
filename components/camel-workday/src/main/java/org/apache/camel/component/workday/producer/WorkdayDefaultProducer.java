@@ -72,7 +72,7 @@ public abstract class WorkdayDefaultProducer extends DefaultProducer {
                             throw new IllegalStateException(
                                     "Got the invalid http status value '" + new StatusLine(httpResponse)
                                                             + "' as the result of the RAAS '"
-                                                            + workdayUri + "'");
+                                                            + workdayUri + '\'');
                         }
 
                         try {
@@ -82,7 +82,7 @@ public abstract class WorkdayDefaultProducer extends DefaultProducer {
                             if (report.isEmpty()) {
                                 throw new IllegalStateException(
                                         "Got the unexpected value '" + report + "' as the result of the report '" + workdayUri
-                                                                + "'");
+                                                                + '\'');
                             }
 
                             exchange.getIn().setBody(report);

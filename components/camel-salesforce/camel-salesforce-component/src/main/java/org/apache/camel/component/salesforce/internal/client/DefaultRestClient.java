@@ -109,7 +109,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void getBasicInfo(String sObjectName, Map<String, List<String>> headers, ResponseCallback callback) {
-        Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + "/"), headers);
+        Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + '/'), headers);
         // requires authorization token
         setAccessToken(get);
 
@@ -141,7 +141,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             }
             params = fieldsValue.toString();
         }
-        Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + "/" + id + params), headers);
+        Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + '/' + id + params), headers);
         // requires authorization token
         setAccessToken(get);
 
@@ -167,7 +167,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     public void updateSObject(
             String sObjectName, String id, InputStream sObject, Map<String, List<String>> headers, ResponseCallback callback) {
-        final Request patch = getRequest("PATCH", sobjectsUrl(sObjectName + "/" + id), headers);
+        final Request patch = getRequest("PATCH", sobjectsUrl(sObjectName + '/' + id), headers);
         // requires authorization token
         setAccessToken(patch);
 
@@ -180,7 +180,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     @Override
     public void deleteSObject(String sObjectName, String id, Map<String, List<String>> headers, ResponseCallback callback) {
-        final Request delete = getRequest(HttpMethod.DELETE, sobjectsUrl(sObjectName + "/" + id), headers);
+        final Request delete = getRequest(HttpMethod.DELETE, sobjectsUrl(sObjectName + '/' + id), headers);
 
         // requires authorization token
         setAccessToken(delete);
@@ -233,7 +233,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     public void getBlobField(
             String sObjectName, String id, String blobFieldName, Map<String, List<String>> headers, ResponseCallback callback) {
-        final Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + "/" + id + "/" + blobFieldName), headers);
+        final Request get = getRequest(HttpMethod.GET, sobjectsUrl(sObjectName + '/' + id + '/' + blobFieldName), headers);
         // TODO this doesn't seem to be required, the response is always the
         // content binary stream
         // get.header(HttpHeader.ACCEPT_ENCODING, "base64");
@@ -382,7 +382,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     private String versionUrl() {
         ObjectHelper.notNull(version, "version");
-        return servicesDataUrl() + "v" + version + "/";
+        return servicesDataUrl() + 'v' + version + '/';
     }
 
     private String sobjectsUrl(String sObjectName) {
@@ -396,7 +396,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         }
         try {
             String encodedValue = urlEncode(fieldValue);
-            return sobjectsUrl(sObjectName + "/" + fieldName + "/" + encodedValue);
+            return sobjectsUrl(sObjectName + '/' + fieldName + '/' + encodedValue);
         } catch (UnsupportedEncodingException e) {
             String msg = "Unexpected error: " + e.getMessage();
             throw new IllegalArgumentException(msg, e);

@@ -57,6 +57,6 @@ public class SpringWebserviceMessage extends DefaultMessage {
 
     @Override
     public String toString() {
-        return "SpringWebserviceMessage[" + webServiceMessage + "]";
+        return "SpringWebserviceMessage[" + webServiceMessage + ']';
     }
 }

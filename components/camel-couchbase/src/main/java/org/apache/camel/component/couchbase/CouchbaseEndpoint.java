@@ -488,7 +488,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
     public URI[] makeBootstrapURI() throws URISyntaxException {
 
         if (additionalHosts == null || additionalHosts.isEmpty()) {
-            return new URI[] { new URI(protocol + "://" + hostname + ":" + port + "/pools") };
+            return new URI[] { new URI(protocol + "://" + hostname + ':' + port + "/pools") };
         }
         return getAllUris();
 
@@ -511,7 +511,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
         URI[] uriArray = new URI[hosts.length];
 
         for (int i = 0; i < hosts.length; i++) {
-            uriArray[i] = new URI(protocol + "://" + hosts[i] + ":" + port + "/pools");
+            uriArray[i] = new URI(protocol + "://" + hosts[i] + ':' + port + "/pools");
         }
 
         return uriArray;

@@ -70,7 +70,7 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
     }
 
     public String getMainMessageContentType() {
-        return AS2MimeType.MULTIPART_REPORT + "; report-type=disposition-notification; boundary=\"" + boundary + "\"";
+        return AS2MimeType.MULTIPART_REPORT + "; report-type=disposition-notification; boundary=\"" + boundary + '"';
     }
 
     protected TextPlainEntity buildPlainTextReport(String mdnMessage) {
@@ -78,8 +78,8 @@ public class DispositionNotificationMultipartReportEntity extends MultipartRepor
     }
 
     protected String getContentTypeValue(String boundary) {
-        ContentType contentType = ContentType.parse(AS2MimeType.MULTIPART_REPORT + ";"
-                                                    + "report-type=disposition-notification; boundary=\"" + boundary + "\"");
+        ContentType contentType = ContentType.parse(AS2MimeType.MULTIPART_REPORT + ';'
+                                                    + "report-type=disposition-notification; boundary=\"" + boundary + '"');
         return contentType.toString();
     }
 

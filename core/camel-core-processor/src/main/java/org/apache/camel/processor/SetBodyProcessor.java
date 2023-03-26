@@ -82,7 +82,7 @@ public class SetBodyProcessor extends AsyncProcessorSupport implements Traceable
 
     @Override
     public String getTraceLabel() {
-        return "setBody[" + expression + "]";
+        return "setBody[" + expression + ']';
     }
 
     @Override

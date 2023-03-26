@@ -41,7 +41,7 @@ public class SingleQuoteStart extends BaseSimpleNode implements BlockStart {
     @Override
     public String toString() {
         // output a nice toString so it makes debugging easier as we can see the entire block
-        return "'" + block + "'";
+        return "'" + block + '\'';
     }
 
     @Override
@@ -73,7 +73,7 @@ public class SingleQuoteStart extends BaseSimpleNode implements BlockStart {
         if (answer == null) {
             answer = "\"\"";
         } else {
-            answer = "\"" + answer + "\"";
+            answer = '"' + answer + '"';
         }
         return answer;
     }

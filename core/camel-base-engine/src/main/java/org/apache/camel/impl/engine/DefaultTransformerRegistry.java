@@ -111,7 +111,7 @@ public class DefaultTransformerRegistry extends AbstractDynamicRegistry<Transfor
 
     @Override
     public String toString() {
-        return "TransformerRegistry for " + context.getName() + " [capacity: " + maxCacheSize + "]";
+        return "TransformerRegistry for " + context.getName() + " [capacity: " + maxCacheSize + ']';
     }
 
 }

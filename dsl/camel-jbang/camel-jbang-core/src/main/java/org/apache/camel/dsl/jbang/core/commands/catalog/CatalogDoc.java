@@ -590,7 +590,7 @@ public class CatalogDoc extends CamelCommand {
     String getName(BaseOptionModel o) {
         String l = o.getShortGroup();
         if (l != null && !"common".equals(l)) {
-            return o.getName() + "\n" + "(" + l + ")";
+            return o.getName() + '\n' + '(' + l + ')';
         }
         return o.getName();
     }

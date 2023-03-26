@@ -53,6 +53,6 @@ public class AnnotatedWithAnyPackageScanFilter implements PackageScanFilter {
 
     @Override
     public String toString() {
-        return "annotated with any @[" + annotations + "]";
+        return "annotated with any @[" + annotations + ']';
     }
 }

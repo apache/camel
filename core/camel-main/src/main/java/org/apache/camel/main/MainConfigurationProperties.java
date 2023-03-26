@@ -383,7 +383,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (configuration != null) {
             for (Class<? extends CamelConfiguration> clazz : configuration) {
                 if (existing.length() > 0) {
-                    existing.append(",");
+                    existing.append(',');
                 }
                 existing.append(clazz.getName());
             }
@@ -459,7 +459,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (routeBuilder != null) {
             for (Class<?> clazz : routeBuilder) {
                 if (existing.length() > 0) {
-                    existing.append(",");
+                    existing.append(',');
                 }
                 existing.append(clazz.getName());
             }
@@ -604,7 +604,7 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         if (this.configurationClasses.isEmpty()) {
             this.configurationClasses = configurations;
         } else {
-            this.configurationClasses = "," + configurations;
+            this.configurationClasses = ',' + configurations;
         }
         return this;
     }

@@ -37,11 +37,11 @@ public class WorkdayReportProducer extends WorkdayDefaultProducer {
     public String prepareUri(WorkdayConfiguration configuration) {
         Map<String, Object> parameters = configuration.getParameters();
         StringBuilder stringBuilder = new StringBuilder(configuration.getPath());
-        stringBuilder.append("?");
+        stringBuilder.append('?');
         if (parameters.size() > 0) {
-            String params = parameters.keySet().stream().map(k -> k + "=" + parameters.get(k)).collect(Collectors.joining("&"));
+            String params = parameters.keySet().stream().map(k -> k + '=' + parameters.get(k)).collect(Collectors.joining("&"));
             stringBuilder.append(params);
-            stringBuilder.append("&");
+            stringBuilder.append('&');
         }
 
         stringBuilder.append("format=");

@@ -50,7 +50,7 @@ public class OpenApiRestApiProcessorFactory implements RestApiProcessorFactory {
                 host = configuration.getHost();
                 int port = configuration.getPort();
                 if (host != null && port > 0) {
-                    options.put("host", host + ":" + port);
+                    options.put("host", host + ':' + port);
                 } else if (host != null) {
                     options.put("host", host);
                 } else {

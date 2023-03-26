@@ -57,7 +57,7 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
 
     @Override
     public String toString() {
-        return "DynamicRouter[" + getExpression() + "]";
+        return "DynamicRouter[" + getExpression() + ']';
     }
 
     @Override
@@ -67,7 +67,7 @@ public class DynamicRouterDefinition<Type extends ProcessorDefinition<Type>> ext
 
     @Override
     public String getLabel() {
-        return "dynamicRouter[" + getExpression() + "]";
+        return "dynamicRouter[" + getExpression() + ']';
     }
 
     @Override

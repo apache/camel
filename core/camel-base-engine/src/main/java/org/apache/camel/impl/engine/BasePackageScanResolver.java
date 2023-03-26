@@ -134,7 +134,7 @@ public abstract class BasePackageScanResolver extends ServiceSupport implements 
         // If the URL is a jar, the URLClassloader.getResources() seems to require a trailing slash.  The
         // trailing slash is harmless for other URLs
         if (!packageName.endsWith("/")) {
-            packageName = packageName + "/";
+            packageName = packageName + '/';
         }
         return loader.getResources(packageName);
     }

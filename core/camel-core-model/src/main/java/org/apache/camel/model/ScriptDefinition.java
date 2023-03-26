@@ -41,7 +41,7 @@ public class ScriptDefinition extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "Script[" + getExpression() + "]";
+        return "Script[" + getExpression() + ']';
     }
 
     @Override
@@ -51,7 +51,7 @@ public class ScriptDefinition extends ExpressionNode {
 
     @Override
     public String getLabel() {
-        return "script[" + getExpression() + "]";
+        return "script[" + getExpression() + ']';
     }
 
     /**

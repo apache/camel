@@ -71,7 +71,7 @@ public class TopDevConsole extends AbstractDevConsole {
             if (subPath == null || subPath.isBlank()) {
                 Function<ManagedRouteMBean, Object> task = mrb -> {
                     if (sb.length() > 0) {
-                        sb.append("\n");
+                        sb.append('\n');
                     }
                     sb.append(String.format("    Route Id: %s", mrb.getRouteId()));
                     sb.append(String.format("\n    From: %s", mrb.getEndpointUri()));
@@ -90,14 +90,14 @@ public class TopDevConsole extends AbstractDevConsole {
                             String.format("\n    Delta Time: %s", TimeUtils.printDuration(mrb.getDeltaProcessingTime(), true)));
                     sb.append(
                             String.format("\n    Total Time: %s", TimeUtils.printDuration(mrb.getTotalProcessingTime(), true)));
-                    sb.append("\n");
+                    sb.append('\n');
                     return null;
                 };
                 topRoutes(filter, max, mcc, task);
             } else {
                 Function<ManagedProcessorMBean, Object> task = mpb -> {
                     if (sb.length() > 0) {
-                        sb.append("\n");
+                        sb.append('\n');
                     }
                     sb.append(String.format("    Route Id: %s", mpb.getRouteId()));
                     sb.append(String.format("\n    Processor Id: %s", mpb.getProcessorId()));
@@ -147,7 +147,7 @@ public class TopDevConsole extends AbstractDevConsole {
                             String.format("\n    Delta Time: %s", TimeUtils.printDuration(mpb.getDeltaProcessingTime(), true)));
                     sb.append(
                             String.format("\n    Total Time: %s", TimeUtils.printDuration(mpb.getTotalProcessingTime(), true)));
-                    sb.append("\n");
+                    sb.append('\n');
                     return null;
                 };
                 topProcessors(filter, subPath, max, mcc, task);

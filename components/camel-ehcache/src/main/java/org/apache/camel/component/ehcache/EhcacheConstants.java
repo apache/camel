@@ -20,7 +20,7 @@ import org.apache.camel.spi.Metadata;
 
 public interface EhcacheConstants {
     @Metadata(description = "The operation to be performed on the cache, valid options are:\n" +
-                            "\n" +
+            '\n' +
                             "* CLEAR\n" +
                             "* PUT\n" +
                             "* PUT_ALL\n" +
@@ -39,7 +39,7 @@ public interface EhcacheConstants {
     @Metadata(description = "The cache key used for an action", javaType = "Object")
     String KEY = "CamelEhcacheKey";
     @Metadata(description = "A list of keys, used in\n" +
-                            "\n" +
+            '\n' +
                             "* PUT_ALL\n" +
                             "* GET_ALL\n" +
                             "* REMOVE_ALL\n",

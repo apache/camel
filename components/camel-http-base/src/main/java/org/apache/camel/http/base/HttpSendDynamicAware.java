@@ -78,12 +78,12 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
             String url;
             if (auth != null && auth.contains("@")) {
                 // only use auth if there is a username:password@host
-                url = getScheme() + ":" + auth;
+                url = getScheme() + ':' + auth;
             } else {
-                url = getScheme() + ":" + host;
+                url = getScheme() + ':' + host;
             }
             if (!params.isEmpty()) {
-                url += "?" + URISupport.createQueryString(params, false);
+                url += '?' + URISupport.createQueryString(params, false);
             }
             return url;
         } else {
@@ -135,7 +135,7 @@ public class HttpSendDynamicAware extends SendDynamicAwareSupport {
         boolean vertxHttpComponent = "vertx-http".equals(getScheme());
         if (!httpComponent && !vertxHttpComponent) {
             String prefix = getScheme() + "://";
-            String prefix2 = getScheme() + ":";
+            String prefix2 = getScheme() + ':';
             if (u.startsWith(prefix)) {
                 u = u.substring(prefix.length());
             } else if (u.startsWith(prefix2)) {

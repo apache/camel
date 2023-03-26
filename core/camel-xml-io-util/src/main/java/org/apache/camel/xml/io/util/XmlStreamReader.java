@@ -584,7 +584,7 @@ public class XmlStreamReader extends Reader {
     private void setRequestHeader(final URLConnection conn, final Map<String, String> requestHeaders) {
         final Package pckg = this.getClass().getPackage();
         if (pckg.getImplementationTitle() != null && pckg.getImplementationVersion() != null) {
-            conn.setRequestProperty("User-Agent", pckg.getImplementationTitle() + "/" + pckg.getImplementationVersion());
+            conn.setRequestProperty("User-Agent", pckg.getImplementationTitle() + '/' + pckg.getImplementationVersion());
         } else {
             conn.setRequestProperty("User-Agent", "ROME");
         }

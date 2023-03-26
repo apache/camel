@@ -39,7 +39,7 @@ public class CamelQuartzCronService implements CamelCronService, CamelContextAwa
 
         String uriPath = "quartz://" + configuration.getName();
         String query = URISupport.createQueryString(Collections.singletonMap("cron", schedule));
-        String uri = uriPath + "?" + query;
+        String uri = uriPath + '?' + query;
 
         QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
         return quartz.createEndpoint(uri);

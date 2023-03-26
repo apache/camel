@@ -65,7 +65,7 @@ public class DummyRestConsumerFactory implements RestConsumerFactory, RestApiCon
             }
         }
 
-        SedaEndpoint seda = camelContext.getEndpoint("seda:" + verb + "-" + id, SedaEndpoint.class);
+        SedaEndpoint seda = camelContext.getEndpoint("seda:" + verb + '-' + id, SedaEndpoint.class);
         // speedup pooling to also be able to shutdown faster
         seda.setPollTimeout(10);
         return seda.createConsumer(processor);
@@ -82,7 +82,7 @@ public class DummyRestConsumerFactory implements RestConsumerFactory, RestApiCon
         if (id.startsWith("-")) {
             id = id.substring(1);
         }
-        SedaEndpoint seda = camelContext.getEndpoint("seda:api:" + "-" + id, SedaEndpoint.class);
+        SedaEndpoint seda = camelContext.getEndpoint("seda:api:" + '-' + id, SedaEndpoint.class);
         // speedup pooling to also be able to shutdown faster
         seda.setPollTimeout(10);
         return seda.createConsumer(processor);

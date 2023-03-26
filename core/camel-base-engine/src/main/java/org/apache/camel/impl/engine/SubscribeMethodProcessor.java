@@ -108,7 +108,7 @@ public final class SubscribeMethodProcessor extends AsyncProcessorSupport implem
 
     @Override
     public String toString() {
-        return "SubscribeMethodProcessor[" + endpoint + "]";
+        return "SubscribeMethodProcessor[" + endpoint + ']';
     }
 
     @Override

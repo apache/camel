@@ -55,7 +55,7 @@ public class DefaultValidatorRegistry extends AbstractDynamicRegistry<ValidatorK
 
     @Override
     public String toString() {
-        return "ValidatorRegistry for " + context.getName() + " [capacity: " + maxCacheSize + "]";
+        return "ValidatorRegistry for " + context.getName() + " [capacity: " + maxCacheSize + ']';
     }
 
     @Override

@@ -50,7 +50,7 @@ public class RollbackDefinition extends NoOutputDefinition<RollbackDefinition> {
     @Override
     public String toString() {
         if (message != null) {
-            return "Rollback[" + message + "]";
+            return "Rollback[" + message + ']';
         } else {
             return "Rollback";
         }

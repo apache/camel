@@ -108,7 +108,7 @@ public class Yytoken {
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer();
-        sb.append(this.type).append("(").append(this.value).append(")");
+        sb.append(this.type).append('(').append(this.value).append(')');
         return sb.toString();
     }
 }

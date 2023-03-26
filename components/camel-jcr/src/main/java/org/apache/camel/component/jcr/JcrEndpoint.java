@@ -108,7 +108,7 @@ public class JcrEndpoint extends DefaultEndpoint {
 
         this.repository = getCamelContext().getRegistry().lookupByNameAndType(host, Repository.class);
         if (repository == null) {
-            throw new RuntimeCamelException("No JCR repository defined under '" + host + "'");
+            throw new RuntimeCamelException("No JCR repository defined under '" + host + '\'');
         }
         if (username != null && password != null) {
             this.credentials = new SimpleCredentials(username, password.toCharArray());

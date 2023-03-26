@@ -95,17 +95,17 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
 
         if (target != null) {
             // use Object.toString as target logging
-            target = target.getClass().getName() + "@" + Integer.toHexString(target.hashCode());
+            target = target.getClass().getName() + '@' + Integer.toHexString(target.hashCode());
         }
 
         String line;
         if (target == null) {
-            line = "Invoked: " + invoked.get() + " times (overall) [Method: " + method + "]";
+            line = "Invoked: " + invoked.get() + " times (overall) [Method: " + method + ']';
         } else if (args == null) {
-            line = "Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + "]";
+            line = "Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + ']';
         } else {
             line = "Invoked: " + invoked.get() + " times (overall) [Method: " + method + ", Target: " + target + ", Arguments: "
-                   + obj + "]";
+                   + obj + ']';
         }
 
         if (preStartDone) {

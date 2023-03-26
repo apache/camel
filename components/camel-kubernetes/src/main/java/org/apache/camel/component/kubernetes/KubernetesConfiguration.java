@@ -501,7 +501,7 @@ public class KubernetesConfiguration implements Cloneable {
                + trustCerts + ", namespace=" + namespace
                + ", labelKey=" + labelKey + ", labelValue=" + labelValue + ", resourceName=" + resourceName + ", portName="
                + portName + ", dnsDomain=" + dnsDomain + ", poolSize="
-               + poolSize + ", connectionTimeout=" + connectionTimeout + "]";
+               + poolSize + ", connectionTimeout=" + connectionTimeout + ']';
     }
 
 }

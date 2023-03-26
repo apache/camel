@@ -228,7 +228,7 @@ public class Ses2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (sesProducerToString == null) {
-            sesProducerToString = "SesProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            sesProducerToString = "SesProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return sesProducerToString;
     }

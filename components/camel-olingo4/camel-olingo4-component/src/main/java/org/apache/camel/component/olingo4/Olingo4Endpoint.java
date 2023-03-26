@@ -238,7 +238,7 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
                 throw new IllegalArgumentException(
                         "Resource path must be provided in endpoint URI, or URI parameter '" + RESOURCE_PATH_PROPERTY
                                                    + "', or exchange header '"
-                                                   + Olingo4Constants.PROPERTY_PREFIX + RESOURCE_PATH_PROPERTY + "'");
+                                                   + Olingo4Constants.PROPERTY_PREFIX + RESOURCE_PATH_PROPERTY + '\'');
             }
 
             // append keyPredicate to dynamically create resource path

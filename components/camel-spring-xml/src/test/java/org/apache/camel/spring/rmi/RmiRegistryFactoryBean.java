@@ -129,7 +129,7 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
         if (registryHost != null) {
             // Host explictly specified: only lookup possible.
             if (logger.isInfoEnabled()) {
-                logger.info("Looking for RMI registry at port '" + registryPort + "' of host [" + registryHost + "]");
+                logger.info("Looking for RMI registry at port '" + registryPort + "' of host [" + registryHost + ']');
             }
             Registry reg = LocateRegistry.getRegistry(registryHost, registryPort, clientSocketFactory);
             testRegistry(reg);
@@ -194,7 +194,7 @@ public class RmiRegistryFactoryBean implements FactoryBean<Registry>, Initializi
             return LocateRegistry.createRegistry(registryPort);
         }
         if (logger.isInfoEnabled()) {
-            logger.info("Looking for RMI registry at port '" + registryPort + "'");
+            logger.info("Looking for RMI registry at port '" + registryPort + '\'');
         }
         synchronized (LocateRegistry.class) {
             try {

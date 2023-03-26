@@ -58,7 +58,7 @@ public class Hl7TerserLanguage extends SingleInputTypedLanguageSupport {
 
             @Override
             public String toString() {
-                return "hl7terser(" + expression + ")";
+                return "hl7terser(" + expression + ')';
             }
 
         };

@@ -846,7 +846,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 String soapAction = soapActionList.get(0);
                 if (!soapAction.isEmpty() && !soapAction.startsWith("\"")) {
                     //Per RFC, the SOAPAction HTTP header should be quoted if not empty
-                    transportHeaders.put(SoapBindingConstants.SOAP_ACTION, Collections.singletonList("\"" + soapAction + "\""));
+                    transportHeaders.put(SoapBindingConstants.SOAP_ACTION, Collections.singletonList('"' + soapAction + '"'));
                 }
             }
             cxfContext.put(CxfConstants.PROTOCOL_HEADERS, transportHeaders);
@@ -926,9 +926,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                     element.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, "xmlns", ns.getValue());
                 }
             } else {
-                if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns.getKey()))) {
+                if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE + ':' + ns.getKey()))) {
                     element.setAttributeNS(XMLConstants.XMLNS_ATTRIBUTE_NS_URI,
-                            XMLConstants.XMLNS_ATTRIBUTE + ":" + ns.getKey(), ns.getValue());
+                            XMLConstants.XMLNS_ATTRIBUTE + ':' + ns.getKey(), ns.getValue());
                 }
             }
         }

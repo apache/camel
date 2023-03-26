@@ -58,7 +58,7 @@ public class DelegateAsyncProcessor extends AsyncProcessorSupport implements Del
 
     @Override
     public String toString() {
-        return "DelegateAsync[" + processor + "]";
+        return "DelegateAsync[" + processor + ']';
     }
 
     @Override

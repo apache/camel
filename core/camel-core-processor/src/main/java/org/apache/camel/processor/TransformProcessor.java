@@ -89,7 +89,7 @@ public class TransformProcessor extends AsyncProcessorSupport implements Traceab
 
     @Override
     public String getTraceLabel() {
-        return "transform[" + expression + "]";
+        return "transform[" + expression + ']';
     }
 
     @Override

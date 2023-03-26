@@ -199,7 +199,7 @@ public class ZookeeperGroupSupport extends ServiceSupport
             String zkHost = System.getenv(ZOOKEEPER_HOST_ENV);
             if (zkHost != null) {
                 String zkPort = System.getenv(ZOOKEEPER_PORT_ENV);
-                connectString = zkHost + ":" + (zkPort == null ? "2181" : zkPort);
+                connectString = zkHost + ':' + (zkPort == null ? "2181" : zkPort);
             }
         }
         if (connectString == null) {

@@ -119,11 +119,11 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
     protected final String getScpPath() {
         // use this convention and use separate directories for tests
         // (easier to debug and avoid interference)
-        return SCP_ROOT_DIR + "/" + getClass().getSimpleName();
+        return SCP_ROOT_DIR + '/' + getClass().getSimpleName();
     }
 
     protected String getScpUri() {
-        return "scp://localhost:" + getPort() + "/" + getScpPath();
+        return "scp://localhost:" + getPort() + '/' + getScpPath();
     }
 
     protected boolean startSshd() {
@@ -163,7 +163,7 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
     }
 
     protected void setupKnownHosts() {
-        knownHostsFile = SCP_ROOT_DIR + "/" + KNOWN_HOSTS;
+        knownHostsFile = SCP_ROOT_DIR + '/' + KNOWN_HOSTS;
         if (!acceptLocalhostConnections) {
             return;
         }

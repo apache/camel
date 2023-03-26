@@ -55,7 +55,7 @@ public class MyMockStore extends MockStore {
         Folder folder = folders.get(name);
         if (folder == null) {
             // need a new mailbox as its a sub folder
-            String adr = name + "-" + address;
+            String adr = name + '-' + address;
             Mailbox mailbox = Mailbox.get(Aliases.getInstance().resolve(adr));
             folder = new MyMockFolder(this, mailbox, name);
             folders.put(name, folder);

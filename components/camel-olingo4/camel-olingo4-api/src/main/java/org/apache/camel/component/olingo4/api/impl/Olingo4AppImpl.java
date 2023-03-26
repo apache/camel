@@ -745,13 +745,13 @@ public final class Olingo4AppImpl implements Olingo4App {
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
 
                     batchRequestHeaderOutputStream.write(
-                            (HttpGet.METHOD_NAME + " " + batchQueryUri + " " + HttpVersion.HTTP_1_1)
+                            (HttpGet.METHOD_NAME + ' ' + batchQueryUri + ' ' + HttpVersion.HTTP_1_1)
                                     .getBytes(StandardCharsets.UTF_8));
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
                     final ContentType acceptType = getResourceContentType(uriInfo);
                     final String acceptCharset = acceptType.getParameter(ContentType.PARAMETER_CHARSET);
                     writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT,
-                            contentType.getType().toLowerCase() + "/" + contentType.getSubtype().toLowerCase());
+                            contentType.getType().toLowerCase() + '/' + contentType.getSubtype().toLowerCase());
                     if (null != acceptCharset) {
                         writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT_CHARSET,
                                 acceptCharset.toLowerCase());
@@ -774,7 +774,7 @@ public final class Olingo4AppImpl implements Olingo4App {
 
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
                     batchRequestHeaderOutputStream
-                            .write((batchChangePart.getOperation().getHttpMethod() + " " + batchChangeUri + " "
+                            .write((batchChangePart.getOperation().getHttpMethod() + ' ' + batchChangeUri + ' '
                                     + HttpVersion.HTTP_1_1).getBytes(StandardCharsets.UTF_8));
                     batchRequestHeaderOutputStream.write(ODataStreamer.CRLF);
                     writeHttpHeader(batchRequestHeaderOutputStream, HttpHeader.ODATA_VERSION,
@@ -782,7 +782,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                     final ContentType acceptType = getResourceContentType(uriInfo);
                     final String acceptCharset = acceptType.getParameter(ContentType.PARAMETER_CHARSET);
                     writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT,
-                            contentType.getType().toLowerCase() + "/" + contentType.getSubtype().toLowerCase());
+                            contentType.getType().toLowerCase() + '/' + contentType.getSubtype().toLowerCase());
                     if (null != acceptCharset) {
                         writeHttpHeader(batchRequestHeaderOutputStream, HttpHeaders.ACCEPT_CHARSET,
                                 acceptCharset.toLowerCase());
@@ -974,7 +974,7 @@ public final class Olingo4AppImpl implements Olingo4App {
 
         final StringBuilder absolutUri = new StringBuilder(resourceUri).append(SEPARATOR).append(resourcePath);
         if (queryOptions != null && !queryOptions.isEmpty()) {
-            absolutUri.append("?").append(queryOptions);
+            absolutUri.append('?').append(queryOptions);
         }
         return absolutUri.toString();
 
@@ -1002,7 +1002,7 @@ public final class Olingo4AppImpl implements Olingo4App {
         try {
             result = parser.parseUri(resourcePath, queryOptions, null, serviceUri);
         } catch (Exception e) {
-            throw new IllegalArgumentException("parseUri (" + resourcePath + "," + queryOptions + "): " + e.getMessage(), e);
+            throw new IllegalArgumentException("parseUri (" + resourcePath + ',' + queryOptions + "): " + e.getMessage(), e);
         }
         return result;
     }
@@ -1023,7 +1023,7 @@ public final class Olingo4AppImpl implements Olingo4App {
                 && !contentType.toContentTypeString().startsWith(MULTIPART_MIME_TYPE)) {
             // otherwise accept what is being sent
             httpUriRequest.addHeader(HttpHeaders.ACCEPT,
-                    contentType.getType().toLowerCase() + "/" + contentType.getSubtype().toLowerCase());
+                    contentType.getType().toLowerCase() + '/' + contentType.getSubtype().toLowerCase());
             final String acceptCharset = contentType.getParameter(ContentType.PARAMETER_CHARSET);
             if (null != acceptCharset) {
                 httpUriRequest.addHeader(HttpHeaders.ACCEPT_CHARSET, acceptCharset.toLowerCase());

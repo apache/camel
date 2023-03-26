@@ -182,7 +182,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
             // the base path should start with a leading slash
             String path = getPath();
             if (path != null && !path.startsWith("/")) {
-                path = "/" + path;
+                path = '/' + path;
             }
 
             Processor processor = factory.createApiProcessor(getCamelContext(), path, config, getParameters());
@@ -249,7 +249,7 @@ public class RestApiEndpoint extends DefaultEndpoint {
             // calculate the url to the rest API service
             String path = getPath();
             if (path != null && !path.startsWith("/")) {
-                path = "/" + path;
+                path = '/' + path;
             }
 
             Consumer consumer = factory.createApiConsumer(getCamelContext(), processor, path, config, getParameters());

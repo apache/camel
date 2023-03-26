@@ -155,7 +155,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
                 // create a random selector value we will use for the reply queue
                 // NOSONAR
                 replyToSelectorValue = "ID:" + new BigInteger(192, new Random()).toString(16);
-                String fixedMessageSelector = replyToSelectorName + "='" + replyToSelectorValue + "'";
+                String fixedMessageSelector = replyToSelectorName + "='" + replyToSelectorValue + '\'';
                 answer = new SharedQueueSimpleMessageListenerContainer(endpoint, fixedMessageSelector);
                 log.debug("Using shared queue: {} with fixed message selector [{}] as reply listener: {}",
                         endpoint.getReplyTo(), fixedMessageSelector, answer);
@@ -211,7 +211,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         }
 
         // setup a bean name which is used by Spring JMS as the thread name
-        String name = "QueueReplyManager[" + answer.getDestinationName() + "]";
+        String name = "QueueReplyManager[" + answer.getDestinationName() + ']';
         answer.setBeanName(name);
 
         if (endpoint.getReplyToConcurrentConsumers() > 1) {
@@ -247,7 +247,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
                 // create a random selector value we will use for the reply queue
                 // NOSONAR
                 replyToSelectorValue = "ID:" + new BigInteger(192/*24 * 8*/, new Random()).toString(16);
-                String fixedMessageSelector = replyToSelectorName + "='" + replyToSelectorValue + "'";
+                String fixedMessageSelector = replyToSelectorName + "='" + replyToSelectorValue + '\'';
                 answer = new SharedQueueMessageListenerContainer(endpoint, fixedMessageSelector);
                 log.debug("Using shared queue: {} with fixed message selector [{}] as reply listener: {}",
                         endpoint.getReplyTo(), fixedMessageSelector, answer);
@@ -325,7 +325,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         }
 
         // setup a bean name which is used by Spring JMS as the thread name
-        String name = "QueueReplyManager[" + answer.getDestinationName() + "]";
+        String name = "QueueReplyManager[" + answer.getDestinationName() + ']';
         answer.setBeanName(name);
 
         if (answer.getConcurrentConsumers() > 1) {

@@ -107,14 +107,14 @@ public class CamelCount extends ProcessWatchCommand {
                 int index = 0;
                 for (Row r : rows) {
                     if (rows.size() > 1) {
-                        builder.append(r.name).append(",");
+                        builder.append(r.name).append(',');
                     }
                     if (total) {
                         builder.append(r.total);
                     }
                     if (fail) {
                         if (total) {
-                            builder.append(",");
+                            builder.append(',');
                         }
                         builder.append(r.failed);
                     }

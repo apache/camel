@@ -71,7 +71,7 @@ public class Delayer extends DelayProcessorSupport implements Traceable, IdAware
 
     @Override
     public String getTraceLabel() {
-        return "delay[" + delay + "]";
+        return "delay[" + delay + ']';
     }
 
     public Expression getDelay() {

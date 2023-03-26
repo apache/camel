@@ -75,13 +75,13 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
     }
 
     public String toJDBCUri() {
-        String url = "jdbc:drill:" + mode.name().toLowerCase() + "=" + host + ":" + port;
+        String url = "jdbc:drill:" + mode.name().toLowerCase() + '=' + host + ':' + port;
         if (mode.equals(DrillConnectionMode.ZK)) {
             if (StringUtils.isNotBlank(directory)) {
-                url += "/" + directory;
+                url += '/' + directory;
             }
             if (StringUtils.isNotBlank(clusterId)) {
-                url += "/" + clusterId;
+                url += '/' + clusterId;
             }
         }
 

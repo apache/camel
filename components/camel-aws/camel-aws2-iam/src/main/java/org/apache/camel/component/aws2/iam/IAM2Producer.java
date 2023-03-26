@@ -134,7 +134,7 @@ public class IAM2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (iamProducerToString == null) {
-            iamProducerToString = "IAMProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            iamProducerToString = "IAMProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return iamProducerToString;
     }

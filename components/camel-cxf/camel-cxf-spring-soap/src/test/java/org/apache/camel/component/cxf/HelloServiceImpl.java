@@ -66,7 +66,7 @@ public class HelloServiceImpl implements HelloService {
     public String complexParameters(List<String> par1, List<String> par2) {
         String result = "param";
         if (par1 != null && par2 != null) {
-            result = result + ":" + par1.get(0) + par2.get(0);
+            result = result + ':' + par1.get(0) + par2.get(0);
         }
         return result;
     }

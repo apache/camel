@@ -30,15 +30,15 @@ public interface ScheduledRoutePolicyConstants {
     String SCHEDULED_ROUTE = "ScheduledRoute";
     String SCHEDULED_TRIGGER = "ScheduledTrigger";
     String SCHEDULED_ACTION = "ScheduledAction";
-    String JOB_START = "job-" + Action.START + "-";
-    String JOB_STOP = "job-" + Action.STOP + "-";
-    String JOB_SUSPEND = "job-" + Action.SUSPEND + "-";
-    String JOB_RESUME = "job-" + Action.RESUME + "-";
+    String JOB_START = "job-" + Action.START + '-';
+    String JOB_STOP = "job-" + Action.STOP + '-';
+    String JOB_SUSPEND = "job-" + Action.SUSPEND + '-';
+    String JOB_RESUME = "job-" + Action.RESUME + '-';
     String JOB_GROUP = "jobGroup-";
-    String TRIGGER_START = "trigger-" + Action.START + "-";
-    String TRIGGER_STOP = "trigger-" + Action.STOP + "-";
-    String TRIGGER_SUSPEND = "trigger-" + Action.SUSPEND + "-";
-    String TRIGGER_RESUME = "trigger-" + Action.RESUME + "-";
+    String TRIGGER_START = "trigger-" + Action.START + '-';
+    String TRIGGER_STOP = "trigger-" + Action.STOP + '-';
+    String TRIGGER_SUSPEND = "trigger-" + Action.SUSPEND + '-';
+    String TRIGGER_RESUME = "trigger-" + Action.RESUME + '-';
     String TRIGGER_GROUP = "triggerGroup-";
 
 }

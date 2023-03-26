@@ -354,7 +354,7 @@ public class RouteService extends ChildServiceSupport {
 
     private StartupStep beginStep(Service service, String description) {
         Class<?> type = service instanceof Processor ? Processor.class : Service.class;
-        description = description + " " + service.getClass().getSimpleName();
+        description = description + ' ' + service.getClass().getSimpleName();
         String id = null;
         if (service instanceof IdAware) {
             id = ((IdAware) service).getId();

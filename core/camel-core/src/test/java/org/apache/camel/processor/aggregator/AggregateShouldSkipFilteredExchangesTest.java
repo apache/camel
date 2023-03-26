@@ -70,7 +70,7 @@ public class AggregateShouldSkipFilteredExchangesTest extends ContextTestSupport
 
             String newBody = newExchange.getIn().getBody(String.class);
             String body = oldExchange.getIn().getBody(String.class);
-            body = body + "," + newBody;
+            body = body + ',' + newBody;
             oldExchange.getIn().setBody(body);
             return oldExchange;
         }

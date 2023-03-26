@@ -104,7 +104,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "header(" + headerName + ")";
+                return "header(" + headerName + ')';
             }
         };
     }
@@ -175,7 +175,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "headerAs(" + headerName + ", " + typeName + ")";
+                return "headerAs(" + headerName + ", " + typeName + ')';
             }
         };
     }
@@ -266,7 +266,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "exchangeException[" + type + "]";
+                return "exchangeException[" + type + ']';
             }
         };
     }
@@ -363,7 +363,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "ref(" + ref + ")";
+                return "ref(" + ref + ')';
             }
         };
     }
@@ -506,7 +506,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "exchangeProperty(" + propertyName + ")";
+                return "exchangeProperty(" + propertyName + ')';
             }
         };
     }
@@ -587,7 +587,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "camelContextProperty(" + propertyName + ")";
+                return "camelContextProperty(" + propertyName + ')';
             }
         };
     }
@@ -641,7 +641,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "systemProperty(" + exprName + ")";
+                return "systemProperty(" + exprName + ')';
             }
         };
     }
@@ -709,7 +709,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "systemEnvironment(" + propertyName + ")";
+                return "systemEnvironment(" + propertyName + ')';
             }
         };
     }
@@ -764,7 +764,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return languageName + "(" + expression + ")";
+                return languageName + '(' + expression + ')';
             }
         };
     }
@@ -805,7 +805,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "language[" + language + ":" + expression + "]";
+                return "language[" + language + ':' + expression + ']';
             }
         };
     }
@@ -914,7 +914,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "bodyExpression (" + bodyType + ")";
+                return "bodyExpression (" + bodyType + ')';
             }
         };
     }
@@ -934,7 +934,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "bodyExpression (" + bodyType + ")";
+                return "bodyExpression (" + bodyType + ')';
             }
         };
     }
@@ -952,7 +952,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "bodyAs[" + type.getName() + "]";
+                return "bodyAs[" + type.getName() + ']';
             }
         };
     }
@@ -993,7 +993,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "bodyAs[" + name + "]";
+                return "bodyAs[" + name + ']';
             }
         };
     }
@@ -1112,7 +1112,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "mandatoryBodyAs[" + type.getName() + "]";
+                return "mandatoryBodyAs[" + type.getName() + ']';
             }
         };
     }
@@ -1303,7 +1303,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "tokenize(" + expression + ", " + token + ")";
+                return "tokenize(" + expression + ", " + token + ')';
             }
         };
     }
@@ -1336,7 +1336,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "skipFirst(" + expression + ")";
+                return "skipFirst(" + expression + ')';
             }
         };
     }
@@ -1361,7 +1361,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "regexTokenize(" + expression + ", " + regexTokenizer + ")";
+                return "regexTokenize(" + expression + ", " + regexTokenizer + ')';
             }
         };
     }
@@ -1395,7 +1395,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "group " + expression + " " + group + " times";
+                return "group " + expression + ' ' + group + " times";
             }
         };
     }
@@ -1432,7 +1432,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "group " + expression + " " + group + " times";
+                return "group " + expression + ' ' + group + " times";
             }
         };
     }
@@ -1476,9 +1476,9 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 if (prefix != null) {
-                    return "join(" + expression + "," + separator + "," + prefix + ")";
+                    return "join(" + expression + ',' + separator + ',' + prefix + ')';
                 } else {
-                    return "join(" + expression + "," + separator + ")";
+                    return "join(" + expression + ',' + separator + ')';
                 }
             }
         };
@@ -1506,7 +1506,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "sort(" + expression + " by: " + comparator + ")";
+                return "sort(" + expression + " by: " + comparator + ')';
             }
         };
     }
@@ -1535,7 +1535,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "regexReplaceAll(" + expression + ", " + pattern.pattern() + ")";
+                return "regexReplaceAll(" + expression + ", " + pattern.pattern() + ')';
             }
         };
     }
@@ -1567,7 +1567,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "regexReplaceAll(" + expression + ", " + pattern.pattern() + ")";
+                return "regexReplaceAll(" + expression + ", " + pattern.pattern() + ')';
             }
         };
     }
@@ -1590,7 +1590,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "append(" + left + ", " + right + ")";
+                return "append(" + left + ", " + right + ')';
             }
         };
     }
@@ -1613,7 +1613,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "prepend(" + left + ", " + right + ")";
+                return "prepend(" + left + ", " + right + ')';
             }
         };
     }
@@ -1681,7 +1681,7 @@ public class ExpressionBuilder {
                 if (description != null) {
                     return description;
                 } else {
-                    return "concat(" + expressions + ")";
+                    return "concat(" + expressions + ')';
                 }
             }
         };
@@ -1757,7 +1757,7 @@ public class ExpressionBuilder {
                 if (description != null) {
                     return description;
                 } else {
-                    return "concat(" + expressions + ")";
+                    return "concat(" + expressions + ')';
                 }
             }
         };
@@ -1851,7 +1851,7 @@ public class ExpressionBuilder {
 
                 @Override
                 public String toString() {
-                    return "simple(" + expression + ")";
+                    return "simple(" + expression + ')';
                 }
             };
         } else {
@@ -1880,7 +1880,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "bean(" + expression + ")";
+                return "bean(" + expression + ')';
             }
         };
     }
@@ -1903,7 +1903,7 @@ public class ExpressionBuilder {
             }
 
             public String toString() {
-                return "bean(" + bean + ", " + method + ")";
+                return "bean(" + bean + ", " + method + ')';
             }
         };
     }
@@ -1926,7 +1926,7 @@ public class ExpressionBuilder {
             }
 
             public String toString() {
-                return "bean(" + expression + ", " + method + ")";
+                return "bean(" + expression + ", " + method + ')';
             }
         };
     }
@@ -1960,7 +1960,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "properties(" + key + ")";
+                return "properties(" + key + ')';
             }
         };
     }
@@ -1986,7 +1986,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "propertiesExist(" + key + ")";
+                return "propertiesExist(" + key + ')';
             }
         };
     }
@@ -2038,7 +2038,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "xtokenize(" + path + ")";
+                return "xtokenize(" + path + ')';
             }
         };
     }

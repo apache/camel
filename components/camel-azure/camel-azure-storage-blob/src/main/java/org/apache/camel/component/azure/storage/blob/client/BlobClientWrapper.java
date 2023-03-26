@@ -177,7 +177,7 @@ public class BlobClientWrapper {
                 .setStartTime(OffsetDateTime.now());
         String sasToken = sourceBlob.generateSas(values);
 
-        return client.copyFromUrl(sourceBlob.getBlobUrl() + "?" + sasToken);
+        return client.copyFromUrl(sourceBlob.getBlobUrl() + '?' + sasToken);
     }
 
     public boolean appendBlobExists() {

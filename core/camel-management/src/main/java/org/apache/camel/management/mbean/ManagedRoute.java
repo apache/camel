@@ -237,7 +237,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         for (int i = 0; i < policyList.size(); i++) {
             RoutePolicy policy = policyList.get(i);
             sb.append(policy.getClass().getSimpleName());
-            sb.append("(").append(ObjectHelper.getIdentityHashCode(policy)).append(")");
+            sb.append('(').append(ObjectHelper.getIdentityHashCode(policy)).append(')');
             if (i < policyList.size() - 1) {
                 sb.append(", ");
             }
@@ -454,10 +454,10 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                     // do we have an accumulated time then append that
                     Long accTime = accumulatedTimes.get(processor.getProcessorId());
                     if (accTime != null) {
-                        sb.append(" accumulatedProcessingTime=\"").append(accTime).append("\"");
+                        sb.append(" accumulatedProcessingTime=\"").append(accTime).append('"');
                     }
                     // use substring as we only want the attributes
-                    sb.append(" ").append(processor.dumpStatsAsXml(fullStats).substring(7)).append("\n");
+                    sb.append(' ').append(processor.dumpStatsAsXml(fullStats).substring(7)).append('\n');
                 }
             }
             sb.append("  </processorStats>\n");
@@ -478,17 +478,17 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         }
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
-        answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
-        answer.append(" selfProcessingTime=\"").append(routeSelfTime).append("\"");
+        answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append('"');
+        answer.append(" selfProcessingTime=\"").append(routeSelfTime).append('"');
         InflightRepository.InflightExchange oldest = getOldestInflightEntry();
         if (oldest == null) {
             answer.append(" oldestInflightExchangeId=\"\"");
             answer.append(" oldestInflightDuration=\"\"");
         } else {
-            answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append("\"");
-            answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append("\"");
+            answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append('"');
+            answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append('"');
         }
-        answer.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
+        answer.append(' ').append(stat, 7, stat.length() - 2).append(">\n");
 
         if (includeProcessors) {
             answer.append(sb);
@@ -534,7 +534,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
                                 step.getProcessorId(),
                                 step.getIndex(), step.getState(), line));
                 // use substring as we only want the attributes
-                sb.append(" ").append(step.dumpStatsAsXml(fullStats).substring(7)).append("\n");
+                sb.append(' ').append(step.dumpStatsAsXml(fullStats).substring(7)).append('\n');
             }
         }
         sb.append("  </stepStats>\n");
@@ -547,16 +547,16 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         }
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
-        answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
+        answer.append(" exchangesInflight=\"").append(getInflightExchanges()).append('"');
         InflightRepository.InflightExchange oldest = getOldestInflightEntry();
         if (oldest == null) {
             answer.append(" oldestInflightExchangeId=\"\"");
             answer.append(" oldestInflightDuration=\"\"");
         } else {
-            answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append("\"");
-            answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append("\"");
+            answer.append(" oldestInflightExchangeId=\"").append(oldest.getExchange().getExchangeId()).append('"');
+            answer.append(" oldestInflightDuration=\"").append(oldest.getDuration()).append('"');
         }
-        answer.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
+        answer.append(' ').append(stat, 7, stat.length() - 2).append(">\n");
 
         answer.append(sb);
 

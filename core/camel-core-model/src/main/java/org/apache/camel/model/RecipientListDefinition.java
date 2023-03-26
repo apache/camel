@@ -103,7 +103,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
 
     @Override
     public String toString() {
-        return "RecipientList[" + getExpression() + "]";
+        return "RecipientList[" + getExpression() + ']';
     }
 
     @Override
@@ -113,7 +113,7 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
 
     @Override
     public String getLabel() {
-        return "recipientList[" + getExpression() + "]";
+        return "recipientList[" + getExpression() + ']';
     }
 
     // Fluent API

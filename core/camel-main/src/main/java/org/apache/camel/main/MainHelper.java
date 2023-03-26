@@ -157,7 +157,7 @@ public final class MainHelper {
                     toRemove.add(k);
                     String cname = "camel.component." + e.get().substring(16).toLowerCase(Locale.US).replace('_', '-');
                     String option = k.substring(cname.length() + 1).toLowerCase(Locale.US).replace('_', '-');
-                    properties.put(cname + "." + option, v);
+                    properties.put(cname + '.' + option, v);
                 }
             }
         });
@@ -179,7 +179,7 @@ public final class MainHelper {
                     toRemove.add(k);
                     String cname = "camel.dataformat." + e.get().substring(17).toLowerCase(Locale.US).replace('_', '-');
                     String option = k.substring(cname.length() + 1).toLowerCase(Locale.US).replace('_', '-');
-                    properties.put(cname + "." + option, v);
+                    properties.put(cname + '.' + option, v);
                 }
             }
         });
@@ -201,7 +201,7 @@ public final class MainHelper {
                     toRemove.add(k);
                     String cname = "camel.language." + e.get().substring(15).toLowerCase(Locale.US).replace('_', '-');
                     String option = k.substring(cname.length() + 1).toLowerCase(Locale.US).replace('_', '-');
-                    properties.put(cname + "." + option, v);
+                    properties.put(cname + '.' + option, v);
                 }
             }
         });
@@ -318,7 +318,7 @@ public final class MainHelper {
                 if (entry.getValue() != null && !properties.containsKey(entry.getKey())) {
                     String prefix = optionPrefix;
                     if (prefix != null && !prefix.endsWith(".")) {
-                        prefix = "." + prefix;
+                        prefix = '.' + prefix;
                     }
 
                     LOG.debug("Configured property: {}{}={} on bean: {}", prefix, entry.getKey(), entry.getValue(), target);
@@ -332,11 +332,11 @@ public final class MainHelper {
             if (key == null) {
                 String prefix = e.getOptionPrefix();
                 if (prefix != null && !prefix.endsWith(".")) {
-                    prefix = "." + prefix;
+                    prefix = '.' + prefix;
                 }
 
                 key = prefix != null
-                        ? prefix + "." + e.getPropertyName()
+                        ? prefix + '.' + e.getPropertyName()
                         : e.getPropertyName();
             }
 
@@ -416,7 +416,7 @@ public final class MainHelper {
         ObjectHelper.notNull(properties, "properties");
 
         if (!prefix.endsWith(".")) {
-            prefix = prefix + ".";
+            prefix = prefix + '.';
         }
 
         final String group = properties.getProperty(prefix + "enabled", "true");

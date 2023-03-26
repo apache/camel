@@ -71,7 +71,7 @@ public class PgEventConsumer extends DefaultConsumer implements PGNotificationLi
         }
         if (exchange.getException() != null) {
             String cause = "Unable to process incoming notification from PostgreSQL: processId='" + processId + "', channel='"
-                           + channel + "', payload='" + payload + "'";
+                           + channel + "', payload='" + payload + '\'';
             getExceptionHandler().handleException(cause, exchange.getException());
         }
         releaseExchange(exchange, false);

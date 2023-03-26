@@ -45,6 +45,6 @@ public class TestJAXBPojo {
 
     @Override
     public String toString() {
-        return "TestJAXBPojo[" + name + "]";
+        return "TestJAXBPojo[" + name + ']';
     }
 }

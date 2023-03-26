@@ -57,7 +57,7 @@ class ExportCamelMain extends Export {
         File profile = new File(getProfile() + ".properties");
 
         // the settings file has information what to export
-        File settings = new File(Run.WORK_DIR + "/" + Run.RUN_SETTINGS_FILE);
+        File settings = new File(Run.WORK_DIR + '/' + Run.RUN_SETTINGS_FILE);
         if (fresh || !settings.exists()) {
             // allow to automatic build
             if (!quiet) {
@@ -140,7 +140,7 @@ class ExportCamelMain extends Export {
         context = context.replaceFirst("\\{\\{ \\.Version }}", ids[2]);
         context = context.replaceFirst("\\{\\{ \\.JavaVersion }}", javaVersion);
         context = context.replaceAll("\\{\\{ \\.CamelVersion }}", camelVersion);
-        context = context.replaceAll("\\{\\{ \\.MainClassname }}", packageName + "." + mainClassname);
+        context = context.replaceAll("\\{\\{ \\.MainClassname }}", packageName + '.' + mainClassname);
 
         Properties prop = new CamelCaseOrderedProperties();
         RuntimeUtil.loadProperties(prop, settings);

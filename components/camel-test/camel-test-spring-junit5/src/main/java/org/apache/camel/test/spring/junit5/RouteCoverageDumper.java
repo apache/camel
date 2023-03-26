@@ -42,7 +42,7 @@ public final class RouteCoverageDumper {
     public static void dumpRouteCoverage(CamelContext context, String testClassName, String testName) {
         try {
             String dir = "target/camel-route-coverage";
-            String name = testClassName + "-" + testName + ".xml";
+            String name = testClassName + '-' + testName + ".xml";
 
             ManagedCamelContext managedCamelContext
                     = context.getExtension(ManagedCamelContext.class);

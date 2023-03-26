@@ -226,7 +226,7 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
     }
 
     private String reportsUrl(String reportId) {
-        return reportsUrl() + "/" + reportId;
+        return reportsUrl() + '/' + reportId;
     }
 
     private String reportsUrl(String reportId, Boolean includeDetails) {
@@ -244,7 +244,7 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
     }
 
     private String reportInstancesUrl(String reportId, String instanceId) {
-        return reportInstancesUrl(reportId) + "/" + instanceId;
+        return reportInstancesUrl(reportId) + '/' + instanceId;
     }
 
     @Override

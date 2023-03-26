@@ -61,7 +61,7 @@ public class InterceptReifier<T extends InterceptDefinition> extends ProcessorRe
 
             @Override
             public String toString() {
-                return "intercept[" + (interceptedTarget != null ? interceptedTarget : output) + "]";
+                return "intercept[" + (interceptedTarget != null ? interceptedTarget : output) + ']';
             }
         });
 

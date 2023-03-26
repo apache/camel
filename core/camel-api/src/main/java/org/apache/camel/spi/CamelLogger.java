@@ -66,7 +66,7 @@ public class CamelLogger {
 
     @Override
     public String toString() {
-        return "Logger[" + log + "]";
+        return "Logger[" + log + ']';
     }
 
     public void log(String message, LoggingLevel loggingLevel) {

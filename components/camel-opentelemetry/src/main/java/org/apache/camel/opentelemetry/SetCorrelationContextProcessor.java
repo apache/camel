@@ -67,7 +67,7 @@ public class SetCorrelationContextProcessor extends AsyncProcessorSupport implem
 
     @Override
     public String getTraceLabel() {
-        return "setCorrelationContext[" + baggageName + ", " + expression + "]";
+        return "setCorrelationContext[" + baggageName + ", " + expression + ']';
     }
 
     @Override

@@ -140,7 +140,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
                + ", useCollisionAvoidance=" + useCollisionAvoidance
                + ", collisionAvoidanceFactor=" + collisionAvoidanceFactor
                + ", delayPattern=" + delayPattern
-               + ", exchangeFormatterRef=" + exchangeFormatterRef + "]";
+               + ", exchangeFormatterRef=" + exchangeFormatterRef + ']';
     }
 
     public RedeliveryPolicy copy() {

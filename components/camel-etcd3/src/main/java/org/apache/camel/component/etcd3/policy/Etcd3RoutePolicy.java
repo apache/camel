@@ -160,7 +160,7 @@ public class Etcd3RoutePolicy extends RoutePolicySupport implements CamelContext
         if (executorService == null) {
             executorService = ObjectHelper.notNull(camelContext, "camelContext", this)
                     .getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                            "Etcd3RoutePolicy[" + route.getRouteId() + "]");
+                            "Etcd3RoutePolicy[" + route.getRouteId() + ']');
         }
     }
 

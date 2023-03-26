@@ -123,7 +123,7 @@ public class GoogleBigQueryProducer extends DefaultProducer {
             throws Exception {
         String tableIdWithPartition = Strings.isNullOrEmpty(partitionDecorator)
                 ? tableId
-                : (tableId + "$" + partitionDecorator);
+                : (tableId + '$' + partitionDecorator);
 
         List<InsertAllRequest.RowToInsert> apiRequestRows = new ArrayList<>();
         for (Exchange ex : exchanges) {

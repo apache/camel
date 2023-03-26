@@ -83,6 +83,6 @@ public interface CamelClusterView extends Service, CamelContextAware {
         }
 
         throw new IllegalArgumentException(
-                "Unable to unwrap this CamelClusterView type (" + getClass() + ") to the required type (" + clazz + ")");
+                "Unable to unwrap this CamelClusterView type (" + getClass() + ") to the required type (" + clazz + ')');
     }
 }

@@ -124,7 +124,7 @@ public class DurationRoutePolicy extends org.apache.camel.support.RoutePolicySup
 
         if (executorService == null) {
             executorService = camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                    "DurationRoutePolicy[" + routeId + "]");
+                    "DurationRoutePolicy[" + routeId + ']');
         }
 
         if (maxSeconds > 0) {

@@ -155,7 +155,7 @@ public abstract class SpringTestSupport extends ContextTestSupport {
      */
     public <T> T getMandatoryBean(Class<T> type, String name) {
         T value = applicationContext.getBean(name, type);
-        assertNotNull(value, "No spring bean found for name <" + name + ">");
+        assertNotNull(value, "No spring bean found for name <" + name + '>');
         return value;
     }
 
@@ -188,10 +188,10 @@ public abstract class SpringTestSupport extends ContextTestSupport {
                 quote = "";
                 break;
         }
-        String on = DEFAULT_DOMAIN + ":"
-                    + KEY_CONTEXT + "=" + context.getManagementName() + ","
-                    + KEY_TYPE + "=" + type + ","
-                    + KEY_NAME + "=" + quote + name + quote;
+        String on = DEFAULT_DOMAIN + ':'
+                    + KEY_CONTEXT + '=' + context.getManagementName() + ','
+                    + KEY_TYPE + '=' + type + ','
+                    + KEY_NAME + '=' + quote + name + quote;
         return ObjectName.getInstance(on);
     }
 }

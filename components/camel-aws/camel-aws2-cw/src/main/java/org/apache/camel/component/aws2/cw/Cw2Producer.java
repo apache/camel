@@ -144,7 +144,7 @@ public class Cw2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (cwProducerToString == null) {
-            cwProducerToString = "CwProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            cwProducerToString = "CwProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return cwProducerToString;
     }

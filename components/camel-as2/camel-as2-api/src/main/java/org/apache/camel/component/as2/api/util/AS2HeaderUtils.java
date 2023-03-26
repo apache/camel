@@ -60,11 +60,11 @@ public final class AS2HeaderUtils {
             StringBuilder sb = new StringBuilder();
             sb.append(attribute);
             if (importance != null) {
-                sb.append("=").append(importance);
+                sb.append('=').append(importance);
             }
             if (values != null) {
                 for (String value : values) {
-                    sb.append(",").append(value);
+                    sb.append(',').append(value);
                 }
             }
             return sb.toString();

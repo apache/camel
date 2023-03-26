@@ -230,7 +230,7 @@ public class KeyStoreParameters extends JsseParameters {
         builder.append(provider);
         builder.append(", resource=");
         builder.append(resource);
-        builder.append("]");
+        builder.append(']');
         return builder.toString();
     }
 }

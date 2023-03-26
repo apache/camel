@@ -121,7 +121,7 @@ public class IrcConfiguration implements Cloneable {
     }
 
     public String getCacheKey() {
-        return hostname + ":" + nickname;
+        return hostname + ':' + nickname;
     }
 
     /*
@@ -307,7 +307,7 @@ public class IrcConfiguration implements Cloneable {
                 channel = channel.substring(1);
             }
             if (key != null && !key.isEmpty()) {
-                channel += "!" + key;
+                channel += '!' + key;
             }
             channelList.add(createChannel(channel));
         }
@@ -531,7 +531,7 @@ public class IrcConfiguration implements Cloneable {
     @Override
     public String toString() {
         return "IrcConfiguration[hostname: " + hostname + ", ports=" + Arrays.toString(ports) + ", username=" + username
-               + "]";
+               + ']';
     }
 
     private static IrcChannel createChannel(String channelInfo) {

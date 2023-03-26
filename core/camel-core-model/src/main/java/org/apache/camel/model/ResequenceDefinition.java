@@ -292,7 +292,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
 
     @Override
     public String toString() {
-        return "Resequencer[" + getExpression() + " -> " + getOutputs() + "]";
+        return "Resequencer[" + getExpression() + " -> " + getOutputs() + ']';
     }
 
     @Override
@@ -302,7 +302,7 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
 
     @Override
     public String getLabel() {
-        return "resequencer[" + (getExpression() != null ? getExpression().getLabel() : "") + "]";
+        return "resequencer[" + (getExpression() != null ? getExpression().getLabel() : "") + ']';
     }
 
     public ResequencerConfig getResequencerConfig() {

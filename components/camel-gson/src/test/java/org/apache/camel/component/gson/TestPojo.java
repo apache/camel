@@ -51,6 +51,6 @@ public class TestPojo {
 
     @Override
     public String toString() {
-        return "TestPojo[" + name + "]";
+        return "TestPojo[" + name + ']';
     }
 }

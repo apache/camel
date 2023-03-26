@@ -418,7 +418,7 @@ public class BoxFilesManager {
         try {
             LOG.debug("Copying file(id={}) to destination_folder(id={}) {}",
                     fileId, destinationFolderId,
-                    newName == null ? "" : " with new name '" + newName + "'");
+                    newName == null ? "" : " with new name '" + newName + '\'');
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }
@@ -451,7 +451,7 @@ public class BoxFilesManager {
         try {
             LOG.debug("Moving file(id={}) to destination_folder(id={}) {}",
                     fileId, destinationFolderId,
-                    newName == null ? "" : " with new name '" + newName + "'");
+                    newName == null ? "" : " with new name '" + newName + '\'');
             if (fileId == null) {
                 throw new IllegalArgumentException("Parameter 'fileId' can not be null");
             }

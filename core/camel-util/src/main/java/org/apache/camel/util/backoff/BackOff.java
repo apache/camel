@@ -122,7 +122,7 @@ public final class BackOff {
         }
         sb.append(", maxAttempts=").append(maxAttempts);
         sb.append(", multiplier=").append(multiplier);
-        sb.append("]");
+        sb.append(']');
         return sb.toString();
     }
 

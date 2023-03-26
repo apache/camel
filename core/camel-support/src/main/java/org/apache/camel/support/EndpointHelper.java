@@ -147,7 +147,7 @@ public final class EndpointHelper {
         }
 
         // assemble uri as answer
-        uri = query != null && !query.isEmpty() ? base + "?" + query : base;
+        uri = query != null && !query.isEmpty() ? base + '?' + query : base;
         return uri;
     }
 
@@ -266,7 +266,7 @@ public final class EndpointHelper {
         if (normalizedUri.contains("://")) {
             String scheme = StringHelper.before(normalizedUri, "://");
             String path = after(normalizedUri, "://");
-            return scheme + ":" + path;
+            return scheme + ':' + path;
         } else {
             String scheme = StringHelper.before(normalizedUri, ":");
             String path = after(normalizedUri, ":");

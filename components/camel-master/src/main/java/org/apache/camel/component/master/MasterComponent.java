@@ -63,7 +63,7 @@ public class MasterComponent extends DefaultComponent {
 
         // we need to apply the params here
         if (params != null && params.size() > 0) {
-            delegateUri = delegateUri + "?" + uri.substring(uri.indexOf('?') + 1);
+            delegateUri = delegateUri + '?' + uri.substring(uri.indexOf('?') + 1);
         }
 
         return new MasterEndpoint(

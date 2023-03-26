@@ -85,7 +85,7 @@ public class XsltBuilder implements Processor {
 
     @Override
     public String toString() {
-        return "XSLT[" + template + "]";
+        return "XSLT[" + template + ']';
     }
 
     @Override

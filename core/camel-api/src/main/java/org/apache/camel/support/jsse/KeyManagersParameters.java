@@ -195,7 +195,7 @@ public class KeyManagersParameters extends JsseParameters {
         builder.append(provider);
         builder.append(", algorithm=");
         builder.append(algorithm);
-        builder.append("]");
+        builder.append(']');
         return builder.toString();
     }
 }

@@ -62,7 +62,7 @@ class ExportQuarkus extends Export {
         File profile = new File(getProfile() + ".properties");
 
         // the settings file has information what to export
-        File settings = new File(Run.WORK_DIR + "/" + Run.RUN_SETTINGS_FILE);
+        File settings = new File(Run.WORK_DIR + '/' + Run.RUN_SETTINGS_FILE);
         if (fresh || !settings.exists()) {
             // allow to automatic build
             if (!quiet) {

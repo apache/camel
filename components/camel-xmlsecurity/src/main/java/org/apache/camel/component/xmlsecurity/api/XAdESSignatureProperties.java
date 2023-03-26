@@ -591,7 +591,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         }
         String signedPropertiesId = "_" + UUID.randomUUID();
         List<Transform> transforms = Collections.emptyList();
-        Reference ref = input.getSignatureFactory().newReference("#" + signedPropertiesId,
+        Reference ref = input.getSignatureFactory().newReference('#' + signedPropertiesId,
                 input.getSignatureFactory().newDigestMethod(input.getContentDigestAlgorithm(), null), transforms,
                 "http://uri.etsi.org/01903#SignedProperties", null);
 
@@ -613,7 +613,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
             // and set to output
             result.setSignatureId(signatureId);
         }
-        setAttribute(qualifyingProperties, "Target", "#" + signatureId);
+        setAttribute(qualifyingProperties, "Target", '#' + signatureId);
         Element signedProperties = createElement("SignedProperties", doc, input);
         qualifyingProperties.appendChild(signedProperties);
         setAttribute(signedProperties, "Id", signedPropertiesId);
@@ -724,7 +724,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
         Element dataObjectFormat = createElement("DataObjectFormat", doc, input);
         signedDataObjectProperties.appendChild(dataObjectFormat);
         String contentReferenceId = "_" + UUID.randomUUID();
-        setAttribute(dataObjectFormat, "ObjectReference", "#" + contentReferenceId);
+        setAttribute(dataObjectFormat, "ObjectReference", '#' + contentReferenceId);
 
         if (getDataObjectFormatDescription() != null && !getDataObjectFormatDescription().isEmpty()) {
             Element description = createElement("Description", doc, input);
@@ -970,7 +970,7 @@ public class XAdESSignatureProperties implements XmlSignatureProperties {
             Document doc, Input input, String localElementName, String errorMessage,
             String elementOrText)
             throws IOException, ParserConfigurationException, XmlSignatureException {
-        String ending = localElementName + ">";
+        String ending = localElementName + '>';
         Element child;
         if (elementOrText.startsWith("<") && elementOrText.endsWith(ending)) {
             try {

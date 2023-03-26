@@ -21,7 +21,7 @@ public class FooBar {
     private String greeting = "Hello";
 
     public String hello(String name) {
-        return greeting + " " + name;
+        return greeting + ' ' + name;
     }
 
     public void setGreeting(String greeting) {

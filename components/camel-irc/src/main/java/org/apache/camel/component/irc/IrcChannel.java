@@ -32,7 +32,7 @@ public final class IrcChannel {
         if (name == null || name.isEmpty()) {
             name = "";
         }
-        this.name = name.startsWith("#") || name.startsWith("&") ? name : "#" + name;
+        this.name = name.startsWith("#") || name.startsWith("&") ? name : '#' + name;
     }
 
     public String getName() {

@@ -208,13 +208,13 @@ public class BindyImpliedTest {
         @Override
         public String toString() {
             return "Record{"
-                   + "field1=<" + field1 + ">"
-                   + ", field2=<" + field2 + ">"
-                   + ", field3=<" + field3 + ">"
-                   + ", field4=<" + field4 + ">"
-                   + ", field5=<" + field6 + ">"
-                   + ", field6=<" + field6 + ">"
-                   + "}";
+                   + "field1=<" + field1 + '>'
+                   + ", field2=<" + field2 + '>'
+                   + ", field3=<" + field3 + '>'
+                   + ", field4=<" + field4 + '>'
+                   + ", field5=<" + field6 + '>'
+                   + ", field6=<" + field6 + '>'
+                   + '}';
         }
     }
 }

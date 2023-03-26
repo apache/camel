@@ -180,6 +180,6 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
 
     @Override
     public String toString() {
-        return "FatalFallbackErrorHandler[" + processor + "]";
+        return "FatalFallbackErrorHandler[" + processor + ']';
     }
 }

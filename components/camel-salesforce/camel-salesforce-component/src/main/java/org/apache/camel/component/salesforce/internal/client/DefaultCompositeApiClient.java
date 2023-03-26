@@ -223,7 +223,7 @@ public class DefaultCompositeApiClient extends AbstractClientBase implements Com
     String versionUrl() {
         ObjectHelper.notNull(version, "version");
 
-        return servicesDataUrl() + "v" + version + "/";
+        return servicesDataUrl() + 'v' + version + '/';
     }
 
     @Override

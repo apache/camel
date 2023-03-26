@@ -54,7 +54,7 @@ public class JavaScriptRoutesBuilderLoader extends EndpointRouteBuilderLoaderSup
 
         final Context context = contextBuilder.build();
         final Value bindings = context.getBindings(LANGUAGE_ID);
-        final String name = FileUtil.onlyName(builder.getResource().getLocation(), true) + "." + EXTENSION;
+        final String name = FileUtil.onlyName(builder.getResource().getLocation(), true) + '.' + EXTENSION;
 
         // configure bindings
         bindings.putMember("__dsl", new JavaScriptDSL(builder));

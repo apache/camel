@@ -186,10 +186,10 @@ public class RestProducer extends DefaultAsyncProducer {
             // if so us a header for the dynamic uri template so we reuse same endpoint but the header overrides the actual url to use
             String overrideUri = host;
             if (!ObjectHelper.isEmpty(basePath)) {
-                overrideUri += "/" + basePath;
+                overrideUri += '/' + basePath;
             }
             if (!ObjectHelper.isEmpty(resolvedUriTemplate)) {
-                overrideUri += "/" + resolvedUriTemplate;
+                overrideUri += '/' + resolvedUriTemplate;
             }
             // the http uri for the rest call to be used
             inMessage.setHeader(RestConstants.REST_HTTP_URI, overrideUri);

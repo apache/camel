@@ -71,7 +71,7 @@ public class ToDynamicDefinition extends NoOutputDefinition<ToDynamicDefinition>
 
     @Override
     public String toString() {
-        return "DynamicTo[" + getLabel() + "]";
+        return "DynamicTo[" + getLabel() + ']';
     }
 
     @Override

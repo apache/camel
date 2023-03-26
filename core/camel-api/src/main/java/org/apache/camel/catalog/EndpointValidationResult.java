@@ -251,12 +251,12 @@ public class EndpointValidationResult extends PropertiesValidationResult impleme
             sb.append("Endpoint validator error\n");
             sb.append(
                     "---------------------------------------------------------------------------------------------------------------------------------------\n");
-            sb.append("\n");
+            sb.append('\n');
         }
         if (uri != null) {
-            sb.append("\t").append(uri).append("\n");
+            sb.append('\t').append(uri).append('\n');
         } else {
-            sb.append("\n");
+            sb.append('\n');
         }
         for (Map.Entry<String, String> option : options.entrySet()) {
             String out = String.format(format, option.getKey(), option.getValue());

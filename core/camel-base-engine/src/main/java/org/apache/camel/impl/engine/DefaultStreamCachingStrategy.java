@@ -372,7 +372,7 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
                + ", spoolThreshold=" + spoolThreshold
                + ", spoolUsedHeapMemoryThreshold=" + spoolUsedHeapMemoryThreshold
                + ", bufferSize=" + bufferSize
-               + ", anySpoolRules=" + anySpoolRules + "]";
+               + ", anySpoolRules=" + anySpoolRules + ']';
     }
 
     private final class FixedThresholdSpoolRule implements SpoolRule {

@@ -372,10 +372,10 @@ public final class URISupport {
             s = before;
         }
         if (query != null) {
-            s = s + "?" + query;
+            s = s + '?' + query;
         }
         if (!s.contains("#") && uri.getFragment() != null) {
-            s = s + "#" + uri.getFragment();
+            s = s + '#' + uri.getFragment();
         }
 
         return new URI(s);
@@ -460,7 +460,7 @@ public final class URISupport {
                     if (first) {
                         first = false;
                     } else {
-                        rc.append("&");
+                        rc.append('&');
                     }
 
                     String key = (String) o;
@@ -476,7 +476,7 @@ public final class URISupport {
                             // append & separator if there is more in the list
                             // to append
                             if (it.hasNext()) {
-                                rc.append("&");
+                                rc.append('&');
                             }
                         }
                     } else {
@@ -508,7 +508,7 @@ public final class URISupport {
             return;
         }
         // only append if value is not null
-        rc.append("=");
+        rc.append('=');
         String raw = URIScanner.resolveRaw(value);
         if (raw != null) {
             // do not encode RAW parameters unless it has %
@@ -756,7 +756,7 @@ public final class URISupport {
 
         final String query = uri.getQuery();
         if (ObjectHelper.isNotEmpty(query)) {
-            pathAndQuery += "?" + query;
+            pathAndQuery += '?' + query;
         }
 
         return pathAndQuery;
@@ -799,10 +799,10 @@ public final class URISupport {
         for (Object v : values) {
             String s = v.toString();
             if (sb.length() > 0) {
-                sb.append("&");
+                sb.append('&');
             }
             sb.append(key);
-            sb.append("=");
+            sb.append('=');
             sb.append(v);
         }
         return sb.toString();

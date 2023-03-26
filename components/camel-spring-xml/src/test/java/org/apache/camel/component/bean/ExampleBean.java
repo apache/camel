@@ -22,11 +22,11 @@ package org.apache.camel.component.bean;
 public class ExampleBean {
 
     public String sayHello(String name) {
-        return "Hello " + name + "!";
+        return "Hello " + name + '!';
     }
 
     public String sayGoodbye(String name) {
-        return "Bye " + name + "!";
+        return "Bye " + name + '!';
     }
 
     public long timesTwo(int value) {

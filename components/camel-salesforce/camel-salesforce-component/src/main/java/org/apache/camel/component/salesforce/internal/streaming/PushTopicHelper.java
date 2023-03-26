@@ -79,7 +79,7 @@ public class PushTopicHelper {
                     .query("SELECT Id, Name, Query, ApiVersion, IsActive, "
                            + "NotifyForFields, NotifyForOperations, NotifyForOperationCreate, "
                            + "NotifyForOperationDelete, NotifyForOperationUndelete, " + "NotifyForOperationUpdate, Description "
-                           + "FROM PushTopic WHERE Name = '" + topicName + "'",
+                           + "FROM PushTopic WHERE Name = '" + topicName + '\'',
                             Collections.emptyMap(), callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {

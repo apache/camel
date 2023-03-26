@@ -84,9 +84,9 @@ public class ExampleModel {
 
     public String getDocLink() {
         if (middleFolder == null) {
-            return fileName + "/" + readmeFileName;
+            return fileName + '/' + readmeFileName;
         }
 
-        return middleFolder + "/" + fileName + "/" + readmeFileName;
+        return middleFolder + '/' + fileName + '/' + readmeFileName;
     }
 }

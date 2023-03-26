@@ -473,7 +473,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
 
     @Override
     public String getTraceLabel() {
-        return "throttle[" + maxRequestsPerPeriodExpression + " per: " + timePeriodMillis + "]";
+        return "throttle[" + maxRequestsPerPeriodExpression + " per: " + timePeriodMillis + ']';
     }
 
     @Override

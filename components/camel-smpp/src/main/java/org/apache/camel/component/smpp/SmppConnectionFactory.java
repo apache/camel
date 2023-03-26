@@ -121,14 +121,14 @@ public final class SmppConnectionFactory implements ConnectionFactory {
             OutputStream out = socket.getOutputStream();
             InputStream in = socket.getInputStream();
 
-            String connectString = "CONNECT " + host + ":" + port + " HTTP/1.0\r\n";
+            String connectString = "CONNECT " + host + ':' + port + " HTTP/1.0\r\n";
             out.write(connectString.getBytes());
 
             String username = config.getHttpProxyUsername();
             String password = config.getHttpProxyPassword();
 
             if (username != null && password != null) {
-                String usernamePassword = username + ":" + password;
+                String usernamePassword = username + ':' + password;
                 byte[] code = Base64.getEncoder().encode(usernamePassword.getBytes());
                 out.write("Proxy-Authorization: Basic ".getBytes());
                 out.write(code);
@@ -151,7 +151,7 @@ public final class SmppConnectionFactory implements ConnectionFactory {
             BufferedReader reader = IOHelper.buffered(new InputStreamReader(in));
             String response = reader.readLine();
             if (response == null) {
-                throw new RuntimeCamelException("Empty response to CONNECT request to host " + host + ":" + port);
+                throw new RuntimeCamelException("Empty response to CONNECT request to host " + host + ':' + port);
             }
             String reason = "Unknown reason";
             int code = -1;
@@ -162,7 +162,7 @@ public final class SmppConnectionFactory implements ConnectionFactory {
                 reason = response.substring(bar + 1);
             } catch (NumberFormatException e) {
                 throw new RuntimeCamelException(
-                        "Invalid response to CONNECT request to host " + host + ":" + port
+                        "Invalid response to CONNECT request to host " + host + ':' + port
                                                 + " - cannot parse code from response string: " + response);
             }
             if (code != 200) {

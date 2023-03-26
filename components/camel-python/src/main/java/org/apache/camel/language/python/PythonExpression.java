@@ -69,7 +69,7 @@ public class PythonExpression extends ExpressionSupport {
 
     @Override
     public String toString() {
-        return "Python[" + expressionString + "]";
+        return "Python[" + expressionString + ']';
     }
 
 }

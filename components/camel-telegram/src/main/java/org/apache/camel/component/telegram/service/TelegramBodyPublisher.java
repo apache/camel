@@ -91,7 +91,7 @@ public class TelegramBodyPublisher {
             // this creates the key-pair part of the content disposition (i.e.: name="myName"; file="myFile.doc")
             contentDisposition += headers.entrySet()
                     .stream()
-                    .map(e -> e.getKey().toLowerCase() + "=\"" + e.getValue().toString() + "\"")
+                    .map(e -> e.getKey().toLowerCase() + "=\"" + e.getValue().toString() + '"')
                     .collect(Collectors.joining("; ")) + "\r\n";
             buffer.put(contentDisposition.getBytes());
 

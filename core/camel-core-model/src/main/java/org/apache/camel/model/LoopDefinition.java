@@ -112,7 +112,7 @@ public class LoopDefinition extends OutputExpressionNode {
 
     @Override
     public String toString() {
-        return "Loop[" + getExpression() + " -> " + getOutputs() + "]";
+        return "Loop[" + getExpression() + " -> " + getOutputs() + ']';
     }
 
     @Override
@@ -122,7 +122,7 @@ public class LoopDefinition extends OutputExpressionNode {
 
     @Override
     public String getLabel() {
-        return "loop[" + getExpression() + "]";
+        return "loop[" + getExpression() + ']';
     }
 
     /**

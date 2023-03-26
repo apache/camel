@@ -59,7 +59,7 @@ final class BatchRequest implements Serializable {
 
     @Override
     public String toString() {
-        return "Batch: " + method + " " + url + ", data:" + richInput;
+        return "Batch: " + method + ' ' + url + ", data:" + richInput;
     }
 
 }

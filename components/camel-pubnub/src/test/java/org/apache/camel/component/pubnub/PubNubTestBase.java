@@ -61,7 +61,7 @@ public class PubNubTestBase extends CamelTestSupport {
             throw new RuntimeException(e);
         }
 
-        pnConfiguration.setOrigin("localhost" + ":" + port);
+        pnConfiguration.setOrigin("localhost" + ':' + port);
         pnConfiguration.setSecure(false);
         pnConfiguration.setSubscribeKey("mySubscribeKey");
         pnConfiguration.setPublishKey("myPublishKey");

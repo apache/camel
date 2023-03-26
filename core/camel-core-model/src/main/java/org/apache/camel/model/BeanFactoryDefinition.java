@@ -171,7 +171,7 @@ public abstract class BeanFactoryDefinition<
     public T type(String prefix, Class<?> type) {
         if (prefix.startsWith("#type") || prefix.startsWith("#class")) {
             if (!prefix.endsWith(":")) {
-                prefix = prefix + ":";
+                prefix = prefix + ':';
             }
             setType(prefix + type.getName());
         } else {

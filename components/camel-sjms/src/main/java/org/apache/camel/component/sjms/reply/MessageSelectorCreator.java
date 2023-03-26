@@ -60,7 +60,7 @@ public class MessageSelectorCreator {
                 if (!first) {
                     expression.append(" OR JMSCorrelationID='");
                 }
-                expression.append(value).append("'");
+                expression.append(value).append('\'');
                 if (first) {
                     first = false;
                 }

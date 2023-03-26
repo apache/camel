@@ -68,7 +68,7 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
 
     @Override
     public String toString() {
-        return "Sample[" + description() + " -> " + getOutputs() + "]";
+        return "Sample[" + description() + " -> " + getOutputs() + ']';
     }
 
     protected String description() {
@@ -81,7 +81,7 @@ public class SamplingDefinition extends NoOutputDefinition<SamplingDefinition> {
 
     @Override
     public String getLabel() {
-        return "sample[" + description() + "]";
+        return "sample[" + description() + ']';
     }
 
     // Fluent API

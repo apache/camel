@@ -61,14 +61,14 @@ public class WeatherProducer extends DefaultProducer {
                         if (HttpStatus.SC_OK != response.getCode()) {
                             throw new IllegalStateException(
                                     "Got the invalid http status value '" + response.getCode()
-                                                            + "' as the result of the query '" + query + "'");
+                                                            + "' as the result of the query '" + query + '\'');
                         }
                         String weather = EntityUtils.toString(response.getEntity(), "UTF-8");
                         LOG.debug("Got back the Weather information {}", weather);
 
                         if (ObjectHelper.isEmpty(weather)) {
                             throw new IllegalStateException(
-                                    "Got the unexpected value '" + weather + "' as the result of the query '" + uri + "'");
+                                    "Got the unexpected value '" + weather + "' as the result of the query '" + uri + '\'');
                         }
 
                         String header = getEndpoint().getConfiguration().getHeaderName();

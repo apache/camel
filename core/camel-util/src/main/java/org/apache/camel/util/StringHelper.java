@@ -255,7 +255,7 @@ public final class StringHelper {
             return true;
         }
 
-        if (language != null && expression.contains("$" + language + "{")) {
+        if (language != null && expression.contains('$' + language + '{')) {
             return true;
         }
 
@@ -996,15 +996,15 @@ public final class StringHelper {
                 next = null;
             }
             if (ch == '-' || ch == '_') {
-                answer.append("-");
+                answer.append('-');
             } else if (Character.isUpperCase(ch) && prev != null && !Character.isUpperCase(prev)) {
                 if (prev != '-' && prev != '_') {
-                    answer.append("-");
+                    answer.append('-');
                 }
                 answer.append(ch);
             } else if (Character.isUpperCase(ch) && prev != null && next != null && Character.isLowerCase(next)) {
                 if (prev != '-' && prev != '_') {
-                    answer.append("-");
+                    answer.append('-');
                 }
                 answer.append(ch);
             } else {

@@ -68,7 +68,7 @@ public class CreateInstanceJsonTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:operation_result");
         mock.expectedMinimumMessageCount(1);
 
-        String sampleBody = "{" +
+        String sampleBody = '{' +
                             "\"name\":\"" + testConfiguration.getProperty("name") + "\"," +
                             "\"description\":\"" + testConfiguration.getProperty("description") + "\"," +
                             "\"engine\":\"" + testConfiguration.getProperty("engine") + "\"," +
@@ -95,8 +95,8 @@ public class CreateInstanceJsonTest extends CamelTestSupport {
                             "\"connector_enable\":false," +
                             "\"enable_auto_topic\":true," +
                             "\"storage_spec_code\":\"" + testConfiguration.getProperty("storageSpecCode") + "\"," +
-                            "\"enterprise_project_id\":\"" + testConfiguration.getProperty("enterpriseProjectId") + "\"" +
-                            "}";
+                            "\"enterprise_project_id\":\"" + testConfiguration.getProperty("enterpriseProjectId") + '"' +
+                '}';
         template.sendBody("direct:operation", sampleBody);
         Exchange responseExchange = mock.getExchanges().get(0);
 

@@ -121,7 +121,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
 
     @Override
     public String toString() {
-        return "OnException[" + description() + " -> " + getOutputs() + "]";
+        return "OnException[" + description() + " -> " + getOutputs() + ']';
     }
 
     protected String description() {
@@ -135,7 +135,7 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
 
     @Override
     public String getLabel() {
-        return "onException[" + description() + "]";
+        return "onException[" + description() + ']';
     }
 
     @Override

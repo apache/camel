@@ -77,7 +77,7 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
 
     @Override
     public String toString() {
-        return "RoutingSlip[" + getExpression() + "]";
+        return "RoutingSlip[" + getExpression() + ']';
     }
 
     @Override
@@ -87,7 +87,7 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
 
     @Override
     public String getLabel() {
-        return "routingSlip[" + getExpression() + "]";
+        return "routingSlip[" + getExpression() + ']';
     }
 
     @Override

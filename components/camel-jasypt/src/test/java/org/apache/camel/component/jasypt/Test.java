@@ -24,7 +24,7 @@ public class Test {
     }
 
     public String handleRequst(String request) {
-        return request + " " + data;
+        return request + ' ' + data;
     }
 
 }

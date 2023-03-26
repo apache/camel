@@ -314,7 +314,7 @@ public abstract class GenerateYamlSupportMojo extends AbstractMojo {
     }
 
     protected static AnnotationSpec yamlPropertyWithSubtype(String name, String type, String subType, boolean required) {
-        return yamlProperty(name, type + ":" + subType, required, false);
+        return yamlProperty(name, type + ':' + subType, required, false);
     }
 
     // **************************

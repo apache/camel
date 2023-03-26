@@ -59,7 +59,7 @@ abstract class DefaultCaffeineSendDynamicAware extends SendDynamicAwareSupport {
             }
             String query = URISupport.createQueryString(copy);
             if (!query.isEmpty()) {
-                return u + "?" + query;
+                return u + '?' + query;
             } else {
                 return u;
             }

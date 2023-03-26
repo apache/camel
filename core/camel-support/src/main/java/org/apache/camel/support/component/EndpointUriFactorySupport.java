@@ -90,7 +90,7 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
             if (val instanceof String) {
                 String answer = (String) val;
                 if (!answer.startsWith("#") && !answer.startsWith("RAW(")) {
-                    map.put(secretParameter, "RAW(" + val + ")");
+                    map.put(secretParameter, "RAW(" + val + ')');
                 }
             }
         }
@@ -102,9 +102,9 @@ public abstract class EndpointUriFactorySupport implements CamelContextAware, En
             // this)
             boolean questionMark = uri.indexOf('?') != -1;
             if (questionMark) {
-                uri = uri + "&" + query;
+                uri = uri + '&' + query;
             } else {
-                uri = uri + "?" + query;
+                uri = uri + '?' + query;
             }
         }
         return uri;

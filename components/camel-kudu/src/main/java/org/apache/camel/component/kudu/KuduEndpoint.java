@@ -77,7 +77,7 @@ public class KuduEndpoint extends DefaultEndpoint {
 
         //To facilitate tests, if the client is already created, do not recreate.
         if (this.getKuduClient() == null) {
-            setKuduClient(new KuduClient.KuduClientBuilder(getHost() + ":" + getPort()).build());
+            setKuduClient(new KuduClient.KuduClientBuilder(getHost() + ':' + getPort()).build());
         }
         LOG.debug("Resolved the host with the name {} as {}", getHost(), getKuduClient());
         super.doStart();

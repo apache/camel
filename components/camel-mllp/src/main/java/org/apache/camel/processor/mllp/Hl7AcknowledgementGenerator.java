@@ -127,7 +127,7 @@ public class Hl7AcknowledgementGenerator extends ServiceSupport implements Proce
             throw new Hl7AcknowledgementGenerationException(
                     hl7Util,
                     "Insufficient number of fields in MSH to generate a response - 8 are required but "
-                             + fieldSeparatorIndexes.size() + " " + "were found",
+                             + fieldSeparatorIndexes.size() + ' ' + "were found",
                     hl7MessageBytes);
         }
 

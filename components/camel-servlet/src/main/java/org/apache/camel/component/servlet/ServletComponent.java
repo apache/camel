@@ -98,8 +98,8 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             while (after.startsWith("/")) {
                 after = after.substring(1);
             }
-            after = "/" + after;
-            uri = scheme + ":" + after;
+            after = '/' + after;
+            uri = scheme + ':' + after;
         }
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
@@ -287,7 +287,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             if (uriTemplate.startsWith("/")) {
                 path = path + uriTemplate;
             } else {
-                path = path + "/" + uriTemplate;
+                path = path + '/' + uriTemplate;
             }
         }
         path = FileUtil.stripLeadingSeparator(path);

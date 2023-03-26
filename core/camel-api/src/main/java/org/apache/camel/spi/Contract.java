@@ -103,7 +103,7 @@ public class Contract {
     @Override
     public String toString() {
         if (contractString == null) {
-            this.contractString = "DataType[input=" + this.inputType + ", output=" + this.outputType + "]";
+            this.contractString = "DataType[input=" + this.inputType + ", output=" + this.outputType + ']';
         }
         return contractString;
     }

@@ -363,7 +363,7 @@ public class Athena2Producer extends DefaultProducer {
             queryString = "-- {\"fromEndpointUri\": \"" + exchange.getFromEndpoint().getEndpointUri() + "\", "
                           + "\"exchangeId\": \"" + exchange.getExchangeId() + "\", "
                           + "\"exchangeFromRouteId\": \"" + exchange.getFromRouteId() + "\"}"
-                          + "\n"
+                          + '\n'
                           + queryString;
         }
 

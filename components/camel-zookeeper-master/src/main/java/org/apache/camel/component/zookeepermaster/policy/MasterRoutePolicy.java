@@ -273,7 +273,7 @@ public class MasterRoutePolicy extends RoutePolicySupport implements CamelContex
     protected String getCamelClusterPath(String name) {
         String path = name;
         if (ObjectHelper.isNotEmpty(zkRoot)) {
-            path = zkRoot + "/" + name;
+            path = zkRoot + '/' + name;
         }
         return path;
     }

@@ -485,7 +485,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 method.setPublic().setStatic();
                 method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
                 method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder",
-                        "\"" + componentModel.getScheme() + "\", path");
+                        '"' + componentModel.getScheme() + "\", path");
                 staticBuilders.add(method);
             }
 
@@ -530,7 +530,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 .setReturnType(new GenericType(loadClass(builderClass.getCanonicalName())))
                 .setDefault()
                 .setBodyF("return %s.%s(%s);", javaClass.getName(), "endpointBuilder",
-                        "\"" + componentModel.getScheme() + "\", path");
+                        '"' + componentModel.getScheme() + "\", path");
     }
 
     private void processAliases(
@@ -553,7 +553,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         method.setPublic().setStatic();
         method.setReturnType(builderClass.getCanonicalName().replace('$', '.'));
         method.setBodyF("return %s.%s(%s);", javaClass.getCanonicalName(), "endpointBuilder",
-                "\"" + model.getScheme() + "\", path");
+                '"' + model.getScheme() + "\", path");
         staticBuilders.add(method);
 
         method = dslClass.addMethod().setStatic().setName(methodName)
@@ -718,7 +718,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
         StringBuilder baseDescBuilder = new StringBuilder(baseDesc);
         if (!baseDesc.endsWith(".")) {
-            baseDescBuilder.append(".");
+            baseDescBuilder.append('.');
         }
         baseDescBuilder.append("\n@@REPLACE_ME@@");
         if (option.isMultiValue()) {
@@ -726,7 +726,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                     .append(option.getName())
                     .append("(String, Object) method to add a value (call the method multiple times to set more values).");
         }
-        baseDescBuilder.append("\n");
+        baseDescBuilder.append('\n');
         // the Endpoint DSL currently requires to provide the entire
         // context-path and not as individual options
         // so lets only mark query parameters that are required as
@@ -854,7 +854,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         for (File factory : factories) {
             String factoryName = Strings.before(factory.getName(), ".");
             String endpointsName = factoryName.replace("EndpointBuilderFactory", "Builders");
-            javaClass.implementInterface(componentsFactoriesPackageName + "." + factoryName + "." + endpointsName);
+            javaClass.implementInterface(componentsFactoriesPackageName + '.' + factoryName + '.' + endpointsName);
         }
 
         return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + javaClass.printClass() + "\n//CHECKSTYLE:ON",
@@ -871,7 +871,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
         javaClass.addAnnotation(Generated.class).setStringValue("value", EndpointDslMojo.class.getName());
 
         for (File factory : factories) {
-            javaClass.implementInterface(componentsFactoriesPackageName + "." + Strings.before(factory.getName(), "."));
+            javaClass.implementInterface(componentsFactoriesPackageName + '.' + Strings.before(factory.getName(), "."));
         }
 
         return writeSourceIfChanged("//CHECKSTYLE:OFF\n" + javaClass.printClass() + "\n//CHECKSTYLE:ON",
@@ -880,7 +880,7 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
 
     private boolean synchronizeEndpointBuildersStaticClass(List<Method> methods) throws MojoFailureException {
         File file = new File(
-                sourcesOutputDir.getPath() + "/" + endpointFactoriesPackageName.replace(".", "/"),
+                sourcesOutputDir.getPath() + '/' + endpointFactoriesPackageName.replace(".", "/"),
                 "StaticEndpointBuilders.java");
         if (file.exists()) {
             // does the file already exists
@@ -1031,9 +1031,9 @@ public class EndpointDslMojo extends AbstractGeneratorMojo {
                 getLog().debug("Source code generated:\n" + code);
             }
 
-            return updateResource(sourcesOutputDir.toPath(), filePath + "/" + fileName, code);
+            return updateResource(sourcesOutputDir.toPath(), filePath + '/' + fileName, code);
         } catch (Exception e) {
-            throw new MojoFailureException("IOError with file " + filePath + "/" + fileName, e);
+            throw new MojoFailureException("IOError with file " + filePath + '/' + fileName, e);
         }
     }
 }

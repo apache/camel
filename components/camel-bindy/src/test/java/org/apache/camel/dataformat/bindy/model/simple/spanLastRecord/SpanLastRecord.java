@@ -55,7 +55,7 @@ public class SpanLastRecord {
 
     @Override
     public String toString() {
-        return "SpanLastRecord [recordId=" + recordId + ", name=" + name + ", comment=" + comment + "]";
+        return "SpanLastRecord [recordId=" + recordId + ", name=" + name + ", comment=" + comment + ']';
     }
 
 }

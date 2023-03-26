@@ -90,6 +90,6 @@ public final class ExceptionPolicyKey {
     @Override
     public String toString() {
         return "ExceptionPolicyKey[route: " + (routeId != null ? routeId : "<global>") + ", " + exceptionClass
-               + (when != null ? " " + when : "") + "]";
+               + (when != null ? " " + when : "") + ']';
     }
 }

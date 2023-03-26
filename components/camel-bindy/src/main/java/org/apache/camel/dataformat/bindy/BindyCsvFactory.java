@@ -249,8 +249,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
         if (!data.isEmpty()) {
             try {
-                if (quoting && quote != null && (data.contains("\\" + quote) || data.contains(quote)) && quotingEscaped) {
-                    value = format.parse(data.replaceAll("\\\\" + quote, "\\" + quote));
+                if (quoting && quote != null && (data.contains('\\' + quote) || data.contains(quote)) && quotingEscaped) {
+                    value = format.parse(data.replaceAll("\\\\" + quote, '\\' + quote));
                 } else if (quote != null && quote.equals(DOUBLE_QUOTES_SYMBOL)
                         && data.contains(DOUBLE_QUOTES_SYMBOL + DOUBLE_QUOTES_SYMBOL) && !quotingEscaped) {
                     // If double-quotes are used to enclose fields, the two double
@@ -382,8 +382,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                         buffer.append(quote);
 
                         // CAMEL-7519 - improvement escape the token itself by prepending escape char
-                        if (quotingEscaped && (res.contains("\\" + quote) || res.contains(quote))) {
-                            buffer.append(res.replaceAll("\\" + quote, "\\\\" + quote));
+                        if (quotingEscaped && (res.contains('\\' + quote) || res.contains(quote))) {
+                            buffer.append(res.replaceAll('\\' + quote, "\\\\" + quote));
                         } else if (!quotingEscaped && quote.equals(DOUBLE_QUOTES_SYMBOL) && res.contains(quote)) {
                             // If double-quotes are used to enclose fields, then a double-quote
                             // appearing inside a field must be escaped by preceding it with another
@@ -600,8 +600,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             if (quoting && quote != null) {
                 builderHeader.append(quote);
             }
-            if (quoting && quote != null && (res.contains("\\" + quote) || res.contains(quote)) && quotingEscaped) {
-                builderHeader.append(res.replaceAll("\\" + quote, "\\\\" + quote));
+            if (quoting && quote != null && (res.contains('\\' + quote) || res.contains(quote)) && quotingEscaped) {
+                builderHeader.append(res.replaceAll('\\' + quote, "\\\\" + quote));
             } else {
                 builderHeader.append(res);
             }

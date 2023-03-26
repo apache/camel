@@ -35,12 +35,12 @@ public final class UndertowServiceExpression extends DefaultServiceCallExpressio
 
         String answer = scheme + ":http://" + host;
         if (port != null) {
-            answer = answer + ":" + port;
+            answer = answer + ':' + port;
         }
 
         if (contextPath != null) {
             if (!contextPath.startsWith("/")) {
-                contextPath = "/" + contextPath;
+                contextPath = '/' + contextPath;
             }
 
             answer += contextPath;

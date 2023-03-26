@@ -76,7 +76,7 @@ public class CamelPropertyPlaceholderLocationDefinition extends IdentifiedType {
     public String toString() {
         String answer = path;
         if (ObjectHelper.isNotEmpty(resolver)) {
-            answer = resolver + ":" + answer;
+            answer = resolver + ':' + answer;
         }
         if (ObjectHelper.isNotEmpty(optional)) {
             answer = answer + ";optional=true";

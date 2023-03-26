@@ -345,7 +345,7 @@ public class MailConfiguration implements Cloneable {
             ssl = " (SSL enabled)";
         }
 
-        return protocol + "://" + host + ":" + port + ssl + ", folder=" + folderName;
+        return protocol + "://" + host + ':' + port + ssl + ", folder=" + folderName;
     }
 
     // Properties
@@ -483,7 +483,7 @@ public class MailConfiguration implements Cloneable {
             // can be overridden by URI parameters
             String address = username;
             if (address.indexOf('@') == -1) {
-                address += "@" + host;
+                address += '@' + host;
             }
             setTo(address);
         }

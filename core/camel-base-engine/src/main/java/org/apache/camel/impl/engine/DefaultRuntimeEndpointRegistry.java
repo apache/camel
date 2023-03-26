@@ -302,7 +302,7 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
         if (routeId == null || uri == null) {
             return null;
         } else {
-            return routeId + "|" + uri;
+            return routeId + '|' + uri;
         }
     }
 

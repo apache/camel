@@ -76,21 +76,21 @@ public class SchemaValidationException extends ValidationException {
             List<SAXParseException> errors, List<SAXParseException> warnings) {
         StringBuilder buffer = new StringBuilder("Validation failed for: ")
                 .append(schema)
-                .append("\n");
+                .append('\n');
 
         if (!fatalErrors.isEmpty()) {
             buffer.append("fatal errors: [")
-                    .append("\n");
+                    .append('\n');
             appendDetails(buffer, fatalErrors);
-            buffer.append("]")
-                    .append("\n");
+            buffer.append(']')
+                    .append('\n');
         }
 
         if (!errors.isEmpty()) {
             buffer.append("errors: [")
-                    .append("\n");
+                    .append('\n');
             appendDetails(buffer, errors);
-            buffer.append("]");
+            buffer.append(']');
         }
 
         return buffer.toString();
@@ -101,7 +101,7 @@ public class SchemaValidationException extends ValidationException {
             buffer.append(e.getClass().getName()).append(": ");
             buffer.append(e.getMessage()).append(", ");
             buffer.append("Line : ").append(e.getLineNumber()).append(", ");
-            buffer.append("Column : ").append(e.getColumnNumber()).append("\n");
+            buffer.append("Column : ").append(e.getColumnNumber()).append('\n');
         }
     }
 }

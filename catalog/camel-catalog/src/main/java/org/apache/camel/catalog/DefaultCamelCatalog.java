@@ -487,7 +487,7 @@ public class DefaultCamelCatalog extends AbstractCamelCatalog implements CamelCa
 
     @Override
     public InputStream loadResource(String kind, String name) {
-        return versionManager.getResourceAsStream(BASE_RESOURCE_DIR + "/" + kind + "/" + name);
+        return versionManager.getResourceAsStream(BASE_RESOURCE_DIR + '/' + kind + '/' + name);
     }
 
     @Override

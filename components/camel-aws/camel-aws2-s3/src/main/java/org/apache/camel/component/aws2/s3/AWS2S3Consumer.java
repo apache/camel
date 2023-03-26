@@ -451,7 +451,7 @@ public class AWS2S3Consumer extends ScheduledBatchPollingConsumer {
     @Override
     public String toString() {
         if (s3ConsumerToString == null) {
-            s3ConsumerToString = "S3Consumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            s3ConsumerToString = "S3Consumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return s3ConsumerToString;
     }

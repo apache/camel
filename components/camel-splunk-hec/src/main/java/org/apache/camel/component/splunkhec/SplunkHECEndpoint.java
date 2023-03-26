@@ -71,7 +71,7 @@ public class SplunkHECEndpoint extends DefaultEndpoint {
         if (port < 1 || port > 65535) {
             throw new IllegalArgumentException("Invalid port: " + port);
         }
-        splunkURL = hostname + ":" + port;
+        splunkURL = hostname + ':' + port;
         token = match.group(3);
     }
 

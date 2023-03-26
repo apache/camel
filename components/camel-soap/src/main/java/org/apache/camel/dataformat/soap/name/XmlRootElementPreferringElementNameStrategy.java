@@ -60,7 +60,7 @@ public class XmlRootElementPreferringElementNameStrategy implements ElementNameS
         }
 
         if (ObjectHelper.isEmpty(localName) || isInValidNamespace(nameSpace)) {
-            throw new IllegalStateException("Unable to determine localName or namespace for type <" + type.getName() + ">");
+            throw new IllegalStateException("Unable to determine localName or namespace for type <" + type.getName() + '>');
         }
         return new QName(nameSpace, localName);
     }

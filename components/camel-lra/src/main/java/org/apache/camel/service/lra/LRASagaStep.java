@@ -49,7 +49,7 @@ public final class LRASagaStep {
             try {
                 t.options.put(entry.getKey(), entry.getValue().evaluate(exchange, String.class));
             } catch (Exception ex) {
-                throw new RuntimeCamelException("Cannot evaluate saga option '" + entry.getKey() + "'", ex);
+                throw new RuntimeCamelException("Cannot evaluate saga option '" + entry.getKey() + '\'', ex);
             }
         }
         return t;

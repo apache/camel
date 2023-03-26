@@ -69,7 +69,7 @@ public class SetPropertyProcessor extends AsyncProcessorSupport implements Trace
 
     @Override
     public String getTraceLabel() {
-        return "setProperty[" + propertyName + ", " + expression + "]";
+        return "setProperty[" + propertyName + ", " + expression + ']';
     }
 
     @Override

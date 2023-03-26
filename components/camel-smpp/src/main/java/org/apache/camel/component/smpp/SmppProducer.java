@@ -267,6 +267,6 @@ public class SmppProducer extends DefaultProducer {
 
     @Override
     public String toString() {
-        return "SmppProducer[" + getEndpoint().getConnectionString() + "]";
+        return "SmppProducer[" + getEndpoint().getConnectionString() + ']';
     }
 }

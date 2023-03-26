@@ -110,7 +110,7 @@ public class ExpressionDefinition
 
         StringBuilder sb = new StringBuilder();
         if (getLanguage() != null) {
-            sb.append(getLanguage()).append("{");
+            sb.append(getLanguage()).append('{');
         }
         if (getPredicate() != null) {
             sb.append(getPredicate().toString());
@@ -118,7 +118,7 @@ public class ExpressionDefinition
             sb.append(getExpression());
         }
         if (getLanguage() != null) {
-            sb.append("}");
+            sb.append('}');
         }
         return sb.toString();
     }

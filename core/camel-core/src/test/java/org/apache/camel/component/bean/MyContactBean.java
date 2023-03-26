@@ -19,6 +19,6 @@ package org.apache.camel.component.bean;
 public class MyContactBean {
 
     public String concat(String a, String b) {
-        return a + "=" + b;
+        return a + '=' + b;
     }
 }

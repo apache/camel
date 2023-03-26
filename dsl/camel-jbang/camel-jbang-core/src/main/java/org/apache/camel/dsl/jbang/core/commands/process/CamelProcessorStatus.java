@@ -260,7 +260,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
     protected String getSinceLast(Row r) {
         String s1 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
         String s2 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
-        return s1 + "/" + s2;
+        return s1 + '/' + s2;
     }
 
     protected String getDelta(Row r) {
@@ -269,7 +269,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                 return r.delta;
             } else if (!"0".equals(r.delta)) {
                 // use plus sign to denote slower when positive
-                return "+" + r.delta;
+                return '+' + r.delta;
             }
         }
         return r.delta;

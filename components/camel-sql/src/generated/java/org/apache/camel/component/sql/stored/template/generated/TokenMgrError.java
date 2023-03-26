@@ -106,9 +106,9 @@ public class TokenMgrError extends Error
     return("Lexical error at line " + //
           errorLine + ", column " + //
           errorColumn + ".  Encountered: " + //
-          (EOFSeen ? "<EOF>" : ("'" + addEscapes(String.valueOf(curChar)) + "' (" + curChar + "),")) + //
-          (errorAfter == null || errorAfter.length() == 0 ? "" : " after prefix \"" + addEscapes(errorAfter) + "\"")) + //
-          (lexState == 0 ? "" : " (in lexical state " + lexState + ")");
+          (EOFSeen ? "<EOF>" : ('\'' + addEscapes(String.valueOf(curChar)) + "' (" + curChar + "),")) + //
+          (errorAfter == null || errorAfter.length() == 0 ? "" : " after prefix \"" + addEscapes(errorAfter) + '"')) + //
+          (lexState == 0 ? "" : " (in lexical state " + lexState + ')');
   }
 
   /**

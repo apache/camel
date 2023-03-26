@@ -193,7 +193,7 @@ public final class DispositionNotificationContentUtils {
                     if (dispositionMode == null) {
                         throw new ParseException(
                                 "Invalid '" + MDNField.DISPOSITION + "' field: invalid disposition mode '"
-                                        + elements[0].getValue() + "'");
+                                        + elements[0].getValue() + '\'');
                     }
 
                     String dispositionTypeString = elements[1].getValue();

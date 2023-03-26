@@ -65,13 +65,13 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
         String path = uriTemplate != null ? uriTemplate : basePath;
         // path must start with a leading slash
         if (!path.startsWith("/")) {
-            path = "/" + path;
+            path = '/' + path;
         }
 
         OasDocument openApi = loadOpenApiModel(camelContext, apiDoc);
         OasOperation operation = getOpenApiOperation(openApi, verb, path);
         if (operation == null) {
-            throw new IllegalArgumentException("OpenApi api-doc does not contain operation for " + verb + ":" + path);
+            throw new IllegalArgumentException("OpenApi api-doc does not contain operation for " + verb + ':' + path);
         }
 
         // validate if we have the query parameters also
@@ -80,11 +80,11 @@ public class OpenApiRestProducerFactory implements RestProducerFactory {
                 if ("query".equals(param.in) && Boolean.TRUE.equals(param.required)) {
                     // check if we have the required query parameter defined
                     String key = param.getName();
-                    String token = key + "=";
+                    String token = key + '=';
                     boolean hasQuery = queryParameters.contains(token);
                     if (!hasQuery) {
                         throw new IllegalArgumentException(
-                                "OpenApi api-doc does not contain query parameter " + key + " for " + verb + ":" + path);
+                                "OpenApi api-doc does not contain query parameter " + key + " for " + verb + ':' + path);
                     }
                 }
             }

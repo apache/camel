@@ -60,7 +60,7 @@ public class Plc4XConsumer extends DefaultConsumer {
 
     @Override
     public String toString() {
-        return "Plc4XConsumer[" + plc4XEndpoint + "]";
+        return "Plc4XConsumer[" + plc4XEndpoint + ']';
     }
 
     @Override

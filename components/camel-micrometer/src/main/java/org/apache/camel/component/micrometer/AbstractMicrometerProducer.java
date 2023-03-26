@@ -37,7 +37,7 @@ import static org.apache.camel.component.micrometer.MicrometerConstants.HEADER_P
 
 public abstract class AbstractMicrometerProducer<T extends Meter> extends DefaultProducer {
 
-    private static final String HEADER_PATTERN = HEADER_PREFIX + "*";
+    private static final String HEADER_PATTERN = HEADER_PREFIX + '*';
 
     public AbstractMicrometerProducer(MicrometerEndpoint endpoint) {
         super(endpoint);

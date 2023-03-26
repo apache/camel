@@ -126,9 +126,9 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
             String remotePort = String.valueOf(inetSocketAddress.getPort());
 
             returnList.add(hostName);
-            returnList.add("[" + hostName + "]:" + remotePort);
+            returnList.add('[' + hostName + "]:" + remotePort);
             returnList.add(ipAddress);
-            returnList.add("[" + ipAddress + "]:" + remotePort);
+            returnList.add('[' + ipAddress + "]:" + remotePort);
         }
 
         return returnList;

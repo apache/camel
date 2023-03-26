@@ -108,7 +108,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     @Override
     public String toString() {
-        return "XQuery[" + expression + "]";
+        return "XQuery[" + expression + ']';
     }
 
     @Override

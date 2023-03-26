@@ -53,7 +53,7 @@ public class MyBean {
 
     @Override
     public String toString() {
-        return "MyBean[a=" + a + " b=" + b + "]";
+        return "MyBean[a=" + a + " b=" + b + ']';
     }
 
     public String getA() {

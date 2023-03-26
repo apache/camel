@@ -774,6 +774,6 @@ public class SmppConfiguration implements Cloneable {
                + ", httpProxyPassword=" + httpProxyPassword
                + ", splittingPolicy=" + splittingPolicy
                + ", proxyHeaders=" + proxyHeaders
-               + "]";
+               + ']';
     }
 }

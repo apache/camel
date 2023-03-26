@@ -317,10 +317,10 @@ public class ZooKeeperServiceRegistry extends AbstractServiceRegistry {
     @Override
     public void register(ServiceDefinition definition) {
         if (definition.getId() == null) {
-            throw new IllegalArgumentException("Service ID must be defined (definition=" + definition + ")");
+            throw new IllegalArgumentException("Service ID must be defined (definition=" + definition + ')');
         }
         if (definition.getName() == null) {
-            throw new IllegalArgumentException("Service Name must be defined (definition=" + definition + ")");
+            throw new IllegalArgumentException("Service Name must be defined (definition=" + definition + ')');
         }
 
         try {
@@ -344,10 +344,10 @@ public class ZooKeeperServiceRegistry extends AbstractServiceRegistry {
     @Override
     public void deregister(ServiceDefinition definition) {
         if (definition.getId() == null) {
-            throw new IllegalArgumentException("Service ID must be defined (definition=" + definition + ")");
+            throw new IllegalArgumentException("Service ID must be defined (definition=" + definition + ')');
         }
         if (definition.getName() == null) {
-            throw new IllegalArgumentException("Service Name must be defined (definition=" + definition + ")");
+            throw new IllegalArgumentException("Service Name must be defined (definition=" + definition + ')');
         }
 
         try {

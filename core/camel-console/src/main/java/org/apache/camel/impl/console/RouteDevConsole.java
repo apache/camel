@@ -66,7 +66,7 @@ public class RouteDevConsole extends AbstractDevConsole {
         final StringBuilder sb = new StringBuilder();
         Function<ManagedRouteMBean, Object> task = mrb -> {
             if (sb.length() > 0) {
-                sb.append("\n");
+                sb.append('\n');
             }
             sb.append(String.format("    Id: %s", mrb.getRouteId()));
             sb.append(String.format("\n    From: %s", mrb.getEndpointUri()));
@@ -117,7 +117,7 @@ public class RouteDevConsole extends AbstractDevConsole {
             if (processors) {
                 includeProcessorsText(mrb, sb);
             }
-            sb.append("\n");
+            sb.append('\n');
             return null;
         };
         doCall(options, task);
@@ -146,7 +146,7 @@ public class RouteDevConsole extends AbstractDevConsole {
         mps.sort(Comparator.comparingInt(ManagedProcessorMBean::getIndex));
 
         for (ManagedProcessorMBean mp : mps) {
-            sb.append("\n");
+            sb.append('\n');
             sb.append(String.format("\n        Id: %s", mp.getProcessorId()));
             sb.append(String.format("\n        Processor: %s", mp.getProcessorName()));
             sb.append(String.format("\n        Level: %d", mp.getLevel()));

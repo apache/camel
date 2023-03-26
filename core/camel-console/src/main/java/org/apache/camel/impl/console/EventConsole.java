@@ -83,13 +83,13 @@ public class EventConsole extends AbstractDevConsole {
 
         int pos = posEvents.get();
         sb.append(appendTextEvents(events, "Camel", pos, capacity));
-        sb.append("\n");
+        sb.append('\n');
         pos = posRoutes.get();
         sb.append(appendTextEvents(routeEvents, "Route", pos, capacity));
-        sb.append("\n");
+        sb.append('\n');
         pos = posExchanges.get();
         sb.append(appendTextEvents(exchangeEvents, "Exchange", pos, capacity));
-        sb.append("\n");
+        sb.append('\n');
 
         return sb.toString();
     }

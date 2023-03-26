@@ -186,11 +186,11 @@ public class CamelRouteCoverageDumper {
         builder.append("\tRoute coverage: ").append(used).append(" out of ").append(routes).append(" routes used (")
                 .append(contextPercentage).append("%)\n");
         builder.append("\t\tCamelContext (").append(managedCamelContext.getCamelId()).append(") total: ")
-                .append(contextExchangesTotal).append("\n");
+                .append(contextExchangesTotal).append('\n');
 
         if (!uncoveredRoutes.isEmpty()) {
             builder.append("\t\tUncovered routes: ").append(uncoveredRoutes.stream().collect(Collectors.joining(", ")))
-                    .append("\n");
+                    .append('\n');
         }
 
         builder.append(routesSummary);

@@ -217,7 +217,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
                     String parentScheme = parentUriEndpoint.scheme().split(",")[0];
                     String superClassName = superclass.getName();
                     String packageName = superClassName.substring(0, superClassName.lastIndexOf('.'));
-                    String fileName = packageName.replace('.', '/') + "/" + parentScheme + ".json";
+                    String fileName = packageName.replace('.', '/') + '/' + parentScheme + ".json";
                     String json = loadResource(fileName);
                     parentData = JsonMapper.generateComponentModel(json);
                 }
@@ -296,7 +296,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         String packageName = name.substring(0, name.lastIndexOf('.'));
         String fileName = scheme + PackageHelper.JSON_SUFIX;
 
-        String file = packageName.replace('.', '/') + "/" + fileName;
+        String file = packageName.replace('.', '/') + '/' + fileName;
         updateResource(resourcesOutputDir.toPath(), file, json);
 
         generateEndpointConfigurer(classElement, uriEndpoint, scheme, schemes, componentModel, parentData);
@@ -712,7 +712,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         String componentClassName = fqComponentClassName.substring(fqComponentClassName.lastIndexOf('.') + 1);
         String className = componentClassName + "Configurer";
         String packageName = fqComponentClassName.substring(0, fqComponentClassName.lastIndexOf('.'));
-        String fqClassName = packageName + "." + className;
+        String fqClassName = packageName + '.' + className;
 
         List<ComponentOptionModel> options;
         if (parentData != null) {
@@ -769,7 +769,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         String endpointClassName = fqEndpointClassName.substring(fqEndpointClassName.lastIndexOf('.') + 1);
         String className = endpointClassName + "Configurer";
         String packageName = fqEndpointClassName.substring(0, fqEndpointClassName.lastIndexOf('.'));
-        String fqClassName = packageName + "." + className;
+        String fqClassName = packageName + '.' + className;
 
         List<EndpointOptionModel> options;
         if (parentData != null) {
@@ -800,10 +800,10 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
         // if the scheme is an alias then replace the scheme name from the
         // syntax with the alias
-        String syntax = scheme + ":" + Strings.after(uriEndpoint.syntax(), ":");
+        String syntax = scheme + ':' + Strings.after(uriEndpoint.syntax(), ":");
         // alternative syntax is optional
         if (!Strings.isNullOrEmpty(uriEndpoint.alternativeSyntax())) {
-            String alternativeSyntax = scheme + ":" + Strings.after(uriEndpoint.alternativeSyntax(), ":");
+            String alternativeSyntax = scheme + ':' + Strings.after(uriEndpoint.alternativeSyntax(), ":");
             model.setAlternativeSyntax(alternativeSyntax);
         }
         model.setSyntax(syntax);
@@ -1598,7 +1598,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
         }
 
         // if alias is like scheme but with ending s its secured
-        if ((scheme + "s").equals(alias)) {
+        if ((scheme + 's').equals(alias)) {
             return true;
         }
 
@@ -1637,7 +1637,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
 
     protected void generateMetaInfConfigurer(String name, String fqn) {
         try (Writer w = new StringWriter()) {
-            w.append("# " + GENERATED_MSG + "\n");
+            w.append("# " + GENERATED_MSG + '\n');
             w.append("class=").append(fqn).append("\n");
             updateResource(resourcesOutputDir.toPath(), "META-INF/services/org/apache/camel/configurer/" + name, w.toString());
         } catch (IOException e) {
@@ -1832,7 +1832,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
             throw new RuntimeException(
                     "Unable to load source for class " + className + " in folders " + getSourceRoots()
-                                       + " (classpath: " + classpath + ")");
+                                       + " (classpath: " + classpath + ')');
         }
     }
 

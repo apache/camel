@@ -183,14 +183,14 @@ public class KafkaEndpoint extends DefaultEndpoint implements MultipleConsumersS
 
     public ExecutorService createExecutor() {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
-                "KafkaConsumer[" + configuration.getTopic() + "]", configuration.getConsumersCount());
+                "KafkaConsumer[" + configuration.getTopic() + ']', configuration.getConsumersCount());
     }
 
     public ExecutorService createProducerExecutor() {
         int core = getConfiguration().getWorkerPoolCoreSize();
         int max = getConfiguration().getWorkerPoolMaxSize();
         return getCamelContext().getExecutorServiceManager().newThreadPool(this,
-                "KafkaProducer[" + configuration.getTopic() + "]", core, max);
+                "KafkaProducer[" + configuration.getTopic() + ']', core, max);
     }
 
     protected KafkaProducer createProducer(KafkaEndpoint endpoint) {

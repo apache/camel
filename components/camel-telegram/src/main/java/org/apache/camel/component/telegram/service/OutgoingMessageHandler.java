@@ -55,7 +55,7 @@ abstract class OutgoingMessageHandler<T extends OutgoingMessage> {
         addBody(message);
 
         if (bodyPublisher.getBodyParts().size() > 1) {
-            builder.setHeader("Content-type", "multipart/form-data; boundary=\"" + bodyPublisher.getBoundary() + "\"");
+            builder.setHeader("Content-type", "multipart/form-data; boundary=\"" + bodyPublisher.getBoundary() + '"');
         } else {
             if (contentType != null) {
                 builder.setHeader("Content-type", contentType);

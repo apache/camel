@@ -75,12 +75,12 @@ public class MarshalProcessor extends AsyncProcessorSupport implements Traceable
 
     @Override
     public String toString() {
-        return "Marshal[" + dataFormat + "]";
+        return "Marshal[" + dataFormat + ']';
     }
 
     @Override
     public String getTraceLabel() {
-        return "marshal[" + dataFormat + "]";
+        return "marshal[" + dataFormat + ']';
     }
 
     @Override

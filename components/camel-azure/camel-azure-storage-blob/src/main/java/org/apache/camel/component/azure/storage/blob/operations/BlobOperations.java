@@ -170,7 +170,7 @@ public class BlobOperations {
 
         final BlobServiceSasSignatureValues serviceSasSignatureValues
                 = new BlobServiceSasSignatureValues(offsetDateTimeToSet, sasPermission);
-        final String url = client.getBlobUrl() + "?" + client.generateSas(serviceSasSignatureValues);
+        final String url = client.getBlobUrl() + '?' + client.generateSas(serviceSasSignatureValues);
 
         final BlobExchangeHeaders headers = BlobExchangeHeaders.create().downloadLink(url);
 

@@ -97,7 +97,7 @@ public final class GitHubHelper {
 
         if ("tree".equals(action)) {
             // https://api.github.com/repos/apache/camel-k/contents/examples/kamelets/kameletbindings?ref=v1.7.0
-            url = "https://api.github.com/repos/" + org + "/" + repo + "/contents/" + path;
+            url = "https://api.github.com/repos/" + org + '/' + repo + "/contents/" + path;
             if (!"main".equals(branch) && !"master".equals(branch)) {
                 url = url + "?ref=" + branch;
             }

@@ -99,7 +99,7 @@ public class LRAUrlBuilder {
             } else {
                 copy.query += "&";
             }
-            copy.query += key + "=" + value;
+            copy.query += key + '=' + value;
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException(e);
         }
@@ -122,7 +122,7 @@ public class LRAUrlBuilder {
         while (second.startsWith("/")) {
             second = second.substring(1);
         }
-        return first + "/" + second;
+        return first + '/' + second;
     }
 
     private String toNonnullString(Object obj) {

@@ -124,7 +124,7 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
 
     @Override
     public String getTraceLabel() {
-        return "filter[if: " + predicate + "]";
+        return "filter[if: " + predicate + ']';
     }
 
     public Predicate getPredicate() {

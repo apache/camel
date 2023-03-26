@@ -158,7 +158,7 @@ public abstract class RouteBuilderLoaderSupport extends RoutesBuilderLoaderSuppo
                         line = ""; // use an empty line so line numbers still matches
                     }
                     builder.append(line);
-                    builder.append("\n");
+                    builder.append('\n');
                     first = false;
                 } else {
                     break;

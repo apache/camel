@@ -352,7 +352,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         boolean hasHost = params.containsKey("host");
 
         String basePath = determineBasePath(openapi);
-        String componentEndpointUri = "rest:" + method + ":" + basePath + ":" + uriTemplate;
+        String componentEndpointUri = "rest:" + method + ':' + basePath + ':' + uriTemplate;
         if (hasHost) {
             componentEndpointUri += "?host=" + params.get("host");
         }
@@ -438,7 +438,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             String var = m.group(1);
             if (server != null && server.variables != null && server.variables.get(var) != null) {
                 String varValue = server.variables.get(var).default_;
-                url = url.replace("{" + var + "}", varValue);
+                url = url.replace('{' + var + '}', varValue);
             }
         }
         return url;
@@ -645,7 +645,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         final String valueStr = String.valueOf(parameters.get(name));
         final String encoded = UnsafeUriCharactersEncoder.encode(valueStr);
 
-        return name + "=" + encoded;
+        return name + '=' + encoded;
     }
 
     String queryParameter(final OasParameter parameter) {

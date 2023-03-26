@@ -43,7 +43,7 @@ public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyD
 
     @Override
     public String toString() {
-        return "RemoveProperty[" + name + "]";
+        return "RemoveProperty[" + name + ']';
     }
 
     @Override
@@ -53,7 +53,7 @@ public class RemovePropertyDefinition extends NoOutputDefinition<RemovePropertyD
 
     @Override
     public String getLabel() {
-        return "removeProperty[" + name + "]";
+        return "removeProperty[" + name + ']';
     }
 
     public String getName() {

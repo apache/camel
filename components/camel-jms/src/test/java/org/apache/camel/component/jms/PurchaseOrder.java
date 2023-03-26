@@ -53,7 +53,7 @@ public class PurchaseOrder implements Serializable {
 
     @Override
     public String toString() {
-        return "PurchaseOrder[" + product + " x " + amount + "]";
+        return "PurchaseOrder[" + product + " x " + amount + ']';
     }
 
     public double getAmount() {

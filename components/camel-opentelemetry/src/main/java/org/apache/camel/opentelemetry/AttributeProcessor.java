@@ -69,7 +69,7 @@ public class AttributeProcessor extends AsyncProcessorSupport implements Traceab
 
     @Override
     public String getTraceLabel() {
-        return "attribute[" + attributeName + ", " + expression + "]";
+        return "attribute[" + attributeName + ", " + expression + ']';
     }
 
     @Override

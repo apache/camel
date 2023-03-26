@@ -86,7 +86,7 @@ public class ThrowExceptionProcessor extends AsyncProcessorSupport
     @Override
     public String getTraceLabel() {
         String className = this.exception == null ? this.type.getSimpleName() : this.exception.getClass().getSimpleName();
-        return "throwException[" + className + "]";
+        return "throwException[" + className + ']';
     }
 
     @Override

@@ -208,7 +208,7 @@ public class TarAggregationStrategy implements AggregationStrategy {
         File tmpTar = Files.createTempFile(parentDir.toPath(), source.getName(), null).toFile();
         tmpTar.delete();
         if (!source.renameTo(tmpTar)) {
-            throw new IOException("Could not make temp file (" + source.getName() + ")");
+            throw new IOException("Could not make temp file (" + source.getName() + ')');
         }
 
         try (FileInputStream fis = new FileInputStream(tmpTar)) {

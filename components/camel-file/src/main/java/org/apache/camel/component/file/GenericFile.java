@@ -456,6 +456,6 @@ public class GenericFile<T> implements WrappedFile<T> {
 
     @Override
     public String toString() {
-        return "GenericFile[" + (absolute ? absoluteFilePath : relativeFilePath) + "]";
+        return "GenericFile[" + (absolute ? absoluteFilePath : relativeFilePath) + ']';
     }
 }

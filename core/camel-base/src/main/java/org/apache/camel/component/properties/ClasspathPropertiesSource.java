@@ -37,7 +37,7 @@ public class ClasspathPropertiesSource extends AbstractLocationPropertiesSource 
 
     @Override
     public String getName() {
-        return "ClasspathPropertiesSource[" + getLocation().getPath() + "]";
+        return "ClasspathPropertiesSource[" + getLocation().getPath() + ']';
     }
 
     @Override

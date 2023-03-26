@@ -37,13 +37,13 @@ public class PropertiesDevConsole extends AbstractDevConsole {
         PropertiesComponent pc = getCamelContext().getPropertiesComponent();
         String loc = String.join(", ", pc.getLocations());
         sb.append(String.format("Properties loaded from locations: %s", loc));
-        sb.append("\n");
+        sb.append('\n');
         for (Map.Entry<Object, Object> entry : pc.loadProperties().entrySet()) {
             Object k = entry.getKey();
             Object v = entry.getValue();
             sb.append(String.format("\n    %s = %s", k, v));
         }
-        sb.append("\n");
+        sb.append('\n');
 
         return sb.toString();
     }

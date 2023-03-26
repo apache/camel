@@ -38,7 +38,7 @@ public class FilePropertiesSource extends AbstractLocationPropertiesSource imple
 
     @Override
     public String getName() {
-        return "FilePropertiesSource[" + getLocation().getPath() + "]";
+        return "FilePropertiesSource[" + getLocation().getPath() + ']';
     }
 
     @Override

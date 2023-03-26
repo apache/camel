@@ -111,12 +111,12 @@ public class ParseException extends Exception {
     StringBuilder retval = new StringBuilder("Encountered \"");
     Token tok = currentToken.next;
     for (int i = 0; i < maxSize; i++) {
-      if (i != 0) retval.append(" ");
+      if (i != 0) retval.append(' ');
       if (tok.kind == 0) {
         retval.append(tokenImage[0]);
         break;
       }
-      retval.append(" ").append(tokenImage[tok.kind]);
+      retval.append(' ').append(tokenImage[tok.kind]);
       retval.append(" \"");
       retval.append(add_escapes(tok.image));
       retval.append(" \"");
@@ -125,7 +125,7 @@ public class ParseException extends Exception {
     if (currentToken.next != null) {
       retval.append("\" at line ").append(currentToken.next.beginLine).append(", column ").append(currentToken.next.beginColumn);
     }
-    retval.append(".").append(EOL);
+    retval.append('.').append(EOL);
     
     
     if (expectedTokenSequences.length == 0) {

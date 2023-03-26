@@ -125,7 +125,7 @@ public class AWS2EC2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (ec2ProducerToString == null) {
-            ec2ProducerToString = "EC2Producer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            ec2ProducerToString = "EC2Producer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return ec2ProducerToString;
     }

@@ -33,7 +33,7 @@ public class MethodNotFoundException extends RuntimeExchangeException {
     }
 
     public MethodNotFoundException(Exchange exchange, Object pojo, String methodName, String postfix) {
-        super("Method with name: " + methodName + " " + postfix + " not found on bean: " + pojo + " of type: "
+        super("Method with name: " + methodName + ' ' + postfix + " not found on bean: " + pojo + " of type: "
               + ObjectHelper.className(pojo), exchange);
         this.methodName = methodName;
         this.bean = pojo;

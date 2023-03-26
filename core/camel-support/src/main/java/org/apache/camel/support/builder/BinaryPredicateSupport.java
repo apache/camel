@@ -48,7 +48,7 @@ public abstract class BinaryPredicateSupport implements BinaryPredicate {
 
     @Override
     public String toString() {
-        return left + " " + getOperationText() + " " + right;
+        return left + " " + getOperationText() + ' ' + right;
     }
 
     @Override
@@ -67,7 +67,7 @@ public abstract class BinaryPredicateSupport implements BinaryPredicate {
         Object leftValue = left.evaluate(exchange, Object.class);
         Object rightValue = right.evaluate(exchange, Object.class);
         if (!matches(exchange, leftValue, rightValue)) {
-            answer = leftValue + " " + getOperator() + " " + rightValue;
+            answer = leftValue + " " + getOperator() + ' ' + rightValue;
         }
 
         return answer;

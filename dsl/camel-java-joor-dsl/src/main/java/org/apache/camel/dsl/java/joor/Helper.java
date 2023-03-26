@@ -49,7 +49,7 @@ public final class Helper {
         final Matcher matcher = PACKAGE_PATTERN.matcher(content);
 
         return matcher.find()
-                ? matcher.group(1) + "." + name
+                ? matcher.group(1) + '.' + name
                 : name;
     }
 }

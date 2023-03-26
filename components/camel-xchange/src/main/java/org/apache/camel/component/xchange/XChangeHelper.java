@@ -26,7 +26,7 @@ public final class XChangeHelper {
 
     public static Class<? extends Exchange> loadXChangeClass(CamelContext camelContext, String name) {
         String firstUpper = name.substring(0, 1).toUpperCase() + name.substring(1);
-        String className = "org.knowm.xchange." + name + "." + firstUpper + "Exchange";
+        String className = "org.knowm.xchange." + name + '.' + firstUpper + "Exchange";
         try {
             return camelContext.getClassResolver().resolveClass(className, Exchange.class);
         } catch (Exception e) {

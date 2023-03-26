@@ -290,17 +290,17 @@ public final class BacklogDebugger extends ServiceSupport {
         Predicate condition = camelContext.resolveLanguage(language).createPredicate(predicate);
         NodeBreakpoint breakpoint = breakpoints.get(nodeId);
         if (breakpoint == null) {
-            logger.log("Adding conditional breakpoint " + nodeId + " [" + predicate + "]");
+            logger.log("Adding conditional breakpoint " + nodeId + " [" + predicate + ']');
             breakpoint = new NodeBreakpoint(nodeId, condition);
             breakpoints.put(nodeId, breakpoint);
             debugger.addBreakpoint(breakpoint, breakpoint);
         } else if (breakpoint.getCondition() == null) {
-            logger.log("Updating to conditional breakpoint " + nodeId + " [" + predicate + "]");
+            logger.log("Updating to conditional breakpoint " + nodeId + " [" + predicate + ']');
             debugger.removeBreakpoint(breakpoint);
             breakpoints.put(nodeId, breakpoint);
             debugger.addBreakpoint(breakpoint, breakpoint);
         } else {
-            logger.log("Updating conditional breakpoint " + nodeId + " [" + predicate + "]");
+            logger.log("Updating conditional breakpoint " + nodeId + " [" + predicate + ']');
             breakpoint.setCondition(condition);
         }
     }

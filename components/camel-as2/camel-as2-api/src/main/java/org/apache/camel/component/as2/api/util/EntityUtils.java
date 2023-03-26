@@ -70,13 +70,13 @@ public final class EntityUtils {
     public static String createBoundaryValue() {
         // TODO: ensure boundary string is limited to 70 characters or less.
         StringBuffer s = new StringBuffer();
-        s.append("----=_Part_").append(partNumber.incrementAndGet()).append("_").append(s.hashCode()).append(".")
+        s.append("----=_Part_").append(partNumber.incrementAndGet()).append('_').append(s.hashCode()).append('.')
                 .append(System.currentTimeMillis());
         return s.toString();
     }
 
     public static String appendParameter(String headerString, String parameterName, String parameterValue) {
-        return headerString + "; " + parameterName + "=" + parameterValue;
+        return headerString + "; " + parameterName + '=' + parameterValue;
     }
 
     public static String encode(String data, Charset charset, String encoding) throws CamelException {

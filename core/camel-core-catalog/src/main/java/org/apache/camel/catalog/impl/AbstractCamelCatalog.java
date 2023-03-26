@@ -674,11 +674,11 @@ public abstract class AbstractCamelCatalog {
                     Map<String, Object> values = URISupport.extractProperties(parameters, prefix);
                     // build a string with the extra multi valued options with the prefix and & as separator
                     String csb = values.entrySet().stream()
-                            .map(multi -> prefix + multi.getKey() + "=" + (multi.getValue() != null ? multi.getValue().toString() : ""))
+                            .map(multi -> prefix + multi.getKey() + '=' + (multi.getValue() != null ? multi.getValue().toString() : ""))
                             .collect(Collectors.joining("&"));
                     // append the extra multi-values to the existing (which contains the first multi value)
                     if (!csb.isEmpty()) {
-                        value = value + "&" + csb;
+                        value = value + '&' + csb;
                     }
                 }
             }
@@ -871,7 +871,7 @@ public abstract class AbstractCamelCatalog {
                     }
 
                     if (option.isSecret() && !val.startsWith("#") && !val.startsWith("RAW(")) {
-                        return "RAW(" + val + ")";
+                        return "RAW(" + val + ')';
                     }
 
                     return val;
@@ -976,7 +976,7 @@ public abstract class AbstractCamelCatalog {
                         }
 
                         if (option.isSecret() && !val.startsWith("#") && !val.startsWith("RAW(")) {
-                            return "RAW(" + val + ")";
+                            return "RAW(" + val + ')';
                         }
 
                         return val;
@@ -997,7 +997,7 @@ public abstract class AbstractCamelCatalog {
             return scheme + remainder;
         } else if (!remainder.isEmpty()) {
             // it has context path and possible query parameters
-            return scheme + ":" + remainder;
+            return scheme + ':' + remainder;
         } else {
             // its empty without anything
             return scheme;

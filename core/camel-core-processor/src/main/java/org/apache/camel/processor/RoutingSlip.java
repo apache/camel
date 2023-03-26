@@ -173,7 +173,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
 
     @Override
     public String getTraceLabel() {
-        return "routingSlip[" + expression + "]";
+        return "routingSlip[" + expression + ']';
     }
 
     @Override

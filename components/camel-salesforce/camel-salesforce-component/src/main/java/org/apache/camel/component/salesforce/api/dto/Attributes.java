@@ -50,6 +50,6 @@ public class Attributes extends AbstractDTOBase {
 
     @Override
     public String toString() {
-        return "Attribute<type: " + type + ", referenceId: " + referenceId + ">";
+        return "Attribute<type: " + type + ", referenceId: " + referenceId + '>';
     }
 }

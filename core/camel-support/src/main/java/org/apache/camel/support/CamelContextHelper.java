@@ -543,10 +543,10 @@ public final class CamelContextHelper {
                 return camelContext.getTypeConverter().mandatoryConvertTo(clazz, s);
             } catch (Exception e) {
                 if (s.equals(text)) {
-                    throw new IllegalArgumentException("Error parsing [" + s + "] as a " + clazz.getName() + ".", e);
+                    throw new IllegalArgumentException("Error parsing [" + s + "] as a " + clazz.getName() + '.', e);
                 } else {
                     throw new IllegalArgumentException(
-                            "Error parsing [" + s + "] from property " + text + " as a " + clazz.getName() + ".", e);
+                            "Error parsing [" + s + "] from property " + text + " as a " + clazz.getName() + '.', e);
                 }
             }
         }

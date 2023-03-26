@@ -106,19 +106,19 @@ public final class XmlPrettyPrinter {
                     StringBuilder lb = new StringBuilder();
                     lb.append("<?xml");
                     if (version != null) {
-                        lb.append(" version=\"").append(version).append("\"");
+                        lb.append(" version=\"").append(version).append('"');
                     }
                     if (encoding != null) {
-                        lb.append(" encoding=\"").append(encoding).append("\"");
+                        lb.append(" encoding=\"").append(encoding).append('"');
                     }
                     if (standalone != null) {
-                        lb.append(" standalone=\"").append(encoding).append("\"");
+                        lb.append(" standalone=\"").append(encoding).append('"');
                     }
                     lb.append("?>");
 
                     String value = color.color(ColorPrintElement.DECLARATION, lb.toString());
                     sb.append(value);
-                    sb.append("\n");
+                    sb.append('\n');
                 }
             }
 
@@ -127,7 +127,7 @@ public final class XmlPrettyPrinter {
                 sb.append(padString(indent, blanks));
 
                 StringBuilder lb = new StringBuilder();
-                lb.append("<");
+                lb.append('<');
                 lb.append(qName);
                 String value = color.color(ColorPrintElement.ELEMENT, lb.toString());
                 sb.append(value);
@@ -138,13 +138,13 @@ public final class XmlPrettyPrinter {
                     String v = color.color(ColorPrintElement.ATTRIBUTE_VALUE, attributes.getValue(i));
                     String eq = color.color(ColorPrintElement.ATTRIBUTE_EQUAL, "=");
                     String quote = color.color(ColorPrintElement.ATTRIBUTE_QUOTE, "\"");
-                    lb.append(" ").append(k).append(eq).append(quote).append(v).append(quote);
+                    lb.append(' ').append(k).append(eq).append(quote).append(v).append(quote);
                 }
                 sb.append(lb);
 
                 value = color.color(ColorPrintElement.ELEMENT, ">");
                 sb.append(value);
-                sb.append("\n");
+                sb.append('\n');
 
                 indent++;
             }
@@ -156,13 +156,13 @@ public final class XmlPrettyPrinter {
                 StringBuilder lb = new StringBuilder();
                 lb.append("</");
                 lb.append(qName);
-                lb.append(">");
+                lb.append('>');
 
                 sb.append(padString(indent, blanks));
                 String value = color.color(ColorPrintElement.ELEMENT, lb.toString());
                 sb.append(value);
                 if (indent > 0) {
-                    sb.append("\n");
+                    sb.append('\n');
                 }
             }
 
@@ -174,7 +174,7 @@ public final class XmlPrettyPrinter {
 
                 sb.append(padString(indent, blanks));
                 sb.append(value);
-                sb.append("\n");
+                sb.append('\n');
             }
         };
 

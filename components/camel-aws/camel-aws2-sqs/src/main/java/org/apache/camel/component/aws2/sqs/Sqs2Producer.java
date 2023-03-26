@@ -283,7 +283,7 @@ public class Sqs2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (sqsProducerToString == null) {
-            sqsProducerToString = "SqsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            sqsProducerToString = "SqsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return sqsProducerToString;
     }

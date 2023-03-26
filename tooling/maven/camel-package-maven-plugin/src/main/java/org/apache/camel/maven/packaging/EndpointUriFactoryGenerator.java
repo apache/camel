@@ -54,7 +54,7 @@ public final class EndpointUriFactoryGenerator {
         if (alternative != null) {
             w.append("    private static final String[] SCHEMES = ").append(alternative).append(";\n");
         }
-        w.append("\n");
+        w.append('\n');
         w.append("    private static final Set<String> PROPERTY_NAMES;\n");
         w.append("    private static final Set<String> SECRET_PROPERTY_NAMES;\n");
         w.append("    private static final Set<String> MULTI_VALUE_PREFIXES;\n");
@@ -63,7 +63,7 @@ public final class EndpointUriFactoryGenerator {
         w.append(generateSecretPropertyNames(model));
         w.append(generateMultiValuePrefixes(model));
         w.append("    }\n");
-        w.append("\n");
+        w.append('\n');
         w.append("    @Override\n");
         w.append("    public boolean isEnabled(String scheme) {\n");
         if (alternative == null) {
@@ -93,28 +93,28 @@ public final class EndpointUriFactoryGenerator {
         w.append("        uri = buildQueryParameters(uri, copy, encode);\n");
         w.append("        return uri;\n");
         w.append("    }\n");
-        w.append("\n");
+        w.append('\n');
         w.append("    @Override\n");
         w.append("    public Set<String> propertyNames() {\n");
         w.append("        return PROPERTY_NAMES;\n");
         w.append("    }\n");
-        w.append("\n");
+        w.append('\n');
         w.append("    @Override\n");
         w.append("    public Set<String> secretPropertyNames() {\n");
         w.append("        return SECRET_PROPERTY_NAMES;\n");
         w.append("    }\n");
-        w.append("\n");
+        w.append('\n');
         w.append("    @Override\n");
         w.append("    public Set<String> multiValuePrefixes() {\n");
         w.append("        return MULTI_VALUE_PREFIXES;\n");
         w.append("    }\n");
-        w.append("\n");
+        w.append('\n');
         w.append("    @Override\n");
         w.append("    public boolean isLenientProperties() {\n");
         w.append("        return ").append(model.isLenientProperties()).append(";\n");
         w.append("    }\n");
         w.append("}\n");
-        w.append("\n");
+        w.append('\n');
 
         return w.toString();
     }
@@ -211,10 +211,10 @@ public final class EndpointUriFactoryGenerator {
             String[] alts = model.getAlternativeSchemes().split(",");
             StringJoiner sj = new StringJoiner(", ");
             for (String alt : alts) {
-                sj.add("\"" + alt + "\"");
+                sj.add('"' + alt + '"');
             }
             sb.append(sj);
-            sb.append("}");
+            sb.append('}');
         }
         if (sb.length() == 0) {
             return null;
@@ -231,7 +231,7 @@ public final class EndpointUriFactoryGenerator {
     private static Object defaultValue(BaseOptionModel option) {
         Object obj = option.getDefaultValue();
         if (obj instanceof String) {
-            return "\"" + obj + "\"";
+            return "\"" + obj + '"';
         } else {
             return obj;
         }

@@ -251,7 +251,7 @@ public class SubnetUtils {
         @Override
         public String toString() {
             final StringBuilder buf = new StringBuilder();
-            buf.append("CIDR Signature:\t[").append(getCidrSignature()).append("]")
+            buf.append("CIDR Signature:\t[").append(getCidrSignature()).append(']')
                     .append(" Netmask: [").append(getNetmask()).append("]\n")
                     .append("Network:\t[").append(getNetworkAddress()).append("]\n")
                     .append("Broadcast:\t[").append(getBroadcastAddress()).append("]\n")
@@ -292,7 +292,7 @@ public class SubnetUtils {
             /* Calculate broadcast address */
             broadcast = network | ~netmask;
         } else {
-            throw new IllegalArgumentException("Could not parse [" + mask + "]");
+            throw new IllegalArgumentException("Could not parse [" + mask + ']');
         }
     }
 
@@ -304,7 +304,7 @@ public class SubnetUtils {
         if (matcher.matches()) {
             return matchAddress(matcher);
         } else {
-            throw new IllegalArgumentException("Could not parse [" + address + "]");
+            throw new IllegalArgumentException("Could not parse [" + address + ']');
         }
     }
 
@@ -340,7 +340,7 @@ public class SubnetUtils {
         for (int i = 0; i < octets.length; ++i) {
             str.append(octets[i]);
             if (i != octets.length - 1) {
-                str.append(".");
+                str.append('.');
             }
         }
         return str.toString();
@@ -356,7 +356,7 @@ public class SubnetUtils {
             return value;
         }
 
-        throw new IllegalArgumentException("Value [" + value + "] not in range [" + begin + "," + end + "]");
+        throw new IllegalArgumentException("Value [" + value + "] not in range [" + begin + ',' + end + ']');
     }
 
     /*
@@ -377,6 +377,6 @@ public class SubnetUtils {
      * NBITS-#trailing zeroes for this case)
      */
     private String toCidrNotation(String addr, String mask) {
-        return addr + "/" + pop(toInteger(mask));
+        return addr + '/' + pop(toInteger(mask));
     }
 }

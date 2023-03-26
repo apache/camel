@@ -85,7 +85,7 @@ public class MSK2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (mskProducerToString == null) {
-            mskProducerToString = "MSKProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            mskProducerToString = "MSKProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return mskProducerToString;
     }

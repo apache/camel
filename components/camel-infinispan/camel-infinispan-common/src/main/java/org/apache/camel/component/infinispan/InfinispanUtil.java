@@ -77,7 +77,7 @@ public class InfinispanUtil {
             CamelContext camelContext, Object source, String id) {
         return camelContext.getExecutorServiceManager().newSingleThreadScheduledExecutor(
                 source,
-                source.getClass().getSimpleName() + "-" + id);
+                source.getClass().getSimpleName() + '-' + id);
     }
 
     public static ScheduledExecutorService newSingleThreadScheduledExecutor(

@@ -68,14 +68,14 @@ public class CreateInstanceJsonFunctionalTest extends CamelTestSupport {
 
         // new Kafka instance options: https://support.huaweicloud.com/en-us/api-kafka/kafka-api-180514002.html
         // new RabbitMQ instance options: https://support.huaweicloud.com/en-us/api-rabbitmq/rabbitmq-api-180514002.html
-        String sampleBody = "{" +
+        String sampleBody = '{' +
                             "\"name\":\"" + "replace_with_instance_information" + "\"," +
                             "\"description\":\"" + "replace_with_instance_information" + "\"," +
                             "\"engine\":\"" + "replace_with_instance_information" + "\"," +
                             "\"engine_version\":\"" + "replace_with_instance_information" + "\"," +
                             "\"specification\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"storage_space\":" + "replace_with_instance_information" + "," +
-                            "\"partition_num\":" + "replace_with_instance_information" + "," +
+                            "\"storage_space\":" + "replace_with_instance_information" + ',' +
+                            "\"partition_num\":" + "replace_with_instance_information" + ',' +
                             "\"access_user\":\"" + "replace_with_instance_information" + "\"," +
                             "\"password\":\"" + "replace_with_instance_information" + "\"," +
                             "\"vpc_id\":\"" + "replace_with_instance_information" + "\"," +
@@ -87,16 +87,16 @@ public class CreateInstanceJsonFunctionalTest extends CamelTestSupport {
                             "\"kafka_manager_password\":\"" + "replace_with_instance_information" + "\"," +
                             "\"maintain_begin\":\"" + "replace_with_instance_information" + "\"," +
                             "\"maintain_end\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"enable_publicip\":" + "replace_with_instance_information" + "," +
+                            "\"enable_publicip\":" + "replace_with_instance_information" + ',' +
                             "\"public_bandwidth\":\"" + "replace_with_instance_information" + "\"," +
                             "\"publicip_id\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"ssl_enable\":" + "replace_with_instance_information" + "," +
+                            "\"ssl_enable\":" + "replace_with_instance_information" + ',' +
                             "\"retention_policy\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"connector_enable\":" + "replace_with_instance_information" + "," +
-                            "\"enable_auto_topic\":" + "replace_with_instance_information" + "," +
+                            "\"connector_enable\":" + "replace_with_instance_information" + ',' +
+                            "\"enable_auto_topic\":" + "replace_with_instance_information" + ',' +
                             "\"storage_spec_code\":\"" + "replace_with_instance_information" + "\"," +
-                            "\"enterprise_project_id\":\"" + "replace_with_instance_information" + "\"" +
-                            "}";
+                            "\"enterprise_project_id\":\"" + "replace_with_instance_information" + '"' +
+                '}';
 
         template.sendBody("direct:operation", sampleBody);
         Exchange responseExchange = mock.getExchanges().get(0);

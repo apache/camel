@@ -368,7 +368,7 @@ public class RunMojo extends AbstractExecMojo {
                 }
                 msg.append(arguments[i]);
             }
-            msg.append(")");
+            msg.append(')');
             getLog().debug(msg);
         }
 
@@ -705,8 +705,8 @@ public class RunMojo extends AbstractExecMojo {
             // java.lang.NoClassDefFoundError: org.osgi.vendor.framework property not set
             if (classPathElement.getArtifactId().equals("org.osgi.core")) {
                 if (getLog().isDebugEnabled()) {
-                    getLog().debug("Skipping org.osgi.core -> " + classPathElement.getGroupId() + "/"
-                                   + classPathElement.getArtifactId() + "/" + classPathElement.getVersion());
+                    getLog().debug("Skipping org.osgi.core -> " + classPathElement.getGroupId() + '/'
+                                   + classPathElement.getArtifactId() + '/' + classPathElement.getVersion());
                 }
                 continue;
             }
@@ -857,7 +857,7 @@ public class RunMojo extends AbstractExecMojo {
 
             List<String> exclusions = new ArrayList<>();
             for (Exclusion exclusion : dependency.getExclusions()) {
-                exclusions.add(exclusion.getGroupId() + ":" + exclusion.getArtifactId());
+                exclusions.add(exclusion.getGroupId() + ':' + exclusion.getArtifactId());
             }
 
             ArtifactFilter newFilter = new ExcludesArtifactFilter(exclusions);

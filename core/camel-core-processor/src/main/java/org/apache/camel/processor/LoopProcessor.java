@@ -212,9 +212,9 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
     @Override
     public String getTraceLabel() {
         if (predicate != null) {
-            return "loopWhile[" + predicate + "]";
+            return "loopWhile[" + predicate + ']';
         } else {
-            return "loop[" + expression + "]";
+            return "loop[" + expression + ']';
         }
     }
 

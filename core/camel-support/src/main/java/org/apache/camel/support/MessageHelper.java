@@ -348,7 +348,7 @@ public final class MessageHelper {
 
         if (!allowFiles) {
             if (obj instanceof WrappedFile || obj instanceof File) {
-                return "[Body is file based: " + obj + "]";
+                return "[Body is file based: " + obj + ']';
             }
         }
 
@@ -419,7 +419,7 @@ public final class MessageHelper {
         // clip body if length enabled and the body is too big
         if (maxChars > 0 && body.length() > maxChars) {
             body = body.substring(0, maxChars) + "... [Body clipped after " + maxChars + " chars, total length is "
-                   + body.length() + "]";
+                   + body.length() + ']';
         }
 
         return body;
@@ -496,7 +496,7 @@ public final class MessageHelper {
 
         StringBuilder prefix = new StringBuilder();
         for (int i = 0; i < indent; i++) {
-            prefix.append(" ");
+            prefix.append(' ');
         }
 
         // include exchangeId/exchangePattern/type as attribute on the <message> tag
@@ -523,11 +523,11 @@ public final class MessageHelper {
                 Object value = entry.getValue();
                 String type = ObjectHelper.classCanonicalName(value);
                 sb.append(prefix);
-                sb.append("    <exchangeProperty key=\"").append(key).append("\"");
+                sb.append("    <exchangeProperty key=\"").append(key).append('"');
                 if (type != null) {
-                    sb.append(" type=\"").append(type).append("\"");
+                    sb.append(" type=\"").append(type).append('"');
                 }
-                sb.append(">");
+                sb.append('>');
 
                 // dump header value as XML, use Camel type converter to convert
                 // to String
@@ -559,11 +559,11 @@ public final class MessageHelper {
                 Object value = entry.getValue();
                 String type = ObjectHelper.classCanonicalName(value);
                 sb.append(prefix);
-                sb.append("    <header key=\"").append(entry.getKey()).append("\"");
+                sb.append("    <header key=\"").append(entry.getKey()).append('"');
                 if (type != null) {
-                    sb.append(" type=\"").append(type).append("\"");
+                    sb.append(" type=\"").append(type).append('"');
                 }
-                sb.append(">");
+                sb.append('>');
 
                 // dump header value as XML, use Camel type converter to convert
                 // to String
@@ -590,9 +590,9 @@ public final class MessageHelper {
             sb.append("  <body");
             String type = ObjectHelper.classCanonicalName(message.getBody());
             if (type != null) {
-                sb.append(" type=\"").append(type).append("\"");
+                sb.append(" type=\"").append(type).append('"');
             }
-            sb.append(">");
+            sb.append('>');
 
             String xml = extractBodyForLogging(message, null, allowCachedStreams, allowStreams, allowFiles, maxChars);
             if (xml != null) {
@@ -703,7 +703,7 @@ public final class MessageHelper {
         String label = "";
         if (exchange.getFromEndpoint() != null) {
             label = "from[" + URISupport.sanitizeUri(StringHelper.limitLength(exchange.getFromEndpoint().getEndpointUri(), 100))
-                    + "]";
+                    + ']';
         }
         long elapsed = new StopWatch(exchange.getCreated()).taken();
 
@@ -712,7 +712,7 @@ public final class MessageHelper {
         boolean source = !loc.isEmpty();
 
         StringBuilder sb = new StringBuilder();
-        sb.append("\n");
+        sb.append('\n');
         sb.append("Message History");
         if (!source && !enabled) {
             sb.append(" (source location and message history is disabled)");
@@ -721,18 +721,18 @@ public final class MessageHelper {
         } else if (!enabled) {
             sb.append(" (complete message history is disabled)");
         }
-        sb.append("\n");
+        sb.append('\n');
         sb.append(
                 "---------------------------------------------------------------------------------------------------------------------------------------\n");
         String goMessageHistoryHeader = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_HEADER_FORMAT);
         sb.append(String.format(goMessageHistoryHeader == null ? MESSAGE_HISTORY_HEADER : goMessageHistoryHeader,
                 "Source", "ID", "Processor", "Elapsed (ms)"));
-        sb.append("\n");
+        sb.append('\n');
 
         String goMessageHistoryOutput = exchange.getContext().getGlobalOption(Exchange.MESSAGE_HISTORY_OUTPUT_FORMAT);
         goMessageHistoryOutput = goMessageHistoryOutput == null ? MESSAGE_HISTORY_OUTPUT : goMessageHistoryOutput;
-        sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed));
-        sb.append("\n");
+        sb.append(String.format(goMessageHistoryOutput, loc, routeId + '/' + id, label, elapsed));
+        sb.append('\n');
 
         if (list == null || list.isEmpty()) {
             // message history is not enabled but we can show the last processed
@@ -759,8 +759,8 @@ public final class MessageHelper {
                 // we do not have elapsed time
                 elapsed = 0;
                 sb.append("\t...\n");
-                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed));
-                sb.append("\n");
+                sb.append(String.format(goMessageHistoryOutput, loc, routeId + '/' + id, label, elapsed));
+                sb.append('\n');
             }
         } else {
             for (MessageHistory history : list) {
@@ -781,8 +781,8 @@ public final class MessageHelper {
                 label = URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 100));
                 elapsed = history.getElapsed();
 
-                sb.append(String.format(goMessageHistoryOutput, loc, routeId + "/" + id, label, elapsed));
-                sb.append("\n");
+                sb.append(String.format(goMessageHistoryOutput, loc, routeId + '/' + id, label, elapsed));
+                sb.append('\n');
             }
         }
 
@@ -791,7 +791,7 @@ public final class MessageHelper {
             sb.append(
                     "---------------------------------------------------------------------------------------------------------------------------------------\n");
             sb.append(exchangeFormatter.format(exchange));
-            sb.append("\n");
+            sb.append('\n');
         }
 
         if (logStackTrace) {
@@ -990,7 +990,7 @@ public final class MessageHelper {
     public static String dumpExceptionAsXML(Throwable exception, int indent) {
         StringBuilder prefix = new StringBuilder();
         for (int i = 0; i < indent; i++) {
-            prefix.append(" ");
+            prefix.append(' ');
         }
 
         StringBuilder sb = new StringBuilder();
@@ -998,12 +998,12 @@ public final class MessageHelper {
             sb.append(prefix).append("<exception");
             String type = ObjectHelper.classCanonicalName(exception);
             if (type != null) {
-                sb.append(" type=\"").append(type).append("\"");
+                sb.append(" type=\"").append(type).append('"');
             }
             String msg = exception.getMessage();
             if (msg != null) {
                 msg = StringHelper.xmlEncode(msg);
-                sb.append(" message=\"").append(msg).append("\"");
+                sb.append(" message=\"").append(msg).append('"');
             }
             sb.append(">\n");
             StringWriter sw = new StringWriter();

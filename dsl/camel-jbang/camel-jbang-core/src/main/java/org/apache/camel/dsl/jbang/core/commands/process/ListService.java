@@ -126,7 +126,7 @@ public class ListService extends ProcessWatchCommand {
                     jo = (JsonObject) o;
                     row.component = component;
                     row.protocol = jo.getString("protocol");
-                    row.service = row.protocol + ":" + jo.getString("host") + ":" + jo.getInteger("port");
+                    row.service = row.protocol + ':' + jo.getString("host") + ':' + jo.getInteger("port");
                     rows.add(row);
                 }
             }
@@ -163,7 +163,7 @@ public class ListService extends ProcessWatchCommand {
     private String getService(Row r) {
         String s = r.service;
         if (r.verbs != null) {
-            s += " (" + r.verbs + ")";
+            s += " (" + r.verbs + ')';
         }
         return s;
     }

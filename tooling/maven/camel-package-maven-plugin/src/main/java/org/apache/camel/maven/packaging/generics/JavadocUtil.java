@@ -48,11 +48,11 @@ public final class JavadocUtil {
     public static String getMainDescription(ComponentModel model, boolean withPathParameterDetails) {
         StringBuilder descSb = new StringBuilder(512);
 
-        descSb.append(model.getTitle()).append(" (").append(model.getArtifactId()).append(")");
-        descSb.append("\n").append(model.getDescription());
+        descSb.append(model.getTitle()).append(" (").append(model.getArtifactId()).append(')');
+        descSb.append('\n').append(model.getDescription());
         descSb.append("\n\nCategory: ").append(model.getLabel());
         descSb.append("\nSince: ").append(model.getFirstVersionShort());
-        descSb.append("\nMaven coordinates: ").append(model.getGroupId()).append(":").append(model.getArtifactId());
+        descSb.append("\nMaven coordinates: ").append(model.getGroupId()).append(':').append(model.getArtifactId());
 
         if (withPathParameterDetails) {
             // include javadoc for all path parameters and mark which are required
@@ -66,7 +66,7 @@ public final class JavadocUtil {
                     if (option.isDeprecated()) {
                         descSb.append(" <strong>deprecated</strong>");
                     }
-                    descSb.append("\n").append(option.getDescription());
+                    descSb.append('\n').append(option.getDescription());
                     if (option.getDefaultValue() != null) {
                         descSb.append("\nDefault value: ").append(option.getDefaultValue());
                     }
@@ -118,7 +118,7 @@ public final class JavadocUtil {
                         line = line.substring(1).trim();
                     }
                     sb.append(line);
-                    sb.append("\n");
+                    sb.append('\n');
                 }
                 doc = sb.toString();
                 return doc;

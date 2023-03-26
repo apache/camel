@@ -139,7 +139,7 @@ public class JndiContext implements Context, Serializable {
             String remainder = name.substring(pos + 1);
             Map<String, Object> subBindings = defaultContext.internalBind(remainder, value);
             for (Entry<String, Object> entry : subBindings.entrySet()) {
-                String subName = segment + "/" + entry.getKey();
+                String subName = segment + '/' + entry.getKey();
                 Object bound = entry.getValue();
                 treeBindings.put(subName, bound);
                 newBindings.put(subName, bound);

@@ -59,6 +59,6 @@ public class Pair<T> {
 
     @Override
     public String toString() {
-        return "(" + left + ", " + right + ")";
+        return "(" + left + ", " + right + ')';
     }
 }

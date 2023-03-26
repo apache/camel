@@ -89,7 +89,7 @@ public class ThreadsDefinition extends NoOutputDefinition<ThreadsDefinition>
 
     @Override
     public String toString() {
-        return "Threads[" + getOutputs() + "]";
+        return "Threads[" + getOutputs() + ']';
     }
 
     /**

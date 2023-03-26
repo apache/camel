@@ -125,7 +125,7 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
             Exchange exchange = exchanges.get(i);
             Message msg = exchange.getMessage();
             String xml = MessageHelper.dumpAsXml(msg, includeBody);
-            sb.append("\n").append(xml);
+            sb.append('\n').append(xml);
         }
         sb.append("\n</messages>");
         return sb.toString();

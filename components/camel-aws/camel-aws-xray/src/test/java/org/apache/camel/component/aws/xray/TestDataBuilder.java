@@ -167,7 +167,7 @@ final class TestDataBuilder {
                         sb.append(key).append("->").append(entry.getValue().get(key));
                         first = false;
                     }
-                    sb.append("]");
+                    sb.append(']');
                 }
                 ret += sb + "}";
             }

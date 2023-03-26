@@ -107,7 +107,7 @@ public class RedeliveryPolicyDefinition extends IdentifiedType implements Clonea
 
     @Override
     public String toString() {
-        return "RedeliveryPolicy[maximumRedeliveries: " + maximumRedeliveries + "]";
+        return "RedeliveryPolicy[maximumRedeliveries: " + maximumRedeliveries + ']';
     }
 
     public RedeliveryPolicyDefinition copy() {

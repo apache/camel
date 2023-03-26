@@ -71,7 +71,7 @@ public final class ThriftUtils {
         Object[] constructorParamValues
                 = { constructSyncProtocol(transport, exchangeProtocol, negotiationType, compressionType) };
 
-        String clientClassName = packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_SYNC_CLIENT_CLASS_NAME;
+        String clientClassName = packageName + '.' + serviceName + '$' + ThriftConstants.THRIFT_SYNC_CLIENT_CLASS_NAME;
         try {
             Class clientClass = context.getClassResolver().resolveMandatoryClass(clientClassName);
             Constructor clientConstructor = clientClass.getConstructor(constructorParamTypes);
@@ -95,7 +95,7 @@ public final class ThriftUtils {
         Class[] getterParamTypes = { TNonblockingTransport.class };
         Class[] constructorParamTypes = { TAsyncClientManager.class, TProtocolFactory.class };
 
-        String clientClassName = packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_ASYNC_CLIENT_CLASS_NAME + "$"
+        String clientClassName = packageName + '.' + serviceName + '$' + ThriftConstants.THRIFT_ASYNC_CLIENT_CLASS_NAME + '$'
                                  + ThriftConstants.THRIFT_ASYNC_CLIENT_FACTORY_NAME;
         try {
             Class clientClass = context.getClassResolver().resolveMandatoryClass(clientClassName);
@@ -106,7 +106,7 @@ public final class ThriftUtils {
                     getterParamTypes);
             if (asyncClientGetter == null) {
                 throw new IllegalArgumentException(
-                        "Thrift async client getter not found: " + clientClassName + "."
+                        "Thrift async client getter not found: " + clientClassName + '.'
                                                    + ThriftConstants.THRIFT_ASYNC_CLIENT_GETTER_NAME);
             }
             asynClientInstance = ObjectHelper.invokeMethod(asyncClientGetter, factoryInstance, transport);
@@ -131,7 +131,7 @@ public final class ThriftUtils {
         Method method = ReflectionHelper.findMethod(syncClient.getClass(), invokeMethod, paramsTypes);
         if (method == null) {
             throw new IllegalArgumentException(
-                    "Thrift service client method not found: " + syncClient.getClass().getName() + "." + invokeMethod
+                    "Thrift service client method not found: " + syncClient.getClass().getName() + '.' + invokeMethod
                                                + printParamsTypes(paramsTypes));
         }
         return ObjectHelper.invokeMethod(method, syncClient, paramsValues);
@@ -147,7 +147,7 @@ public final class ThriftUtils {
         Method method = ReflectionHelper.findMethod(asyncClient.getClass(), invokeMethod, paramsTypes);
         if (method == null) {
             throw new IllegalArgumentException(
-                    "Thrift service client method not found: " + asyncClient.getClass().getName() + "." + invokeMethod
+                    "Thrift service client method not found: " + asyncClient.getClass().getName() + '.' + invokeMethod
                                                + printParamsTypes(paramsTypes));
         }
         ObjectHelper.invokeMethod(method, asyncClient, paramsValues);
@@ -161,10 +161,10 @@ public final class ThriftUtils {
 
         try {
             if (isSyncInterface) {
-                serverInterfaceName = packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_SERVER_SYNC_INTERFACE_NAME;
+                serverInterfaceName = packageName + '.' + serviceName + '$' + ThriftConstants.THRIFT_SERVER_SYNC_INTERFACE_NAME;
             } else {
                 serverInterfaceName
-                        = packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_SERVER_ASYNC_INTERFACE_NAME;
+                        = packageName + '.' + serviceName + '$' + ThriftConstants.THRIFT_SERVER_ASYNC_INTERFACE_NAME;
             }
             serverInterface = context.getClassResolver().resolveMandatoryClass(serverInterfaceName);
         } catch (ClassNotFoundException e) {
@@ -183,11 +183,11 @@ public final class ThriftUtils {
 
         try {
             if (isSyncProcessor) {
-                processorClassName = packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_SERVER_SYNC_PROCESSOR_CLASS;
+                processorClassName = packageName + '.' + serviceName + '$' + ThriftConstants.THRIFT_SERVER_SYNC_PROCESSOR_CLASS;
                 serverInterface = getServerInterface(packageName, serviceName, isSyncProcessor, context);
             } else {
                 processorClassName
-                        = packageName + "." + serviceName + "$" + ThriftConstants.THRIFT_SERVER_ASYNC_PROCESSOR_CLASS;
+                        = packageName + '.' + serviceName + '$' + ThriftConstants.THRIFT_SERVER_ASYNC_PROCESSOR_CLASS;
                 serverInterface = getServerInterface(packageName, serviceName, isSyncProcessor, context);
             }
             Class processorClass = context.getClassResolver().resolveMandatoryClass(processorClassName);
@@ -263,7 +263,7 @@ public final class ThriftUtils {
         for (Class paramType : paramsTypes) {
             joiner.add(paramType == null ? "null" : paramType.getName());
         }
-        return "(" + joiner + ")";
+        return "(" + joiner + ')';
     }
 
     /**

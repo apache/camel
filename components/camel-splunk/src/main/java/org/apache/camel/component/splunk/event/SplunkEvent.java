@@ -352,7 +352,7 @@ public class SplunkEvent implements Serializable {
         for (StackTraceElement element : elements) {
             depth++;
             if (stackTraceDepth == -1 || stackTraceDepth >= depth) {
-                sb.append(element.toString()).append(",");
+                sb.append(element.toString()).append(',');
             } else {
                 break;
             }

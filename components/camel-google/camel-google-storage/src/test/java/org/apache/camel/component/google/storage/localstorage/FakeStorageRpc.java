@@ -506,7 +506,7 @@ class FakeStorageRpc extends StorageRpcTestBase {
     }
 
     private String fullname(StorageObject so) {
-        return so.getBucket() + "/" + so.getName();
+        return so.getBucket() + '/' + so.getName();
     }
 
     private BigInteger size(StorageObject so) {

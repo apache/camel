@@ -217,7 +217,7 @@ public class KnativeComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (ObjectHelper.isEmpty(remaining)) {
-            throw new IllegalArgumentException("Expecting URI in the form of: 'knative:type/name', got '" + uri + "'");
+            throw new IllegalArgumentException("Expecting URI in the form of: 'knative:type/name', got '" + uri + '\'');
         }
 
         final String type = ObjectHelper.supplyIfEmpty(StringHelper.before(remaining, "/"), () -> remaining);

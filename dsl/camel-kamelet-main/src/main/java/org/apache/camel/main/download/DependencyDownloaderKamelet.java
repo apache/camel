@@ -189,7 +189,7 @@ public final class DependencyDownloaderKamelet extends ServiceSupport
                 String gav = dep;
                 if (dep.startsWith("camel:")) {
                     // it's a known camel component
-                    gav = "org.apache.camel:camel-" + dep.substring(6) + ":" + camelContext.getVersion();
+                    gav = "org.apache.camel:camel-" + dep.substring(6) + ':' + camelContext.getVersion();
                 }
                 if (isValidGav(gav)) {
                     gavs.add(gav);

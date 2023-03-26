@@ -63,7 +63,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
 
     @Override
     public String toString() {
-        return "Bean[" + description() + "]";
+        return "Bean[" + description() + ']';
     }
 
     public String description() {
@@ -91,7 +91,7 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
 
     @Override
     public String getLabel() {
-        return "bean[" + description() + "]";
+        return "bean[" + description() + ']';
     }
 
     public String getRef() {

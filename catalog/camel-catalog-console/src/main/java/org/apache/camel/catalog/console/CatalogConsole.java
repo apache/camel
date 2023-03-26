@@ -52,7 +52,7 @@ public class CatalogConsole extends AbstractDevConsole {
         // misc is harder to find as we need to find them via classpath
         sb.append("\n\nMiscellaneous Components:\n");
         String[] cp = CP.split("[:|;]");
-        String suffix = "-" + getCamelContext().getVersion() + ".jar";
+        String suffix = '-' + getCamelContext().getVersion() + ".jar";
         for (String c : cp) {
             if (c.endsWith(suffix)) {
                 int pos = Math.max(c.lastIndexOf('/'), c.lastIndexOf('\\'));
@@ -84,7 +84,7 @@ public class CatalogConsole extends AbstractDevConsole {
 
         // misc is harder to find as we need to find them via classpath
         String[] cp = CP.split("[:|;]");
-        String suffix = "-" + getCamelContext().getVersion() + ".jar";
+        String suffix = '-' + getCamelContext().getVersion() + ".jar";
         for (String c : cp) {
             if (c.endsWith(suffix)) {
                 int pos = Math.max(c.lastIndexOf('/'), c.lastIndexOf('\\'));

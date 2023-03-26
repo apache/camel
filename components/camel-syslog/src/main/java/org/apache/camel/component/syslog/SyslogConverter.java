@@ -81,7 +81,7 @@ public final class SyslogConverter {
         boolean isRfc5424 = message instanceof Rfc5424SyslogMessage;
 
         StringBuilder sbr = new StringBuilder();
-        sbr.append("<");
+        sbr.append('<');
         if (message.getFacility() == null) {
             message.setFacility(SyslogFacility.USER);
         }
@@ -97,12 +97,12 @@ public final class SyslogConverter {
             }
         }
         sbr.append((message.getFacility().ordinal() << 3) + message.getSeverity().ordinal());
-        sbr.append(">");
+        sbr.append('>');
 
         // version number
         if (isRfc5424) {
-            sbr.append("1");
-            sbr.append(" ");
+            sbr.append('1');
+            sbr.append(' ');
         }
 
         if (message.getTimestamp() == null) {
@@ -114,25 +114,25 @@ public final class SyslogConverter {
         } else {
             addRfc3164TimeStamp(sbr, message);
         }
-        sbr.append(" ");
+        sbr.append(' ');
 
         sbr.append(message.getHostname());
-        sbr.append(" ");
+        sbr.append(' ');
 
         if (isRfc5424) {
             Rfc5424SyslogMessage rfc5424SyslogMessage = (Rfc5424SyslogMessage) message;
 
             sbr.append(rfc5424SyslogMessage.getAppName());
-            sbr.append(" ");
+            sbr.append(' ');
 
             sbr.append(rfc5424SyslogMessage.getProcId());
-            sbr.append(" ");
+            sbr.append(' ');
 
             sbr.append(rfc5424SyslogMessage.getMsgId());
-            sbr.append(" ");
+            sbr.append(' ');
 
             sbr.append(rfc5424SyslogMessage.getStructuredData());
-            sbr.append(" ");
+            sbr.append(' ');
         }
 
         sbr.append(message.getLogMessage());
@@ -282,32 +282,32 @@ public final class SyslogConverter {
         String capitalized = firstLetter.toUpperCase() + remainder.toLowerCase();
 
         sbr.append(capitalized);
-        sbr.append(" ");
+        sbr.append(' ');
 
         if (cal.get(Calendar.DAY_OF_MONTH) < 10) {
-            sbr.append(" ").append(cal.get(Calendar.DAY_OF_MONTH));
+            sbr.append(' ').append(cal.get(Calendar.DAY_OF_MONTH));
         } else {
             sbr.append(cal.get(Calendar.DAY_OF_MONTH));
         }
 
-        sbr.append(" ");
+        sbr.append(' ');
 
         if (cal.get(Calendar.HOUR_OF_DAY) < 10) {
-            sbr.append("0").append(cal.get(Calendar.HOUR_OF_DAY));
+            sbr.append('0').append(cal.get(Calendar.HOUR_OF_DAY));
         } else {
             sbr.append(cal.get(Calendar.HOUR_OF_DAY));
         }
-        sbr.append(":");
+        sbr.append(':');
 
         if (cal.get(Calendar.MINUTE) < 10) {
-            sbr.append("0").append(cal.get(Calendar.MINUTE));
+            sbr.append('0').append(cal.get(Calendar.MINUTE));
         } else {
             sbr.append(cal.get(Calendar.MINUTE));
         }
-        sbr.append(":");
+        sbr.append(':');
 
         if (cal.get(Calendar.SECOND) < 10) {
-            sbr.append("0").append(cal.get(Calendar.SECOND));
+            sbr.append('0').append(cal.get(Calendar.SECOND));
         } else {
             sbr.append(cal.get(Calendar.SECOND));
         }

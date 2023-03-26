@@ -28,7 +28,7 @@ public class Poetry implements Serializable {
                           + "And spirits of Love were the stars that glowed,\n"
                           + "And spirits of Peace were the streams that flowed\n"
                           + "In that magical wood in the land of sleep."
-                          + "\n"
+                          + '\n'
                           + "Lone in the light of that magical grove,\n"
                           + "I felt the stars of the spirits of Love\n"
                           + "Gather and gleam round my delicate youth,\n"

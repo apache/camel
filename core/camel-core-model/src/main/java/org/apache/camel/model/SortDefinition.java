@@ -56,7 +56,7 @@ public class SortDefinition<T> extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "sort[" + getExpression() + " by: " + (comparator != null ? "ref:" + comparator : comparatorBean) + "]";
+        return "sort[" + getExpression() + " by: " + (comparator != null ? "ref:" + comparator : comparatorBean) + ']';
     }
 
     @Override
@@ -66,7 +66,7 @@ public class SortDefinition<T> extends ExpressionNode {
 
     @Override
     public String getLabel() {
-        return "sort[" + getExpression() + "]";
+        return "sort[" + getExpression() + ']';
     }
 
     /**

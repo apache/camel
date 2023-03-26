@@ -39,7 +39,7 @@ public class ErrorHandlerRefReifier extends ErrorHandlerReifier<RefErrorHandlerD
 
     private ErrorHandlerFactory lookupErrorHandler(Route route) {
         ErrorHandlerFactory handler = ErrorHandlerHelper.lookupErrorHandlerFactory(route, definition.getRef(), true);
-        ObjectHelper.notNull(handler, "error handler '" + definition.getRef() + "'");
+        ObjectHelper.notNull(handler, "error handler '" + definition.getRef() + '\'');
         route.addErrorHandlerFactoryReference(definition, handler);
         return handler;
     }

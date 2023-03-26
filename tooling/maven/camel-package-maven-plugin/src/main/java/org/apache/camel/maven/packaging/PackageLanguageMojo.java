@@ -168,7 +168,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         Path out = schemaOutDir.toPath().resolve(schemaSubDirectory(languageModel.getJavaType()))
                                 .resolve(name + PackageHelper.JSON_SUFIX);
                         updateResource(schemaOutDir.toPath(),
-                                schemaSubDirectory(languageModel.getJavaType()) + "/" + name + PackageHelper.JSON_SUFIX,
+                                schemaSubDirectory(languageModel.getJavaType()) + '/' + name + PackageHelper.JSON_SUFIX,
                                 schema);
 
                         if (log.isDebugEnabled()) {
@@ -267,7 +267,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
         String name = file.getName();
         if (name.charAt(0) != '.') {
             if (buffer.length() > 0) {
-                buffer.append(" ");
+                buffer.append(' ');
             }
             buffer.append(name);
         }

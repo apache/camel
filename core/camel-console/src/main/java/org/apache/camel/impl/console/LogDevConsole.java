@@ -47,7 +47,7 @@ public class LogDevConsole extends AbstractDevConsole {
             sb.append("Logging Levels:\n");
             levels.forEach((k, v) -> sb.append(String.format("\n    %s = %s", k, v)));
         }
-        sb.append("\n");
+        sb.append('\n');
 
         return sb.toString();
     }

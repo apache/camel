@@ -43,7 +43,7 @@ public class JavaSecurityDevConsole extends AbstractDevConsole {
         Provider[] providers = Security.getProviders();
         if (providers != null && providers.length > 0) {
             sb.append("Security Providers:");
-            sb.append("\n");
+            sb.append('\n');
             for (Provider p : providers) {
                 sb.append(String.format("\n    %s (%s)\n", p.getName(), p.getVersionStr()));
                 if (p.getInfo() != null) {
@@ -55,9 +55,9 @@ public class JavaSecurityDevConsole extends AbstractDevConsole {
                 for (Provider.Service s : services) {
                     sb.append(String.format("\n        %s: %s (%s)", s.getType(), s.getAlgorithm(), s.getClassName()));
                 }
-                sb.append("\n");
+                sb.append('\n');
             }
-            sb.append("\n");
+            sb.append('\n');
         }
 
         return sb.toString();

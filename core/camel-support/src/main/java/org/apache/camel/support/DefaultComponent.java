@@ -299,7 +299,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
                     uri, "There are " + param.size()
                          + " parameters that couldn't be set on the endpoint."
                          + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
-                         + " Unknown parameters=[" + param + "]");
+                         + " Unknown parameters=[" + param + ']');
         }
     }
 

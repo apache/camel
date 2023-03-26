@@ -244,7 +244,7 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
 
     @Override
     public String toString() {
-        return "Registry for " + context.getName() + " [capacity: " + maxCacheSize + "]";
+        return "Registry for " + context.getName() + " [capacity: " + maxCacheSize + ']';
     }
 
 }

@@ -54,7 +54,7 @@ public class RemovePropertyProcessor extends AsyncProcessorSupport implements Tr
 
     @Override
     public String getTraceLabel() {
-        return "removeProperty[" + propertyName + "]";
+        return "removeProperty[" + propertyName + ']';
     }
 
     @Override

@@ -381,7 +381,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 sb.append(token);
                 for (int i = path.size() - 1; i >= 0; i--) {
                     QName q = path.get(i);
-                    sb.append("</").append(makeName(q)).append(">");
+                    sb.append("</").append(makeName(q)).append('>');
                 }
 
             } else if (mode == 'i') {
@@ -407,7 +407,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 for (Entry<String, String> e : getCurrentNamespaceBindings().entrySet()) {
                     if (!skip.contains(e.getKey())) {
                         sb.append(e.getKey().length() == 0 ? " xmlns" : " xmlns:")
-                                .append(e.getKey()).append("=").append(quote).append(e.getValue()).append(quote);
+                                .append(e.getKey()).append('=').append(quote).append(e.getValue()).append(quote);
                     }
                 }
                 sb.append(token, stag.length() - (empty ? 2 : 1), token.length());
@@ -446,7 +446,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 }
                 for (int i = path.size() - 1; i >= 0; i--) {
                     QName q = path.get(i);
-                    sb.append("</").append(makeName(q)).append(">");
+                    sb.append("</").append(makeName(q)).append('>');
                 }
             } else {
                 // for injected, unwrapped, text
@@ -577,7 +577,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
         private static String makeName(QName qname) {
             String pfx = qname.getPrefix();
-            return pfx.length() == 0 ? qname.getLocalPart() : qname.getPrefix() + ":" + qname.getLocalPart();
+            return pfx.length() == 0 ? qname.getLocalPart() : qname.getPrefix() + ':' + qname.getLocalPart();
         }
 
         @Override

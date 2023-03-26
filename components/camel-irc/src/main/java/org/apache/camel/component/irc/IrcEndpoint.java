@@ -100,7 +100,7 @@ public class IrcEndpoint extends DefaultEndpoint {
 
     private void handleNickInUse() {
         IRCConnection connection = component.getIRCConnection(configuration);
-        String nick = connection.getNick() + "-";
+        String nick = connection.getNick() + '-';
 
         // hackish but working approach to prevent an endless loop. Abort after 4 nick attempts.
         if (nick.endsWith("----")) {

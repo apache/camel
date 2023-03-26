@@ -194,7 +194,7 @@ public class TokenizerExpression extends SingleInputExpressionDefinition {
     @Override
     public String toString() {
         if (endToken != null) {
-            return "tokenize{body() using tokens: " + token + "..." + endToken + "}";
+            return "tokenize{body() using tokens: " + token + "..." + endToken + '}';
         } else {
             final String source;
             if (getHeaderName() != null) {
@@ -204,7 +204,7 @@ public class TokenizerExpression extends SingleInputExpressionDefinition {
             } else {
                 source = "body()";
             }
-            return "tokenize{" + source + " using token: " + token + "}";
+            return "tokenize{" + source + " using token: " + token + '}';
         }
     }
 

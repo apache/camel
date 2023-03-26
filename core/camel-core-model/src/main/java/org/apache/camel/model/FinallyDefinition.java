@@ -35,7 +35,7 @@ public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {
 
     @Override
     public String toString() {
-        return "DoFinally[" + getOutputs() + "]";
+        return "DoFinally[" + getOutputs() + ']';
     }
 
     @Override

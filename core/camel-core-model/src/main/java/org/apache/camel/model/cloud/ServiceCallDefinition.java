@@ -111,7 +111,7 @@ public class ServiceCallDefinition extends NoOutputDefinition<ServiceCallDefinit
 
     @Override
     public String toString() {
-        return "ServiceCall[" + name + "]";
+        return "ServiceCall[" + name + ']';
     }
 
     @Override

@@ -29,6 +29,6 @@ public class MyLocalBean {
     }
 
     public String hello(String body) {
-        return prefix + " " + body;
+        return prefix + ' ' + body;
     }
 }

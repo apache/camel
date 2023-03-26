@@ -225,7 +225,7 @@ public class BoxFoldersManager {
     public BoxFolder copyFolder(String folderId, String destinationFolderId, String newName) {
         try {
             LOG.debug("Copying folder(id={}) to destination_folder(id={}) {}",
-                    folderId, destinationFolderId, newName == null ? "" : " with new name '" + newName + "'");
+                    folderId, destinationFolderId, newName == null ? "" : " with new name '" + newName + '\'');
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }
@@ -257,7 +257,7 @@ public class BoxFoldersManager {
     public BoxFolder moveFolder(String folderId, String destinationFolderId, String newName) {
         try {
             LOG.debug("Moving folder(id={}) to destination_folder(id={}) {}",
-                    folderId, destinationFolderId, newName == null ? "" : " with new name '" + newName + "'");
+                    folderId, destinationFolderId, newName == null ? "" : " with new name '" + newName + '\'');
             if (folderId == null) {
                 throw new IllegalArgumentException("Parameter 'folderId' can not be null");
             }

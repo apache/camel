@@ -43,7 +43,7 @@ public class InterceptFromDefinition extends InterceptDefinition {
 
     @Override
     public String toString() {
-        return "InterceptFrom[" + getOutputs() + "]";
+        return "InterceptFrom[" + getOutputs() + ']';
     }
 
     @Override

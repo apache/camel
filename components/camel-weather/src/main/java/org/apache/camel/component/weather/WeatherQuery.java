@@ -42,10 +42,10 @@ public class WeatherQuery {
             location = createLatLonQueryString();
         } else if (weatherConfiguration.getLat() != null && weatherConfiguration.getLon() != null
                 && weatherConfiguration.getRightLon() != null && weatherConfiguration.getTopLat() != null) {
-            location = "bbox=" + weatherConfiguration.getLon() + ","
-                       + weatherConfiguration.getLat() + ","
-                       + weatherConfiguration.getRightLon() + ","
-                       + weatherConfiguration.getTopLat() + ","
+            location = "bbox=" + weatherConfiguration.getLon() + ','
+                       + weatherConfiguration.getLat() + ','
+                       + weatherConfiguration.getRightLon() + ','
+                       + weatherConfiguration.getTopLat() + ','
                        + weatherConfiguration.getZoom() + "&cluster=yes";
         } else if (!isEmpty(weatherConfiguration.getZip())) {
             location = "zip=" + weatherConfiguration.getZip();

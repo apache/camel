@@ -57,7 +57,7 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
 
     @Override
     public String toString() {
-        return "RemoveHeaders[" + getPattern() + "]";
+        return "RemoveHeaders[" + getPattern() + ']';
     }
 
     @Override
@@ -67,7 +67,7 @@ public class RemoveHeadersDefinition extends NoOutputDefinition<RemoveHeadersDef
 
     @Override
     public String getLabel() {
-        return "removeHeaders[" + getPattern() + "]";
+        return "removeHeaders[" + getPattern() + ']';
     }
 
     /**

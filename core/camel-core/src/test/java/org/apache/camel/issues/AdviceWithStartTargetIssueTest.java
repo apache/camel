@@ -86,7 +86,7 @@ public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
 
                 @Override
                 public String toString() {
-                    return "ContainerWideInterceptor[" + target + "]";
+                    return "ContainerWideInterceptor[" + target + ']';
                 }
             });
         }

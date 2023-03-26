@@ -92,7 +92,7 @@ public interface CamelClusterService extends Service, CamelContextAware, IdAware
         }
 
         throw new IllegalArgumentException(
-                "Unable to unwrap this CamelClusterService type (" + getClass() + ") to the required type (" + clazz + ")");
+                "Unable to unwrap this CamelClusterService type (" + getClass() + ") to the required type (" + clazz + ')');
     }
 
     @FunctionalInterface

@@ -117,19 +117,19 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
     public String toString() {
         StringBuilder sb = new StringBuilder("[me: ");
         for (Entry<String, String> nsEntry : map.entrySet()) {
-            sb.append("{").append(nsEntry.getKey()).append(" -> ").append(nsEntry.getValue()).append("},");
+            sb.append('{').append(nsEntry.getKey()).append(" -> ").append(nsEntry.getValue()).append("},");
         }
         if (!map.isEmpty()) {
             // remove the last comma
             sb.deleteCharAt(sb.length() - 1);
         }
-        sb.append("]");
+        sb.append(']');
 
         // Get the parent's namespace mappings
         if (parent != null) {
             sb.append(", [parent: ");
             sb.append(parent);
-            sb.append("]");
+            sb.append(']');
         }
         return sb.toString();
     }

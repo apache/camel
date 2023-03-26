@@ -56,7 +56,7 @@ public class DefaultResourceLoader extends ServiceSupport implements ResourceLoa
         this.fallbackResolver = new DefaultResourceResolvers.ClasspathResolver() {
             @Override
             public Resource resolve(String location) {
-                return super.resolve(DefaultResourceResolvers.ClasspathResolver.SCHEME + ":" + location);
+                return super.resolve(DefaultResourceResolvers.ClasspathResolver.SCHEME + ':' + location);
             }
         };
 

@@ -195,16 +195,16 @@ public final class SimpleTokenizer {
                 // special for new line, tabs and carriage return
                 boolean special = false;
                 if ('n' == next) {
-                    sb.append("\n");
+                    sb.append('\n');
                     special = true;
                 } else if ('t' == next) {
-                    sb.append("\t");
+                    sb.append('\t');
                     special = true;
                 } else if ('r' == next) {
-                    sb.append("\r");
+                    sb.append('\r');
                     special = true;
                 } else if ('}' == next) {
-                    sb.append("}");
+                    sb.append('}');
                     special = true;
                 } else {
                     // not special just a regular character

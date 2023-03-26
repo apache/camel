@@ -116,7 +116,7 @@ public class DeferProducer extends ServiceSupport implements Producer, AsyncProc
         if (delegate != null) {
             return delegate.toString();
         } else {
-            return "DelegateProducer[" + endpoint + "]";
+            return "DelegateProducer[" + endpoint + ']';
         }
     }
 

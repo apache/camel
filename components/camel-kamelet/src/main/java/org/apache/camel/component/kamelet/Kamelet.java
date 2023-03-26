@@ -90,7 +90,7 @@ public final class Kamelet {
             answer = StringHelper.after(remaining, "/");
         }
         if (answer == null) {
-            answer = extractTemplateId(context, remaining, parameters) + "-" + UUID.generateUuid();
+            answer = extractTemplateId(context, remaining, parameters) + '-' + UUID.generateUuid();
         }
 
         return answer;
@@ -112,7 +112,7 @@ public final class Kamelet {
             if (element == null) {
                 continue;
             }
-            prefixBuffer.append(element).append(".");
+            prefixBuffer.append(element).append('.');
 
             Properties prefixed = pc.loadProperties(Kamelet.startsWith(prefixBuffer.toString()));
             for (String name : prefixed.stringPropertyNames()) {
@@ -138,7 +138,7 @@ public final class Kamelet {
         // must make the source and sink endpoints are unique by appending the route id before we create the route from the template
         if (def.getInput().getEndpointUri().startsWith("kamelet:source")
                 || def.getInput().getEndpointUri().startsWith("kamelet://source")) {
-            def.getInput().setUri("kamelet://source?" + PARAM_ROUTE_ID + "=" + rid);
+            def.getInput().setUri("kamelet://source?" + PARAM_ROUTE_ID + '=' + rid);
         }
 
         // there must be at least one sink
@@ -147,14 +147,14 @@ public final class Kamelet {
         Collection<ToDefinition> col = filterTypeInOutputs(def.getOutputs(), ToDefinition.class);
         for (ToDefinition to : col) {
             if (to.getEndpointUri().startsWith("kamelet:sink") || to.getEndpointUri().startsWith("kamelet://sink")) {
-                to.setUri("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);
+                to.setUri("kamelet://sink?" + PARAM_ROUTE_ID + '=' + rid);
                 sink = true;
             }
             line = to.getLineNumber();
         }
         if (!sink) {
             // this is appended and is used to go back to the kamelet that called me
-            ToDefinition to = new ToDefinition("kamelet://sink?" + PARAM_ROUTE_ID + "=" + rid);
+            ToDefinition to = new ToDefinition("kamelet://sink?" + PARAM_ROUTE_ID + '=' + rid);
             to.setLocation(def.getInput().getLocation());
             if (line != -1) {
                 to.setLineNumber(line + 1);

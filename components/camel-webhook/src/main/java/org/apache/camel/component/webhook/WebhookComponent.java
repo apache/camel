@@ -58,7 +58,7 @@ public class WebhookComponent extends DefaultComponent {
         setProperties(endpoint, parameters);
         // we need to apply the params here
         if (parameters != null && !parameters.isEmpty()) {
-            delegateUri = delegateUri + "?" + resolveDelegateUriQuery(uri, parameters);
+            delegateUri = delegateUri + '?' + resolveDelegateUriQuery(uri, parameters);
         }
         endpoint.getConfiguration().setEndpointUri(delegateUri);
 

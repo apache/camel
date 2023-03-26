@@ -40,7 +40,7 @@ public class DependencyDownloaderConsole extends AbstractDevConsole {
             DependencyDownloaderClassLoader ddcl = (DependencyDownloaderClassLoader) cl;
             sb.append("Dependencies:");
             String cp = String.join("\n    ", ddcl.getDownloaded());
-            sb.append("\n    ").append(cp).append("\n");
+            sb.append("\n    ").append(cp).append('\n');
         }
 
         return sb.toString();

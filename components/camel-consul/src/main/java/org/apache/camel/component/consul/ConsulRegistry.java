@@ -62,14 +62,14 @@ public class ConsulRegistry implements Registry {
     public ConsulRegistry(String hostname, int port) {
         this.hostname = hostname;
         this.port = port;
-        this.consul = Consul.builder().withUrl("http://" + this.hostname + ":" + this.port).build();
+        this.consul = Consul.builder().withUrl("http://" + this.hostname + ':' + this.port).build();
     }
 
     /* builder pattern */
     private ConsulRegistry(Builder builder) {
         this.hostname = builder.hostname;
         this.port = builder.port;
-        this.consul = Consul.builder().withUrl("http://" + this.hostname + ":" + this.port).build();
+        this.consul = Consul.builder().withUrl("http://" + this.hostname + ':' + this.port).build();
     }
 
     @Override
@@ -186,7 +186,7 @@ public class ConsulRegistry implements Registry {
             throw new NoSuchBeanException(msg);
         }
         kvClient.deleteKey(key);
-        kvClient.deleteKey(object.getClass().getName() + "/" + key);
+        kvClient.deleteKey(object.getClass().getName() + '/' + key);
         kvClient.releaseLock(lockKey, sessionId);
     }
 
@@ -214,7 +214,7 @@ public class ConsulRegistry implements Registry {
         // store the actual class
         kvClient.putValue(key, value);
         // store just as a bookmark
-        kvClient.putValue(object.getClass().getName().replace('$', '/') + "/" + key, "1");
+        kvClient.putValue(object.getClass().getName().replace('$', '/') + '/' + key, "1");
         kvClient.releaseLock(lockKey, sessionId);
     }
 

@@ -54,7 +54,7 @@ public class FilePatchesRepository implements PatchesRepository {
     @Override
     public void install(String coordinates) {
         try {
-            FileUtils.writeStringToFile(repository, coordinates + "\n", StandardCharsets.UTF_8.name(), true);
+            FileUtils.writeStringToFile(repository, coordinates + '\n', StandardCharsets.UTF_8.name(), true);
         } catch (IOException e) {
             throw new IOError(e);
         }

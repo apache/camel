@@ -72,9 +72,9 @@ public class CustomLoadBalancerDefinition extends LoadBalancerDefinition {
     @Override
     public String toString() {
         if (getCustomLoadBalancer() != null) {
-            return "CustomLoadBalancer[" + getCustomLoadBalancer() + "]";
+            return "CustomLoadBalancer[" + getCustomLoadBalancer() + ']';
         } else {
-            return "CustomLoadBalancer[" + ref + "]";
+            return "CustomLoadBalancer[" + ref + ']';
         }
     }
 

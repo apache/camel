@@ -62,7 +62,7 @@ public class EndpointDevConsole extends AbstractDevConsole {
                 }
             }
         }
-        sb.append("\n");
+        sb.append('\n');
 
         return sb.toString();
     }

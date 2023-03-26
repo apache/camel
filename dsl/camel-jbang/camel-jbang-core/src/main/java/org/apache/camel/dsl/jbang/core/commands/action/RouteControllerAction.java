@@ -280,7 +280,7 @@ public class RouteControllerAction extends ActionWatchCommand {
         if (r.lastAttemptAgo != null && !r.lastAttemptAgo.isEmpty()) {
             String s = r.lastAttemptAgo;
             if (r.elapsed != null && !r.elapsed.isEmpty()) {
-                s += " (" + r.elapsed + ")";
+                s += " (" + r.elapsed + ')';
             }
         }
         return "";

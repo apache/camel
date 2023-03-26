@@ -132,7 +132,7 @@ final class ZooKeeperClusterView extends AbstractCamelClusterView {
     }
 
     private String getFullPath() {
-        return configuration.getBasePath() + "/" + getNamespace();
+        return configuration.getBasePath() + '/' + getNamespace();
     }
 
     // ***********************************************

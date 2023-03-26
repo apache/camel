@@ -44,7 +44,7 @@ public class Plc4XPollingConsumer extends EventDrivenPollingConsumer {
 
     @Override
     public String toString() {
-        return "Plc4XPollingConsumer[" + plc4XEndpoint + "]";
+        return "Plc4XPollingConsumer[" + plc4XEndpoint + ']';
     }
 
     @Override

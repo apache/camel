@@ -57,7 +57,7 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
 
     @Override
     public String toString() {
-        return "removeProperties[" + getPattern() + "]";
+        return "removeProperties[" + getPattern() + ']';
     }
 
     @Override
@@ -67,7 +67,7 @@ public class RemovePropertiesDefinition extends NoOutputDefinition<RemovePropert
 
     @Override
     public String getLabel() {
-        return "removeProperties[" + getPattern() + "]";
+        return "removeProperties[" + getPattern() + ']';
     }
 
     /**

@@ -45,7 +45,7 @@ public class ContextDevConsole extends AbstractDevConsole {
         if (getCamelContext().getDescription() != null) {
             sb.append(String.format("\n    %s", getCamelContext().getDescription()));
         }
-        sb.append("\n");
+        sb.append('\n');
 
         ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
         if (mcc != null) {
@@ -97,7 +97,7 @@ public class ContextDevConsole extends AbstractDevConsole {
                     String ago = TimeUtils.printSince(last.getTime());
                     sb.append(String.format("\n    Since Last Failed: %s", ago));
                 }
-                sb.append("\n");
+                sb.append('\n');
             }
         }
 

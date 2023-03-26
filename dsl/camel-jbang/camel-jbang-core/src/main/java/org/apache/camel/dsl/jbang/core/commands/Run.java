@@ -355,7 +355,7 @@ public class Run extends CamelCommand {
         if (deps.isBlank()) {
             deps = dependencies != null ? dependencies : "";
         } else if (dependencies != null && !dependencies.equals(deps)) {
-            deps += "," + dependencies;
+            deps += ',' + dependencies;
         }
         if (!deps.isBlank()) {
             main.addInitialProperty("camel.jbang.dependencies", deps);
@@ -426,7 +426,7 @@ public class Run extends CamelCommand {
                 if (ObjectHelper.isEmpty(propertiesFiles)) {
                     propertiesFiles = file;
                 } else {
-                    propertiesFiles = propertiesFiles + "," + file;
+                    propertiesFiles = propertiesFiles + ',' + file;
                 }
                 if (dev && file.startsWith("file:")) {
                     // we can only reload if file based
@@ -500,7 +500,7 @@ public class Run extends CamelCommand {
         if (sjKamelets.length() > 0) {
             String loc = main.getInitialProperties().getProperty("camel.component.kamelet.location");
             if (loc != null) {
-                loc = loc + "," + sjKamelets;
+                loc = loc + ',' + sjKamelets;
             } else {
                 loc = sjKamelets.toString();
             }
@@ -541,14 +541,14 @@ public class Run extends CamelCommand {
                     file = "file://" + file;
                 }
                 if (locations.length() > 0) {
-                    locations.append(",");
+                    locations.append(',');
                 }
                 locations.append(file);
             }
             // there may be existing properties
             String loc = main.getInitialProperties().getProperty("camel.component.properties.location");
             if (loc != null) {
-                loc = loc + "," + locations;
+                loc = loc + ',' + locations;
             } else {
                 loc = locations.toString();
             }
@@ -748,7 +748,7 @@ public class Run extends CamelCommand {
         code = code.replace("'", "\"");
         code = code.trim();
         if (!code.endsWith(";")) {
-            code = code + ";";
+            code = code + ';';
         }
         content = content.replaceFirst("\\{\\{ \\.Name }}", "CodeRoute");
         content = content.replaceFirst("\\{\\{ \\.Code }}", code);
@@ -823,7 +823,7 @@ public class Run extends CamelCommand {
         Clipboard c = Toolkit.getDefaultToolkit().getSystemClipboard();
         Object t = c.getData(DataFlavor.stringFlavor);
         if (t != null) {
-            String fn = CLIPBOARD_GENERATED_FILE + "." + ext;
+            String fn = CLIPBOARD_GENERATED_FILE + '.' + ext;
             if ("java".equals(ext)) {
                 String fqn = determineClassName(t.toString());
                 if (fqn == null) {
@@ -975,8 +975,8 @@ public class Run extends CamelCommand {
     private void writeSettings(String key, String value) {
         FileOutputStream fos = null;
         try {
-            fos = new FileOutputStream(WORK_DIR + "/" + RUN_SETTINGS_FILE, true);
-            String line = key + "=" + value;
+            fos = new FileOutputStream(WORK_DIR + '/' + RUN_SETTINGS_FILE, true);
+            String line = key + '=' + value;
             fos.write(line.getBytes(StandardCharsets.UTF_8));
             fos.write(System.lineSeparator().getBytes(StandardCharsets.UTF_8));
         } catch (Exception e) {
@@ -1024,7 +1024,7 @@ public class Run extends CamelCommand {
 
         String fqn;
         if (pn != null) {
-            fqn = pn + "." + cn;
+            fqn = pn + '.' + cn;
         } else {
             fqn = cn;
         }
@@ -1049,9 +1049,9 @@ public class Run extends CamelCommand {
 
         @Override
         public void onDownloadDependency(String groupId, String artifactId, String version) {
-            String line = "mvn:" + groupId + ":" + artifactId;
+            String line = "mvn:" + groupId + ':' + artifactId;
             if (version != null) {
-                line += ":" + version;
+                line += ':' + version;
             }
             if (!downloaded.contains(line)) {
                 writeSettings("dependency", line);
@@ -1082,7 +1082,7 @@ public class Run extends CamelCommand {
 
         @Override
         public void onLoadingModeline(String key, String value) {
-            String line = key + "=" + value;
+            String line = key + '=' + value;
             if (!modelines.contains(line)) {
                 writeSettings("modeline", line);
                 modelines.add(line);

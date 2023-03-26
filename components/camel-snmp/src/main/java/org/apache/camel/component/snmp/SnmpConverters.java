@@ -79,9 +79,9 @@ public final class SnmpConverters {
 
     private static void entryAppend(StringBuilder sb, String tag, String value) {
         sb.append(ENTRY_TAG_OPEN);
-        sb.append("<").append(tag).append(">");
+        sb.append('<').append(tag).append('>');
         sb.append(value);
-        sb.append("</").append(tag).append(">");
+        sb.append("</").append(tag).append('>');
         sb.append(ENTRY_TAG_CLOSE);
     }
 
@@ -98,7 +98,7 @@ public final class SnmpConverters {
 
         // prepare the header
         if (pdu.getType() == PDU.V1TRAP) {
-            sb.append("<" + SNMP_TAG + " messageType=\"v1\">");
+            sb.append('<' + SNMP_TAG + " messageType=\"v1\">");
         } else {
             sb.append(SNMP_TAG_OPEN);
         }

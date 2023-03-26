@@ -59,7 +59,7 @@ public class ErrorHandlerDefinition extends IdentifiedType {
 
     @Override
     public String toString() {
-        return "ErrorHandler[" + description() + "]";
+        return "ErrorHandler[" + description() + ']';
     }
 
     protected String description() {

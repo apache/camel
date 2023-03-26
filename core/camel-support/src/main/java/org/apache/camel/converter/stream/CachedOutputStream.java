@@ -89,7 +89,7 @@ public class CachedOutputStream extends OutputStream {
 
     @Override
     public String toString() {
-        return "CachedOutputStream[size: " + totalLength + "]";
+        return "CachedOutputStream[size: " + totalLength + ']';
     }
 
     @Override

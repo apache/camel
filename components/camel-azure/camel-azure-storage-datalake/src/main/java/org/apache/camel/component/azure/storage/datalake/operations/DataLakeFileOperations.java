@@ -140,7 +140,7 @@ public class DataLakeFileOperations {
         final DataLakeServiceSasSignatureValues serviceSasSignatureValues
                 = new DataLakeServiceSasSignatureValues(offsetDateTimeToSet, sasPermission);
         final DataLakeFileClientWrapper fileClientWrapper = getFileClientWrapper(exchange);
-        final String url = fileClientWrapper.getFileUrl() + "?" + fileClientWrapper.generateSas(serviceSasSignatureValues);
+        final String url = fileClientWrapper.getFileUrl() + '?' + fileClientWrapper.generateSas(serviceSasSignatureValues);
         final DataLakeExchangeHeaders headers = DataLakeExchangeHeaders.create().downloadLink(url);
         return new DataLakeOperationResponse(url, headers.toMap());
     }

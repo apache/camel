@@ -70,7 +70,7 @@ public class WhatsAppServiceRestAPIAdapter implements WhatsAppService {
 
     public WhatsAppServiceRestAPIAdapter(HttpClient client, String baseUri, String apiVersion, String phoneNumberId,
                                          String authorizationToken) {
-        this.baseUri = baseUri + "/" + apiVersion + "/" + phoneNumberId;
+        this.baseUri = baseUri + '/' + apiVersion + '/' + phoneNumberId;
         this.mapper = new ObjectMapper().registerModule(new JavaTimeModule());
         this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         this.authorizationToken = authorizationToken;

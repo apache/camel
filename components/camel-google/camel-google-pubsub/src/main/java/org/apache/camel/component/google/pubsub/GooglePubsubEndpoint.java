@@ -155,7 +155,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     public ExecutorService createExecutor() {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
-                "GooglePubsubConsumer[" + getDestinationName() + "]", concurrentConsumers);
+                "GooglePubsubConsumer[" + getDestinationName() + ']', concurrentConsumers);
     }
 
     public String getProjectId() {

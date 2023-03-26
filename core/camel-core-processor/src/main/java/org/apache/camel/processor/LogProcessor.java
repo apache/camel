@@ -113,9 +113,9 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
     @Override
     public String getTraceLabel() {
         if (expression != null) {
-            return "log[" + expression + "]";
+            return "log[" + expression + ']';
         } else {
-            return "log[" + message + "]";
+            return "log[" + message + ']';
         }
     }
 

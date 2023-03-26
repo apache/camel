@@ -199,7 +199,7 @@ public class MethodCallExpression extends TypedExpressionDefinition {
         } else {
             name = getExpression();
         }
-        return "bean[" + name + (method != null ? " method:" + method : "") + "]";
+        return "bean[" + name + (method != null ? " method:" + method : "") + ']';
     }
 
     /**

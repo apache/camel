@@ -75,7 +75,7 @@ public class PlatformHttpConsole extends AbstractDevConsole {
                 JsonObject jo = new JsonObject();
                 String uri = model.getUri();
                 if (!uri.startsWith("/")) {
-                    uri = "/" + uri;
+                    uri = '/' + uri;
                 }
                 jo.put("url", server + uri);
                 jo.put("path", model.getUri());

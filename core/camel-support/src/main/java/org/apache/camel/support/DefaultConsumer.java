@@ -67,7 +67,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     @Override
     public String toString() {
         if (consumerToString == null) {
-            consumerToString = "Consumer[" + URISupport.sanitizeUri(endpoint.getEndpointUri()) + "]";
+            consumerToString = "Consumer[" + URISupport.sanitizeUri(endpoint.getEndpointUri()) + ']';
         }
         return consumerToString;
     }

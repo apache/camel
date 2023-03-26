@@ -95,7 +95,7 @@ public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware, 
 
         @Override
         public String toString() {
-            return "ProcessCall[" + exchange + "]";
+            return "ProcessCall[" + exchange + ']';
         }
     }
 

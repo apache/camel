@@ -196,7 +196,7 @@ public class ResequencerEngine<E> {
             throw new MessageRejectedException(
                     "rejecting message [" + element.getObject()
                                                + "], it should have been sent before the last delivered message ["
-                                               + lastDelivered.getObject() + "]");
+                                               + lastDelivered.getObject() + ']');
         }
 
         // add element to sequence in proper order

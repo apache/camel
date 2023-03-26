@@ -52,7 +52,7 @@ public class KubernetesDnsServiceDiscovery extends KubernetesServiceDiscovery {
 
     private ServiceDefinition newService(String name) {
         return new DefaultServiceDefinition(
-                name, name + "." + getConfiguration().getNamespace() + ".svc." + getConfiguration().getDnsDomain(), -1);
+                name, name + '.' + getConfiguration().getNamespace() + ".svc." + getConfiguration().getDnsDomain(), -1);
     }
 
     @Override

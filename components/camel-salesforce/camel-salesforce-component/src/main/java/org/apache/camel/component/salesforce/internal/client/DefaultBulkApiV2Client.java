@@ -208,11 +208,11 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
             query = "locator=" + locator;
         }
         if (maxRecords != null) {
-            query = (query != null ? query + "&" : "") + "maxRecords=" + maxRecords;
+            query = (query != null ? query + '&' : "") + "maxRecords=" + maxRecords;
         }
         String url = queryJobUrl(jobId) + "/results";
         if (query != null) {
-            url = url + "?" + query;
+            url = url + '?' + query;
         }
         final Request request = getRequest(HttpMethod.GET, url, headers);
         doRequestWithCsvResponse(callback, request);
@@ -318,12 +318,12 @@ public class DefaultBulkApiV2Client extends AbstractClientBase implements BulkAp
 
     private String jobUrl(String jobId) {
         return super.instanceUrl + "/services/data/v" + version + "/jobs/ingest" +
-               (jobId != null ? "/" + jobId : "");
+               (jobId != null ? '/' + jobId : "");
     }
 
     private String queryJobUrl(String jobId) {
         return super.instanceUrl + "/services/data/v" + version + "/jobs/query" +
-               (jobId != null ? "/" + jobId : "");
+               (jobId != null ? '/' + jobId : "");
     }
 
     private void doRequestWithCsvResponse(StreamResponseCallback callback, Request request) {

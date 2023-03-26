@@ -182,7 +182,7 @@ public class BomGeneratorMojo extends AbstractMojo {
             }
         }
 
-        outDependencies.sort(Comparator.comparing(d -> d.getGroupId() + ":" + d.getArtifactId()));
+        outDependencies.sort(Comparator.comparing(d -> d.getGroupId() + ':' + d.getArtifactId()));
 
         return outDependencies;
     }
@@ -343,7 +343,7 @@ public class BomGeneratorMojo extends AbstractMojo {
             msg.append("Found ").append(errors.size())
                     .append(" conflicts between the current managed dependencies and the external BOMS:\n");
             for (String error : errors) {
-                msg.append(" - ").append(error).append("\n");
+                msg.append(" - ").append(error).append('\n');
             }
 
             throw new MojoFailureException(msg.toString());
@@ -370,7 +370,7 @@ public class BomGeneratorMojo extends AbstractMojo {
     private Set<String> getProvidedDependencyManagement(
             String groupId, String artifactId, String version, Set<String> gaChecked)
             throws Exception {
-        String ga = groupId + ":" + artifactId;
+        String ga = groupId + ':' + artifactId;
         gaChecked.add(ga);
         Artifact bom = resolveArtifact(groupId, artifactId, version, "pom");
         MavenProject bomProject = loadExternalProjectPom(bom.getFile());
@@ -379,7 +379,7 @@ public class BomGeneratorMojo extends AbstractMojo {
         if (bomProject.getDependencyManagement() != null && bomProject.getDependencyManagement().getDependencies() != null) {
             for (Dependency dep : bomProject.getDependencyManagement().getDependencies()) {
                 if ("pom".equals(dep.getType()) && "import".equals(dep.getScope())) {
-                    String subGa = dep.getGroupId() + ":" + dep.getArtifactId();
+                    String subGa = dep.getGroupId() + ':' + dep.getArtifactId();
                     if (!gaChecked.contains(subGa)) {
                         Set<String> sub = getProvidedDependencyManagement(dep.getGroupId(), dep.getArtifactId(),
                                 resolveVersion(bomProject, dep.getVersion()), gaChecked);
@@ -414,7 +414,7 @@ public class BomGeneratorMojo extends AbstractMojo {
     }
 
     private String comparisonKey(Dependency dependency) {
-        return dependency.getGroupId() + ":" + dependency.getArtifactId() + ":"
+        return dependency.getGroupId() + ':' + dependency.getArtifactId() + ':'
                + (dependency.getType() != null ? dependency.getType() : "jar");
     }
 

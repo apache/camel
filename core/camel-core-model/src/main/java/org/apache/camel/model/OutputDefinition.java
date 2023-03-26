@@ -56,6 +56,6 @@ public class OutputDefinition<Type extends ProcessorDefinition<Type>> extends Pr
 
     @Override
     public String toString() {
-        return getShortName() + " -> [" + outputs + "]";
+        return getShortName() + " -> [" + outputs + ']';
     }
 }

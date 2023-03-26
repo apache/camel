@@ -58,9 +58,9 @@ public class CamelCronConfiguration {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", CamelCronConfiguration.class.getSimpleName() + "[", "]")
-                .add("name='" + name + "'")
-                .add("schedule='" + schedule + "'")
+        return new StringJoiner(", ", CamelCronConfiguration.class.getSimpleName() + '[', "]")
+                .add("name='" + name + '\'')
+                .add("schedule='" + schedule + '\'')
                 .toString();
     }
 }

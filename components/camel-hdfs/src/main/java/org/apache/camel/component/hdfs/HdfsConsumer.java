@@ -127,7 +127,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
         if (info.getFileSystem().isFile(info.getPath())) {
             fileStatuses = info.getFileSystem().globStatus(info.getPath());
         } else {
-            Path pattern = info.getPath().suffix("/" + this.endpointConfig.getPattern());
+            Path pattern = info.getPath().suffix('/' + this.endpointConfig.getPattern());
             fileStatuses = info.getFileSystem().globStatus(pattern, new ExcludePathFilter());
         }
 

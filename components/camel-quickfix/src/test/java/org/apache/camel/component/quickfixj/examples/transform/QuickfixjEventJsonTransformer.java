@@ -47,7 +47,7 @@ public class QuickfixjEventJsonTransformer {
             sb.append("  \"").append(key).append("\": ").append(in.getHeader(key)).append(",\n");
         }
 
-        sb.append(renderer.transform(in.getBody(Message.class), "  ", dataDictionary)).append("\n");
+        sb.append(renderer.transform(in.getBody(Message.class), "  ", dataDictionary)).append('\n');
         sb.append("}\n");
         return sb.toString();
     }

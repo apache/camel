@@ -52,7 +52,7 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
     private String getUri(String systemId) {
         if (resourcePath != null && !systemId.toLowerCase().startsWith("http:")
                 && !systemId.toLowerCase().startsWith("https:")) {
-            return FileUtil.onlyPath(resourceUri) + "/" + systemId;
+            return FileUtil.onlyPath(resourceUri) + '/' + systemId;
         } else {
             return systemId;
         }
@@ -79,11 +79,11 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
                 if (relatedPath == null) {
                     relatedPath = "";
                 }
-                relatedURI = FileUtil.compactPath(FileUtil.onlyPath(relatedURI) + "/" + systemId, '/');
+                relatedURI = FileUtil.compactPath(FileUtil.onlyPath(relatedURI) + '/' + systemId, '/');
                 resourceURI = relatedURI;
                 relatedURIMap.put(baseURI, relatedPath);
             } else {
-                resourceURI = FileUtil.compactPath(relatedPath + "/" + systemId, '/');
+                resourceURI = FileUtil.compactPath(relatedPath + '/' + systemId, '/');
                 relatedURI = resourceURI;
             }
         }
@@ -208,7 +208,7 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
 
         @Override
         public String toString() {
-            return "DefaultLSInput[" + uri + "]";
+            return "DefaultLSInput[" + uri + ']';
         }
     }
 

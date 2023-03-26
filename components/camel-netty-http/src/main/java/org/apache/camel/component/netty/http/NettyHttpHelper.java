@@ -213,12 +213,12 @@ public final class NettyHttpHelper {
             // if there are no query params
             if (idx == -1) {
                 // make sure that there is exactly one "/" between HTTP_URI and HTTP_PATH
-                uri = uri.endsWith("/") ? uri : uri + "/";
+                uri = uri.endsWith("/") ? uri : uri + '/';
                 uri = uri.concat(path);
             } else {
                 // there are query params, so inject the relative path in the right place
                 String base = uri.substring(0, idx);
-                base = base.endsWith("/") ? base : base + "/";
+                base = base.endsWith("/") ? base : base + '/';
                 base = base.concat(path);
                 uri = base.concat(uri.substring(idx));
             }
@@ -259,7 +259,7 @@ public final class NettyHttpHelper {
             queryString = UnsafeUriCharactersEncoder.encodeHttpURI(queryString);
             if (ObjectHelper.isEmpty(uri.getPath())) {
                 // If queryString is present, the path cannot be empty - CAMEL-13707
-                uri = new URI(url + "/");
+                uri = new URI(url + '/');
             }
 
             uri = URISupport.createURIWithQuery(uri, queryString);

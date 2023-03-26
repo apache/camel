@@ -84,7 +84,7 @@ public class TraceAnnotatedTracingStrategy implements InterceptStrategy {
         }
 
         final Class<?> type = processorClass;
-        final String name = shortName + ":" + metricName;
+        final String name = shortName + ':' + metricName;
 
         return new DelegateAsyncProcessor((Exchange exchange) -> {
             LOG.trace("Creating new subsegment for {} of type {} - EIP {}", name, type, target);

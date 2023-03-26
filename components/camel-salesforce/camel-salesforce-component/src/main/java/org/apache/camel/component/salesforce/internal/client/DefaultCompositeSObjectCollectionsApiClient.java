@@ -136,9 +136,9 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
             throws SalesforceException {
 
         String url = versionUrl() + "composite/sobjects";
-        url = url + "/" + sObjectName;
+        url = url + '/' + sObjectName;
         if (externalIdFieldName != null) {
-            url = url + "/" + externalIdFieldName;
+            url = url + '/' + externalIdFieldName;
         }
 
         Request request = createRequest("PATCH", url, headers);
@@ -249,6 +249,6 @@ public class DefaultCompositeSObjectCollectionsApiClient extends AbstractClientB
 
     private String versionUrl() {
         ObjectHelper.notNull(version, "version");
-        return servicesDataUrl() + "v" + version + "/";
+        return servicesDataUrl() + 'v' + version + '/';
     }
 }

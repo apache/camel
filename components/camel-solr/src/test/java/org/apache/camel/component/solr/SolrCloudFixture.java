@@ -130,7 +130,7 @@ public class SolrCloudFixture {
             return;
         }
 
-        String destPath = "/configs/" + confName + "/" + destName;
+        String destPath = "/configs/" + confName + '/' + destName;
         LOG.info("zk put " + file.getAbsolutePath() + " to " + destPath);
         zkClient.makePath(destPath, file, false, true);
     }

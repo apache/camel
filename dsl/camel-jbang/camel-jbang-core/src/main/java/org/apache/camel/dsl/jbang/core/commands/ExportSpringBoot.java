@@ -61,7 +61,7 @@ class ExportSpringBoot extends Export {
         File profile = new File(getProfile() + ".properties");
 
         // the settings file has information what to export
-        File settings = new File(Run.WORK_DIR + "/" + Run.RUN_SETTINGS_FILE);
+        File settings = new File(Run.WORK_DIR + '/' + Run.RUN_SETTINGS_FILE);
         if (fresh || !settings.exists()) {
             // allow to automatic build
             if (!quiet) {
@@ -187,7 +187,7 @@ class ExportSpringBoot extends Export {
         StringBuilder sbJKube = new StringBuilder();
         allProps.stringPropertyNames().stream().filter(p -> p.startsWith("jkube")).forEach(key -> {
             String value = allProps.getProperty(key);
-            sbJKube.append("        <").append(key).append(">").append(value).append("</").append(key).append(">\n");
+            sbJKube.append("        <").append(key).append('>').append(value).append("</").append(key).append(">\n");
         });
         context = context.replaceFirst(Pattern.quote("{{ .jkubeProperties }}"),
                 Matcher.quoteReplacement(sbJKube.toString()));

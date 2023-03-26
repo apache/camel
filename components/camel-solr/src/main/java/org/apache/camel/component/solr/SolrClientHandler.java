@@ -97,7 +97,7 @@ public abstract class SolrClientHandler {
             sb.append(solrConfiguration.getSolrEndpoint());
         }
         if (solrConfiguration.getUseConcurrentUpdateSolrClient()) {
-            sb.append("_");
+            sb.append('_');
             sb.append(solrConfiguration.getUseConcurrentUpdateSolrClient());
         }
         return sb.toString();

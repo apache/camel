@@ -63,6 +63,6 @@ public class ChatScriptLocalContainerService implements ChatScriptService, Conta
 
     @Override
     public String serviceAddress() {
-        return container.getHost() + ":" + container.getMappedPort(SERVICE_PORT);
+        return container.getHost() + ':' + container.getMappedPort(SERVICE_PORT);
     }
 }

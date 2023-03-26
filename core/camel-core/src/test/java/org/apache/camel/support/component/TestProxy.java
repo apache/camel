@@ -69,7 +69,7 @@ class TestProxy {
         for (Map.Entry<String, String> entry : nameMap.entrySet()) {
             final String name = entry.getKey();
             final String greeting = entry.getValue();
-            result.put(name, greeting + " " + name);
+            result.put(name, greeting + ' ' + name);
         }
         return result;
     }

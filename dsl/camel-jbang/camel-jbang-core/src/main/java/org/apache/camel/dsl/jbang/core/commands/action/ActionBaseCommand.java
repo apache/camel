@@ -45,7 +45,7 @@ abstract class ActionBaseCommand extends CamelCommand {
         } else {
             // lets be open and match all that starts with this pattern
             if (!name.endsWith("*")) {
-                name = name + "*";
+                name = name + '*';
             }
         }
 

@@ -65,12 +65,12 @@ public final class Environment {
                 .withNetwork(NETWORK).withExposedPorts(8080)
                 .waitingFor(
                         new HttpWaitStrategy().forStatusCode(200).withStartupTimeout(Duration.ofSeconds(360)))
-                .withEnv("WAIT_FOR_DB_CONTAINER", "db" + ":" + 5432 + " -t 0");
+                .withEnv("WAIT_FOR_DB_CONTAINER", "db" + ':' + 5432 + " -t 0");
 
         DHIS2_CONTAINER.start();
 
         DHIS2_CLIENT = Dhis2ClientBuilder.newClient(
-                "http://" + Environment.getDhis2Container().getHost() + ":" + Environment.getDhis2Container()
+                "http://" + Environment.getDhis2Container().getHost() + ':' + Environment.getDhis2Container()
                         .getFirstMappedPort() + "/api",
                 "admin", "district").build();
 

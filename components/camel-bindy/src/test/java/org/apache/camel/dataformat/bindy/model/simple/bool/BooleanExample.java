@@ -46,7 +46,7 @@ public class BooleanExample {
 
     @Override
     public String toString() {
-        return "BoolExample [name=" + name + ", exist=" + exist + "]";
+        return "BoolExample [name=" + name + ", exist=" + exist + ']';
     }
 
 }

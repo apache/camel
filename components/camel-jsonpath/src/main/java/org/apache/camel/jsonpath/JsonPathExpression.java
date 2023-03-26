@@ -213,7 +213,7 @@ public class JsonPathExpression extends ExpressionAdapter {
 
     @Override
     public String toString() {
-        return "jsonpath[" + expression + "]";
+        return "jsonpath[" + expression + ']';
     }
 
     private Object evaluateJsonPath(Exchange exchange, JsonPathEngine engine) throws Exception {

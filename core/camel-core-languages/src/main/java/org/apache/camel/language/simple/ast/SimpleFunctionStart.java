@@ -54,7 +54,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
     @Override
     public String toString() {
         // output a nice toString, so it makes debugging easier, so we can see the entire block
-        return "${" + block + "}";
+        return "${" + block + '}';
     }
 
     @Override
@@ -101,7 +101,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                             String text = nested.evaluate(exchange, String.class);
                             if (text != null) {
                                 if (quoteEmbeddedFunctions && !StringHelper.isQuoted(text)) {
-                                    sb.append("'").append(text).append("'");
+                                    sb.append('\'').append(text).append('\'');
                                 } else {
                                     sb.append(text);
                                 }
@@ -184,7 +184,7 @@ public class SimpleFunctionStart extends BaseSimpleNode implements BlockStart {
                     String text = child.createCode(null);
                     if (text != null) {
                         if (quoteEmbeddedFunctions && !StringHelper.isQuoted(text)) {
-                            sb.append("'").append(text).append("'");
+                            sb.append('\'').append(text).append('\'');
                         } else {
                             sb.append(text);
                         }

@@ -67,7 +67,7 @@ public final class ThreadHelper {
         // are there any #word# combos left, if so they should be considered invalid tokens
         if (INVALID_PATTERN.matcher(answer).matches()) {
             throw new IllegalArgumentException(
-                    "Pattern is invalid: [" + pattern + "] in resolved thread name: [" + answer + "]");
+                    "Pattern is invalid: [" + pattern + "] in resolved thread name: [" + answer + ']');
         }
 
         return answer;

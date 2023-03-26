@@ -84,7 +84,7 @@ public final class Version implements Comparable<Version> {
 
     @Override
     public String toString() {
-        return "v" + major + "." + minor;
+        return "v" + major + '.' + minor;
     }
 
     public void requireAtLeast(final int requiredMajor, final int requiredMinor) {
@@ -92,9 +92,9 @@ public final class Version implements Comparable<Version> {
 
         if (this.compareTo(required) < 0) {
             throw new UnsupportedOperationException(
-                    "This operation requires API version at least " + requiredMajor + "." + requiredMinor
+                    "This operation requires API version at least " + requiredMajor + '.' + requiredMinor
                                                     + ", currently configured for " + major
-                                                    + "." + minor);
+                                                    + '.' + minor);
         }
     }
 }

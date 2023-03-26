@@ -623,7 +623,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
         Map<String, T> map = new TreeMap<>();
         List<String> nodes = curator.getChildren().forPath(path);
         for (String node : nodes) {
-            byte[] data = curator.getData().forPath(path + "/" + node);
+            byte[] data = curator.getData().forPath(path + '/' + node);
             T val = mapper.readValue(data, clazz);
             map.put(node, val);
         }

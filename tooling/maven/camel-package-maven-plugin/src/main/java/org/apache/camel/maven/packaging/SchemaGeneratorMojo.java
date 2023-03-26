@@ -235,7 +235,7 @@ public class SchemaGeneratorMojo extends AbstractGeneratorMojo {
         String json = JsonMapper.createParameterJsonSchema(eipModel);
         updateResource(
                 resourcesOutputDir.toPath(),
-                packageName.replace('.', '/') + "/" + fileName,
+                packageName.replace('.', '/') + '/' + fileName,
                 json);
 
     }

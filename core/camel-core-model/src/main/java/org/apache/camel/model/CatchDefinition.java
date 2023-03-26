@@ -62,7 +62,7 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
 
     @Override
     public String toString() {
-        return "DoCatch[ " + getExceptionClasses() + " -> " + getOutputs() + "]";
+        return "DoCatch[ " + getExceptionClasses() + " -> " + getOutputs() + ']';
     }
 
     @Override
@@ -72,7 +72,7 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
 
     @Override
     public String getLabel() {
-        return "doCatch[ " + getExceptionClasses() + "]";
+        return "doCatch[ " + getExceptionClasses() + ']';
     }
 
     @Override

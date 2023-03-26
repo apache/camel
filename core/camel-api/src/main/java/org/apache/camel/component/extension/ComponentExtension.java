@@ -35,6 +35,6 @@ public interface ComponentExtension {
         }
 
         throw new IllegalArgumentException(
-                "Unable to unwrap this ComponentExtension type (" + getClass() + ") to the required type (" + clazz + ")");
+                "Unable to unwrap this ComponentExtension type (" + getClass() + ") to the required type (" + clazz + ')');
     }
 }

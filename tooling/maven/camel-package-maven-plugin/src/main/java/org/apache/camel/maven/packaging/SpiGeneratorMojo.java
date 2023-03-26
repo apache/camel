@@ -145,7 +145,7 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
                         StringBuilder sb = new StringBuilder();
                         sb.append("# ").append(GENERATED_MSG).append(NL).append("class=").append(className).append(NL);
                         updateResource(resourcesOutputDir.toPath(),
-                                "META-INF/services/org/apache/camel/" + sfa.value().asString() + "/" + pval,
+                                "META-INF/services/org/apache/camel/" + sfa.value().asString() + '/' + pval,
                                 sb.toString());
                     }
                 }
@@ -217,15 +217,15 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
         StringBuilder w = new StringBuilder();
         w.append("/* ").append(GENERATED_MSG).append(" */\n");
         w.append("package ").append(pn).append(";\n");
-        w.append("\n");
+        w.append('\n');
         w.append("import java.util.HashMap;\n");
         w.append("import java.util.Map;\n");
-        w.append("\n");
+        w.append('\n');
         w.append("/**\n");
-        w.append(" * ").append(GENERATED_MSG).append("\n");
+        w.append(" * ").append(GENERATED_MSG).append('\n');
         w.append(" */\n");
         w.append("public class ").append(cn).append(" {\n");
-        w.append("\n");
+        w.append('\n');
         w.append("    private static final Map<String, String> MAP;\n");
         w.append("    static {\n");
         w.append("        Map<String, String> map = new HashMap<>(").append(fields.size()).append(");\n");
@@ -234,12 +234,12 @@ public class SpiGeneratorMojo extends AbstractGeneratorMojo {
         }
         w.append("        MAP = map;\n");
         w.append("    }\n");
-        w.append("\n");
+        w.append('\n');
         w.append("    public static String lookup(String key) {\n");
         w.append("        return MAP.get(key);\n");
         w.append("    }\n");
         w.append("}\n");
-        w.append("\n");
+        w.append('\n');
 
         return w.toString();
     }

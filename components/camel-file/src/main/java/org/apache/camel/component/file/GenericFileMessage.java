@@ -75,6 +75,6 @@ public class GenericFileMessage<T> extends DefaultMessage {
         if (file != null) {
             return file.getFileName();
         }
-        return getClass().getName() + "@" + Integer.toHexString(hashCode());
+        return getClass().getName() + '@' + Integer.toHexString(hashCode());
     }
 }

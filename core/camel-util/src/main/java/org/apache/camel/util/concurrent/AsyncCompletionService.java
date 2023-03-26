@@ -175,7 +175,7 @@ public class AsyncCompletionService<V> {
 
         @Override
         public String toString() {
-            return "SubmitOrderedTask[" + this.id + "]";
+            return "SubmitOrderedTask[" + this.id + ']';
         }
     }
 }

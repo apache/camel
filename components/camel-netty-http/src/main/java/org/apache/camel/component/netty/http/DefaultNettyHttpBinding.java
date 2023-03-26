@@ -156,7 +156,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         if (!s.startsWith("http://") && !s.startsWith("https://")) {
             String http = configuration.isSsl() ? "https://" : "http://";
             if (configuration.getPort() != 80 && configuration.getPort() != 443) {
-                s = http + configuration.getHost() + ":" + configuration.getPort() + s;
+                s = http + configuration.getHost() + ':' + configuration.getPort() + s;
             } else {
                 s = http + configuration.getHost() + s;
             }
@@ -597,7 +597,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
             }
             final String rawQuery = uri.getRawQuery();
             if (rawQuery != null) {
-                uriForRequest += "?" + rawQuery;
+                uriForRequest += '?' + rawQuery;
             }
         }
 

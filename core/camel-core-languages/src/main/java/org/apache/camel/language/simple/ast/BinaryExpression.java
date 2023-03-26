@@ -55,7 +55,7 @@ public class BinaryExpression extends BaseSimpleNode {
 
     @Override
     public String toString() {
-        return left + " " + token.getText() + " " + right;
+        return left + " " + token.getText() + ' ' + right;
     }
 
     public boolean acceptLeftNode(SimpleNode lef) {
@@ -163,7 +163,7 @@ public class BinaryExpression extends BaseSimpleNode {
 
             @Override
             public String toString() {
-                return left + " " + token.getText() + " " + right;
+                return left + " " + token.getText() + ' ' + right;
             }
         };
     }
@@ -184,7 +184,7 @@ public class BinaryExpression extends BaseSimpleNode {
 
             @Override
             public String toString() {
-                return left + " " + token.getText() + " " + right;
+                return left + " " + token.getText() + ' ' + right;
             }
         };
     }
@@ -214,7 +214,7 @@ public class BinaryExpression extends BaseSimpleNode {
 
             @Override
             public String toString() {
-                return left + " " + token.getText() + " " + right;
+                return left + " " + token.getText() + ' ' + right;
             }
         };
     }
@@ -251,7 +251,7 @@ public class BinaryExpression extends BaseSimpleNode {
 
             @Override
             public String toString() {
-                return left + " " + token.getText() + " " + right;
+                return left + " " + token.getText() + ' ' + right;
             }
         };
     }
@@ -267,7 +267,7 @@ public class BinaryExpression extends BaseSimpleNode {
 
             @Override
             public String toString() {
-                return left + " " + token.getText() + " " + right;
+                return left + " " + token.getText() + ' ' + right;
             }
         };
     }
@@ -281,29 +281,29 @@ public class BinaryExpression extends BaseSimpleNode {
         final String rightExp = right.createCode(expression);
 
         if (operator == BinaryOperatorType.EQ) {
-            return "isEqualTo(exchange, " + leftExp + ", " + rightExp + ")";
+            return "isEqualTo(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.EQ_IGNORE) {
-            return "isEqualToIgnoreCase(exchange, " + leftExp + ", " + rightExp + ")";
+            return "isEqualToIgnoreCase(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.GT) {
-            return "isGreaterThan(exchange, " + leftExp + ", " + rightExp + ")";
+            return "isGreaterThan(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.GTE) {
-            return "isGreaterThanOrEqualTo(exchange, " + leftExp + ", " + rightExp + ")";
+            return "isGreaterThanOrEqualTo(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.LT) {
-            return "isLessThan(exchange, " + leftExp + ", " + rightExp + ")";
+            return "isLessThan(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.LTE) {
-            return "isLessThanOrEqualTo(exchange, " + leftExp + ", " + rightExp + ")";
+            return "isLessThanOrEqualTo(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.NOT_EQ) {
-            return "isNotEqualTo(exchange, " + leftExp + ", " + rightExp + ")";
+            return "isNotEqualTo(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.NOT_EQ_IGNORE) {
-            return "!isEqualToIgnoreCase(exchange, " + leftExp + ", " + rightExp + ")";
+            return "!isEqualToIgnoreCase(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.CONTAINS) {
-            return "contains(exchange, " + leftExp + ", " + rightExp + ")";
+            return "contains(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.CONTAINS_IGNORECASE) {
-            return "containsIgnoreCase(exchange, " + leftExp + ", " + rightExp + ")";
+            return "containsIgnoreCase(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.NOT_CONTAINS) {
-            return "!contains(exchange, " + leftExp + ", " + rightExp + ")";
+            return "!contains(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.NOT_CONTAINS_IGNORECASE) {
-            return "!containsIgnoreCase(exchange, " + leftExp + ", " + rightExp + ")";
+            return "!containsIgnoreCase(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.IS) {
             String type = StringHelper.removeQuotes(rightExp);
             if (!type.endsWith(".class")) {
@@ -311,7 +311,7 @@ public class BinaryExpression extends BaseSimpleNode {
             }
             type = type.replace('$', '.');
             type = type.trim();
-            return "is(exchange, " + leftExp + ", " + type + ")";
+            return "is(exchange, " + leftExp + ", " + type + ')';
         } else if (operator == BinaryOperatorType.NOT_IS) {
             String type = StringHelper.removeQuotes(rightExp);
             if (!type.endsWith(".class")) {
@@ -319,27 +319,27 @@ public class BinaryExpression extends BaseSimpleNode {
             }
             type = type.replace('$', '.');
             type = type.trim();
-            return "!is(exchange, " + leftExp + ", " + type + ")";
+            return "!is(exchange, " + leftExp + ", " + type + ')';
         } else if (operator == BinaryOperatorType.REGEX) {
             // regexp is a pain with escapes
             String escaped = rightExp.replace("\\", "\\\\");
-            return "regexp(exchange, " + leftExp + ", " + escaped + ")";
+            return "regexp(exchange, " + leftExp + ", " + escaped + ')';
         } else if (operator == BinaryOperatorType.NOT_REGEX) {
             // regexp is a pain with escapes
             String escaped = rightExp.replace("\\", "\\\\");
-            return "!regexp(exchange, " + leftExp + ", " + escaped + ")";
+            return "!regexp(exchange, " + leftExp + ", " + escaped + ')';
         } else if (operator == BinaryOperatorType.IN) {
-            return "in(exchange, " + leftExp + ", " + rightExp + ")";
+            return "in(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.NOT_IN) {
-            return "!in(exchange, " + leftExp + ", " + rightExp + ")";
+            return "!in(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.RANGE) {
-            return "range(exchange, " + leftExp + ", " + rightExp + ")";
+            return "range(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.NOT_RANGE) {
-            return "!range(exchange, " + leftExp + ", " + rightExp + ")";
+            return "!range(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.STARTS_WITH) {
-            return "startsWith(exchange, " + leftExp + ", " + rightExp + ")";
+            return "startsWith(exchange, " + leftExp + ", " + rightExp + ')';
         } else if (operator == BinaryOperatorType.ENDS_WITH) {
-            return "endsWith(exchange, " + leftExp + ", " + rightExp + ")";
+            return "endsWith(exchange, " + leftExp + ", " + rightExp + ')';
         }
 
         throw new SimpleParserException("Unknown binary operator " + operator, token.getIndex());

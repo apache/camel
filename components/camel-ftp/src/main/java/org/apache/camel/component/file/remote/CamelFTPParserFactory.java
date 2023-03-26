@@ -44,7 +44,7 @@ public class CamelFTPParserFactory extends DefaultFTPFileEntryParserFactory {
     private static final String JAVA_IDENTIFIER = "\\p{javaJavaIdentifierStart}(\\p{javaJavaIdentifierPart})*";
     // Match a qualified name, e.g. a.b.c.Name - but don't allow the default
     // package as that would allow "VMS"/"UNIX" etc.
-    private static final String JAVA_QUALIFIED_NAME = "(" + JAVA_IDENTIFIER + "\\.)+" + JAVA_IDENTIFIER;
+    private static final String JAVA_QUALIFIED_NAME = '(' + JAVA_IDENTIFIER + "\\.)+" + JAVA_IDENTIFIER;
     // Create the pattern, as it will be reused many times
     private static final Pattern JAVA_QUALIFIED_NAME_PATTERN = Pattern.compile(JAVA_QUALIFIED_NAME);
 

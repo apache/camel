@@ -126,7 +126,7 @@ public class Sns2Endpoint extends DefaultEndpoint implements HeaderFilterStrateg
         if (configuration.getTopicArn() == null) {
             try {
                 String nextToken = null;
-                final String arnSuffix = ":" + configuration.getTopicName();
+                final String arnSuffix = ':' + configuration.getTopicName();
                 do {
                     ListTopicsRequest request = ListTopicsRequest.builder().nextToken(nextToken).build();
                     final ListTopicsResponse response = snsClient.listTopics(request);

@@ -152,7 +152,7 @@ class StubServer {
 
         @Override
         public String toString() {
-            return requestMethod + " " + requestPath;
+            return requestMethod + ' ' + requestPath;
         }
 
         private boolean matches(final HttpServletRequest request, final String body) throws IOException {

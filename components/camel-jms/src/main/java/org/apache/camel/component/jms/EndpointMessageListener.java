@@ -434,6 +434,6 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
 
     @Override
     public String toString() {
-        return "EndpointMessageListener[" + endpoint + "]";
+        return "EndpointMessageListener[" + endpoint + ']';
     }
 }

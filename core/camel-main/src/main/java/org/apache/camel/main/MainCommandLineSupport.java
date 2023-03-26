@@ -281,8 +281,8 @@ public abstract class MainCommandLineSupport extends MainSupport {
         private final String description;
 
         public Option(String abbreviation, String fullName, String description) {
-            this.abbreviation = "-" + abbreviation;
-            this.fullName = "-" + fullName;
+            this.abbreviation = '-' + abbreviation;
+            this.fullName = '-' + fullName;
             this.description = description;
         }
 

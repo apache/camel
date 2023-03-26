@@ -85,7 +85,7 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
 
     @Override
     public String toString() {
-        return "RemoteFile[" + (isAbsolute() ? getAbsoluteFilePath() : getRelativeFilePath()) + "]";
+        return "RemoteFile[" + (isAbsolute() ? getAbsoluteFilePath() : getRelativeFilePath()) + ']';
     }
 
 }

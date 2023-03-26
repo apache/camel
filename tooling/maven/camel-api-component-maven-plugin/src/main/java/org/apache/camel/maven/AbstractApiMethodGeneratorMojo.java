@@ -319,13 +319,13 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     @SuppressWarnings("unused")
     public String getAliases() {
         StringBuilder sb = new StringBuilder();
-        sb.append("{");
+        sb.append('{');
         if (!aliases.isEmpty()) {
             StringJoiner sj = new StringJoiner(", ");
-            aliases.forEach(a -> sj.add("\"" + a.getMethodPattern() + "=" + a.getMethodAlias() + "\""));
+            aliases.forEach(a -> sj.add('"' + a.getMethodPattern() + '=' + a.getMethodAlias() + '"'));
             sb.append(sj);
         }
-        sb.append("}");
+        sb.append('}');
         return sb.toString();
     }
 
@@ -354,20 +354,20 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                 if (desc == null) {
                     desc = argument.getDescription();
                 }
-                sb.append("@ApiMethod(methodName = \"").append(p.getName()).append("\"");
+                sb.append("@ApiMethod(methodName = \"").append(p.getName()).append('"');
                 if (ObjectHelper.isNotEmpty(desc)) {
-                    sb.append(", description=\"").append(desc).append("\"");
+                    sb.append(", description=\"").append(desc).append('"');
                 }
-                sb.append(")");
+                sb.append(')');
                 sb.append(", ");
             } else if (noneMatch) {
                 // favour desc from argument
                 String desc = argument.getDescription();
-                sb.append("@ApiMethod(methodName = \"").append(p.getName()).append("\"");
+                sb.append("@ApiMethod(methodName = \"").append(p.getName()).append('"');
                 if (ObjectHelper.isNotEmpty(desc)) {
-                    sb.append(", description=\"").append(desc).append("\"");
+                    sb.append(", description=\"").append(desc).append('"');
                 }
-                sb.append(")");
+                sb.append(')');
                 sb.append(", ");
             }
         });
@@ -375,7 +375,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         if (answer.endsWith(", ")) {
             answer = answer.substring(0, answer.length() - 2);
         }
-        return "{" + answer + "}";
+        return '{' + answer + '}';
     }
 
     /*
@@ -412,7 +412,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     @SuppressWarnings("unused")
     public String getExchangePropertyPrefix() {
         // exchange property prefix
-        return "Camel" + componentName + ".";
+        return "Camel" + componentName + '.';
     }
 
     /*
@@ -531,31 +531,31 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         Set<String> names = new HashSet<>();
 
         StringBuilder sb = new StringBuilder();
-        sb.append("{");
+        sb.append('{');
         for (int i = 0; i < models.size(); i++) {
             ApiMethodParser.ApiMethodModel model = models.get(i);
             String name = model.getName();
             if (names.add(name)) {
-                sb.append("@ApiMethod(methodName = \"").append(model.getName()).append("\"");
+                sb.append("@ApiMethod(methodName = \"").append(model.getName()).append('"');
                 String desc = model.getDescription();
                 if (ObjectHelper.isNotEmpty(desc)) {
-                    sb.append(", description=\"").append(desc).append("\"");
+                    sb.append(", description=\"").append(desc).append('"');
                 }
                 List<String> signatures = getSignatures(models, name);
                 if (!signatures.isEmpty()) {
                     sb.append(", signatures={");
                     StringJoiner sj = new StringJoiner(", ");
-                    signatures.forEach(s -> sj.add("\"" + s + "\""));
+                    signatures.forEach(s -> sj.add('"' + s + '"'));
                     sb.append(sj);
-                    sb.append("}");
+                    sb.append('}');
                 }
-                sb.append(")");
+                sb.append(')');
                 if (i < models.size() - 1) {
                     sb.append(", ");
                 }
             }
         }
-        sb.append("}");
+        sb.append('}');
         return sb.toString();
     }
 

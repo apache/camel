@@ -100,7 +100,7 @@ public class MQ2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (mqProducerToString == null) {
-            mqProducerToString = "MQProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            mqProducerToString = "MQProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return mqProducerToString;
     }

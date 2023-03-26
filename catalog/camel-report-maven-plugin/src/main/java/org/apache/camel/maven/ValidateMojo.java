@@ -246,7 +246,7 @@ public class ValidateMojo extends AbstractExecMojo {
                     for (String name : prop.stringPropertyNames()) {
                         String value = prop.getProperty(name);
                         if (value != null) {
-                            String text = name + "=" + value;
+                            String text = name + '=' + value;
                             ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
                             // only include lines that camel can accept (as there may be non camel properties too)
                             if (result.isAccepted()) {
@@ -301,11 +301,11 @@ public class ValidateMojo extends AbstractExecMojo {
 
                 StringBuilder sb = new StringBuilder();
                 sb.append("Configuration validation error at: ");
-                sb.append("(").append(result.getFileName());
+                sb.append('(').append(result.getFileName());
                 if (result.getLineNumber() > 0) {
-                    sb.append(":").append(result.getLineNumber());
+                    sb.append(':').append(result.getLineNumber());
                 }
-                sb.append(")");
+                sb.append(')');
                 sb.append("\n\n");
                 String out = result.summaryErrorMessage(false, ignoreDeprecated, true);
                 sb.append(out);
@@ -317,9 +317,9 @@ public class ValidateMojo extends AbstractExecMojo {
                 sb.append("Configuration validation passed at: ");
                 sb.append(result.getFileName());
                 if (result.getLineNumber() > 0) {
-                    sb.append(":").append(result.getLineNumber());
+                    sb.append(':').append(result.getLineNumber());
                 }
-                sb.append("\n");
+                sb.append('\n');
                 sb.append("\n\t").append(result.getText());
                 sb.append("\n\n");
 
@@ -343,7 +343,7 @@ public class ValidateMojo extends AbstractExecMojo {
         }
 
         if (failOnError && (configurationErrors > 0)) {
-            throw new MojoExecutionException(configurationSummary + "\n");
+            throw new MojoExecutionException(configurationSummary + '\n');
         }
     }
 
@@ -488,7 +488,7 @@ public class ValidateMojo extends AbstractExecMojo {
         }
 
         if (failOnError && (endpointErrors > 0 || simpleErrors > 0 || duplicateRouteIdErrors > 0) || sedaDirectErrors > 0) {
-            throw new MojoExecutionException(endpointSummary + "\n" + simpleSummary + "\n" + routeIdSummary + "\n" + sedaDirectSummary);
+            throw new MojoExecutionException(endpointSummary + '\n' + simpleSummary + '\n' + routeIdSummary + '\n' + sedaDirectSummary);
         }
     }
 
@@ -610,8 +610,8 @@ public class ValidateMojo extends AbstractExecMojo {
     private int countEndpointPairs(List<CamelEndpointDetails> endpoints, String scheme) {
         int pairs = 0;
 
-        Set<CamelEndpointDetails> consumers = endpoints.stream().filter(e -> e.isConsumerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
-        Set<CamelEndpointDetails> producers = endpoints.stream().filter(e -> e.isProducerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
+        Set<CamelEndpointDetails> consumers = endpoints.stream().filter(e -> e.isConsumerOnly() && e.getEndpointUri().startsWith(scheme + ':')).collect(Collectors.toSet());
+        Set<CamelEndpointDetails> producers = endpoints.stream().filter(e -> e.isProducerOnly() && e.getEndpointUri().startsWith(scheme + ':')).collect(Collectors.toSet());
 
         // find all pairs, eg producers that has a consumer (no need to check for opposite)
         for (CamelEndpointDetails p : producers) {
@@ -627,8 +627,8 @@ public class ValidateMojo extends AbstractExecMojo {
     private int validateEndpointPairs(List<CamelEndpointDetails> endpoints, String scheme) {
         int errors = 0;
 
-        Set<CamelEndpointDetails> consumers = endpoints.stream().filter(e -> e.isConsumerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
-        Set<CamelEndpointDetails> producers = endpoints.stream().filter(e -> e.isProducerOnly() && e.getEndpointUri().startsWith(scheme + ":")).collect(Collectors.toSet());
+        Set<CamelEndpointDetails> consumers = endpoints.stream().filter(e -> e.isConsumerOnly() && e.getEndpointUri().startsWith(scheme + ':')).collect(Collectors.toSet());
+        Set<CamelEndpointDetails> producers = endpoints.stream().filter(e -> e.isProducerOnly() && e.getEndpointUri().startsWith(scheme + ':')).collect(Collectors.toSet());
 
         // are there any producers that do not have a consumer pair
         for (CamelEndpointDetails detail : producers) {
@@ -656,7 +656,7 @@ public class ValidateMojo extends AbstractExecMojo {
         StringBuilder sb = new StringBuilder();
         sb.append(str);
         buildErrorMessage(sb, className, lineNumber, methodName, fileName);
-        sb.append("\n");
+        sb.append('\n');
         sb.append("\n\t").append(uri);
         sb.append("\n\n");
         return sb;
@@ -666,7 +666,7 @@ public class ValidateMojo extends AbstractExecMojo {
         StringBuilder sb = new StringBuilder();
         sb.append("Endpoint pair (seda/direct) validation error at: ");
         buildErrorMessage(sb, detail.getClassName(), detail.getLineNumber(), detail.getMethodName(), detail.getFileName());
-        sb.append("\n");
+        sb.append('\n');
         sb.append("\n\t").append(detail.getEndpointUri());
         sb.append("\n\n\t\t\t\t").append(endpointPathSummaryError(detail));
         sb.append("\n\n");
@@ -679,10 +679,10 @@ public class ValidateMojo extends AbstractExecMojo {
             // this is from java code
             sb.append(className);
             if (methodName != null) {
-                sb.append(".").append(methodName);
+                sb.append('.').append(methodName);
             }
-            sb.append("(").append(asSimpleClassName(className)).append(".java:");
-            sb.append(lineNumber).append(")");
+            sb.append('(').append(asSimpleClassName(className)).append(".java:");
+            sb.append(lineNumber).append(')');
         } else if (lineNumber != null) {
             // this is from xml
             String fqn = stripRootPath(asRelativeFile(fileName, project), project);
@@ -691,8 +691,8 @@ public class ValidateMojo extends AbstractExecMojo {
                 fqn = asPackageName(fqn);
             }
             sb.append(fqn);
-            sb.append("(").append(asSimpleClassName(fqn)).append(".xml:");
-            sb.append(lineNumber).append(")");
+            sb.append('(').append(asSimpleClassName(fqn)).append(".xml:");
+            sb.append(lineNumber).append(')');
         } else {
             sb.append(fileName);
         }
@@ -702,7 +702,7 @@ public class ValidateMojo extends AbstractExecMojo {
         String uri = detail.getEndpointUri();
         String p = uri.contains("?") ? StringHelper.before(uri, "?") : uri;
         String path = StringHelper.after(p, ":");
-        return path + "\t" + "Sending to non existing " + detail.getEndpointComponentName() + " queue name";
+        return path + '\t' + "Sending to non existing " + detail.getEndpointComponentName() + " queue name";
     }
 
     private static boolean matchEndpointPath(String uri, String uri2) {
@@ -731,12 +731,12 @@ public class ValidateMojo extends AbstractExecMojo {
                 StringBuilder sb = new StringBuilder();
                 sb.append("Simple validation error at: ");
                 buildErrorMessage(sb, detail.getClassName(), detail.getLineNumber(), detail.getMethodName(), detail.getFileName());
-                sb.append("\n");
+                sb.append('\n');
                 String[] lines = result.getError().split("\n");
                 for (String line : lines) {
                     sb.append("\n\t").append(line);
                 }
-                sb.append("\n");
+                sb.append('\n');
 
                 getLog().warn(sb.toString());
             } else if (showAll) {

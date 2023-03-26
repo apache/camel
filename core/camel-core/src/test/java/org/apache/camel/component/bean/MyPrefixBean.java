@@ -28,7 +28,7 @@ public class MyPrefixBean {
     }
 
     public String hello(String s) {
-        return prefix + " " + s;
+        return prefix + ' ' + s;
     }
 
 }

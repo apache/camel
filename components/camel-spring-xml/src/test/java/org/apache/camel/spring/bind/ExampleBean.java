@@ -23,7 +23,7 @@ package org.apache.camel.spring.bind;
 public class ExampleBean {
 
     public String sayHello(String name) {
-        return "Hello " + name + "!";
+        return "Hello " + name + '!';
     }
 }
 // END SNIPPET: e1

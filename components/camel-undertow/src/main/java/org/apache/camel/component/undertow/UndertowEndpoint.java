@@ -492,7 +492,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
                     // upper case and dash as underscore
                     key = key.toUpperCase(Locale.ENGLISH).replace('-', '_');
                     // must be field name
-                    key = Options.class.getName() + "." + key;
+                    key = Options.class.getName() + '.' + key;
                     Option option = Option.fromString(key, cl);
                     value = option.parseValue(value.toString(), cl);
                     LOG.trace("Parsed option {}={}", option.getName(), value);

@@ -232,7 +232,7 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
 
         // local-mode will not lookup in kubernetes but as local properties
         if (localMode) {
-            String localKey = name + "/" + key;
+            String localKey = name + '/' + key;
             return getCamelContext().getPropertiesComponent().resolveProperty(localKey).orElse(defaultValue);
         }
 

@@ -314,7 +314,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
     @Override
     public String toString() {
         // just output the next processor as all the interceptors and error handler is just too verbose
-        return "Channel[" + nextProcessor + "]";
+        return "Channel[" + nextProcessor + ']';
     }
 
 }

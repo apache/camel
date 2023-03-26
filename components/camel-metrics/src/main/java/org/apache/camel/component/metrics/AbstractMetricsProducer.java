@@ -24,7 +24,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public abstract class AbstractMetricsProducer extends DefaultProducer {
 
-    public static final String HEADER_PATTERN = MetricsConstants.HEADER_PREFIX + "*";
+    public static final String HEADER_PATTERN = MetricsConstants.HEADER_PREFIX + '*';
 
     public AbstractMetricsProducer(MetricsEndpoint endpoint) {
         super(endpoint);

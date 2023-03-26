@@ -61,7 +61,7 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
             // Preserves backwards compatibility for the vertx-websocket  on camel-quarkus / camel-k where the HTTP
             // server is provided by the runtime platform and the host:port configuration is not strictly required
             if (remaining.startsWith("/")) {
-                wsUri = scheme + "/" + remaining.replaceAll("^/+", "");
+                wsUri = scheme + '/' + remaining.replaceAll("^/+", "");
             } else {
                 wsUri = scheme + remaining;
             }

@@ -37,7 +37,7 @@ public class VertxHttpRestHeaderFilterStrategy extends VertxHttpHeaderFilterStra
         // the header to included as HTTP header also (eg as duplicate value)
         if (!answer) {
             if (templateUri != null) {
-                String token = "{" + headerName + "}";
+                String token = '{' + headerName + '}';
                 if (templateUri.contains(token)) {
                     answer = true;
                 }

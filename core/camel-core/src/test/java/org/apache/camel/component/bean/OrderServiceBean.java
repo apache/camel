@@ -36,7 +36,7 @@ public class OrderServiceBean {
 
         StringBuilder sb = new StringBuilder();
         sb.append(orderId);
-        sb.append(",");
+        sb.append(',');
         sb.append(content);
 
         return sb.toString();
@@ -55,9 +55,9 @@ public class OrderServiceBean {
 
         StringBuilder sb = new StringBuilder();
         sb.append(orderId);
-        sb.append(",");
+        sb.append(',');
         sb.append(customerId);
-        sb.append(",");
+        sb.append(',');
         sb.append(confirmId);
 
         return sb.toString();

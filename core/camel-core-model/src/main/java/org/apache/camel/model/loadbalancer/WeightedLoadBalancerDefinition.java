@@ -86,11 +86,11 @@ public class WeightedLoadBalancerDefinition extends LoadBalancerDefinition {
     @Override
     public String toString() {
         if (roundRobin == null || Boolean.FALSE.toString().equals(roundRobin)) {
-            return "WeightedRandomLoadBalancer[" + distributionRatio + "]";
+            return "WeightedRandomLoadBalancer[" + distributionRatio + ']';
         } else if (Boolean.TRUE.toString().equals(roundRobin)) {
-            return "WeightedRoundRobinLoadBalancer[" + distributionRatio + "]";
+            return "WeightedRoundRobinLoadBalancer[" + distributionRatio + ']';
         } else {
-            return "WeightedLoadBalancer[roundRobin=" + roundRobin + "," + distributionRatio + "]";
+            return "WeightedLoadBalancer[roundRobin=" + roundRobin + ',' + distributionRatio + ']';
         }
     }
 }

@@ -109,7 +109,7 @@ public class CamelHttpTransportServlet extends CamelServlet {
     public String toString() {
         String name = getServletName();
         if (name != null) {
-            return "CamelHttpTransportServlet[name=" + getServletName() + "]";
+            return "CamelHttpTransportServlet[name=" + getServletName() + ']';
         } else {
             return "CamelHttpTransportServlet";
         }

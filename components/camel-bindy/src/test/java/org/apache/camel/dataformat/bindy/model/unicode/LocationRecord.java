@@ -45,6 +45,6 @@ public class LocationRecord {
 
     @Override
     public String toString() {
-        return "LocationRecord[address=" + address + ", nation=" + nation + "]";
+        return "LocationRecord[address=" + address + ", nation=" + nation + ']';
     }
 }

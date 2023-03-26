@@ -81,7 +81,7 @@ public class Bind extends CamelCommand {
             out = "uri";
         }
 
-        InputStream is = Bind.class.getClassLoader().getResourceAsStream("templates/binding-" + in + "-" + out + ".yaml.tmpl");
+        InputStream is = Bind.class.getClassLoader().getResourceAsStream("templates/binding-" + in + '-' + out + ".yaml.tmpl");
         String context = IOHelper.loadText(is);
         IOHelper.close(is);
 
@@ -176,17 +176,17 @@ public class Bind extends CamelCommand {
                             sb.append("      ").append(req).append(": ");
                             if (example != null) {
                                 if ("string".equals(type)) {
-                                    sb.append("\"");
+                                    sb.append('"');
                                 }
                                 sb.append(example);
                                 if ("string".equals(type)) {
-                                    sb.append("\"");
+                                    sb.append('"');
                                 }
                             } else {
                                 sb.append("\"value\"");
                             }
                             if (it.hasNext()) {
-                                sb.append("\n");
+                                sb.append('\n');
                             }
                         }
                     }

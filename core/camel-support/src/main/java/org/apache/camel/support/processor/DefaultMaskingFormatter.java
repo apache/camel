@@ -112,7 +112,7 @@ public class DefaultMaskingFormatter implements MaskingFormatter {
                 answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + maskString);
             }
         } else if (json) {
-            answer = jsonMaskPattern.matcher(answer).replaceAll("\"$1\"$2:$3\"" + maskString + "\"");
+            answer = jsonMaskPattern.matcher(answer).replaceAll("\"$1\"$2:$3\"" + maskString + '"');
         } else if (maskKeyValue) {
             // key=value paris
             answer = keyValueMaskPattern.matcher(answer).replaceAll("$1" + maskString);

@@ -62,21 +62,21 @@ public class SedaWaitForTaskCompleteOnCompletionTest extends ContextTestSupport 
                         exchange.getExchangeExtension().addOnCompletion(new SynchronizationAdapter() {
                             @Override
                             public void onDone(Exchange exchange) {
-                                done = done + "A";
+                                done = done + 'A';
                             }
                         });
                     }
                 }).to("seda:foo?waitForTaskToComplete=Always").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        done = done + "B";
+                        done = done + 'B';
                     }
                 }).to("mock:result");
 
                 from("seda:foo").errorHandler(noErrorHandler()).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        done = done + "C";
+                        done = done + 'C';
                     }
                 }).throwException(new IllegalArgumentException("Forced"));
             }

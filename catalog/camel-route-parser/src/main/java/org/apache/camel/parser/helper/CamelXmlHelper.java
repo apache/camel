@@ -266,7 +266,7 @@ public final class CamelXmlHelper {
             nodeCounts.put(elementName, ++count);
             answer = element.getAttribute("id");
             if (Strings.isNullOrEmpty(answer)) {
-                answer = "_" + elementName + count;
+                answer = '_' + elementName + count;
             }
         }
         return answer;

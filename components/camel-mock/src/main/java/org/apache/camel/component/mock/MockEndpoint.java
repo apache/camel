@@ -1797,7 +1797,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     protected void assertEquals(String message, Object expectedValue, Object actualValue) {
         if (!ObjectHelper.equal(expectedValue, actualValue)) {
-            fail(message + ". Expected: <" + expectedValue + "> but was: <" + actualValue + ">");
+            fail(message + ". Expected: <" + expectedValue + "> but was: <" + actualValue + '>');
         }
     }
 
@@ -1840,7 +1840,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             String msg = "Caught exception on " + getEndpointUri() + " due to: " + cause.getMessage();
             throw new AssertionError(msg, cause);
         } else {
-            throw new AssertionError(getEndpointUri() + " " + message);
+            throw new AssertionError(getEndpointUri() + ' ' + message);
         }
     }
 

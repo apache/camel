@@ -112,10 +112,10 @@ public class PrepareCamelMainDocMojo extends AbstractGeneratorMojo {
                 String eval
                         = (String) TemplateRuntime.eval(template, root, Collections.singletonMap("util", MvelHelper.INSTANCE));
                 sb.append(eval);
-                sb.append("\n");
+                sb.append('\n');
             }
         } catch (IOException e) {
-            throw new MojoExecutionException("Error processing mvel template `" + templateName + "`", e);
+            throw new MojoExecutionException("Error processing mvel template `" + templateName + '`', e);
         }
 
         return sb.toString();

@@ -57,7 +57,7 @@ public class ScriptProcessor extends AsyncProcessorSupport implements Traceable,
 
     @Override
     public String getTraceLabel() {
-        return "script[" + expression + "]";
+        return "script[" + expression + ']';
     }
 
     @Override

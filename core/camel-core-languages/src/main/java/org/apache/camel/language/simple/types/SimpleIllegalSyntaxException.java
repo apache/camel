@@ -68,9 +68,9 @@ public class SimpleIllegalSyntaxException extends ExpressionIllegalSyntaxExcepti
         if (index > -1) {
             sb.append(" at location ").append(index);
             // create a nice looking message with indicator where the problem is
-            sb.append("\n").append(getExpression()).append("\n");
+            sb.append('\n').append(getExpression()).append('\n');
             for (int i = 0; i < index; i++) {
-                sb.append(" ");
+                sb.append(' ');
             }
             sb.append("*\n");
         }

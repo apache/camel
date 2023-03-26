@@ -51,7 +51,7 @@ public final class FilePathResolver {
                 String key = fun.substring(pos + 6);
                 String value = System.getenv(key);
                 if (value != null) {
-                    path = path.replace("${env:" + key + "}", value);
+                    path = path.replace("${env:" + key + '}', value);
                 }
             }
             pos = fun.indexOf("${env.");
@@ -59,7 +59,7 @@ public final class FilePathResolver {
                 String key = fun.substring(pos + 6);
                 String value = System.getenv(key);
                 if (value != null) {
-                    path = path.replace("${env." + key + "}", value);
+                    path = path.replace("${env." + key + '}', value);
                 }
             }
         }
@@ -75,7 +75,7 @@ public final class FilePathResolver {
                 String key = fun.substring(pos + 2);
                 String value = System.getProperty(key);
                 if (value != null) {
-                    path = path.replace("${" + key + "}", value);
+                    path = path.replace("${" + key + '}', value);
                 }
             }
         }

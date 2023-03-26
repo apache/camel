@@ -161,7 +161,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      * Returns human readable server information for logging purpose
      */
     public String remoteServerInformation() {
-        return protocol + "://" + (username != null ? username : "anonymous") + "@" + host + ":" + getPort();
+        return protocol + "://" + (username != null ? username : "anonymous") + '@' + host + ':' + getPort();
     }
 
     protected abstract void setDefaultPort();

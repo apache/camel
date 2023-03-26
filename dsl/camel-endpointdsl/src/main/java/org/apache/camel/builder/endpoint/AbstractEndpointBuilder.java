@@ -136,9 +136,9 @@ public class AbstractEndpointBuilder {
                 // build query string from parameters
                 String query = URISupport.createQueryString(params, encode);
                 if (targetPath.contains("?")) {
-                    answer = NormalizedUri.newNormalizedUri(targetScheme + "://" + targetPath + "&" + query, true);
+                    answer = NormalizedUri.newNormalizedUri(targetScheme + "://" + targetPath + '&' + query, true);
                 } else {
-                    answer = NormalizedUri.newNormalizedUri(targetScheme + "://" + targetPath + "?" + query, true);
+                    answer = NormalizedUri.newNormalizedUri(targetScheme + "://" + targetPath + '?' + query, true);
                 }
             } catch (URISyntaxException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -160,7 +160,7 @@ public class AbstractEndpointBuilder {
                 params.put(key, val.toString());
             } else if (camelContext != null && bindToRegistry) {
                 String hash = Integer.toHexString(val.hashCode());
-                params.put(key, "#" + hash);
+                params.put(key, '#' + hash);
                 camelContext.getRegistry().bind(hash, val);
             } else {
                 remaining.put(key, val);

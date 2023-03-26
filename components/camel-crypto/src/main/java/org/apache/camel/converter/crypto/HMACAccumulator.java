@@ -180,17 +180,17 @@ public class HMACAccumulator {
         }
 
         public String show() {
-            StringBuilder b = new StringBuilder(HexUtils.byteArrayToHexString(buffer)).append("\n");
+            StringBuilder b = new StringBuilder(HexUtils.byteArrayToHexString(buffer)).append('\n');
             for (int x = read; --x >= 0;) {
                 b.append("--");
             }
-            b.append("r");
-            b.append("\n");
+            b.append('r');
+            b.append('\n');
             for (int x = write; --x >= 0;) {
                 b.append("--");
             }
-            b.append("w");
-            b.append("\n");
+            b.append('w');
+            b.append('\n');
             return b.toString();
         }
     }

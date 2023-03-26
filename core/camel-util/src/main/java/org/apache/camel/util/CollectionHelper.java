@@ -114,7 +114,7 @@ public final class CollectionHelper {
         while (it.hasNext()) {
             sb.append(it.next().toString());
             if (it.hasNext()) {
-                sb.append(",");
+                sb.append(',');
             }
         }
 

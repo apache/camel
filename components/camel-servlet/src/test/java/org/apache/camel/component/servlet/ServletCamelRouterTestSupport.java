@@ -91,9 +91,9 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
     }
 
     protected WebResponse query(WebRequest req, boolean exceptionsThrownOnErrorStatus) throws IOException {
-        String params = req.params.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue())
+        String params = req.params.entrySet().stream().map(e -> e.getKey() + '=' + e.getValue())
                 .collect(Collectors.joining("&"));
-        String urlStr = params.isEmpty() ? req.url : req.url + "?" + params;
+        String urlStr = params.isEmpty() ? req.url : req.url + '?' + params;
         URL url = new URL(urlStr);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setUseCaches(false);
@@ -286,13 +286,13 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
             StringBuilder sb = new StringBuilder().append("Error on HTTP request: ");
             sb.append(code);
             if (message != null) {
-                sb.append(" ");
+                sb.append(' ');
                 sb.append(message);
             }
             if (url != null) {
                 sb.append(" [");
                 sb.append(url.toExternalForm());
-                sb.append("]");
+                sb.append(']');
             }
             return sb.toString();
         }

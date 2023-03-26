@@ -65,7 +65,7 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
 
     @Override
     public String toString() {
-        return "Policy[" + description() + "]";
+        return "Policy[" + description() + ']';
     }
 
     public Policy getPolicy() {
@@ -93,7 +93,7 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
 
     @Override
     public String getLabel() {
-        return getShortName() + "[" + getDescription() + "]";
+        return getShortName() + '[' + getDescription() + ']';
     }
 
     @Override

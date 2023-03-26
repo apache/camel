@@ -110,7 +110,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
                 throw new IllegalArgumentException("String doesn't have equal opening and closing brackets: " + query);
             }
 
-            query = query.substring(0, i) + "?" + query.substring(j + 1);
+            query = query.substring(0, i) + '?' + query.substring(j + 1);
         }
         return query;
     }
@@ -250,7 +250,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
                     String querySubstring = query.substring(matcher.start());
                     int i = querySubstring.indexOf('{');
                     int j = findClosingBracket(querySubstring, i);
-                    param = "$" + querySubstring.substring(i, j + 1);
+                    param = '$' + querySubstring.substring(i, j + 1);
                 }
 
                 return param;

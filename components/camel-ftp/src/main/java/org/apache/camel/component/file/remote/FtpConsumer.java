@@ -184,7 +184,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
             // recursive scan and add the sub files and folders
             String subDirectory = file.getName();
-            String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
+            String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + '/' + subDirectory : subDirectory;
             boolean canPollMore = pollSubDirectory(path, subDirectory, fileList, depth);
             if (!canPollMore) {
                 return true;
@@ -317,11 +317,11 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         if (((FtpConfiguration) endpoint.getConfiguration()).isHandleDirectoryParserAbsoluteResult()) {
             fileName = FtpUtils.extractDirNameFromAbsolutePath(file.getName());
         }
-        String absoluteFileName = FileUtil.stripLeadingSeparator(dir + "/" + fileName);
+        String absoluteFileName = FileUtil.stripLeadingSeparator(dir + '/' + fileName);
         // if absolute start with a leading separator otherwise let it be
         // relative
         if (absolute) {
-            absoluteFileName = "/" + absoluteFileName;
+            absoluteFileName = '/' + absoluteFileName;
         }
         answer.setAbsoluteFilePath(absoluteFileName);
 
@@ -371,7 +371,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                 long since = listener.getLastLogActivityTimestamp();
                 if (since > 0) {
                     String human = TimeUtils.printSince(since);
-                    return log + " " + human + " ago";
+                    return log + ' ' + human + " ago";
                 } else {
                     return log;
                 }
@@ -390,7 +390,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
                 long since = listener.getLastVerboseLogActivityTimestamp();
                 if (since > 0) {
                     String human = TimeUtils.printSince(since);
-                    return log + " " + human + " ago";
+                    return log + ' ' + human + " ago";
                 } else {
                     return log;
                 }
@@ -402,7 +402,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     @Override
     public String toString() {
         if (ftpConsumerToString == null) {
-            ftpConsumerToString = "FtpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            ftpConsumerToString = "FtpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return ftpConsumerToString;
     }

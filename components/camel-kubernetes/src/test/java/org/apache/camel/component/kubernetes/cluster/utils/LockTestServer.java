@@ -153,7 +153,7 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
         }
 
         expect().get()
-                .withPath(lockSimulator.getAPIPath() + "/namespaces/test/" + lockSimulator.getResourcePath() + "/"
+                .withPath(lockSimulator.getAPIPath() + "/namespaces/test/" + lockSimulator.getResourcePath() + '/'
                           + lockSimulator.getResourceName())
                 .andReply(new ResponseProvider<Object>() {
 
@@ -194,7 +194,7 @@ public class LockTestServer<T extends HasMetadata> extends KubernetesMockServer 
                 }).always();
 
         expect().put()
-                .withPath(lockSimulator.getAPIPath() + "/namespaces/test/" + lockSimulator.getResourcePath() + "/"
+                .withPath(lockSimulator.getAPIPath() + "/namespaces/test/" + lockSimulator.getResourcePath() + '/'
                           + lockSimulator.getResourceName())
                 .andReply(new ResponseProvider<Object>() {
 

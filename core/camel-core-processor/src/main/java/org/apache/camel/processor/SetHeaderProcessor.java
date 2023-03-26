@@ -73,7 +73,7 @@ public class SetHeaderProcessor extends AsyncProcessorSupport implements Traceab
 
     @Override
     public String getTraceLabel() {
-        return "setHeader[" + headerName + ", " + expression + "]";
+        return "setHeader[" + headerName + ", " + expression + ']';
     }
 
     @Override

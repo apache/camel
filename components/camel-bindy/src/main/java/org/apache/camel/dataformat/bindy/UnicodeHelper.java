@@ -187,6 +187,6 @@ public class UnicodeHelper implements Serializable {
 
     @Override
     public String toString() {
-        return "StringHelper [input=" + input + ", splitted=" + splitted + ", method=" + method + "]";
+        return "StringHelper [input=" + input + ", splitted=" + splitted + ", method=" + method + ']';
     }
 }

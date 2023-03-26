@@ -252,7 +252,7 @@ public class PrepareFatJarMojo extends AbstractMojo {
 
                 List<String> exclusions = new ArrayList<>();
                 for (Exclusion exclusion : dependency.getExclusions()) {
-                    exclusions.add(exclusion.getGroupId() + ":" + exclusion.getArtifactId());
+                    exclusions.add(exclusion.getGroupId() + ':' + exclusion.getArtifactId());
                 }
 
                 ArtifactFilter newFilter = new ExcludesArtifactFilter(exclusions);

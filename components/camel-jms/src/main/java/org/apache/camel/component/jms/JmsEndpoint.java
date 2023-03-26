@@ -325,7 +325,7 @@ public class JmsEndpoint extends DefaultEndpoint
     }
 
     public String getThreadName() {
-        return "JmsConsumer[" + getEndpointConfiguredDestinationName() + "]";
+        return "JmsConsumer[" + getEndpointConfiguredDestinationName() + ']';
     }
 
     // Properties
@@ -1281,11 +1281,11 @@ public class JmsEndpoint extends DefaultEndpoint
     protected String createEndpointUri() {
         String scheme = "jms";
         if (destinationName != null) {
-            return scheme + ":" + destinationName;
+            return scheme + ':' + destinationName;
         }
         DestinationResolver resolver = getDestinationResolver();
         if (resolver != null) {
-            return scheme + ":" + resolver;
+            return scheme + ':' + resolver;
         }
         return super.createEndpointUri();
     }

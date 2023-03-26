@@ -86,7 +86,7 @@ public class KubernetesLeadershipController implements Service {
         this.disabled = false;
         this.leaseManager = KubernetesLeaseResourceManager.create(lockConfiguration.getLeaseResourceType());
 
-        logPrefix = "Pod[" + this.lockConfiguration.getPodName() + "]";
+        logPrefix = "Pod[" + this.lockConfiguration.getPodName() + ']';
     }
 
     @Override

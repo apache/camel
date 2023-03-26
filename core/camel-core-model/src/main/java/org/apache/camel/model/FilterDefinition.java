@@ -52,7 +52,7 @@ public class FilterDefinition extends OutputExpressionNode {
 
     @Override
     public String toString() {
-        return "Filter[" + getExpression() + " -> " + getOutputs() + "]";
+        return "Filter[" + getExpression() + " -> " + getOutputs() + ']';
     }
 
     @Override
@@ -62,7 +62,7 @@ public class FilterDefinition extends OutputExpressionNode {
 
     @Override
     public String getLabel() {
-        return "filter[" + getExpression() + "]";
+        return "filter[" + getExpression() + ']';
     }
 
     public String getStatusPropertyName() {

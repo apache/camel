@@ -53,7 +53,7 @@ public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsume
             } else {
                 StringBuilder pathsExtracted = new StringBuilder();
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
-                    pathsExtracted.append(entry.getKey()).append("\n");
+                    pathsExtracted.append(entry.getKey()).append('\n');
                 }
                 exchange.getIn().setHeader(DropboxConstants.DOWNLOADED_FILES, pathsExtracted.toString());
                 exchange.getIn().setBody(map);

@@ -50,7 +50,7 @@ public final class AuthenticationRequestFilter implements ClientRequestFilter {
     }
 
     private static String getBasicAuthenticationString(ServiceNowConfiguration conf) {
-        String userAndPassword = conf.getUserName() + ":" + conf.getPassword();
+        String userAndPassword = conf.getUserName() + ':' + conf.getPassword();
         return "Basic " + Base64.getEncoder().encodeToString(userAndPassword.getBytes(StandardCharsets.UTF_8));
     }
 }

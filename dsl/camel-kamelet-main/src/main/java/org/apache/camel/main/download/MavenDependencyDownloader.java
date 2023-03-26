@@ -196,7 +196,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             // is it already on classpath
             String target = artifactId;
             if (version != null) {
-                target = target + "-" + version;
+                target = target + '-' + version;
             }
             if (CP.contains(target)) {
                 // already on classpath
@@ -209,7 +209,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             return;
         }
 
-        String gav = groupId + ":" + artifactId + ":" + version;
+        String gav = groupId + ':' + artifactId + ':' + version;
         threadPool.download(LOG, () -> {
             LOG.debug("Downloading: {}", gav);
             List<String> deps = List.of(gav);
@@ -268,7 +268,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     @Override
     public MavenArtifact downloadArtifact(String groupId, String artifactId, String version) {
-        String gav = groupId + ":" + artifactId + ":" + version;
+        String gav = groupId + ':' + artifactId + ':' + version;
         LOG.debug("DownloadingArtifact: {}", gav);
         List<String> deps = List.of(gav);
 
@@ -289,7 +289,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     public List<String[]> resolveAvailableVersions(
             String groupId, String artifactId,
             String minimumVersion, String repo) {
-        String gav = groupId + ":" + artifactId;
+        String gav = groupId + ':' + artifactId;
         LOG.debug("DownloadAvailableVersions: {}", gav);
 
         List<String[]> answer = new ArrayList<>();
@@ -338,7 +338,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
         String target = artifactId;
         if (version != null) {
-            target = target + "-" + version;
+            target = target + '-' + version;
         }
 
         if (bootClasspath != null) {
@@ -357,9 +357,9 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
         if (classLoader instanceof URLClassLoader) {
             // create path like target to match against the file url
-            String urlTarget = groupId + "/" + artifactId;
+            String urlTarget = groupId + '/' + artifactId;
             urlTarget = urlTarget.replace('.', '/');
-            urlTarget += "/" + version + "/" + target + ".jar";
+            urlTarget += '/' + version + '/' + target + ".jar";
             urlTarget = FileUtil.normalizePath(urlTarget); // windows vs linux
             URLClassLoader ucl = (URLClassLoader) classLoader;
             for (URL u : ucl.getURLs()) {
@@ -468,7 +468,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     private String resolveCamelVersionByQuarkusVersion(String quarkusVersion, Set<String> extraRepos)
             throws Exception {
-        String gav = "org.apache.camel.quarkus" + ":" + "camel-quarkus" + ":pom:" + quarkusVersion;
+        String gav = "org.apache.camel.quarkus" + ':' + "camel-quarkus" + ":pom:" + quarkusVersion;
 
         try {
             List<MavenArtifact> artifacts = resolveDependenciesViaAether(List.of(gav), extraRepos, false, false);
@@ -500,7 +500,7 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
 
     private String resolveSpringBootVersionByCamelVersion(String camelVersion, Set<String> extraRepos)
             throws Exception {
-        String gav = "org.apache.camel.springboot" + ":" + "spring-boot" + ":pom:" + camelVersion;
+        String gav = "org.apache.camel.springboot" + ':' + "spring-boot" + ":pom:" + camelVersion;
 
         List<MavenArtifact> artifacts = resolveDependenciesViaAether(List.of(gav), extraRepos, false, false);
         if (!artifacts.isEmpty()) {

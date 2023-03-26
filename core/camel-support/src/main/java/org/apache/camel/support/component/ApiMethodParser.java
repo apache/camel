@@ -269,7 +269,7 @@ public abstract class ApiMethodParser<T> {
                 dups.put(uniqueName, 1);
             } else {
                 dups.put(uniqueName, suffix + 1);
-                uniqueName = uniqueName + "_" + suffix;
+                uniqueName = uniqueName + '_' + suffix;
             }
             model.uniqueName = uniqueName;
         }
@@ -308,7 +308,7 @@ public abstract class ApiMethodParser<T> {
                 String innerClass = className;
                 while (result == null && innerClass.indexOf('.') != -1) {
                     int endIndex = innerClass.lastIndexOf('.');
-                    innerClass = innerClass.substring(0, endIndex) + "$" + innerClass.substring(endIndex + 1);
+                    innerClass = innerClass.substring(0, endIndex) + '$' + innerClass.substring(endIndex + 1);
                     try {
                         result = Class.forName(innerClass, true, classLoader);
                     } catch (ClassNotFoundException ignore) {
@@ -395,10 +395,10 @@ public abstract class ApiMethodParser<T> {
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
-            builder.append(resultType.getName()).append(" ");
-            builder.append(name).append("(");
+            builder.append(resultType.getName()).append(' ');
+            builder.append(name).append('(');
             for (ApiMethodArg argument : arguments) {
-                builder.append(argument.getType().getCanonicalName()).append(" ");
+                builder.append(argument.getType().getCanonicalName()).append(' ');
                 builder.append(argument.getName()).append(", ");
             }
             if (!arguments.isEmpty()) {

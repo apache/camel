@@ -203,7 +203,7 @@ public class HdfsConfiguration {
             for (String strategyElement : strategyElements) {
                 String[] tokens = strategyElement.split(":");
                 if (tokens.length != 2) {
-                    throw new IllegalArgumentException("Wrong Split Strategy [splitStrategy" + "=" + splitStrategy + "]");
+                    throw new IllegalArgumentException("Wrong Split Strategy [splitStrategy" + '=' + splitStrategy + ']');
                 }
                 HdfsProducer.SplitStrategyType strategyType = HdfsProducer.SplitStrategyType.valueOf(tokens[0]);
                 long strategyValue = Long.parseLong(tokens[1]);

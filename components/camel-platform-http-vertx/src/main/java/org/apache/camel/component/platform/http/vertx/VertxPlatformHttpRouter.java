@@ -231,7 +231,7 @@ public class VertxPlatformHttpRouter implements Router {
             throw new IllegalArgumentException("Don't include * when mounting a sub router");
         }
 
-        return route(mountPoint + "*")
+        return route(mountPoint + '*')
                 .subRouter(subRouter);
     }
 

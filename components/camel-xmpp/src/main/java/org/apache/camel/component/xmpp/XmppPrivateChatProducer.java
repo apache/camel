@@ -70,7 +70,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         if (participant == null) {
             participant = getParticipant();
         } else {
-            thread = "Chat:" + participant + ":" + endpoint.getUser();
+            thread = "Chat:" + participant + ':' + endpoint.getUser();
         }
 
         Message message = new Message();

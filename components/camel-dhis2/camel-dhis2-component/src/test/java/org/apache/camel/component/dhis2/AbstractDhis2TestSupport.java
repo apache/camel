@@ -33,7 +33,7 @@ abstract class AbstractDhis2TestSupport extends CamelTestSupport {
     protected CamelContext createCamelContext()
             throws Exception {
 
-        String baseApiUrl = "http://" + Environment.getDhis2Container().getHost() + ":" + Environment.getDhis2Container()
+        String baseApiUrl = "http://" + Environment.getDhis2Container().getHost() + ':' + Environment.getDhis2Container()
                 .getFirstMappedPort() + "/api";
         String username = "admin";
         String password = "district";

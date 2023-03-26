@@ -180,7 +180,7 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
         String path = definition.getPath();
         if (path != null) {
             if (path.charAt(0) != '/') {
-                path = "/" + path;
+                path = '/' + path;
             }
             if (url.endsWith("/")) {
                 url = url.substring(0, url.length() - 1);

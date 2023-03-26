@@ -45,12 +45,12 @@ public final class AS2Utils {
     public static final String BACKSLASH = "\\\\";
     public static final String AS2_TEXT_CHAR_SET = "[\u0021\u0023-\\\u005B\\\u005D-\u007E]";
     public static final String AS2_QUOTED_TEXT_CHAR_SET = "[\u0020\u0021\u0023-\\\u005B\\\u005D-\u007E]";
-    public static final String AS2_QUOTED_PAIR = BACKSLASH + DQUOTE + "|" + BACKSLASH + BACKSLASH;
+    public static final String AS2_QUOTED_PAIR = BACKSLASH + DQUOTE + '|' + BACKSLASH + BACKSLASH;
 
     public static final String AS2_QUOTED_NAME
-            = DQUOTE + "(" + AS2_QUOTED_TEXT_CHAR_SET + "|" + AS2_QUOTED_PAIR + "){1,128}" + DQUOTE;
-    public static final String AS2_ATOMIC_NAME = "(" + AS2_TEXT_CHAR_SET + "){1,128}";
-    public static final String AS2_NAME = AS2_ATOMIC_NAME + "|" + AS2_QUOTED_NAME;
+            = DQUOTE + '(' + AS2_QUOTED_TEXT_CHAR_SET + '|' + AS2_QUOTED_PAIR + "){1,128}" + DQUOTE;
+    public static final String AS2_ATOMIC_NAME = '(' + AS2_TEXT_CHAR_SET + "){1,128}";
+    public static final String AS2_NAME = AS2_ATOMIC_NAME + '|' + AS2_QUOTED_NAME;
 
     public static final Pattern AS_NAME_PATTERN = Pattern.compile(AS2_NAME);
 
@@ -88,7 +88,7 @@ public final class AS2Utils {
      */
     public static String createMessageId(String fqdn) {
         /* Wall Clock Time in Nanoseconds */ /* 64 Bit Random Number */ /* Fully Qualified Domain Name */
-        return "<" + Long.toString(System.nanoTime(), 36) + "." + Long.toString(generator.nextLong(), 36) + "@" + fqdn + ">";
+        return '<' + Long.toString(System.nanoTime(), 36) + '.' + Long.toString(generator.nextLong(), 36) + '@' + fqdn + '>';
     }
 
     /**

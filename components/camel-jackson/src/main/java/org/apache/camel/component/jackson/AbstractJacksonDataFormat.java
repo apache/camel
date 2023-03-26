@@ -469,7 +469,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         if (enableFeatures == null) {
             enableFeatures = feature.name();
         } else {
-            enableFeatures += "," + feature.name();
+            enableFeatures += ',' + feature.name();
         }
     }
 
@@ -477,7 +477,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         if (enableFeatures == null) {
             enableFeatures = feature.name();
         } else {
-            enableFeatures += "," + feature.name();
+            enableFeatures += ',' + feature.name();
         }
     }
 
@@ -485,7 +485,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         if (enableFeatures == null) {
             enableFeatures = feature.name();
         } else {
-            enableFeatures += "," + feature.name();
+            enableFeatures += ',' + feature.name();
         }
     }
 
@@ -493,7 +493,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         if (disableFeatures == null) {
             disableFeatures = feature.name();
         } else {
-            disableFeatures += "," + feature.name();
+            disableFeatures += ',' + feature.name();
         }
     }
 
@@ -501,7 +501,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         if (disableFeatures == null) {
             disableFeatures = feature.name();
         } else {
-            disableFeatures += "," + feature.name();
+            disableFeatures += ',' + feature.name();
         }
     }
 
@@ -509,7 +509,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
         if (disableFeatures == null) {
             disableFeatures = feature.name();
         } else {
-            disableFeatures += "," + feature.name();
+            disableFeatures += ',' + feature.name();
         }
     }
 

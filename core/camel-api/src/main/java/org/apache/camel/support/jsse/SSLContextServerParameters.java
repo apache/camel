@@ -185,7 +185,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
         builder.append(getSecureSocketProtocolsFilter());
         builder.append(", getSessionTimeout()=");
         builder.append(getSessionTimeout());
-        builder.append("]");
+        builder.append(']');
         return builder.toString();
     }
 }

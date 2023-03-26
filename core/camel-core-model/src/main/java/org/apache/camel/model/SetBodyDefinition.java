@@ -41,7 +41,7 @@ public class SetBodyDefinition extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "SetBody[" + getExpression() + "]";
+        return "SetBody[" + getExpression() + ']';
     }
 
     @Override
@@ -51,7 +51,7 @@ public class SetBodyDefinition extends ExpressionNode {
 
     @Override
     public String getLabel() {
-        return "setBody[" + getExpression() + "]";
+        return "setBody[" + getExpression() + ']';
     }
 
     /**

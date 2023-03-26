@@ -92,7 +92,7 @@ public class JGroupsLockClusterView extends AbstractCamelClusterView {
         // Camel context should be set at this stage.
         final CamelContext context = ObjectHelper.notNull(getCamelContext(), "CamelContext");
         executor = context.getExecutorServiceManager().newSingleThreadScheduledExecutor(this,
-                "JGroupsLockClusterView-" + getClusterService().getId() + "-" + lockName);
+                "JGroupsLockClusterView-" + getClusterService().getId() + '-' + lockName);
         executor.execute(() -> {
             LOG.info(
                     "Attempting to become master acquiring the lock for group: {} in JGroups cluster {} with configuration: {}",

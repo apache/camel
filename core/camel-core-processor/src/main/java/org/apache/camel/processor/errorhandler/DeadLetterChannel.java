@@ -94,7 +94,7 @@ public class DeadLetterChannel extends RedeliveryErrorHandler {
             // if no output then don't do any description
             return "";
         }
-        return "DeadLetterChannel[" + output + ", " + (deadLetterUri != null ? deadLetterUri : deadLetter) + "]";
+        return "DeadLetterChannel[" + output + ", " + (deadLetterUri != null ? deadLetterUri : deadLetter) + ']';
     }
 
     @Override

@@ -158,7 +158,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
     @Override
     protected String startupMessage(File dir) {
-        return "Live route reloading enabled (directory: " + dir + ")";
+        return "Live route reloading enabled (directory: " + dir + ')';
     }
 
     protected void onPropertiesReload(Resource resource) throws Exception {

@@ -83,7 +83,7 @@ public class Ddb2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (ddbProducerToString == null) {
-            ddbProducerToString = "DdbProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            ddbProducerToString = "DdbProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return ddbProducerToString;
     }

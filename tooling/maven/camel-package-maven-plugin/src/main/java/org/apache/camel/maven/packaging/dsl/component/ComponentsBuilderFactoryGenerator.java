@@ -86,7 +86,7 @@ public final class ComponentsBuilderFactoryGenerator {
 
     private void setJavaDoc() {
         final String doc = "Component DSL builder."
-                           + "\n"
+                           + '\n'
                            + "\nYou can build a component as follows:"
                            + "\n<pre>"
                            + "\n    KafkaComponent kafka = ComponentBuilderFactory.kafka().setBrokers(\"{{host:port}}\").build();"
@@ -99,8 +99,8 @@ public final class ComponentsBuilderFactoryGenerator {
                            + "\n<pre>"
                            + "\n    ComponentBuilderFactory.kafka().setBrokers(\"{{host2:port}}\").register(camelContext, \"kafka2\");"
                            + "\n</pre>"
-                           + "\n"
-                           + "\n"
+                           + '\n'
+                           + '\n'
                            + AbstractGeneratorMojo.GENERATED_MSG;
         javaClass.getJavaDoc().setText(doc);
     }
@@ -118,7 +118,7 @@ public final class ComponentsBuilderFactoryGenerator {
     private void setComponentsDslMethods() {
         componentModels.forEach(componentModel -> {
             final String returnType = packageName + ".dsl."
-                                      + ComponentDslBuilderFactoryGenerator.getExpectedGeneratedClassName(componentModel) + "."
+                                      + ComponentDslBuilderFactoryGenerator.getExpectedGeneratedClassName(componentModel) + '.'
                                       + ComponentDslInnerBuilderGenerator.getExpectedGeneratedInterfaceName(componentModel);
 
             final Method componentEntryMethod = javaClass.addMethod();

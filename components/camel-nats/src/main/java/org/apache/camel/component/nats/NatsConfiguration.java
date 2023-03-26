@@ -411,7 +411,7 @@ public class NatsConfiguration {
         String[] pieces = srvspec.split(",");
         for (int i = 0; i < pieces.length; i++) {
             if (i < pieces.length - 1) {
-                servers.append(prefix).append(pieces[i]).append(",");
+                servers.append(prefix).append(pieces[i]).append(',');
             } else {
                 servers.append(prefix).append(pieces[i]);
             }

@@ -93,12 +93,12 @@ public class PredicateValidatingProcessor extends ServiceSupport implements Proc
 
     @Override
     public String toString() {
-        return "validate(" + predicate + ")";
+        return "validate(" + predicate + ')';
     }
 
     @Override
     public String getTraceLabel() {
-        return "validate[" + predicate + "]";
+        return "validate[" + predicate + ']';
     }
 
     @Override

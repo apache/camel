@@ -40,7 +40,7 @@ public enum DispositionMode {
 
     @Override
     public String toString() {
-        return actionMode + "/" + sendingMode;
+        return actionMode + '/' + sendingMode;
     }
 
     public static DispositionMode parseDispositionMode(String dispositionModeString) {

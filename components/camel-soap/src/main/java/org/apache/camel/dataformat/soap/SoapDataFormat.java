@@ -204,7 +204,7 @@ public class SoapDataFormat extends JaxbDataFormat {
     @Override
     protected JAXBContext createContext() throws JAXBException {
         if (getContextPath() != null) {
-            return JAXBContext.newInstance(adapter.getSoapPackageName() + ":" + getContextPath());
+            return JAXBContext.newInstance(adapter.getSoapPackageName() + ':' + getContextPath());
         } else {
             return JAXBContext.newInstance();
         }

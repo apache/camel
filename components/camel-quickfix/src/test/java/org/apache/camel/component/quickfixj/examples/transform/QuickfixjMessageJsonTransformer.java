@@ -56,21 +56,21 @@ public class QuickfixjMessageJsonTransformer {
             String contentIndent = indent + "  ";
 
             transform("header", message.getHeader(), sb, contentIndent, dd);
-            sb.append("\n");
+            sb.append('\n');
 
             transform("body", message, sb, contentIndent, dd);
-            sb.append("\n");
+            sb.append('\n');
 
             transform("trailer", message.getTrailer(), sb, contentIndent, dd);
-            sb.append("\n");
+            sb.append('\n');
 
-            sb.append(indent).append("}");
+            sb.append(indent).append('}');
         }
         return sb.toString();
     }
 
     private void transform(String name, FieldMap fieldMap, StringBuilder sb, String indent, DataDictionary dd) {
-        sb.append(indent).append("\"").append(name).append("\": {\n");
+        sb.append(indent).append('"').append(name).append("\": {\n");
         int fieldCount = 0;
         Iterator<Field<?>> fieldIterator = fieldMap.iterator();
         while (fieldIterator.hasNext()) {
@@ -88,13 +88,13 @@ public class QuickfixjMessageJsonTransformer {
                 if (Number.class.isAssignableFrom(fieldType.getJavaType())) {
                     sb.append(field.getObject());
                 } else {
-                    sb.append("\"").append(field.getObject().toString()).append("\"");
+                    sb.append('"').append(field.getObject().toString()).append('"');
                 }
             }
             fieldCount++;
         }
 
-        sb.append("\n");
+        sb.append('\n');
 
         Iterator<Integer> groupKeys = fieldMap.groupKeyIterator();
         while (groupKeys.hasNext()) {
@@ -105,6 +105,6 @@ public class QuickfixjMessageJsonTransformer {
             }
         }
 
-        sb.append(indent).append("}").append("\n");
+        sb.append(indent).append('}').append('\n');
     }
 }

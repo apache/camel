@@ -45,7 +45,7 @@ public class MemoryDevConsole extends AbstractDevConsole {
             sb.append(String.format("Heap Max: %s\n", printUnitFromBytesDot(mb.getHeapMemoryUsage().getMax())));
             sb.append(String.format("Heap Used: %s\n", printUnitFromBytesDot(mb.getHeapMemoryUsage().getUsed())));
             sb.append(String.format("Heap Committed: %s\n", printUnitFromBytesDot(mb.getHeapMemoryUsage().getCommitted())));
-            sb.append("\n");
+            sb.append('\n');
             sb.append(String.format("Non-Heap Init: %s\n", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getInit())));
             sb.append(String.format("Non-Heap Max: %s\n", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getMax())));
             sb.append(String.format("Non-Heap Used: %s\n", printUnitFromBytesDot(mb.getNonHeapMemoryUsage().getUsed())));

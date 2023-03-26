@@ -52,6 +52,6 @@ public class AuthenticationValidationHandler extends BasicValidationHandler {
     }
 
     private String getExpectedCredential() {
-        return user + ":" + password;
+        return user + ':' + password;
     }
 }

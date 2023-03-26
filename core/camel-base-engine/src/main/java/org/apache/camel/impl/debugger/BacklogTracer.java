@@ -317,9 +317,9 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
         List<BacklogTracerEventMessage> events = dumpTracedMessages(nodeId);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("<").append(BacklogTracerEventMessage.ROOT_TAG).append("s>");
+        sb.append('<').append(BacklogTracerEventMessage.ROOT_TAG).append("s>");
         for (BacklogTracerEventMessage event : events) {
-            sb.append("\n").append(event.toXml(2));
+            sb.append('\n').append(event.toXml(2));
         }
         sb.append("\n</").append(BacklogTracerEventMessage.ROOT_TAG).append("s>");
         return sb.toString();
@@ -352,9 +352,9 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
         List<BacklogTracerEventMessage> events = dumpAllTracedMessages();
 
         StringBuilder sb = new StringBuilder();
-        sb.append("<").append(BacklogTracerEventMessage.ROOT_TAG).append("s>");
+        sb.append('<').append(BacklogTracerEventMessage.ROOT_TAG).append("s>");
         for (BacklogTracerEventMessage event : events) {
-            sb.append("\n").append(event.toXml(2));
+            sb.append('\n').append(event.toXml(2));
         }
         sb.append("\n</").append(BacklogTracerEventMessage.ROOT_TAG).append("s>");
         return sb.toString();

@@ -199,7 +199,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     @Override
     public String toString() {
         if (remoteFileProducerToString == null) {
-            remoteFileProducerToString = "RemoteFileProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            remoteFileProducerToString = "RemoteFileProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return remoteFileProducerToString;
     }

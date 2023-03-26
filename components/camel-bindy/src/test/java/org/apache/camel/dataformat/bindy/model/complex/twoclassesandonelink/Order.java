@@ -119,6 +119,6 @@ public class Order {
         return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.amount
                + ", " + this.instrumentType + ", "
                + this.orderType + ", " + this.currency + ", " + this.client
-               + "," + this.orderDate;
+               + ',' + this.orderDate;
     }
 }

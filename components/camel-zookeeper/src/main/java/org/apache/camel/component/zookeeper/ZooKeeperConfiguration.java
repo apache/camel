@@ -123,7 +123,7 @@ public class ZooKeeperConfiguration implements Cloneable {
     public String getConnectString() {
         StringBuilder b = new StringBuilder();
         for (String server : servers) {
-            b.append(server).append(",");
+            b.append(server).append(',');
         }
         b.setLength(b.length() - 1);
         return b.toString();

@@ -58,7 +58,7 @@ public class ValidateDefinition extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "Validate[" + getExpression() + " -> " + getOutputs() + "]";
+        return "Validate[" + getExpression() + " -> " + getOutputs() + ']';
     }
 
     @Override
@@ -68,7 +68,7 @@ public class ValidateDefinition extends ExpressionNode {
 
     @Override
     public String getLabel() {
-        return "validate[" + getExpression() + "]";
+        return "validate[" + getExpression() + ']';
     }
 
     /**

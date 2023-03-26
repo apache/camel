@@ -114,7 +114,7 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         Server server = null;
         // Make sure that there is a connector for the requested endpoint.
         CometdEndpoint endpoint = prodcon.getEndpoint();
-        String connectorKey = endpoint.getProtocol() + ":" + endpoint.getUri().getHost() + ":" + endpoint.getPort();
+        String connectorKey = endpoint.getProtocol() + ':' + endpoint.getUri().getHost() + ':' + endpoint.getPort();
 
         synchronized (connectors) {
             ConnectorRef connectorRef = connectors.get(connectorKey);
@@ -169,7 +169,7 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
     public void disconnect(CometdProducerConsumer prodcon) throws Exception {
         CometdEndpoint endpoint = prodcon.getEndpoint();
 
-        String connectorKey = endpoint.getProtocol() + ":" + endpoint.getUri().getHost() + ":" + endpoint.getPort();
+        String connectorKey = endpoint.getProtocol() + ':' + endpoint.getUri().getHost() + ':' + endpoint.getPort();
 
         synchronized (connectors) {
             ConnectorRef connectorRef = connectors.get(connectorKey);

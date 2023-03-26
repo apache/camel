@@ -76,7 +76,7 @@ public class CamelPathHandler extends PathHandler {
     @Override
     public String toString() {
         if (handlerString == null) {
-            handlerString = "CamelPathHandler[" + handlers + "]";
+            handlerString = "CamelPathHandler[" + handlers + ']';
         }
         return handlerString;
     }

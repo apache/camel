@@ -158,15 +158,15 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                 return mapper.readValue(responseBody, resultType);
             } else {
                 throw new TelegramException(
-                        "Could not " + request.method() + " " + request.uri() + ": " + response.statusCode() + " "
+                        "Could not " + request.method() + ' ' + request.uri() + ": " + response.statusCode() + ' '
                                             + response.body(),
                         response.statusCode(), response.body());
             }
         } catch (JsonProcessingException e) {
             throw new RuntimeCamelException(
-                    "Could not parse the response from " + request.method() + " " + request.uri(), e);
+                    "Could not parse the response from " + request.method() + ' ' + request.uri(), e);
         } catch (IOException e) {
-            throw new RuntimeCamelException("Could not request " + request.method() + " " + request.uri(), e);
+            throw new RuntimeCamelException("Could not request " + request.method() + ' ' + request.uri(), e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeCamelException(e);

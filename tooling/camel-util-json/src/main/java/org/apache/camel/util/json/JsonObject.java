@@ -357,7 +357,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
                  * appended to it since they got removed in the split.
                  */
                 returnTypeName.append(splitValues[i]);
-                returnTypeName.append(".");
+                returnTypeName.append('.');
             }
         }
         /* Use the package/class and enum names to get the Enum<T>. */
@@ -433,7 +433,7 @@ public class JsonObject extends LinkedHashMap<String, Object> implements Jsonabl
                      * appended to it since they got removed in the split.
                      */
                     returnTypeName.append(splitValues[i]);
-                    returnTypeName.append(".");
+                    returnTypeName.append('.');
                 }
             }
             /* Use the package/class and enum names to get the Enum<T>. */

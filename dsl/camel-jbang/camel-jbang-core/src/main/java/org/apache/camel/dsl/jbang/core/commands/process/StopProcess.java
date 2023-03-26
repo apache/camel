@@ -58,12 +58,12 @@ public class StopProcess extends ProcessBaseCommand {
             File dir = new File(System.getProperty("user.home"), ".camel");
             File pidFile = new File(dir, "" + pid);
             if (pidFile.exists()) {
-                System.out.println("Shutting down Camel integration (PID: " + pid + ")");
+                System.out.println("Shutting down Camel integration (PID: " + pid + ')');
                 FileUtil.deleteFile(pidFile);
             }
             if (kill) {
                 ProcessHandle.of(pid).ifPresent(ph -> {
-                    System.out.println("Killing Camel integration (PID: " + pid + ")");
+                    System.out.println("Killing Camel integration (PID: " + pid + ')');
                     ph.destroyForcibly();
                 });
             }

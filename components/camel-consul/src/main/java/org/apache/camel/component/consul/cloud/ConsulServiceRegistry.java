@@ -237,17 +237,17 @@ public class ConsulServiceRegistry extends AbstractServiceRegistry {
     @Override
     public void register(ServiceDefinition definition) {
         if (definition.getId() == null) {
-            throw new IllegalArgumentException("Service ID must be defined (definition=" + definition + ")");
+            throw new IllegalArgumentException("Service ID must be defined (definition=" + definition + ')');
         }
         if (definition.getName() == null) {
-            throw new IllegalArgumentException("Service Name must be defined (definition=" + definition + ")");
+            throw new IllegalArgumentException("Service Name must be defined (definition=" + definition + ')');
         }
 
         Registration registration = ImmutableRegistration.builder().address(computeServiceHost(definition))
                 .port(definition.getPort()).name(definition.getName())
                 .id(definition.getId()).check(computeCheck(definition))
                 .tags(definition.getMetadata().entrySet().stream().filter(e -> e.getValue() != null)
-                        .map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.toList()))
+                        .map(e -> e.getKey() + '=' + e.getValue()).collect(Collectors.toList()))
                 .addTags("_consul.service.registry.id=" + getId()).build();
 
         // perform service registration against consul
@@ -283,7 +283,7 @@ public class ConsulServiceRegistry extends AbstractServiceRegistry {
     @Override
     public void deregister(ServiceDefinition definition) {
         if (definition.getId() == null) {
-            throw new IllegalArgumentException("ServiceID must be defined (definition=" + definition + ")");
+            throw new IllegalArgumentException("ServiceID must be defined (definition=" + definition + ')');
         }
 
         client.agentClient().deregister(definition.getId());

@@ -236,7 +236,7 @@ public final class OgnlHelper {
 
                     // pass over ? to the new method
                     if (s.endsWith("?")) {
-                        sb.append("?");
+                        sb.append('?');
                         s = s.substring(0, s.length() - 1);
                     }
 

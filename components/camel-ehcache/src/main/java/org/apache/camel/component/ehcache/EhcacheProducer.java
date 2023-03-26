@@ -150,7 +150,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
 
         if (value == null) {
             throw new CamelExchangeException(
-                    "No value provided in header or as default value (" + EhcacheConstants.KEY + ")",
+                    "No value provided in header or as default value (" + EhcacheConstants.KEY + ')',
                     message.getExchange());
         }
 
@@ -173,7 +173,7 @@ public class EhcacheProducer extends HeaderSelectorProducer {
 
         if (value == null) {
             throw new CamelExchangeException(
-                    "No value provided in header or body (" + EhcacheConstants.VALUE + ")",
+                    "No value provided in header or body (" + EhcacheConstants.VALUE + ')',
                     message.getExchange());
         }
 

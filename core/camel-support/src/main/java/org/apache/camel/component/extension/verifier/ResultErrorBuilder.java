@@ -206,7 +206,7 @@ public final class ResultErrorBuilder {
         return ObjectHelper.isNotEmpty(optionValue)
                 ? new ResultErrorBuilder()
                         .code(VerificationError.StandardCode.ILLEGAL_PARAMETER_VALUE)
-                        .description(optionName + " has wrong value (" + optionValue + ")")
+                        .description(optionName + " has wrong value (" + optionValue + ')')
                         .parameterKey(optionName)
                 : withIllegalOption(optionName);
     }

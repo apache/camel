@@ -153,7 +153,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
     protected String createEndpointUri() {
         String s = script;
         s = URLEncoder.encode(s, StandardCharsets.UTF_8);
-        return languageName + ":" + s;
+        return languageName + ':' + s;
     }
 
     public Language getLanguage() {

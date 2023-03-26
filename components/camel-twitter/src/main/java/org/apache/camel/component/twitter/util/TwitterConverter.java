@@ -55,7 +55,7 @@ public final class TwitterConverter {
     @Converter
     public static String toString(Trends trends) {
         StringBuilder s = new StringBuilder();
-        s.append("(")
+        s.append('(')
                 .append(trends.getTrendAt().toString())
                 .append(") ");
 
@@ -64,7 +64,7 @@ public final class TwitterConverter {
             if (first) {
                 first = false;
             } else {
-                s.append(",");
+                s.append(',');
             }
             s.append(toString(trend));
         }

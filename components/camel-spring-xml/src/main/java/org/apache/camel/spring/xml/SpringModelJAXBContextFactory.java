@@ -23,7 +23,7 @@ import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
 @JdkService(ModelJAXBContextFactory.FACTORY + "-spring")
 public class SpringModelJAXBContextFactory extends DefaultModelJAXBContextFactory {
 
-    public static final String ADDITIONAL_JAXB_CONTEXT_PACKAGES = ":"
+    public static final String ADDITIONAL_JAXB_CONTEXT_PACKAGES = ':'
                                                                   + "org.apache.camel.core.xml:"
                                                                   + "org.apache.camel.spring.xml:";
 

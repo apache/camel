@@ -53,6 +53,6 @@ public final class CamelThreadFactory implements ThreadFactory {
 
     @Override
     public String toString() {
-        return "CamelThreadFactory[" + name + "]";
+        return "CamelThreadFactory[" + name + ']';
     }
 }

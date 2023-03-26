@@ -76,7 +76,7 @@ public class CamelPathTemplateHandler implements HttpHandler {
     @Override
     public String toString() {
         if (handlerString == null) {
-            handlerString = "CamelPathTemplateHandler[default=" + defaultHandlerWrapper.get() + ", " + handlers + "]";
+            handlerString = "CamelPathTemplateHandler[default=" + defaultHandlerWrapper.get() + ", " + handlers + ']';
         }
         return handlerString;
     }

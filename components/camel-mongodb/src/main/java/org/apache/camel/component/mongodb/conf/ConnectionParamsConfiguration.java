@@ -74,7 +74,7 @@ public class ConnectionParamsConfiguration {
 
     @Override
     public String toString() {
-        return "MongoConfiguration [host(s)=" + host + ", user=" + user + ", password=***, adminDB=" + adminDB + "]";
+        return "MongoConfiguration [host(s)=" + host + ", user=" + user + ", password=***, adminDB=" + adminDB + ']';
     }
 
 }

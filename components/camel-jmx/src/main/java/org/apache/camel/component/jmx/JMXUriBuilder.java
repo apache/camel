@@ -174,7 +174,7 @@ public class JMXUriBuilder {
         if (aReferenceToHashtable.startsWith("#")) {
             addProperty("objectProperties", aReferenceToHashtable);
         } else {
-            addProperty("objectProperties", "#" + aReferenceToHashtable);
+            addProperty("objectProperties", '#' + aReferenceToHashtable);
         }
         return this;
     }

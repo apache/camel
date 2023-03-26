@@ -33,7 +33,7 @@ public final class GenericFileHelper {
     }
 
     public static String asExclusiveReadLockKey(String path, String key) {
-        return path + "-" + key;
+        return path + '-' + key;
     }
 
 }

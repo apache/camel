@@ -921,7 +921,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
                         headers.put(headerName, headerValue);
                     }
                 }
-                serverConfigurations.put(ConfigurationProperties.HTTP_HEADERS + "." + server.getId(), headers);
+                serverConfigurations.put(ConfigurationProperties.HTTP_HEADERS + '.' + server.getId(), headers);
 
                 // DON'T handle (as it's pre-maven 3.9):
                 //     <server>

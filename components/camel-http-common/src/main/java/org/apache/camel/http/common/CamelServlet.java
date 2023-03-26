@@ -175,7 +175,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
             if (es == null) {
                 getServletContext().log(
                         "ExecutorServiceRef " + executorRef + " not found in registry (as an ExecutorService instance) " +
-                                        "or as a thread pool profile, will default for " + ctx.getName() + ".");
+                                        "or as a thread pool profile, will default for " + ctx.getName() + '.');
                 es = manager.newDefaultThreadPool(this, getClass().getSimpleName() + "Executor");
             }
             ctx.addLifecycleStrategy(new LifecycleStrategySupport() {

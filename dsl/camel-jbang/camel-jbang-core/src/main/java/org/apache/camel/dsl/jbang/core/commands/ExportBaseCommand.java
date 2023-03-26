@@ -300,7 +300,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         Set<String> toBeRemoved = new HashSet<>();
         for (String line : answer) {
             MavenGav gav = MavenGav.parseGav(line);
-            String ga = gav.getGroupId() + ":" + gav.getArtifactId();
+            String ga = gav.getGroupId() + ':' + gav.getArtifactId();
             if (!versions.containsKey(ga)) {
                 versions.put(ga, gav.getVersion());
             } else {
@@ -365,7 +365,7 @@ abstract class ExportBaseCommand extends CamelCommand {
                         } else {
                             fos = new FileOutputStream(out);
                             lines.add(0, "");
-                            lines.add(0, "package " + packageName + ";");
+                            lines.add(0, "package " + packageName + ';');
                         }
                         for (String line : lines) {
                             adjustJavaSourceFileLine(line, fos);
@@ -385,7 +385,7 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected String exportPackageName(String groupId, String artifactId) {
         // for package name it must be in lower-case and alpha/numeric
-        String s = groupId + "." + artifactId;
+        String s = groupId + '.' + artifactId;
         StringBuilder sb = new StringBuilder();
         for (char ch : s.toCharArray()) {
             if (ch == '.' || Character.isAlphabetic(ch) || Character.isDigit(ch)) {
@@ -499,7 +499,7 @@ abstract class ExportBaseCommand extends CamelCommand {
     }
 
     protected String applicationPropertyLine(String key, String value) {
-        return key + "=" + value;
+        return key + '=' + value;
     }
 
     /**

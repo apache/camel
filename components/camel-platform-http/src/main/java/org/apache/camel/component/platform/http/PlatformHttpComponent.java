@@ -193,7 +193,7 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
             if (uriTemplate.startsWith("/")) {
                 path = path + uriTemplate;
             } else {
-                path = path + "/" + uriTemplate;
+                path = path + '/' + uriTemplate;
             }
         }
         path = FileUtil.stripLeadingSeparator(path);
@@ -211,7 +211,7 @@ public class PlatformHttpComponent extends DefaultComponent implements RestConsu
             contextPath = FileUtil.stripTrailingSeparator(contextPath);
             contextPath = FileUtil.stripLeadingSeparator(contextPath);
             if (ObjectHelper.isNotEmpty(contextPath)) {
-                path = contextPath + "/" + path;
+                path = contextPath + '/' + path;
             }
         }
 

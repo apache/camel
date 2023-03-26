@@ -76,7 +76,7 @@ public class SpringBootProjectSourceCodeGenerator {
         StringBuilder sb = new StringBuilder("{");
         Arrays.stream(mappingValues)
                 .forEach(str -> sb.append(sb.toString().endsWith("\"") ? "," : "").append(StringUtils.wrap(str, '"')));
-        sb.append("}");
+        sb.append('}');
         return sb.toString();
     }
 

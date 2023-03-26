@@ -600,7 +600,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                                     ? exchangeFormatter : null);
                     String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, false);
                     if (routeStackTrace != null) {
-                        msg = msg + "\n" + routeStackTrace;
+                        msg = msg + '\n' + routeStackTrace;
                     }
                 }
 
@@ -623,7 +623,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter,
                             e != null && redeliveryPolicy.isLogStackTrace());
                     if (routeStackTrace != null) {
-                        msg = msg + "\n" + routeStackTrace;
+                        msg = msg + '\n' + routeStackTrace;
                     }
                 }
 
@@ -1207,7 +1207,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                         msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
                         if (processor != null) {
                             if (isDeadLetterChannel && deadLetterUri != null) {
-                                msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
+                                msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + ']';
                             } else {
                                 msg = msg + ". Processed by failure processor: " + processor;
                             }
@@ -1252,7 +1252,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     msg = msg + ". Exhausted after delivery attempt: " + redeliveryCounter + " caught: " + caught;
                     if (processor != null) {
                         if (isDeadLetterChannel && deadLetterUri != null) {
-                            msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + "]";
+                            msg = msg + ". Handled by DeadLetterChannel: [" + URISupport.sanitizeUri(deadLetterUri) + ']';
                         } else {
                             msg = msg + ". Processed by failure processor: " + processor;
                         }
@@ -1450,7 +1450,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                                     ? exchangeFormatter : null);
                     String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, false);
                     if (routeStackTrace != null) {
-                        msg = msg + "\n" + routeStackTrace;
+                        msg = msg + '\n' + routeStackTrace;
                     }
                 }
 
@@ -1473,7 +1473,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                     String routeStackTrace
                             = MessageHelper.dumpMessageHistoryStacktrace(exchange, formatter, e != null && logStackTrace);
                     if (routeStackTrace != null) {
-                        msg = msg + "\n" + routeStackTrace;
+                        msg = msg + '\n' + routeStackTrace;
                     }
                 }
 

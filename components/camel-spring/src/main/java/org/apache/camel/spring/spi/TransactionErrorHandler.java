@@ -104,7 +104,7 @@ public class TransactionErrorHandler extends RedeliveryErrorHandler {
         }
         return "TransactionErrorHandler:"
                + propagationBehaviorToString(transactionTemplate.getPropagationBehavior())
-               + "[" + getOutput() + "]";
+               + '[' + getOutput() + ']';
     }
 
     @Override

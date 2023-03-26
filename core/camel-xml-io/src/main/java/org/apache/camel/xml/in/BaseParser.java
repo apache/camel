@@ -247,28 +247,28 @@ public class BaseParser {
     }
 
     protected boolean handleUnexpectedAttribute(String namespace, String name) throws XmlPullParserException {
-        throw new XmlPullParserException("Unexpected attribute '{" + namespace + "}" + name + "'");
+        throw new XmlPullParserException("Unexpected attribute '{" + namespace + '}' + name + '\'');
     }
 
     protected boolean handleUnexpectedElement(String namespace, String name) throws XmlPullParserException {
-        throw new XmlPullParserException("Unexpected element '{" + namespace + "}" + name + "'");
+        throw new XmlPullParserException("Unexpected element '{" + namespace + '}' + name + '\'');
     }
 
     protected void handleUnexpectedText(String text) throws XmlPullParserException {
-        throw new XmlPullParserException("Unexpected text '" + text + "'");
+        throw new XmlPullParserException("Unexpected text '" + text + '\'');
     }
 
     protected void expectTag(String name) throws XmlPullParserException, IOException {
         if (parser.nextTag() != XmlPullParser.START_TAG) {
             throw new XmlPullParserException(
-                    "Expected starting tag '{" + namespace + "}" + name + "', read ending tag '{" + parser.getNamespace() + "}"
+                    "Expected starting tag '{" + namespace + '}' + name + "', read ending tag '{" + parser.getNamespace() + '}'
                                              + parser.getName()
                                              + "' instead");
         }
         if (!Objects.equals(name, parser.getName()) || !Objects.equals(namespace, parser.getNamespace())) {
             throw new XmlPullParserException(
-                    "Expected starting tag '{" + namespace + "}" + name + "', read starting tag '{" + parser.getNamespace()
-                                             + "}" + parser.getName()
+                    "Expected starting tag '{" + namespace + '}' + name + "', read starting tag '{" + parser.getNamespace()
+                                             + '}' + parser.getName()
                                              + "' instead");
         }
     }
@@ -305,8 +305,8 @@ public class BaseParser {
         if ("http://www.w3.org/2001/XMLSchema-instance".equals(ns)) {
             return;
         }
-        String fqn = ns.isEmpty() ? name : "{" + ns + "}" + name;
-        throw new XmlPullParserException("Unsupported attribute '" + fqn + "'");
+        String fqn = ns.isEmpty() ? name : '{' + ns + '}' + name;
+        throw new XmlPullParserException("Unsupported attribute '" + fqn + '\'');
     }
 
     protected <T> AttributeHandler<T> noAttributeHandler() {

@@ -129,8 +129,8 @@ public class SmppEndpoint extends DefaultEndpoint {
      */
     public String getConnectionString() {
         return (configuration.isUsingSSL() ? "smpps://" : "smpp://")
-               + (getConfiguration().getSystemId() != null ? getConfiguration().getSystemId() + "@" : "")
-               + getConfiguration().getHost() + ":"
+               + (getConfiguration().getSystemId() != null ? getConfiguration().getSystemId() + '@' : "")
+               + getConfiguration().getHost() + ':'
                + getConfiguration().getPort();
     }
 

@@ -98,7 +98,7 @@ public class KafkaFetchRecords implements Runnable {
         this.topicName = topicName;
         this.topicPattern = topicPattern;
         this.consumerListener = consumerListener;
-        this.threadId = topicName + "-" + "Thread " + id;
+        this.threadId = topicName + '-' + "Thread " + id;
         this.kafkaProps = kafkaProps;
     }
 
@@ -412,7 +412,7 @@ public class KafkaFetchRecords implements Runnable {
          */
         try {
             LOG.debug("Closing consumer {}", threadId);
-            IOHelper.close(consumer, "Kafka consumer (thread ID " + threadId + ")", LOG);
+            IOHelper.close(consumer, "Kafka consumer (thread ID " + threadId + ')', LOG);
         } catch (Exception e) {
             LOG.error("Error closing the Kafka consumer: {} (this error will be ignored)", e.getMessage(), e);
         }

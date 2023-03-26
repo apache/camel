@@ -67,7 +67,7 @@ public abstract class TestSupport {
 
     @Override
     public String toString() {
-        return getName() + "(" + getClass().getName() + ")";
+        return getName() + '(' + getClass().getName() + ')';
     }
 
     public String getName() {

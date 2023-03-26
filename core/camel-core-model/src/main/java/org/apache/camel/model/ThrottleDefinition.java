@@ -82,7 +82,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     @Override
     public String toString() {
-        return "Throttle[" + description() + "]";
+        return "Throttle[" + description() + ']';
     }
 
     protected String description() {
@@ -96,7 +96,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     @Override
     public String getLabel() {
-        return "throttle[" + description() + "]";
+        return "throttle[" + description() + ']';
     }
 
     // Fluent API

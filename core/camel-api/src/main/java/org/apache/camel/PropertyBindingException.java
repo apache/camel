@@ -68,10 +68,10 @@ public class PropertyBindingException extends RuntimeCamelException {
         String stringValue = value != null ? value.toString() : "";
         String key = propertyName;
         if (optionPrefix != null && optionKey != null) {
-            key = optionPrefix.endsWith(".") ? optionPrefix + optionKey : optionPrefix + "." + optionKey;
+            key = optionPrefix.endsWith(".") ? optionPrefix + optionKey : optionPrefix + '.' + optionKey;
         }
         if (key != null) {
-            return "Error binding property (" + key + "=" + stringValue + ") with name: " + propertyName
+            return "Error binding property (" + key + '=' + stringValue + ") with name: " + propertyName
                    + " on bean: " + target + " with value: " + stringValue;
         } else {
             return "Error binding properties on bean: " + target;

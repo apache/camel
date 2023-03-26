@@ -186,7 +186,7 @@ public class CamelThreadDump extends ActionWatchCommand {
                     new Column().header("BLOCK").with(this::getBlocked),
                     new Column().header("WAIT").with(this::getWaited))));
             for (int i = 0; i < depth && i < row.stackTrace.size(); i++) {
-                System.out.println("\t" + row.stackTrace.get(i));
+                System.out.println('\t' + row.stackTrace.get(i));
             }
         }
     }

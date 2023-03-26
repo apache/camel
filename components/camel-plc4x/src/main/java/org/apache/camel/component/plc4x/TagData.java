@@ -140,7 +140,7 @@ public class TagData {
 
     @Override
     public String toString() {
-        return "(" + tagName + ") : " + value;
+        return '(' + tagName + ") : " + value;
     }
 
     @Override

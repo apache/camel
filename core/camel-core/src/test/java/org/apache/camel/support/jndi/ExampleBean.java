@@ -23,7 +23,7 @@ public class ExampleBean {
 
     @Override
     public String toString() {
-        return "ExampleBean[name: " + name + " price: " + price + " id: " + id + "]";
+        return "ExampleBean[name: " + name + " price: " + price + " id: " + id + ']';
     }
 
     public String getName() {

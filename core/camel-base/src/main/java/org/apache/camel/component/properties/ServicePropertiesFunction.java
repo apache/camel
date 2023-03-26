@@ -61,7 +61,7 @@ public class ServicePropertiesFunction implements PropertiesFunction {
             String port = System.getenv(key + PORT_PREFIX);
 
             if (host != null && port != null) {
-                return host + ":" + port;
+                return host + ':' + port;
             } else {
                 return defaultValue;
             }

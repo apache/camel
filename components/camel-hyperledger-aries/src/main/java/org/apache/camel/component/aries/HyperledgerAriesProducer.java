@@ -104,7 +104,7 @@ public class HyperledgerAriesProducer extends DefaultProducer {
         }
         AssertState.notNull(service, "Cannot obtain API service");
         if (!service.startsWith("/")) {
-            service = "/" + service;
+            service = '/' + service;
         }
         return service;
     }

@@ -67,7 +67,7 @@ public class SharedQueueSimpleMessageListenerContainer extends SimpleJmsMessageL
             id = creator.get();
         }
         if (logger.isTraceEnabled()) {
-            logger.trace("Using MessageSelector[" + id + "]");
+            logger.trace("Using MessageSelector[" + id + ']');
         }
         return id;
     }

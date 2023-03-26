@@ -70,6 +70,6 @@ public class DefaultExchangeComparator implements ExpressionResultComparator {
 
     @Override
     public String toString() {
-        return "Comparator[" + expression + "]";
+        return "Comparator[" + expression + ']';
     }
 }

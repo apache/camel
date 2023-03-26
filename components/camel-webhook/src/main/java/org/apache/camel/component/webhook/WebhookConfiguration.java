@@ -116,12 +116,12 @@ public class WebhookConfiguration implements Cloneable {
         if (path == null) {
             path = computeDefaultPath(endpointUri);
         } else if (!path.startsWith("/")) {
-            path = "/" + path;
+            path = '/' + path;
         }
 
         if (webhookBasePath != null) {
             if (!webhookBasePath.startsWith("/")) {
-                path = "/" + webhookBasePath + path;
+                path = '/' + webhookBasePath + path;
             } else {
                 path = webhookBasePath + path;
             }
@@ -131,7 +131,7 @@ public class WebhookConfiguration implements Cloneable {
             String contextPath = restConfiguration.getContextPath();
             if (contextPath != null) {
                 if (!contextPath.startsWith("/")) {
-                    path = "/" + contextPath + path;
+                    path = '/' + contextPath + path;
                 } else {
                     path = contextPath + path;
                 }
@@ -187,7 +187,7 @@ public class WebhookConfiguration implements Cloneable {
             md.update(uri.getBytes(StandardCharsets.UTF_8));
             byte[] digest = md.digest();
 
-            return "/" + Base64.getUrlEncoder().encodeToString(digest);
+            return '/' + Base64.getUrlEncoder().encodeToString(digest);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeCamelException("Cannot compute default webhook path", e);
         }

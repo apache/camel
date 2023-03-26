@@ -132,7 +132,7 @@ public class EventbridgeProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (eventbridgeProducerToString == null) {
-            eventbridgeProducerToString = "EventbridgeProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            eventbridgeProducerToString = "EventbridgeProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return eventbridgeProducerToString;
     }

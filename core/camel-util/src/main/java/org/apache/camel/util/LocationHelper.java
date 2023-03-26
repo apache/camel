@@ -54,7 +54,7 @@ public final class LocationHelper {
         } else if ("arguments".equals(loc) || "CLI".equals(loc)) {
             loc = "Command Line";
         }
-        loc = "[" + loc + "]";
+        loc = '[' + loc + ']';
         loc = String.format("%-30s", loc);
         return loc;
     }

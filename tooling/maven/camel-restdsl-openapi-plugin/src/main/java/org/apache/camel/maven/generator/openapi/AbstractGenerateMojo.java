@@ -381,7 +381,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
             dep += "\n\t\t</dependency>\n";
 
             getLog().info("Cannot detect Rest component from classpath. Will use servlet as Rest component.");
-            getLog().info("Add the following dependency in the Maven pom.xml file:\n" + dep + "\n");
+            getLog().info("Add the following dependency in the Maven pom.xml file:\n" + dep + '\n');
         }
 
         return comp;

@@ -39,7 +39,7 @@ public class Order {
 
     @Override
     public String toString() {
-        return "order[" + customerName + "," + productName + "]";
+        return "order[" + customerName + ',' + productName + ']';
     }
 
 }

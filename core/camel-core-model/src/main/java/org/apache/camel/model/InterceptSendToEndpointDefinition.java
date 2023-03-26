@@ -64,7 +64,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
 
     @Override
     public String toString() {
-        return "InterceptSendToEndpoint[" + uri + " -> " + getOutputs() + "]";
+        return "InterceptSendToEndpoint[" + uri + " -> " + getOutputs() + ']';
     }
 
     @Override
@@ -74,7 +74,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
 
     @Override
     public String getLabel() {
-        return "interceptSendToEndpoint[" + uri + "]";
+        return "interceptSendToEndpoint[" + uri + ']';
     }
 
     @Override

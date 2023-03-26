@@ -69,7 +69,7 @@ final class CompositeRequest implements Serializable {
 
     @Override
     public String toString() {
-        return "Batch: " + method + " " + url + ", " + referenceId + ", data:" + body;
+        return "Batch: " + method + ' ' + url + ", " + referenceId + ", data:" + body;
     }
 
 }

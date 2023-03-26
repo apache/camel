@@ -217,7 +217,7 @@ public class Jt400PgmProducer extends DefaultProducer {
             outputMsg.append(messageList[i].getText());
             outputMsg.append(" - ");
             outputMsg.append(messageList[i].getHelp());
-            outputMsg.append("\n");
+            outputMsg.append('\n');
         }
         return outputMsg.toString();
     }

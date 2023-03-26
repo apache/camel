@@ -29,7 +29,7 @@ public class RestContextPathMatcher extends DefaultContextPathMatcher {
     public RestContextPathMatcher(String rawPath, String path, String restrictMethod, boolean matchOnUriPrefix) {
         super(path, matchOnUriPrefix);
         this.rawPath = rawPath;
-        this.comparePath = rawPath + "?" + restrictMethod;
+        this.comparePath = rawPath + '?' + restrictMethod;
     }
 
     @Override

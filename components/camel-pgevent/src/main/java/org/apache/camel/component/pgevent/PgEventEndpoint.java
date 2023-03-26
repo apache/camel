@@ -95,7 +95,7 @@ public class PgEventEndpoint extends DefaultEndpoint {
             ClassResolver classResolver = getCamelContext().getClassResolver();
             classResolver.resolveMandatoryClass(PGDriver.class.getName(), PgEventComponent.class.getClassLoader());
             conn = (PGConnection) DriverManager.getConnection(
-                    "jdbc:pgsql://" + this.getHost() + ":" + this.getPort() + "/" + this.getDatabase(), this.getUser(),
+                    "jdbc:pgsql://" + this.getHost() + ':' + this.getPort() + '/' + this.getDatabase(), this.getUser(),
                     this.getPass());
         }
         return conn;

@@ -71,7 +71,7 @@ public class PollEnrichDefinition extends ExpressionNode implements AggregationS
 
     @Override
     public String toString() {
-        return "PollEnrich[" + getExpression() + "]";
+        return "PollEnrich[" + getExpression() + ']';
     }
 
     @Override
@@ -81,7 +81,7 @@ public class PollEnrichDefinition extends ExpressionNode implements AggregationS
 
     @Override
     public String getLabel() {
-        return "pollEnrich[" + getExpression() + "]";
+        return "pollEnrich[" + getExpression() + ']';
     }
 
     // Fluent API

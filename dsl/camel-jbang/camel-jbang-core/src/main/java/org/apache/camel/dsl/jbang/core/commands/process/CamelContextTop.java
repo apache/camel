@@ -210,7 +210,7 @@ public class CamelContextTop extends ProcessWatchCommand {
     }
 
     private String getHeapMemory(Row r) {
-        return asMegaBytesOneDigit(r.heapMemUsed) + "/" + asMegaBytesOneDigit(r.heapMemCommitted) + "/"
+        return asMegaBytesOneDigit(r.heapMemUsed) + "/" + asMegaBytesOneDigit(r.heapMemCommitted) + '/'
                + asMegaBytesOneDigit(r.heapMemMax) + " MB";
     }
 
@@ -261,7 +261,7 @@ public class CamelContextTop extends ProcessWatchCommand {
         if (s1.equals("-") && s2.equals("-") && s3.equals("-")) {
             return "0/0/0";
         }
-        return s1 + "/" + s2 + "/" + s3;
+        return s1 + '/' + s2 + '/' + s3;
     }
 
     private static long asMegaBytesOneDigit(long bytes) {

@@ -164,10 +164,10 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
         String scheme = "vertx-http:";
         String url = scheme + host;
         if (!ObjectHelper.isEmpty(basePath)) {
-            url += "/" + basePath;
+            url += '/' + basePath;
         }
         if (!ObjectHelper.isEmpty(uriTemplate)) {
-            url += "/" + uriTemplate;
+            url += '/' + uriTemplate;
         }
 
         RestConfiguration config = configuration;
@@ -187,7 +187,7 @@ public class VertxHttpComponent extends HeaderFilterStrategyComponent
         // get the endpoint
         String query = URISupport.createQueryString(map);
         if (!query.isEmpty()) {
-            url = url + "?" + query;
+            url = url + '?' + query;
         }
 
         parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<>();

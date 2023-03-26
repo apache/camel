@@ -113,7 +113,7 @@ public class SecureRandomParameters extends JsseParameters {
         builder.append(algorithm);
         builder.append(", provider=");
         builder.append(provider);
-        builder.append("]");
+        builder.append(']');
         return builder.toString();
     }
 }

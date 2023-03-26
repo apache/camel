@@ -259,11 +259,11 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
     @Override
     public String getLabel() {
         return getOutputs().stream().map(ProcessorDefinition::getLabel)
-                .collect(Collectors.joining(",", getShortName() + "[", "]"));
+                .collect(Collectors.joining(",", getShortName() + '[', "]"));
     }
 
     @Override
     public String toString() {
-        return "LoadBalanceType[" + loadBalancerType + ", " + getOutputs() + "]";
+        return "LoadBalanceType[" + loadBalancerType + ", " + getOutputs() + ']';
     }
 }

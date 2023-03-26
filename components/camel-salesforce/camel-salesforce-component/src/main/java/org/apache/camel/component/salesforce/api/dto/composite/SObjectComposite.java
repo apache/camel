@@ -118,7 +118,7 @@ public final class SObjectComposite implements Serializable {
      */
     public SObjectComposite addCreate(final AbstractDescribedSObjectBase data, final String referenceId) {
         addCompositeRequest(
-                new CompositeRequest(Method.POST, apiPrefix + "/sobjects/" + typeOf(data) + "/", data, referenceId));
+                new CompositeRequest(Method.POST, apiPrefix + "/sobjects/" + typeOf(data) + '/', data, referenceId));
 
         return this;
     }
@@ -224,7 +224,7 @@ public final class SObjectComposite implements Serializable {
         final String fieldsParameter = composeFieldsParameter(fields);
 
         addCompositeRequest(new CompositeRequest(
-                Method.GET, rowBaseUrl(type, id) + "/" + notEmpty(relation, "relation") + fieldsParameter, referenceId));
+                Method.GET, rowBaseUrl(type, id) + '/' + notEmpty(relation, "relation") + fieldsParameter, referenceId));
 
         return this;
     }
@@ -357,12 +357,12 @@ public final class SObjectComposite implements Serializable {
     }
 
     String rowBaseUrl(final String type, final String id) {
-        return apiPrefix + "/sobjects/" + notEmpty(type, SOBJECT_TYPE_PARAM) + "/" + notEmpty(id, "id");
+        return apiPrefix + "/sobjects/" + notEmpty(type, SOBJECT_TYPE_PARAM) + '/' + notEmpty(id, "id");
     }
 
     String rowBaseUrl(final String type, final String fieldName, final String fieldValue) {
         try {
-            return apiPrefix + "/sobjects/" + notEmpty(type, SOBJECT_TYPE_PARAM) + "/" + notEmpty(fieldName, "fieldName") + "/"
+            return apiPrefix + "/sobjects/" + notEmpty(type, SOBJECT_TYPE_PARAM) + '/' + notEmpty(fieldName, "fieldName") + '/'
                    + UrlUtils.encodePath(notEmpty(fieldValue, "fieldValue"));
         } catch (final UnsupportedEncodingException e) {
             throw new IllegalStateException(e);

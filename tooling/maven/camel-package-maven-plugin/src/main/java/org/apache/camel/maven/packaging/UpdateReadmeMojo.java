@@ -171,7 +171,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     // special for some components
                     componentName = asComponentName(componentName);
 
-                    File file = new File(componentDocDir, componentName + "-" + kind + ".adoc");
+                    File file = new File(componentDocDir, componentName + '-' + kind + ".adoc");
                     boolean exists = file.exists();
 
                     ComponentModel model = generateComponentModel(json);
@@ -274,7 +274,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
                     // special for some data formats
                     dataFormatName = asDataFormatName(dataFormatName);
 
-                    File file = new File(dataformatDocDir, dataFormatName + "-" + kind + ".adoc");
+                    File file = new File(dataformatDocDir, dataFormatName + '-' + kind + ".adoc");
 
                     DataFormatModel model = generateDataFormatModel(json);
                     // Bindy has 3 derived dataformats, but only one doc, so
@@ -345,10 +345,10 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             for (String languageName : languageNames) {
                 String json = loadJsonFrom(jsonFiles, kind, languageName);
                 if (json != null) {
-                    File file = new File(languageDocDir, languageName + "-" + kind + ".adoc");
+                    File file = new File(languageDocDir, languageName + '-' + kind + ".adoc");
                     boolean exists = file.exists();
                     if (!exists) {
-                        file = new File(languageDocDir2, languageName + "-" + kind + ".adoc");
+                        file = new File(languageDocDir2, languageName + '-' + kind + ".adoc");
                         exists = file.exists();
                     }
 
@@ -413,7 +413,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
 
                     String eipName = model.getName();
 
-                    File file = new File(eipDocDir, eipName + "-" + kind + ".adoc");
+                    File file = new File(eipDocDir, eipName + '-' + kind + ".adoc");
                     boolean exists = file.exists();
 
                     boolean updated = updateHeader(eipName, file, model, " EIP");
@@ -540,7 +540,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             if (!manualAttributes.isEmpty()) {
                 newLines.add("//Manually maintained attributes");
                 for (Map.Entry<String, String> entry : manualAttributes.entrySet()) {
-                    newLines.add(":" + entry.getKey() + ": " + entry.getValue());
+                    newLines.add(':' + entry.getKey() + ": " + entry.getValue());
                 }
             }
 
@@ -611,7 +611,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
         }
         if (!loadedText.contains(headerText)) {
-            throw new MojoExecutionException("File " + file + " does not contain required string `" + headerText + "'");
+            throw new MojoExecutionException("File " + file + " does not contain required string `" + headerText + '\'');
         }
     }
 
@@ -629,7 +629,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
         }
         if (!loadedText.contains(sinceText)) {
-            throw new MojoExecutionException("File " + file + " does not contain required string '" + sinceText + "'");
+            throw new MojoExecutionException("File " + file + " does not contain required string '" + sinceText + '\'');
         }
     }
 
@@ -847,7 +847,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             }
             throw new RuntimeException(
                     "Unable to load source for class " + className + " in folders " + getSourceRoots()
-                                       + " (classpath: " + classpath + ")");
+                                       + " (classpath: " + classpath + ')');
         }
     }
 
@@ -893,7 +893,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
             String template = PackageHelper.loadText(templateStream);
             return (String) TemplateRuntime.eval(template, model, Collections.singletonMap("util", MvelHelper.INSTANCE));
         } catch (IOException e) {
-            throw new MojoExecutionException("Error processing mvel template `" + templateName + "`", e);
+            throw new MojoExecutionException("Error processing mvel template `" + templateName + '`', e);
         }
     }
 

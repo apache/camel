@@ -163,7 +163,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
                 if (endpoint.isRecursive() && depth < endpoint.getMaxDepth() && isValidFile(remote, true, files)) {
                     // recursive scan and add the sub files and folders
                     String subDirectory = file.getFilename();
-                    String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + "/" + subDirectory : subDirectory;
+                    String path = ObjectHelper.isNotEmpty(absolutePath) ? absolutePath + '/' + subDirectory : subDirectory;
                     boolean canPollMore = pollSubDirectory(path, subDirectory, fileList, depth);
                     if (!canPollMore) {
                         return false;
@@ -270,11 +270,11 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
 
         // create a pseudo absolute name
         String dir = FileUtil.stripTrailingSeparator(absolutePath);
-        String absoluteFileName = FileUtil.stripLeadingSeparator(dir + "/" + file.getFilename());
+        String absoluteFileName = FileUtil.stripLeadingSeparator(dir + '/' + file.getFilename());
         // if absolute start with a leading separator otherwise let it be
         // relative
         if (absolute) {
-            absoluteFileName = "/" + absoluteFileName;
+            absoluteFileName = '/' + absoluteFileName;
         }
         answer.setAbsoluteFilePath(absoluteFileName);
 
@@ -321,7 +321,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
     @Override
     public String toString() {
         if (sftpConsumerToString == null) {
-            sftpConsumerToString = "SftpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            sftpConsumerToString = "SftpConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return sftpConsumerToString;
     }

@@ -56,7 +56,7 @@ public class Address {
     @Override
     public String toString() {
         // OpenJPA warns about fields being accessed directly in methods if NOT using the corresponding getters.
-        return "Address[id: " + getId() + ", addressLine1: " + getAddressLine1() + ", addressLine2: " + getAddressLine2() + "]";
+        return "Address[id: " + getId() + ", addressLine1: " + getAddressLine1() + ", addressLine2: " + getAddressLine2() + ']';
     }
 
 }

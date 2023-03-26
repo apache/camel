@@ -107,7 +107,7 @@ public class LRAClient implements Closeable {
 
             String lraEndpoint = lra.toString();
             if (step.getTimeoutInMilliseconds().isPresent()) {
-                lraEndpoint = lraEndpoint + "?" + HEADER_TIME_LIMIT + "=" + step.getTimeoutInMilliseconds().get();
+                lraEndpoint = lraEndpoint + '?' + HEADER_TIME_LIMIT + '=' + step.getTimeoutInMilliseconds().get();
             }
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(lraEndpoint))

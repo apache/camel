@@ -814,7 +814,7 @@ class AbstractExchange implements Exchange {
     public String toString() {
         // do not output information about the message as it may contain sensitive information
         if (exchangeId != null) {
-            return "Exchange[" + exchangeId + "]";
+            return "Exchange[" + exchangeId + ']';
         } else {
             return "Exchange[]";
         }

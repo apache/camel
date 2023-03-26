@@ -53,7 +53,7 @@ public class ProxyAndBasicAuthenticationValidationHandler extends Authentication
     }
 
     private Object getExpectedProxyCredential() {
-        return proxyUser + ":" + proxyPassword;
+        return proxyUser + ':' + proxyPassword;
     }
 
 }

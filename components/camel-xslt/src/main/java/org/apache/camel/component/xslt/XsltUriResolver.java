@@ -107,9 +107,9 @@ public class XsltUriResolver implements URIResolver {
             return resolve(path, base);
         } else {
             if (ResourceHelper.hasScheme(path)) {
-                path = path + "/" + href;
+                path = path + '/' + href;
             } else {
-                path = baseScheme + path + "/" + href;
+                path = baseScheme + path + '/' + href;
             }
             return resolve(path, base);
         }

@@ -599,10 +599,10 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // get the endpoint
         String url = host;
         if (!ObjectHelper.isEmpty(basePath)) {
-            url += "/" + basePath;
+            url += '/' + basePath;
         }
         if (!ObjectHelper.isEmpty(uriTemplate)) {
-            url += "/" + uriTemplate;
+            url += '/' + uriTemplate;
         }
 
         RestConfiguration config = configuration;
@@ -623,7 +623,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // get the endpoint
         String query = URISupport.createQueryString(map);
         if (!query.isEmpty()) {
-            url = url + "?" + query;
+            url = url + '?' + query;
         }
 
         parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<>();

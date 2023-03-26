@@ -75,7 +75,7 @@ public class ThrottlingInflightRoutePolicy extends RoutePolicySupport implements
     @Override
     public String toString() {
         return "ThrottlingInflightRoutePolicy[" + maxInflightExchanges + " / " + resumePercentOfMax + "% using scope " + scope
-               + "]";
+               + ']';
     }
 
     @Override

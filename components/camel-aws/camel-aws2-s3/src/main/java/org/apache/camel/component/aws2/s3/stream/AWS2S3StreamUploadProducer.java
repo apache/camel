@@ -240,9 +240,9 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             case progressive:
                 if (part.get() > 0) {
                     if (ObjectHelper.isNotEmpty(ext)) {
-                        dynamicKeyName = fileName + "-" + part + ext;
+                        dynamicKeyName = fileName + '-' + part + ext;
                     } else {
-                        dynamicKeyName = fileName + "-" + part;
+                        dynamicKeyName = fileName + '-' + part;
                     }
                 } else {
                     if (ObjectHelper.isNotEmpty(ext)) {
@@ -255,9 +255,9 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
             case random:
                 if (part.get() > 0) {
                     if (ObjectHelper.isNotEmpty(ext)) {
-                        dynamicKeyName = fileName + "-" + id.toString() + ext;
+                        dynamicKeyName = fileName + '-' + id.toString() + ext;
                     } else {
-                        dynamicKeyName = fileName + "-" + id.toString();
+                        dynamicKeyName = fileName + '-' + id.toString();
                     }
                 } else {
                     if (ObjectHelper.isNotEmpty(ext)) {
@@ -308,7 +308,7 @@ public class AWS2S3StreamUploadProducer extends DefaultProducer {
     @Override
     public String toString() {
         if (s3ProducerToString == null) {
-            s3ProducerToString = "AWS2S3StreamUploadProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            s3ProducerToString = "AWS2S3StreamUploadProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return s3ProducerToString;
     }

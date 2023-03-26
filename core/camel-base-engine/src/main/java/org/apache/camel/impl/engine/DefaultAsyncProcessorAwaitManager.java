@@ -179,7 +179,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
                 sb.append(
                         "Interrupted while waiting for asynchronous callback, will release the following blocked thread which was waiting for exchange to finish processing with exchangeId: ");
                 sb.append(exchange.getExchangeId());
-                sb.append("\n");
+                sb.append('\n');
 
                 sb.append(dumpBlockedThread(entry));
 
@@ -254,15 +254,15 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
     private static String dumpBlockedThread(AwaitThread entry) {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n");
+        sb.append('\n');
         sb.append("Blocked Thread\n");
         sb.append(
                 "---------------------------------------------------------------------------------------------------------------------------------------\n");
 
-        sb.append(style("Id:")).append(entry.getBlockedThread().getId()).append("\n");
-        sb.append(style("Name:")).append(entry.getBlockedThread().getName()).append("\n");
-        sb.append(style("RouteId:")).append(safeNull(entry.getRouteId())).append("\n");
-        sb.append(style("NodeId:")).append(safeNull(entry.getNodeId())).append("\n");
+        sb.append(style("Id:")).append(entry.getBlockedThread().getId()).append('\n');
+        sb.append(style("Name:")).append(entry.getBlockedThread().getName()).append('\n');
+        sb.append(style("RouteId:")).append(safeNull(entry.getRouteId())).append('\n');
+        sb.append(style("NodeId:")).append(safeNull(entry.getNodeId())).append('\n');
         sb.append(style("Duration:")).append(entry.getWaitDuration()).append(" msec.\n");
         return sb.toString();
     }
@@ -319,7 +319,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
 
         @Override
         public String toString() {
-            return "AwaitThreadEntry[name=" + thread.getName() + ", exchangeId=" + exchange.getExchangeId() + "]";
+            return "AwaitThreadEntry[name=" + thread.getName() + ", exchangeId=" + exchange.getExchangeId() + ']';
         }
     }
 

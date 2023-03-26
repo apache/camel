@@ -85,7 +85,7 @@ public class ECS2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (ecsProducerToString == null) {
-            ecsProducerToString = "ECSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            ecsProducerToString = "ECSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return ecsProducerToString;
     }

@@ -29,7 +29,7 @@ public class ScpFile {
     public String header() {
         StringBuilder buffer = new StringBuilder();
         buffer.append(directory ? "D" : "C");
-        buffer.append(" ");
+        buffer.append(' ');
         return buffer.toString();
     }
 

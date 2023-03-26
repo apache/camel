@@ -193,7 +193,7 @@ public class BeanExpression implements Expression, Predicate {
         if (method != null) {
             sb.append(" method:").append(method);
         }
-        sb.append("]");
+        sb.append(']');
         return sb.toString();
     }
 
@@ -537,7 +537,7 @@ public class BeanExpression implements Expression, Predicate {
                     throw new IndexOutOfBoundsException(
                             "Index: " + num + ", Size: " + list.size()
                                                         + " out of bounds with List from bean: " + bean + "using OGNL path ["
-                                                        + ognlPath + "]");
+                                                        + ognlPath + ']');
                 }
             }
         }
@@ -546,7 +546,7 @@ public class BeanExpression implements Expression, Predicate {
             throw new IndexOutOfBoundsException(
                     "Key: " + key + " not found in bean: " + bean + " of type: "
                                                 + ObjectHelper.classCanonicalName(bean) + " using OGNL path [" + ognlPath
-                                                + "]");
+                                                + ']');
         } else {
             // null safe so we can return null
             return null;

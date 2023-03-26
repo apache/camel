@@ -165,7 +165,7 @@ public final class JsonUtils {
 
         // generate SObject schema from description
         ObjectSchema sobjectSchema = new ObjectSchema();
-        sobjectSchema.setId(idPrefix + ":" + description.getName());
+        sobjectSchema.setId(idPrefix + ':' + description.getName());
         sobjectSchema.setTitle(description.getLabel());
 
         SimpleTypeSchema addressSchema = null;
@@ -325,7 +325,7 @@ public final class JsonUtils {
         for (SObject sobject : globalObjects.getSobjects()) {
             // generate SObject schema from description
             ObjectSchema sobjectSchema = new ObjectSchema();
-            sobjectSchema.setId(DEFAULT_ID_PREFIX + ":" + sobject.getName());
+            sobjectSchema.setId(DEFAULT_ID_PREFIX + ':' + sobject.getName());
             sobjectSchema.setTitle(sobject.getLabel());
 
             allSchemas.add(sobjectSchema);

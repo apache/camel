@@ -61,6 +61,6 @@ public class BytesSource extends StreamSource implements Serializable {
 
     @Override
     public String toString() {
-        return "BytesSource[" + new String(data) + "]";
+        return "BytesSource[" + new String(data) + ']';
     }
 }

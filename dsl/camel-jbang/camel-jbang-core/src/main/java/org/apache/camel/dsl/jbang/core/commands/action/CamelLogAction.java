@@ -359,13 +359,13 @@ public class CamelLogAction extends ActionBaseCommand {
                     color = Ansi.Color.values()[idx];
                     colors.put(name, color);
                 }
-                String n = String.format("%-" + nameMaxWidth + "s", name);
+                String n = String.format("%-" + nameMaxWidth + 's', name);
                 AnsiConsole.out().print(Ansi.ansi().fg(color).a(n).a("| ").reset());
             }
         } else {
             line = unescapeAnsi(line);
             if (name != null) {
-                String n = String.format("%-" + nameMaxWidth + "s", name);
+                String n = String.format("%-" + nameMaxWidth + 's', name);
                 System.out.print(n);
                 System.out.print("| ");
             }

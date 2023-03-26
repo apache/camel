@@ -55,7 +55,7 @@ public class JooqComponent extends DefaultComponent {
 
         String[] parts = remaining.split("/");
         if (parts.length == 0 || parts.length > 2) {
-            throw new IllegalArgumentException("Unexpected URI format. Expected ... , found '" + remaining + "'");
+            throw new IllegalArgumentException("Unexpected URI format. Expected ... , found '" + remaining + '\'');
         }
 
         String className = parts[0];

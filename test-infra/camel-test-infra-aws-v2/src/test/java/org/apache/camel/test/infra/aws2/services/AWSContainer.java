@@ -89,7 +89,7 @@ public class AWSContainer extends GenericContainer<AWSContainer> {
     }
 
     protected String getAmazonHost() {
-        return getHost() + ":" + getMappedPort(SERVICE_PORT);
+        return getHost() + ':' + getMappedPort(SERVICE_PORT);
     }
 
     public URI getServiceEndpoint() {

@@ -31,11 +31,11 @@ public class BonitaAPIConfig {
     }
 
     public String getBaseBonitaURI() {
-        return "http://" + hostname + ":" + port + "/bonita";
+        return "http://" + hostname + ':' + port + "/bonita";
     }
 
     public String getProcessFileUploadBaseURI(String processName, String processVersion) {
-        return getBaseBonitaURI() + "portal/resource/process/" + processName + "/" + processVersion
+        return getBaseBonitaURI() + "portal/resource/process/" + processName + '/' + processVersion
                + "/API/formFileUpload";
     }
 

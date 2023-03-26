@@ -135,7 +135,7 @@ public class SplunkDataReader {
     private String calculateEarliestTimeForRealTime(Calendar startTime) {
         String result;
         long diff = startTime.getTimeInMillis() - lastSuccessfulReadTime.getTimeInMillis();
-        result = "-" + diff / 1000 + "s";
+        result = "-" + diff / 1000 + 's';
         return result;
     }
 

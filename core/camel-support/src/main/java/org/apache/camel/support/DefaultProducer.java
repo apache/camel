@@ -41,7 +41,7 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
     @Override
     public String toString() {
         if (producerToString == null) {
-            producerToString = "Producer[" + URISupport.sanitizeUri(endpoint.getEndpointUri()) + "]";
+            producerToString = "Producer[" + URISupport.sanitizeUri(endpoint.getEndpointUri()) + ']';
         }
         return producerToString;
     }

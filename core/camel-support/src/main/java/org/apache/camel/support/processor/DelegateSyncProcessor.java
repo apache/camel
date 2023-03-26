@@ -50,7 +50,7 @@ public class DelegateSyncProcessor extends ServiceSupport
 
     @Override
     public String toString() {
-        return "DelegateSync[" + processor + "]";
+        return "DelegateSync[" + processor + ']';
     }
 
     @Override

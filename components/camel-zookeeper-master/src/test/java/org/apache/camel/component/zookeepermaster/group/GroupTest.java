@@ -59,7 +59,7 @@ public class GroupTest {
             if (connected) {
                 Collection<NodeState> members = group.members().values();
                 LOGGER.info("GroupEvent: " + event + " (connected=" + connected + ", master=" + master + ", members=" + members
-                            + ")");
+                            + ')');
             } else {
                 LOGGER.info("GroupEvent: " + event + " (connected=" + connected + ", master=false)");
             }

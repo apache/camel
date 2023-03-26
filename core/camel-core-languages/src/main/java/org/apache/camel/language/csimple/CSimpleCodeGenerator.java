@@ -74,38 +74,38 @@ public class CSimpleCodeGenerator {
         //  wrap text into a class method we can call
         StringBuilder sb = new StringBuilder();
         sb.append("package ").append(qn).append(";\n");
-        sb.append("\n");
+        sb.append('\n');
         sb.append("import java.util.*;\n");
         sb.append("import java.util.concurrent.*;\n");
         sb.append("import java.util.stream.*;\n");
-        sb.append("\n");
+        sb.append('\n');
         sb.append("import org.apache.camel.*;\n");
         sb.append("import org.apache.camel.util.*;\n");
         sb.append("import org.apache.camel.spi.*;\n");
         sb.append("import static org.apache.camel.language.csimple.CSimpleHelper.*;\n");
-        sb.append("\n");
+        sb.append('\n');
         // custom imports
         for (String i : imports) {
             sb.append(i);
             if (!i.endsWith(";")) {
-                sb.append(";");
+                sb.append(';');
             }
-            sb.append("\n");
+            sb.append('\n');
         }
-        sb.append("\n");
+        sb.append('\n');
         sb.append("public class ").append(name).append(" extends org.apache.camel.language.csimple.CSimpleSupport {\n");
-        sb.append("\n");
+        sb.append('\n');
         sb.append("    Language bean;\n");
-        sb.append("\n");
+        sb.append('\n');
         sb.append("    public ").append(name).append("() {\n");
         sb.append("    }\n");
-        sb.append("\n");
+        sb.append('\n');
 
         sb.append("    @Override\n");
         sb.append("    public boolean isPredicate() {\n");
         sb.append("        return ").append(predicate).append(";\n");
         sb.append("    }\n");
-        sb.append("\n");
+        sb.append('\n');
 
         sb.append("    @Override\n");
         sb.append("    public String getText() {\n");
@@ -115,7 +115,7 @@ public class CSimpleCodeGenerator {
         escaped = escaped.replace("\"", "\\\"");
         sb.append("        return \"").append(escaped).append("\";\n");
         sb.append("    }\n");
-        sb.append("\n");
+        sb.append('\n');
 
         sb.append("    @Override\n");
         sb.append(
@@ -137,31 +137,31 @@ public class CSimpleCodeGenerator {
             script = parser.parseExpression(script);
             if (script.trim().isEmpty()) {
                 // an expression can be whitespace but then we need to wrap this in quotes
-                script = "\"" + script + "\"";
+                script = '"' + script + '"';
             }
         }
 
         sb.append(script);
         if (!script.endsWith("}") && !script.endsWith(";")) {
-            sb.append(";");
+            sb.append(';');
         }
-        sb.append("\n");
+        sb.append('\n');
         sb.append("    }\n");
 
         // only resolve bean language if we use it as camel-bean must then be on the classpath
         if (script.contains("bean(exchange, bean,")) {
-            sb.append("\n");
+            sb.append('\n');
             sb.append("    @Override\n");
             sb.append("    public void init(CamelContext context) {\n");
             sb.append("        bean = context.resolveLanguage(\"bean\");\n");
             sb.append("    }\n");
-            sb.append("\n");
+            sb.append('\n');
         }
 
         sb.append("}\n");
-        sb.append("\n");
+        sb.append('\n');
 
-        return new CSimpleGeneratedCode(qn + "." + name, sb.toString());
+        return new CSimpleGeneratedCode(qn + '.' + name, sb.toString());
     }
 
     private String alias(String script) {

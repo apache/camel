@@ -202,7 +202,7 @@ public class SmppConsumer extends DefaultConsumer {
 
     @Override
     public String toString() {
-        return "SmppConsumer[" + getEndpoint().getConnectionString() + "]";
+        return "SmppConsumer[" + getEndpoint().getConnectionString() + ']';
     }
 
     @Override

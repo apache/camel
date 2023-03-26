@@ -122,7 +122,7 @@ public class GraphqlEndpoint extends DefaultEndpoint {
                 authType = this.jwtAuthorizationType;
             }
             httpClientBuilder.setDefaultHeaders(
-                    Arrays.asList(new BasicHeader(HttpHeaders.AUTHORIZATION, authType + " " + accessToken)));
+                    Arrays.asList(new BasicHeader(HttpHeaders.AUTHORIZATION, authType + ' ' + accessToken)));
         }
         if (username != null && password != null) {
             CredentialsStore credentialsProvider = new BasicCredentialsProvider();

@@ -37,7 +37,7 @@ public class RedpandaTransactionsEnabledContainer extends RedpandaContainer {
 
         command += "/usr/bin/rpk redpanda start --mode dev-container ";
         command += "--kafka-addr PLAINTEXT://0.0.0.0:29092,OUTSIDE://0.0.0.0:9092 ";
-        command += "--advertise-kafka-addr PLAINTEXT://kafka:29092,OUTSIDE://" + getHost() + ":" + getMappedPort(9092);
+        command += "--advertise-kafka-addr PLAINTEXT://kafka:29092,OUTSIDE://" + getHost() + ':' + getMappedPort(9092);
 
         this.copyFileToContainer(Transferable.of(command, 511), "/testcontainers_start.sh");
     }

@@ -80,7 +80,7 @@ public class STS2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (stsProducerToString == null) {
-            stsProducerToString = "STSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            stsProducerToString = "STSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return stsProducerToString;
     }

@@ -112,12 +112,12 @@ public class Order {
     public String toString() {
         StringBuilder temp = new StringBuilder();
         temp.append(Order.class.getName()).append(" --> 1: ").append(this.account).append(", 11: ").append(this.clOrdId).append(", 58: ").append(this.text).append(", 777: ").append(this.created);
-        temp.append("\r");
+        temp.append('\r');
 
         if (this.securities != null) {
             for (Security sec : this.securities) {
                 temp.append(sec.toString());
-                temp.append("\r");
+                temp.append('\r');
             }
         }
         return temp.toString();

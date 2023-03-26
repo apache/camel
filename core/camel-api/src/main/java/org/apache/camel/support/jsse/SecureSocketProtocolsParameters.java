@@ -51,7 +51,7 @@ public class SecureSocketProtocolsParameters {
         StringBuilder builder = new StringBuilder();
         builder.append("SecureSocketProtocolsParameters[secureSocketProtocol=");
         builder.append(getSecureSocketProtocol());
-        builder.append("]");
+        builder.append(']');
         return builder.toString();
     }
 }

@@ -145,7 +145,7 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
     }
 
     private static String leaseResourceName(String prefix, String group) {
-        return toValidKubernetesID(prefix + "-" + group);
+        return toValidKubernetesID(prefix + '-' + group);
     }
 
     private static String toValidKubernetesID(String id) {

@@ -104,12 +104,12 @@ public class UnmarshalProcessor extends AsyncProcessorSupport implements Traceab
 
     @Override
     public String toString() {
-        return "Unmarshal[" + dataFormat + "]";
+        return "Unmarshal[" + dataFormat + ']';
     }
 
     @Override
     public String getTraceLabel() {
-        return "unmarshal[" + dataFormat + "]";
+        return "unmarshal[" + dataFormat + ']';
     }
 
     @Override

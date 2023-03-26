@@ -269,7 +269,7 @@ public final class SalesforceReportResultsToListConverter {
 
             for (GroupingValue subGroup : groupings) {
                 addMatrixGroupValues(result, reportResults, columnNames, subGroup, newPrefix, includeDetails, includeSummary,
-                        newKeyPrefix + "_", downGroup);
+                        newKeyPrefix + '_', downGroup);
             }
 
             // process across groupings?
@@ -277,7 +277,7 @@ public final class SalesforceReportResultsToListConverter {
 
             for (GroupingValue acrossGroup : reportResults.getGroupingsAcross().getGroupings()) {
                 addMatrixGroupValues(result, reportResults, columnNames, acrossGroup, newPrefix, includeDetails, includeSummary,
-                        newKeyPrefix + "!", false);
+                        newKeyPrefix + '!', false);
             }
 
             // add lowest level across group detail rows?
@@ -407,7 +407,7 @@ public final class SalesforceReportResultsToListConverter {
                 for (int j = rowPrefix == null ? 0 : rowPrefix.size(); j < detailColumns.length; j++) {
 
                     final String columnName = detailColumns[j];
-                    if (aggregate.endsWith("!" + columnName)) {
+                    if (aggregate.endsWith('!' + columnName)) {
                         final StringBuilder valueBuilder = new StringBuilder();
                         if (aggregate.startsWith("a!")) {
                             valueBuilder.append("avg ");

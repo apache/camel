@@ -37,14 +37,14 @@ public class HttpRestHeaderFilterStrategy extends HttpHeaderFilterStrategy {
         // the header to included as HTTP header also (eg as duplicate value)
         if (!answer) {
             if (templateUri != null) {
-                String token = "{" + headerName + "}";
+                String token = '{' + headerName + '}';
                 if (templateUri.contains(token)) {
                     answer = true;
                 }
             }
             if (!answer && queryParameters != null) {
                 String[] tokens = new String[4];
-                tokens[0] = "={" + headerName + "}";
+                tokens[0] = "={" + headerName + '}';
                 tokens[1] = "={" + headerName + "?}";
                 tokens[2] = "=%7B" + headerName + "%7D";
                 tokens[3] = "=%7B" + headerName + "%3F%7D";

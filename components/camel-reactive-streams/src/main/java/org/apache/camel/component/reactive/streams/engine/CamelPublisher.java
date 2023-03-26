@@ -116,7 +116,7 @@ public class CamelPublisher implements Publisher<Exchange>, AutoCloseable {
     public void attachProducer(ReactiveStreamsProducer producer) {
         Objects.requireNonNull(producer, "producer cannot be null, use the detach method");
         if (this.producer != null) {
-            throw new IllegalStateException("A producer is already attached to the stream '" + name + "'");
+            throw new IllegalStateException("A producer is already attached to the stream '" + name + '\'');
         }
         this.producer = producer;
 

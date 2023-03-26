@@ -45,7 +45,7 @@ public class HealthDevConsole extends AbstractDevConsole {
         Collection<HealthCheck.Result> results = HealthCheckHelper.invoke(getCamelContext(), exposureLevel);
         boolean up = results.stream().allMatch(h -> HealthCheck.State.UP.equals(h.getState()));
         sb.append(String.format("Health Check Status: %s", up ? "UP" : "DOWN"));
-        sb.append("\n");
+        sb.append('\n');
 
         results.forEach(res -> {
             boolean ok = res.getState().equals(HealthCheck.State.UP);

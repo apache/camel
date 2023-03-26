@@ -98,7 +98,7 @@ public class KMS2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (kmsProducerToString == null) {
-            kmsProducerToString = "KMSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            kmsProducerToString = "KMSProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return kmsProducerToString;
     }

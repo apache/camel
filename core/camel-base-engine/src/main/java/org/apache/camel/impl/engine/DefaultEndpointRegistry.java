@@ -64,6 +64,6 @@ public class DefaultEndpointRegistry extends AbstractDynamicRegistry<NormalizedU
 
     @Override
     public String toString() {
-        return "EndpointRegistry for " + context.getName() + " [capacity: " + maxCacheSize + "]";
+        return "EndpointRegistry for " + context.getName() + " [capacity: " + maxCacheSize + ']';
     }
 }

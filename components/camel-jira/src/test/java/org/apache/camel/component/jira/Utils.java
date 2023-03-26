@@ -71,7 +71,7 @@ public final class Utils {
             BasicPriority priority, User assignee, Collection<BasicComponent> components, BasicWatchers watchers) {
         URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + id);
         return new Issue(
-                summary, selfUri, KEY + "-" + id, id, null, issueType, null, description, priority, null, null, null,
+                summary, selfUri, KEY + '-' + id, id, null, issueType, null, description, priority, null, null, null,
                 assignee, null, null, null, null, null, components, null, null, null, null, null, null, null, watchers,
                 null, null, null, null, null);
     }
@@ -106,7 +106,7 @@ public final class Utils {
             BasicPriority priority, User assignee, Collection<Attachment> attachments) {
         URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + id);
         return new Issue(
-                summary, selfUri, KEY + "-" + id, id, null, issueType, null, description, priority, null, attachments, null,
+                summary, selfUri, KEY + '-' + id, id, null, issueType, null, description, priority, null, attachments, null,
                 assignee, null, null, null, null, null, null, null, null, null, null, null, null, null, null,
                 null, null, null, null, null);
     }
@@ -115,7 +115,7 @@ public final class Utils {
         Collection<Comment> comments = new ArrayList<>();
         if (numComments > 0) {
             for (int idx = 1; idx < numComments + 1; idx++) {
-                Comment c = newComment(id, idx, "A test comment " + idx + " for " + KEY + "-" + id);
+                Comment c = newComment(id, idx, "A test comment " + idx + " for " + KEY + '-' + id);
                 comments.add(c);
             }
         }
@@ -125,7 +125,7 @@ public final class Utils {
     public static Issue createIssueWithComments(long id, Collection<Comment> comments) {
         URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + id);
         return new Issue(
-                "jira summary test " + id, selfUri, KEY + "-" + id, id, null, issueType, null, "Description " + id,
+                "jira summary test " + id, selfUri, KEY + '-' + id, id, null, issueType, null, "Description " + id,
                 null, null, null, null, userAssignee, null, null, null, null, null, null, null, null, comments, null, null,
                 null, null, null, null, null, null, null, null);
     }
@@ -133,7 +133,7 @@ public final class Utils {
     public static Issue createIssueWithLinks(long id, Collection<IssueLink> issueLinks) {
         URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + id);
         return new Issue(
-                "jira summary test " + id, selfUri, KEY + "-" + id, id, null, issueType, null, "Description " + id,
+                "jira summary test " + id, selfUri, KEY + '-' + id, id, null, issueType, null, "Description " + id,
                 null, null, null, null, userAssignee, null, null, null, null, null, null, null, null, null, null, issueLinks,
                 null, null, null, null, null, null, null, null);
     }
@@ -141,7 +141,7 @@ public final class Utils {
     public static Issue createIssueWithWorkLogs(long id, Collection<Worklog> worklogs) {
         URI selfUri = URI.create(TEST_JIRA_URL + "/rest/api/latest/issue/" + id);
         return new Issue(
-                "jira summary test " + id, selfUri, KEY + "-" + id, id, null, issueType, null, "Description " + id,
+                "jira summary test " + id, selfUri, KEY + '-' + id, id, null, issueType, null, "Description " + id,
                 null, null, null, null, userAssignee, null, null, null, null, null, null, null, null, null, null, null,
                 null, worklogs, null, null, null, null, null, null);
     }
@@ -186,13 +186,13 @@ public final class Utils {
 
         // Optional user name
         if (StringUtils.isNotBlank(userName)) {
-            sb.append("ownerId=").append(userName).append("&");
+            sb.append("ownerId=").append(userName).append('&');
         }
 
         // avatar Id
         sb.append("avatarId=").append(avatarId);
         String relativeAvatarUrl = sb.toString();
-        return new URL(TEST_JIRA_URL + "/" + relativeAvatarUrl).toURI();
+        return new URL(TEST_JIRA_URL + '/' + relativeAvatarUrl).toURI();
     }
 
 }

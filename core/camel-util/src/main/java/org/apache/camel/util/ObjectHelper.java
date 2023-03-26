@@ -917,7 +917,7 @@ public final class ObjectHelper {
                 String text = (object == null) ? "null" : object.toString();
                 buffer.append(text);
             }
-            buffer.append("}");
+            buffer.append('}');
             return buffer.toString();
         }
     }

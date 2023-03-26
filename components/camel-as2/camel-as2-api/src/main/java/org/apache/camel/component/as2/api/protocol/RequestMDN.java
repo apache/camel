@@ -51,7 +51,7 @@ public class RequestMDN implements HttpRequestInterceptor {
                         SIGNED_RECEIPT_PREFIX.length() + 5 * micAlgorithms.length);
                 options.append(SIGNED_RECEIPT_PREFIX);
                 for (String micAlgorithm : micAlgorithms) {
-                    options.append("," + micAlgorithm);
+                    options.append(',' + micAlgorithm);
                 }
 
                 request.addHeader(AS2Header.DISPOSITION_NOTIFICATION_OPTIONS, options.toString());

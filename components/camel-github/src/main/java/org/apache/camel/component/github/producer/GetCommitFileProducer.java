@@ -56,7 +56,7 @@ public class GetCommitFileProducer extends AbstractGitHubProducer {
 
             if (!encoding.equalsIgnoreCase(Blob.ENCODING_BASE64)
                     && !encoding.equalsIgnoreCase(Blob.ENCODING_UTF8)) {
-                throw new IllegalArgumentException("Unknown encoding '" + encoding + "'");
+                throw new IllegalArgumentException("Unknown encoding '" + encoding + '\'');
             }
         }
     }

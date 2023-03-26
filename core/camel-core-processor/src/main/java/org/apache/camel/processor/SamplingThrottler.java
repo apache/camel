@@ -102,8 +102,8 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
         if (messageFrequency > 0) {
             return "samplingThrottler[1 exchange per: " + messageFrequency + " messages received]";
         } else {
-            return "samplingThrottler[1 exchange per: " + samplePeriod + " " + units.toString().toLowerCase(Locale.ENGLISH)
-                   + "]";
+            return "samplingThrottler[1 exchange per: " + samplePeriod + ' ' + units.toString().toLowerCase(Locale.ENGLISH)
+                   + ']';
         }
     }
 

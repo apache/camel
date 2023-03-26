@@ -73,6 +73,6 @@ public class LegacyErrorHandlerBuilderRef extends LegacyErrorHandlerBuilderSuppo
 
     @Override
     public String toString() {
-        return "ErrorHandlerBuilderRef[" + configuration.getRef() + "]";
+        return "ErrorHandlerBuilderRef[" + configuration.getRef() + ']';
     }
 }

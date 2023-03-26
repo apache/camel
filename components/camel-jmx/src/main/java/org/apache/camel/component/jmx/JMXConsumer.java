@@ -104,7 +104,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
                 executorService = getEndpoint().getExecutorService();
             } else {
                 // lets just use a single threaded thread-pool to process these notifications
-                String name = "JMXConsumer[" + getEndpoint().getJMXObjectName().getCanonicalName() + "]";
+                String name = "JMXConsumer[" + getEndpoint().getJMXObjectName().getCanonicalName() + ']';
                 executorService
                         = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, name);
                 shutdownExecutorService = true;

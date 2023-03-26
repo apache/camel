@@ -70,7 +70,7 @@ public final class SshHelper {
 
         if (!connectFuture.isDone() || !connectFuture.isConnected()) {
             throw new RuntimeCamelException(
-                    "Failed to connect to " + configuration.getHost() + ":" + configuration.getPort() + " within timeout "
+                    "Failed to connect to " + configuration.getHost() + ':' + configuration.getPort() + " within timeout "
                                             + configuration.getTimeout() + "ms");
         }
 

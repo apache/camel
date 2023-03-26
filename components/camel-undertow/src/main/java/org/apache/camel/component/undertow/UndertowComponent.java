@@ -202,7 +202,7 @@ public class UndertowComponent extends DefaultComponent
             if (uriTemplate.startsWith("/")) {
                 path = path + uriTemplate;
             } else {
-                path = path + "/" + uriTemplate;
+                path = path + '/' + uriTemplate;
             }
         }
         path = FileUtil.stripLeadingSeparator(path);
@@ -232,7 +232,7 @@ public class UndertowComponent extends DefaultComponent
             contextPath = FileUtil.stripTrailingSeparator(contextPath);
             contextPath = FileUtil.stripLeadingSeparator(contextPath);
             if (ObjectHelper.isNotEmpty(contextPath)) {
-                path = contextPath + "/" + path;
+                path = contextPath + '/' + path;
             }
         }
 
@@ -298,12 +298,12 @@ public class UndertowComponent extends DefaultComponent
         uriTemplate = FileUtil.stripLeadingSeparator(uriTemplate);
 
         // get the endpoint
-        String url = getComponentName() + ":" + host;
+        String url = getComponentName() + ':' + host;
         if (!ObjectHelper.isEmpty(basePath)) {
-            url += "/" + basePath;
+            url += '/' + basePath;
         }
         if (!ObjectHelper.isEmpty(uriTemplate)) {
-            url += "/" + uriTemplate;
+            url += '/' + uriTemplate;
         }
 
         RestConfiguration config = CamelContextHelper.getRestConfiguration(camelContext, null, getComponentName());
@@ -320,7 +320,7 @@ public class UndertowComponent extends DefaultComponent
         // get the endpoint
         String query = URISupport.createQueryString(map);
         if (!query.isEmpty()) {
-            url = url + "?" + query;
+            url = url + '?' + query;
         }
 
         parameters = parameters != null ? new HashMap<>(parameters) : new HashMap<String, Object>();

@@ -65,7 +65,7 @@ public class NoErrorHandler extends ErrorHandlerSupport implements AsyncProcesso
             // if no output then dont do any description
             return "";
         }
-        return "NoErrorHandler[" + output + "]";
+        return "NoErrorHandler[" + output + ']';
     }
 
     @Override

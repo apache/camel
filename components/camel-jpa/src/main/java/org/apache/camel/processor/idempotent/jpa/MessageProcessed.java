@@ -42,7 +42,7 @@ public class MessageProcessed implements Serializable {
     @Override
     public String toString() {
         return "MessageProcessed[processorName: " + getProcessorName() + " messageId: " + getMessageId() + " createdAt: "
-               + getCreatedAt() + "]";
+               + getCreatedAt() + ']';
     }
 
     @Id

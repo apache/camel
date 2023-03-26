@@ -110,12 +110,12 @@ public final class ApiMethodImpl implements ApiMethod {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("{")
+        builder.append('{')
                 .append("name=").append(name)
                 .append(", resultType=").append(resultType)
                 .append(", argNames=").append(argNames)
                 .append(", argTypes=").append(argTypes)
-                .append("}");
+                .append('}');
 
         return builder.toString();
     }

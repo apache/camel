@@ -74,7 +74,7 @@ public class EnrichDefinition extends ExpressionNode implements AggregationStrat
 
     @Override
     public String toString() {
-        return "Enrich[" + getExpression() + "]";
+        return "Enrich[" + getExpression() + ']';
     }
 
     @Override
@@ -84,7 +84,7 @@ public class EnrichDefinition extends ExpressionNode implements AggregationStrat
 
     @Override
     public String getLabel() {
-        return "enrich[" + getExpression() + "]";
+        return "enrich[" + getExpression() + ']';
     }
 
     // Fluent API

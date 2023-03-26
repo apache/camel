@@ -208,7 +208,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                     }
                     // restricted resource, so send back 401 to require valid username/password
                     HttpResponse response = new DefaultHttpResponse(HTTP_1_1, UNAUTHORIZED);
-                    response.headers().set("WWW-Authenticate", "Basic realm=\"" + security.getRealm() + "\"");
+                    response.headers().set("WWW-Authenticate", "Basic realm=\"" + security.getRealm() + '"');
                     response.headers().set(NettyHttpConstants.CONTENT_TYPE, "text/plain");
                     response.headers().set(Exchange.CONTENT_LENGTH, 0);
                     ctx.writeAndFlush(response);

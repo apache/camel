@@ -95,7 +95,7 @@ public final class TestIgniteComputeResources {
             StringBuilder answer = new StringBuilder();
             for (ComputeJobResult res : results) {
                 Object data = res.getData();
-                answer.append(data).append(",");
+                answer.append(data).append(',');
             }
             answer.deleteCharAt(answer.length() - 1);
             return answer.toString();

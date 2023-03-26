@@ -137,7 +137,7 @@ public class PulsarEndpoint extends DefaultEndpoint {
     }
 
     public String getUri() {
-        return persistence + "://" + tenant + "/" + namespace + "/" + topic;
+        return persistence + "://" + tenant + '/' + namespace + '/' + topic;
     }
 
     @Override
@@ -149,7 +149,7 @@ public class PulsarEndpoint extends DefaultEndpoint {
         ObjectHelper.notNull(namespace, "namespace", this);
         ObjectHelper.notNull(topic, "topic", this);
 
-        uri = persistence + "://" + tenant + "/" + namespace + "/" + topic;
+        uri = persistence + "://" + tenant + '/' + namespace + '/' + topic;
     }
 
     @Override

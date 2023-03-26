@@ -283,7 +283,7 @@ public class XRayTracer extends ServiceSupport implements RoutePolicyFactory, St
                     // Allowed characters: a-z, A-Z, 0-9, _, ., :, /, %, &, #, =, +, \, -, @
                     String name = sd.getOperationName(ese.getExchange(), ese.getEndpoint());
                     if (sd.getComponent() != null) {
-                        name = sd.getComponent() + ":" + name;
+                        name = sd.getComponent() + ':' + name;
                     }
                     name = sanitizeName(name);
                     try {

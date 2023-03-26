@@ -56,11 +56,11 @@ public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition>
     @Override
     public String toString() {
         if (Boolean.toString(true).equals(fallbackViaNetwork)) {
-            return "OnFallbackViaNetwork[" + getOutputs() + "]";
+            return "OnFallbackViaNetwork[" + getOutputs() + ']';
         } else if (fallbackViaNetwork == null || Boolean.toString(false).equals(fallbackViaNetwork)) {
-            return "OnFallback[" + getOutputs() + "]";
+            return "OnFallback[" + getOutputs() + ']';
         } else {
-            return "OnFallback[viaNetwork=" + fallbackViaNetwork + "," + getOutputs() + "]";
+            return "OnFallback[viaNetwork=" + fallbackViaNetwork + ',' + getOutputs() + ']';
         }
     }
 
@@ -77,10 +77,10 @@ public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition>
         } else if (fallbackViaNetwork == null || Boolean.toString(false).equals(fallbackViaNetwork)) {
             name = "onFallback";
         } else {
-            name = "onFallback(viaNetwork=" + fallbackViaNetwork + ")";
+            name = "onFallback(viaNetwork=" + fallbackViaNetwork + ')';
         }
         return getOutputs().stream().map(ProcessorDefinition::getLabel)
-                .collect(Collectors.joining(",", name + "[", "]"));
+                .collect(Collectors.joining(",", name + '[', "]"));
     }
 
     public String getFallbackViaNetwork() {

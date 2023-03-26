@@ -150,7 +150,7 @@ public final class RestComponentHelper {
         StringBuilder urlBuilder = new StringBuilder(String.format(format, formatOptions));
 
         if (!query.isEmpty()) {
-            urlBuilder.append("?");
+            urlBuilder.append('?');
             urlBuilder.append(query);
         }
         return urlBuilder.toString();

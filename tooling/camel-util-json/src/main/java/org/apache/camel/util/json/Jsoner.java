@@ -514,7 +514,7 @@ public final class Jsoner {
                         final String characterHexCode = Integer.toHexString(character);
                         builder.append("\\u");
                         for (int k = 0; k < (4 - characterHexCode.length()); k++) {
-                            builder.append("0");
+                            builder.append('0');
                         }
                         builder.append(characterHexCode.toUpperCase());
                     } else {
@@ -649,7 +649,7 @@ public final class Jsoner {
         }
         final StringBuilder indentation = new StringBuilder("");
         for (int i = 0; i < spaces; i++) {
-            indentation.append(" ");
+            indentation.append(' ');
         }
         return Jsoner.prettyPrint(printable, indentation.toString(), depth);
     }
@@ -682,46 +682,46 @@ public final class Jsoner {
                     case COMMA:
                         returnable.append(lexed.getValue());
                         if (level <= depth) {
-                            returnable.append("\n");
+                            returnable.append('\n');
                             for (int i = 0; i < level; i++) {
                                 returnable.append(indentation);
                             }
                         } else {
-                            returnable.append(" ");
+                            returnable.append(' ');
                         }
                         break;
                     case END:
-                        returnable.append("\n");
+                        returnable.append('\n');
                         break;
                     case LEFT_BRACE:
                     case LEFT_SQUARE:
                         returnable.append(lexed.getValue());
                         if (++level <= depth) {
-                            returnable.append("\n");
+                            returnable.append('\n');
                             for (int i = 0; i < level; i++) {
                                 returnable.append(indentation);
                             }
                         } else {
-                            returnable.append(" ");
+                            returnable.append(' ');
                         }
                         break;
                     case RIGHT_BRACE:
                     case RIGHT_SQUARE:
                         if (level-- <= depth) {
-                            returnable.append("\n");
+                            returnable.append('\n');
                             for (int i = 0; i < level; i++) {
                                 returnable.append(indentation);
                             }
                         } else {
-                            returnable.append(" ");
+                            returnable.append(' ');
                         }
                         returnable.append(lexed.getValue());
                         break;
                     default:
                         if (lexed.getValue() instanceof String) {
-                            returnable.append("\"");
+                            returnable.append('"');
                             returnable.append(Jsoner.escape((String) lexed.getValue()));
-                            returnable.append("\"");
+                            returnable.append('"');
                         } else {
                             returnable.append(lexed.getValue());
                         }
@@ -758,7 +758,7 @@ public final class Jsoner {
         }
         final StringBuilder indentation = new StringBuilder("");
         for (int i = 0; i < spaces; i++) {
-            indentation.append(" ");
+            indentation.append(' ');
         }
         return Jsoner.colorPrint(printable, indentation.toString(), Integer.MAX_VALUE, pretty, color);
     }
@@ -776,41 +776,41 @@ public final class Jsoner {
                     case COLON:
                         returnable.append(color.color(Yytoken.Types.COLON, ":"));
                         if (pretty) {
-                            returnable.append(" ");
+                            returnable.append(' ');
                         }
                         break;
                     case COMMA:
                         returnable.append(color.color(Yytoken.Types.COMMA, lexed.getValue()));
                         if (level <= depth) {
                             if (pretty) {
-                                returnable.append("\n");
+                                returnable.append('\n');
                                 for (int i = 0; i < level; i++) {
                                     returnable.append(indentation);
                                 }
                             }
                         } else {
                             if (pretty) {
-                                returnable.append(" ");
+                                returnable.append(' ');
                             }
                         }
                         break;
                     case END:
                         if (pretty) {
-                            returnable.append("\n");
+                            returnable.append('\n');
                         }
                         break;
                     case LEFT_BRACE:
                         returnable.append(color.color(Yytoken.Types.LEFT_BRACE, lexed.getValue()));
                         if (++level <= depth) {
                             if (pretty) {
-                                returnable.append("\n");
+                                returnable.append('\n');
                                 for (int i = 0; i < level; i++) {
                                     returnable.append(indentation);
                                 }
                             }
                         } else {
                             if (pretty) {
-                                returnable.append(" ");
+                                returnable.append(' ');
                             }
                         }
                         break;
@@ -818,28 +818,28 @@ public final class Jsoner {
                         returnable.append(color.color(Yytoken.Types.LEFT_SQUARE, lexed.getValue()));
                         if (++level <= depth) {
                             if (pretty) {
-                                returnable.append("\n");
+                                returnable.append('\n');
                                 for (int i = 0; i < level; i++) {
                                     returnable.append(indentation);
                                 }
                             }
                         } else {
                             if (pretty) {
-                                returnable.append(" ");
+                                returnable.append(' ');
                             }
                         }
                         break;
                     case RIGHT_BRACE:
                         if (level-- <= depth) {
                             if (pretty) {
-                                returnable.append("\n");
+                                returnable.append('\n');
                                 for (int i = 0; i < level; i++) {
                                     returnable.append(indentation);
                                 }
                             }
                         } else {
                             if (pretty) {
-                                returnable.append(" ");
+                                returnable.append(' ');
                             }
                         }
                         returnable.append(color.color(Yytoken.Types.RIGHT_BRACE, lexed.getValue()));
@@ -847,21 +847,21 @@ public final class Jsoner {
                     case RIGHT_SQUARE:
                         if (level-- <= depth) {
                             if (pretty) {
-                                returnable.append("\n");
+                                returnable.append('\n');
                                 for (int i = 0; i < level; i++) {
                                     returnable.append(indentation);
                                 }
                             }
                         } else {
                             if (pretty) {
-                                returnable.append(" ");
+                                returnable.append(' ');
                             }
                         }
                         returnable.append(color.color(Yytoken.Types.RIGHT_SQUARE, lexed.getValue()));
                         break;
                     default:
                         if (lexed.getValue() instanceof String) {
-                            String s = "\"" + Jsoner.escape((String) lexed.getValue()) + "\"";
+                            String s = '"' + Jsoner.escape((String) lexed.getValue()) + '"';
                             returnable.append(color.color(Yytoken.Types.VALUE, s));
                         } else {
                             returnable.append(color.color(Yytoken.Types.VALUE, lexed.getValue()));

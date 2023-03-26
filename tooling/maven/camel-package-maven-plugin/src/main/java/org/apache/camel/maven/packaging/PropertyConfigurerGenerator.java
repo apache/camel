@@ -41,7 +41,7 @@ public final class PropertyConfigurerGenerator {
         w.append("package ").append(pn).append(";\n");
         w.append('\n');
         w.append("import java.util.Map;\n");
-        w.append("\n");
+        w.append('\n');
         w.append("import org.apache.camel.CamelContext;\n");
         w.append("import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;\n");
         w.append("import org.apache.camel.spi.PropertyConfigurerGetter;\n");
@@ -426,7 +426,7 @@ public final class PropertyConfigurerGenerator {
     }
 
     private static String quote(String n) {
-        return "\"" + n + "\"";
+        return '"' + n + '"';
     }
 
 }

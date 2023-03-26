@@ -48,7 +48,7 @@ public class LRASagaRoutes extends RouteBuilder {
                 .process(this::verifyRequest)
                 .choice()
                 .when(header(URL_COMPENSATION_KEY).isNotNull())
-                .toD("${header." + URL_COMPENSATION_KEY + "}")
+                .toD("${header." + URL_COMPENSATION_KEY + '}')
                 .end();
 
         rest(sagaService.getLocalParticipantContextPath())
@@ -57,7 +57,7 @@ public class LRASagaRoutes extends RouteBuilder {
                 .process(this::verifyRequest)
                 .choice()
                 .when(header(URL_COMPLETION_KEY).isNotNull())
-                .toD("${header." + URL_COMPLETION_KEY + "}")
+                .toD("${header." + URL_COMPLETION_KEY + '}')
                 .end();
     }
 

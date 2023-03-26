@@ -321,7 +321,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
 
                 List<String> exclusions = new ArrayList<>();
                 for (Exclusion exclusion : dependency.getExclusions()) {
-                    exclusions.add(exclusion.getGroupId() + ":" + exclusion.getArtifactId());
+                    exclusions.add(exclusion.getGroupId() + ':' + exclusion.getArtifactId());
                 }
 
                 ArtifactFilter newFilter = new ExcludesArtifactFilter(exclusions);
@@ -448,7 +448,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         String source = PropertyConfigurerGenerator.generatePropertyConfigurer(pn, cn, en, pfqn, psn,
                 false, false, extended, bootstrap, options, null);
 
-        String fileName = pn.replace('.', '/') + "/" + cn + ".java";
+        String fileName = pn.replace('.', '/') + '/' + cn + ".java";
         outputDir.mkdirs();
         boolean updated = updateResource(buildContext, outputDir.toPath().resolve(fileName), source);
         if (updated) {
@@ -461,7 +461,7 @@ public abstract class AbstractGenerateConfigurerMojo extends AbstractGeneratorMo
         String pn = targetFqn.substring(0, pos);
         String en = targetFqn.substring(pos + 1);
         try (Writer w = new StringWriter()) {
-            w.append("# " + GENERATED_MSG + "\n");
+            w.append("# " + GENERATED_MSG + '\n');
             w.append("class=").append(pn).append(".").append(en).append("Configurer").append("\n");
             String fileName = "META-INF/services/org/apache/camel/configurer/" + fqn;
             boolean updated = updateResource(buildContext, resourcesOutputDir.toPath().resolve(fileName), w.toString());

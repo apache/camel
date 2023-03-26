@@ -130,7 +130,7 @@ public class PublishEventNotifier extends EventNotifierSupport implements CamelC
 
     @Override
     public String toString() {
-        return "PublishEventNotifier[" + (endpoint != null ? endpoint : URISupport.sanitizeUri(endpointUri)) + "]";
+        return "PublishEventNotifier[" + (endpoint != null ? endpoint : URISupport.sanitizeUri(endpointUri)) + ']';
     }
 
 }

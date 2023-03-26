@@ -54,6 +54,6 @@ public interface ComponentAware {
         }
 
         throw new IllegalArgumentException(
-                "Unable to unwrap the Component type (" + component.getClass() + ") to the required type (" + type + ")");
+                "Unable to unwrap the Component type (" + component.getClass() + ") to the required type (" + type + ')');
     }
 }

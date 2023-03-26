@@ -340,7 +340,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
             String credentials = username == null ? "" : username;
 
             if (!credentials.isEmpty()) {
-                credentials += this.password == null ? "@" : ":" + password + "@";
+                credentials += this.password == null ? "@" : ':' + password + '@';
             }
 
             String connectionOptions = authSource == null ? "" : "/?authSource=" + authSource;

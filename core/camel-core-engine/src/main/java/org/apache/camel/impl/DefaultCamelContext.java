@@ -871,7 +871,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                                 String oldKey = (String) value;
                                 boolean clash = bbr.keys().stream().anyMatch(k -> k.equals(oldKey));
                                 if (clash) {
-                                    String newKey = oldKey + "-" + UUID.generateUuid();
+                                    String newKey = oldKey + '-' + UUID.generateUuid();
                                     LOG.debug(
                                             "Route: {} re-assigning local-bean id: {} to: {} to ensure ids are globally unique",
                                             routeDefinition.getId(), oldKey, newKey);
@@ -883,7 +883,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
                         // the remainder of the local beans must also have their ids made global unique
                         for (Map.Entry<String, Map<Class<?>, Object>> entry : bbr.entrySet()) {
                             String oldKey = entry.getKey();
-                            String newKey = oldKey + "-" + UUID.generateUuid();
+                            String newKey = oldKey + '-' + UUID.generateUuid();
                             LOG.debug(
                                     "Route: {} re-assigning local-bean id: {} to: {} to ensure ids are globally unique",
                                     routeDefinition.getId(), oldKey, newKey);

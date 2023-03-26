@@ -81,7 +81,7 @@ public final class Version implements Comparable<Version> {
             minor -= 1;
         }
 
-        return major + "." + minor + "." + patch;
+        return major + "." + minor + '.' + patch;
     }
 
     @Override

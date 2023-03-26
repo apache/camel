@@ -58,14 +58,14 @@ public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {
                 answer = answer.replaceFirst(name + "\\.port", "" + port);
             }
             if (answer.contains(name) && port != null) {
-                answer = answer.replaceFirst(name, host + ":" + port);
+                answer = answer.replaceFirst(name, host + ':' + port);
             }
             if (answer.contains(name) && port == null) {
                 answer = answer.replaceFirst(name, host);
             }
             // include scheme if not provided
             if (!answer.startsWith(scheme)) {
-                answer = scheme + ":" + answer;
+                answer = scheme + ':' + answer;
             }
         }
 
@@ -87,11 +87,11 @@ public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {
 
         String answer = scheme + "://" + host;
         if (port != null) {
-            answer = answer + ":" + port;
+            answer = answer + ':' + port;
         }
         if (contextPath != null) {
             if (!contextPath.startsWith("/")) {
-                contextPath = "/" + contextPath;
+                contextPath = '/' + contextPath;
             }
 
             answer += contextPath;

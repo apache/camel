@@ -108,7 +108,7 @@ public class DefaultServiceDefinition implements ServiceDefinition {
 
     @Override
     public String toString() {
-        return "DefaultServiceDefinition[" + id + "]";
+        return "DefaultServiceDefinition[" + id + ']';
     }
 
     @Override

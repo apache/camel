@@ -74,7 +74,7 @@ public class DataType {
     @Override
     public String toString() {
         if (this.typeString == null) {
-            this.typeString = name != null && !name.isEmpty() ? model + ":" + name : model;
+            this.typeString = name != null && !name.isEmpty() ? model + ':' + name : model;
         }
         return this.typeString;
     }

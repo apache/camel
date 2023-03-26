@@ -137,7 +137,7 @@ public class ExecCommand implements Serializable {
         return "ExecCommand [args=" + args + ", executable=" + executable + ", timeout=" + timeout
                + ", exitValues=" + exitValuesString + ", outFile="
                + outFileToPrint + ", workingDir=" + dirToPrint + ", commandLogLevel=" + commandLogLevel
-               + ", useStderrOnEmptyStdout=" + useStderrOnEmptyStdout + "]";
+               + ", useStderrOnEmptyStdout=" + useStderrOnEmptyStdout + ']';
     }
 
     private <T> List<T> unmodifiableOrEmptyList(List<T> list) {

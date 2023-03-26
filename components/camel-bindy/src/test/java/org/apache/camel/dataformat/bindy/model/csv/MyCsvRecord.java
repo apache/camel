@@ -124,7 +124,7 @@ public class MyCsvRecord implements Serializable {
     public String toString() {
         return "Record [attention=" + attention + ", addressLine1=" + addressLine1 + ", addressLine2="
                + addressLine2 + ", city=" + city + ", state=" + state + ", zip=" + zip + ", country="
-               + country + ", dummy1=" + dummy1 + ", dummy2=" + dummy2 + "]";
+               + country + ", dummy1=" + dummy1 + ", dummy2=" + dummy2 + ']';
     }
 
 }

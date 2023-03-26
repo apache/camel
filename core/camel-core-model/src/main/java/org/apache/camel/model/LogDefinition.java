@@ -60,7 +60,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
 
     @Override
     public String toString() {
-        return "Log[" + message + "]";
+        return "Log[" + message + ']';
     }
 
     @Override

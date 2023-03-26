@@ -685,7 +685,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         if (excludeExt != null) {
             String fname = file.getFileName().toLowerCase();
             for (String exclude : excludeExt) {
-                if (fname.endsWith("." + exclude)) {
+                if (fname.endsWith('.' + exclude)) {
                     return false;
                 }
             }
@@ -699,7 +699,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             String fname = file.getFileName().toLowerCase();
             boolean any = false;
             for (String include : includeExt) {
-                any |= fname.endsWith("." + include);
+                any |= fname.endsWith('.' + include);
             }
             if (!any) {
                 return false;

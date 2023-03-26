@@ -122,7 +122,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
 
     @Override
     public String toString() {
-        return "Marshal[" + description() + "]";
+        return "Marshal[" + description() + ']';
     }
 
     protected String description() {
@@ -136,7 +136,7 @@ public class MarshalDefinition extends NoOutputDefinition<MarshalDefinition> imp
 
     @Override
     public String getLabel() {
-        return "marshal[" + description() + "]";
+        return "marshal[" + description() + ']';
     }
 
     @Override

@@ -243,7 +243,7 @@ public final class SObjectNode implements Serializable {
 
     @Override
     public String toString() {
-        return "Node<" + getObjectType() + ">";
+        return "Node<" + getObjectType() + '>';
     }
 
     SObjectNode addChild(final String labelPlural, final SObjectNode node) {

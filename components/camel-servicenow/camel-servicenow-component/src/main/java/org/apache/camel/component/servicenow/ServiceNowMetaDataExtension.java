@@ -121,7 +121,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
             }
         }
 
-        throw new UnsupportedOperationException("Unsupported object type <" + objectType + ">");
+        throw new UnsupportedOperationException("Unsupported object type <" + objectType + '>');
     }
 
     private Optional<MetaData> tableDefinition(MetaContext context) throws Exception {
@@ -159,7 +159,7 @@ final class ServiceNowMetaDataExtension extends AbstractMetaDataExtension {
                         .withAttribute(MetaData.JAVA_TYPE, JsonNode.class)
                         .withAttribute("date.format", dateFormat)
                         .withAttribute("time.format", timeFormat)
-                        .withAttribute("date-time.format", dateFormat + " " + timeFormat)
+                        .withAttribute("date-time.format", dateFormat + ' ' + timeFormat)
                         .withPayload(root)
                         .build());
     }

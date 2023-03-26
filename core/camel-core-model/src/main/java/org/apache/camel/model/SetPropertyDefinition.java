@@ -57,7 +57,7 @@ public class SetPropertyDefinition extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "SetProperty[" + getName() + ", " + getExpression() + "]";
+        return "SetProperty[" + getName() + ", " + getExpression() + ']';
     }
 
     @Override
@@ -67,7 +67,7 @@ public class SetPropertyDefinition extends ExpressionNode {
 
     @Override
     public String getLabel() {
-        return "setProperty[" + getName() + "]";
+        return "setProperty[" + getName() + ']';
     }
 
     /**

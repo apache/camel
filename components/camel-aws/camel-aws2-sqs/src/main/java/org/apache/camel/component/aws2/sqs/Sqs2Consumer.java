@@ -333,7 +333,7 @@ public class Sqs2Consumer extends ScheduledBatchPollingConsumer {
     @Override
     public String toString() {
         if (sqsConsumerToString == null) {
-            sqsConsumerToString = "SqsConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            sqsConsumerToString = "SqsConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return sqsConsumerToString;
     }

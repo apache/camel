@@ -51,7 +51,7 @@ public class NettyProducerHangTest extends CamelTestSupport {
 
         String response1
                 = template.requestBody("netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request1", String.class);
-        LOG.info("Received first response <" + response1 + ">");
+        LOG.info("Received first response <" + response1 + '>');
 
         try {
             // our test server will close the socket now so we should get an error
@@ -62,7 +62,7 @@ public class NettyProducerHangTest extends CamelTestSupport {
 
         String response2
                 = template.requestBody("netty:tcp://localhost:" + PORT + "?textline=true&sync=true", "request3", String.class);
-        LOG.info("Received 2nd response <" + response2 + ">");
+        LOG.info("Received 2nd response <" + response2 + '>');
 
         try {
             // our test server will close the socket now so we should get an error

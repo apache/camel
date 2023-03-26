@@ -102,7 +102,7 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         if (ObjectHelper.isEmpty(desc)) {
             return "saga";
         } else {
-            return "saga[" + desc + "]";
+            return "saga[" + desc + ']';
         }
     }
 
@@ -110,9 +110,9 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     public String toString() {
         String desc = description();
         if (ObjectHelper.isEmpty(desc)) {
-            return "Saga -> [" + outputs + "]";
+            return "Saga -> [" + outputs + ']';
         } else {
-            return "Saga[" + desc + "] -> [" + outputs + "]";
+            return "Saga[" + desc + "] -> [" + outputs + ']';
         }
     }
 

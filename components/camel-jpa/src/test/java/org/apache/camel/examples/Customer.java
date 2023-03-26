@@ -76,7 +76,7 @@ public class Customer {
     public String toString() {
         // OpenJPA warns about fields being accessed directly in methods if NOT using the corresponding getters.
         return "Customer[id: " + getId() + ", version: " + version + ", name: " + getName() + ", address: " + getAddress()
-               + "]";
+               + ']';
     }
 
 }

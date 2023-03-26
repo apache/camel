@@ -64,7 +64,7 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
 
                 @Override
                 public String toString() {
-                    return "AsyncStartListenerTask[" + getDestinationName() + "]";
+                    return "AsyncStartListenerTask[" + getDestinationName() + ']';
                 }
             });
         } else {
@@ -93,7 +93,7 @@ public class SjmsConsumer extends DefaultConsumer implements Suspendable {
 
                     @Override
                     public String toString() {
-                        return "AsyncStopListenerTask[" + getDestinationName() + "]";
+                        return "AsyncStopListenerTask[" + getDestinationName() + ']';
                     }
                 });
             } else {

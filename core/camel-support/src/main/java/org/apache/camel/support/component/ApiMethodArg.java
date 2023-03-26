@@ -56,9 +56,9 @@ public class ApiMethodArg {
         StringBuilder builder = new StringBuilder();
         builder.append(type.getCanonicalName());
         if (typeArgs != null) {
-            builder.append("<").append(typeArgs).append(">");
+            builder.append('<').append(typeArgs).append('>');
         }
-        builder.append(" ").append(name);
+        builder.append(' ').append(name);
         return builder.toString();
     }
 

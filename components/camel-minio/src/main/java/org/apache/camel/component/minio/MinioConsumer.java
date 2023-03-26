@@ -430,7 +430,7 @@ public class MinioConsumer extends ScheduledBatchPollingConsumer {
     @Override
     public String toString() {
         if (isEmpty(minioConsumerToString)) {
-            minioConsumerToString = "MinioConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            minioConsumerToString = "MinioConsumer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return minioConsumerToString;
     }

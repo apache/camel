@@ -244,9 +244,9 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
     public String dumpTracedMessagesAsXml(String nodeId, boolean includeExchangeProperties) {
         String messageAsXml = backlogDebugger.dumpTracedMessagesAsXml(nodeId);
         if (messageAsXml != null && includeExchangeProperties) {
-            String closingTag = "</" + BacklogTracerEventMessage.ROOT_TAG + ">";
+            String closingTag = "</" + BacklogTracerEventMessage.ROOT_TAG + '>';
             String exchangePropertiesAsXml = dumpExchangePropertiesAsXml(nodeId);
-            messageAsXml = messageAsXml.replace(closingTag, exchangePropertiesAsXml) + "\n" + closingTag;
+            messageAsXml = messageAsXml.replace(closingTag, exchangePropertiesAsXml) + '\n' + closingTag;
         }
         return messageAsXml;
     }
@@ -380,18 +380,18 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
                             + URISupport
                                     .sanitizeUri(
                                             StringHelper.limitLength(suspendedExchange.getFromEndpoint().getEndpointUri(), 100))
-                            + "]";
+                            + ']';
                 }
 
                 long elapsed = TimeUtils.elapsedMillisSince(suspendedExchange.getCreated());
 
                 messageHistoryBuffer
                         .append("    <messageHistoryEntry")
-                        .append(" location=\"").append(StringHelper.xmlEncode(loc)).append("\"")
-                        .append(" routeId=\"").append(StringHelper.xmlEncode(routeId)).append("\"")
-                        .append(" processorId=\"").append(StringHelper.xmlEncode(id)).append("\"")
-                        .append(" processor=\"").append(StringHelper.xmlEncode(label)).append("\"")
-                        .append(" elapsed=\"").append(elapsed).append("\"")
+                        .append(" location=\"").append(StringHelper.xmlEncode(loc)).append('"')
+                        .append(" routeId=\"").append(StringHelper.xmlEncode(routeId)).append('"')
+                        .append(" processorId=\"").append(StringHelper.xmlEncode(id)).append('"')
+                        .append(" processor=\"").append(StringHelper.xmlEncode(label)).append('"')
+                        .append(" elapsed=\"").append(elapsed).append('"')
                         .append("/>\n");
 
                 for (MessageHistory history : list) {
@@ -414,11 +414,11 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
                     messageHistoryBuffer
                             .append("    <messageHistoryEntry")
-                            .append(" location=\"").append(StringHelper.xmlEncode(loc)).append("\"")
-                            .append(" routeId=\"").append(StringHelper.xmlEncode(routeId)).append("\"")
-                            .append(" processorId=\"").append(StringHelper.xmlEncode(id)).append("\"")
-                            .append(" processor=\"").append(StringHelper.xmlEncode(label)).append("\"")
-                            .append(" elapsed=\"").append(elapsed).append("\"")
+                            .append(" location=\"").append(StringHelper.xmlEncode(loc)).append('"')
+                            .append(" routeId=\"").append(StringHelper.xmlEncode(routeId)).append('"')
+                            .append(" processorId=\"").append(StringHelper.xmlEncode(id)).append('"')
+                            .append(" processor=\"").append(StringHelper.xmlEncode(label)).append('"')
+                            .append(" elapsed=\"").append(elapsed).append('"')
                             .append("/>\n");
                 }
             }
@@ -445,11 +445,11 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
             Map<String, Object> properties = suspendedExchange.getAllProperties();
             properties.forEach((propertyName, propertyValue) -> {
                 String type = ObjectHelper.classCanonicalName(propertyValue);
-                sb.append("    <exchangeProperty name=\"").append(propertyName).append("\"");
+                sb.append("    <exchangeProperty name=\"").append(propertyName).append('"');
                 if (type != null) {
-                    sb.append(" type=\"").append(type).append("\"");
+                    sb.append(" type=\"").append(type).append('"');
                 }
-                sb.append(">");
+                sb.append('>');
                 // dump property value as XML, use Camel type converter to convert
                 // to String
                 if (propertyValue != null) {

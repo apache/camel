@@ -53,10 +53,10 @@ public class AbstractOlingo2AppAPITestSupport {
     protected static final String CARS = "Cars";
     protected static final String TEST_KEY = "'1'";
     protected static final String TEST_CREATE_KEY = "'123'";
-    protected static final String TEST_MANUFACTURER = FQN_MANUFACTURERS + "(" + TEST_KEY + ")";
-    protected static final String TEST_CREATE_MANUFACTURER = MANUFACTURERS + "(" + TEST_CREATE_KEY + ")";
+    protected static final String TEST_MANUFACTURER = FQN_MANUFACTURERS + '(' + TEST_KEY + ')';
+    protected static final String TEST_CREATE_MANUFACTURER = MANUFACTURERS + '(' + TEST_CREATE_KEY + ')';
     protected static final String TEST_RESOURCE_CONTENT_ID = "1";
-    protected static final String TEST_RESOURCE = "$" + TEST_RESOURCE_CONTENT_ID;
+    protected static final String TEST_RESOURCE = '$' + TEST_RESOURCE_CONTENT_ID;
     protected static final char NEW_LINE = '\n';
     protected static final String TEST_CAR = "Manufacturers('1')/Cars('1')";
     protected static final String TEST_MANUFACTURER_FOUNDED_PROPERTY = "Manufacturers('1')/Founded";
@@ -66,7 +66,7 @@ public class AbstractOlingo2AppAPITestSupport {
     protected static final String TEST_MANUFACTURER_LINKS_CARS = "Manufacturers('1')/$links/Cars";
     protected static final String TEST_CAR_LINK_MANUFACTURER = "Cars('1')/$links/Manufacturer";
     protected static final String COUNT_OPTION = "/$count";
-    protected static final String TEST_SERVICE_URL = "http://localhost:" + PORT + "/" + SERVICE_NAME;
+    protected static final String TEST_SERVICE_URL = "http://localhost:" + PORT + '/' + SERVICE_NAME;
     protected static final ContentType TEST_FORMAT = ContentType.APPLICATION_JSON;
     protected static final String TEST_FORMAT_STRING = TEST_FORMAT.toString();
     protected static final String ID_PROPERTY = "Id";
@@ -125,7 +125,7 @@ public class AbstractOlingo2AppAPITestSupport {
             } else if (value instanceof ODataDeltaFeed) {
                 ODataDeltaFeed feed = (ODataDeltaFeed)value;
                 List<ODataEntry> inlineEntries = feed.getEntries();
-                b.append("{");
+                b.append('{');
                 for (ODataEntry oDataEntry : inlineEntries) {
                     value = prettyPrint(oDataEntry.getProperties(), level + 1);
                     b.append("\n[\n").append(value).append("\n],");

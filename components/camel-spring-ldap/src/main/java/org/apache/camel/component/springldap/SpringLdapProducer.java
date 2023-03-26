@@ -133,7 +133,7 @@ public class SpringLdapProducer extends DefaultProducer {
                 throw new UnsupportedOperationException(
                         "Bug in the Spring-LDAP component. Despite of all assertions, you managed to call an unsupported operation '"
                                                         + operation
-                                                        + "'");
+                                                        + '\'');
         }
     }
 }

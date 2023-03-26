@@ -128,7 +128,7 @@ public class PrinterProducer extends DefaultProducer {
                 // no hostname for localhost printers
                 name = config.getPrintername();
             } else {
-                name = config.getHostname() + "/" + config.getPrintername();
+                name = config.getHostname() + '/' + config.getPrintername();
                 if (config.getPrinterPrefix() != null) {
                     name = config.getPrinterPrefix() + name;
                 }

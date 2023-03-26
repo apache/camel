@@ -177,7 +177,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
         // setup a bean name which is used by Spring JMS as the thread name
         // use the name of the request destination
-        String name = "TemporaryQueueReplyManager[" + endpoint.getDestinationName() + "]";
+        String name = "TemporaryQueueReplyManager[" + endpoint.getDestinationName() + ']';
         answer.setBeanName(name);
 
         if (answer.getConcurrentConsumers() > 1) {
@@ -226,7 +226,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
         // setup a bean name which is used by Spring JMS as the thread name
         // use the name of the request destination
-        String name = "TemporaryQueueReplyManager[" + endpoint.getDestinationName() + "]";
+        String name = "TemporaryQueueReplyManager[" + endpoint.getDestinationName() + ']';
         answer.setBeanName(name);
 
         if (endpoint.getReplyToConcurrentConsumers() > 1) {

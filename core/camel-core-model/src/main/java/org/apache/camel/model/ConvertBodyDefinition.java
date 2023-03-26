@@ -70,7 +70,7 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
 
     @Override
     public String toString() {
-        return "ConvertBodyTo[" + getType() + "]";
+        return "ConvertBodyTo[" + getType() + ']';
     }
 
     @Override
@@ -80,7 +80,7 @@ public class ConvertBodyDefinition extends NoOutputDefinition<ConvertBodyDefinit
 
     @Override
     public String getLabel() {
-        return "convertBodyTo[" + getType() + "]";
+        return "convertBodyTo[" + getType() + ']';
     }
 
     public String getType() {

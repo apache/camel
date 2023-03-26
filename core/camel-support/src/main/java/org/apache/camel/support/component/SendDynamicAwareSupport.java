@@ -134,9 +134,9 @@ public abstract class SendDynamicAwareSupport extends ServiceSupport implements 
         String query = URISupport.createQueryString(properties, false);
         int pos = uri.indexOf('?');
         if (pos != -1) {
-            answer = uri.substring(0, pos) + "?" + query;
+            answer = uri.substring(0, pos) + '?' + query;
         } else {
-            answer = uri + "?" + query;
+            answer = uri + '?' + query;
         }
         return answer;
     }

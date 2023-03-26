@@ -131,7 +131,7 @@ public class FilterParameters extends JsseParameters {
             builder.append(includes);
             builder.append(", excludes=");
             builder.append(excludes);
-            builder.append("]");
+            builder.append(']');
             return builder.toString();
         }
     }
@@ -143,7 +143,7 @@ public class FilterParameters extends JsseParameters {
         builder.append(Arrays.toString(getInclude().toArray(new String[0])));
         builder.append(", exclude=");
         builder.append(Arrays.toString(getExclude().toArray(new String[0])));
-        builder.append("]");
+        builder.append(']');
         return builder.toString();
     }
 }

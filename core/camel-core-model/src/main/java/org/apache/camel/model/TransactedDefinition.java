@@ -74,7 +74,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
         if (org.apache.camel.util.ObjectHelper.isEmpty(desc)) {
             return "Transacted";
         } else {
-            return "Transacted[" + desc + "]";
+            return "Transacted[" + desc + ']';
         }
     }
 
@@ -99,7 +99,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
         if (org.apache.camel.util.ObjectHelper.isEmpty(desc)) {
             return "transacted";
         } else {
-            return "transacted[" + desc + "]";
+            return "transacted[" + desc + ']';
         }
     }
 

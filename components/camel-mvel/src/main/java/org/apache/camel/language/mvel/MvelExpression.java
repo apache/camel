@@ -74,6 +74,6 @@ public class MvelExpression extends ExpressionSupport {
 
     @Override
     public String toString() {
-        return "Mvel[" + expressionString + "]";
+        return "Mvel[" + expressionString + ']';
     }
 }

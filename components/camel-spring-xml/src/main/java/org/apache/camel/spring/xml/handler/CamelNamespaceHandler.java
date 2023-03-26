@@ -127,7 +127,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                         // remove all double spaces in the uri parameters
                         String changed = after.replaceAll("\\s{2,}", "");
                         if (!after.equals(changed)) {
-                            String newAtr = before.trim() + "?" + changed.trim();
+                            String newAtr = before.trim() + '?' + changed.trim();
                             LOG.debug("Removed whitespace noise from attribute {} -> {}", value, newAtr);
                             att.setNodeValue(newAtr);
                         }

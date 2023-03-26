@@ -122,7 +122,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
         host = FileUtil.stripTrailingSeparator(host);
 
         if (isDefaultAwsHost()) {
-            return "sqs." + Region.of(configuration.getRegion()).id() + "." + host;
+            return "sqs." + Region.of(configuration.getRegion()).id() + '.' + host;
         }
 
         return host;
@@ -160,7 +160,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
             // This allows accessing queues where you don't have permission to
             // list queues or query queues
             if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
-                queueUrl = getAwsEndpointUri() + "/" + configuration.getQueueOwnerAWSAccountId() + "/"
+                queueUrl = getAwsEndpointUri() + '/' + configuration.getQueueOwnerAWSAccountId() + '/'
                            + configuration.getQueueName();
                 queueUrlInitialized = true;
             } else if (configuration.getQueueOwnerAWSAccountId() != null) {
@@ -185,7 +185,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
 
     private void initQueueUrl() {
         // check whether the queue already exists
-        String queueNamePath = "/" + configuration.getQueueName();
+        String queueNamePath = '/' + configuration.getQueueName();
         ListQueuesRequest.Builder listQueuesRequestBuilder
                 = ListQueuesRequest.builder().maxResults(1000).queueNamePrefix(configuration.getQueueName());
 

@@ -153,7 +153,7 @@ public class ElasticsearchTestSupport extends CamelTestSupport {
         if (additionalPrefixes.length > 0) {
             StringBuilder sb = new StringBuilder(prefix);
             for (String additionalPrefix : additionalPrefixes) {
-                sb.append(additionalPrefix).append("-");
+                sb.append(additionalPrefix).append('-');
             }
             prefix = sb.toString();
         }
@@ -169,7 +169,7 @@ public class ElasticsearchTestSupport extends CamelTestSupport {
 
     String createPrefix() {
         // make use of the test method name to avoid collision
-        return getCurrentTestName().toLowerCase() + "-";
+        return getCurrentTestName().toLowerCase() + '-';
     }
 
     RestClient getClient() {

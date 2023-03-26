@@ -61,7 +61,7 @@ public class GetCorrelationContextProcessor extends AsyncProcessorSupport implem
 
     @Override
     public String getTraceLabel() {
-        return "getCorrelationContext[" + keyName + ", " + headerName + "]";
+        return "getCorrelationContext[" + keyName + ", " + headerName + ']';
     }
 
     @Override

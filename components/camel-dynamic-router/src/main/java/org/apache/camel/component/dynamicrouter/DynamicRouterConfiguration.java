@@ -115,7 +115,7 @@ public class DynamicRouterConfiguration {
      * predicate. If the mode is "allMatch", then the exchange is routed to all participants that have a matching
      * predicate.
      */
-    @UriParam(label = "common", defaultValue = MODE_FIRST_MATCH, enums = MODE_FIRST_MATCH + "," + MODE_ALL_MATCH,
+    @UriParam(label = "common", defaultValue = MODE_FIRST_MATCH, enums = MODE_FIRST_MATCH + ',' + MODE_ALL_MATCH,
               description = "Recipient mode: firstMatch or allMatch")
     private String recipientMode = MODE_FIRST_MATCH;
 

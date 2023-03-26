@@ -71,7 +71,7 @@ public class NatsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
 
     public ExecutorService createExecutor() {
         return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this,
-                "NatsTopic[" + configuration.getTopic() + "]", configuration.getPoolSize());
+                "NatsTopic[" + configuration.getTopic() + ']', configuration.getPoolSize());
     }
 
     public NatsConfiguration getConfiguration() {

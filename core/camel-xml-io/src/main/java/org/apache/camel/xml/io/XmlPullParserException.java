@@ -43,7 +43,7 @@ public class XmlPullParserException extends Exception {
      */
 
     public XmlPullParserException(String msg, XmlPullParser parser, Throwable cause) {
-        super((msg == null ? "" : msg + " ") + (parser == null ? "" : "(position:" + parser.getPositionDescription() + ") ") + (cause == null ? "" : "caused by: " + cause), cause);
+        super((msg == null ? "" : msg + ' ') + (parser == null ? "" : "(position:" + parser.getPositionDescription() + ") ") + (cause == null ? "" : "caused by: " + cause), cause);
 
         if (parser != null) {
             this.row = parser.getLineNumber();

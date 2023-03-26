@@ -229,7 +229,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
         String s1 = r.sinceLastStarted != null ? r.sinceLastStarted : "-";
         String s2 = r.sinceLastCompleted != null ? r.sinceLastCompleted : "-";
         String s3 = r.sinceLastFailed != null ? r.sinceLastFailed : "-";
-        return s1 + "/" + s2 + "/" + s3;
+        return s1 + '/' + s2 + '/' + s3;
     }
 
     protected String getThroughput(Row r) {
@@ -262,7 +262,7 @@ public class CamelRouteStatus extends ProcessWatchCommand {
                 return r.delta;
             } else if (!"0".equals(r.delta)) {
                 // use plus sign to denote slower when positive
-                return "+" + r.delta;
+                return '+' + r.delta;
             }
         }
         return r.delta;

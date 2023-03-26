@@ -80,7 +80,7 @@ public class ChatScriptMessage {
     @Override
     public String toString() {
         return "ChatScriptMessage [username=" + username + ", botname=" + botname + ", message=" + body + ", reply=" + reply
-               + "]";
+               + ']';
     }
 
 }

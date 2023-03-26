@@ -30,7 +30,7 @@ public class AnotherExampleBean {
 
     @Override
     public String toString() {
-        return "AnotherExampleBean[name: " + name + " price: " + price + " id: " + id + "]";
+        return "AnotherExampleBean[name: " + name + " price: " + price + " id: " + id + ']';
     }
 
     public String getName() {

@@ -237,7 +237,7 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
                     .map(g -> g.asString("            "))
                     .collect(Collectors.joining("\n"));
             final String updatedPom = before + startDependenciesMarker
-                                      + "\n" + s + "\n"
+                                      + '\n' + s + '\n'
                                       + "        " + endDependenciesMarker + after;
 
             updateResource(buildContext, pomFile, updatedPom);
@@ -284,7 +284,7 @@ public class PrepareComponentMojo extends AbstractGeneratorMojo {
                     .map(g -> g.asString("        "))
                     .collect(Collectors.joining("\n"));
             final String updatedPom = before + startDependenciesMarker
-                                      + "\n" + s + "\n"
+                                      + '\n' + s + '\n'
                                       + "    " + endDependenciesMarker + after;
 
             updateResource(buildContext, pomFile, updatedPom);

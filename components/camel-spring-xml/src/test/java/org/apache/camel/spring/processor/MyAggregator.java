@@ -40,7 +40,7 @@ public class MyAggregator implements AggregationStrategy {
             Message newIn = newExchange.getIn();
             String newBody = newIn.getBody(String.class);
             if (newBody != null) {
-                body += " " + newBody;
+                body += ' ' + newBody;
             }
             LOG.debug("**** invoked my strategy with result: " + body);
 

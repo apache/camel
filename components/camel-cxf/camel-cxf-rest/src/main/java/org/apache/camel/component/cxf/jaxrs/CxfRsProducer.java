@@ -574,11 +574,11 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         StringBuilder buffer = new StringBuilder("[");
         for (Object obj : array) {
             if (buffer.length() > 2) {
-                buffer.append(",");
+                buffer.append(',');
             }
             buffer.append(obj.toString());
         }
-        buffer.append("]");
+        buffer.append(']');
         return buffer.toString();
     }
 

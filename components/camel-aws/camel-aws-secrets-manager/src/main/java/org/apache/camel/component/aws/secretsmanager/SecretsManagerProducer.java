@@ -117,7 +117,7 @@ public class SecretsManagerProducer extends DefaultProducer {
     public String toString() {
         if (secretsManagerProducerToString == null) {
             secretsManagerProducerToString = "SecretsManagerProducer["
-                                             + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+                                             + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return secretsManagerProducerToString;
     }

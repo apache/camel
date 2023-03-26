@@ -270,7 +270,7 @@ public class DefaultInflightRepository extends ServiceSupport implements Infligh
 
         @Override
         public String toString() {
-            return "InflightExchangeEntry[exchangeId=" + exchange.getExchangeId() + "]";
+            return "InflightExchangeEntry[exchangeId=" + exchange.getExchangeId() + ']';
         }
     }
 

@@ -402,7 +402,7 @@ public class StaxStreamXMLReader implements XMLReader {
       return qName.getLocalPart();
     }
     else {
-      return prefix + ":" + qName.getLocalPart();
+      return prefix + ':' + qName.getLocalPart();
     }
   }
 

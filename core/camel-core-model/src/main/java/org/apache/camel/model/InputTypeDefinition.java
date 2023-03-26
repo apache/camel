@@ -92,7 +92,7 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
 
     @Override
     public String toString() {
-        return "inputType[" + urn + "]";
+        return "inputType[" + urn + ']';
     }
 
     @Override
@@ -102,7 +102,7 @@ public class InputTypeDefinition extends OptionalIdentifiedDefinition<InputTypeD
 
     @Override
     public String getLabel() {
-        return "inputType[" + urn + "]";
+        return "inputType[" + urn + ']';
     }
 
 }

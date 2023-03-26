@@ -314,7 +314,7 @@ public class RestEndpoint extends DefaultEndpoint {
             throw new IllegalArgumentException(
                     "Hostname must be configured on either restConfiguration"
                                                + " or in the rest endpoint uri as a query parameter with name host, eg rest:"
-                                               + method + ":" + path + "?host=someserver");
+                                               + method + ':' + path + "?host=someserver");
         }
 
         RestProducerFactory apiDocFactory = null;
@@ -557,7 +557,7 @@ public class RestEndpoint extends DefaultEndpoint {
             // calculate the url to the rest service
             String path = getPath();
             if (!path.startsWith("/")) {
-                path = "/" + path;
+                path = '/' + path;
             }
 
             // there may be an optional context path configured to help Camel calculate the correct urls for the REST services
@@ -566,7 +566,7 @@ public class RestEndpoint extends DefaultEndpoint {
             String contextPath = config.getContextPath();
             if (contextPath != null) {
                 if (!contextPath.startsWith("/")) {
-                    path = "/" + contextPath + path;
+                    path = '/' + contextPath + path;
                 } else {
                     path = contextPath + path;
                 }
@@ -580,7 +580,7 @@ public class RestEndpoint extends DefaultEndpoint {
                 if (uriTemplate.startsWith("/")) {
                     url = url + uriTemplate;
                 } else {
-                    url = url + "/" + uriTemplate;
+                    url = url + '/' + uriTemplate;
                 }
             }
 

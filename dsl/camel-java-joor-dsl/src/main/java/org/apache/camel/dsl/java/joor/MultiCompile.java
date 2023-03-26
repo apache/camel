@@ -150,7 +150,7 @@ public final class MultiCompile {
                     StringJoiner sj = new StringJoiner("\n");
                     dc.getDiagnostics().stream().filter(d -> Diagnostic.Kind.ERROR.equals(d.getKind()))
                             .forEach(d -> sj.add(d.toString()));
-                    throw new ReflectException("Compilation error:\n" + sj + "\n" + out);
+                    throw new ReflectException("Compilation error:\n" + sj + '\n' + out);
                 }
             }
 
@@ -166,7 +166,7 @@ public final class MultiCompile {
 
                 // If the compiled class is in the same package as the caller class, then
                 // we can use the private-access Lookup of the caller class
-                if (caller != null && className.startsWith(caller.getPackageName() + ".")
+                if (caller != null && className.startsWith(caller.getPackageName() + '.')
                         && Character.isUpperCase(className.charAt(caller.getPackageName().length() + 1))) {
                     // [#74] This heuristic is necessary to prevent classes in subpackages of the caller to be loaded
                     //       this way, as subpackages cannot access private content in super packages.

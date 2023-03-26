@@ -73,7 +73,7 @@ public class DefaultMailUidGenerator implements MailUidGenerator {
             Enumeration<?> it = message.getAllHeaders();
             while (it.hasMoreElements()) {
                 Header header = (Header) it.nextElement();
-                buffer.append(header.getName()).append("=").append(header.getValue()).append("\n");
+                buffer.append(header.getName()).append('=').append(header.getValue()).append('\n');
             }
             if (buffer.length() > 0) {
                 LOG.trace("Generating UID from the following:\n {}", buffer);

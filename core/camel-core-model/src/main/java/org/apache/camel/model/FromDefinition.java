@@ -63,7 +63,7 @@ public class FromDefinition extends OptionalIdentifiedDefinition<FromDefinition>
 
     @Override
     public String toString() {
-        return "From[" + getLabel() + "]";
+        return "From[" + getLabel() + ']';
     }
 
     @Override

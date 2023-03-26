@@ -84,7 +84,7 @@ public abstract class SecurityAuthenticatorSupport implements SecurityAuthentica
         for (Principal p : subject.getPrincipals()) {
             if (isRoleClass(p)) {
                 if (sb.length() > 0) {
-                    sb.append(",");
+                    sb.append(',');
                 }
                 sb.append(p.getName());
             }

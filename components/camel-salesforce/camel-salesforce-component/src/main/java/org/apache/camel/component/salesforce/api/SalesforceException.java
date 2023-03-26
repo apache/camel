@@ -102,7 +102,7 @@ public class SalesforceException extends CamelException {
         }
         builder.append("statusCode:");
         builder.append(statusCode);
-        builder.append("}");
+        builder.append('}');
 
         return builder.toString();
     }

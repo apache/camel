@@ -38,7 +38,7 @@ public class Olingo4BatchQueryRequest extends Olingo4BatchRequest {
 
     @Override
     public String toString() {
-        return new StringBuilder("Batch Query Request{ ").append(resourceUri).append("/").append(resourcePath)
+        return new StringBuilder("Batch Query Request{ ").append(resourceUri).append('/').append(resourcePath)
                 .append(", headers=").append(headers).append(", queryParams=")
                 .append(queryParams).append('}').toString();
     }

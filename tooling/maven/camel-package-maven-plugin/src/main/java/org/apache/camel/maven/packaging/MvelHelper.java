@@ -51,7 +51,7 @@ public final class MvelHelper {
 
     public static String formatSignature(String signature) {
         signature = signature.replace('$', '.');
-        return signature + ";";
+        return signature + ';';
     }
 
     public static String apiMethodAlias(ApiModel api, ApiMethodModel method) {

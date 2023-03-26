@@ -43,7 +43,7 @@ public class LogicalExpression extends BaseSimpleNode {
 
     @Override
     public String toString() {
-        return left + " " + token.getText() + " " + right;
+        return left + " " + token.getText() + ' ' + right;
     }
 
     public boolean acceptLeftNode(SimpleNode lef) {
@@ -98,7 +98,7 @@ public class LogicalExpression extends BaseSimpleNode {
 
             @Override
             public String toString() {
-                return left + " " + token.getText() + " " + right;
+                return left + " " + token.getText() + ' ' + right;
             }
         };
     }
@@ -116,7 +116,7 @@ public class LogicalExpression extends BaseSimpleNode {
 
             @Override
             public String toString() {
-                return left + " " + token.getText() + " " + right;
+                return left + " " + token.getText() + ' ' + right;
             }
         };
     }

@@ -41,7 +41,7 @@ final class CamelInternalPooledTaskFactory extends PooledObjectFactorySupport<Ca
 
     @Override
     public String toString() {
-        return "CamelInternalPooledTaskFactory[capacity: " + getCapacity() + "]";
+        return "CamelInternalPooledTaskFactory[capacity: " + getCapacity() + ']';
     }
 
 }

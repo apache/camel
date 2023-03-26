@@ -79,7 +79,7 @@ public class AddIssueProducer extends DefaultProducer {
         }
         if (issueTypeId == null) {
             throw new IllegalArgumentException(
-                    "A valid issue type id is required, actual: id(" + null + "), name(" + issueTypeName + ")");
+                    "A valid issue type id is required, actual: id(" + null + "), name(" + issueTypeName + ')');
         }
 
         if (summary == null) {

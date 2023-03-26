@@ -69,6 +69,6 @@ public class LegacyDeadLetterChannelBuilder extends LegacyDefaultErrorHandlerBui
 
     @Override
     public String toString() {
-        return "DeadLetterChannelBuilder(" + getDeadLetterUri() + ")";
+        return "DeadLetterChannelBuilder(" + getDeadLetterUri() + ')';
     }
 }

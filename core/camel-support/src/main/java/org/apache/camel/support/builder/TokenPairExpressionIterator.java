@@ -134,7 +134,7 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
 
     @Override
     public String toString() {
-        return "tokenize[body() using tokens: " + startToken + "..." + endToken + "]";
+        return "tokenize[body() using tokens: " + startToken + "..." + endToken + ']';
     }
 
     /**
@@ -163,14 +163,14 @@ public class TokenPairExpressionIterator extends ExpressionAdapter {
             // where [ and ] have special meaning
             scanStartToken = startToken;
             if (scanStartToken.startsWith("[")) {
-                scanStartToken = "\\" + scanStartToken;
+                scanStartToken = '\\' + scanStartToken;
             }
             if (scanStartToken.endsWith("]")) {
                 scanStartToken = scanStartToken.substring(0, startToken.length() - 1) + "\\]";
             }
             scanEndToken = endToken;
             if (scanEndToken.startsWith("[")) {
-                scanEndToken = "\\" + scanEndToken;
+                scanEndToken = '\\' + scanEndToken;
             }
             if (scanEndToken.endsWith("]")) {
                 scanEndToken = scanEndToken.substring(0, scanEndToken.length() - 1) + "\\]";

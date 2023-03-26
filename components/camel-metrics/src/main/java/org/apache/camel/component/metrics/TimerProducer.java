@@ -73,7 +73,7 @@ public class TimerProducer extends AbstractMetricsProducer {
 
     String getPropertyName(String metricsName) {
         return new StringBuilder("timer")
-                .append(":")
+                .append(':')
                 .append(metricsName)
                 .toString();
     }

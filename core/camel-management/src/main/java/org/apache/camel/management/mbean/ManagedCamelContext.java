@@ -515,8 +515,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         sb.append("<camelContextStat").append(String.format(" id=\"%s\" state=\"%s\"", getCamelId(), getState()));
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
-        sb.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
-        sb.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
+        sb.append(" exchangesInflight=\"").append(getInflightExchanges()).append('"');
+        sb.append(' ').append(stat, 7, stat.length() - 2).append(">\n");
 
         MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (server != null) {
@@ -553,8 +553,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
                 // use substring as we only want the attributes
                 stat = route.dumpStatsAsXml(fullStats);
-                sb.append(" exchangesInflight=\"").append(route.getExchangesInflight()).append("\"");
-                sb.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
+                sb.append(" exchangesInflight=\"").append(route.getExchangesInflight()).append('"');
+                sb.append(' ').append(stat, 7, stat.length() - 2).append(">\n");
 
                 // add processor details if needed
                 if (includeProcessors) {
@@ -568,8 +568,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                                             processor.getProcessorId(), processor.getIndex(), processor.getState(), line));
                             // use substring as we only want the attributes
                             stat = processor.dumpStatsAsXml(fullStats);
-                            sb.append(" exchangesInflight=\"").append(processor.getExchangesInflight()).append("\"");
-                            sb.append(" ").append(stat, 7, stat.length()).append("\n");
+                            sb.append(" exchangesInflight=\"").append(processor.getExchangesInflight()).append('"');
+                            sb.append(' ').append(stat, 7, stat.length()).append('\n');
                         }
                     }
                     sb.append("      </processorStats>\n");
@@ -589,8 +589,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         sb.append("<camelContextStat").append(String.format(" id=\"%s\" state=\"%s\"", getCamelId(), getState()));
         // use substring as we only want the attributes
         String stat = dumpStatsAsXml(fullStats);
-        sb.append(" exchangesInflight=\"").append(getInflightExchanges()).append("\"");
-        sb.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
+        sb.append(" exchangesInflight=\"").append(getInflightExchanges()).append('"');
+        sb.append(' ').append(stat, 7, stat.length() - 2).append(">\n");
 
         MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (server != null) {
@@ -625,8 +625,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
                 // use substring as we only want the attributes
                 stat = route.dumpStatsAsXml(fullStats);
-                sb.append(" exchangesInflight=\"").append(route.getExchangesInflight()).append("\"");
-                sb.append(" ").append(stat, 7, stat.length() - 2).append(">\n");
+                sb.append(" exchangesInflight=\"").append(route.getExchangesInflight()).append('"');
+                sb.append(' ').append(stat, 7, stat.length() - 2).append(">\n");
 
                 // add steps details if needed
                 sb.append("      <stepStats>\n");
@@ -639,8 +639,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
                                         step.getProcessorId(), step.getIndex(), step.getState(), line));
                         // use substring as we only want the attributes
                         stat = step.dumpStatsAsXml(fullStats);
-                        sb.append(" exchangesInflight=\"").append(step.getExchangesInflight()).append("\"");
-                        sb.append(" ").append(stat, 7, stat.length()).append("\n");
+                        sb.append(" exchangesInflight=\"").append(step.getExchangesInflight()).append('"');
+                        sb.append(' ').append(stat, 7, stat.length()).append('\n');
                     }
                     sb.append("      </stepStats>\n");
                 }

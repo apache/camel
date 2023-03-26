@@ -598,7 +598,7 @@ public class DefaultRoute extends ServiceSupport implements Route {
 
     @Override
     public String toString() {
-        return "Route[" + getEndpoint() + " -> " + processor + "]";
+        return "Route[" + getEndpoint() + " -> " + processor + ']';
     }
 
     @Override

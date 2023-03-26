@@ -680,7 +680,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
      * Build the from endpoint uri for the verb
      */
     public String buildFromUri(VerbDefinition verb) {
-        return "rest:" + verb.asVerb() + ":" + buildUri(verb);
+        return "rest:" + verb.asVerb() + ':' + buildUri(verb);
     }
 
     // Implementation
@@ -754,7 +754,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         for (VerbDefinition verb : verbs) {
             String path = verb.asVerb();
             if (verb.getPath() != null) {
-                path += ":" + verb.getPath();
+                path += ':' + verb.getPath();
             }
             if (!paths.add(path)) {
                 throw new IllegalArgumentException("Duplicate verb detected in rest-dsl: " + path);
@@ -967,7 +967,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             String s2 = FileUtil.stripLeadingSeparator(verb.getPath());
             String allPath;
             if (s1 != null && s2 != null) {
-                allPath = s1 + "/" + s2;
+                allPath = s1 + '/' + s2;
             } else if (path != null) {
                 allPath = path;
             } else {
@@ -991,7 +991,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             if (verb.getType() != null) {
                 String bodyType = verb.getType();
                 if (bodyType.endsWith("[]")) {
-                    bodyType = "List[" + bodyType.substring(0, bodyType.length() - 2) + "]";
+                    bodyType = "List[" + bodyType.substring(0, bodyType.length() - 2) + ']';
                 }
                 ParamDefinition param = findParam(verb, RestParamType.body.name());
                 if (param == null) {
@@ -1017,7 +1017,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
                     from = URISupport.stripQuery(from);
                     if (!query.isEmpty()) {
                         String q = URISupport.createQueryString(query);
-                        from = URISupport.stripQuery(from) + "?" + q;
+                        from = URISupport.stripQuery(from) + '?' + q;
                     }
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -1061,7 +1061,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
             Matcher m = Pattern.compile("\\{(.*?)\\}").matcher(a);
             while (m.find()) {
                 String key = m.group(1);
-                params.add("{" + key + "}");
+                params.add('{' + key + '}');
                 //  merge if exists
                 boolean found = false;
                 for (ParamDefinition param : verb.getParams()) {
@@ -1090,7 +1090,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
 
     private String buildUri(VerbDefinition verb) {
         if (path != null && verb.getPath() != null) {
-            return path + ":" + verb.getPath();
+            return path + ':' + verb.getPath();
         } else if (path != null) {
             return path;
         } else if (verb.getPath() != null) {

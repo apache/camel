@@ -117,7 +117,7 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
 
     @Override
     public void onLoginFailed(int replyCode, String replyMessage) {
-        doLogVerbose("Login on host: " + host + " failed (code: " + replyCode + ", message: " + replyMessage + ")");
+        doLogVerbose("Login on host: " + host + " failed (code: " + replyCode + ", message: " + replyMessage + ')');
     }
 
     @Override
@@ -154,7 +154,7 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
                                                                                         // with
                                                                                         // completed
         if (fileSize > 0) {
-            msg += " (size: " + fileSizeText + ")";
+            msg += " (size: " + fileSizeText + ')';
         }
         doLog(msg);
     }
@@ -171,7 +171,7 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
         if (fileSize > 0) {
             float percent = ((float) resumeOffset / (float) fileSize) * 100L;
             String num = String.format("%.1f", percent);
-            msg += "/" + num + "% (size: " + fileSizeText + ")";
+            msg += '/' + num + "% (size: " + fileSizeText + ')';
         }
         doLog(msg);
     }
@@ -183,7 +183,7 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
 
         String prefix = resume ? "Resume downloading" : "Downloading";
         String msg
-                = prefix + " from host: " + host + " file: " + file + " chunk (" + chunkSize + "/" + totalChunkSize + " bytes)";
+                = prefix + " from host: " + host + " file: " + file + " chunk (" + chunkSize + '/' + totalChunkSize + " bytes)";
         if (fileSize > 0) {
             float percent = ((float) totalChunkSize / (float) fileSize) * 100L;
             String num = String.format("%.1f", percent);
@@ -192,12 +192,12 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
                 num = "99.9";
             }
             String size = StringHelper.humanReadableBytes(totalChunkSize);
-            msg += " (progress: " + size + "/" + num + "%)";
+            msg += " (progress: " + size + '/' + num + "%)";
         } else {
             // okay we do not know the total size, but then make what we have
             // download so-far human readable
             String size = StringHelper.humanReadableBytes(totalChunkSize);
-            msg += " (downloaded: " + size + ")";
+            msg += " (downloaded: " + size + ')';
         }
         doLogVerbose(msg);
         // however if the operation is slow then log once in a while
@@ -212,11 +212,11 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
         String prefix = resume ? "Resume downloading" : "Downloading";
         String msg = prefix + " from host: " + host + " file: " + file + " completed";
         if (transferredBytes > 0) {
-            msg += " (size: " + StringHelper.humanReadableBytes(transferredBytes) + ")";
+            msg += " (size: " + StringHelper.humanReadableBytes(transferredBytes) + ')';
         }
         long taken = watch.taken();
         String time = TimeUtils.printDuration(taken, true);
-        msg += " (took: " + time + ")";
+        msg += " (took: " + time + ')';
         doLog(msg);
     }
 
@@ -227,7 +227,7 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
         interval.restart();
         String msg = "Uploading to host: " + host + " file: " + file + " starting";
         if (fileSize > 0) {
-            msg += " (size: " + fileSizeText + ")";
+            msg += " (size: " + fileSizeText + ')';
         }
         doLog(msg);
     }
@@ -237,7 +237,7 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
         transferredBytes = totalChunkSize;
 
         String msg
-                = "Uploading to host: " + host + " file: " + file + " chunk (" + chunkSize + "/" + totalChunkSize + " bytes)";
+                = "Uploading to host: " + host + " file: " + file + " chunk (" + chunkSize + '/' + totalChunkSize + " bytes)";
         if (fileSize > 0) {
             float percent = ((float) totalChunkSize / (float) fileSize) * 100L;
             String num = String.format("%.1f", percent);
@@ -246,12 +246,12 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
                 num = "99.9";
             }
             String size = StringHelper.humanReadableBytes(totalChunkSize);
-            msg += " (progress: " + size + "/" + num + "%)";
+            msg += " (progress: " + size + '/' + num + "%)";
         } else {
             // okay we do not know the total size, but then make what we have
             // uploaded so-far human readable
             String size = StringHelper.humanReadableBytes(totalChunkSize);
-            msg += " (uploaded: " + size + ")";
+            msg += " (uploaded: " + size + ')';
         }
         // each chunk is verbose
         doLogVerbose(msg);
@@ -266,11 +266,11 @@ public class DefaultFtpClientActivityListener implements FtpClientActivityListen
     public void onUploadComplete(String host, String file) {
         String msg = "Uploading to host: " + host + " file: " + file + " completed";
         if (transferredBytes > 0) {
-            msg += " (size: " + StringHelper.humanReadableBytes(transferredBytes) + ")";
+            msg += " (size: " + StringHelper.humanReadableBytes(transferredBytes) + ')';
         }
         long taken = watch.taken();
         String time = TimeUtils.printDuration(taken, true);
-        msg += " (took: " + time + ")";
+        msg += " (took: " + time + ')';
         doLog(msg);
     }
 

@@ -78,7 +78,7 @@ public final class GenericFileDefaultSorter {
             text = "${" + text;
         }
         if (!expression.endsWith("}")) {
-            text = text + "}";
+            text = text + '}';
         }
         Language language = context.resolveLanguage("file");
         final Expression exp = language.createExpression(text);

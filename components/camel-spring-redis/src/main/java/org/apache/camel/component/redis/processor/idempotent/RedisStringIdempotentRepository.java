@@ -72,7 +72,7 @@ public class RedisStringIdempotentRepository extends RedisIdempotentRepository {
             @Override
             public List<byte[]> doInRedis(RedisConnection connection) throws DataAccessException {
                 List<byte[]> binaryKeys = new ArrayList<>();
-                Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().match("*" + createRedisKey("*")).build());
+                Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().match('*' + createRedisKey("*")).build());
 
                 while (cursor.hasNext()) {
                     byte[] key = cursor.next();
@@ -87,7 +87,7 @@ public class RedisStringIdempotentRepository extends RedisIdempotentRepository {
     }
 
     protected String createRedisKey(String key) {
-        return getProcessorName() + ":" + key;
+        return getProcessorName() + ':' + key;
     }
 
     public long getExpiry() {

@@ -44,7 +44,7 @@ public class FlatpackException extends CamelExchangeException {
         StringBuilder sb = new StringBuilder();
         sb.append(super.getMessage());
         if (errors != null && !errors.isEmpty()) {
-            sb.append("\n");
+            sb.append('\n');
             for (Object error : errors) {
                 DataError e = (DataError) error;
                 sb.append(e.toString());

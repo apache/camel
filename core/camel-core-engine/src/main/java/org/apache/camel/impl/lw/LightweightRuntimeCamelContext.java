@@ -1201,7 +1201,7 @@ public class LightweightRuntimeCamelContext implements CamelContext, CatalogCame
         // we find it
         String[] subPackages = new String[] { "", "/config", "/dataformat", "/language", "/loadbalancer", "/rest" };
         for (String sub : subPackages) {
-            String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + sub + "/" + eipName + ".json";
+            String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + sub + '/' + eipName + ".json";
             InputStream inputStream = getClassResolver().loadResourceAsStream(path);
             if (inputStream != null) {
                 try {
@@ -1215,7 +1215,7 @@ public class LightweightRuntimeCamelContext implements CamelContext, CatalogCame
     }
 
     private String getJsonSchema(String packageName, String name) throws IOException {
-        String path = packageName.replace('.', '/') + "/" + name + ".json";
+        String path = packageName.replace('.', '/') + '/' + name + ".json";
         InputStream inputStream = getClassResolver().loadResourceAsStream(path);
         if (inputStream != null) {
             try {

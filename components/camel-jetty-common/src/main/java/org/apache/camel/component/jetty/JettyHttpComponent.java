@@ -199,7 +199,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
 
         // include component scheme in the uri
         String scheme = StringHelper.before(uri, ":");
-        endpointUri = new URI(scheme + ":" + endpointUri);
+        endpointUri = new URI(scheme + ':' + endpointUri);
 
         JettyHttpEndpoint endpoint = createEndpoint(endpointUri, httpUri);
         if (async != null) {
@@ -412,7 +412,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
                 pathSpec = "/";
             }
             if (endpoint.isMatchOnUriPrefix()) {
-                pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
+                pathSpec = pathSpec.endsWith("/") ? pathSpec + '*' : pathSpec + "/*";
             }
             addFilter(context, filterHolder, pathSpec);
         }
@@ -448,7 +448,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             pathSpec = "/";
         }
         if (endpoint.isMatchOnUriPrefix()) {
-            pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
+            pathSpec = pathSpec.endsWith("/") ? pathSpec + '*' : pathSpec + "/*";
         }
         addFilter(context, filterHolder, pathSpec);
         LOG.debug("using multipart filter implementation {} for path {}", filter.getClass().getName(), pathSpec);
@@ -493,7 +493,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
     }
 
     private String getConnectorKey(HttpCommonEndpoint endpoint) {
-        return endpoint.getProtocol() + ":" + endpoint.getHttpUri().getHost() + ":" + endpoint.getPort();
+        return endpoint.getProtocol() + ':' + endpoint.getHttpUri().getHost() + ':' + endpoint.getPort();
     }
 
     // Properties
@@ -1054,7 +1054,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             if (uriTemplate.startsWith("/")) {
                 path = path + uriTemplate;
             } else {
-                path = path + "/" + uriTemplate;
+                path = path + '/' + uriTemplate;
             }
         }
         path = FileUtil.stripLeadingSeparator(path);
@@ -1086,7 +1086,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             contextPath = FileUtil.stripTrailingSeparator(contextPath);
             contextPath = FileUtil.stripLeadingSeparator(contextPath);
             if (ObjectHelper.isNotEmpty(contextPath)) {
-                path = contextPath + "/" + path;
+                path = contextPath + '/' + path;
             }
         }
 
@@ -1231,7 +1231,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
 
         if (defaultQueuedThreadPool != null) {
             // let the thread names indicate they are from the server
-            defaultQueuedThreadPool.setName("CamelJettyServer(" + ObjectHelper.getIdentityHashCode(s) + ")");
+            defaultQueuedThreadPool.setName("CamelJettyServer(" + ObjectHelper.getIdentityHashCode(s) + ')');
             try {
                 defaultQueuedThreadPool.start();
             } catch (Exception e) {

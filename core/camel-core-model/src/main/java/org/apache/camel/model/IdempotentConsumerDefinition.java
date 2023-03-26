@@ -64,7 +64,7 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
 
     @Override
     public String toString() {
-        return "IdempotentConsumer[" + getExpression() + " -> " + getOutputs() + "]";
+        return "IdempotentConsumer[" + getExpression() + " -> " + getOutputs() + ']';
     }
 
     @Override
@@ -74,7 +74,7 @@ public class IdempotentConsumerDefinition extends OutputExpressionNode {
 
     @Override
     public String getLabel() {
-        return "idempotentConsumer[" + getExpression() + "]";
+        return "idempotentConsumer[" + getExpression() + ']';
     }
 
     // Fluent API

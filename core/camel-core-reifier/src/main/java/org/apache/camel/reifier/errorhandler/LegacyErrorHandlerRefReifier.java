@@ -43,7 +43,7 @@ public class LegacyErrorHandlerRefReifier extends ErrorHandlerReifier<ErrorHandl
 
     private ErrorHandlerFactory lookupErrorHandler(Route route) {
         ErrorHandlerFactory handler = ErrorHandlerHelper.lookupErrorHandlerFactory(route, definition.getRef(), true);
-        ObjectHelper.notNull(handler, "error handler '" + definition.getRef() + "'");
+        ObjectHelper.notNull(handler, "error handler '" + definition.getRef() + '\'');
         route.addErrorHandlerFactoryReference(definition, handler);
         return handler;
     }

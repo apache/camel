@@ -358,7 +358,7 @@ public class RouteTemplateDefinition extends OptionalIdentifiedDefinition {
 
     @Override
     public String getLabel() {
-        return "RouteTemplate[" + route.getInput().getLabel() + "]";
+        return "RouteTemplate[" + route.getInput().getLabel() + ']';
     }
 
     private void addTemplateParameter(String name, String defaultValue) {

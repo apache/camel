@@ -54,7 +54,7 @@ public abstract class ResourceResolverSupport extends ServiceSupport implements 
 
     @Override
     public Resource resolve(String location) {
-        if (!location.startsWith(getSupportedScheme() + ":")) {
+        if (!location.startsWith(getSupportedScheme() + ':')) {
             throw new IllegalArgumentException("Unsupported scheme: " + location);
         }
 
@@ -73,7 +73,7 @@ public abstract class ResourceResolverSupport extends ServiceSupport implements 
     protected abstract Resource createResource(String location, String remaining);
 
     protected String getRemaining(String location) {
-        return StringHelper.after(location, getSupportedScheme() + ":");
+        return StringHelper.after(location, getSupportedScheme() + ':');
     }
 
     protected Logger getLogger() {

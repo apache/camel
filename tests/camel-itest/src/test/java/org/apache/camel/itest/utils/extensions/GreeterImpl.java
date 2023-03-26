@@ -35,7 +35,7 @@ public class GreeterImpl implements Greeter {
     public String greetMe(String me) {
         LOG.info("Executing operation greetMe");
         LOG.info("Executing operation greetMe");
-        LOG.info("Message received: " + me + "\n");
+        LOG.info("Message received: " + me + '\n');
         return "Hello " + me;
     }
 

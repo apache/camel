@@ -208,7 +208,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                         Path out = schemaOutDir.toPath().resolve(schemaSubDirectory(dataFormatModel.getJavaType()))
                                 .resolve(name + PackageHelper.JSON_SUFIX);
                         updateResource(schemaOutDir.toPath(),
-                                schemaSubDirectory(dataFormatModel.getJavaType()) + "/" + name + PackageHelper.JSON_SUFIX,
+                                schemaSubDirectory(dataFormatModel.getJavaType()) + '/' + name + PackageHelper.JSON_SUFIX,
                                 schema);
 
                         if (log.isDebugEnabled()) {
@@ -228,11 +228,11 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
                             log.warn("Unmapped options: " + String.join(",", names));
                         }
                         updateResource(configurerSourceOutDir.toPath(),
-                                pn.replace('.', '/') + "/" + cn + "Configurer.java",
+                                pn.replace('.', '/') + '/' + cn + "Configurer.java",
                                 generatePropertyConfigurer(pn, cn + "Configurer", cn, options));
                         updateResource(configurerResourceOutDir.toPath(),
                                 "META-INF/services/org/apache/camel/configurer/" + name + "-dataformat",
-                                generateMetaInfConfigurer(pn + "." + cn + "Configurer"));
+                                generateMetaInfConfigurer(pn + '.' + cn + "Configurer"));
                     }
                 } else {
                     throw new MojoExecutionException(
@@ -397,7 +397,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
         String name = file.getName();
         if (name.charAt(0) != '.') {
             if (buffer.length() > 0) {
-                buffer.append(" ");
+                buffer.append(' ');
             }
             buffer.append(name);
         }
@@ -560,7 +560,7 @@ public class PackageDataFormatMojo extends AbstractGeneratorMojo {
             w.write("import org.apache.camel.support.component.PropertyConfigurerSupport;\n");
             w.write("\n");
             w.write("/**\n");
-            w.write(" * " + GENERATED_MSG + "\n");
+            w.write(" * " + GENERATED_MSG + '\n');
             w.write(" */\n");
             w.write("@SuppressWarnings(\"unchecked\")\n");
             w.write("public class " + cn + " extends PropertyConfigurerSupport implements GeneratedPropertyConfigurer {\n");

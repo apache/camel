@@ -29,7 +29,7 @@ public class BodyInPreCompleteAggregatingStrategy implements AggregationStrategy
 
         String oldBody = oldExchange.getIn().getBody(String.class);
         String newBody = newExchange.getIn().getBody(String.class);
-        oldExchange.getIn().setBody(oldBody + "+" + newBody);
+        oldExchange.getIn().setBody(oldBody + '+' + newBody);
         return oldExchange;
     }
 

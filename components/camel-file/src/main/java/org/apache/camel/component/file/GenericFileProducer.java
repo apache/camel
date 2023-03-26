@@ -289,7 +289,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
         boolean success = operations.storeFile(fileName, exchange, -1);
         if (!success) {
-            throw new GenericFileOperationFailedException("Error writing file [" + fileName + "]");
+            throw new GenericFileOperationFailedException("Error writing file [" + fileName + ']');
         }
         LOG.debug("Wrote [{}] to [{}]", fileName, getEndpoint());
     }

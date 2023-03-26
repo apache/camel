@@ -72,7 +72,7 @@ public final class SimpleExpressionBuilder {
      */
     public static Expression headersOgnlExpression(final String ognl) {
         return new KeyedOgnlExpressionAdapter(
-                ognl, "headerOgnl(" + ognl + ")",
+                ognl, "headerOgnl(" + ognl + ')',
                 (exchange, exp) -> {
                     String text = exp.evaluate(exchange, String.class);
                     return exchange.getIn().getHeader(text);
@@ -127,7 +127,7 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public String toString() {
-                return "messageHistory(" + detailed + ")";
+                return "messageHistory(" + detailed + ')';
             }
         };
     }
@@ -155,7 +155,7 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public String toString() {
-                return "collate(" + expression + "," + group + ")";
+                return "collate(" + expression + ',' + group + ')';
             }
         };
     }
@@ -180,7 +180,7 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public String toString() {
-                return "skip(" + expression + "," + number + ")";
+                return "skip(" + expression + ',' + number + ')';
             }
         };
     }
@@ -208,9 +208,9 @@ public final class SimpleExpressionBuilder {
             @Override
             public String toString() {
                 if (prefix != null) {
-                    return "join(" + expression + "," + separator + "," + prefix + ")";
+                    return "join(" + expression + ',' + separator + ',' + prefix + ')';
                 } else {
-                    return "join(" + expression + "," + separator + ")";
+                    return "join(" + expression + ',' + separator + ')';
                 }
             }
         };
@@ -242,7 +242,7 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public String toString() {
-                return "random(" + min + "," + max + ")";
+                return "random(" + min + ',' + max + ')';
             }
         };
     }
@@ -267,7 +267,7 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public String toString() {
-                return "random(" + min + "," + max + ")";
+                return "random(" + min + ',' + max + ')';
             }
         };
     }
@@ -304,7 +304,7 @@ public final class SimpleExpressionBuilder {
             @Override
             public String toString() {
                 if (generator != null) {
-                    return "uuid(" + generator + ")";
+                    return "uuid(" + generator + ')';
                 } else {
                     return "uuid";
                 }
@@ -609,11 +609,11 @@ public final class SimpleExpressionBuilder {
             @Override
             public String toString() {
                 if (timezone != null && pattern != null) {
-                    return "date(" + commandWithOffsets + ":" + timezone + ":" + pattern + ")";
+                    return "date(" + commandWithOffsets + ':' + timezone + ':' + pattern + ')';
                 } else if (pattern != null) {
-                    return "date(" + commandWithOffsets + ":" + pattern + ")";
+                    return "date(" + commandWithOffsets + ':' + pattern + ')';
                 } else {
-                    return "date(" + commandWithOffsets + ")";
+                    return "date(" + commandWithOffsets + ')';
                 }
             }
         };
@@ -632,7 +632,7 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public String toString() {
-                return "skip " + expression + " " + skip + " times";
+                return "skip " + expression + ' ' + skip + " times";
             }
         };
     }
@@ -694,7 +694,7 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public String toString() {
-                return "mandatoryBodyAs[" + name + "](" + ognl + ")";
+                return "mandatoryBodyAs[" + name + "](" + ognl + ')';
             }
         };
     }
@@ -732,7 +732,7 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public String toString() {
-                return "mandatoryBodyAs[" + name + "]";
+                return "mandatoryBodyAs[" + name + ']';
             }
         };
     }
@@ -778,7 +778,7 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public String toString() {
-                return "bodyOgnlAs[" + name + "](" + ognl + ")";
+                return "bodyOgnlAs[" + name + "](" + ognl + ')';
             }
         };
     }
@@ -808,7 +808,7 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public String toString() {
-                return "exchangeOgnl(" + ognl + ")";
+                return "exchangeOgnl(" + ognl + ')';
             }
         };
     }
@@ -837,7 +837,7 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public String toString() {
-                return "camelContextOgnl(" + ognl + ")";
+                return "camelContextOgnl(" + ognl + ')';
             }
         };
     }
@@ -869,7 +869,7 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public String toString() {
-                return "bodyOgnl(" + ognl + ")";
+                return "bodyOgnl(" + ognl + ')';
             }
         };
     }
@@ -976,7 +976,7 @@ public final class SimpleExpressionBuilder {
      */
     public static Expression propertyOgnlExpression(final String ognl) {
         return new KeyedOgnlExpressionAdapter(
-                ognl, "propertyOgnl(" + ognl + ")",
+                ognl, "propertyOgnl(" + ognl + ')',
                 (exchange, exp) -> {
                     String text = exp.evaluate(exchange, String.class);
                     return exchange.getProperty(text);
@@ -1017,7 +1017,7 @@ public final class SimpleExpressionBuilder {
 
             @Override
             public String toString() {
-                return "exchangeExceptionOgnl(" + ognl + ")";
+                return "exchangeExceptionOgnl(" + ognl + ')';
             }
         };
     }

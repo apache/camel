@@ -119,7 +119,7 @@ public class CaffeineLoadCacheProducer extends HeaderSelectorProducer {
 
         if (value == null) {
             throw new CamelExchangeException(
-                    "No value provided in header or as default value (" + CaffeineConstants.KEY + ")", message.getExchange());
+                    "No value provided in header or as default value (" + CaffeineConstants.KEY + ')', message.getExchange());
         }
 
         return value;
@@ -138,7 +138,7 @@ public class CaffeineLoadCacheProducer extends HeaderSelectorProducer {
 
         if (value == null) {
             throw new CamelExchangeException(
-                    "No value provided in header or body (" + CaffeineConstants.VALUE + ")", message.getExchange());
+                    "No value provided in header or body (" + CaffeineConstants.VALUE + ')', message.getExchange());
         }
 
         return value;

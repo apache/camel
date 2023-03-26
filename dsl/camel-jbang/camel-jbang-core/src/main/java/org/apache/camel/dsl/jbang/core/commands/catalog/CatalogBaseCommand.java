@@ -88,7 +88,7 @@ public abstract class CatalogBaseCommand extends CamelCommand {
     abstract List<Row> collectRows();
 
     String getGAV(ArtifactModel<?> model) {
-        return model.getGroupId() + ":" + model.getArtifactId() + ":" + model.getVersion();
+        return model.getGroupId() + ':' + model.getArtifactId() + ':' + model.getVersion();
     }
 
     CamelCatalog loadCatalog() throws Exception {

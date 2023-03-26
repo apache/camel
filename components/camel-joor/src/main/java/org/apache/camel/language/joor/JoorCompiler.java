@@ -137,38 +137,38 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
         //  wrap text into a class method we can call
         StringBuilder sb = new StringBuilder();
         sb.append("package ").append(qn).append(";\n");
-        sb.append("\n");
+        sb.append('\n');
         sb.append("import java.util.*;\n");
         sb.append("import java.util.concurrent.*;\n");
         sb.append("import java.util.function.*;\n");
         sb.append("import java.util.stream.*;\n");
-        sb.append("\n");
+        sb.append('\n');
         sb.append("import org.apache.camel.*;\n");
         sb.append("import org.apache.camel.util.*;\n");
         sb.append("import static org.apache.camel.language.joor.JoorHelper.*;\n");
-        sb.append("\n");
+        sb.append('\n');
         // custom imports
         for (String i : imports) {
             sb.append(i);
             if (!i.endsWith(";")) {
-                sb.append(";");
+                sb.append(';');
             }
-            sb.append("\n");
+            sb.append('\n');
         }
         for (String i : scriptImports) {
             sb.append("import ");
             sb.append(i);
             sb.append(";\n");
         }
-        sb.append("\n");
+        sb.append('\n');
         sb.append("public class ").append(name).append(" implements org.apache.camel.language.joor.JoorMethod {\n");
-        sb.append("\n");
+        sb.append('\n');
 
         // local beans variables
         for (Map.Entry<String, Class> entry : scriptBeans.entrySet()) {
-            sb.append("    private ").append(entry.getValue().getSimpleName()).append(" ").append(entry.getKey()).append(";\n");
+            sb.append("    private ").append(entry.getValue().getSimpleName()).append(' ').append(entry.getKey()).append(";\n");
         }
-        sb.append("\n");
+        sb.append('\n');
 
         // constructor to lookup beans
         sb.append("    public ").append(name).append("(CamelContext context) throws Exception {\n");
@@ -177,7 +177,7 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
                     .append(entry.getKey()).append("\", ").append(entry.getValue().getSimpleName()).append(".class);\n");
         }
         sb.append("    }\n");
-        sb.append("\n");
+        sb.append('\n');
 
         sb.append("    @Override\n");
         sb.append(
@@ -201,15 +201,15 @@ public class JoorCompiler extends ServiceSupport implements StaticService {
             sb.append(script);
         }
         if (!script.endsWith("}") && !script.endsWith(";")) {
-            sb.append(";");
+            sb.append(';');
         }
         if (biFunction && !script.endsWith(";")) {
-            sb.append(";");
+            sb.append(';');
         }
-        sb.append("\n");
+        sb.append('\n');
         sb.append("    }\n");
         sb.append("}\n");
-        sb.append("\n");
+        sb.append('\n');
 
         return sb.toString();
     }

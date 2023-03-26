@@ -271,7 +271,7 @@ public class CamelWebSocketHandler implements HttpHandler {
                 if (connectionKey == null) {
                     throw new RuntimeCamelException(
                             UndertowConstants.CONNECTION_KEY + " attribute not found on "
-                                                    + WebSocketChannel.class.getSimpleName() + " " + channel);
+                                                    + WebSocketChannel.class.getSimpleName() + ' ' + channel);
                 }
                 if (errors == null) {
                     errors = new HashMap<>();
@@ -299,7 +299,7 @@ public class CamelWebSocketHandler implements HttpHandler {
             if (connectionKey == null) {
                 throw new RuntimeCamelException(
                         UndertowConstants.CONNECTION_KEY + " attribute not found on "
-                                                + WebSocketChannel.class.getSimpleName() + " " + channel);
+                                                + WebSocketChannel.class.getSimpleName() + ' ' + channel);
             }
             final Pooled<ByteBuffer[]> data = message.getData();
             try {
@@ -336,7 +336,7 @@ public class CamelWebSocketHandler implements HttpHandler {
             if (connectionKey == null) {
                 throw new RuntimeCamelException(
                         UndertowConstants.CONNECTION_KEY + " attribute not found on "
-                                                + WebSocketChannel.class.getSimpleName() + " " + channel);
+                                                + WebSocketChannel.class.getSimpleName() + ' ' + channel);
             }
             synchronized (consumerLock) {
                 if (consumer != null) {

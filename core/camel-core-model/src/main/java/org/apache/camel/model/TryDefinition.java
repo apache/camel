@@ -57,7 +57,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
 
     @Override
     public String toString() {
-        return "DoTry[" + getOutputs() + "]";
+        return "DoTry[" + getOutputs() + ']';
     }
 
     @Override

@@ -98,7 +98,7 @@ public class CamelJob implements Job, InterruptableJob {
         SchedulerContext schedulerContext = getSchedulerContext(context);
         String camelContextName = context.getMergedJobDataMap().getString(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME);
         CamelContext result
-                = (CamelContext) schedulerContext.get(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName);
+                = (CamelContext) schedulerContext.get(QuartzConstants.QUARTZ_CAMEL_CONTEXT + '-' + camelContextName);
         if (result == null) {
             throw new JobExecutionException("No CamelContext could be found with name: " + camelContextName);
         }

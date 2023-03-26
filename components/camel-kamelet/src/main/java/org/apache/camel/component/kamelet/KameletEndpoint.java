@@ -69,7 +69,7 @@ public class KameletEndpoint extends DefaultEndpoint {
 
         this.templateId = templateId;
         this.routeId = routeId;
-        this.key = templateId + "/" + routeId;
+        this.key = templateId + '/' + routeId;
         this.kameletProperties = new HashMap<>();
     }
 

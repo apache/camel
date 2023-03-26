@@ -83,18 +83,18 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
 
         // must be XML tokens
         if (!tag.startsWith("<")) {
-            tag = "<" + tag;
+            tag = '<' + tag;
         }
         if (!tag.endsWith(">")) {
-            tag = tag + ">";
+            tag = tag + '>';
         }
 
         if (inherit != null) {
             if (!inherit.startsWith("<")) {
-                inherit = "<" + inherit;
+                inherit = '<' + inherit;
             }
             if (!inherit.endsWith(">")) {
-                inherit = inherit + ">";
+                inherit = inherit + '>';
             }
         }
 
@@ -310,7 +310,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
                 if ("_DEFAULT_".equals(key)) {
                     sb.append(" xmlns=").append(value);
                 } else {
-                    sb.append(" xmlns:").append(key).append("=").append(value);
+                    sb.append(" xmlns:").append(key).append('=').append(value);
                 }
             }
 
@@ -384,7 +384,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
         }
         StringBuilder sb = new StringBuilder();
         for (int i = tags.size() - 1; i >= 0; i--) {
-            sb.append("</").append(tags.get(i)).append(">");
+            sb.append("</").append(tags.get(i)).append('>');
         }
         return sb.toString();
     }

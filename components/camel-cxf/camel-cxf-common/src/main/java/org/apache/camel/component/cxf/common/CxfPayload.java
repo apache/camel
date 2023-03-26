@@ -120,8 +120,8 @@ public class CxfPayload<T> {
                         element.setAttribute(ns, entry.getValue());
                     }
                 } else {
-                    if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns))) {
-                        element.setAttribute(XMLConstants.XMLNS_ATTRIBUTE + ":" + ns, entry.getValue());
+                    if (ObjectHelper.isEmpty(element.getAttribute(XMLConstants.XMLNS_ATTRIBUTE + ':' + ns))) {
+                        element.setAttribute(XMLConstants.XMLNS_ATTRIBUTE + ':' + ns, entry.getValue());
                     }
                 }
             }

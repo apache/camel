@@ -148,7 +148,7 @@ public class GridFsProducer extends DefaultProducer {
             }
             while (cursor.hasNext() && current.length() < 4000) {
                 GridFSFile file = cursor.next();
-                current.append(file.getFilename()).append("\t").append(file.getId()).append("\n");
+                current.append(file.getFilename()).append('\t').append(file.getId()).append('\n');
             }
         }
 

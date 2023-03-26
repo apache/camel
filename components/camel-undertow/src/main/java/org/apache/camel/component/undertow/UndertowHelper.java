@@ -70,7 +70,7 @@ public final class UndertowHelper {
                 // make sure that there is exactly one "/" between HTTP_URI and
                 // HTTP_PATH
                 if (!uri.endsWith("/")) {
-                    uri = uri + "/";
+                    uri = uri + '/';
                 }
                 uri = uri.concat(path);
             }

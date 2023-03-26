@@ -46,6 +46,6 @@ public class ShiroSecurityToken implements Serializable {
 
     @Override
     public String toString() {
-        return "ShiroSecurityToken[" + username + "]";
+        return "ShiroSecurityToken[" + username + ']';
     }
 }

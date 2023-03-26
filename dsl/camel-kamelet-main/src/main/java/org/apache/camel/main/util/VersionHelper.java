@@ -57,25 +57,25 @@ public final class VersionHelper {
         }
         // convert to 2-digit numbers
         if (s1.length() < 2) {
-            s1 = "0" + s1;
+            s1 = '0' + s1;
         }
         if (s2.length() < 2) {
-            s2 = "0" + s2;
+            s2 = '0' + s2;
         }
         if (s2.length() < 2) {
-            s2 = "0" + s2;
+            s2 = '0' + s2;
         }
         if (s3.length() < 2) {
-            s3 = "0" + s3;
+            s3 = '0' + s3;
         }
         if (t1.length() < 2) {
-            t1 = "0" + t1;
+            t1 = '0' + t1;
         }
         if (t2.length() < 2) {
-            t2 = "0" + t2;
+            t2 = '0' + t2;
         }
         if (t3.length() < 2) {
-            t3 = "0" + t3;
+            t3 = '0' + t3;
         }
 
         String s = s1 + s2 + s3;

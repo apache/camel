@@ -79,7 +79,7 @@ public class JcrConsumer extends DefaultConsumer {
         if (absPath == null) {
             absPath = "/";
         } else if (!absPath.startsWith("/")) {
-            absPath = "/" + absPath;
+            absPath = '/' + absPath;
         }
 
         boolean isDeep = getJcrEndpoint().isDeep();
@@ -152,7 +152,7 @@ public class JcrConsumer extends DefaultConsumer {
     }
 
     private void scheduleSessionListenerChecker() {
-        String name = "JcrConsumerSessionChecker[" + getJcrEndpoint().getEndpointConfiguredDestinationName() + "]";
+        String name = "JcrConsumerSessionChecker[" + getJcrEndpoint().getEndpointConfiguredDestinationName() + ']';
         ScheduledExecutorService executor = getJcrEndpoint().getCamelContext().getExecutorServiceManager()
                 .newSingleThreadScheduledExecutor(this, name);
         JcrConsumerSessionListenerChecker sessionListenerChecker = new JcrConsumerSessionListenerChecker();

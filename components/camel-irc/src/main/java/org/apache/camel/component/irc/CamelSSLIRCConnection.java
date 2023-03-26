@@ -61,7 +61,7 @@ public class CamelSSLIRCConnection extends SSLIRCConnection {
             super.connect();
         } else {
             if (level != 0) {
-                throw new SocketException("Socket closed or already open (" + level + ")");
+                throw new SocketException("Socket closed or already open (" + level + ')');
             }
 
             IOException exception = null;

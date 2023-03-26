@@ -186,7 +186,7 @@ public class BindyDataFormat extends DataFormatDefinition {
 
     public BindyDataFormat locale(Locale locale) {
         return locale(locale.getCountry().isEmpty()
-                ? locale.getLanguage() : locale.getLanguage() + "-" + locale.getCountry());
+                ? locale.getLanguage() : locale.getLanguage() + '-' + locale.getCountry());
     }
 
     public BindyDataFormat locale(String locale) {

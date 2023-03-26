@@ -52,11 +52,11 @@ public class GenericFileOperationFailedException extends RuntimeCamelException {
     }
 
     public GenericFileOperationFailedException(int code, String reason, String message) {
-        this(code, reason + " " + message);
+        this(code, reason + ' ' + message);
     }
 
     public GenericFileOperationFailedException(int code, String reason, String message, Throwable cause) {
-        this(code, reason + " " + message, cause);
+        this(code, reason + ' ' + message, cause);
     }
 
     /**

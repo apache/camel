@@ -62,7 +62,7 @@ final class RxJavaCamelProcessor implements Closeable {
         Objects.requireNonNull(producer, "producer cannot be null, use the detach method");
 
         if (this.camelProducer != null) {
-            throw new IllegalStateException("A producer is already attached to the stream '" + name + "'");
+            throw new IllegalStateException("A producer is already attached to the stream '" + name + '\'');
         }
 
         if (this.camelProducer != producer) {

@@ -51,7 +51,7 @@ public class CipherSuitesParameters {
         StringBuilder builder = new StringBuilder();
         builder.append("CipherSuitesParameters[cipherSuite=");
         builder.append(getCipherSuite());
-        builder.append("]");
+        builder.append(']');
         return builder.toString();
     }
 }

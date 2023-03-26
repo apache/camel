@@ -87,7 +87,7 @@ public class AmazonSQSClientMock implements SqsClient {
         ListQueuesResponse.Builder result = ListQueuesResponse.builder();
         List<String> queues = new ArrayList<>();
         if (queueName != null) {
-            queues.add("/" + queueName);
+            queues.add('/' + queueName);
         } else {
             queues.add("/queue1");
             queues.add("/queue2");

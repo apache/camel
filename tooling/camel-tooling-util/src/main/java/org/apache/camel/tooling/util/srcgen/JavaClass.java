@@ -110,9 +110,9 @@ public class JavaClass {
 
     public String getCanonicalName() {
         if (parent != null) {
-            return parent.getCanonicalName() + "$" + name;
+            return parent.getCanonicalName() + '$' + name;
         } else {
-            return packageName + "." + name;
+            return packageName + '.' + name;
         }
     }
 
@@ -249,7 +249,7 @@ public class JavaClass {
 
     @Override
     public String toString() {
-        return "JavaClass[" + getCanonicalName() + "]";
+        return "JavaClass[" + getCanonicalName() + ']';
     }
 
     public String printClass() {
@@ -263,7 +263,7 @@ public class JavaClass {
         imports.addAll(this.imports);
         addImports(imports);
         nested.forEach(jc -> jc.addImports(imports));
-        imports.removeIf(f -> f.startsWith("java.lang.") || f.startsWith(packageName + "."));
+        imports.removeIf(f -> f.startsWith("java.lang.") || f.startsWith(packageName + '.'));
         imports.removeIf(GenericType::isPrimitive);
 
         Map<String, List<String>> importsByPackages = new LinkedHashMap<>();
@@ -281,12 +281,12 @@ public class JavaClass {
         }
 
         sb.append("package ").append(packageName).append(";\n");
-        sb.append("\n");
+        sb.append('\n');
         if (!imports.isEmpty()) {
             for (String imp : imports) {
                 sb.append("import ").append(imp).append(";\n");
             }
-            sb.append("\n");
+            sb.append('\n');
         }
 
         printClass(innerClassesLast, sb, "");
@@ -307,7 +307,7 @@ public class JavaClass {
                     .append(String.join(",\n" + indent + "    ", values))
                     .append(";\n")
                     .append(indent)
-                    .append("}");
+                    .append('}');
             return;
 
         }
@@ -330,7 +330,7 @@ public class JavaClass {
         }
         sb2.append(" {");
         if (sb2.length() < 80) {
-            sb.append(sb2).append("\n");
+            sb.append(sb2).append('\n');
         } else {
             sb.append(indent);
             if (isPublic) {
@@ -341,12 +341,12 @@ public class JavaClass {
             }
             sb.append(isClass ? "class " : "interface ").append(name);
             if (extendsName != null && !"java.lang.Object".equals(extendsName)) {
-                sb.append("\n");
+                sb.append('\n');
                 sb.append(indent).append("        extends\n");
                 sb.append(indent).append("            ").append(extendsName);
             }
             if (!implementNames.isEmpty()) {
-                sb.append("\n");
+                sb.append('\n');
                 sb.append(indent).append(isClass ? "        implements\n" : "        extends\n");
                 sb.append(
                         implementNames.stream().map(name -> indent + "            " + name).collect(Collectors.joining(",\n")));
@@ -354,7 +354,7 @@ public class JavaClass {
             sb.append(" {\n");
         }
         if (parent == null) {
-            sb.append("\n");
+            sb.append('\n');
         }
 
         for (Field field : fields) {
@@ -368,9 +368,9 @@ public class JavaClass {
 
         if (!innerClassesLast) {
             for (JavaClass nest : nested) {
-                sb.append("\n");
+                sb.append('\n');
                 nest.printClass(innerClassesLast, sb, indent + "    ");
-                sb.append("\n");
+                sb.append('\n');
             }
         }
 
@@ -389,13 +389,13 @@ public class JavaClass {
 
         if (innerClassesLast) {
             for (JavaClass nest : nested) {
-                sb.append("\n");
+                sb.append('\n');
                 nest.printClass(innerClassesLast, sb, indent + "    ");
-                sb.append("\n");
+                sb.append('\n');
             }
         }
 
-        sb.append(indent).append("}");
+        sb.append(indent).append('}');
     }
 
     private void addImports(Set<String> imports) {
@@ -451,7 +451,7 @@ public class JavaClass {
 
     private void printMethod(StringBuilder sb, String indent, Method method) {
         if (fields.size() + properties.size() > 0) {
-            sb.append("\n");
+            sb.append('\n');
         }
         if (method.javadoc.text != null) {
             printJavadoc(sb, indent, method.javadoc);
@@ -488,14 +488,14 @@ public class JavaClass {
                 } else {
                     sb2.append("void");
                 }
-                sb2.append(" ");
+                sb2.append(' ');
             }
             sb2.append(method.name);
-            sb2.append("(");
+            sb2.append('(');
             sb2.append(method.parameters.stream()
                     .map(p -> p.vararg
                             ? typeOf(p) + "... " + p.name
-                            : typeOf(p) + " " + p.name)
+                            : typeOf(p) + ' ' + p.name)
                     .collect(Collectors.joining(", ")));
 
             sb2.append(") ");
@@ -504,7 +504,7 @@ public class JavaClass {
                 sb2.append(method.exceptions.stream().map(this::shortName).collect(Collectors.joining(", ", "", " ")));
             }
             if (!method.isAbstract) {
-                sb2.append("{");
+                sb2.append('{');
             }
             if (sb2.length() < 84) {
                 sb.append(sb2);
@@ -531,7 +531,7 @@ public class JavaClass {
                     } else {
                         sb.append("void");
                     }
-                    sb.append(" ");
+                    sb.append(' ');
                 }
                 sb.append(method.name);
                 if (!method.parameters.isEmpty()) {
@@ -539,9 +539,9 @@ public class JavaClass {
                     sb.append(method.parameters.stream()
                             .map(p -> p.vararg
                                     ? indent + "        " + typeOf(p) + "... " + p.name
-                                    : indent + "        " + typeOf(p) + " " + p.name)
+                                    : indent + "        " + typeOf(p) + ' ' + p.name)
                             .collect(Collectors.joining(",\n")));
-                    sb.append(")");
+                    sb.append(')');
                 } else {
                     sb.append("()");
                 }
@@ -555,12 +555,12 @@ public class JavaClass {
             }
         }
         if (!method.isAbstract) {
-            sb.append("\n");
+            sb.append('\n');
             for (String l : method.body.split("\n")) {
                 sb.append(indent);
                 sb.append("    ");
                 sb.append(l);
-                sb.append("\n");
+                sb.append('\n');
             }
             sb.append(indent).append("}\n");
         } else {
@@ -589,7 +589,7 @@ public class JavaClass {
             sb.append("final ");
         }
         sb.append(shortName(field.type));
-        sb.append(" ");
+        sb.append(' ');
         sb.append(field.name);
         if (field.literalInit != null) {
             sb.append(" = ");
@@ -603,7 +603,7 @@ public class JavaClass {
         if (!lines.isEmpty()) {
             sb.append(indent).append("/**\n");
             for (String line : lines) {
-                sb.append(indent).append(" * ").append(line).append("\n");
+                sb.append(indent).append(" * ").append(line).append('\n');
             }
             sb.append(indent).append(" */\n");
         }
@@ -613,7 +613,7 @@ public class JavaClass {
         List<String> lines = formatJavadocOrCommentStringAsList(comment, indent);
         if (!lines.isEmpty()) {
             for (String line : lines) {
-                stringBuilder.append(indent).append("// ").append(line).append("\n");
+                stringBuilder.append(indent).append("// ").append(line).append('\n');
             }
         }
     }
@@ -656,10 +656,10 @@ public class JavaClass {
         if (anns != null) {
             for (Annotation ann : anns) {
                 sb.append(indent);
-                sb.append("@");
+                sb.append('@');
                 sb.append(shortName(ann.type.getName()));
                 if (!ann.values.isEmpty()) {
-                    sb.append("(");
+                    sb.append('(');
                     int i = 0;
                     for (Map.Entry<String, String> e : ann.values.entrySet()) {
                         if (i++ > 0) {
@@ -671,9 +671,9 @@ public class JavaClass {
                             sb.append(e.getKey()).append(" = ").append(e.getValue());
                         }
                     }
-                    sb.append(")");
+                    sb.append(')');
                 }
-                sb.append("\n");
+                sb.append('\n');
             }
         }
     }
@@ -691,7 +691,7 @@ public class JavaClass {
         //        int idx = s.lastIndexOf('.');
         //        return idx > 0 ? s.substring(idx + 1) : s;
         s = s.replaceAll("([a-z][a-z0-9]+\\.([a-z][a-z0-9_]+\\.)*([A-Z][a-zA-Z0-9_]+\\.)?)([A-za-z]+)", "$4");
-        if (s.startsWith(this.name + ".")) {
+        if (s.startsWith(this.name + '.')) {
             s = s.substring(this.name.length() + 1);
         }
         return s;
@@ -708,7 +708,7 @@ public class JavaClass {
         }
         // org.w3c is for some odd reason also before others
         if (s1.startsWith("org.w3c.")) {
-            s1 = "_" + s1;
+            s1 = '_' + s1;
         }
         return s1;
     }

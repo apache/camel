@@ -74,7 +74,7 @@ public final class CamelXmlTreeParserHelper {
         String name = node.getNodeName();
         // clip namespace prefix if in use, eg camel:from => from
         String prefix = node.getPrefix();
-        if (prefix != null && name.startsWith(prefix + ":")) {
+        if (prefix != null && name.startsWith(prefix + ':')) {
             name = name.substring(prefix.length() + 1);
         }
 

@@ -38,8 +38,8 @@ public class Main {
         private String description;
 
         protected Option(String abbreviation, String fullName, String description) {
-            this.abbreviation = "-" + abbreviation;
-            this.fullName = "-" + fullName;
+            this.abbreviation = '-' + abbreviation;
+            this.fullName = '-' + fullName;
             this.description = description;
         }
 

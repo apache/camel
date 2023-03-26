@@ -92,7 +92,7 @@ final class HaConfigurationBuilder {
                 DFSUtil.addKeySuffixes(DFS_NAMENODE_RPC_ADDRESS_KEY, haNamedService, nodeToString(nodeName)),
                 nodeName));
 
-        configuration.set(DFS_CLIENT_FAILOVER_PROXY_PROVIDER_KEY_PREFIX + "." + haNamedService,
+        configuration.set(DFS_CLIENT_FAILOVER_PROXY_PROVIDER_KEY_PREFIX + '.' + haNamedService,
                 ConfiguredFailoverProxyProvider.class.getName());
 
         configuration.set(HFDS_FS, "hdfs://" + haNamedService);

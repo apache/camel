@@ -38,7 +38,7 @@ public class PurchaseOrder implements Serializable {
 
     @Override
     public String toString() {
-        return "PurchaseOrder[name: " + name + " amount: " + amount + " price: " + price + "]";
+        return "PurchaseOrder[name: " + name + " amount: " + amount + " price: " + price + ']';
     }
 
     @Override

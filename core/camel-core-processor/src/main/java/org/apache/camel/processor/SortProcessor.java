@@ -65,7 +65,7 @@ public class SortProcessor<T> extends AsyncProcessorSupport implements IdAware, 
 
     @Override
     public String getTraceLabel() {
-        return "sort[" + expression + "]";
+        return "sort[" + expression + ']';
     }
 
     @Override

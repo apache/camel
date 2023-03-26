@@ -33,7 +33,7 @@ public class InterceptEndpointProcessor extends DelegateAsyncProcessor {
 
     @Override
     public String toString() {
-        return "InterceptEndpointProcessor[" + uri + " -> " + processor + "]";
+        return "InterceptEndpointProcessor[" + uri + " -> " + processor + ']';
     }
 
 }

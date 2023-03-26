@@ -506,7 +506,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
 
         @Override
         public String toString() {
-            return "TopicPoller[" + topic + "]";
+            return "TopicPoller[" + topic + ']';
         }
     }
 

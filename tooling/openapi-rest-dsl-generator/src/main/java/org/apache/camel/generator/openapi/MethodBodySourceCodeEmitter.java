@@ -64,7 +64,7 @@ class MethodBodySourceCodeEmitter implements CodeEmitter<MethodSpec> {
         indentStack.push(indent);
 
         if (hasArgs) {
-            builder.addCode("$L(" + invocationLiteralsFor(args) + ")", extend(method, argumentsFor(args)));
+            builder.addCode("$L(" + invocationLiteralsFor(args) + ')', extend(method, argumentsFor(args)));
         } else {
             builder.addCode("$L()", method);
         }

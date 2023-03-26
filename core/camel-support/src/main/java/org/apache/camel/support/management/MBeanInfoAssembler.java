@@ -384,7 +384,7 @@ public class MBeanInfoAssembler implements Service {
 
         @Override
         public String toString() {
-            return "ManagedAttributeInfo: [" + key + " + getter: " + getter + ", setter: " + setter + "]";
+            return "ManagedAttributeInfo: [" + key + " + getter: " + getter + ", setter: " + setter + ']';
         }
     }
 
@@ -413,7 +413,7 @@ public class MBeanInfoAssembler implements Service {
 
         @Override
         public String toString() {
-            return "ManagedOperationInfo: [" + operation + "]";
+            return "ManagedOperationInfo: [" + operation + ']';
         }
     }
 

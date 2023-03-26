@@ -44,7 +44,7 @@ public class DummyRestConsumerFactory implements RestConsumerFactory {
         if (id.startsWith("-")) {
             id = id.substring(1);
         }
-        SedaEndpoint seda = camelContext.getEndpoint("seda:" + verb + "-" + id, SedaEndpoint.class);
+        SedaEndpoint seda = camelContext.getEndpoint("seda:" + verb + '-' + id, SedaEndpoint.class);
         return seda.createConsumer(processor);
     }
 

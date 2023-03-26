@@ -136,7 +136,7 @@ public abstract class AbstractReifier implements BeanRepository {
     }
 
     protected Object asRef(String s) {
-        return s != null ? s.startsWith("#") ? s : "#" + s : null;
+        return s != null ? s.startsWith("#") ? s : '#' + s : null;
     }
 
     protected BeanRepository getRegistry() {

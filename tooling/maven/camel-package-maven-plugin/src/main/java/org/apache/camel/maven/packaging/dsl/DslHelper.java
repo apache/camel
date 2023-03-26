@@ -70,12 +70,12 @@ public final class DslHelper {
     }
 
     public static String getMainDescriptionWithoutPathOptions(final ComponentModel componentModel) {
-        String desc = componentModel.getTitle() + " (" + componentModel.getArtifactId() + ")";
-        desc += "\n" + componentModel.getDescription();
+        String desc = componentModel.getTitle() + " (" + componentModel.getArtifactId() + ')';
+        desc += '\n' + componentModel.getDescription();
         desc += "\n";
         desc += "\nCategory: " + componentModel.getLabel();
         desc += "\nSince: " + componentModel.getFirstVersionShort();
-        desc += "\nMaven coordinates: " + componentModel.getGroupId() + ":" + componentModel.getArtifactId();
+        desc += "\nMaven coordinates: " + componentModel.getGroupId() + ':' + componentModel.getArtifactId();
 
         return desc;
     }

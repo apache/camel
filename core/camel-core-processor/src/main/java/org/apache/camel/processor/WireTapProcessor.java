@@ -125,7 +125,7 @@ public class WireTapProcessor extends AsyncProcessorSupport
 
     @Override
     public String getTraceLabel() {
-        return "wireTap(" + uri + ")";
+        return "wireTap(" + uri + ')';
     }
 
     @Override

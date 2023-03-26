@@ -47,6 +47,6 @@ public final class HttpPrincipal implements Principal {
     @Override
     public String toString() {
         // do not display the password
-        return "HttpPrincipal[" + username + "]";
+        return "HttpPrincipal[" + username + ']';
     }
 }

@@ -44,7 +44,7 @@ public class WhenDefinition extends OutputExpressionNode {
 
     @Override
     public String toString() {
-        return "When[" + description() + " -> " + getOutputs() + "]";
+        return "When[" + description() + " -> " + getOutputs() + ']';
     }
 
     protected String description() {
@@ -52,11 +52,11 @@ public class WhenDefinition extends OutputExpressionNode {
         if (getExpression() != null) {
             String language = getExpression().getLanguage();
             if (language != null) {
-                sb.append(language).append("{");
+                sb.append(language).append('{');
             }
             sb.append(getExpression().getLabel());
             if (language != null) {
-                sb.append("}");
+                sb.append('}');
             }
         }
         return sb.toString();
@@ -69,7 +69,7 @@ public class WhenDefinition extends OutputExpressionNode {
 
     @Override
     public String getLabel() {
-        return "when[" + description() + "]";
+        return "when[" + description() + ']';
     }
 
     /**

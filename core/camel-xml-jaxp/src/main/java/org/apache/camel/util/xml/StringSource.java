@@ -78,7 +78,7 @@ public class StringSource extends StreamSource implements Externalizable {
 
     @Override
     public String toString() {
-        return "StringSource[" + text + "]";
+        return "StringSource[" + text + ']';
     }
 
     public String getText() {

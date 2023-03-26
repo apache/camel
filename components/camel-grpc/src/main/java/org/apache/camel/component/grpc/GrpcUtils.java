@@ -72,7 +72,7 @@ public final class GrpcUtils {
             Class grpcServiceClass = context.getClassResolver().resolveMandatoryClass(serviceClassName);
             Method grpcMethod = ReflectionHelper.findMethod(grpcServiceClass, stubMethod, paramChannel);
             if (grpcMethod == null) {
-                throw new IllegalArgumentException("gRPC service method not found: " + serviceClassName + "." + stubMethod);
+                throw new IllegalArgumentException("gRPC service method not found: " + serviceClassName + '.' + stubMethod);
             }
             grpcStub = ObjectHelper.invokeMethod(grpcMethod, grpcServiceClass, channel);
 
@@ -102,7 +102,7 @@ public final class GrpcUtils {
     public static Class constructGrpcImplBaseClass(String packageName, String serviceName, final CamelContext context) {
         Class grpcServerImpl;
 
-        String serverBaseImpl = constructFullClassName(packageName, serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX + "$"
+        String serverBaseImpl = constructFullClassName(packageName, serviceName + GrpcConstants.GRPC_SERVICE_CLASS_POSTFIX + '$'
                                                                     + serviceName + GrpcConstants.GRPC_SERVER_IMPL_POSTFIX);
         try {
             grpcServerImpl = context.getClassResolver().resolveMandatoryClass(serverBaseImpl);
@@ -121,7 +121,7 @@ public final class GrpcUtils {
         Method method = ReflectionHelper.findMethod(asyncStubClass.getClass(), invokeMethod, paramMethod);
         if (method == null) {
             throw new IllegalArgumentException(
-                    "gRPC service method not found: " + asyncStubClass.getClass().getName() + "." + invokeMethod);
+                    "gRPC service method not found: " + asyncStubClass.getClass().getName() + '.' + invokeMethod);
         }
         if (method.getReturnType().equals(StreamObserver.class)) {
             StreamObserver<Object> requestObserver
@@ -145,12 +145,12 @@ public final class GrpcUtils {
         Method method = ReflectionHelper.findMethod(asyncStubClass.getClass(), invokeMethod, paramMethod);
         if (method == null) {
             throw new IllegalArgumentException(
-                    "gRPC service method not found: " + asyncStubClass.getClass().getName() + "." + invokeMethod);
+                    "gRPC service method not found: " + asyncStubClass.getClass().getName() + '.' + invokeMethod);
         }
         if (!StreamObserver.class.isAssignableFrom(method.getReturnType())) {
             throw new IllegalArgumentException(
                     "gRPC service method does not declare an input of type stream (cannot be used in streaming mode): "
-                                               + asyncStubClass.getClass().getName() + "." + invokeMethod);
+                                               + asyncStubClass.getClass().getName() + '.' + invokeMethod);
         }
 
         return (StreamObserver<Object>) ObjectHelper.invokeMethod(method, asyncStubClass, responseObserver);
@@ -163,7 +163,7 @@ public final class GrpcUtils {
         Method method = ReflectionHelper.findMethod(blockingStubClass.getClass(), invokeMethod, paramMethod);
         if (method == null) {
             throw new IllegalArgumentException(
-                    "gRPC service method not found: " + blockingStubClass.getClass().getName() + "." + invokeMethod);
+                    "gRPC service method not found: " + blockingStubClass.getClass().getName() + '.' + invokeMethod);
         }
         if (method.getReturnType().equals(Iterator.class)) {
             Iterator<Object> responseObjects = (Iterator<Object>) ObjectHelper.invokeMethod(method, blockingStubClass, request);
@@ -202,7 +202,7 @@ public final class GrpcUtils {
         if (org.apache.camel.util.ObjectHelper.isEmpty(packageName)) {
             return className;
         } else {
-            return packageName + "." + className;
+            return packageName + '.' + className;
         }
     }
 }

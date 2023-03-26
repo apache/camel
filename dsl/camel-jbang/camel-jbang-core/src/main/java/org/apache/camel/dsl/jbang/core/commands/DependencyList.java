@@ -136,9 +136,9 @@ public class DependencyList extends Export {
                         continue;
                     }
                     if (v != null) {
-                        gavs.add(MavenGav.parseGav(g + ":" + a + ":" + v));
+                        gavs.add(MavenGav.parseGav(g + ':' + a + ':' + v));
                     } else {
-                        gavs.add(MavenGav.parseGav(g + ":" + a));
+                        gavs.add(MavenGav.parseGav(g + ':' + a));
                     }
                 }
                 // sort GAVs

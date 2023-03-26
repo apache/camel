@@ -95,7 +95,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     @Override
     public String toString() {
-        return "Split[" + getExpression() + " -> " + getOutputs() + "]";
+        return "Split[" + getExpression() + " -> " + getOutputs() + ']';
     }
 
     @Override
@@ -105,7 +105,7 @@ public class SplitDefinition extends OutputExpressionNode implements ExecutorSer
 
     @Override
     public String getLabel() {
-        return "split[" + getExpression() + "]";
+        return "split[" + getExpression() + ']';
     }
 
     // Fluent API

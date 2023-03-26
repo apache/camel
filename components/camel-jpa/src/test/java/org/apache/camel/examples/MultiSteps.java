@@ -96,6 +96,6 @@ public class MultiSteps {
         // OpenJPA warns about fields being accessed directly in methods if NOT using the corresponding getters:
         // 115  camel  WARN   [main] openjpa.Enhance - Detected the following possible violations of the restrictions placed on property access persistent types:
         // "org.apache.camel.examples.MultiSteps" uses property access, but its field "step" is accessed directly in method "toString" defined in "org.apache.camel.examples.MultiSteps".
-        return "MultiSteps[id: " + getId() + ", address: " + getAddress() + ", step: " + getStep() + "]";
+        return "MultiSteps[id: " + getId() + ", address: " + getAddress() + ", step: " + getStep() + ']';
     }
 }

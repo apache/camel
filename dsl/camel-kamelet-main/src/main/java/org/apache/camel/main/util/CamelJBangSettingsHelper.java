@@ -30,7 +30,7 @@ public final class CamelJBangSettingsHelper {
 
     private static final String WORK_DIR = ".camel-jbang";
     private static final String RUN_SETTINGS_FILE = "camel-jbang-run.properties";
-    private static final File FILE = new File(WORK_DIR + "/" + RUN_SETTINGS_FILE);
+    private static final File FILE = new File(WORK_DIR + '/' + RUN_SETTINGS_FILE);
 
     private CamelJBangSettingsHelper() {
     }
@@ -38,7 +38,7 @@ public final class CamelJBangSettingsHelper {
     public static void writeSettings(String key, String value) {
         if (FILE.exists()) {
             try {
-                String line = key + "=" + value;
+                String line = key + '=' + value;
 
                 String context;
                 try (FileInputStream fis = new FileInputStream(FILE)) {

@@ -89,7 +89,7 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
             // if no output then dont do any description
             return "";
         }
-        return "DefaultErrorHandler[" + output + "]";
+        return "DefaultErrorHandler[" + output + ']';
     }
 
 }

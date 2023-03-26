@@ -65,13 +65,13 @@ public final class NettyHelper {
                 // line delimiter so ensure it ends with newline
                 if (!s.endsWith("\n")) {
                     LOG.trace("Auto appending missing newline delimiter to body");
-                    s = s + "\n";
+                    s = s + '\n';
                 }
             } else {
                 // null delimiter so ensure it ends with null
                 if (!s.endsWith("\u0000")) {
                     LOG.trace("Auto appending missing null delimiter to body");
-                    s = s + "\u0000";
+                    s = s + '\u0000';
                 }
             }
         }

@@ -91,7 +91,7 @@ public class DefaultDevConsolesLoader {
 
     protected String extractId(Resource resource) {
         String loc = resource.getLocation();
-        return StringHelper.after(loc, META_INF_SERVICES + "/");
+        return StringHelper.after(loc, META_INF_SERVICES + '/');
     }
 
 }

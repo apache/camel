@@ -132,7 +132,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
 
     @Override
     public String toString() {
-        return "Choice[" + getWhenClauses() + (getOtherwise() != null ? " " + getOtherwise() : "") + "]";
+        return "Choice[" + getWhenClauses() + (getOtherwise() != null ? " " + getOtherwise() : "") + ']';
     }
 
     @Override
@@ -268,7 +268,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> impl
     @Override
     public String getLabel() {
         return getOutputs().stream().map(ProcessorDefinition::getLabel)
-                .collect(Collectors.joining(",", getShortName() + "[", "]"));
+                .collect(Collectors.joining(",", getShortName() + '[', "]"));
     }
 
     public List<WhenDefinition> getWhenClauses() {

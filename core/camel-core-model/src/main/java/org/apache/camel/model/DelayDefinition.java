@@ -64,12 +64,12 @@ public class DelayDefinition extends ExpressionNode implements ExecutorServiceAw
 
     @Override
     public String getLabel() {
-        return "delay[" + getExpression() + "]";
+        return "delay[" + getExpression() + ']';
     }
 
     @Override
     public String toString() {
-        return "Delay[" + getExpression() + " -> " + getOutputs() + "]";
+        return "Delay[" + getExpression() + " -> " + getOutputs() + ']';
     }
 
     // Fluent API

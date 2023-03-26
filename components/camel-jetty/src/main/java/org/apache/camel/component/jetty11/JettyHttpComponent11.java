@@ -106,7 +106,7 @@ public class JettyHttpComponent11 extends JettyHttpComponent {
                         throw new IllegalArgumentException(
                                 "There are " + properties.size() + " parameters that couldn't be set on the SocketConnector."
                                                            + " Check the uri if the parameters are spelt correctly and that they are properties of the SelectChannelConnector."
-                                                           + " Unknown parameters=[" + properties + "]");
+                                                           + " Unknown parameters=[" + properties + ']');
                     }
                 }
 
@@ -117,7 +117,7 @@ public class JettyHttpComponent11 extends JettyHttpComponent {
                         sslcf.getExcludeProtocols());
             }
 
-            String ckey = endpoint.getProtocol() + ":" + endpoint.getHttpUri().getHost() + ":" + endpoint.getPort();
+            String ckey = endpoint.getProtocol() + ':' + endpoint.getHttpUri().getHost() + ':' + endpoint.getPort();
             connectorCreation.computeIfAbsent(ckey, c -> new Throwable());
             return result;
         } catch (Exception e) {

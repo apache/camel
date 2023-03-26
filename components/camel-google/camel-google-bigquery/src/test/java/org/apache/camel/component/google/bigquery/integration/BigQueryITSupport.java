@@ -138,9 +138,9 @@ public class BigQueryITSupport extends CamelTestSupport {
     }
 
     protected void assertRowExist(String tableName, Map<String, String> row) throws Exception {
-        String query = "SELECT * FROM " + DATASET_ID + "." + tableName + " WHERE "
+        String query = "SELECT * FROM " + DATASET_ID + '.' + tableName + " WHERE "
                        + row.entrySet().stream()
-                               .map(e -> e.getKey() + " = '" + e.getValue() + "'")
+                               .map(e -> e.getKey() + " = '" + e.getValue() + '\'')
                                .collect(Collectors.joining(" AND "));
         LOGGER.debug("Query: {}", query);
         QueryJobConfiguration queryJobConfiguration = QueryJobConfiguration.of(query);

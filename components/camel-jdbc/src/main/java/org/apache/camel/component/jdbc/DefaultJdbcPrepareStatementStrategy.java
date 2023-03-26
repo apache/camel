@@ -99,7 +99,7 @@ public class DefaultJdbcPrepareStatementStrategy implements JdbcPrepareStatement
                             if (!contains) {
                                 throw new RuntimeExchangeException(
                                         "Cannot find key [" + key + "] in message body or headers to use when setting named parameter in query ["
-                                                                   + query + "]",
+                                                                   + query + ']',
                                         exchange);
                             }
                             next = headerMap.get(key);

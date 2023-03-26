@@ -71,7 +71,7 @@ public class AMQPConnectionDetails {
             String password = property(propertiesComponent, AMQP_PASSWORD, null);
             boolean setTopicPrefix = Boolean.parseBoolean(property(propertiesComponent, AMQP_SET_TOPIC_PREFIX, "true"));
 
-            return new AMQPConnectionDetails("amqp://" + host + ":" + port, username, password, setTopicPrefix);
+            return new AMQPConnectionDetails("amqp://" + host + ':' + port, username, password, setTopicPrefix);
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }

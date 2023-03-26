@@ -138,7 +138,7 @@ public class DefaultLineBuilderStrategy implements LineBuilderStrategy {
         }
 
         public LineBuilder appendWord(String word) {
-            line.append(word).append(" ");
+            line.append(word).append(' ');
             wordsCount++;
             return this;
         }

@@ -133,7 +133,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
             if (uriTemplate.startsWith("/")) {
                 path = path + uriTemplate;
             } else {
-                path = path + "/" + uriTemplate;
+                path = path + '/' + uriTemplate;
             }
         }
         path = FileUtil.stripLeadingSeparator(path);
@@ -179,7 +179,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
             contextPath = FileUtil.stripTrailingSeparator(contextPath);
             contextPath = FileUtil.stripLeadingSeparator(contextPath);
             if (ObjectHelper.isNotEmpty(contextPath)) {
-                path = contextPath + "/" + path;
+                path = contextPath + '/' + path;
             }
         }
 
@@ -187,7 +187,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
         String url = String.format("%s://%s:%d/%s?coapMethodRestrict=%s", scheme, host, port, path, restrict);
 
         if (!query.isEmpty()) {
-            url += "&" + query;
+            url += '&' + query;
         }
 
         CoAPEndpoint endpoint = (CoAPEndpoint) camelContext.getEndpoint(url, parameters);

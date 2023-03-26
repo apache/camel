@@ -65,7 +65,7 @@ public class CustomDataFormat extends DataFormatDefinition {
 
     @Override
     public String toString() {
-        return "CustomDataFormat[" + ref + "]";
+        return "CustomDataFormat[" + ref + ']';
     }
 
     /**

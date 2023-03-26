@@ -348,7 +348,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         Path all = modelsOutDir.resolve("../models.properties");
         Set<String> modelNames
                 = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
-        FileUtil.updateFile(all, String.join("\n", modelNames) + "\n");
+        FileUtil.updateFile(all, String.join("\n", modelNames) + '\n');
 
         printModelsReport(jsonFiles, duplicateJsonFiles, missingLabels, usedLabels, missingJavaDoc);
     }
@@ -450,7 +450,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         Path all = componentsOutDir.resolve("../components.properties");
         Set<String> componentNames = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
-        FileUtil.updateFile(all, String.join("\n", componentNames) + "\n");
+        FileUtil.updateFile(all, String.join("\n", componentNames) + '\n');
 
         printComponentsReport(jsonFiles, duplicateJsonFiles, missingComponents, usedComponentLabels, usedOptionLabels, unlabeledOptions, missingFirstVersions);
 
@@ -511,7 +511,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         Path all = dataFormatsOutDir.resolve("../dataformats.properties");
         Set<String> dataFormatNames = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
-        FileUtil.updateFile(all, String.join("\n", dataFormatNames) + "\n");
+        FileUtil.updateFile(all, String.join("\n", dataFormatNames) + '\n');
 
         printDataFormatsReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
 
@@ -569,7 +569,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         Path all = languagesOutDir.resolve("../languages.properties");
         Set<String> languagesNames = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
-        FileUtil.updateFile(all, String.join("\n", languagesNames) + "\n");
+        FileUtil.updateFile(all, String.join("\n", languagesNames) + '\n');
 
         printLanguagesReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
 
@@ -685,7 +685,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
         Path all = othersOutDir.resolve("../others.properties");
         Set<String> otherNames = jsonFiles.stream().map(PrepareCatalogMojo::asComponentName).collect(Collectors.toCollection(TreeSet::new));
-        FileUtil.updateFile(all, String.join("\n", otherNames) + "\n");
+        FileUtil.updateFile(all, String.join("\n", otherNames) + '\n');
 
         printOthersReport(jsonFiles, duplicateJsonFiles, usedLabels, missingFirstVersions);
 
@@ -888,7 +888,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 getLog().info("");
                 getLog().info("\tUsed labels: " + usedLabels.size());
                 for (Map.Entry<String, Set<String>> entry : usedLabels.entrySet()) {
-                    getLog().info("\t\t" + entry.getKey() + ":");
+                    getLog().info("\t\t" + entry.getKey() + ':');
                     for (String name : entry.getValue()) {
                         getLog().info("\t\t\t" + name);
                     }
@@ -915,7 +915,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 getLog().info("");
                 getLog().info("\tUsed component labels: " + usedComponentLabels.size());
                 for (Map.Entry<String, Set<String>> entry : usedComponentLabels.entrySet()) {
-                    getLog().debug("\t\t" + entry.getKey() + ":");
+                    getLog().debug("\t\t" + entry.getKey() + ':');
                     for (String name : entry.getValue()) {
                         getLog().debug("\t\t\t" + name);
                     }

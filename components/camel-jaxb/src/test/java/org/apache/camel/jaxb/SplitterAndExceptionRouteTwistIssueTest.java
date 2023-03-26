@@ -172,7 +172,7 @@ class Twits implements Serializable {
         if (twits == null || twits.isEmpty()) {
             return super.toString();
         }
-        return super.toString() + "[" + twits.get(0).toString() + "]";
+        return super.toString() + '[' + twits.get(0).toString() + ']';
     }
 }
 

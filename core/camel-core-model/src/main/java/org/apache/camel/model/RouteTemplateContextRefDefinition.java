@@ -46,7 +46,7 @@ public class RouteTemplateContextRefDefinition {
 
     @Override
     public String toString() {
-        return "RouteTemplateContextRef[" + getRef() + "]";
+        return "RouteTemplateContextRef[" + getRef() + ']';
     }
 
     public String getRef() {

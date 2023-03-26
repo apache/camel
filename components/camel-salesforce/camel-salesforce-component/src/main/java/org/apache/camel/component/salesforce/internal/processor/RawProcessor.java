@@ -71,12 +71,12 @@ public class RawProcessor extends AbstractSalesforceProcessor {
             String params = getParameter(
                     SalesforceEndpointConfig.RAW_QUERY_PARAMETERS, exchange, IGNORE_BODY, IS_OPTIONAL);
             if (params != null) {
-                path.append("?");
+                path.append('?');
                 for (String p : params.split(",")) {
                     if (!path.toString().endsWith("?")) {
-                        path.append("&");
+                        path.append('&');
                     }
-                    path.append(p).append("=");
+                    path.append(p).append('=');
                     path.append(urlEncode(exchange.getIn().getHeader(p).toString()));
                 }
             }

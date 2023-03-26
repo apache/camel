@@ -32,6 +32,6 @@ public class HelloBean {
     }
 
     public String say(String hi) {
-        return greeting + " " + hi;
+        return greeting + ' ' + hi;
     }
 }

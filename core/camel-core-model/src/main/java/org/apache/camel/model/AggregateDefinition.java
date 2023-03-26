@@ -176,7 +176,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
 
     @Override
     public String toString() {
-        return "Aggregate[" + description() + " -> " + getOutputs() + "]";
+        return "Aggregate[" + description() + " -> " + getOutputs() + ']';
     }
 
     protected String description() {
@@ -190,7 +190,7 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition>
 
     @Override
     public String getLabel() {
-        return "aggregate[" + description() + "]";
+        return "aggregate[" + description() + ']';
     }
 
     @Override

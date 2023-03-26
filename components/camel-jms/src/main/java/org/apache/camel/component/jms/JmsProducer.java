@@ -560,12 +560,12 @@ public class JmsProducer extends DefaultAsyncProducer {
         ReplyManager replyManager = new TemporaryQueueReplyManager(getEndpoint().getCamelContext());
         replyManager.setEndpoint(getEndpoint());
 
-        String name = "JmsReplyManagerTimeoutChecker[" + getEndpoint().getEndpointConfiguredDestinationName() + "]";
+        String name = "JmsReplyManagerTimeoutChecker[" + getEndpoint().getEndpointConfiguredDestinationName() + ']';
         ScheduledExecutorService replyManagerScheduledExecutorService
                 = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
         replyManager.setScheduledExecutorService(replyManagerScheduledExecutorService);
 
-        name = "JmsReplyManagerOnTimeout[" + getEndpoint().getEndpointConfiguredDestinationName() + "]";
+        name = "JmsReplyManagerOnTimeout[" + getEndpoint().getEndpointConfiguredDestinationName() + ']';
         // allow the timeout thread to timeout so during normal operation we do not have a idle thread
         int max = getEndpoint().getReplyToOnTimeoutMaxConcurrentConsumers();
         if (max <= 0) {
@@ -585,12 +585,12 @@ public class JmsProducer extends DefaultAsyncProducer {
         ReplyManager replyManager = new QueueReplyManager(getEndpoint().getCamelContext());
         replyManager.setEndpoint(getEndpoint());
 
-        String name = "JmsReplyManagerTimeoutChecker[" + replyTo + "]";
+        String name = "JmsReplyManagerTimeoutChecker[" + replyTo + ']';
         ScheduledExecutorService replyManagerScheduledExecutorService
                 = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadScheduledExecutor(name, name);
         replyManager.setScheduledExecutorService(replyManagerScheduledExecutorService);
 
-        name = "JmsReplyManagerOnTimeout[" + replyTo + "]";
+        name = "JmsReplyManagerOnTimeout[" + replyTo + ']';
         // allow the timeout thread to timeout so during normal operation we do not have a idle thread
         int max = getEndpoint().getReplyToOnTimeoutMaxConcurrentConsumers();
         if (max <= 0) {

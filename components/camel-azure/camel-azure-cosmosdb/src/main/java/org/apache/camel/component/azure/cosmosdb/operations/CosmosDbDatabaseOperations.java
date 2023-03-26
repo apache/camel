@@ -56,7 +56,7 @@ public class CosmosDbDatabaseOperations {
         // containerPartitionKeyPath it needs to start with /
         final String enhancedContainerPartitionKeyPath;
         if (!containerPartitionKeyPath.startsWith("/")) {
-            enhancedContainerPartitionKeyPath = "/" + containerPartitionKeyPath;
+            enhancedContainerPartitionKeyPath = '/' + containerPartitionKeyPath;
         } else {
             enhancedContainerPartitionKeyPath = containerPartitionKeyPath;
         }

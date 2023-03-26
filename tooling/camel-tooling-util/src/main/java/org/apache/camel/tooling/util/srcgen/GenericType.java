@@ -134,7 +134,7 @@ public class GenericType {
                 if (dotIndex == -1) {
                     throw new ClassNotFoundException(org);
                 } else {
-                    loadClassName = loadClassName.substring(0, dotIndex) + "$" + loadClassName.substring(dotIndex + 1);
+                    loadClassName = loadClassName.substring(0, dotIndex) + '$' + loadClassName.substring(dotIndex + 1);
                 }
             }
         }
@@ -177,14 +177,14 @@ public class GenericType {
         }
         sb.append(cl.getName());
         if (parameters.length > 0) {
-            sb.append("<");
+            sb.append('<');
             for (int i = 0; i < parameters.length; i++) {
                 if (i > 0) {
                     sb.append(", ");
                 }
                 sb.append(parameters[i].toString());
             }
-            sb.append(">");
+            sb.append('>');
         }
         return sb.toString();
     }

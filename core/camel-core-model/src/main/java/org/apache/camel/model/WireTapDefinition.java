@@ -66,7 +66,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
 
     @Override
     public String toString() {
-        return "WireTap[" + getUri() + "]";
+        return "WireTap[" + getUri() + ']';
     }
 
     @Override
@@ -76,7 +76,7 @@ public class WireTapDefinition<Type extends ProcessorDefinition<Type>> extends T
 
     @Override
     public String getLabel() {
-        return "wireTap[" + getUri() + "]";
+        return "wireTap[" + getUri() + ']';
     }
 
     @Override

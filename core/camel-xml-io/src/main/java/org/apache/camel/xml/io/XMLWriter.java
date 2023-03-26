@@ -183,7 +183,7 @@ public class XMLWriter {
         // Windows
         text = text.replace("\r\n", "&#10;");
         // Non printable characters
-        text = LOWERS.matcher(text).replaceAll(r -> "&#" + Integer.toString(r.group(1).charAt(0)) + ";");
+        text = LOWERS.matcher(text).replaceAll(r -> "&#" + Integer.toString(r.group(1).charAt(0)) + ';');
         return text;
     }
 
@@ -211,7 +211,7 @@ public class XMLWriter {
             elements.removeLast();
         } else {
             finishTag();
-            write("</" + elements.removeLast() + ">");
+            write("</" + elements.removeLast() + '>');
         }
 
         readyForNewLine = true;
@@ -271,7 +271,7 @@ public class XMLWriter {
     private void writeDocumentHeaders() throws IOException {
         write("<?xml version=\"1.0\"");
         if (getEncoding() != null) {
-            write(" encoding=\"" + getEncoding() + "\"");
+            write(" encoding=\"" + getEncoding() + '"');
         }
         write("?>");
         endOfLine();

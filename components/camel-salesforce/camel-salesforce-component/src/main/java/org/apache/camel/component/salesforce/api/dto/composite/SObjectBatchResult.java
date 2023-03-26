@@ -99,6 +99,6 @@ public final class SObjectBatchResult implements Serializable {
 
     @Override
     public String toString() {
-        return "<statusCode: " + statusCode + ", result: " + result + ">";
+        return "<statusCode: " + statusCode + ", result: " + result + '>';
     }
 }

@@ -46,7 +46,7 @@ public class RouteConfigurationContextRefDefinition {
 
     @Override
     public String toString() {
-        return "RouteConfigurationContextRef[" + getRef() + "]";
+        return "RouteConfigurationContextRef[" + getRef() + ']';
     }
 
     public String getRef() {

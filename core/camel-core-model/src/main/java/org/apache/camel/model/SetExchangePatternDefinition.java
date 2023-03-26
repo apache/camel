@@ -69,7 +69,7 @@ public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchange
 
     @Override
     public String toString() {
-        return "setExchangePattern[pattern: " + pattern + "]";
+        return "setExchangePattern[pattern: " + pattern + ']';
     }
 
     @Override
@@ -79,7 +79,7 @@ public class SetExchangePatternDefinition extends NoOutputDefinition<SetExchange
 
     @Override
     public String getLabel() {
-        return "setExchangePattern[" + pattern + "]";
+        return "setExchangePattern[" + pattern + ']';
     }
 
 }

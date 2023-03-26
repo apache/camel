@@ -830,7 +830,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     .append(", nodeId=").append(inflight.getNodeId())
                     .append(", elapsed=").append(inflight.getElapsed())
                     .append(", duration=").append(inflight.getDuration())
-                    .append("]");
+                    .append(']');
         }
 
         if (infoLevel) {

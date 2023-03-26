@@ -54,7 +54,7 @@ public class RemoveHeaderProcessor extends AsyncProcessorSupport implements Trac
 
     @Override
     public String getTraceLabel() {
-        return "removeHeader[" + headerName + "]";
+        return "removeHeader[" + headerName + ']';
     }
 
     @Override

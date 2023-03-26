@@ -131,7 +131,7 @@ public class Sns2Producer extends DefaultProducer {
                             .collect(Collectors.joining(", "));
                     MessageAttributeValue.Builder mav = MessageAttributeValue.builder();
                     mav.dataType("String.Array");
-                    mav.stringValue("[" + resultString + "]");
+                    mav.stringValue('[' + resultString + ']');
                     result.put(entry.getKey(), mav.build());
                 } else {
                     // cannot translate the message header to message attribute
@@ -170,7 +170,7 @@ public class Sns2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (snsProducerToString == null) {
-            snsProducerToString = "SnsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            snsProducerToString = "SnsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return snsProducerToString;
     }

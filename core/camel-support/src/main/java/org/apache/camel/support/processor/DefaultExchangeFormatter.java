@@ -110,7 +110,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
                 sb.append(", ").append(label).append(": ");
             }
         } else if (style == OutputStyle.Tab) {
-            sb.append("\t").append(label).append(": ");
+            sb.append('\t').append(label).append(": ");
         } else {
             String s = String.format("\t%-20s", label);
             sb.append(s);
@@ -228,7 +228,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
 
         if (multiline) {
             sb.insert(0, "Exchange[");
-            sb.append("]");
+            sb.append(']');
             return sb.toString();
         } else {
             // get rid of the leading comma space if needed
@@ -236,7 +236,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
                 sb.replace(0, 2, "");
             }
             sb.insert(0, "Exchange[");
-            sb.append("]");
+            sb.append(']');
 
             return sb.toString();
         }

@@ -87,7 +87,7 @@ public class DataFormatTransformer extends Transformer {
             message.setBody(osb.build());
 
         } else {
-            throw new IllegalArgumentException("Unsupported transformation: from='" + from + ", to='" + to + "'");
+            throw new IllegalArgumentException("Unsupported transformation: from='" + from + ", to='" + to + '\'');
         }
     }
 

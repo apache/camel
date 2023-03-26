@@ -41,7 +41,7 @@ public class TransformDefinition extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "Transform[" + getExpression() + "]";
+        return "Transform[" + getExpression() + ']';
     }
 
     @Override
@@ -51,7 +51,7 @@ public class TransformDefinition extends ExpressionNode {
 
     @Override
     public String getLabel() {
-        return "transform[" + getExpression() + "]";
+        return "transform[" + getExpression() + ']';
     }
 
     /**

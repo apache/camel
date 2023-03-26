@@ -69,7 +69,7 @@ public class YAMLDataFormatReifier extends DataFormatReifier<YAMLDataFormat> {
                     if (type == null) {
                         type = YAMLTypeFilterType.type;
                     }
-                    value = type.name() + ":" + value;
+                    value = type.name() + ':' + value;
                 }
                 if (value != null) {
                     typeFilterDefinitions.add(value);

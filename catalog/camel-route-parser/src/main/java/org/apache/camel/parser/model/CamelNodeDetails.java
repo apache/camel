@@ -155,14 +155,14 @@ public class CamelNodeDetails {
     public String dump(int level) {
         StringBuilder sb = new StringBuilder();
         sb.append(lineNumber);
-        sb.append("\t");
+        sb.append('\t');
         sb.append(padString(level));
         sb.append(name);
         if (outputs != null) {
             level++;
             for (CamelNodeDetails child : outputs) {
                 String text = child.dump(level);
-                sb.append("\n");
+                sb.append('\n');
                 sb.append(text);
             }
         }

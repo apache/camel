@@ -73,13 +73,13 @@ public class HeaderTesterWithInsertionImpl extends HeaderTesterImpl {
                 if (!headerName.equals(ob.getName())) {
                     throw new RuntimeException(
                             "test failed expected name ' + headerName + ' but found '"
-                                               + ob.getName() + "'");
+                                               + ob.getName() + '\'');
                 }
 
                 if (!headerValue.equals(ob.getValue())) {
                     throw new RuntimeException(
                             "test failed expected name ' + headerValue + ' but found '"
-                                               + ob.getValue() + "'");
+                                               + ob.getValue() + '\'');
                 }
             } catch (JAXBException ex) {
                 throw new RuntimeException("test failed", ex);

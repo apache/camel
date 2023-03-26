@@ -181,13 +181,13 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
 
         String source = sw.toString();
 
-        String fileName = pn.replace('.', '/') + "/" + cn + ".java";
+        String fileName = pn.replace('.', '/') + '/' + cn + ".java";
         outputDir.mkdirs();
         boolean updated = updateResource(buildContext, outputDir.toPath().resolve(fileName), source);
         if (updated) {
             getLog().info("Updated " + fileName);
         }
-        return pn + "." + cn;
+        return pn + '.' + cn;
     }
 
     private void generateInvokeOnHeaderSource(
@@ -201,7 +201,7 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
         w.write("import " + pfqn + ";\n");
         w.write("\n");
         w.write("/**\n");
-        w.write(" * " + AbstractGeneratorMojo.GENERATED_MSG + "\n");
+        w.write(" * " + AbstractGeneratorMojo.GENERATED_MSG + '\n');
         w.write(" */\n");
         w.write("@SuppressWarnings(\"unchecked\")\n");
         w.write("public class " + cn + " implements InvokeOnHeaderStrategy");
@@ -215,7 +215,7 @@ public class GenerateInvokeOnHeaderMojo extends AbstractGeneratorMojo {
             w.write("        switch (key) {\n");
             for (InvokeOnHeaderModel option : models) {
                 boolean sync = true;
-                String invoke = "target." + option.getMethodName() + "(";
+                String invoke = "target." + option.getMethodName() + '(';
                 if (!option.getArgs().isEmpty()) {
                     StringJoiner sj = new StringJoiner(", ");
                     for (String arg : option.getArgs()) {

@@ -259,7 +259,7 @@ public final class ConnectorConfigGenerator {
                         fieldConfig.getRawName(), fieldConfig.getFieldName()));
             }
         });
-        stringBuilder.append("\n");
+        stringBuilder.append('\n');
         stringBuilder.append("return configBuilder.build();");
 
         createConfig.setBody(stringBuilder.toString());

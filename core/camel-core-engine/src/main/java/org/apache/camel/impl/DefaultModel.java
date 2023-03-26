@@ -642,7 +642,7 @@ public class DefaultModel implements Model {
                             }
                             if (local == null) {
                                 throw new IllegalStateException(
-                                        "Cannot create bean instance using factory method: " + fqn + "#" + fm);
+                                        "Cannot create bean instance using factory method: " + fqn + '#' + fm);
                             }
                         } else {
                             // special to support constructor parameters
@@ -737,11 +737,11 @@ public class DefaultModel implements Model {
             if (key == null) {
                 String prefix = e.getOptionPrefix();
                 if (prefix != null && !prefix.endsWith(".")) {
-                    prefix = "." + prefix;
+                    prefix = '.' + prefix;
                 }
 
                 key = prefix != null
-                        ? prefix + "." + e.getPropertyName()
+                        ? prefix + '.' + e.getPropertyName()
                         : e.getPropertyName();
             }
 

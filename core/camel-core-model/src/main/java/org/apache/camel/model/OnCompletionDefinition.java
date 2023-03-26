@@ -90,7 +90,7 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
 
     @Override
     public String toString() {
-        return "onCompletion[" + getOutputs() + "]";
+        return "onCompletion[" + getOutputs() + ']';
     }
 
     @Override

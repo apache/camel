@@ -86,6 +86,6 @@ public final class UnitOfWorkProducer extends DefaultAsyncProducer {
 
     @Override
     public String toString() {
-        return "UnitOfWork(" + producer + ")";
+        return "UnitOfWork(" + producer + ')';
     }
 }

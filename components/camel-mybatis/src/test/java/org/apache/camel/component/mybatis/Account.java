@@ -24,7 +24,7 @@ public class Account {
 
     @Override
     public String toString() {
-        return "Account[id: " + id + " name: " + firstName + " " + lastName + " email: " + emailAddress + "]";
+        return "Account[id: " + id + " name: " + firstName + ' ' + lastName + " email: " + emailAddress + ']';
     }
 
     public int getId() {

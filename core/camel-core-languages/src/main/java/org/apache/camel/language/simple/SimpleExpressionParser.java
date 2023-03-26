@@ -221,7 +221,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                 }
                 if (node instanceof LiteralNode) {
                     exp = StringHelper.removeLeadingAndEndingQuotes(exp);
-                    sb.append("\"");
+                    sb.append('"');
                     // " should be escaped to \"
                     exp = escapeQuotes(exp);
                     // \n \t \r should be escaped
@@ -233,7 +233,7 @@ public class SimpleExpressionParser extends BaseSimpleParser {
                         exp += "\\";
                     }
                     sb.append(exp);
-                    sb.append("\"");
+                    sb.append('"');
                 } else {
                     sb.append(exp);
                 }

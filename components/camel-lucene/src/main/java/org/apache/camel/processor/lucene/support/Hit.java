@@ -62,6 +62,6 @@ public class Hit implements Serializable {
 
     @Override
     public String toString() {
-        return "Hit[location=" + hitLocation + ", score=" + score + ", data=" + data + "]";
+        return "Hit[location=" + hitLocation + ", score=" + score + ", data=" + data + ']';
     }
 }

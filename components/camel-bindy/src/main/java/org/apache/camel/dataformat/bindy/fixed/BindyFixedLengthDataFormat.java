@@ -331,7 +331,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     @SuppressWarnings("unused")
     private String rightPad(String myLine, int length) {
-        return String.format("%1$-" + length + "s", myLine);
+        return String.format("%1$-" + length + 's', myLine);
     }
 
     private boolean isPaddingNeededAndEnable(BindyFixedLengthFactory factory, String myLine) {

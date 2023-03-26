@@ -330,7 +330,7 @@ public class DefaultPropertiesParser implements PropertiesParser {
                     String value = function.apply(remainder);
                     if (value == null) {
                         throw new IllegalArgumentException(
-                                "Property with key [" + key + "] using function [" + function.getName() + "]"
+                                "Property with key [" + key + "] using function [" + function.getName() + ']'
                                                            + " returned null value which is not allowed, from input: "
                                                            + input);
                     } else {

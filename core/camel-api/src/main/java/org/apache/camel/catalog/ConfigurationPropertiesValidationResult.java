@@ -227,12 +227,12 @@ public class ConfigurationPropertiesValidationResult extends PropertiesValidatio
             sb.append("Configuration properties error\n");
             sb.append(
                     "---------------------------------------------------------------------------------------------------------------------------------------\n");
-            sb.append("\n");
+            sb.append('\n');
         }
         if (text != null) {
-            sb.append("\t").append(text).append("\n");
+            sb.append('\t').append(text).append('\n');
         } else {
-            sb.append("\n");
+            sb.append('\n');
         }
         for (Map.Entry<String, String> option : options.entrySet()) {
             String out = String.format(format, shortKey(option.getKey()), option.getValue());

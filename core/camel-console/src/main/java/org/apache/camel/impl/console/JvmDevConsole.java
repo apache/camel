@@ -60,16 +60,16 @@ public class JvmDevConsole extends AbstractDevConsole {
             if (!mb.getInputArguments().isEmpty()) {
                 sb.append("Input Arguments:");
                 String arg = String.join("\n    ", mb.getInputArguments());
-                sb.append("\n    ").append(arg).append("\n");
+                sb.append("\n    ").append(arg).append('\n');
             }
             if (mb.isBootClassPathSupported()) {
                 sb.append("Boot Classpath:");
                 String cp = String.join("\n    ", mb.getBootClassPath().split("[:|;]"));
-                sb.append("\n    ").append(cp).append("\n");
+                sb.append("\n    ").append(cp).append('\n');
             }
             sb.append("Classpath:");
             String cp = String.join("\n    ", mb.getClassPath().split("[:|;]"));
-            sb.append("\n    ").append(cp).append("\n");
+            sb.append("\n    ").append(cp).append('\n');
         }
 
         return sb.toString();

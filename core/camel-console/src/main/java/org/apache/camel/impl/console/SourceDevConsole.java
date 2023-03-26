@@ -65,7 +65,7 @@ public class SourceDevConsole extends AbstractDevConsole {
                             .resolveResource(loc);
                     if (resource != null) {
                         if (sb.length() > 0) {
-                            sb.append("\n");
+                            sb.append('\n');
                         }
 
                         LineNumberReader reader = new LineNumberReader(resource.getReader());
@@ -91,7 +91,7 @@ public class SourceDevConsole extends AbstractDevConsole {
                     sb.append(code);
                 }
             }
-            sb.append("\n");
+            sb.append('\n');
             return null;
         };
         doCall(options, task);

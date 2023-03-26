@@ -574,7 +574,7 @@ public abstract class CamelTestSupport
         if (isRouteCoverageEnabled()) {
             String className = this.getClass().getSimpleName();
             String dir = "target/camel-route-coverage";
-            String name = className + "-" + StringHelper.before(currentTestName, "(") + ".xml";
+            String name = className + '-' + StringHelper.before(currentTestName, "(") + ".xml";
 
             ManagedCamelContext mc = context != null ? context.getExtension(ManagedCamelContext.class) : null;
             ManagedCamelContextMBean managedCamelContext = mc != null ? mc.getManagedCamelContext() : null;

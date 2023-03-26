@@ -158,7 +158,7 @@ final class HttpComponentVerifierExtension extends DefaultComponentVerifierExten
         String path = getOption(parameters, "rest.path", String.class).map(FileUtil::stripLeadingSeparator).orElse(null);
 
         if (ObjectHelper.isNotEmpty(httpUri) && ObjectHelper.isNotEmpty(path)) {
-            httpUri = httpUri + "/" + path;
+            httpUri = httpUri + '/' + path;
         }
 
         return httpUri;

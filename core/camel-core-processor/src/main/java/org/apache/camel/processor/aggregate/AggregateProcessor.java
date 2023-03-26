@@ -274,7 +274,7 @@ public class AggregateProcessor extends AsyncProcessorSupport
 
     @Override
     public String getTraceLabel() {
-        return "aggregate[" + correlationExpression + "]";
+        return "aggregate[" + correlationExpression + ']';
     }
 
     @Override

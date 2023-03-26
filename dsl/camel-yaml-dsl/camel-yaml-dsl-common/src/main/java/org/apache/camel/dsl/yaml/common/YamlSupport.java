@@ -92,11 +92,11 @@ public final class YamlSupport {
             if (key == null) {
                 String prefix = e.getOptionPrefix();
                 if (prefix != null && !prefix.endsWith(".")) {
-                    prefix = "." + prefix;
+                    prefix = '.' + prefix;
                 }
 
                 key = prefix != null
-                        ? prefix + "." + e.getPropertyName()
+                        ? prefix + '.' + e.getPropertyName()
                         : e.getPropertyName();
             }
 
@@ -144,7 +144,7 @@ public final class YamlSupport {
             //
             // is not supported and leads to an InvalidEndpointException being thrown.
             //
-            throw new InvalidEndpointException(node, "Uri should not contains query parameters (uri: " + uri + ")");
+            throw new InvalidEndpointException(node, "Uri should not contains query parameters (uri: " + uri + ')');
         }
 
         final String scheme = uri.contains(":") ? StringHelper.before(uri, ":") : uri;
@@ -170,15 +170,15 @@ public final class YamlSupport {
                         if (val instanceof String) {
                             String newVal = (String) val;
                             if (!newVal.startsWith("#") && !newVal.startsWith("RAW(")) {
-                                options.put(secretParameter, "RAW(" + val + ")");
+                                options.put(secretParameter, "RAW(" + val + ')');
                             }
                         }
                     }
 
-                    answer += "?" + URISupport.createQueryString(options, false);
+                    answer += '?' + URISupport.createQueryString(options, false);
                 }
             } else {
-                answer += "?" + URISupport.createQueryString(parameters, false);
+                answer += '?' + URISupport.createQueryString(parameters, false);
             }
         } catch (URISyntaxException e) {
             throw new InvalidEndpointException(node, "Error creating query", e);

@@ -49,7 +49,7 @@ public class OtherwiseDefinition extends OutputDefinition<OtherwiseDefinition> {
 
     @Override
     public String toString() {
-        return "Otherwise[" + getOutputs() + "]";
+        return "Otherwise[" + getOutputs() + ']';
     }
 
     @Override

@@ -83,9 +83,9 @@ public abstract class PooledTaskFactory extends PooledObjectFactorySupport<Poole
     @Override
     public String toString() {
         if (source != null) {
-            return "PooledTaskFactory[source: " + source + ", capacity: " + getCapacity() + "]";
+            return "PooledTaskFactory[source: " + source + ", capacity: " + getCapacity() + ']';
         } else {
-            return "PooledTaskFactory[capacity: " + getCapacity() + "]";
+            return "PooledTaskFactory[capacity: " + getCapacity() + ']';
         }
     }
 }

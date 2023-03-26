@@ -659,7 +659,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (type.isEmpty() || invalid) {
                 throw new SimpleParserException("Valid syntax: ${exceptionAs(type).OGNL} was: " + function, token.getIndex());
             }
-            return "exceptionAs(exchange, " + type + ")" + ognlCodeMethods(remainder, type);
+            return "exceptionAs(exchange, " + type + ')' + ognlCodeMethods(remainder, type);
         }
         // Exception OGNL
         remainder = ifStartsWithReturnRemainder("exception", function);
@@ -811,7 +811,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (field != null) {
                 return "type(exchange, " + type + ", \"" + field + "\")";
             } else {
-                return "type(exchange, " + type + ")";
+                return "type(exchange, " + type + ')';
             }
         }
 
@@ -924,14 +924,14 @@ public class SimpleFunctionExpression extends LiteralExpression {
                         String func = "bodyAsIndex(" + type + ", \"" + parts.remove(0) + "\")";
                         String last = String.join("", parts);
                         if (!last.isEmpty()) {
-                            func += "." + last;
+                            func += '.' + last;
                         }
                         return createCodeBody(func);
                     }
                 }
-                return "bodyAs(message, " + type + ")" + ognlCodeMethods(remainder, type);
+                return "bodyAs(message, " + type + ')' + ognlCodeMethods(remainder, type);
             } else {
-                return "bodyAs(message, " + type + ")";
+                return "bodyAs(message, " + type + ')';
             }
         }
 
@@ -999,14 +999,14 @@ public class SimpleFunctionExpression extends LiteralExpression {
                         String func = "mandatoryBodyAsIndex(" + type + ", \"" + parts.remove(0) + "\")";
                         String last = String.join("", parts);
                         if (!last.isEmpty()) {
-                            func += "." + last;
+                            func += '.' + last;
                         }
                         return createCodeBody(func);
                     }
                 }
-                return "mandatoryBodyAs(message, " + type + ")" + ognlCodeMethods(remainder, type);
+                return "mandatoryBodyAs(message, " + type + ')' + ognlCodeMethods(remainder, type);
             } else {
-                return "mandatoryBodyAs(message, " + type + ")";
+                return "mandatoryBodyAs(message, " + type + ')';
             }
         }
 
@@ -1030,7 +1030,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                     String func = "bodyAsIndex(Object.class, \"" + parts.remove(0) + "\")";
                     String last = String.join("", parts);
                     if (!last.isEmpty()) {
-                        func += "." + last;
+                        func += '.' + last;
                     }
                     return createCodeBody(func);
                 }
@@ -1108,7 +1108,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             type = type.replace('$', '.');
             type = type.trim();
-            return "headerAs(message, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder, type);
+            return "headerAs(message, \"" + key + "\", " + type + ')' + ognlCodeMethods(remainder, type);
         }
 
         // headers function
@@ -1169,7 +1169,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 if (parts.size() > 2) {
                     String last = String.join("", parts.subList(2, parts.size()));
                     if (!last.isEmpty()) {
-                        func += "." + last;
+                        func += '.' + last;
                     }
                 }
                 return createCodeHeader(func);
@@ -1255,7 +1255,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             }
             type = type.replace('$', '.');
             type = type.trim();
-            return "exchangePropertyAs(exchange, \"" + key + "\", " + type + ")" + ognlCodeMethods(remainder, type);
+            return "exchangePropertyAs(exchange, \"" + key + "\", " + type + ')' + ognlCodeMethods(remainder, type);
         }
 
         // exchange property
@@ -1356,9 +1356,9 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 if (after.endsWith(")")) {
                     after = after.substring(0, after.length() - 1);
                 }
-                return "random(exchange, " + before + ", " + after + ")";
+                return "random(exchange, " + before + ", " + after + ')';
             } else {
-                return "random(exchange, 0, " + values.trim() + ")";
+                return "random(exchange, 0, " + values.trim() + ')';
             }
         }
 
@@ -1369,7 +1369,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException("Valid syntax: ${skip(number)} was: " + function, token.getIndex());
             }
-            return "skip(exchange, " + values.trim() + ")";
+            return "skip(exchange, " + values.trim() + ')';
         }
 
         // collate function
@@ -1379,7 +1379,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (values == null || ObjectHelper.isEmpty(values)) {
                 throw new SimpleParserException("Valid syntax: ${collate(group)} was: " + function, token.getIndex());
             }
-            return "collate(exchange, " + values.trim() + ")";
+            return "collate(exchange, " + values.trim() + ')';
         }
 
         // messageHistory function
@@ -1392,7 +1392,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
             } else {
                 detailed = Boolean.parseBoolean(values);
             }
-            return "messageHistory(exchange, " + (detailed ? "true" : "false") + ")";
+            return "messageHistory(exchange, " + (detailed ? "true" : "false") + ')';
         } else if (ObjectHelper.equal(function, "messageHistory")) {
             return "messageHistory(exchange, true)";
         }
@@ -1460,7 +1460,7 @@ public class SimpleFunctionExpression extends LiteralExpression {
                 // shorthand getter syntax: .name -> .getName()
                 if (m != null && !m.isEmpty()) {
                     // a method so append with a dot
-                    sb.append(".");
+                    sb.append('.');
                     char ch = m.charAt(m.length() - 1);
                     if (Character.isAlphabetic(ch)) {
                         if (!m.startsWith("get")) {
@@ -1483,16 +1483,16 @@ public class SimpleFunctionExpression extends LiteralExpression {
                         long lon = Long.parseLong(index);
                         sb.append(lon);
                         if (lon > Integer.MAX_VALUE) {
-                            sb.append("l");
+                            sb.append('l');
                         }
                     } catch (Exception e) {
                         // its text based
                         index = StringHelper.removeLeadingAndEndingQuotes(index);
-                        sb.append("\"");
+                        sb.append('"');
                         sb.append(index);
-                        sb.append("\"");
+                        sb.append('"');
                     }
-                    sb.append(")");
+                    sb.append(')');
                 }
             }
         }

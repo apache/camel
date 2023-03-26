@@ -59,7 +59,7 @@ final class ConsulClusterView extends AbstractCamelClusterView {
         this.localMember = new ConsulLocalMember();
         this.sessionId = new AtomicReference<>();
         this.watcher = new Watcher();
-        this.path = configuration.getRootPath() + "/" + namespace;
+        this.path = configuration.getRootPath() + '/' + namespace;
     }
 
     @Override

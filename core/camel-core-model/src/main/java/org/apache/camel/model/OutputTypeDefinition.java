@@ -92,7 +92,7 @@ public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTyp
 
     @Override
     public String toString() {
-        return "outputType[" + urn + "]";
+        return "outputType[" + urn + ']';
     }
 
     @Override
@@ -102,7 +102,7 @@ public class OutputTypeDefinition extends OptionalIdentifiedDefinition<OutputTyp
 
     @Override
     public String getLabel() {
-        return "outputType[" + urn + "]";
+        return "outputType[" + urn + ']';
     }
 
 }

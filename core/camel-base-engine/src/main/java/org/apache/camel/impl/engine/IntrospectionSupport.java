@@ -400,7 +400,7 @@ final class IntrospectionSupport {
                 return method;
             }
         }
-        throw new NoSuchMethodException(type.getCanonicalName() + "." + name);
+        throw new NoSuchMethodException(type.getCanonicalName() + '.' + name);
     }
 
     static boolean isPropertyIsGetter(Class<?> type, String propertyName) {

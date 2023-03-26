@@ -102,7 +102,7 @@ public class PropertiesComponent extends ServiceSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
 
-    private static final String NEGATE_PREFIX = PREFIX_TOKEN + "!";
+    private static final String NEGATE_PREFIX = PREFIX_TOKEN + '!';
 
     private CamelContext camelContext;
     private PropertiesFunctionResolver propertiesFunctionResolver = new DefaultPropertiesFunctionResolver();
@@ -673,7 +673,7 @@ public class PropertiesComponent extends ServiceSupport
             if (source instanceof LocationPropertiesSource && source instanceof LoadablePropertiesSource) {
                 LocationPropertiesSource loc = (LocationPropertiesSource) source;
                 LoadablePropertiesSource loadable = (LoadablePropertiesSource) source;
-                String schemeAndPath = loc.getLocation().getResolver() + ":" + loc.getLocation().getPath();
+                String schemeAndPath = loc.getLocation().getResolver() + ':' + loc.getLocation().getPath();
                 String path = loc.getLocation().getPath();
                 if (PatternHelper.matchPattern(schemeAndPath, pattern) || PatternHelper.matchPattern(path, pattern)) {
                     loadable.reloadProperties(schemeAndPath);

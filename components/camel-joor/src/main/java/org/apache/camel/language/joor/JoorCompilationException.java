@@ -47,7 +47,7 @@ public class JoorCompilationException extends RuntimeException {
         for (String line : lines) {
             String s = String.format("%3d %s", ++counter, line);
             sb.append(s);
-            sb.append("\n");
+            sb.append('\n');
         }
         return sb.toString();
     }

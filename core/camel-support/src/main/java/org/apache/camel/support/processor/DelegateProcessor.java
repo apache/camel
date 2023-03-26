@@ -61,7 +61,7 @@ public class DelegateProcessor extends ServiceSupport
 
     @Override
     public String toString() {
-        return "Delegate[" + processor + "]";
+        return "Delegate[" + processor + ']';
     }
 
     @Override

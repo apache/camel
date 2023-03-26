@@ -55,7 +55,7 @@ public class ClassicUuidGenerator implements UuidGenerator {
                 if (hostName == null) {
                     hostName = InetAddressUtil.getLocalHostName();
                 }
-                stub = "-" + System.currentTimeMillis() + "-";
+                stub = "-" + System.currentTimeMillis() + '-';
             } catch (Exception e) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Cannot generate unique stub by using DNS", e);
@@ -72,14 +72,14 @@ public class ClassicUuidGenerator implements UuidGenerator {
         hostName = sanitizeHostName(hostName);
 
         if (ObjectHelper.isEmpty(stub)) {
-            stub = "-1-" + System.currentTimeMillis() + "-";
+            stub = "-1-" + System.currentTimeMillis() + '-';
         }
         UNIQUE_STUB = stub;
     }
 
     public ClassicUuidGenerator(String prefix) {
         synchronized (UNIQUE_STUB) {
-            this.seed = prefix + UNIQUE_STUB + (instanceCount++) + "-";
+            this.seed = prefix + UNIQUE_STUB + (instanceCount++) + '-';
             // let the ID be friendly for URL and file systems
             this.seed = generateSanitizedId(this.seed);
             this.length = seed.length() + ("" + Long.MAX_VALUE).length();

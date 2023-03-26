@@ -74,7 +74,7 @@ public class JavaScriptExpression extends ExpressionSupport {
 
     @Override
     public String toString() {
-        return "JavaScript[" + expressionString + "]";
+        return "JavaScript[" + expressionString + ']';
     }
 
 }

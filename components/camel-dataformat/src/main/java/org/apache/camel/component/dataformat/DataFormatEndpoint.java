@@ -97,7 +97,7 @@ public class DataFormatEndpoint extends DefaultEndpoint {
 
             @Override
             public String toString() {
-                return "DataFormatProducer[" + dataFormat + "]";
+                return "DataFormatProducer[" + dataFormat + ']';
             }
         };
     }

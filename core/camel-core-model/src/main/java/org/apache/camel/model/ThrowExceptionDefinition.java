@@ -50,7 +50,7 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
 
     @Override
     public String toString() {
-        return "ThrowException[" + description() + "]";
+        return "ThrowException[" + description() + ']';
     }
 
     protected String description() {
@@ -70,7 +70,7 @@ public class ThrowExceptionDefinition extends NoOutputDefinition<ThrowExceptionD
 
     @Override
     public String getLabel() {
-        return "throwException[" + description() + "]";
+        return "throwException[" + description() + ']';
     }
 
     public String getRef() {

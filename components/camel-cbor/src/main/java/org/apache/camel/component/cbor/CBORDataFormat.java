@@ -264,7 +264,7 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         if (enableFeatures == null) {
             enableFeatures = feature.name();
         } else {
-            enableFeatures += "," + feature.name();
+            enableFeatures += ',' + feature.name();
         }
     }
 
@@ -272,7 +272,7 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         if (enableFeatures == null) {
             enableFeatures = feature.name();
         } else {
-            enableFeatures += "," + feature.name();
+            enableFeatures += ',' + feature.name();
         }
     }
 
@@ -280,7 +280,7 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         if (enableFeatures == null) {
             enableFeatures = feature.name();
         } else {
-            enableFeatures += "," + feature.name();
+            enableFeatures += ',' + feature.name();
         }
     }
 
@@ -288,7 +288,7 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         if (disableFeatures == null) {
             disableFeatures = feature.name();
         } else {
-            disableFeatures += "," + feature.name();
+            disableFeatures += ',' + feature.name();
         }
     }
 
@@ -296,7 +296,7 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         if (disableFeatures == null) {
             disableFeatures = feature.name();
         } else {
-            disableFeatures += "," + feature.name();
+            disableFeatures += ',' + feature.name();
         }
     }
 
@@ -304,7 +304,7 @@ public class CBORDataFormat extends ServiceSupport implements DataFormat, DataFo
         if (disableFeatures == null) {
             disableFeatures = feature.name();
         } else {
-            disableFeatures += "," + feature.name();
+            disableFeatures += ',' + feature.name();
         }
     }
 

@@ -53,7 +53,7 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
 
     @Override
     public String toString() {
-        return "CircuitBreaker[" + getOutputs() + "]";
+        return "CircuitBreaker[" + getOutputs() + ']';
     }
 
     @Override

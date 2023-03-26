@@ -41,7 +41,7 @@ public final class DynamicRouterConstants {
     /**
      * Convenient constant for the control channel URI.
      */
-    public static final String CONTROL_CHANNEL_URI = COMPONENT_SCHEME + ":" + CONTROL_CHANNEL_NAME;
+    public static final String CONTROL_CHANNEL_URI = COMPONENT_SCHEME + ':' + CONTROL_CHANNEL_NAME;
 
     /**
      * The title, for the auto-generated documentation.
@@ -77,7 +77,7 @@ public final class DynamicRouterConstants {
      * The alternate control-channel syntax.
      */
     public static final String CONTROL_SYNTAX
-            = SYNTAX + "/" + CONTROL_ACTION_PARAM + "/" + SUBSCRIPTION_CHANNEL_PARAM;
+            = SYNTAX + '/' + CONTROL_ACTION_PARAM + '/' + SUBSCRIPTION_CHANNEL_PARAM;
 
     /**
      * Subscribe control channel action.

@@ -451,7 +451,7 @@ public final class PropertyBindingSupport {
                 // resolve property placeholders
                 String s = text.toString();
                 text = camelContext.resolvePropertyPlaceholders(s);
-                if (text == null && s.startsWith(PropertiesComponent.PREFIX_TOKEN + "?")) {
+                if (text == null && s.startsWith(PropertiesComponent.PREFIX_TOKEN + '?')) {
                     // it was an optional value, so we should not try to set the property but regard it as a "hit"
                     return true;
                 }
@@ -858,7 +858,7 @@ public final class PropertyBindingSupport {
             String str = value.toString();
             if (str.startsWith("#bean:")) {
                 // okay its a reference so swap to lookup this which is already supported in IntrospectionSupport
-                refName = "#" + ((String) value).substring(6);
+                refName = '#' + ((String) value).substring(6);
                 value = null;
             } else if (str.equals("#autowired")) {
                 value = resolveAutowired(context, target, name, value, ignoreCase, fluentBuilder, allowPrivateSetter, true,
@@ -1535,7 +1535,7 @@ public final class PropertyBindingSupport {
                 }
                 if (answer == null) {
                     throw new IllegalStateException(
-                            "Cannot create bean instance using factory method: " + className + "#" + factoryMethod);
+                            "Cannot create bean instance using factory method: " + className + '#' + factoryMethod);
                 }
             } else if (parameters != null) {
                 // special to support constructor parameters
@@ -1903,7 +1903,7 @@ public final class PropertyBindingSupport {
             map.forEach((k, v) -> {
                 if (startsWithIgnoreCase(k, optionPrefix)) {
                     put(k.substring(optionPrefix.length()), v);
-                } else if (startsWithIgnoreCase(k, "?" + optionPrefix)) {
+                } else if (startsWithIgnoreCase(k, '?' + optionPrefix)) {
                     put(k.substring(optionPrefix.length() + 1), v);
                 }
             });
@@ -1917,7 +1917,7 @@ public final class PropertyBindingSupport {
             originalMap.forEach((k, v) -> {
                 if (startsWithIgnoreCase(k, optionPrefix)) {
                     toBeRemoved.add(k);
-                } else if (startsWithIgnoreCase(k, "?" + optionPrefix)) {
+                } else if (startsWithIgnoreCase(k, '?' + optionPrefix)) {
                     toBeRemoved.add(k);
                 }
             });
@@ -1949,7 +1949,7 @@ public final class PropertyBindingSupport {
                     key = key.substring(1);
                 }
                 Object value = entry.getValue();
-                String keyPrefix = (optional ? "?" : "") + (prefix.isEmpty() ? key : prefix + "." + key);
+                String keyPrefix = (optional ? "?" : "") + (prefix.isEmpty() ? key : prefix + '.' + key);
                 if (value instanceof Map) {
                     flatten(keyPrefix, (Map<?, Object>) value);
                 } else {

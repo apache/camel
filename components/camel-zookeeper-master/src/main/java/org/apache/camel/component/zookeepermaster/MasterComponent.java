@@ -68,14 +68,14 @@ public class MasterComponent extends ZookeeperComponentSupport {
         int idx = remaining.indexOf(':');
         if (idx <= 0) {
             throw new IllegalArgumentException(
-                    "Missing : in URI so cannot split the group name from the actual URI for '" + remaining + "'");
+                    "Missing : in URI so cannot split the group name from the actual URI for '" + remaining + '\'');
         }
         // we are registering a regular endpoint
         String name = remaining.substring(0, idx);
         String childUri = remaining.substring(idx + 1);
         // we need to apply the params here
         if (params != null && params.size() > 0) {
-            childUri = childUri + "?" + uri.substring(uri.indexOf('?') + 1);
+            childUri = childUri + '?' + uri.substring(uri.indexOf('?') + 1);
         }
         return new MasterEndpoint(uri, this, name, childUri);
     }
@@ -83,7 +83,7 @@ public class MasterComponent extends ZookeeperComponentSupport {
     protected String getCamelClusterPath(String name) {
         String path = name;
         if (ObjectHelper.isNotEmpty(zkRoot)) {
-            path = zkRoot + "/" + name;
+            path = zkRoot + '/' + name;
         }
         return path;
     }

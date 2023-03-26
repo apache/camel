@@ -233,7 +233,7 @@ public class RestOpenApiSupport {
             String var = m.group(1);
             if (server != null && server.variables != null && server.variables.get(var) != null) {
                 String varValue = server.variables.get(var).default_;
-                url = url.replace("{" + var + "}", varValue);
+                url = url.replace('{' + var + '}', varValue);
             }
         }
         return url;

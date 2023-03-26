@@ -43,7 +43,7 @@ public abstract class ExpressionSupport implements Expression, Predicate {
 
     public void assertMatches(String text, Exchange exchange) {
         if (!matches(exchange)) {
-            throw new AssertionError(text + " " + assertionFailureMessage(exchange) + " for exchange: " + exchange);
+            throw new AssertionError(text + ' ' + assertionFailureMessage(exchange) + " for exchange: " + exchange);
         }
     }
 

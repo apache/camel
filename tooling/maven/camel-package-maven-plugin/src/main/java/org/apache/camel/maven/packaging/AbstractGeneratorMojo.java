@@ -124,7 +124,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         String data;
         StringBuilder properties = new StringBuilder(256);
         properties.append("# ").append(GENERATED_MSG).append(NL);
-        properties.append(key).append("=").append(val).append(NL);
+        properties.append(key).append('=').append(val).append(NL);
         properties.append("groupId=").append(project.getGroupId()).append(NL);
         properties.append("artifactId=").append(project.getArtifactId()).append(NL);
         properties.append("version=").append(project.getVersion()).append(NL);
@@ -163,8 +163,8 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
             }
 
             if (log.isDebugEnabled()) {
-                String path = file.getPath() + "/" + suffix;
-                log.debug("Checking  if " + path + " (" + r.getDirectory() + "/" + suffix + ") has changed.");
+                String path = file.getPath() + '/' + suffix;
+                log.debug("Checking  if " + path + " (" + r.getDirectory() + '/' + suffix + ") has changed.");
             }
             if (buildContext.hasDelta(new File(file, suffix))) {
                 if (log.isDebugEnabled()) {
@@ -210,7 +210,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 
                     throw new NoClassDefFoundError(org);
                 } else {
-                    loadClassName = loadClassName.substring(0, dotIndex) + "$" + loadClassName.substring(dotIndex + 1);
+                    loadClassName = loadClassName.substring(0, dotIndex) + '$' + loadClassName.substring(dotIndex + 1);
                     if (getLog().isDebugEnabled()) {
                         getLog().debug("Relocating previous class name for loading as: " + loadClassName);
                     }

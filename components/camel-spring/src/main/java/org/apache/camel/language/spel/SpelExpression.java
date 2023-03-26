@@ -116,6 +116,6 @@ public class SpelExpression extends ExpressionSupport {
 
     @Override
     public String toString() {
-        return "SpelExpression[" + expressionString + "]";
+        return "SpelExpression[" + expressionString + ']';
     }
 }

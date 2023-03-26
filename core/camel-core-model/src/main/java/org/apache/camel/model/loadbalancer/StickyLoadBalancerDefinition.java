@@ -61,6 +61,6 @@ public class StickyLoadBalancerDefinition extends LoadBalancerDefinition {
 
     @Override
     public String toString() {
-        return "StickyLoadBalancer[" + correlationExpression + "]";
+        return "StickyLoadBalancer[" + correlationExpression + ']';
     }
 }

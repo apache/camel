@@ -680,7 +680,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
         if (params != null && !params.isEmpty()) {
             try {
                 String query = URISupport.createQueryString(params);
-                uri = uri + "?" + query;
+                uri = uri + '?' + query;
             } catch (URISyntaxException e) {
                 throw new InvalidEndpointException(node, "Error creating URI query parameters", e);
             }

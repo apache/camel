@@ -33,9 +33,9 @@ public final class SupportLevelHelper {
 
         // we only want major/minor (strip patch)
         Version v1 = new Version(firstVersion);
-        v1 = new Version(v1.getMajor() + "." + v1.getMinor());
+        v1 = new Version(v1.getMajor() + '.' + v1.getMinor());
         Version v2 = new Version(currentVersion);
-        v2 = new Version(v2.getMajor() + "." + v2.getMinor());
+        v2 = new Version(v2.getMajor() + '.' + v2.getMinor());
 
         boolean justNew = CamelVersionHelper.isGE(v2.toString(), v1.toString());
         boolean prevNew = CamelVersionHelper.isGE(CamelVersionHelper.prevMinor(v2.toString()), v1.toString());

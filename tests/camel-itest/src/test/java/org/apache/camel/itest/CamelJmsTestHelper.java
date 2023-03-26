@@ -42,7 +42,7 @@ public final class CamelJmsTestHelper {
         int id = counter.incrementAndGet();
         String url = brokerUrl + "?broker.persistent=false&broker.useJmx=false";
         if (options != null) {
-            url = url + "&" + options;
+            url = url + '&' + options;
         }
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(url);
 

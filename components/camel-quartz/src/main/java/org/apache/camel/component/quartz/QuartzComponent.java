@@ -307,7 +307,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
             if (instName == null) {
                 instName = "scheduler-" + identity;
             } else {
-                instName = instName + "-" + identity;
+                instName = instName + '-' + identity;
             }
         }
         return instName;
@@ -448,7 +448,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         }
 
         if (prefixJobNameWithEndpointId) {
-            name = endpoint.getId() + "_" + name;
+            name = endpoint.getId() + '_' + name;
         }
 
         return new TriggerKey(name, group);
@@ -480,7 +480,7 @@ public class QuartzComponent extends DefaultComponent implements ExtendedStartup
         SchedulerContext quartzContext = scheduler.getContext();
         String camelContextName = QuartzHelper.getQuartzContextName(getCamelContext());
         LOG.debug("Storing camelContextName={} into Quartz Context space", camelContextName);
-        quartzContext.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName, getCamelContext());
+        quartzContext.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + '-' + camelContextName, getCamelContext());
         return quartzContext;
     }
 

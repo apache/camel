@@ -176,7 +176,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
 
         StringJoiner sb = new StringJoiner(",\n");
         for (String name : secrets) {
-            sb.add(spaces20 + "\"" + name + "\"");
+            sb.add(spaces20 + '"' + name + '"');
         }
         String changed = sb.toString();
 
@@ -190,7 +190,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
             } else {
                 String before = Strings.before(text, KEYS_START_TOKEN);
                 String after = Strings.after(text, KEYS_END_TOKEN);
-                text = before + KEYS_START_TOKEN + "\n" + spaces20 + changed + "\n" + spaces12 + KEYS_END_TOKEN + after;
+                text = before + KEYS_START_TOKEN + '\n' + spaces20 + changed + '\n' + spaces12 + KEYS_END_TOKEN + after;
                 PackageHelper.writeText(java, text);
                 return true;
             }
@@ -212,7 +212,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
             line.append(spaces52);
             line.append("+ \"");
             if (!first) {
-                line.append("|");
+                line.append('|');
             }
             line.append("\\\\Q");
             line.append(name);
@@ -232,7 +232,7 @@ public class UpdateSensitizeHelper extends AbstractGeneratorMojo {
             } else {
                 String before = Strings.before(text, PATTERN_START_TOKEN);
                 String after = Strings.after(text, PATTERN_END_TOKEN);
-                text = before + PATTERN_START_TOKEN + "\n" + spaces52 + changed + "\n" + spaces52 + PATTERN_END_TOKEN + after;
+                text = before + PATTERN_START_TOKEN + '\n' + spaces52 + changed + '\n' + spaces52 + PATTERN_END_TOKEN + after;
                 PackageHelper.writeText(java, text);
                 return true;
             }

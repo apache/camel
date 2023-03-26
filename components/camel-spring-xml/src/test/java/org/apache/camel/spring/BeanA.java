@@ -32,7 +32,7 @@ public class BeanA implements InitializingBean, DisposableBean {
     }
 
     public String foo(String s) {
-        return "a" + s;
+        return 'a' + s;
     }
 
     @Override

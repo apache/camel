@@ -135,7 +135,7 @@ public class NotifyBuilder {
 
             @Override
             public String toString() {
-                return "from(" + endpointUri + ")";
+                return "from(" + endpointUri + ')';
             }
         });
         return this;
@@ -177,7 +177,7 @@ public class NotifyBuilder {
 
             @Override
             public String toString() {
-                return "fromRoute(" + routeId + ")";
+                return "fromRoute(" + routeId + ')';
             }
         });
         return this;
@@ -217,7 +217,7 @@ public class NotifyBuilder {
 
             @Override
             public String toString() {
-                return "fromCurrentRoute(" + routeId + ")";
+                return "fromCurrentRoute(" + routeId + ')';
             }
         });
         return this;
@@ -292,7 +292,7 @@ public class NotifyBuilder {
 
             @Override
             public String toString() {
-                return "filter(" + predicate + ")";
+                return "filter(" + predicate + ')';
             }
         });
         return this;
@@ -327,7 +327,7 @@ public class NotifyBuilder {
 
             @Override
             public String toString() {
-                return "filter(" + clause + ")";
+                return "filter(" + clause + ')';
             }
         });
         return clause;
@@ -382,7 +382,7 @@ public class NotifyBuilder {
 
             @Override
             public String toString() {
-                return "wereSentTo(" + endpointUri + ")";
+                return "wereSentTo(" + endpointUri + ')';
             }
         });
         return this;
@@ -417,7 +417,7 @@ public class NotifyBuilder {
 
             @Override
             public String toString() {
-                return "whenReceived(" + number + ")";
+                return "whenReceived(" + number + ')';
             }
         });
         return this;
@@ -461,7 +461,7 @@ public class NotifyBuilder {
 
             @Override
             public String toString() {
-                return "whenDone(" + number + ")";
+                return "whenDone(" + number + ')';
             }
         });
         return this;
@@ -520,7 +520,7 @@ public class NotifyBuilder {
 
             @Override
             public String toString() {
-                return "whenDoneByIndex(" + index + ")";
+                return "whenDoneByIndex(" + index + ')';
             }
         });
         return this;
@@ -558,7 +558,7 @@ public class NotifyBuilder {
 
             @Override
             public String toString() {
-                return "whenCompleted(" + number + ")";
+                return "whenCompleted(" + number + ')';
             }
         });
         return this;
@@ -593,7 +593,7 @@ public class NotifyBuilder {
 
             @Override
             public String toString() {
-                return "whenFailed(" + number + ")";
+                return "whenFailed(" + number + ')';
             }
         });
         return this;
@@ -634,7 +634,7 @@ public class NotifyBuilder {
 
             @Override
             public String toString() {
-                return "whenExactlyDone(" + number + ")";
+                return "whenExactlyDone(" + number + ')';
             }
         });
         return this;
@@ -670,7 +670,7 @@ public class NotifyBuilder {
 
             @Override
             public String toString() {
-                return "whenExactlyCompleted(" + number + ")";
+                return "whenExactlyCompleted(" + number + ')';
             }
         });
         return this;
@@ -703,7 +703,7 @@ public class NotifyBuilder {
 
             @Override
             public String toString() {
-                return "whenExactlyFailed(" + number + ")";
+                return "whenExactlyFailed(" + number + ')';
             }
         });
         return this;
@@ -769,9 +769,9 @@ public class NotifyBuilder {
             @Override
             public String toString() {
                 if (received) {
-                    return "whenAnyReceivedMatches(" + predicate + ")";
+                    return "whenAnyReceivedMatches(" + predicate + ')';
                 } else {
-                    return "whenAnyDoneMatches(" + predicate + ")";
+                    return "whenAnyDoneMatches(" + predicate + ')';
                 }
             }
         });
@@ -838,9 +838,9 @@ public class NotifyBuilder {
             @Override
             public String toString() {
                 if (received) {
-                    return "whenAllReceivedMatches(" + predicate + ")";
+                    return "whenAllReceivedMatches(" + predicate + ')';
                 } else {
-                    return "whenAllDoneMatches(" + predicate + ")";
+                    return "whenAllDoneMatches(" + predicate + ')';
                 }
             }
         });
@@ -962,9 +962,9 @@ public class NotifyBuilder {
             @Override
             public String toString() {
                 if (received) {
-                    return "" + (exact ? "whenExactBodiesReceived(" : "whenBodiesReceived(") + bodies + ")";
+                    return "" + (exact ? "whenExactBodiesReceived(" : "whenBodiesReceived(") + bodies + ')';
                 } else {
-                    return "" + (exact ? "whenExactBodiesDone(" : "whenBodiesDone(") + bodies + ")";
+                    return "" + (exact ? "whenExactBodiesDone(" : "whenBodiesDone(") + bodies + ')';
                 }
             }
         });
@@ -1042,9 +1042,9 @@ public class NotifyBuilder {
             @Override
             public String toString() {
                 if (received) {
-                    return "whenReceivedSatisfied(" + matcher + ")";
+                    return "whenReceivedSatisfied(" + matcher + ')';
                 } else {
-                    return "whenDoneSatisfied(" + matcher + ")";
+                    return "whenDoneSatisfied(" + matcher + ')';
                 }
             }
         });
@@ -1122,9 +1122,9 @@ public class NotifyBuilder {
             @Override
             public String toString() {
                 if (received) {
-                    return "whenReceivedNotSatisfied(" + mock + ")";
+                    return "whenReceivedNotSatisfied(" + mock + ')';
                 } else {
-                    return "whenDoneNotSatisfied(" + mock + ")";
+                    return "whenDoneNotSatisfied(" + mock + ')';
                 }
             }
         });
@@ -1270,7 +1270,7 @@ public class NotifyBuilder {
         StringBuilder sb = new StringBuilder();
         for (EventPredicateHolder eventPredicateHolder : predicates) {
             if (sb.length() > 0) {
-                sb.append(".");
+                sb.append('.');
             }
             sb.append(eventPredicateHolder.toString());
         }
@@ -1638,7 +1638,7 @@ public class NotifyBuilder {
             StringBuilder sb = new StringBuilder();
             for (EventPredicate eventPredicate : predicates) {
                 if (sb.length() > 0) {
-                    sb.append(".");
+                    sb.append('.');
                 }
                 sb.append(eventPredicate.toString());
             }

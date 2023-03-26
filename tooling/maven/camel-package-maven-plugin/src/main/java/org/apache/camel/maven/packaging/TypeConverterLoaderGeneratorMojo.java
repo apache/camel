@@ -128,7 +128,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
                 // okay there is only 1 class so let use that as the name, and avoid repeating converter in the name
                 name = bulkConverters.get(0).declaringClass().name().local().replace("Converter", "");
             }
-            String fqn = pn + "." + name + "BulkConverterLoader";
+            String fqn = pn + '.' + name + "BulkConverterLoader";
             // special optimized for camel-base type converters to be bulk and reduce memory usage
             boolean base = "camel-base".equals(project.getArtifactId());
             String source = writeBulkLoader(fqn, bulkConverters, base);
@@ -177,7 +177,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
 
         writer.append("/* ").append(GENERATED_MSG).append(" */\n");
         writer.append("package ").append(p).append(";\n");
-        writer.append("\n");
+        writer.append('\n');
         writer.append("import org.apache.camel.CamelContext;\n");
         writer.append("import org.apache.camel.CamelContextAware;\n");
         writer.append("import org.apache.camel.DeferredContextBinding;\n");
@@ -189,31 +189,31 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         writer.append("import org.apache.camel.spi.BulkTypeConverters;\n");
         writer.append("import org.apache.camel.spi.TypeConverterLoader;\n");
         writer.append("import org.apache.camel.spi.TypeConverterRegistry;\n");
-        writer.append("\n");
+        writer.append('\n');
         writer.append("/**\n");
-        writer.append(" * ").append(GENERATED_MSG).append("\n");
+        writer.append(" * ").append(GENERATED_MSG).append('\n');
         writer.append(" */\n");
         writer.append("@SuppressWarnings(\"unchecked\")\n");
         writer.append("@DeferredContextBinding\n");
         writer.append("public final class ").append(c)
                 .append(" implements TypeConverterLoader, BulkTypeConverters, CamelContextAware {\n");
-        writer.append("\n");
+        writer.append('\n');
         writer.append("    private CamelContext camelContext;\n");
-        writer.append("\n");
+        writer.append('\n');
         writer.append("    ").append("public ").append(c).append("() {\n");
         writer.append("    }\n");
-        writer.append("\n");
+        writer.append('\n');
 
         writer.append("    @Override\n");
         writer.append("    public void setCamelContext(CamelContext camelContext) {\n");
         writer.append("        this.camelContext = camelContext;\n");
         writer.append("    }\n");
-        writer.append("\n");
+        writer.append('\n');
         writer.append("    @Override\n");
         writer.append("    public CamelContext getCamelContext() {\n");
         writer.append("        return camelContext;\n");
         writer.append("    }\n");
-        writer.append("\n");
+        writer.append('\n');
 
         if (base) {
             // we want to be highest ordered for the base converters
@@ -221,20 +221,20 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
             writer.append("    public int getOrder() {\n");
             writer.append("        return Ordered.HIGHEST;\n");
             writer.append("    }\n");
-            writer.append("\n");
+            writer.append('\n');
         }
 
         writer.append("    @Override\n");
         writer.append("    public int size() {\n");
         writer.append("        return ").append(converters.size()).append(";\n");
         writer.append("    }\n");
-        writer.append("\n");
+        writer.append('\n');
 
         writer.append("    @Override\n");
         writer.append("    public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {\n");
         writer.append("        registry.addBulkTypeConverters(this);\n");
         writer.append("    }\n");
-        writer.append("\n");
+        writer.append('\n');
         writer.append("    @Override\n");
         writer.append(
                 "    public <T> T convertTo(Class<?> from, Class<T> to, Exchange exchange, Object value) throws TypeConversionException {\n");
@@ -251,25 +251,25 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         writer.append("            throw new TypeConversionException(value, to, e);\n");
         writer.append("        }\n");
         writer.append("    }\n");
-        writer.append("\n");
+        writer.append('\n');
         writer.append(
                 "    private Object doConvertTo(Class<?> from, Class<?> to, Exchange exchange, Object value) throws Exception {\n");
         writeLoader(converters, writer, converterClasses, false);
         writer.append("        }\n");
         writer.append("        return null;\n");
         writer.append("    }\n");
-        writer.append("\n");
+        writer.append('\n');
         writer.append(
                 "    public TypeConverter lookup(Class<?> to, Class<?> from) {\n");
         writeLoader(converters, writer, converterClasses, true);
         writer.append("        }\n");
         writer.append("        return null;\n");
         writer.append("    }\n");
-        writer.append("\n");
+        writer.append('\n');
         for (String f : converterClasses) {
             String s = f.substring(f.lastIndexOf('.') + 1);
             String v = s.substring(0, 1).toLowerCase() + s.substring(1);
-            writer.append("    private volatile ").append(f).append(" ").append(v).append(";\n");
+            writer.append("    private volatile ").append(f).append(' ').append(v).append(";\n");
             writer.append("    private ").append(f).append(" get").append(s).append("() {\n");
             writer.append("        if (").append(v).append(" == null) {\n");
             writer.append("            ").append(v).append(" = new ").append(f).append("();\n");
@@ -383,7 +383,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
 
         writer.append("/* ").append(GENERATED_MSG).append(" */\n");
         writer.append("package ").append(p).append(";\n");
-        writer.append("\n");
+        writer.append('\n');
         writer.append("import org.apache.camel.CamelContext;\n");
         writer.append("import org.apache.camel.CamelContextAware;\n");
         writer.append("import org.apache.camel.DeferredContextBinding;\n");
@@ -395,30 +395,30 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
         writer.append("import org.apache.camel.support.SimpleTypeConverter;\n");
         writer.append("import org.apache.camel.support.TypeConverterSupport;\n");
         writer.append("import org.apache.camel.util.DoubleMap;\n");
-        writer.append("\n");
+        writer.append('\n');
         writer.append("/**\n");
-        writer.append(" * ").append(GENERATED_MSG).append("\n");
+        writer.append(" * ").append(GENERATED_MSG).append('\n');
         writer.append(" */\n");
         writer.append("@SuppressWarnings(\"unchecked\")\n");
         writer.append("@DeferredContextBinding\n");
         writer.append("public final class ").append(c).append(" implements TypeConverterLoader, CamelContextAware {\n");
-        writer.append("\n");
+        writer.append('\n');
         writer.append("    private CamelContext camelContext;\n");
-        writer.append("\n");
+        writer.append('\n');
         writer.append("    ").append("public ").append(c).append("() {\n");
         writer.append("    }\n");
-        writer.append("\n");
+        writer.append('\n');
 
         writer.append("    @Override\n");
         writer.append("    public void setCamelContext(CamelContext camelContext) {\n");
         writer.append("        this.camelContext = camelContext;\n");
         writer.append("    }\n");
-        writer.append("\n");
+        writer.append('\n');
         writer.append("    @Override\n");
         writer.append("    public CamelContext getCamelContext() {\n");
         writer.append("        return camelContext;\n");
         writer.append("    }\n");
-        writer.append("\n");
+        writer.append('\n');
 
         writer.append("    @Override\n");
         writer.append("    public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {\n");
@@ -437,7 +437,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
             writer.append("        registerFallbackConverters(registry);\n");
         }
         writer.append("    }\n");
-        writer.append("\n");
+        writer.append('\n');
 
         if (converters.size() > 0) {
             writer.append("    private void registerConverters(TypeConverterRegistry registry) {\n");
@@ -453,14 +453,14 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
                 }
             }
             writer.append("    }\n");
-            writer.append("\n");
+            writer.append('\n');
 
             writer
                     .append("    private static void addTypeConverter(TypeConverterRegistry registry, Class<?> toType, Class<?> fromType, boolean allowNull, SimpleTypeConverter.ConversionMethod method)"
                             + " { \n");
             writer.append("        registry.addTypeConverter(toType, fromType, new SimpleTypeConverter(allowNull, method));\n");
             writer.append("    }\n");
-            writer.append("\n");
+            writer.append('\n');
         }
 
         if (converters.sizeFallback() > 0) {
@@ -473,20 +473,20 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
                         .append("(type, exchange, value) -> ").append(toJavaFallback(ee, converterClasses)).append(");\n");
             }
             writer.append("    }\n");
-            writer.append("\n");
+            writer.append('\n');
 
             writer
                     .append("    private static void addFallbackTypeConverter(TypeConverterRegistry registry, boolean allowNull, boolean canPromote, SimpleTypeConverter.ConversionMethod method) { \n");
             writer.append(
                     "        registry.addFallbackTypeConverter(new SimpleTypeConverter(allowNull, method), canPromote);\n");
             writer.append("    }\n");
-            writer.append("\n");
+            writer.append('\n');
         }
 
         for (String f : converterClasses) {
             String s = f.substring(f.lastIndexOf('.') + 1);
             String v = s.substring(0, 1).toLowerCase() + s.substring(1);
-            writer.append("    private volatile ").append(f).append(" ").append(v).append(";\n");
+            writer.append("    private volatile ").append(f).append(' ').append(v).append(";\n");
             writer.append("    private ").append(f).append(" get").append(s).append("() {\n");
             writer.append("        if (").append(v).append(" == null) {\n");
             writer.append("            ").append(v).append(" = new ").append(f).append("();\n");
@@ -509,7 +509,7 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
     private String toJava(MethodInfo converter, Set<String> converterClasses) {
         String pfx;
         if (Modifier.isStatic(converter.flags())) {
-            pfx = converter.declaringClass().toString() + "." + converter.name();
+            pfx = converter.declaringClass().toString() + '.' + converter.name();
         } else {
             converterClasses.add(converter.declaringClass().toString());
             pfx = "get" + converter.declaringClass().simpleName() + "()." + converter.name();
@@ -528,20 +528,20 @@ public class TypeConverterLoaderGeneratorMojo extends AbstractGeneratorMojo {
             }
         }
         String type = toString(converter.parameterTypes().get(0));
-        String cast = type.equals("java.lang.Object") ? "" : "(" + type + ") ";
-        return pfx + "(" + cast + "value" + param + ")";
+        String cast = type.equals("java.lang.Object") ? "" : '(' + type + ") ";
+        return pfx + '(' + cast + "value" + param + ')';
     }
 
     private String toJavaFallback(MethodInfo converter, Set<String> converterClasses) {
         String pfx;
         if (Modifier.isStatic(converter.flags())) {
-            pfx = converter.declaringClass().toString() + "." + converter.name();
+            pfx = converter.declaringClass().toString() + '.' + converter.name();
         } else {
             converterClasses.add(converter.declaringClass().toString());
             pfx = "get" + converter.declaringClass().simpleName() + "()." + converter.name();
         }
         String type = toString(converter.parameterTypes().get(converter.parameterTypes().size() - 2));
-        String cast = type.equals("java.lang.Object") ? "" : "(" + type + ") ";
+        String cast = type.equals("java.lang.Object") ? "" : '(' + type + ") ";
         return pfx + "(type, " + (converter.parameterTypes().size() == 4 ? "exchange, " : "") + cast + "value" + ", registry)";
     }
 

@@ -98,7 +98,7 @@ public abstract class AbstractProviderServletTest extends BaseUndertowTest {
             public void configure() {
                 from("undertow:http://localhost:{{port}}/foo?allowedRoles=user")
                         .to("mock:input")
-                        .transform(simple("${in.header." + AbstractSecurityProviderTest.PRINCIPAL_PARAMETER + "}"));
+                        .transform(simple("${in.header." + AbstractSecurityProviderTest.PRINCIPAL_PARAMETER + '}'));
             }
         };
     }

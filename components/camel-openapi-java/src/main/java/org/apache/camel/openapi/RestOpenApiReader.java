@@ -460,7 +460,7 @@ public class RestOpenApiReader {
                             auth.flow = flow;
                             break;
                         default:
-                            throw new IllegalStateException("Invalid OAuth flow `" + flow + "'");
+                            throw new IllegalStateException("Invalid OAuth flow `" + flow + '\'');
                     }
                     auth.authorizationUrl = getValue(camelContext, rs.getAuthorizationUrl());
                     auth.tokenUrl = getValue(camelContext, rs.getTokenUrl());
@@ -488,7 +488,7 @@ public class RestOpenApiReader {
         String basePath = FileUtil.stripLeadingSeparator(getValue(camelContext, rest.getPath()));
         // must start with leading slash
         if (basePath != null && !basePath.startsWith("/")) {
-            basePath = "/" + basePath;
+            basePath = '/' + basePath;
         }
         return basePath;
     }

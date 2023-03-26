@@ -152,9 +152,9 @@ public class UnaryExpression extends BaseSimpleNode {
         final String number = left.createCode(expression);
 
         if (operator == UnaryOperatorType.INC) {
-            return "increment(exchange, " + number + ")";
+            return "increment(exchange, " + number + ')';
         } else if (operator == UnaryOperatorType.DEC) {
-            return "decrement(exchange, " + number + ")";
+            return "decrement(exchange, " + number + ')';
         }
 
         throw new SimpleParserException("Unknown unary operator " + operator, token.getIndex());

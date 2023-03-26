@@ -77,7 +77,7 @@ public class GenerateExecution extends AbstractSalesforceExecution {
         }
 
         public String enumTypeName(final String sObjectName, final String name) {
-            return sObjectName + "_" + (name.endsWith("__c") ? name.substring(0, name.length() - 3) : name) + "Enum";
+            return sObjectName + '_' + (name.endsWith("__c") ? name.substring(0, name.length() - 3) : name) + "Enum";
         }
 
         public List<SObjectField> externalIdsOf(final String name) {
@@ -95,7 +95,7 @@ public class GenerateExecution extends AbstractSalesforceExecution {
             final StringBuilder result = new StringBuilder();
             boolean changed = false;
             if (!Character.isJavaIdentifierStart(picklistValue.charAt(0))) {
-                result.append("_");
+                result.append('_');
                 changed = true;
             }
             for (final char c : picklistValue.toCharArray()) {
@@ -152,7 +152,7 @@ public class GenerateExecution extends AbstractSalesforceExecution {
                     getLog().warn(String.format("Unsupported field type `%s` in field `%s` of object `%s`", soapType,
                             field.getName(), description.getName()));
                     getLog().debug("Currently known types:\n " + types.entrySet().stream()
-                            .map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining("\n")));
+                            .map(e -> e.getKey() + '=' + e.getValue()).collect(Collectors.joining("\n")));
                 }
                 return type;
             }

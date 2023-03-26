@@ -28,6 +28,6 @@ public class MyHelloBean {
     }
 
     public String hello(String s) {
-        return greet + " " + s;
+        return greet + ' ' + s;
     }
 }

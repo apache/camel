@@ -553,10 +553,10 @@ public class CamelTraceAction extends ActionBaseCommand {
                     color = Ansi.Color.values()[idx];
                     nameColors.put(name, color);
                 }
-                String n = String.format("%-" + nameMaxWidth + "s", name);
+                String n = String.format("%-" + nameMaxWidth + 's', name);
                 nameWithPrefix = Ansi.ansi().fg(color).a(n).a("| ").reset().toString();
             } else {
-                nameWithPrefix = String.format("%-" + nameMaxWidth + "s", name) + "| ";
+                nameWithPrefix = String.format("%-" + nameMaxWidth + 's', name) + "| ";
             }
             System.out.print(nameWithPrefix);
         }
@@ -601,7 +601,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         if (source) {
             ids = row.location;
         } else {
-            ids = row.routeId + "/" + getId(row);
+            ids = row.routeId + '/' + getId(row);
         }
         if (ids.length() > 40) {
             ids = ids.substring(ids.length() - 40);
@@ -627,9 +627,9 @@ public class CamelTraceAction extends ActionBaseCommand {
         String e = getElapsed(row);
         if (e != null) {
             if (loggingColor) {
-                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" (" + e + ")").reset());
+                AnsiConsole.out().print(Ansi.ansi().fgBrightDefault().a(" (" + e + ')').reset());
             } else {
-                System.out.print("(" + e + ")");
+                System.out.print('(' + e + ')');
             }
         }
         // trace message
@@ -995,7 +995,7 @@ public class CamelTraceAction extends ActionBaseCommand {
             } else {
                 s = type;
             }
-            s = "(" + s + ")";
+            s = '(' + s + ')';
             if (loggingColor) {
                 s = Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(s).reset().toString();
             }
@@ -1013,10 +1013,10 @@ public class CamelTraceAction extends ActionBaseCommand {
             } else {
                 s = type;
             }
-            s = "(" + s + ")";
+            s = '(' + s + ')';
             int l = valueLength();
             if (l != -1) {
-                s = s + " (length: " + l + ")";
+                s = s + " (length: " + l + ')';
             }
             if (loggingColor) {
                 s = Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(s).reset().toString();

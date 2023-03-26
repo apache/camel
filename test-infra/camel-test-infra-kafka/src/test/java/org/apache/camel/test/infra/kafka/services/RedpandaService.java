@@ -53,7 +53,7 @@ public class RedpandaService implements KafkaService, ContainerService<RedpandaC
 
     @Override
     public String getBootstrapServers() {
-        return redpandaContainer.getHost() + ":" + getKafkaPort();
+        return redpandaContainer.getHost() + ':' + getKafkaPort();
     }
 
     @Override

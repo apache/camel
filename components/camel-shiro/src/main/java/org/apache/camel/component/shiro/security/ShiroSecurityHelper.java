@@ -37,7 +37,7 @@ public final class ShiroSecurityHelper {
 
     static byte[] serialize(ShiroSecurityToken token) {
         StringBuilder sb = new StringBuilder().append(token.getUsername().length())
-                .append(":")
+                .append(':')
                 .append(token.getUsername())
                 .append(token.getPassword() != null ? token.getPassword() : "");
         return sb.toString().getBytes();

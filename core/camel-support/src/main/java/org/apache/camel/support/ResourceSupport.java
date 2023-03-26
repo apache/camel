@@ -44,11 +44,11 @@ public abstract class ResourceSupport implements Resource {
 
     @Override
     public String toString() {
-        String prefix = scheme + ":";
+        String prefix = scheme + ':';
         if (location.startsWith(prefix)) {
-            return "Resource[" + location + "]";
+            return "Resource[" + location + ']';
         } else {
-            return "Resource[" + prefix + location + "]";
+            return "Resource[" + prefix + location + ']';
         }
     }
 

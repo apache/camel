@@ -98,7 +98,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition>
 
     @Override
     public String toString() {
-        return "Multicast[" + getOutputs() + "]";
+        return "Multicast[" + getOutputs() + ']';
     }
 
     @Override

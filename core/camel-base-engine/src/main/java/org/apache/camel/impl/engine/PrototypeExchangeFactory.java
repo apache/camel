@@ -147,7 +147,7 @@ public class PrototypeExchangeFactory extends PooledObjectFactorySupport<Exchang
                 if (id == null) {
                     id = "";
                 } else {
-                    id = " " + id;
+                    id = ' ' + id;
                 }
                 String uri = consumer.getEndpoint().getEndpointBaseUri();
                 uri = URISupport.sanitizeUri(uri);

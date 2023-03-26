@@ -173,7 +173,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
         if (prefix == null || prefix.length() == 0) {
             return localName;
         }
-        return prefix + ":" + localName;
+        return prefix + ':' + localName;
     }
 
     private String nullToEmpty(String s) {

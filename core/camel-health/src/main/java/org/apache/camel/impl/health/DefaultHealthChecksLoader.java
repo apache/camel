@@ -92,7 +92,7 @@ public class DefaultHealthChecksLoader {
 
     protected String extractId(Resource resource) {
         String loc = resource.getLocation();
-        loc = StringHelper.after(loc, META_INF_SERVICES + "/");
+        loc = StringHelper.after(loc, META_INF_SERVICES + '/');
         // remove -check suffix
         if (loc != null && loc.endsWith("-check")) {
             loc = loc.substring(0, loc.length() - 6);

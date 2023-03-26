@@ -550,11 +550,11 @@ public class BaseExecutorServiceManager extends ServiceSupport implements Execut
                 id = source.getClass().getSimpleName();
             } else {
                 // fallback and use the simple class name with hashcode for the id so its unique for this given source
-                id = source.getClass().getSimpleName() + "(" + ObjectHelper.getIdentityHashCode(source) + ")";
+                id = source.getClass().getSimpleName() + '(' + ObjectHelper.getIdentityHashCode(source) + ')';
             }
         } else {
             // no source, so fallback and use the simple class name from thread pool and its hashcode identity so its unique
-            id = executorService.getClass().getSimpleName() + "(" + ObjectHelper.getIdentityHashCode(executorService) + ")";
+            id = executorService.getClass().getSimpleName() + '(' + ObjectHelper.getIdentityHashCode(executorService) + ')';
         }
 
         // id is mandatory

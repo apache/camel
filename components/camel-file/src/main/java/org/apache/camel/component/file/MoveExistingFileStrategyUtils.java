@@ -51,7 +51,7 @@ public final class MoveExistingFileStrategyUtils {
 
         if (ObjectHelper.isNotEmpty(directoryName) && !destinationPath.startsWith(directoryName)
                 && !FileUtil.isAbsolute(new File(destinationPath))) {
-            destinationPath = directoryName + "/" + destinationPath;
+            destinationPath = directoryName + '/' + destinationPath;
         }
 
         return destinationPath;

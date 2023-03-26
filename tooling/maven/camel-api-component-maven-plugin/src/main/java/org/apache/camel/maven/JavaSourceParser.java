@@ -133,7 +133,7 @@ public class JavaSourceParser {
             Map<String, String> docs = new LinkedHashMap<>();
             Map<String, String> args = new LinkedHashMap<>();
             StringBuilder sb = new StringBuilder();
-            sb.append("public ").append(result).append(" ").append(ms.getName()).append("(");
+            sb.append("public ").append(result).append(' ').append(ms.getName()).append('(');
             List<ParameterSource> list = ms.getParameters();
             for (int i = 0; i < list.size(); i++) {
                 ParameterSource ps = list.get(i);
@@ -142,7 +142,7 @@ public class JavaSourceParser {
                 LOG.trace("Parsing parameter #{} ({} {})", i, type, name);
 
                 sb.append(type);
-                sb.append(" ").append(name);
+                sb.append(' ').append(name);
                 if (i < list.size() - 1) {
                     sb.append(", ");
                 }
@@ -151,7 +151,7 @@ public class JavaSourceParser {
                 docs.put(name, getJavadocValue(params, name));
                 args.put(name, type);
             }
-            sb.append(")");
+            sb.append(')');
 
             Map<String, String> existing = parameterDocs.get(ms.getName());
             if (existing != null) {
@@ -292,7 +292,7 @@ public class JavaSourceParser {
                 for (Type arg : types) {
                     sj.add(resolveType(rootClazz, clazz, ms, arg));
                 }
-                answer = answer + "<" + sj + ">";
+                answer = answer + '<' + sj + '>';
             }
         }
         return answer;
@@ -307,11 +307,11 @@ public class JavaSourceParser {
         // is this an inner class
         boolean inner = rootClazz.getNestedType(type) != null;
         if (inner) {
-            return rootClazz.getQualifiedName() + "$" + type;
+            return rootClazz.getQualifiedName() + '$' + type;
         }
         inner = clazz.getNestedType(type) != null;
         if (inner) {
-            return clazz.getQualifiedName() + "$" + type;
+            return clazz.getQualifiedName() + '$' + type;
         }
         int dot = type.indexOf('.');
         if (Character.isUpperCase(type.charAt(0)) && dot != -1) {
@@ -320,24 +320,24 @@ public class JavaSourceParser {
             String child = type.substring(dot + 1);
             inner = rootClazz.getNestedType(parent) != null;
             if (inner) {
-                return rootClazz.getQualifiedName() + "$" + type.replace('.', '$');
+                return rootClazz.getQualifiedName() + '$' + type.replace('.', '$');
             }
             inner = clazz.getNestedType(type) != null;
             if (inner) {
-                return clazz.getQualifiedName() + "$" + type.replace('.', '$');
+                return clazz.getQualifiedName() + '$' + type.replace('.', '$');
             }
             if (parent.equals(rootClazz.getName())) {
                 inner = rootClazz.getNestedType(child) != null;
                 if (inner) {
-                    return rootClazz.getQualifiedName() + "$" + child.replace('.', '$');
+                    return rootClazz.getQualifiedName() + '$' + child.replace('.', '$');
                 }
                 inner = clazz.getNestedType(child) != null;
                 if (inner) {
-                    return clazz.getQualifiedName() + "$" + child.replace('.', '$');
+                    return clazz.getQualifiedName() + '$' + child.replace('.', '$');
                 }
             }
             String resolvedType = rootClazz.resolveType(parent);
-            return resolvedType + "$" + child;
+            return resolvedType + '$' + child;
         }
 
         // okay attempt to resolve the type

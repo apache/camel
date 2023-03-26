@@ -67,6 +67,6 @@ public final class SObjectCompositeResult implements Serializable {
     @Override
     public String toString() {
         return "SObjectCompositeResult [body=" + body + ", headers=" + httpHeaders + ", httpStatusCode=" + httpStatusCode
-               + ", referenceId=" + referenceId + "]";
+               + ", referenceId=" + referenceId + ']';
     }
 }

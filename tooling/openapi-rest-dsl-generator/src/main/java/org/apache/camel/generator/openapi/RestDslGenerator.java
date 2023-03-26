@@ -215,7 +215,7 @@ public abstract class RestDslGenerator<G> {
         }
 
         if (basePath.charAt(0) != '/') {
-            basePath = "/" + basePath;
+            basePath = '/' + basePath;
         }
 
         if (basePath.indexOf("//") == 0) {
@@ -255,7 +255,7 @@ public abstract class RestDslGenerator<G> {
         final List<ServerVariable> variables = Objects.requireNonNull(server, "server").getServerVariables();
         String withoutPlaceholders = url;
         for (final ServerVariable variable : variables) {
-            final String name = "{" + variable.getName() + "}";
+            final String name = '{' + variable.getName() + '}';
             withoutPlaceholders = withoutPlaceholders.replace(name, variable.default_);
         }
 

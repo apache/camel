@@ -241,7 +241,7 @@ public class JsonArray extends ArrayList<Object> implements Jsonable {
                  * appended to it since they got removed in the split.
                  */
                 returnTypeName.append(splitValues[i]);
-                returnTypeName.append(".");
+                returnTypeName.append('.');
             }
         }
         /* Use the package/class and enum names to get the Enum<T>. */

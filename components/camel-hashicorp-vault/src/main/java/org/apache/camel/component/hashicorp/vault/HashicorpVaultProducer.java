@@ -81,7 +81,7 @@ public class HashicorpVaultProducer extends DefaultProducer {
         if (ObjectHelper.isNotEmpty(exchange.getMessage().getHeader(HashicorpVaultConstants.SECRET_VERSION))) {
             secretVersion = exchange.getMessage().getHeader(HashicorpVaultConstants.SECRET_VERSION, String.class);
         }
-        String completePath = getEndpoint().getConfiguration().getSecretsEngine() + "/" + "data" + "/" + secretPath;
+        String completePath = getEndpoint().getConfiguration().getSecretsEngine() + '/' + "data" + '/' + secretPath;
         if (ObjectHelper.isNotEmpty(secretVersion)) {
             completePath = completePath + "?version=" + secretVersion;
         }
@@ -98,7 +98,7 @@ public class HashicorpVaultProducer extends DefaultProducer {
 
     private void listSecrets(Exchange exchange) {
         List<String> secretsList = getEndpoint().getVaultTemplate()
-                .list(getEndpoint().getConfiguration().getSecretsEngine() + "/" + "metadata" + "/");
+                .list(getEndpoint().getConfiguration().getSecretsEngine() + '/' + "metadata" + '/');
         exchange.getMessage().setBody(secretsList);
     }
 

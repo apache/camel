@@ -129,7 +129,7 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
 
     @Override
     public String toString() {
-        return "DisruptorConsumer[" + endpoint + "]";
+        return "DisruptorConsumer[" + endpoint + ']';
     }
 
     private Exchange prepareExchange(final Exchange exchange) {

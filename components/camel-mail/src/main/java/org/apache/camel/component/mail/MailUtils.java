@@ -101,35 +101,35 @@ public final class MailUtils {
             StringBuilder sb = new StringBuilder();
 
             int number = message.getMessageNumber();
-            sb.append("messageNumber=[").append(number).append("]");
+            sb.append("messageNumber=[").append(number).append(']');
 
             Address[] from = message.getFrom();
             if (from != null) {
                 for (Address adr : from) {
-                    sb.append(", from=[").append(adr).append("]");
+                    sb.append(", from=[").append(adr).append(']');
                 }
             }
 
             Address[] to = message.getRecipients(Message.RecipientType.TO);
             if (to != null) {
                 for (Address adr : to) {
-                    sb.append(", to=[").append(adr).append("]");
+                    sb.append(", to=[").append(adr).append(']');
                 }
             }
 
             String subject = message.getSubject();
             if (subject != null) {
-                sb.append(", subject=[").append(subject).append("]");
+                sb.append(", subject=[").append(subject).append(']');
             }
 
             Date sentDate = message.getSentDate();
             if (sentDate != null) {
-                sb.append(", sentDate=[").append(DateFormat.getDateTimeInstance().format(sentDate)).append("]");
+                sb.append(", sentDate=[").append(DateFormat.getDateTimeInstance().format(sentDate)).append(']');
             }
 
             Date receivedDate = message.getReceivedDate();
             if (receivedDate != null) {
-                sb.append(", receivedDate=[").append(DateFormat.getDateTimeInstance().format(receivedDate)).append("]");
+                sb.append(", receivedDate=[").append(DateFormat.getDateTimeInstance().format(receivedDate)).append(']');
             }
 
             return sb.toString();

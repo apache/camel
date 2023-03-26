@@ -57,7 +57,7 @@ public class ClaimCheckDefinition extends NoOutputDefinition<ClaimCheckDefinitio
     @Override
     public String toString() {
         if (operation != null) {
-            return "ClaimCheck[" + operation + "]";
+            return "ClaimCheck[" + operation + ']';
         } else {
             return "ClaimCheck";
         }

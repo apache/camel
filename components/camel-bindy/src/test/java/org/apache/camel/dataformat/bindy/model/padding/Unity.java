@@ -45,7 +45,7 @@ public class Unity {
 
     @Override
     public String toString() {
-        return "Unity [mandant=" + mandant + ", receiver=" + receiver + "]";
+        return "Unity [mandant=" + mandant + ", receiver=" + receiver + ']';
     }
 
 }

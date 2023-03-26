@@ -90,7 +90,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     static final int REQUEST_BUFFER_SIZE = 8192;
 
     static final Pattern SOBJECT_NAME_PATTERN = Pattern.compile("^.*[\\?&]sObjectName=([^&,]+).*$");
-    static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
+    static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + '/';
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
 

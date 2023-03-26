@@ -434,7 +434,7 @@ public final class URISupport {
             return;
         }
         // only append if value is not null
-        rc.append("=");
+        rc.append('=');
         boolean isRaw = resolveRaw(value, (str, raw) -> {
             // do not encode RAW parameters
             rc.append(str);

@@ -72,7 +72,7 @@ public class Translate2Producer extends DefaultProducer {
     @Override
     public String toString() {
         if (translateProducerToString == null) {
-            translateProducerToString = "TranslateProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+            translateProducerToString = "TranslateProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + ']';
         }
         return translateProducerToString;
     }

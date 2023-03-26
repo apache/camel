@@ -59,7 +59,7 @@ public class PredicateBuilder {
 
             @Override
             public String toString() {
-                return "not (" + predicate + ")";
+                return "not (" + predicate + ')';
             }
         };
     }
@@ -83,7 +83,7 @@ public class PredicateBuilder {
 
             @Override
             public String toString() {
-                return "(" + left + ") and (" + right + ")";
+                return "(" + left + ") and (" + right + ')';
             }
         };
     }
@@ -108,7 +108,7 @@ public class PredicateBuilder {
 
             @Override
             public String toString() {
-                return "(" + left + ") or (" + right + ")";
+                return "(" + left + ") or (" + right + ')';
             }
         };
     }
@@ -168,7 +168,7 @@ public class PredicateBuilder {
 
             @Override
             public String toString() {
-                return "in (" + Arrays.asList(predicates) + ")";
+                return "in (" + Arrays.asList(predicates) + ')';
             }
         };
     }

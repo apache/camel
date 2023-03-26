@@ -43,6 +43,6 @@ public class Hits implements Serializable {
 
     @Override
     public String toString() {
-        return "Hits[numberOfHits=" + numberOfHits + "]";
+        return "Hits[numberOfHits=" + numberOfHits + ']';
     }
 }

@@ -54,7 +54,7 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
     public void attachConsumer(ReactiveStreamsConsumer consumer) {
         synchronized (this) {
             if (this.consumer != null) {
-                throw new IllegalStateException("A consumer is already attached to the stream '" + name + "'");
+                throw new IllegalStateException("A consumer is already attached to the stream '" + name + '\'');
             }
             this.consumer = consumer;
         }
@@ -74,7 +74,7 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
     @Override
     public void onSubscribe(Subscription subscription) {
         if (subscription == null) {
-            throw new NullPointerException("subscription is null for stream '" + name + "'");
+            throw new NullPointerException("subscription is null for stream '" + name + '\'');
         }
 
         boolean allowed = true;
@@ -157,7 +157,7 @@ public class ReactiveStreamsCamelSubscriber implements Subscriber<Exchange>, Clo
             throw new NullPointerException("throwable is null");
         }
 
-        LOG.error("Error in reactive stream '" + name + "'", throwable);
+        LOG.error("Error in reactive stream '" + name + '\'', throwable);
 
         ReactiveStreamsConsumer consumer;
         synchronized (this) {

@@ -60,6 +60,6 @@ public class ConsulTestSupport extends CamelTestSupport {
     }
 
     protected String generateKey() {
-        return KV_PREFIX + "/" + getCurrentTestName() + "/" + generateRandomString();
+        return KV_PREFIX + '/' + getCurrentTestName() + '/' + generateRandomString();
     }
 }

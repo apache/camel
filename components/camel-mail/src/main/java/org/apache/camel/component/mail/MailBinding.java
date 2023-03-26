@@ -489,7 +489,7 @@ public class MailBinding {
         if (string.lastIndexOf('.') > 0) {
             string = new StringBuilder(string).insert(string.lastIndexOf('.'), "_" + UUID.randomUUID()).toString();
         } else {
-            string = string + "_" + UUID.randomUUID();
+            string = string + '_' + UUID.randomUUID();
         }
         return string;
     }
@@ -662,7 +662,7 @@ public class MailBinding {
                     if (attachmentFilename.regionMatches(true, 0, pattern, 0, pattern.length())) {
                         // add a Content-ID header to the attachment
                         // must use angle brackets according to RFC: http://www.ietf.org/rfc/rfc2392.txt
-                        messageBodyPart.addHeader("Content-ID", "<" + attachmentFilename.substring(4) + ">");
+                        messageBodyPart.addHeader("Content-ID", '<' + attachmentFilename.substring(4) + '>');
                         // Set the filename without the cid
                         messageBodyPart.setFileName(attachmentFilename.substring(4));
                     } else {

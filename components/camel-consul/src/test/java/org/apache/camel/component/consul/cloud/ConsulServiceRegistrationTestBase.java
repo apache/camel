@@ -80,7 +80,7 @@ public abstract class ConsulServiceRegistrationTestBase extends ConsulTestSuppor
         assertTrue(services.get(0).getServiceTags().contains(ServiceDefinition.SERVICE_META_PATH + "=/service/endpoint"));
 
         getMetadata().forEach((k, v) -> {
-            assertTrue(services.get(0).getServiceTags().contains(k + "=" + v));
+            assertTrue(services.get(0).getServiceTags().contains(k + '=' + v));
         });
 
         List<ServiceHealth> checks = health.getHealthyServiceInstances(SERVICE_NAME).getResponse();

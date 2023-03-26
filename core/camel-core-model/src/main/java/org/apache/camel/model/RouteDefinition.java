@@ -155,9 +155,9 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
     @Override
     public String toString() {
         if (getId() != null) {
-            return "Route(" + getId() + ")[" + (input != null ? input : "") + " -> " + outputs + "]";
+            return "Route(" + getId() + ")[" + (input != null ? input : "") + " -> " + outputs + ']';
         } else {
-            return "Route[" + input + " -> " + outputs + "]";
+            return "Route[" + input + " -> " + outputs + ']';
         }
     }
 
@@ -168,7 +168,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
 
     @Override
     public String getLabel() {
-        return "Route[" + input.getLabel() + "]";
+        return "Route[" + input.getLabel() + ']';
     }
 
     @Override

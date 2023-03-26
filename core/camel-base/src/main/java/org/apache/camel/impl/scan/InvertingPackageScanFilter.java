@@ -37,7 +37,7 @@ public class InvertingPackageScanFilter implements PackageScanFilter {
 
     @Override
     public String toString() {
-        return "![" + filter.toString() + "]";
+        return "![" + filter.toString() + ']';
     }
 
 }

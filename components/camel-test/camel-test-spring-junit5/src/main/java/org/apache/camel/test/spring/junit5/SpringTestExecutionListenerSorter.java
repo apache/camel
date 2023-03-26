@@ -39,7 +39,7 @@ public final class SpringTestExecutionListenerSorter {
         } else if (clazz == CamelSpringTestContextLoaderTestExecutionListener.class) {
             return Ordered.HIGHEST_PRECEDENCE + 1000;
         }
-        throw new IllegalArgumentException("Impossible to get the precedence of the class " + clazz.getName() + ".");
+        throw new IllegalArgumentException("Impossible to get the precedence of the class " + clazz.getName() + '.');
     }
 
 }

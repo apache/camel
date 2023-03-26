@@ -777,7 +777,7 @@ public final class ExchangeHelper {
      */
     public static String logIds(Exchange exchange) {
         String msgId = exchange.getMessage().getMessageId();
-        return "(MessageId: " + msgId + " on ExchangeId: " + exchange.getExchangeId() + ")";
+        return "(MessageId: " + msgId + " on ExchangeId: " + exchange.getExchangeId() + ')';
     }
 
     /**

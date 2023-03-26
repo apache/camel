@@ -74,7 +74,7 @@ public final class ComponentArtifactHelper {
             int pos = javaType.lastIndexOf('.');
             path = javaType.substring(0, pos);
             path = path.replace('.', '/');
-            path = path + "/" + scheme + ".json";
+            path = path + '/' + scheme + ".json";
         }
 
         if (path != null) {

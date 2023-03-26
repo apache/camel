@@ -147,7 +147,7 @@ public class Init extends CamelCommand {
                 }
                 top = false;
                 sb.append(line);
-                sb.append("\n");
+                sb.append('\n');
             }
             content = sb.toString();
         }

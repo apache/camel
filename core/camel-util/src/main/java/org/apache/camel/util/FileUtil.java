@@ -342,7 +342,7 @@ public final class FileUtil {
         StringBuilder sb = new StringBuilder();
         if (scheme != null) {
             sb.append(scheme);
-            sb.append(":");
+            sb.append(':');
         }
 
         for (int i = 0; i < cntSlashsAtStart; i++) {

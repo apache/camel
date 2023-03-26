@@ -89,7 +89,7 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
     @Override
     public String getTraceLabel() {
-        return "split[" + expression + "]";
+        return "split[" + expression + ']';
     }
 
     @Override

@@ -169,9 +169,9 @@ public final class MavenGav {
     @Override
     public String toString() {
         if (version != null) {
-            return groupId + ":" + artifactId + ":" + version;
+            return groupId + ':' + artifactId + ':' + version;
         } else {
-            return groupId + ":" + artifactId;
+            return groupId + ':' + artifactId;
         }
     }
 }

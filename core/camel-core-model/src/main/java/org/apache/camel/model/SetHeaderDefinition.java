@@ -57,7 +57,7 @@ public class SetHeaderDefinition extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "SetHeader[" + getName() + ", " + getExpression() + "]";
+        return "SetHeader[" + getName() + ", " + getExpression() + ']';
     }
 
     @Override
@@ -67,7 +67,7 @@ public class SetHeaderDefinition extends ExpressionNode {
 
     @Override
     public String getLabel() {
-        return "setHeader[" + getName() + "]";
+        return "setHeader[" + getName() + ']';
     }
 
     /**

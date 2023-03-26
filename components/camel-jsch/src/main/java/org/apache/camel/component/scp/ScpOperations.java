@@ -382,7 +382,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 }
 
                 // send the header
-                bytes = "C0" + cfg.getChmod() + " " + count + " " + filename;
+                bytes = "C0" + cfg.getChmod() + ' ' + count + ' ' + filename;
                 LOG.trace("[scp:sink] {}", bytes);
                 os.write(bytes.getBytes());
                 os.write(lineFeed);
@@ -446,7 +446,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
     private static String getRemoteFile(String name, ScpConfiguration config) {
         String dir = config.getDirectory();
-        dir = dir.endsWith("/") ? dir : dir + "/";
+        dir = dir.endsWith("/") ? dir : dir + '/';
         return name.startsWith(dir) ? name.substring(dir.length()) : name;
     }
 

@@ -48,7 +48,7 @@ public class DefaultCamelContextNameStrategy implements CamelContextNameStrategy
 
     @Override
     public String getNextName() {
-        return prefix + "-" + getNextCounter();
+        return prefix + '-' + getNextCounter();
     }
 
     @Override

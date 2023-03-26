@@ -99,7 +99,7 @@ public class DefaultMainShutdownStrategy extends SimpleMainShutdownStrategy {
                 while (!main.getCamelContext().isStopped() && !done && watch.taken() < max) {
                     String msg = "Waiting for CamelContext to graceful shutdown (max:"
                                  + TimeUtils.printDuration(max, true) + ", elapsed:"
-                                 + TimeUtils.printDuration(watch.taken(), true) + ")";
+                                 + TimeUtils.printDuration(watch.taken(), true) + ')';
                     if (waits > 0 && waits % 5 == 0) {
                         // do some info logging every 5th time
                         LOG.info(msg);

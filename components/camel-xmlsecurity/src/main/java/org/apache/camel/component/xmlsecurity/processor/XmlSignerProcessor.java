@@ -549,7 +549,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         } else {
             throw new XmlSignatureException(
                     "Either the configuration of the XML Signature component is wrong or the incoming document has an invalid structure: The element "
-                                            + el.getLocalName() + "{" + el.getNamespaceURI()
+                                            + el.getLocalName() + '{' + el.getNamespaceURI()
                                             + "} which is referenced by the reference URI " + referenceUri
                                             + " has no parent element. The element must have a parent element in the configured detached case.");
         }
@@ -682,7 +682,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
 
         List<String> result;
         if (SignatureType.enveloping == signatureType) {
-            String uri = "#" + getConfiguration().getContentObjectId();
+            String uri = '#' + getConfiguration().getContentObjectId();
             result = Collections.singletonList(uri);
         } else if (SignatureType.enveloped == signatureType) {
             // only for enveloped the parameter content reference URI is used
@@ -741,9 +741,9 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
                                 "Wrong configured xpath expression for ID attributes: The evaluation of the xpath expression "
                                                         + xp.getXPath()
                                                         + " resulted in an attribute which is not of type ID. The attribute value is "
-                                                        + value + ".");
+                                                        + value + '.');
                     }
-                    result.add(new ComparableNode(element, "#" + value));
+                    result.add(new ComparableNode(element, '#' + value));
                     LOG.debug("ID attribute with value {} found for xpath {}", value, xp.getXPath());
                 } else {
                     throw new XmlSignatureException(
@@ -881,7 +881,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         List<Transform> transforms = new ArrayList<>(1);
         Transform transform = fac.newTransform(CanonicalizationMethod.INCLUSIVE, (TransformParameterSpec) null);
         transforms.add(transform);
-        return fac.newReference("#" + keyInfoId, fac.newDigestMethod(digestAlgorithm, null), transforms, null, null);
+        return fac.newReference('#' + keyInfoId, fac.newDigestMethod(digestAlgorithm, null), transforms, null, null);
     }
 
     private String getKeyInfoId(KeyInfo keyInfo) {

@@ -73,7 +73,7 @@ public class CamelRouteTop extends CamelRouteStatus {
         if (s1.equals("-") && s2.equals("-") && s3.equals("-")) {
             return "0/0/0";
         }
-        return s1 + "/" + s2 + "/" + s3;
+        return s1 + '/' + s2 + '/' + s3;
     }
 
     @Override

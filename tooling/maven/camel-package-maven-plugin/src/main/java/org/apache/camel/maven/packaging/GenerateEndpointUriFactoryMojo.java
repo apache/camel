@@ -137,7 +137,7 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
         String cn = fqn.substring(pos + 1) + "EndpointUriFactory";
         // remove component from name
         cn = cn.replace("Component", "");
-        fqn = pn + "." + cn;
+        fqn = pn + '.' + cn;
 
         String pval = model.getScheme() + "-endpoint";
         updateResource(resourcesOutputDir.toPath(),
@@ -169,7 +169,7 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
 
         String source = EndpointUriFactoryGenerator.generateEndpointUriFactory(pn, cn, psn, model);
 
-        String fileName = pn.replace('.', '/') + "/" + cn + ".java";
+        String fileName = pn.replace('.', '/') + '/' + cn + ".java";
         outputDir.mkdirs();
         boolean updated = updateResource(buildContext, outputDir.toPath().resolve(fileName), source);
         if (updated) {
@@ -193,7 +193,7 @@ public class GenerateEndpointUriFactoryMojo extends AbstractGeneratorMojo {
         for (Map.Entry<File, Supplier<String>> entry : jsonFiles.entrySet()) {
             if (entry.getKey().getName().equals(modelName + ".json")) {
                 String json = entry.getValue().get();
-                if (json.contains("\"kind\": \"" + type + "\"")) {
+                if (json.contains("\"kind\": \"" + type + '"')) {
                     return json;
                 }
             }

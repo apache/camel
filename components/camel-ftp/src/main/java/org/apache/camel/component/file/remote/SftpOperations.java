@@ -266,9 +266,9 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             if (keyPair.getPrivate() != null) {
                 // Encode the private key in PEM format for JSCH
                 StringBuilder sb = new StringBuilder(256);
-                sb.append("-----BEGIN PRIVATE KEY-----").append("\n");
-                sb.append(Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded())).append("\n");
-                sb.append("-----END PRIVATE KEY-----").append("\n");
+                sb.append("-----BEGIN PRIVATE KEY-----").append('\n');
+                sb.append(Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded())).append('\n');
+                sb.append("-----END PRIVATE KEY-----").append('\n');
 
                 jsch.addIdentity("ID", sb.toString().getBytes(StandardCharsets.UTF_8), null, null);
             } else {
@@ -726,7 +726,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         String parent = FileUtil.compactPath(current + "/..");
         // must start with absolute
         if (!parent.startsWith("/")) {
-            parent = "/" + parent;
+            parent = '/' + parent;
         }
 
         changeCurrentDirectory(parent);

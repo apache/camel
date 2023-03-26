@@ -38,7 +38,7 @@ public class JavadocTest {
             "     * @param resourceUri  the resource path\n" +
             "     */\n" +
             "class Test {\n" +
-            "}";
+                    '}';
     public static final String JAVADOC_1 =
             "Path to the template.\n<p/>\nThe following is supported by the default URIResolver.\n" +
             "You can prefix with: classpath, file, http, ref, or bean.\nclasspath, file and http " +
@@ -62,7 +62,7 @@ public class JavadocTest {
             "         * </ul>\n" +
             "         */\n" +
             "class Test {\n" +
-            "}";
+                    '}';
     public static final String JAVADOC_2 =
             "Sets how requests and responses will be mapped to/from Camel. Two values are possible:\n" +
             "<ul>\n<li>SimpleConsumer: This binding style processes request parameters, multiparts, etc. " +
@@ -82,7 +82,7 @@ public class JavadocTest {
             "     * {@link org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS}\n" +
             "     */\n" +
             "class Test {\n" +
-            "}";
+                    '}';
     public static final String JAVADOC_3 =
             "Sets the alias used to query the KeyStore for keys and " +
             "{@link java.security.cert.Certificate Certificates}\n" +
@@ -97,7 +97,7 @@ public class JavadocTest {
             " * performing the AMQP connectivity.\n" +
             " */\n" +
             "class Test {\n" +
-            "}";
+                    '}';
     public static final String JAVADOC_4 =
             "Messaging with AMQP protocol using Apache QPid Client.\n\nThis class extends JmsEndpoint " +
             "because it uses Apache Qpid JMS-compatible client for\nperforming the AMQP connectivity.";

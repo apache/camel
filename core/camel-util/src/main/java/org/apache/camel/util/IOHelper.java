@@ -461,7 +461,7 @@ public final class IOHelper {
                 String line = reader.readLine();
                 if (line != null) {
                     builder.append(line);
-                    builder.append("\n");
+                    builder.append('\n');
                 } else {
                     break;
                 }

@@ -288,9 +288,9 @@ public class ThreadPoolProfile implements Serializable, Cloneable {
 
     @Override
     public String toString() {
-        return "ThreadPoolProfile[" + id + " (" + defaultProfile + ") size:" + poolSize + "-" + maxPoolSize
-               + ", keepAlive:" + keepAliveTime + " " + timeUnit + ", maxQueue:" + maxQueueSize
-               + ", allowCoreThreadTimeOut:" + allowCoreThreadTimeOut + ", rejectedPolicy:" + rejectedPolicy + "]";
+        return "ThreadPoolProfile[" + id + " (" + defaultProfile + ") size:" + poolSize + '-' + maxPoolSize
+               + ", keepAlive:" + keepAliveTime + ' ' + timeUnit + ", maxQueue:" + maxQueueSize
+               + ", allowCoreThreadTimeOut:" + allowCoreThreadTimeOut + ", rejectedPolicy:" + rejectedPolicy + ']';
     }
 
 }

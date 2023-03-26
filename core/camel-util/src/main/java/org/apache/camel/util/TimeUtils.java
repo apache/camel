@@ -113,22 +113,22 @@ public final class TimeUtils {
         }
 
         if (days > 0) {
-            sb.append(days).append("d").append(hours % 24).append("h");
+            sb.append(days).append('d').append(hours % 24).append('h');
             if (precise) {
-                sb.append(minutes % 60).append("m").append(seconds % 60).append("s");
+                sb.append(minutes % 60).append('m').append(seconds % 60).append('s');
             }
         } else if (hours > 0) {
-            sb.append(hours % 24).append("h").append(minutes % 60).append("m");
+            sb.append(hours % 24).append('h').append(minutes % 60).append('m');
             if (precise) {
-                sb.append(seconds % 60).append("s");
+                sb.append(seconds % 60).append('s');
             }
         } else if (minutes > 0) {
-            sb.append(minutes % 60).append("m").append(seconds % 60).append("s");
+            sb.append(minutes % 60).append('m').append(seconds % 60).append('s');
             if (precise) {
                 sb.append(millis).append("ms");
             }
         } else if (seconds > 0) {
-            sb.append(seconds % 60).append("s");
+            sb.append(seconds % 60).append('s');
             if (precise) {
                 sb.append(millis).append("ms");
             }

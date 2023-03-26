@@ -127,7 +127,7 @@ public final class ReactiveStreamsHelper {
         } catch (Exception e) {
             throw new IllegalStateException(
                     "Unable to create the reactive stream service defined in '" + ReactiveStreamsConstants.SERVICE_PATH
-                                            + serviceType + "'",
+                                            + serviceType + '\'',
                     e);
         }
     }

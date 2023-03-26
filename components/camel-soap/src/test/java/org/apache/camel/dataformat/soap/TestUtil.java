@@ -42,7 +42,7 @@ public final class TestUtil {
                     comment = false;
                 } else {
                     if (!comment) {
-                        sb.append(line).append("\n");
+                        sb.append(line).append('\n');
                     }
                 }
             }
