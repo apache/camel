@@ -5674,18 +5674,22 @@ that the former includes both the original body and headers, where as the latter
 only includes the original body. You can use the latter to enrich the message
 with custom headers and include the original message body. The former wont let
 you do this, as its using the original message body and headers as they are. You
-cannot enable both useOriginalMessage and useOriginalBody. Important: The
-original input means the input message that are bounded by the current
-org.apache.camel.spi.UnitOfWork . An unit of work typically spans one route, or
-multiple routes if they are connected using internal endpoints such as direct or
-seda. When messages is passed via external endpoints such as JMS or HTTP then
-the consumer will create a new unit of work, with the message it received as
-input as the original input. Also some EIP patterns such as splitter, multicast,
-will create a new unit of work boundary for the messages in their sub-route (eg
-the splitted message); however these EIPs have an option named shareUnitOfWork
-which allows to combine with the parent unit of work in regard to error handling
-and therefore use the parent original message. By default this feature is off.
-Default value: false
+cannot enable both useOriginalMessage and useOriginalBody. The original input
+message is defensively copied, and the copied message body is converted to
+org.apache.camel.StreamCache if possible, to ensure the body can be read when
+the original message is being used later. If the body is not converted to
+org.apache.camel.StreamCache then the body will not be able to re-read when
+accessed later. Important: The original input means the input message that are
+bounded by the current org.apache.camel.spi.UnitOfWork . An unit of work
+typically spans one route, or multiple routes if they are connected using
+internal endpoints such as direct or seda. When messages is passed via external
+endpoints such as JMS or HTTP then the consumer will create a new unit of work,
+with the message it received as input as the original input. Also some EIP
+patterns such as splitter, multicast, will create a new unit of work boundary
+for the messages in their sub-route (eg the splitted message); however these
+EIPs have an option named shareUnitOfWork which allows to combine with the
+parent unit of work in regard to error handling and therefore use the parent
+original message. By default this feature is off. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -5709,18 +5713,22 @@ that the former includes both the original body and headers, where as the latter
 only includes the original body. You can use the latter to enrich the message
 with custom headers and include the original message body. The former wont let
 you do this, as its using the original message body and headers as they are. You
-cannot enable both useOriginalMessage and useOriginalBody. Important: The
-original input means the input message that are bounded by the current
-org.apache.camel.spi.UnitOfWork . An unit of work typically spans one route, or
-multiple routes if they are connected using internal endpoints such as direct or
-seda. When messages is passed via external endpoints such as JMS or HTTP then
-the consumer will create a new unit of work, with the message it received as
-input as the original input. Also some EIP patterns such as splitter, multicast,
-will create a new unit of work boundary for the messages in their sub-route (eg
-the splitted message); however these EIPs have an option named shareUnitOfWork
-which allows to combine with the parent unit of work in regard to error handling
-and therefore use the parent original message. By default this feature is off.
-Default value: false
+cannot enable both useOriginalMessage and useOriginalBody. The original input
+message is defensively copied, and the copied message body is converted to
+org.apache.camel.StreamCache if possible, to ensure the body can be read when
+the original message is being used later. If the body is not converted to
+org.apache.camel.StreamCache then the body will not be able to re-read when
+accessed later. Important: The original input means the input message that are
+bounded by the current org.apache.camel.spi.UnitOfWork . An unit of work
+typically spans one route, or multiple routes if they are connected using
+internal endpoints such as direct or seda. When messages is passed via external
+endpoints such as JMS or HTTP then the consumer will create a new unit of work,
+with the message it received as input as the original input. Also some EIP
+patterns such as splitter, multicast, will create a new unit of work boundary
+for the messages in their sub-route (eg the splitted message); however these
+EIPs have an option named shareUnitOfWork which allows to combine with the
+parent unit of work in regard to error handling and therefore use the parent
+original message. By default this feature is off. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -12104,18 +12112,22 @@ that the former includes both the original body and headers, where as the latter
 only includes the original body. You can use the latter to enrich the message
 with custom headers and include the original message body. The former wont let
 you do this, as its using the original message body and headers as they are. You
-cannot enable both useOriginalMessage and useOriginalBody. Important: The
-original input means the input message that are bounded by the current
-org.apache.camel.spi.UnitOfWork . An unit of work typically spans one route, or
-multiple routes if they are connected using internal endpoints such as direct or
-seda. When messages is passed via external endpoints such as JMS or HTTP then
-the consumer will create a new unit of work, with the message it received as
-input as the original input. Also some EIP patterns such as splitter, multicast,
-will create a new unit of work boundary for the messages in their sub-route (eg
-the split message); however these EIPs have an option named shareUnitOfWork
-which allows to combine with the parent unit of work in regard to error handling
-and therefore use the parent original message. By default this feature is off.
-Default value: false
+cannot enable both useOriginalMessage and useOriginalBody. The original input
+message is defensively copied, and the copied message body is converted to
+org.apache.camel.StreamCache if possible, to ensure the body can be read when
+the original message is being used later. If the body is not converted to
+org.apache.camel.StreamCache then the body will not be able to re-read when
+accessed later. Important: The original input means the input message that are
+bounded by the current org.apache.camel.spi.UnitOfWork . An unit of work
+typically spans one route, or multiple routes if they are connected using
+internal endpoints such as direct or seda. When messages is passed via external
+endpoints such as JMS or HTTP then the consumer will create a new unit of work,
+with the message it received as input as the original input. Also some EIP
+patterns such as splitter, multicast, will create a new unit of work boundary
+for the messages in their sub-route (eg the split message); however these EIPs
+have an option named shareUnitOfWork which allows to combine with the parent
+unit of work in regard to error handling and therefore use the parent original
+message. By default this feature is off. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
@@ -12139,18 +12151,22 @@ that the former includes both the original body and headers, where as the latter
 only includes the original body. You can use the latter to enrich the message
 with custom headers and include the original message body. The former wont let
 you do this, as its using the original message body and headers as they are. You
-cannot enable both useOriginalMessage and useOriginalBody. Important: The
-original input means the input message that are bounded by the current
-org.apache.camel.spi.UnitOfWork . An unit of work typically spans one route, or
-multiple routes if they are connected using internal endpoints such as direct or
-seda. When messages is passed via external endpoints such as JMS or HTTP then
-the consumer will create a new unit of work, with the message it received as
-input as the original input. Also some EIP patterns such as splitter, multicast,
-will create a new unit of work boundary for the messages in their sub-route (eg
-the split message); however these EIPs have an option named shareUnitOfWork
-which allows to combine with the parent unit of work in regard to error handling
-and therefore use the parent original message. By default this feature is off.
-Default value: false
+cannot enable both useOriginalMessage and useOriginalBody. The original input
+message is defensively copied, and the copied message body is converted to
+org.apache.camel.StreamCache if possible, to ensure the body can be read when
+the original message is being used later. If the body is not converted to
+org.apache.camel.StreamCache then the body will not be able to re-read when
+accessed later. Important: The original input means the input message that are
+bounded by the current org.apache.camel.spi.UnitOfWork . An unit of work
+typically spans one route, or multiple routes if they are connected using
+internal endpoints such as direct or seda. When messages is passed via external
+endpoints such as JMS or HTTP then the consumer will create a new unit of work,
+with the message it received as input as the original input. Also some EIP
+patterns such as splitter, multicast, will create a new unit of work boundary
+for the messages in their sub-route (eg the split message); however these EIPs
+have an option named shareUnitOfWork which allows to combine with the parent
+unit of work in regard to error handling and therefore use the parent original
+message. By default this feature is off. Default value: false
             ]]></xs:documentation>
           </xs:annotation>
         </xs:attribute>
