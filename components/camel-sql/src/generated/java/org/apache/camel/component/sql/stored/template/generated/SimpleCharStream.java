@@ -19,8 +19,8 @@ public class SimpleCharStream
   protected int bufline[];
   protected int bufcolumn[];
 
-  protected int column = 0;
-  protected int line = 1;
+  protected int column;
+  protected int line;
 
   protected boolean prevCharIsCR = false;
   protected boolean prevCharIsLF = false;
@@ -437,8 +437,8 @@ public class SimpleCharStream
       len = bufsize - tokenBegin + bufpos + 1 + inBuf;
     }
 
-    int i = 0, j = 0, k = 0;
-    int nextColDiff = 0, columnDiff = 0;
+    int i = 0, j = 0, k;
+    int nextColDiff, columnDiff = 0;
 
     while (i < len && bufline[j = start % bufsize] == bufline[k = ++start % bufsize])
     {

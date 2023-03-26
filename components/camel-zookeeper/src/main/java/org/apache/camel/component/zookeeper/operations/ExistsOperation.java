@@ -50,7 +50,7 @@ public class ExistsOperation extends ZooKeeperOperation<String> {
     }
 
     private boolean isOk(Stat statistics) {
-        boolean ok = false;
+        boolean ok;
         if (mustExist) {
             ok = statistics != null;
         } else {

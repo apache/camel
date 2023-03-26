@@ -153,8 +153,8 @@ public final class SmppConnectionFactory implements ConnectionFactory {
             if (response == null) {
                 throw new RuntimeCamelException("Empty response to CONNECT request to host " + host + ':' + port);
             }
-            String reason = "Unknown reason";
-            int code = -1;
+            String reason;
+            int code;
             try {
                 ch = response.indexOf(' ');
                 int bar = response.indexOf(' ', ch + 1);

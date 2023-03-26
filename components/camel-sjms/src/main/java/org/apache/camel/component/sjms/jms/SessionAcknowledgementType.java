@@ -27,7 +27,7 @@ public enum SessionAcknowledgementType {
     DUPS_OK_ACKNOWLEDGE(Session.DUPS_OK_ACKNOWLEDGE),
     SESSION_TRANSACTED(Session.SESSION_TRANSACTED);
 
-    private int intValue = -1;
+    private int intValue;
 
     SessionAcknowledgementType(int intValue) {
         this.intValue = intValue;

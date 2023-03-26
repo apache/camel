@@ -1890,7 +1890,7 @@ public class SimpleTest extends LanguageTestSupport {
         int min = 1;
         int max = 10;
         int iterations = 30;
-        int i = 0;
+        int i;
         for (i = 0; i < iterations; i++) {
             Expression expression = context.resolveLanguage("simple").createExpression("${random(1,10)}");
             assertTrue(

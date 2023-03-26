@@ -48,8 +48,8 @@ import org.apache.camel.spi.Registry;
  */
 public class ConsulRegistry implements Registry {
 
-    private String hostname = "localhost";
-    private int port = 8500;
+    private String hostname;
+    private int port;
     private Consul consul;
     private KeyValueClient kvClient;
 

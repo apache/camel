@@ -111,7 +111,7 @@ public class S3ObjectRangeOperationManualIT extends CamelTestSupport {
         StringBuilder textBuilder = new StringBuilder();
         try (Reader reader
                 = new BufferedReader(new InputStreamReader(s3Object, Charset.forName(StandardCharsets.UTF_8.name())))) {
-            int c = 0;
+            int c;
             while ((c = reader.read()) != -1) {
                 textBuilder.append((char) c);
             }

@@ -77,7 +77,7 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
                         // You can use a customer toStringConverter to turn a CxfPayLoad message into String as you want
                         String request = exchange.getIn().getBody(String.class);
                         XmlConverter converter = new XmlConverter();
-                        String documentString = ECHO_RESPONSE;
+                        String documentString;
 
                         Element in = new XmlConverter().toDOMElement(inElements.get(0));
                         // Just check the element namespace

@@ -418,7 +418,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         List<List<String>> product = new ArrayList<>();
 
         int idx = 0;
-        int idxSize = 0;
+        int idxSize;
         do {
             idxSize = 0;
             List<String> v = new ArrayList<>();
