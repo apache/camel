@@ -10,6 +10,13 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 XML parsers & XML transformers has been made more secure by disabling DOCTYPE and/or access to external DTD/Schema.
 
+==== UseOriginalMessage / UseOriginalBody
+
+When `useOriginalMessage` or `useOriginalBody` is enabled in `OnException`, `OnCompletion` or error handlers,
+then the original message body is defensively copied and if possible converted to `StreamCache` to ensure
+the body can be re-read when accessed. Previously the original body was not converted to `StreamCache` which
+could lead to the body not able to be read or the stream has been closed.
+
 === camel-console
 
 The class `org.apache.camel.impl.console.AbstractDevConsole` has moved from `camel-console` to `camel-support`
