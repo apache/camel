@@ -52,9 +52,7 @@ public class OnExceptionUseOriginalMessageStreamTest extends ContextTestSupport 
     @Test
     void unmarshallWithStreamCache() {
         // Cached stream is closed unmarshalling
-        String data = """
-                {"test": "data"}
-                """;
+        String data = "{\"test\": \"data\"";
         InputStream is = new ByteArrayInputStream(data.getBytes());
         Object out = template.requestBody("direct:unmarshallWithStreamCache", is, Object.class);
         Assertions.assertEquals(data, out);
@@ -63,9 +61,7 @@ public class OnExceptionUseOriginalMessageStreamTest extends ContextTestSupport 
     @Test
     void unmarshallWithoutStreamCache() {
         // Uncached stream is closed by reading with unmarshaller
-        String data = """
-                {"test": "data"}
-                """;
+        String data = "{\"test\": \"data\"";
         InputStream is = new ByteArrayInputStream(data.getBytes());
         Object out = template.requestBody("direct:unmarshallWithoutStreamCache", is, Object.class);
         Assertions.assertEquals(data, out);
@@ -74,9 +70,7 @@ public class OnExceptionUseOriginalMessageStreamTest extends ContextTestSupport 
     @Test
     void unmarshallInvalidWithoutStreamCache() {
         // Uncached stream is closed by reading with unmarshaller
-        String data = """
-                {"test": "data
-                """;
+        String data = "{\"test\": \"data\"";
         InputStream is = new ByteArrayInputStream(data.getBytes());
         Object out = template.requestBody("direct:convertBodyInvalidUnmarshallWithoutStreamCache", is, Object.class);
         Assertions.assertEquals(data, out);
