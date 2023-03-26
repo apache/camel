@@ -93,6 +93,13 @@ Removed `lang` attribute for the `<description>` on every EIPs.
 The `InOnly` and `InOut` EIPs has been removed.
 Instead, use `SetExchangePattern` or `To` where you can specify exchange pattern to use.
 
+=== UseOriginalMessage / UseOriginalBody
+
+When `useOriginalMessage` or `useOriginalBody` is enabled in `OnException`, `OnCompletion` or error handlers,
+then the original message body is defensively copied and if possible converted to `StreamCache` to ensure
+the body can be re-read when accessed. Previously the original body was not converted to `StreamCache` which
+could lead to the body not able to be read or the stream has been closed.
+
 == Camel Health
 
 Health checks are now by default only readiness checks out of the box.
