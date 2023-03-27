@@ -117,6 +117,16 @@ public class PulsarProducerHeadersInIT extends PulsarITSupport {
     }
 
     @Test
+    public void deliverAtHeaderSetsPulsarDeliverAt() throws InterruptedException {
+        long deliverAt = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(1);
+        mock.expectedMinimumMessageCount(1);
+
+        producerTemplate.sendBodyAndHeader("test", PulsarMessageHeaders.DELIVER_AT_OUT, deliverAt);
+
+        MockEndpoint.assertIsSatisfied(10, TimeUnit.SECONDS, mock);
+    }
+
+    @Test
     public void keyHeaderSetsPulsarKey() throws InterruptedException {
         String key = "testKey";
         mock.expectedHeaderReceived(PulsarMessageHeaders.KEY, key);
