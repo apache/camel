@@ -30,6 +30,7 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.utils.SecurityUtils;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
+import org.apache.camel.component.salesforce.internal.client.PubSubApiClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -151,12 +152,18 @@ public abstract class AbstractSalesforceExecution {
 
     private long responseTimeout;
 
+    private SalesforceHttpClient httpClient;
+    private SalesforceSession session;
+    private RestClient restClient;
+    private PubSubApiClient pubSubApiClient;
+    private String pubSubHost;
+    private int pubSubPort;
+
     public final void execute() throws Exception {
         setup();
-
-        final RestClient restClient = connectToSalesforce();
+        login();
         try {
-            executeWithClient(restClient);
+            executeWithClient();
         } finally {
             disconnectFromSalesforce(restClient);
         }
@@ -166,24 +173,34 @@ public abstract class AbstractSalesforceExecution {
         return responseTimeout;
     }
 
-    private RestClient connectToSalesforce() throws Exception {
-        RestClient restClient = null;
+    private void login() {
         try {
-            final SalesforceHttpClient httpClient = createHttpClient();
+            httpClient = createHttpClient();
 
             // connect to Salesforce
             getLog().info("Logging in to Salesforce");
-            final SalesforceSession session = httpClient.getSession();
+            session = httpClient.getSession();
             try {
                 session.login(null);
+
             } catch (final SalesforceException e) {
                 final String msg = "Salesforce login error " + e.getMessage();
                 throw new RuntimeException(msg, e);
             }
             getLog().info("Salesforce login successful");
+        } catch (final Exception e) {
+            final String msg = "Error connecting to Salesforce: " + e.getMessage();
+            ServiceHelper.stopAndShutdownServices(session, httpClient);
+            throw new RuntimeException(msg, e);
+        }
+    }
 
-            // create rest client
-
+    protected RestClient getRestClient() {
+        if (restClient != null) {
+            return restClient;
+        }
+        try {
+            login();
             restClient = new DefaultRestClient(httpClient, version, session, new SalesforceLoginConfig());
             // remember to start the active client object
             ((DefaultRestClient) restClient).start();
@@ -194,6 +211,15 @@ public abstract class AbstractSalesforceExecution {
             disconnectFromSalesforce(restClient);
             throw new RuntimeException(msg, e);
         }
+    }
+
+    protected PubSubApiClient getPubSubApiClient() {
+        if (pubSubApiClient != null) {
+            return pubSubApiClient;
+        }
+        pubSubApiClient = new PubSubApiClient(session, new SalesforceLoginConfig(), pubSubHost, pubSubPort, 0, 0);
+        pubSubApiClient.start();
+        return pubSubApiClient;
     }
 
     private SalesforceHttpClient createHttpClient() throws Exception {
@@ -371,7 +397,15 @@ public abstract class AbstractSalesforceExecution {
         this.version = version;
     }
 
-    protected abstract void executeWithClient(RestClient client) throws Exception;
+    public void setPubSubHost(String pubSubHost) {
+        this.pubSubHost = pubSubHost;
+    }
+
+    public void setPubSubPort(int pubSubPort) {
+        this.pubSubPort = pubSubPort;
+    }
+
+    protected abstract void executeWithClient() throws Exception;
 
     protected abstract Logger getLog();
 

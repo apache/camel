@@ -47,7 +47,6 @@ import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.PickListValue;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.component.salesforce.api.dto.SObjectField;
-import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.impl.engine.DefaultBeanIntrospection;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.util.StringHelper;
@@ -482,9 +481,9 @@ public class GenerateExecution extends AbstractSalesforceExecution {
     }
 
     @Override
-    protected void executeWithClient(final RestClient client) throws Exception {
+    protected void executeWithClient() throws Exception {
         descriptions = new ObjectDescriptions(
-                client, getResponseTimeout(), includes, includePattern, excludes, excludePattern, getLog());
+                getRestClient(), getResponseTimeout(), includes, includePattern, excludes, excludePattern, getLog());
 
         // make sure we can load both templates
         if (!engine.resourceExists(SOBJECT_POJO_VM) || !engine.resourceExists(SOBJECT_QUERY_RECORDS_VM)

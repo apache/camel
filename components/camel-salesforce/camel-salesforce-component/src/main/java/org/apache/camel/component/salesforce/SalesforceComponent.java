@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.SSLContextParametersAware;
@@ -93,6 +94,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     static final String APEX_CALL_PREFIX = OperationName.APEX_CALL.value() + "/";
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceComponent.class);
+    private static final String SALESFORCE_EVENTBUS_PACKAGE = "com.sforce.eventbus";
 
     @Metadata(description = "All authentication configuration in one nested bean, all properties set there can be set"
                             + " directly on the component as well",
@@ -161,6 +163,14 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
                             + " aware of any authentication issues.",
               defaultValue = "false", label = "common,security")
     private boolean lazyLogin;
+
+    @Metadata(description = "Pub/Sub host",
+              defaultValue = "api.pubsub.salesforce.com", label = "common,security")
+    private String pubSubHost = "api.pubsub.salesforce.com";
+
+    @Metadata(description = "Pub/Sub port",
+              defaultValue = "7443", label = "common,security")
+    private int pubSubPort = 7443;
 
     @Metadata(description = "Global endpoint configuration - use to set values that are common to all endpoints",
               label = "common,advanced")
@@ -266,6 +276,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     private SalesforceSession session;
 
     private Map<String, Class<?>> classMap;
+    private Map<String, Class<?>> eventClassMap;
 
     // Lazily created helper for consumer endpoints
     private SubscriptionHelper subscriptionHelper;
@@ -291,10 +302,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             // extract APEX URL
             apexUrl = remaining.substring(APEX_CALL_PREFIX.length());
             remaining = OperationName.APEX_CALL.value();
-        } else if (remaining.startsWith(OperationName.SUBSCRIBE.value())) {
+        } else if (remaining.startsWith(OperationName.SUBSCRIBE.value()) || remaining.startsWith("pubSub")) {
             final String[] parts = remaining.split(":");
             if (parts.length != 2) {
-                throw new IllegalArgumentException("topicName must be supplied for subscribe operation.");
+                throw new IllegalArgumentException("topicName must be supplied for subscribe/pubsub operations.");
             }
             remaining = parts[0];
             topicName = parts[1];
@@ -344,6 +355,17 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
                 .findImplementations(AbstractDTOBase.class, getPackagesAsArray());
         for (Class<?> aClass : classes) {
             result.put(aClass.getSimpleName(), aClass);
+        }
+        return result;
+    }
+
+    private Map<String, Class<?>> scanEventClasses() {
+        Map<String, Class<?>> result = new HashMap<>();
+
+        Set<Class<?>> classes = getCamelContext().getCamelContextExtension().getPackageScanClassResolver()
+                .findImplementations(SpecificRecord.class, SALESFORCE_EVENTBUS_PACKAGE);
+        for (Class<?> aClass : classes) {
+            result.put(aClass.getName(), aClass);
         }
         return result;
     }
@@ -432,6 +454,8 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
             classMap = new HashMap<>(0);
         }
 
+        this.eventClassMap = scanEventClasses();
+
         if (subscriptionHelper != null) {
             ServiceHelper.startService(subscriptionHelper);
         }
@@ -441,6 +465,9 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     protected void doStop() throws Exception {
         if (classMap != null) {
             classMap.clear();
+        }
+        if (eventClassMap != null) {
+            eventClassMap.clear();
         }
 
         try {
@@ -570,6 +597,22 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     public void setLazyLogin(boolean lazyLogin) {
         this.lazyLogin = lazyLogin;
+    }
+
+    public String getPubSubHost() {
+        return pubSubHost;
+    }
+
+    public void setPubSubHost(String pubSubHost) {
+        this.pubSubHost = pubSubHost;
+    }
+
+    public int getPubSubPort() {
+        return pubSubPort;
+    }
+
+    public void setPubSubPort(int pubSubPort) {
+        this.pubSubPort = pubSubPort;
     }
 
     public SalesforceEndpointConfig getConfig() {
@@ -780,6 +823,10 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     public Map<String, Class<?>> getClassMap() {
         return classMap;
+    }
+
+    public Map<String, Class<?>> getEventClassMap() {
+        return eventClassMap;
     }
 
     public RestClient createRestClientFor(final SalesforceEndpoint endpoint) throws SalesforceException {

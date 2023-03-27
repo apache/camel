@@ -24,10 +24,10 @@ import java.util.stream.Stream;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.component.salesforce.SalesforceComponent;
-import org.apache.camel.component.salesforce.SalesforceConsumer;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
+import org.apache.camel.component.salesforce.StreamingApiConsumer;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.support.service.ServiceSupport;
@@ -74,7 +74,7 @@ public class SubscriptionHelper extends ServiceSupport {
     private SalesforceSession session;
     private final long timeout = 60 * 1000L;
 
-    private final Map<SalesforceConsumer, ClientSessionChannel.MessageListener> listenerMap;
+    private final Map<StreamingApiConsumer, ClientSessionChannel.MessageListener> listenerMap;
     private final long maxBackoff;
     private final long backoffIncrement;
 
@@ -129,7 +129,7 @@ public class SubscriptionHelper extends ServiceSupport {
                                     if (failureReason.equals(AUTHENTICATION_INVALID)) {
                                         LOG.debug(
                                                 "attempting login due to handshake error: 403 -> 401::Authentication invalid");
-                                        attemptLoginUntilSuccessful();
+                                        session.attemptLoginUntilSuccessful(backoffIncrement, maxBackoff);
                                     }
                                 }
                             }
@@ -163,7 +163,7 @@ public class SubscriptionHelper extends ServiceSupport {
                             if (connectError != null && connectError.equals(AUTHENTICATION_INVALID)) {
                                 LOG.debug("connectError: {}", connectError);
                                 LOG.debug("Attempting login...");
-                                attemptLoginUntilSuccessful();
+                                session.attemptLoginUntilSuccessful(backoffIncrement, maxBackoff);
                             }
                             // Server says don't retry to connect, so we'll handshake instead
                             // Otherwise, Bayeux client automatically re-attempts connection
@@ -176,10 +176,10 @@ public class SubscriptionHelper extends ServiceSupport {
                             LOG.debug("Refreshing subscriptions to {} channels on reconnect", listenerMap.size());
                             // reconnected to Salesforce, subscribe to existing
                             // channels
-                            final Map<SalesforceConsumer, MessageListener> map = new HashMap<>(listenerMap);
+                            final Map<StreamingApiConsumer, MessageListener> map = new HashMap<>(listenerMap);
                             listenerMap.clear();
-                            for (Map.Entry<SalesforceConsumer, ClientSessionChannel.MessageListener> entry : map.entrySet()) {
-                                final SalesforceConsumer consumer = entry.getKey();
+                            for (Map.Entry<StreamingApiConsumer, ClientSessionChannel.MessageListener> entry : map.entrySet()) {
+                                final StreamingApiConsumer consumer = entry.getKey();
                                 final String topicName = consumer.getTopicName();
                                 subscribe(topicName, consumer);
                             }
@@ -301,7 +301,7 @@ public class SubscriptionHelper extends ServiceSupport {
                         // notify all consumers
                         String abortMsg = "Aborting handshake attempt due to: " + lastError.getMessage();
                         SalesforceException ex = new SalesforceException(abortMsg, lastError);
-                        for (SalesforceConsumer consumer : listenerMap.keySet()) {
+                        for (StreamingApiConsumer consumer : listenerMap.keySet()) {
                             consumer.handleException(abortMsg, ex);
                         }
                     }
@@ -341,8 +341,8 @@ public class SubscriptionHelper extends ServiceSupport {
         closeChannel(META_CONNECT, connectListener);
         closeChannel(META_HANDSHAKE, handshakeListener);
 
-        for (Map.Entry<SalesforceConsumer, MessageListener> entry : listenerMap.entrySet()) {
-            final SalesforceConsumer consumer = entry.getKey();
+        for (Map.Entry<StreamingApiConsumer, MessageListener> entry : listenerMap.entrySet()) {
+            final StreamingApiConsumer consumer = entry.getKey();
             final String topic = consumer.getTopicName();
 
             final MessageListener listener = entry.getValue();
@@ -410,12 +410,12 @@ public class SubscriptionHelper extends ServiceSupport {
         return client;
     }
 
-    public void subscribe(final String topicName, final SalesforceConsumer consumer) {
+    public void subscribe(final String topicName, final StreamingApiConsumer consumer) {
         subscribe(topicName, consumer, false);
     }
 
     public void subscribe(
-            final String topicName, final SalesforceConsumer consumer,
+            final String topicName, final StreamingApiConsumer consumer,
             final boolean skipReplayId) {
         // create subscription for consumer
         final String channelName = getChannelName(topicName);
@@ -543,40 +543,6 @@ public class SubscriptionHelper extends ServiceSupport {
         }
     }
 
-    private void attemptLoginUntilSuccessful() {
-        if (!loggingIn.compareAndSet(false, true)) {
-            LOG.debug("already logging in");
-            return;
-        }
-
-        long backoff = 0;
-
-        try {
-            for (;;) {
-                try {
-                    if (isStoppingOrStopped()) {
-                        return;
-                    }
-                    session.login(session.getAccessToken());
-                    break;
-                } catch (SalesforceException e) {
-                    backoff = backoff + backoffIncrement;
-                    if (backoff > maxBackoff) {
-                        backoff = maxBackoff;
-                    }
-                    LOG.warn(String.format("Salesforce login failed. Pausing for %d seconds", backoff), e);
-                    try {
-                        Thread.sleep(backoff);
-                    } catch (InterruptedException ex) {
-                        throw new RuntimeException("Failed to login.", ex);
-                    }
-                }
-            }
-        } finally {
-            loggingIn.set(false);
-        }
-    }
-
     static Optional<Long> determineReplayIdFor(final SalesforceEndpoint endpoint, final String topicName) {
         final String channelName = getChannelName(topicName);
 
@@ -619,7 +585,7 @@ public class SubscriptionHelper extends ServiceSupport {
         return channelName.toString();
     }
 
-    public void unsubscribe(String topicName, SalesforceConsumer consumer) {
+    public void unsubscribe(String topicName, StreamingApiConsumer consumer) {
 
         // channel name
         final String channelName = getChannelName(topicName);

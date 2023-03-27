@@ -24,9 +24,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.component.salesforce.AuthenticationType;
 import org.apache.camel.component.salesforce.SalesforceComponent;
-import org.apache.camel.component.salesforce.SalesforceConsumer;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
+import org.apache.camel.component.salesforce.StreamingApiConsumer;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.cometd.bayeux.Message;
@@ -60,7 +60,7 @@ public class SubscriptionHelperIntegrationTest {
     final StubServer server;
     final SubscriptionHelper subscription;
 
-    SalesforceConsumer toUnsubscribe;
+    StreamingApiConsumer toUnsubscribe;
 
     static class MessageArgumentMatcher implements ArgumentMatcher<Message> {
 
@@ -90,27 +90,36 @@ public class SubscriptionHelperIntegrationTest {
         LoggerFactory.getLogger(SubscriptionHelperIntegrationTest.class).info("Port for wireshark to filter: {}",
                 server.port());
         final String instanceUrl = "http://localhost:" + server.port();
-        server.replyTo("POST", "/services/oauth2/token",
-                "{\"instance_url\":\"" + instanceUrl + "\",\"access_token\":\"token\"}");
+        server.replyTo(
+                "POST", "/services/oauth2/token",
+                "{\n" +
+                                                  "    \"instance_url\": \"" + instanceUrl + "\",\n" +
+                                                  "    \"access_token\": \"00D4100000xxxxx!faketoken\",\n" +
+                                                  "    \"id\": \"https://login.salesforce.com/id/00D4100000xxxxxxxx/0054100000xxxxxxxx\"\n"
+                                                  +
+                                                  "}");
+
         server.replyTo("GET", "/services/oauth2/revoke?token=token", 200);
 
-        server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/handshake", "[\n"
-                                                                                                     + "  {\n"
-                                                                                                     + "    \"ext\": {\n"
-                                                                                                     + "      \"replay\": true,\n"
-                                                                                                     + "      \"payload.format\": true\n"
-                                                                                                     + "    },\n"
-                                                                                                     + "    \"minimumVersion\": \"1.0\",\n"
-                                                                                                     + "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n"
-                                                                                                     + "    \"supportedConnectionTypes\": [\n"
-                                                                                                     + "      \"long-polling\"\n"
-                                                                                                     + "    ],\n"
-                                                                                                     + "    \"channel\": \"/meta/handshake\",\n"
-                                                                                                     + "    \"id\": \"$id\",\n"
-                                                                                                     + "    \"version\": \"1.0\",\n"
-                                                                                                     + "    \"successful\": true\n"
-                                                                                                     + "  }\n"
-                                                                                                     + "]");
+        server.replyTo(
+                "POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/handshake",
+                "[\n"
+                                                                                              + "  {\n"
+                                                                                              + "    \"ext\": {\n"
+                                                                                              + "      \"replay\": true,\n"
+                                                                                              + "      \"payload.format\": true\n"
+                                                                                              + "    },\n"
+                                                                                              + "    \"minimumVersion\": \"1.0\",\n"
+                                                                                              + "    \"clientId\": \"5ra4927ikfky6cb12juthkpofeu8\",\n"
+                                                                                              + "    \"supportedConnectionTypes\": [\n"
+                                                                                              + "      \"long-polling\"\n"
+                                                                                              + "    ],\n"
+                                                                                              + "    \"channel\": \"/meta/handshake\",\n"
+                                                                                              + "    \"id\": \"$id\",\n"
+                                                                                              + "    \"version\": \"1.0\",\n"
+                                                                                              + "    \"successful\": true\n"
+                                                                                              + "  }\n"
+                                                                                              + "]");
 
         server.replyTo("POST", "/cometd/" + SalesforceEndpointConfig.DEFAULT_VERSION + "/connect",
                 req -> req.contains("\"timeout\":0"), "[\n"
@@ -194,8 +203,8 @@ public class SubscriptionHelperIntegrationTest {
         // handshake and connect
         subscription.start();
 
-        final SalesforceConsumer consumer
-                = toUnsubscribe = mock(SalesforceConsumer.class, "shouldResubscribeOnConnectionFailures:consumer");
+        final StreamingApiConsumer consumer
+                = toUnsubscribe = mock(StreamingApiConsumer.class, "shouldResubscribeOnConnectionFailures:consumer");
 
         final SalesforceEndpoint endpoint = mock(SalesforceEndpoint.class, "shouldResubscribeOnConnectionFailures:endpoint");
 
@@ -289,8 +298,8 @@ public class SubscriptionHelperIntegrationTest {
         // handshake and connect
         subscription.start();
 
-        final SalesforceConsumer consumer
-                = toUnsubscribe = mock(SalesforceConsumer.class, "shouldResubscribeOnHelperRestart:consumer");
+        final StreamingApiConsumer consumer
+                = toUnsubscribe = mock(StreamingApiConsumer.class, "shouldResubscribeOnHelperRestart:consumer");
 
         final SalesforceEndpoint endpoint = mock(SalesforceEndpoint.class, "shouldResubscribeOnHelperRestart:endpoint");
 

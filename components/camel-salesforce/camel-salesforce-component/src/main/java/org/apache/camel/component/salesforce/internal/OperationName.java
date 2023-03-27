@@ -107,7 +107,12 @@ public enum OperationName {
     // Raw operation
     RAW("raw"),
 
-    SUBSCRIBE("subscribe");
+    // Streaming API
+    SUBSCRIBE("subscribe"),
+
+    // Pub/Sub API
+    PUBSUB_PUBLISH("pubSubPublish"),
+    PUBSUB_SUBSCRIBE("pubSubSubscribe");
 
     private final String value;
 

@@ -20,8 +20,10 @@ import org.apache.camel.spi.Metadata;
 
 public final class SalesforceConstants {
 
-    @Metadata(label = "consumer", description = "The replay id.", javaType = "Object")
+    @Metadata(label = "consumer", description = "The Streaming API replayId.", javaType = "Object")
     public static final String HEADER_SALESFORCE_REPLAY_ID = "CamelSalesforceReplayId";
+    @Metadata(label = "consumer", description = "The Pub/Sub API replayId.", javaType = "Object")
+    public static final String HEADER_SALESFORCE_PUBSUB_REPLAY_ID = "CamelSalesforcePubSubReplayId";
     @Metadata(label = "consumer", description = "The change event schema.", javaType = "Object")
     public static final String HEADER_SALESFORCE_CHANGE_EVENT_SCHEMA = "CamelSalesforceChangeEventSchema";
     @Metadata(label = "consumer", description = "The event type.", javaType = "String")

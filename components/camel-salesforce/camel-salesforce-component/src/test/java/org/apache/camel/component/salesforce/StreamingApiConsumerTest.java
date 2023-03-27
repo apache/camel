@@ -51,7 +51,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class SalesforceConsumerTest {
+public class StreamingApiConsumerTest {
 
     public static class AccountUpdates {
         @JsonProperty("Id")
@@ -156,7 +156,7 @@ public class SalesforceConsumerTest {
         when(endpoint.getTopicName()).thenReturn("AccountUpdates");
         configuration.setSObjectClass(AccountUpdates.class.getName());
 
-        final SalesforceConsumer consumer = new SalesforceConsumer(endpoint, processor, NOT_USED);
+        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
         consumer.determineSObjectClass();
 
         consumer.processMessage(mock(ClientSessionChannel.class), pushTopicMessage);
@@ -194,7 +194,7 @@ public class SalesforceConsumerTest {
         message.put("data", data);
         message.put("channel", "/event/TestEvent__e");
 
-        final SalesforceConsumer consumer = new SalesforceConsumer(endpoint, processor, NOT_USED);
+        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
 
         consumer.processMessage(mock(ClientSessionChannel.class), message);
 
@@ -217,7 +217,7 @@ public class SalesforceConsumerTest {
     public void shouldProcessPushTopicMessages() throws Exception {
         when(endpoint.getTopicName()).thenReturn("AccountUpdates");
 
-        final SalesforceConsumer consumer = new SalesforceConsumer(endpoint, processor, NOT_USED);
+        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
 
         consumer.processMessage(mock(ClientSessionChannel.class), pushTopicMessage);
 
@@ -239,7 +239,7 @@ public class SalesforceConsumerTest {
         when(endpoint.getTopicName()).thenReturn("AccountUpdates");
         configuration.setRawPayload(true);
 
-        final SalesforceConsumer consumer = new SalesforceConsumer(endpoint, processor, NOT_USED);
+        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
 
         consumer.processMessage(mock(ClientSessionChannel.class), pushTopicMessage);
 
@@ -272,7 +272,7 @@ public class SalesforceConsumerTest {
         message.put("data", data);
         message.put("channel", "/event/TestEvent__e");
 
-        final SalesforceConsumer consumer = new SalesforceConsumer(endpoint, processor, NOT_USED);
+        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
 
         consumer.processMessage(mock(ClientSessionChannel.class), message);
 
@@ -293,7 +293,7 @@ public class SalesforceConsumerTest {
     public void shouldProcessChangeEvents() throws Exception {
         when(endpoint.getTopicName()).thenReturn("/data/AccountChangeEvent");
 
-        final SalesforceConsumer consumer = new SalesforceConsumer(endpoint, processor, NOT_USED);
+        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
 
         consumer.processMessage(mock(ClientSessionChannel.class), mockChangeEvent);
 
@@ -325,7 +325,7 @@ public class SalesforceConsumerTest {
         when(endpoint.getTopicName()).thenReturn("/data/AccountChangeEvent");
         when(mockChangeEventMap.get("replayId")).thenReturn(null);
 
-        final SalesforceConsumer consumer = new SalesforceConsumer(endpoint, processor, NOT_USED);
+        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
 
         consumer.processMessage(mock(ClientSessionChannel.class), mockChangeEvent);
 
@@ -337,7 +337,7 @@ public class SalesforceConsumerTest {
         when(endpoint.getTopicName()).thenReturn("/data/AccountChangeEvent");
         configuration.setRawPayload(true);
 
-        final SalesforceConsumer consumer = new SalesforceConsumer(endpoint, processor, NOT_USED);
+        final StreamingApiConsumer consumer = new StreamingApiConsumer(endpoint, processor, NOT_USED);
 
         consumer.processMessage(mock(ClientSessionChannel.class), mockChangeEvent);
 

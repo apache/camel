@@ -183,6 +183,7 @@ Camel supports the following Salesforce APIs:
 * <<ApexRESTAPI,Apex REST API>>
 * <<Bulk2API,Bulk 2 API>>
 * <<BulkAPI,Bulk API>>
+* <<PubSubAPI,Pub/Sub API>>
 * <<StreamingAPI,Streaming API>>
 * <<ReportsAPI,Reports API>>
 
@@ -1614,6 +1615,92 @@ error.
 ----
 ...to("salesforce:createBatch")..
 ----
+
+[[PubSubAPI]]
+=== Pub/Sub API
+
+The Pub/Sub API allows you to publish and subscribe to platform events, including real-time event
+monitoring events, and change data capture events. This API is based on gRPC and HTTP/2, and event
+payloads are delivered in Apache Avro format.
+
+==== Publishing Events
+
+The URI format for publishing events is:
+----
+salesforce:pubSubPublish:<topic_name>
+----
+
+For example:
+----
+.to("salesforce:pubsubPublish:/event/MyCustomPlatformEvent__e")
+----
+
+[[pubSubPublish]]
+==== Publish an Event
+
+`pubSubPublish`
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| Body | `List`. List can contained mixed types (see description below). | Event payloads to be published | |
+
+|===
+
+Because The Pub/Sub API requires that event payloads be serialized in Apache Avro format, Camel will
+attempt to serialize event payloads from the following input types:
+
+* Avro `GenericRecord`. Camel fetches the Avro schema in order to serialize `GenericRecord`
+instances. This option doesn't require ahead-of-time generation of Event classes.
+* Avro `SpecificRecord`. Subclasses of `SpecificRecord` contain properties that are specific to an
+event type. The <<MavenPlugin,maven plugin>> can generate the subclasses automatically.
+* POJO. Camel fetches the Avro schema in order to serialize POJO instances. The POJO's
+field names must match event field names exactly, including case.
+* `String`. Camel will treat the `String` value as JSON and serialize to Avro. Note that the JSON
+value does not have to be Avro-encoded JSON. It can be arbitrary JSON, but it must be serializable
+to Avro based on the Schema associated with the topic you're publishing to. The JSON object's
+field names must match event field names exactly, including case.
+* `byte[]`. Camel will not perform any serialization. Value must be the Avro-encoded event payload.
+* `com.salesforce.eventbus.protobuf.ProducerEvent`. Providing a `ProducerEvent` allows full control,
+e.g. setting the `id` property, which can be tied back to the `PublishResult.CorrelationKey`.
+
+*Output*
+
+Type: `List<org.apache.camel.component.salesforce.api.dto.pubsub.PublishResult>`
+
+The order of the items in the returned `List` correlates to the order of the items in the input `List`.
+
+==== Subscribing
+The URI format for subscribing to a Pub/Sub topic is:
+----
+salesforce:pubSubSubscribe:<topic_name>
+----
+
+For example:
+
+----
+from("salesforce:pubSubSubscribe:/event/BatchApexErrorEvent")
+----
+
+|===
+| Parameter | Type | Description| Default| Required
+
+| `replayPreset` | `ReplayPreset` | Values: `LATEST`, `EARLIEST`, `CUSTOM`.  | `LATEST` |
+| `pubSubReplayId` | `String` | When `replayPreset` is set to `CUSTOM`, the replayId to use when
+subscribing to a topic.  | |
+| `pubSubBatchSize` | int | Max number of events to receive at a time. Values >100 will be normalized to 100 by salesforce.  | 100 | X
+| `pubSubDeserializeType` | `PubSubDeserializeType` | Values: `AVRO`, `SPECIFIC_RECORD`, `GENERIC_RECORD`,
+`POJO`, `JSON`. `AVRO` will try a `SpecificRecord` subclass if found, otherwise `GenericRecord` | `AVRO` | X
+| `pubSubPojoClass` | Fully qualified class name to deserialize Pub/Sub API event to. | | | If `pubSubDeserializeType` is `POJO`
+
+|===
+
+*Output*
+
+Type: Determined by the `pubSubDeserializeType` option.
+
+Headers: `CamelSalesforcePubSubReplayId`
+
 
 [[StreamingAPI]]
 === Streaming API

@@ -21,7 +21,7 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(60);
+        Set<String> props = new HashSet<>(65);
         props.add("allOrNone");
         props.add("apexMethod");
         props.add("apexQueryParams");
@@ -60,6 +60,10 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
         props.add("pkChunkingChunkSize");
         props.add("pkChunkingParent");
         props.add("pkChunkingStartRow");
+        props.add("pubSubBatchSize");
+        props.add("pubSubDeserializeType");
+        props.add("pubSubPojoClass");
+        props.add("pubSubReplayId");
         props.add("queryLocator");
         props.add("rawHttpHeaders");
         props.add("rawMethod");
@@ -67,6 +71,7 @@ public class SalesforceEndpointUriFactory extends org.apache.camel.support.compo
         props.add("rawPayload");
         props.add("rawQueryParameters");
         props.add("replayId");
+        props.add("replayPreset");
         props.add("reportId");
         props.add("reportMetadata");
         props.add("resultId");

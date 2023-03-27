@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.salesforce.eventbus.protobuf.ReplayPreset;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
@@ -94,6 +95,11 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String FALL_BACK_REPLAY_ID = "fallBackReplayId";
     public static final String INITIAL_REPLAY_ID_MAP = "initialReplayIdMap";
     public static final long REPLAY_FROM_TIP = -1L;
+
+    // parameters for Pub/Sub API
+    public static final String REPLAY_PRESET = "replayPreset";
+    public static final String PUB_SUB_DESERIALIZE_TYPE = "pubSubDeserializeType";
+    public static final String PUB_SUB_POJO_CLASS = "pubSubPojoClass";
 
     // parameters for Approval API
     public static final String APPROVAL = "approval";
@@ -194,6 +200,24 @@ public class SalesforceEndpointConfig implements Cloneable {
     private Boolean notifyForOperationDelete;
     @UriParam
     private Boolean notifyForOperationUndelete;
+
+    // Pub/Sub API properties
+    @UriParam(label = "consumer", defaultValue = "100",
+              description = "Max number of events to receive in a batch from the Pub/Sub API.")
+    private int pubSubBatchSize = 100;
+
+    @UriParam(label = "consumer", defaultValue = "AVRO",
+              description = "How to deserialize events consume from the Pub/Sub API. AVRO will try a " +
+                            "SpecificRecord subclass if found, otherwise GenericRecord.",
+              enums = "AVRO,SPECIFIC_RECORD,GENERIC_RECORD,POJO,JSON")
+    private PubSubDeserializeType pubSubDeserializeType = PubSubDeserializeType.AVRO;
+
+    @UriParam(label = "consumer", description = "Replay preset for Pub/Sub API.", defaultValue = "LATEST",
+              enums = "LATEST,EARLIEST,CUSTOM")
+    private ReplayPreset replayPreset = ReplayPreset.LATEST;
+
+    @UriParam(label = "consumer", description = "Fully qualified class name to deserialize Pub/Sub API event to.")
+    private String pubSubPojoClass;
 
     // Analytics API properties
     @UriParam
@@ -814,6 +838,11 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(FALL_BACK_REPLAY_ID, fallBackReplayId);
         valueMap.put(INITIAL_REPLAY_ID_MAP, initialReplayIdMap);
 
+        // add Pub/Sub API properties
+        valueMap.put(REPLAY_PRESET, initialReplayIdMap);
+        valueMap.put(PUB_SUB_DESERIALIZE_TYPE, pubSubDeserializeType);
+        valueMap.put(PUB_SUB_POJO_CLASS, pubSubPojoClass);
+
         valueMap.put(NOT_FOUND_BEHAVIOUR, notFoundBehaviour);
 
         valueMap.put(RAW_PATH, rawPath);
@@ -857,6 +886,43 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setFallBackReplayId(Long fallBackReplayId) {
         this.fallBackReplayId = fallBackReplayId;
+    }
+
+    /**
+     * ReplayPreset for Pub/Sub API
+     */
+    public ReplayPreset getReplayPreset() {
+        return replayPreset;
+    }
+
+    public void setReplayPreset(ReplayPreset replayPreset) {
+        this.replayPreset = replayPreset;
+    }
+
+    /**
+     * Type of deserialization for Pub/Sub API events
+     *
+     * @return
+     */
+    public PubSubDeserializeType getPubSubDeserializeType() {
+        return pubSubDeserializeType;
+    }
+
+    public void setPubSubDeserializeType(PubSubDeserializeType pubSubDeserializeType) {
+        this.pubSubDeserializeType = pubSubDeserializeType;
+    }
+
+    /**
+     * Class to deserialize Pub/Sub API events to
+     *
+     * @return
+     */
+    public String getPubSubPojoClass() {
+        return pubSubPojoClass;
+    }
+
+    public void setPubSubPojoClass(String pubSubPojoClass) {
+        this.pubSubPojoClass = pubSubPojoClass;
     }
 
     public Integer getLimit() {
@@ -1100,4 +1166,13 @@ public class SalesforceEndpointConfig implements Cloneable {
     public void setRawHttpHeaders(String rawHttpHeaders) {
         this.rawHttpHeaders = rawHttpHeaders;
     }
+
+    public int getPubSubBatchSize() {
+        return pubSubBatchSize;
+    }
+
+    public void setPubSubBatchSize(int pubSubBatchSize) {
+        this.pubSubBatchSize = pubSubBatchSize;
+    }
+
 }

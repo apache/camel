@@ -103,7 +103,9 @@ public class RawPayloadTest extends AbstractSalesforceTestBase {
             public MockResponse dispatch(RecordedRequest recordedRequest) throws InterruptedException {
                 if (recordedRequest.getPath().equals(OAUTH2_TOKEN_PATH)) {
                     return new MockResponse().setResponseCode(200)
-                            .setBody("{ \"access_token\": \"mock_token\", \"instance_url\": \"" + loginUrl + "\"}");
+                            .setBody(
+                                    "{ \"access_token\": \"mock_token\", \"id\": \"https://login.salesforce.com/id/00D4100000xxxxxxxx/0054100000xxxxxxxx\", \"instance_url\": \""
+                                     + loginUrl + "\"}");
                 } else {
                     return new MockResponse().setResponseCode(200)
                             .setHeader(HttpHeader.CONTENT_TYPE.toString(),
