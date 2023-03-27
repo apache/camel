@@ -94,7 +94,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
 
     public void setTrigger(String trigger) {
         this.trigger = trigger;
-        plcDriverManager = new PooledPlcDriverManager();
+        this.plcDriverManager = new PooledPlcDriverManager();
     }
 
     public void setAutoReconnect(boolean autoReconnect) {
@@ -190,12 +190,14 @@ public class Plc4XEndpoint extends DefaultEndpoint {
      */
     public PlcReadRequest buildPlcReadRequest() {
         PlcReadRequest.Builder builder = connection.readRequestBuilder();
-        for (Map.Entry<String, Object> tag : tags.entrySet()) {
-            try {
-                builder.addItem(tag.getKey(), (String) tag.getValue());
-            } catch (PlcIncompatibleDatatypeException e) {
-                LOGGER.error("For consumer, please use Map<String,String>, currently using {}",
-                        tags.getClass().getSimpleName());
+        if (tags != null) {
+            for (Map.Entry<String, Object> tag : tags.entrySet()) {
+                try {
+                    builder.addItem(tag.getKey(), (String) tag.getValue());
+                } catch (PlcIncompatibleDatatypeException e) {
+                    LOGGER.warn("For consumer, please use Map<String,String>, currently using {}",
+                            tags.getClass().getSimpleName());
+                }
             }
         }
         return builder.build();
@@ -268,6 +270,7 @@ public class Plc4XEndpoint extends DefaultEndpoint {
         //Shutting down the connection when leaving the Context
         if (connection != null && connection.isConnected()) {
             connection.close();
+            connection = null;
         }
     }
 
