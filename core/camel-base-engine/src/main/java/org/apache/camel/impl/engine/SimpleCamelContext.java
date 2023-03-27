@@ -572,7 +572,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
             }
         }
         if (tracer == null) {
-            tracer = getExtension(Tracer.class);
+            tracer = getCamelContextExtension().getContextPlugin(Tracer.class);
         }
         if (tracer == null) {
             tracer = new DefaultTracer();

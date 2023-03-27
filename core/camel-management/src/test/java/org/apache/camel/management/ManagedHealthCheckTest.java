@@ -87,7 +87,7 @@ public class ManagedHealthCheckTest extends ManagementTestSupport {
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();
 
-        context.getExtension(HealthCheckRegistry.class).register(new AbstractHealthCheck("custom", "myCheck") {
+        context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class).register(new AbstractHealthCheck("custom", "myCheck") {
             @Override
             protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
                 // make it always down

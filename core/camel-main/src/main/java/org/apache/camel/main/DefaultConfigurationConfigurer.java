@@ -310,7 +310,7 @@ public final class DefaultConfigurationConfigurer {
         }
 
         if (config.getRouteFilterIncludePattern() != null || config.getRouteFilterExcludePattern() != null) {
-            camelContext.getExtension(Model.class).setRouteFilterPattern(config.getRouteFilterIncludePattern(),
+            camelContext.getCamelContextExtension().getContextPlugin(Model.class).setRouteFilterPattern(config.getRouteFilterIncludePattern(),
                     config.getRouteFilterExcludePattern());
         }
 

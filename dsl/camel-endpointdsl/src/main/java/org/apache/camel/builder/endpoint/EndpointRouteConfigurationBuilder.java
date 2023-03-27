@@ -91,7 +91,8 @@ public abstract class EndpointRouteConfigurationBuilder extends EndpointRouteBui
         if (!list.isEmpty()) {
             // remove existing before updating
             for (RouteConfigurationDefinition def : list) {
-                context.getExtension(Model.class).removeRouteConfiguration(def);
+                context.getCamelContextExtension().getContextPlugin(Model.class)
+                        .removeRouteConfiguration(def);
             }
             populateRoutesConfiguration();
         }
@@ -103,7 +104,7 @@ public abstract class EndpointRouteConfigurationBuilder extends EndpointRouteBui
             throw new IllegalArgumentException("CamelContext has not been injected!");
         }
         getRouteConfigurationCollection().setCamelContext(camelContext);
-        camelContext.getExtension(Model.class)
+        camelContext.getCamelContextExtension().getContextPlugin(Model.class)
                 .addRouteConfigurations(getRouteConfigurationCollection().getRouteConfigurations());
     }
 

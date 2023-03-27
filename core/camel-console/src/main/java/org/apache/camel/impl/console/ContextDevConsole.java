@@ -47,7 +47,7 @@ public class ContextDevConsole extends AbstractDevConsole {
         }
         sb.append("\n");
 
-        ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
+        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
             if (mb != null) {
@@ -115,7 +115,7 @@ public class ContextDevConsole extends AbstractDevConsole {
         root.put("phase", getCamelContext().getCamelContextExtension().getStatusPhase());
         root.put("uptime", getCamelContext().getUptime());
 
-        ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
+        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             ManagedCamelContextMBean mb = mcc.getManagedCamelContext();
             if (mb != null) {

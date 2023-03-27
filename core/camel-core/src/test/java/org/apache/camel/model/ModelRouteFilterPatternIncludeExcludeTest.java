@@ -28,7 +28,7 @@ public class ModelRouteFilterPatternIncludeExcludeTest extends ContextTestSuppor
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getExtension(Model.class).setRouteFilterPattern("foo*", "jms:*");
+        context.getCamelContextExtension().getContextPlugin(Model.class).setRouteFilterPattern("foo*", "jms:*");
         return context;
     }
 

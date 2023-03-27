@@ -43,7 +43,7 @@ public class TelegramConsumerReadyLiveCheckTest extends TelegramTestSupport {
         CamelContext context = super.createCamelContext();
 
         // enabling consumers health check is a bit cumbersome via low-level Java code
-        HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
+        HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
         HealthCheckRepository repo
                 = hcr.getRepository("consumers").orElse((HealthCheckRepository) hcr.resolveById("consumers"));
         repo.setEnabled(true);

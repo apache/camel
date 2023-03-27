@@ -240,7 +240,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
         enlistPreRegisteredServices();
 
         // register health check if detected
-        HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
+        HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
         if (hcr != null) {
             try {
                 Object me = getManagementObjectStrategy().getManagedObjectForCamelHealth(camelContext, hcr);
@@ -339,7 +339,7 @@ public class JmxManagementLifecycleStrategy extends ServiceSupport implements Li
             LOG.warn("Could not unregister CamelContext MBean", e);
         }
 
-        HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
+        HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
         if (hcr != null) {
             try {
                 Object mc = getManagementObjectStrategy().getManagedObjectForCamelHealth(context, hcr);

@@ -43,7 +43,7 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
     @Test
     public void testCamelContextHealthCheckUpStatus() {
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("health-context"));
-        context.getExtension(HealthCheckRegistry.class).register(new ContextHealthCheck());
+        context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class).register(new ContextHealthCheck());
 
         SmallRyeHealth health = reporter.getHealth();
 
@@ -66,7 +66,7 @@ public class CamelMicroProfileHealthCheckTest extends CamelMicroProfileHealthTes
     @Test
     public void testCamelContextHealthCheckDownStatus() {
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("health-context"));
-        context.getExtension(HealthCheckRegistry.class).register(new ContextHealthCheck());
+        context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class).register(new ContextHealthCheck());
 
         context.stop();
 

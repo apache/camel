@@ -273,7 +273,6 @@ public abstract class AbstractCamelContext extends BaseService
     private final InternalRouteStartupManager internalRouteStartupManager = new InternalRouteStartupManager(this);
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<>();
     private final StopWatch stopWatch = new StopWatch(false);
-    private final PluginManager pluginManager;
     private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(() -> new HashSet<>());
     private VetoCamelContextStartException vetoed;
     private String managementName;
@@ -389,7 +388,6 @@ public abstract class AbstractCamelContext extends BaseService
         this.bootstraps.add(bootstrapFactories::clear);
 
         this.internalServiceManager = new InternalServiceManager(this, internalRouteStartupManager, startupListeners);
-        this.pluginManager = new DefaultContextPluginManager(internalServiceManager);
 
         if (build) {
             try {
@@ -439,20 +437,6 @@ public abstract class AbstractCamelContext extends BaseService
      */
     protected boolean eagerCreateTypeConverter() {
         return true;
-    }
-
-    @Override
-    public <T> T getExtension(Class<T> type) {
-        if (type.isInstance(this)) {
-            return type.cast(this);
-        }
-
-        return pluginManager.getContextPlugin(type);
-    }
-
-    @Override
-    public <T> void setExtension(Class<T> type, T module) {
-        pluginManager.addContextPlugin(type, module);
     }
 
     @Override
@@ -2197,7 +2181,7 @@ public abstract class AbstractCamelContext extends BaseService
         startupStepRecorder.endStep(step3);
 
         // setup health-check registry as its needed this early phase for 3rd party to register custom repositories
-        HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
+        HealthCheckRegistry hcr = getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
         if (hcr == null) {
             StartupStep step4 = startupStepRecorder.beginStep(CamelContext.class, null, "Setup HealthCheckRegistry");
             hcr = createHealthCheckRegistry();
@@ -2210,7 +2194,7 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         // setup dev-console registry as its needed this early phase for 3rd party to register custom consoles
-        DevConsoleRegistry dcr = getExtension(DevConsoleRegistry.class);
+        DevConsoleRegistry dcr = getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
         if (dcr == null) {
             StartupStep step5 = startupStepRecorder.beginStep(CamelContext.class, null, "Setup DevConsoleRegistry");
             dcr = createDevConsoleRegistry();
@@ -2287,7 +2271,7 @@ public abstract class AbstractCamelContext extends BaseService
         // ensure additional health checks is loaded
         if (loadHealthChecks) {
             StartupStep step3 = startupStepRecorder.beginStep(CamelContext.class, null, "Scan HealthChecks");
-            HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
+            HealthCheckRegistry hcr = getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
             if (hcr != null) {
                 hcr.loadHealthChecks();
             }
@@ -2296,7 +2280,7 @@ public abstract class AbstractCamelContext extends BaseService
         // ensure additional dev consoles is loaded
         if (devConsole) {
             StartupStep step4 = startupStepRecorder.beginStep(CamelContext.class, null, "Scan DevConsoles (phase 1)");
-            DevConsoleRegistry dcr = getExtension(DevConsoleRegistry.class);
+            DevConsoleRegistry dcr = getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
             if (dcr != null) {
                 dcr.loadDevConsoles();
             }
@@ -2838,7 +2822,7 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.debug("Using ThreadPoolFactory: {}", getExecutorServiceManager().getThreadPoolFactory());
         }
 
-        HealthCheckRegistry hcr = getExtension(HealthCheckRegistry.class);
+        HealthCheckRegistry hcr = getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
         if (hcr != null && hcr.isEnabled()) {
             LOG.debug("Using HealthCheck: {}", hcr.getId());
         }
@@ -2865,7 +2849,7 @@ public abstract class AbstractCamelContext extends BaseService
         // ensure extra dev consoles is loaded in case additional JARs has been dynamically added to the classpath
         if (devConsole) {
             StartupStep step = startupStepRecorder.beginStep(CamelContext.class, null, "Scan DevConsoles (phase 2)");
-            DevConsoleRegistry dcr = getExtension(DevConsoleRegistry.class);
+            DevConsoleRegistry dcr = getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
             if (dcr != null) {
                 dcr.loadDevConsoles(true);
             }

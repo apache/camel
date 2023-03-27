@@ -66,7 +66,7 @@ public class TopDevConsole extends AbstractDevConsole {
         final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
 
         final StringBuilder sb = new StringBuilder();
-        ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
+        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             if (subPath == null || subPath.isBlank()) {
                 Function<ManagedRouteMBean, Object> task = mrb -> {
@@ -168,7 +168,7 @@ public class TopDevConsole extends AbstractDevConsole {
         final JsonObject root = new JsonObject();
         final List<JsonObject> list = new ArrayList<>();
 
-        ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
+        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             if (subPath == null || subPath.isBlank()) {
                 Function<ManagedRouteMBean, Object> task = mrb -> {

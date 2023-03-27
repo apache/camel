@@ -151,7 +151,7 @@ public final class CamelAnnotationsHandler {
 
                     // reset JMX statistics
                     ManagedCamelContext managedCamelContext
-                            = camelContext.getExtension(ManagedCamelContext.class);
+                            = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
                     if (managedCamelContext != null) {
                         ManagedCamelContextMBean mBean = managedCamelContext.getManagedCamelContext();
                         LOGGER.debug("Resetting JMX statistics for RouteCoverage");

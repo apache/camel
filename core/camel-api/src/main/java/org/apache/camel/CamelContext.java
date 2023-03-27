@@ -91,22 +91,6 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
     ExtendedCamelContext getCamelContextExtension();
 
     /**
-     * Gets the extension of the given type.
-     *
-     * @param  type the type of the extension
-     * @return      the extension, or <tt>null</tt> if no extension has been installed.
-     */
-    <T> T getExtension(Class<T> type);
-
-    /**
-     * Allows to install custom extensions to the Camel context.
-     *
-     * @param type   the type of the extension
-     * @param module the instance of the extension
-     */
-    <T> void setExtension(Class<T> type, T module);
-
-    /**
      * If CamelContext during the start procedure was vetoed, and therefore causing Camel to not start.
      */
     boolean isVetoStarted();

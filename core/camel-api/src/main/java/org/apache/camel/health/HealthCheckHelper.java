@@ -207,7 +207,7 @@ public final class HealthCheckHelper {
      * @return         the health check registry, or <tt>null</tt> if health-check is not enabled.
      */
     public static HealthCheckRegistry getHealthCheckRegistry(CamelContext context) {
-        return context.getExtension(HealthCheckRegistry.class);
+        return context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
     }
 
     /**
@@ -220,7 +220,7 @@ public final class HealthCheckHelper {
     public static HealthCheck getHealthCheck(CamelContext context, String id) {
         HealthCheck answer = null;
 
-        HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
+        HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
         if (hcr != null && hcr.isEnabled()) {
             Optional<HealthCheck> check = hcr.getCheck(id);
             if (check.isEmpty()) {
@@ -266,7 +266,7 @@ public final class HealthCheckHelper {
     public static HealthCheckRepository getHealthCheckRepository(CamelContext context, String id) {
         HealthCheckRepository answer = null;
 
-        HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
+        HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
         if (hcr != null && hcr.isEnabled()) {
             Optional<HealthCheckRepository> repo = hcr.getRepository(id);
             if (repo.isEmpty()) {
