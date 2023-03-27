@@ -22,7 +22,7 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TaskTestSupport {
-    protected static final int maxIterations = 5;
+    protected static final int MAX_ITERATIONS = 5;
     protected volatile int taskCount;
 
     protected boolean booleanSupplier() {

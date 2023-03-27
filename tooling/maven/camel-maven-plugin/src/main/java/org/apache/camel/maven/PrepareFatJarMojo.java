@@ -29,7 +29,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -104,7 +103,7 @@ public class PrepareFatJarMojo extends AbstractMojo {
     private void writeFile(File file, String data) throws IOException {
         Path path = file.toPath();
         Files.createDirectories(path.getParent());
-        Files.write(path, data.getBytes(StandardCharsets.UTF_8), StandardOpenOption.WRITE, StandardOpenOption.CREATE,
+        Files.writeString(path, data, StandardOpenOption.WRITE, StandardOpenOption.CREATE,
                 StandardOpenOption.TRUNCATE_EXISTING);
     }
 

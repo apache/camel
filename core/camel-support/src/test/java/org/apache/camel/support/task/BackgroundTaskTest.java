@@ -58,7 +58,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::booleanSupplier);
-        assertTrue(taskCount <= maxIterations);
+        assertTrue(taskCount <= MAX_ITERATIONS);
         assertFalse(completed, "The task did not complete, the return should be false");
 
         Duration duration = task.elapsed();
@@ -88,7 +88,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::booleanSupplier);
-        assertTrue((maxIterations - 1) <= taskCount);
+        assertTrue((MAX_ITERATIONS - 1) <= taskCount);
         assertFalse(completed, "The task did not complete, the return should be false");
 
         Duration duration = task.elapsed();
@@ -118,7 +118,7 @@ public class BackgroundTaskTest extends TaskTestSupport {
                 .build();
 
         boolean completed = task.run(this::taskPredicate, new Object());
-        assertTrue(taskCount <= maxIterations);
+        assertTrue(taskCount <= MAX_ITERATIONS);
         assertFalse(completed, "The task did not complete, the return should be false");
 
         Duration duration = task.elapsed();

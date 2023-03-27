@@ -48,11 +48,10 @@ import org.apache.camel.util.ObjectHelper;
  * The default implementation of the {@link Debugger}.
  */
 public class DefaultDebugger extends ServiceSupport implements Debugger, CamelContextAware {
-
+    private static final int MAX_CONCURRENT_SINGLE_STEPS = 1;
     private final EventNotifier debugEventNotifier = new DebugEventNotifier();
     private final List<BreakpointConditions> breakpoints = new CopyOnWriteArrayList<>();
-    private static final int maxConcurrentSingleSteps = 1;
-    private final Map<String, Breakpoint> singleSteps = new HashMap<>(maxConcurrentSingleSteps);
+    private final Map<String, Breakpoint> singleSteps = new HashMap<>(MAX_CONCURRENT_SINGLE_STEPS);
     private CamelContext camelContext;
 
     /**
@@ -195,7 +194,7 @@ public class DefaultDebugger extends ServiceSupport implements Debugger, CamelCo
     @Override
     public boolean startSingleStepExchange(String exchangeId, Breakpoint breakpoint) {
         // can we accept single stepping the given exchange?
-        if (singleSteps.size() >= maxConcurrentSingleSteps) {
+        if (singleSteps.size() >= MAX_CONCURRENT_SINGLE_STEPS) {
             return false;
         }
 
