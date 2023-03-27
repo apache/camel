@@ -23,7 +23,12 @@ import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class ZooKeeperContainer extends GenericContainer {
-    public static final String CONTAINER_IMAGE = "zookeeper:3.5";
+    if (arch == ppc64le) {
+        public static final String CONTAINER_IMAGE = "icr.io/ppc64le-oss/zookeeper-ppc64le:v3.8.0-bv"
+    } else {
+        public static final String CONTAINER_IMAGE = "zookeeper:3.5";
+    }
+    
     public static final String CONTAINER_NAME = "zookeeper";
     public static final int CLIENT_PORT = 2181;
 
