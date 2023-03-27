@@ -17,6 +17,7 @@
 package org.apache.camel.component.graphql;
 
 import java.io.IOException;
+import java.net.URI;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.BindToRegistry;
@@ -31,6 +32,8 @@ import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GraphqlComponentTest extends CamelTestSupport {
 
@@ -111,6 +114,9 @@ public class GraphqlComponentTest extends CamelTestSupport {
                         .setHeader("myQuery", constant("{books{id name}}"))
                         .to("graphql://http://localhost:" + server.getPort()
                             + "/graphql?queryHeader=myQuery")
+                        .to("mock:result");
+                from("direct:start8")
+                        .to("graphql://http://localhost:" + server.getPort() + "/graphql?apikey=123456&query={books{id name}}")
                         .to("mock:result");
             }
         };
@@ -198,5 +204,22 @@ public class GraphqlComponentTest extends CamelTestSupport {
         template.sendBody("direct:start1", variables);
 
         result.assertIsSatisfied();
+    }
+
+    @Test
+    public void checkApiKey() throws Exception {
+
+        GraphqlEndpoint graphqlEndpoint = (GraphqlEndpoint) template.getCamelContext().getEndpoint(
+                "graphql://http://localhost:" + server.getPort() + "/graphql?apikey=123456&query={books{id name}}");
+        URI httpUri = graphqlEndpoint.getHttpUri();
+        assertEquals("apikey=123456", httpUri.getQuery());
+
+        result.expectedMessageCount(1);
+        result.expectedBodiesReceived(booksQueryResult);
+
+        template.sendBody("direct:start8", "");
+
+        result.assertIsSatisfied();
+
     }
 }
