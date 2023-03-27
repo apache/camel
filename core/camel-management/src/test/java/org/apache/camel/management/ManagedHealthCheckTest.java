@@ -50,7 +50,7 @@ public class ManagedHealthCheckTest extends ManagementTestSupport {
         registry.setCamelContext(context);
         Object hc = registry.resolveById("context");
         registry.register(hc);
-        context.setExtension(HealthCheckRegistry.class, registry);
+        context.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
 
         return context;
     }

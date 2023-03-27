@@ -2188,7 +2188,7 @@ public abstract class AbstractCamelContext extends BaseService
             if (hcr != null) {
                 // install health-check registry if it was discovered from classpath (camel-health)
                 hcr.setCamelContext(this);
-                setExtension(HealthCheckRegistry.class, hcr);
+                getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, hcr);
             }
             startupStepRecorder.endStep(step4);
         }
@@ -2201,7 +2201,7 @@ public abstract class AbstractCamelContext extends BaseService
             if (dcr != null) {
                 // install dev-console registry if it was discovered from classpath (camel-console)
                 dcr.setCamelContext(this);
-                setExtension(DevConsoleRegistry.class, dcr);
+                getCamelContextExtension().addContextPlugin(DevConsoleRegistry.class, dcr);
             }
             startupStepRecorder.endStep(step5);
         }
