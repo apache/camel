@@ -83,11 +83,6 @@ public class OnExceptionReifier extends ProcessorReifier<OnExceptionDefinition> 
             when = createPredicate(definition.getOnWhen().getExpression());
         }
 
-        Predicate handle = null;
-        if (definition.getHandled() != null) {
-            handle = createPredicate(definition.getHandled());
-        }
-
         return new CatchProcessor(classes, childProcessor, when);
     }
 
