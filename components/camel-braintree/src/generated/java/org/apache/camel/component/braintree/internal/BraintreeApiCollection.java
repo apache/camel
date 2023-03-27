@@ -5,7 +5,6 @@
 package org.apache.camel.component.braintree.internal;
 
 import java.util.*;
-import java.util.HashMap;
 
 import org.apache.camel.component.braintree.BraintreeConfiguration;
 import org.apache.camel.component.braintree.AddOnGatewayEndpointConfiguration;

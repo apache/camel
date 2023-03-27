@@ -5,7 +5,6 @@
 package org.apache.camel.component.fhir.internal;
 
 import java.util.*;
-import java.util.HashMap;
 
 import org.apache.camel.component.fhir.FhirConfiguration;
 import org.apache.camel.component.fhir.FhirCapabilitiesEndpointConfiguration;

@@ -18,7 +18,6 @@ package org.apache.camel.component.arangodb;
 
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 

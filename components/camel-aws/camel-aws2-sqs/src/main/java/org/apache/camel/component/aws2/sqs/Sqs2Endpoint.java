@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Category;

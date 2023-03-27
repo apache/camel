@@ -5,7 +5,6 @@
 package org.apache.camel.component.as2.internal;
 
 import java.util.*;
-import java.util.HashMap;
 
 import org.apache.camel.component.as2.AS2Configuration;
 import org.apache.camel.component.as2.AS2ClientManagerEndpointConfiguration;

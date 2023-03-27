@@ -5,7 +5,6 @@
 package org.apache.camel.component.olingo2.internal;
 
 import java.util.*;
-import java.util.HashMap;
 
 import org.apache.camel.component.olingo2.Olingo2Configuration;
 import org.apache.camel.component.olingo2.Olingo2AppEndpointConfiguration;

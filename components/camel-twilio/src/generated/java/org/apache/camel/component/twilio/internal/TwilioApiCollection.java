@@ -5,7 +5,6 @@
 package org.apache.camel.component.twilio.internal;
 
 import java.util.*;
-import java.util.HashMap;
 
 import org.apache.camel.component.twilio.TwilioConfiguration;
 import org.apache.camel.component.twilio.AccountEndpointConfiguration;

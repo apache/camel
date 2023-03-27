@@ -5,7 +5,6 @@
 package org.apache.camel.component.box.internal;
 
 import java.util.*;
-import java.util.HashMap;
 
 import org.apache.camel.component.box.BoxConfiguration;
 import org.apache.camel.component.box.BoxCollaborationsManagerEndpointConfiguration;

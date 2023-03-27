@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.ironmq;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.Gson;

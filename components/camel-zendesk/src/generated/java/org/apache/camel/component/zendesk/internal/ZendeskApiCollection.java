@@ -5,7 +5,6 @@
 package org.apache.camel.component.zendesk.internal;
 
 import java.util.*;
-import java.util.HashMap;
 
 import org.apache.camel.component.zendesk.ZendeskConfiguration;
 import org.apache.camel.component.zendesk.ZendeskEndpointConfiguration;

@@ -32,7 +32,6 @@ import java.util.Optional;
 import org.apache.camel.model.*;
 import org.apache.camel.model.cloud.*;
 import org.apache.camel.model.config.BatchResequencerConfig;
-import org.apache.camel.model.config.ResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.dataformat.*;
 import org.apache.camel.model.errorhandler.*;
