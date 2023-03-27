@@ -2705,7 +2705,7 @@
     "api": false,
     "consumerOnly": false,
     "producerOnly": true,
-    "lenientProperties": false
+    "lenientProperties": true
   },
   "GrpcComponentBuilderFactory": {
     "kind": "component",
