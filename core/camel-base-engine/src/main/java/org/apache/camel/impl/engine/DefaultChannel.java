@@ -275,7 +275,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             }
         }
         if (tracer == null) {
-            tracer = camelContext.getExtension(BacklogTracer.class);
+            tracer = camelContext.getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         }
         if (tracer == null) {
             tracer = BacklogTracer.createTracer(camelContext);

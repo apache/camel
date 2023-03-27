@@ -255,26 +255,26 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                 }
                 reloader.onReload("Camel CLI");
             } else if ("reset-stats".equals(action)) {
-                ManagedCamelContext mcc = camelContext.getExtension(ManagedCamelContext.class);
+                ManagedCamelContext mcc = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
                 if (mcc != null) {
                     mcc.getManagedCamelContext().reset(true);
                 }
             } else if ("thread-dump".equals(action)) {
-                DevConsole dc = camelContext.getExtension(DevConsoleRegistry.class).resolveById("thread");
+                DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class).resolveById("thread");
                 if (dc != null) {
                     JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stackTrace", "true"));
                     LOG.trace("Updating output file: {}", outputFile);
                     IOHelper.writeText(json.toJson(), outputFile);
                 }
             } else if ("top-processors".equals(action)) {
-                DevConsole dc = camelContext.getExtension(DevConsoleRegistry.class).resolveById("top");
+                DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class).resolveById("top");
                 if (dc != null) {
                     JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of(Exchange.HTTP_PATH, "/*"));
                     LOG.trace("Updating output file: {}", outputFile);
                     IOHelper.writeText(json.toJson(), outputFile);
                 }
             } else if ("source".equals(action)) {
-                DevConsole dc = camelContext.getExtension(DevConsoleRegistry.class).resolveById("source");
+                DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class).resolveById("source");
                 if (dc != null) {
                     String filter = root.getString("filter");
                     JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("filter", filter));
@@ -282,7 +282,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     IOHelper.writeText(json.toJson(), outputFile);
                 }
             } else if ("route-controller".equals(action)) {
-                DevConsole dc = camelContext.getExtension(DevConsoleRegistry.class).resolveById("route-controller");
+                DevConsole dc = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class).resolveById("route-controller");
                 if (dc != null) {
                     String stacktrace = root.getString("stacktrace");
                     JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stacktrace", stacktrace));
@@ -344,7 +344,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
             root.put("runtime", rc);
 
-            DevConsoleRegistry dcr = camelContext.getExtension(DevConsoleRegistry.class);
+            DevConsoleRegistry dcr = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
             if (dcr != null) {
                 // collect details via console
                 DevConsole dc = dcr.resolveById("context");
@@ -421,7 +421,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                         root.put("fault-tolerance", json);
                     }
                 }
-                DevConsole dc12 = camelContext.getExtension(DevConsoleRegistry.class).resolveById("trace");
+                DevConsole dc12 = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class).resolveById("trace");
                 if (dc12 != null) {
                     JsonObject json = (JsonObject) dc12.call(DevConsole.MediaType.JSON);
                     JsonArray arr = json.getCollection("traces");

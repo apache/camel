@@ -65,7 +65,7 @@ public class ManagedStepTest extends ManagementTestSupport {
         String state = (String) mbeanServer.getAttribute(on, "State");
         assertEquals(ServiceStatus.Started.name(), state);
 
-        ManagedCamelContext mcc = context.getExtension(ManagedCamelContext.class);
+        ManagedCamelContext mcc = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         ManagedStepMBean step = mcc.getManagedStep("foo");
 
         assertEquals("foo", step.getProcessorId());

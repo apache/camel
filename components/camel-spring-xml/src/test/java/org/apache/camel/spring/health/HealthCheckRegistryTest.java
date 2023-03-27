@@ -36,7 +36,7 @@ public class HealthCheckRegistryTest {
     public void testHealthCheckRoutes() throws Exception {
         CamelContext context = createContext("org/apache/camel/spring/health/HealthCheckRegistryTest.xml");
 
-        HealthCheckRegistry hc = context.getExtension(HealthCheckRegistry.class);
+        HealthCheckRegistry hc = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
         assertNotNull(hc);
 
         List<HealthCheck> checks = hc.stream().collect(Collectors.toList());

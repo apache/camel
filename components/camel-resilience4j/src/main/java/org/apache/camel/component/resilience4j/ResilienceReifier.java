@@ -183,7 +183,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
         // Extract properties from default configuration, the one configured on
         // camel context takes the precedence over those in the registry
         loadProperties(properties, Suppliers.firstNotNull(
-                () -> camelContext.getExtension(Model.class).getResilience4jConfiguration(null),
+                () -> camelContext.getCamelContextExtension().getContextPlugin(Model.class).getResilience4jConfiguration(null),
                 () -> lookupByNameAndType(ResilienceConstants.DEFAULT_RESILIENCE_CONFIGURATION_ID,
                         Resilience4jConfigurationDefinition.class)),
                 configurer);
@@ -194,7 +194,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
             final String ref = parseString(definition.getConfiguration());
 
             loadProperties(properties, Suppliers.firstNotNull(
-                    () -> camelContext.getExtension(Model.class).getResilience4jConfiguration(ref),
+                    () -> camelContext.getCamelContextExtension().getContextPlugin(Model.class).getResilience4jConfiguration(ref),
                     () -> mandatoryLookup(ref, Resilience4jConfigurationDefinition.class)),
                     configurer);
         }

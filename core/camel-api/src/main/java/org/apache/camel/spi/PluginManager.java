@@ -17,6 +17,10 @@
 
 package org.apache.camel.spi;
 
+/**
+ * A manager for internal plugins. This is part of the internal Camel API and not meant for public usage.
+ */
+
 public interface PluginManager {
     /**
      * Gets a plugin of the given type.

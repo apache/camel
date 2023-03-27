@@ -90,7 +90,7 @@ public class DefaultDevConsoleResolver implements DevConsoleResolver, CamelConte
 
     @Override
     public Optional<DevConsole> lookupDevConsole(String id) {
-        DevConsoleRegistry dcr = camelContext.getExtension(DevConsoleRegistry.class);
+        DevConsoleRegistry dcr = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
         if (dcr != null) {
             return dcr.getConsole(id);
         } else {

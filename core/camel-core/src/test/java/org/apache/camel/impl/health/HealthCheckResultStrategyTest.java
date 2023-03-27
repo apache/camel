@@ -62,7 +62,7 @@ public class HealthCheckResultStrategyTest extends ContextTestSupport {
                 = context.getCamelContextExtension().getHealthCheckResolver().resolveHealthCheck("myfoo");
         Assertions.assertNotNull(hc);
 
-        HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
+        HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
         hcr.register(hc);
 
         Collection<HealthCheck.Result> col = HealthCheckHelper.invoke(context);

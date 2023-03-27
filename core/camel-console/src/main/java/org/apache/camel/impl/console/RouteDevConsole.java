@@ -125,7 +125,7 @@ public class RouteDevConsole extends AbstractDevConsole {
     }
 
     private void includeProcessorsText(ManagedRouteMBean mrb, StringBuilder sb) {
-        ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
+        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 
         Collection<String> ids;
         try {
@@ -251,7 +251,7 @@ public class RouteDevConsole extends AbstractDevConsole {
     }
 
     private void includeProcessorsJson(ManagedRouteMBean mrb, JsonArray arr) {
-        ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
+        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 
         Collection<String> ids;
         try {
@@ -329,7 +329,7 @@ public class RouteDevConsole extends AbstractDevConsole {
         String limit = (String) options.get(LIMIT);
         final int max = limit == null ? Integer.MAX_VALUE : Integer.parseInt(limit);
 
-        ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
+        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
         if (mcc != null) {
             List<Route> routes = getCamelContext().getRoutes();
             routes.sort((o1, o2) -> o1.getRouteId().compareToIgnoreCase(o2.getRouteId()));
@@ -387,7 +387,7 @@ public class RouteDevConsole extends AbstractDevConsole {
     }
 
     private String calculateRouteCoverage(ManagedRouteMBean mrb, boolean percent) {
-        ManagedCamelContext mcc = getCamelContext().getExtension(ManagedCamelContext.class);
+        ManagedCamelContext mcc = getCamelContext().getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
 
         Collection<String> ids;
         try {

@@ -45,7 +45,7 @@ public final class RouteCoverageDumper {
             String name = testClassName + "-" + testName + ".xml";
 
             ManagedCamelContext managedCamelContext
-                    = context.getExtension(ManagedCamelContext.class);
+                    = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
             if (managedCamelContext == null) {
                 LOG.warn(
                         "Cannot dump route coverage to file as JMX is not enabled."
