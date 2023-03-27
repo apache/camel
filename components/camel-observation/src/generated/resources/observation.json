@@ -1,0 +1,15 @@
+{
+  "other": {
+    "kind": "other",
+    "name": "observation",
+    "title": "Micrometer Observability",
+    "description": "Observability using Micrometer Observation",
+    "deprecated": false,
+    "firstVersion": "3.21.0",
+    "label": "monitoring,microservice",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-observation",
+    "version": "4.0.0-SNAPSHOT"
+  }
+}

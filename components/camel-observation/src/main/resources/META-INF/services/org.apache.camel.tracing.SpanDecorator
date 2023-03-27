@@ -1,0 +1,52 @@
+#
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+org.apache.camel.tracing.decorators.AhcSpanDecorator
+org.apache.camel.tracing.decorators.AmqpSpanDecorator
+org.apache.camel.tracing.decorators.AzureServiceBusSpanDecorator
+org.apache.camel.tracing.decorators.CometdSpanDecorator
+org.apache.camel.tracing.decorators.CometdsSpanDecorator
+org.apache.camel.tracing.decorators.CqlSpanDecorator
+org.apache.camel.tracing.decorators.DirectSpanDecorator
+org.apache.camel.tracing.decorators.DisruptorSpanDecorator
+org.apache.camel.tracing.decorators.DisruptorvmSpanDecorator
+org.apache.camel.tracing.decorators.ElasticsearchSpanDecorator
+org.apache.camel.tracing.decorators.HttpSpanDecorator
+org.apache.camel.tracing.decorators.HttpsSpanDecorator
+org.apache.camel.tracing.decorators.IronmqSpanDecorator
+org.apache.camel.tracing.decorators.JdbcSpanDecorator
+org.apache.camel.tracing.decorators.JettySpanDecorator
+org.apache.camel.tracing.decorators.JmsSpanDecorator
+org.apache.camel.tracing.decorators.KafkaSpanDecorator
+org.apache.camel.tracing.decorators.LogSpanDecorator
+org.apache.camel.tracing.decorators.MongoDBSpanDecorator
+org.apache.camel.tracing.decorators.NettyHttpSpanDecorator
+org.apache.camel.tracing.decorators.NatsSpanDecorator
+org.apache.camel.tracing.decorators.NsqSpanDecorator
+org.apache.camel.tracing.decorators.PahoSpanDecorator
+org.apache.camel.tracing.decorators.PlatformHttpSpanDecorator
+org.apache.camel.tracing.decorators.RestSpanDecorator
+org.apache.camel.tracing.decorators.SedaSpanDecorator
+org.apache.camel.tracing.decorators.ServletSpanDecorator
+org.apache.camel.tracing.decorators.SjmsSpanDecorator
+org.apache.camel.tracing.decorators.Sjms2SpanDecorator
+org.apache.camel.tracing.decorators.SqlSpanDecorator
+org.apache.camel.tracing.decorators.StompSpanDecorator
+org.apache.camel.tracing.decorators.TimerSpanDecorator
+org.apache.camel.tracing.decorators.UndertowSpanDecorator
+org.apache.camel.tracing.decorators.VertxHttpSpanDecorator
+

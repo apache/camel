@@ -360,6 +360,7 @@
         <maven-war-plugin-version>3.3.1</maven-war-plugin-version>
         <metrics-version>4.2.17</metrics-version>
         <micrometer-version>1.10.5</micrometer-version>
+        <micrometer-tracing-version>1.0.3</micrometer-tracing-version>
         <microprofile-config-version>3.0.2</microprofile-config-version>
         <microprofile-fault-tolerance-version>4.0.2</microprofile-fault-tolerance-version>
         <milo-version>0.6.8</milo-version>
@@ -1837,6 +1838,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-oaipmh</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-observation</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
