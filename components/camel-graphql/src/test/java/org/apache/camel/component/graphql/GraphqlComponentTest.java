@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.graphql;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.io.IOException;
+import java.net.URI;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.net.URI;
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,6 +32,8 @@ import org.apache.camel.util.json.JsonObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GraphqlComponentTest extends CamelTestSupport {
 
@@ -209,7 +209,8 @@ public class GraphqlComponentTest extends CamelTestSupport {
     @Test
     public void checkApiKey() throws Exception {
 
-        GraphqlEndpoint graphqlEndpoint = (GraphqlEndpoint) template.getCamelContext().getEndpoint("graphql://http://localhost:" + server.getPort() + "/graphql?apikey=123456&query={books{id name}}");
+        GraphqlEndpoint graphqlEndpoint = (GraphqlEndpoint) template.getCamelContext().getEndpoint(
+                "graphql://http://localhost:" + server.getPort() + "/graphql?apikey=123456&query={books{id name}}");
         URI httpUri = graphqlEndpoint.getHttpUri();
         assertEquals("apikey=123456", httpUri.getQuery());
 
