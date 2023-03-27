@@ -18,8 +18,6 @@ package org.apache.camel.component.telegram.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -151,8 +149,8 @@ public class ReplyKeyboardMarkup implements Serializable, ReplyMarkup {
 
         public static class KeyboardBuilder {
 
-            private Builder builder;
-            private List<List<InlineKeyboardButton>> keyboard;
+            private final Builder builder;
+            private final List<List<InlineKeyboardButton>> keyboard;
 
             public KeyboardBuilder(Builder builder) {
 
@@ -170,7 +168,7 @@ public class ReplyKeyboardMarkup implements Serializable, ReplyMarkup {
 
                 for (InlineKeyboardButton inlineKeyboardButton : inlineKeyboardButtons) {
 
-                    keyboard.add(Arrays.asList(inlineKeyboardButton));
+                    keyboard.add(List.of(inlineKeyboardButton));
                 }
 
                 return this;

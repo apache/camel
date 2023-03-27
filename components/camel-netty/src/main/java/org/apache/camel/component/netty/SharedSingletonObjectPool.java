@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.netty;
 
-import java.util.NoSuchElementException;
-
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.PooledObjectFactory;
