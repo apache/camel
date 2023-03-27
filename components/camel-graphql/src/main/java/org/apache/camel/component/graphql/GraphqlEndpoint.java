@@ -50,7 +50,7 @@ import org.apache.http.message.BasicHeader;
  * Send GraphQL queries and mutations to external systems.
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "graphql", title = "GraphQL", syntax = "graphql:httpUri",
-             category = { Category.API }, producerOnly = true)
+             category = { Category.API }, producerOnly = true, lenientProperties = true)
 public class GraphqlEndpoint extends DefaultEndpoint {
 
     @UriPath
@@ -276,5 +276,10 @@ public class GraphqlEndpoint extends DefaultEndpoint {
 
     public void setHttpClient(CloseableHttpClient httpClient) {
         this.httpClient = httpClient;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return true;
     }
 }
