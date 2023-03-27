@@ -78,7 +78,7 @@ public class GraphqlEndpointUriFactory extends org.apache.camel.support.componen
 
     @Override
     public boolean isLenientProperties() {
-        return false;
+        return true;
     }
 }
 
