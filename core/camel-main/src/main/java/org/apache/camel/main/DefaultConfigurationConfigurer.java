@@ -373,7 +373,7 @@ public final class DefaultConfigurationConfigurer {
         }
         BacklogTracer bt = getSingleBeanOfType(registry, BacklogTracer.class);
         if (bt != null) {
-            ecc.setExtension(BacklogTracer.class, bt);
+            ecc.getCamelContextExtension().addContextPlugin(BacklogTracer.class, bt);
         }
         InflightRepository ir = getSingleBeanOfType(registry, InflightRepository.class);
         if (ir != null) {
@@ -530,7 +530,7 @@ public final class DefaultConfigurationConfigurer {
         if (healthCheckRegistry != null) {
             healthCheckRegistry.setCamelContext(camelContext);
             LOG.debug("Using HealthCheckRegistry: {}", healthCheckRegistry);
-            camelContext.setExtension(HealthCheckRegistry.class, healthCheckRegistry);
+            camelContext.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, healthCheckRegistry);
         } else {
             // okay attempt to inject this camel context into existing health check (if any)
             healthCheckRegistry = HealthCheckRegistry.get(camelContext);
@@ -552,7 +552,7 @@ public final class DefaultConfigurationConfigurer {
         if (devConsoleRegistry != null) {
             devConsoleRegistry.setCamelContext(camelContext);
             LOG.debug("Using DevConsoleRegistry: {}", devConsoleRegistry);
-            camelContext.setExtension(DevConsoleRegistry.class, devConsoleRegistry);
+            camelContext.getCamelContextExtension().addContextPlugin(DevConsoleRegistry.class, devConsoleRegistry);
         } else {
             // okay attempt to inject this camel context into existing dev console (if any)
             devConsoleRegistry = DevConsoleRegistry.get(camelContext);

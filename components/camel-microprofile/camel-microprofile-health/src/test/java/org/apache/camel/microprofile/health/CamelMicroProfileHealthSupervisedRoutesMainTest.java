@@ -44,7 +44,7 @@ public class CamelMicroProfileHealthSupervisedRoutesMainTest {
         CamelContext context = new DefaultCamelContext();
         CamelMicroProfileHealthCheckRegistry registry = new CamelMicroProfileHealthCheckRegistry(context);
         context.addComponent("my", new CamelMicroProfileHealthTestHelper.MyComponent());
-        context.setExtension(HealthCheckRegistry.class, registry);
+        context.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
         context.getRouteController().supervising();
         context.addRoutes(new RouteBuilder() {
             @Override

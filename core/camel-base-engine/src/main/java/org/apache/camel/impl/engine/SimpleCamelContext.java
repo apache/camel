@@ -578,7 +578,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
             tracer = new DefaultTracer();
             tracer.setEnabled(isTracing());
             tracer.setStandby(isTracingStandby());
-            setExtension(Tracer.class, tracer);
+            getCamelContextExtension().addContextPlugin(Tracer.class, tracer);
         }
         return tracer;
     }

@@ -65,7 +65,7 @@ public class Kinesis2ConsumerHealthCustomClientTest extends CamelTestSupport {
         registry.register(hc);
         hc = registry.resolveById("consumers");
         registry.register(hc);
-        context.setExtension(HealthCheckRegistry.class, registry);
+        context.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
 
         return context;
     }
