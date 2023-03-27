@@ -86,12 +86,14 @@ public class Plc4XConsumer extends DefaultConsumer {
 
     private void startUnTriggered() {
         PlcReadRequest.Builder builder = plcConnection.readRequestBuilder();
-        for (Map.Entry<String, Object> tag : tags.entrySet()) {
-            try {
-                builder.addItem(tag.getKey(), (String) tag.getValue());
-            } catch (PlcIncompatibleDatatypeException e) {
-                LOGGER.error("For consumer, please use Map<String,String>, currently using {}",
-                        tags.getClass().getSimpleName());
+        if (tags != null) {
+            for (Map.Entry<String, Object> tag : tags.entrySet()) {
+                try {
+                    builder.addItem(tag.getKey(), (String) tag.getValue());
+                } catch (PlcIncompatibleDatatypeException e) {
+                    LOGGER.error("For consumer, please use Map<String,String>, currently using {}",
+                            tags.getClass().getSimpleName());
+                }
             }
         }
         PlcReadRequest request = builder.build();
@@ -129,17 +131,18 @@ public class Plc4XConsumer extends DefaultConsumer {
 
     private Map<String, String> validateTags() {
         Map<String, String> map = new HashMap<>();
-        for (Map.Entry<String, Object> tag : tags.entrySet()) {
-            if (tag.getValue() instanceof String) {
-                map.put(tag.getKey(), (String) tag.getValue());
+        if (tags != null) {
+            for (Map.Entry<String, Object> tag : tags.entrySet()) {
+                if (tag.getValue() instanceof String) {
+                    map.put(tag.getKey(), (String) tag.getValue());
+                }
+            }
+            if (map.size() != tags.size()) {
+                LOGGER.error("At least one entry does not match the format : Map.Entry<String,String> ");
+                return null;
             }
         }
-        if (map.size() != tags.size()) {
-            LOGGER.error("At least one entry does not match the format : Map.Entry<String,String> ");
-            return null;
-        } else {
-            return map;
-        }
+        return map;
     }
 
     private ScraperConfigurationTriggeredImpl getScraperConfig(Map<String, String> tagList) {
