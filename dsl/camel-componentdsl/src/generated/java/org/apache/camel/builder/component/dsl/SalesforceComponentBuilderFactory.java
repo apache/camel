@@ -995,6 +995,71 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * Max number of events to receive in a batch from the Pub/Sub API.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: consumer
+         * 
+         * @param pubSubBatchSize the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder pubSubBatchSize(int pubSubBatchSize) {
+            doSetProperty("pubSubBatchSize", pubSubBatchSize);
+            return this;
+        }
+        /**
+         * How to deserialize events consume from the Pub/Sub API. AVRO will try
+         * a SpecificRecord subclass if found, otherwise GenericRecord.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.salesforce.PubSubDeserializeType&lt;/code&gt; type.
+         * 
+         * Default: AVRO
+         * Group: consumer
+         * 
+         * @param pubSubDeserializeType the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder pubSubDeserializeType(
+                org.apache.camel.component.salesforce.PubSubDeserializeType pubSubDeserializeType) {
+            doSetProperty("pubSubDeserializeType", pubSubDeserializeType);
+            return this;
+        }
+        /**
+         * Fully qualified class name to deserialize Pub/Sub API event to.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param pubSubPojoClass the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder pubSubPojoClass(
+                java.lang.String pubSubPojoClass) {
+            doSetProperty("pubSubPojoClass", pubSubPojoClass);
+            return this;
+        }
+        /**
+         * Replay preset for Pub/Sub API.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.salesforce.eventbus.protobuf.ReplayPreset&lt;/code&gt; type.
+         * 
+         * Default: LATEST
+         * Group: consumer
+         * 
+         * @param replayPreset the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder replayPreset(
+                com.salesforce.eventbus.protobuf.ReplayPreset replayPreset) {
+            doSetProperty("replayPreset", replayPreset);
+            return this;
+        }
+        /**
          * Composite API option to indicate to rollback all records if any are
          * not successful.
          * 
@@ -1495,6 +1560,37 @@ public interface SalesforceComponentBuilderFactory {
             return this;
         }
         /**
+         * Pub/Sub host.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: api.pubsub.salesforce.com
+         * Group: security
+         * 
+         * @param pubSubHost the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder pubSubHost(
+                java.lang.String pubSubHost) {
+            doSetProperty("pubSubHost", pubSubHost);
+            return this;
+        }
+        /**
+         * Pub/Sub port.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 7443
+         * Group: security
+         * 
+         * @param pubSubPort the value to set
+         * @return the dsl builder
+         */
+        default SalesforceComponentBuilder pubSubPort(int pubSubPort) {
+            doSetProperty("pubSubPort", pubSubPort);
+            return this;
+        }
+        /**
          * Refresh token already obtained in the refresh token OAuth flow. One
          * needs to setup a web application and configure a callback URL to
          * receive the refresh token, or configure using the builtin callback at
@@ -1647,6 +1743,10 @@ public interface SalesforceComponentBuilderFactory {
             case "workerPoolMaxSize": ((SalesforceComponent) component).setWorkerPoolMaxSize((int) value); return true;
             case "workerPoolSize": ((SalesforceComponent) component).setWorkerPoolSize((int) value); return true;
             case "bridgeErrorHandler": ((SalesforceComponent) component).setBridgeErrorHandler((boolean) value); return true;
+            case "pubSubBatchSize": getOrCreateConfiguration((SalesforceComponent) component).setPubSubBatchSize((int) value); return true;
+            case "pubSubDeserializeType": getOrCreateConfiguration((SalesforceComponent) component).setPubSubDeserializeType((org.apache.camel.component.salesforce.PubSubDeserializeType) value); return true;
+            case "pubSubPojoClass": getOrCreateConfiguration((SalesforceComponent) component).setPubSubPojoClass((java.lang.String) value); return true;
+            case "replayPreset": getOrCreateConfiguration((SalesforceComponent) component).setReplayPreset((com.salesforce.eventbus.protobuf.ReplayPreset) value); return true;
             case "allOrNone": getOrCreateConfiguration((SalesforceComponent) component).setAllOrNone((boolean) value); return true;
             case "apexUrl": getOrCreateConfiguration((SalesforceComponent) component).setApexUrl((java.lang.String) value); return true;
             case "compositeMethod": getOrCreateConfiguration((SalesforceComponent) component).setCompositeMethod((java.lang.String) value); return true;
@@ -1677,6 +1777,8 @@ public interface SalesforceComponentBuilderFactory {
             case "loginConfig": ((SalesforceComponent) component).setLoginConfig((org.apache.camel.component.salesforce.SalesforceLoginConfig) value); return true;
             case "loginUrl": ((SalesforceComponent) component).setLoginUrl((java.lang.String) value); return true;
             case "password": ((SalesforceComponent) component).setPassword((java.lang.String) value); return true;
+            case "pubSubHost": ((SalesforceComponent) component).setPubSubHost((java.lang.String) value); return true;
+            case "pubSubPort": ((SalesforceComponent) component).setPubSubPort((int) value); return true;
             case "refreshToken": ((SalesforceComponent) component).setRefreshToken((java.lang.String) value); return true;
             case "sslContextParameters": ((SalesforceComponent) component).setSslContextParameters((org.apache.camel.support.jsse.SSLContextParameters) value); return true;
             case "useGlobalSslContextParameters": ((SalesforceComponent) component).setUseGlobalSslContextParameters((boolean) value); return true;
