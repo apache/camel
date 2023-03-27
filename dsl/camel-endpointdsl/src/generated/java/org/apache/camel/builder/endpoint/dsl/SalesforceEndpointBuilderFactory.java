@@ -1220,7 +1220,105 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * The replayId value to use when subscribing.
+         * Max number of events to receive in a batch from the Pub/Sub API.
+         * 
+         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: consumer
+         * 
+         * @param pubSubBatchSize the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder pubSubBatchSize(
+                int pubSubBatchSize) {
+            doSetProperty("pubSubBatchSize", pubSubBatchSize);
+            return this;
+        }
+        /**
+         * Max number of events to receive in a batch from the Pub/Sub API.
+         * 
+         * The option will be converted to a &lt;code&gt;int&lt;/code&gt; type.
+         * 
+         * Default: 100
+         * Group: consumer
+         * 
+         * @param pubSubBatchSize the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder pubSubBatchSize(
+                String pubSubBatchSize) {
+            doSetProperty("pubSubBatchSize", pubSubBatchSize);
+            return this;
+        }
+        /**
+         * How to deserialize events consume from the Pub/Sub API. AVRO will try
+         * a SpecificRecord subclass if found, otherwise GenericRecord.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.salesforce.PubSubDeserializeType&lt;/code&gt; type.
+         * 
+         * Default: AVRO
+         * Group: consumer
+         * 
+         * @param pubSubDeserializeType the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder pubSubDeserializeType(
+                org.apache.camel.component.salesforce.PubSubDeserializeType pubSubDeserializeType) {
+            doSetProperty("pubSubDeserializeType", pubSubDeserializeType);
+            return this;
+        }
+        /**
+         * How to deserialize events consume from the Pub/Sub API. AVRO will try
+         * a SpecificRecord subclass if found, otherwise GenericRecord.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.salesforce.PubSubDeserializeType&lt;/code&gt; type.
+         * 
+         * Default: AVRO
+         * Group: consumer
+         * 
+         * @param pubSubDeserializeType the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder pubSubDeserializeType(
+                String pubSubDeserializeType) {
+            doSetProperty("pubSubDeserializeType", pubSubDeserializeType);
+            return this;
+        }
+        /**
+         * Fully qualified class name to deserialize Pub/Sub API event to.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param pubSubPojoClass the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder pubSubPojoClass(
+                String pubSubPojoClass) {
+            doSetProperty("pubSubPojoClass", pubSubPojoClass);
+            return this;
+        }
+        /**
+         * The replayId value to use when subscribing to the Pub/Sub API.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param pubSubReplayId the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder pubSubReplayId(
+                String pubSubReplayId) {
+            doSetProperty("pubSubReplayId", pubSubReplayId);
+            return this;
+        }
+        /**
+         * The replayId value to use when subscribing to the Streaming API.
          * 
          * The option is a: &lt;code&gt;java.lang.Long&lt;/code&gt; type.
          * 
@@ -1234,7 +1332,7 @@ public interface SalesforceEndpointBuilderFactory {
             return this;
         }
         /**
-         * The replayId value to use when subscribing.
+         * The replayId value to use when subscribing to the Streaming API.
          * 
          * The option will be converted to a
          * &lt;code&gt;java.lang.Long&lt;/code&gt; type.
@@ -1246,6 +1344,40 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder replayId(String replayId) {
             doSetProperty("replayId", replayId);
+            return this;
+        }
+        /**
+         * Replay preset for Pub/Sub API.
+         * 
+         * The option is a:
+         * &lt;code&gt;com.salesforce.eventbus.protobuf.ReplayPreset&lt;/code&gt; type.
+         * 
+         * Default: LATEST
+         * Group: consumer
+         * 
+         * @param replayPreset the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder replayPreset(
+                com.salesforce.eventbus.protobuf.ReplayPreset replayPreset) {
+            doSetProperty("replayPreset", replayPreset);
+            return this;
+        }
+        /**
+         * Replay preset for Pub/Sub API.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;com.salesforce.eventbus.protobuf.ReplayPreset&lt;/code&gt; type.
+         * 
+         * Default: LATEST
+         * Group: consumer
+         * 
+         * @param replayPreset the value to set
+         * @return the dsl builder
+         */
+        default SalesforceEndpointConsumerBuilder replayPreset(
+                String replayPreset) {
+            doSetProperty("replayPreset", replayPreset);
             return this;
         }
     }
@@ -3955,7 +4087,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * Path parameter: operationName (required)
          * The operation to use
-         * There are 66 enums and the value can be one of: getVersions,
+         * There are 68 enums and the value can be one of: getVersions,
          * getResources, getGlobalObjects, getBasicInfo, getDescription,
          * getSObject, createSObject, updateSObject, deleteSObject,
          * getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField,
@@ -3973,7 +4105,7 @@ public interface SalesforceEndpointBuilderFactory {
          * bulk2GetSuccessfulResults, bulk2GetFailedResults,
          * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
          * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
-         * bulk2DeleteQueryJob, raw, subscribe
+         * bulk2DeleteQueryJob, raw, subscribe, pubSubSubscribe, pubSubPublish
          * 
          * Path parameter: topicName
          * The name of the topic/channel to use
@@ -3996,7 +4128,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * Path parameter: operationName (required)
          * The operation to use
-         * There are 66 enums and the value can be one of: getVersions,
+         * There are 68 enums and the value can be one of: getVersions,
          * getResources, getGlobalObjects, getBasicInfo, getDescription,
          * getSObject, createSObject, updateSObject, deleteSObject,
          * getSObjectWithId, upsertSObject, deleteSObjectWithId, getBlobField,
@@ -4014,7 +4146,7 @@ public interface SalesforceEndpointBuilderFactory {
          * bulk2GetSuccessfulResults, bulk2GetFailedResults,
          * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
          * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
-         * bulk2DeleteQueryJob, raw, subscribe
+         * bulk2DeleteQueryJob, raw, subscribe, pubSubSubscribe, pubSubPublish
          * 
          * Path parameter: topicName
          * The name of the topic/channel to use
@@ -4042,7 +4174,7 @@ public interface SalesforceEndpointBuilderFactory {
         private static final SalesforceHeaderNameBuilder INSTANCE = new SalesforceHeaderNameBuilder();
 
         /**
-         * The replay id.
+         * The Streaming API replayId.
          * 
          * The option is a: {@code Object} type.
          * 
@@ -4052,6 +4184,19 @@ public interface SalesforceEndpointBuilderFactory {
          */
         public String salesforceReplayId() {
             return "SalesforceReplayId";
+        }
+
+        /**
+         * The Pub/Sub API replayId.
+         * 
+         * The option is a: {@code Object} type.
+         * 
+         * Group: consumer
+         * 
+         * @return the name of the header {@code SalesforcePubSubReplayId}.
+         */
+        public String salesforcePubSubReplayId() {
+            return "SalesforcePubSubReplayId";
         }
 
         /**

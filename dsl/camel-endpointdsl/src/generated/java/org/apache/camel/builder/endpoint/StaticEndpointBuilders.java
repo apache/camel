@@ -11892,7 +11892,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operationName (required)
      * The operation to use
-     * There are 66 enums and the value can be one of: getVersions,
+     * There are 68 enums and the value can be one of: getVersions,
      * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
      * createSObject, updateSObject, deleteSObject, getSObjectWithId,
      * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
@@ -11909,7 +11909,7 @@ public class StaticEndpointBuilders {
      * bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults,
      * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
      * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
-     * bulk2DeleteQueryJob, raw, subscribe
+     * bulk2DeleteQueryJob, raw, subscribe, pubSubSubscribe, pubSubPublish
      * 
      * Path parameter: topicName
      * The name of the topic/channel to use
@@ -11933,7 +11933,7 @@ public class StaticEndpointBuilders {
      * 
      * Path parameter: operationName (required)
      * The operation to use
-     * There are 66 enums and the value can be one of: getVersions,
+     * There are 68 enums and the value can be one of: getVersions,
      * getResources, getGlobalObjects, getBasicInfo, getDescription, getSObject,
      * createSObject, updateSObject, deleteSObject, getSObjectWithId,
      * upsertSObject, deleteSObjectWithId, getBlobField, query, queryMore,
@@ -11950,7 +11950,7 @@ public class StaticEndpointBuilders {
      * bulk2DeleteJob, bulk2GetSuccessfulResults, bulk2GetFailedResults,
      * bulk2GetUnprocessedRecords, bulk2CreateQueryJob, bulk2GetQueryJob,
      * bulk2GetAllQueryJobs, bulk2GetQueryJobResults, bulk2AbortQueryJob,
-     * bulk2DeleteQueryJob, raw, subscribe
+     * bulk2DeleteQueryJob, raw, subscribe, pubSubSubscribe, pubSubPublish
      * 
      * Path parameter: topicName
      * The name of the topic/channel to use
