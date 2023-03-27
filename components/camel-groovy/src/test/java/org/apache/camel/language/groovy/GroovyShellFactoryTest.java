@@ -17,6 +17,8 @@
 package org.apache.camel.language.groovy;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import groovy.lang.GroovyShell;
 import org.apache.camel.CamelContext;
@@ -30,6 +32,7 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GroovyShellFactoryTest extends CamelTestSupport {
@@ -73,6 +76,31 @@ public class GroovyShellFactoryTest extends CamelTestSupport {
         final Exception e = GroovyLanguage.groovy("new Exception()").evaluate(exchange, Exception.class);
         assertTrue(Arrays.stream(e.getStackTrace())
                 .anyMatch(stackTraceElement -> "Test.groovy".equals(stackTraceElement.getFileName())));
+    }
+
+    @Test
+    public void testGroovyShellFactoryVariables() {
+        SimpleRegistry registry = new SimpleRegistry();
+        registry.bind("groovyShellFactory", new GroovyShellFactory() {
+            @Override
+            public GroovyShell createGroovyShell(Exchange exchange) {
+                return new GroovyShell();
+            }
+
+            @Override
+            public Map<String, Object> getVariables(Exchange exchange) {
+                Map<String, Object> map = new HashMap<>();
+                map.put("key", "testValue");
+                return map;
+            }
+        });
+
+        CamelContext camelContext = new DefaultCamelContext(registry);
+
+        final DefaultExchange exchange = new DefaultExchange(camelContext);
+
+        final String res = GroovyLanguage.groovy("key").evaluate(exchange, String.class);
+        assertEquals("testValue", res);
     }
 
     public static class Utils {

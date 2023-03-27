@@ -19,11 +19,17 @@ package org.apache.camel.language.groovy;
 import groovy.lang.GroovyShell;
 import org.apache.camel.Exchange;
 
+import java.util.Map;
+
 public interface GroovyShellFactory {
 
     GroovyShell createGroovyShell(Exchange exchange);
 
     default String getFileName(Exchange exchange) {
+        return null;
+    }
+
+    default Map<String, Object> getVariables(Exchange exchange) {
         return null;
     }
 
