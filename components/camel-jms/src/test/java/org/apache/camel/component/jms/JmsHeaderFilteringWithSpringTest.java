@@ -21,8 +21,10 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.infra.core.annotations.ContextProvider;
 import org.apache.camel.util.IOHelper;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.parallel.Isolated;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+@Isolated
 public class JmsHeaderFilteringWithSpringTest extends JmsHeaderFilteringTest {
 
     private ClassPathXmlApplicationContext applicationContext;
