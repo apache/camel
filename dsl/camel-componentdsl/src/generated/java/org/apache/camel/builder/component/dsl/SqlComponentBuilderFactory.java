@@ -128,6 +128,22 @@ public interface SqlComponentBuilderFactory {
             return this;
         }
         /**
+         * Factory for creating RowMapper.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.sql.RowMapperFactory&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param rowMapperFactory the value to set
+         * @return the dsl builder
+         */
+        default SqlComponentBuilder rowMapperFactory(
+                org.apache.camel.component.sql.RowMapperFactory rowMapperFactory) {
+            doSetProperty("rowMapperFactory", rowMapperFactory);
+            return this;
+        }
+        /**
          * Sets whether to use placeholder and replace all placeholder
          * characters with sign in the SQL queries. This option is default true.
          * 
@@ -164,6 +180,7 @@ public interface SqlComponentBuilderFactory {
             case "bridgeErrorHandler": ((SqlComponent) component).setBridgeErrorHandler((boolean) value); return true;
             case "lazyStartProducer": ((SqlComponent) component).setLazyStartProducer((boolean) value); return true;
             case "autowiredEnabled": ((SqlComponent) component).setAutowiredEnabled((boolean) value); return true;
+            case "rowMapperFactory": ((SqlComponent) component).setRowMapperFactory((org.apache.camel.component.sql.RowMapperFactory) value); return true;
             case "usePlaceholder": ((SqlComponent) component).setUsePlaceholder((boolean) value); return true;
             default: return false;
             }
