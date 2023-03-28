@@ -122,7 +122,6 @@ import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
-import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementStrategy;
@@ -4274,10 +4273,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
         camelContextExtension.addInterceptStrategy(interceptStrategy);
-    }
-
-    public void addLogListener(LogListener listener) {
-        camelContextExtension.addLogListener(listener);
     }
 
     public AsyncProcessorAwaitManager getAsyncProcessorAwaitManager() {
