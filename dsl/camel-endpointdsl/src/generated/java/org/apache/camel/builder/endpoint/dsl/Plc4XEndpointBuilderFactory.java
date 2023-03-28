@@ -17,6 +17,7 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import java.util.*;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.function.*;
 import java.util.stream.*;
@@ -77,40 +78,6 @@ public interface Plc4XEndpointBuilderFactory {
             return this;
         }
         /**
-         * The tags to read as Map containing the tag name associated to its
-         * query.
-         * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param tags the value to set
-         * @return the dsl builder
-         */
-        default Plc4XEndpointConsumerBuilder tags(
-                Map<java.lang.String, java.lang.Object> tags) {
-            doSetProperty("tags", tags);
-            return this;
-        }
-        /**
-         * The tags to read as Map containing the tag name associated to its
-         * query.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param tags the value to set
-         * @return the dsl builder
-         */
-        default Plc4XEndpointConsumerBuilder tags(String tags) {
-            doSetProperty("tags", tags);
-            return this;
-        }
-        /**
          * Interval on which the Trigger should be checked.
          * 
          * The option is a: &lt;code&gt;int&lt;/code&gt; type.
@@ -136,6 +103,43 @@ public interface Plc4XEndpointBuilderFactory {
          */
         default Plc4XEndpointConsumerBuilder period(String period) {
             doSetProperty("period", period);
+            return this;
+        }
+        /**
+         * Tags as key/values from the Map to use in query.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is multivalued, and you can use the tags(String, Object)
+         * method to add a value (call the method multiple times to set more
+         * values).
+         * 
+         * Group: consumer
+         * 
+         * @param key the option key
+         * @param value the option value
+         * @return the dsl builder
+         */
+        default Plc4XEndpointConsumerBuilder tags(String key, Object value) {
+            doSetMultiValueProperty("tags", "tag." + key, value);
+            return this;
+        }
+        /**
+         * Tags as key/values from the Map to use in query.
+         * 
+         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
+         * java.lang.String&amp;gt;&lt;/code&gt; type.
+         * The option is multivalued, and you can use the tags(String, Object)
+         * method to add a value (call the method multiple times to set more
+         * values).
+         * 
+         * Group: consumer
+         * 
+         * @param values the values
+         * @return the dsl builder
+         */
+        default Plc4XEndpointConsumerBuilder tags(Map values) {
+            doSetMultiValueProperties("tags", "tag.", values);
             return this;
         }
         /**
@@ -323,40 +327,6 @@ public interface Plc4XEndpointBuilderFactory {
             doSetProperty("autoReconnect", autoReconnect);
             return this;
         }
-        /**
-         * The tags to read as Map containing the tag name associated to its
-         * query.
-         * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param tags the value to set
-         * @return the dsl builder
-         */
-        default Plc4XEndpointProducerBuilder tags(
-                Map<java.lang.String, java.lang.Object> tags) {
-            doSetProperty("tags", tags);
-            return this;
-        }
-        /**
-         * The tags to read as Map containing the tag name associated to its
-         * query.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param tags the value to set
-         * @return the dsl builder
-         */
-        default Plc4XEndpointProducerBuilder tags(String tags) {
-            doSetProperty("tags", tags);
-            return this;
-        }
     }
 
     /**
@@ -460,40 +430,6 @@ public interface Plc4XEndpointBuilderFactory {
          */
         default Plc4XEndpointBuilder autoReconnect(String autoReconnect) {
             doSetProperty("autoReconnect", autoReconnect);
-            return this;
-        }
-        /**
-         * The tags to read as Map containing the tag name associated to its
-         * query.
-         * 
-         * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param tags the value to set
-         * @return the dsl builder
-         */
-        default Plc4XEndpointBuilder tags(
-                Map<java.lang.String, java.lang.Object> tags) {
-            doSetProperty("tags", tags);
-            return this;
-        }
-        /**
-         * The tags to read as Map containing the tag name associated to its
-         * query.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
-         * java.lang.Object&amp;gt;&lt;/code&gt; type.
-         * 
-         * Group: common
-         * 
-         * @param tags the value to set
-         * @return the dsl builder
-         */
-        default Plc4XEndpointBuilder tags(String tags) {
-            doSetProperty("tags", tags);
             return this;
         }
     }
