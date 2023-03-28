@@ -18,7 +18,6 @@ package org.apache.camel.component.file.watch;
 
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Set;
 
 import io.methvin.watcher.hashing.FileHasher;

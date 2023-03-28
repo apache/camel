@@ -81,7 +81,8 @@ public class ClusteredJdbcAggregationRepository extends JdbcAggregationRepositor
                     insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted(), version, true);
 
                 } catch (Exception e) {
-                    throw new RuntimeException("Error removing key " + correlationId + " from repository " + getRepositoryName(), e);
+                    throw new RuntimeException(
+                            "Error removing key " + correlationId + " from repository " + getRepositoryName(), e);
                 }
             }
         });

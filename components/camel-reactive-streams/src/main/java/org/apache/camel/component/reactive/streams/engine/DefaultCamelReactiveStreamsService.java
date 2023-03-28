@@ -352,7 +352,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
                     CompositeData data = new CompositeDataSupport(
                             ct,
                             new String[] { "name", "inflight", "requested" },
-                            new Object[] {k, inflight, requested });
+                            new Object[] { k, inflight, requested });
                     answer.put(data);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);
@@ -392,7 +392,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
                     CompositeData data = new CompositeDataSupport(
                             ct,
                             new String[] { "name", "subscribers", "subscriptions" },
-                            new Object[] {k, subscribers, subscriptionData });
+                            new Object[] { k, subscribers, subscriptionData });
                     answer.put(data);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);

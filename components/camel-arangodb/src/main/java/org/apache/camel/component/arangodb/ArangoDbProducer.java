@@ -49,7 +49,7 @@ import static org.apache.camel.component.arangodb.ArangoDbConstants.RESULT_CLASS
 
 public class ArangoDbProducer extends DefaultProducer {
     private final ArangoDbEndpoint endpoint;
-    private final Map<ArangoDbOperation, Processor> operations = new EnumMap<ArangoDbOperation, Processor>(ArangoDbOperation.class);
+    private final Map<ArangoDbOperation, Processor> operations = new EnumMap<>(ArangoDbOperation.class);
 
     {
         bind(ArangoDbOperation.SAVE_DOCUMENT, saveDocument());

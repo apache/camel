@@ -23,18 +23,17 @@ public final class AS2ApiCollection extends ApiCollection<AS2ApiName, AS2Configu
 
     private AS2ApiCollection() {
         final Map<String, String> aliases = new HashMap<>();
-        final Map<AS2ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(AS2ApiName.class);
+        final Map<AS2ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
         final Map<Class<? extends ApiMethod>, AS2ApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;
-
 
         nullableArgs = Arrays.asList("ediMessageTransferEncoding", "signingAlgorithm", "signingCertificateChain", "signingPrivateKey", "compressionAlgorithm", "dispositionNotificationTo", "signedReceiptMicAlgorithms", "encryptingAlgorithm", "encryptingCertificateChain", "attachedFileName");
         apiHelpers.put(AS2ApiName.CLIENT, new ApiMethodHelper<AS2ClientManagerApiMethod>(AS2ClientManagerApiMethod.class, aliases, nullableArgs));
         apiMethods.put(AS2ClientManagerApiMethod.class, AS2ApiName.CLIENT);
 
         aliases.clear();
-        nullableArgs = Arrays.asList();
+        nullableArgs = List.of();
         apiHelpers.put(AS2ApiName.SERVER, new ApiMethodHelper<AS2ServerManagerApiMethod>(AS2ServerManagerApiMethod.class, aliases, nullableArgs));
         apiMethods.put(AS2ServerManagerApiMethod.class, AS2ApiName.SERVER);
 

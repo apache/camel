@@ -47,7 +47,6 @@ import software.amazon.awssdk.services.sqs.model.ListQueuesResponse;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest;
 import software.amazon.awssdk.services.sqs.model.PurgeQueueResponse;
-import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
@@ -64,8 +63,8 @@ public class AmazonSQSClientMock implements SqsClient {
     List<Message> messages = new ArrayList<>();
     Map<String, Map<String, String>> queueAttributes = new HashMap<>();
     List<ChangeMessageVisibilityRequest> changeMessageVisibilityRequests = new CopyOnWriteArrayList<>();
-    private Map<String, CreateQueueRequest> queues = new LinkedHashMap<>();
-    private Map<String, ScheduledFuture<?>> inFlight = new LinkedHashMap<>();
+    private final Map<String, CreateQueueRequest> queues = new LinkedHashMap<>();
+    private final Map<String, ScheduledFuture<?>> inFlight = new LinkedHashMap<>();
     private ScheduledExecutorService scheduler;
     private String queueName;
     private boolean verifyQueueUrl;
