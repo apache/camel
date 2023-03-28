@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.translate;
 
 import software.amazon.awssdk.services.translate.TranslateClient;
+import software.amazon.awssdk.services.translate.TranslateServiceClientConfiguration;
 import software.amazon.awssdk.services.translate.model.TranslateTextRequest;
 import software.amazon.awssdk.services.translate.model.TranslateTextResponse;
 
@@ -26,6 +27,11 @@ public class AmazonAWSTranslateMock implements TranslateClient {
     public TranslateTextResponse translateText(TranslateTextRequest request) {
         TranslateTextResponse result = TranslateTextResponse.builder().translatedText("Hello").build();
         return result;
+    }
+
+    @Override
+    public TranslateServiceClientConfiguration serviceClientConfiguration() {
+        return null;
     }
 
     @Override

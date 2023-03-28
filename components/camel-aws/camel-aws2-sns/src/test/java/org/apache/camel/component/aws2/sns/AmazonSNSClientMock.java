@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import software.amazon.awssdk.services.sns.SnsClient;
+import software.amazon.awssdk.services.sns.SnsServiceClientConfiguration;
 import software.amazon.awssdk.services.sns.model.CreateTopicRequest;
 import software.amazon.awssdk.services.sns.model.CreateTopicResponse;
 import software.amazon.awssdk.services.sns.model.ListTopicsRequest;
@@ -44,6 +45,11 @@ public class AmazonSNSClientMock implements SnsClient {
         assertEquals(DEFAULT_TOPIC_ARN, setTopicAttributesRequest.topicArn());
         assertEquals("Policy", setTopicAttributesRequest.attributeName());
         return SetTopicAttributesResponse.builder().build();
+    }
+
+    @Override
+    public SnsServiceClientConfiguration serviceClientConfiguration() {
+        return null;
     }
 
     @Override

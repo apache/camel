@@ -17,6 +17,7 @@
 package org.apache.camel.component.aws2.ses;
 
 import software.amazon.awssdk.services.ses.SesClient;
+import software.amazon.awssdk.services.ses.SesServiceClientConfiguration;
 import software.amazon.awssdk.services.ses.model.SendEmailRequest;
 import software.amazon.awssdk.services.ses.model.SendEmailResponse;
 import software.amazon.awssdk.services.ses.model.SendRawEmailRequest;
@@ -39,6 +40,11 @@ public class AmazonSESClientMock implements SesClient {
     public SendRawEmailResponse sendRawEmail(SendRawEmailRequest sendRawEmailRequest) {
         this.sendRawEmailRequest = sendRawEmailRequest;
         return SendRawEmailResponse.builder().messageId("1").build();
+    }
+
+    @Override
+    public SesServiceClientConfiguration serviceClientConfiguration() {
+        return null;
     }
 
     public SendEmailRequest getSendEmailRequest() {

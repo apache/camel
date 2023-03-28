@@ -28,6 +28,7 @@ import org.testcontainers.shaded.com.fasterxml.jackson.core.type.TypeReference;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.services.lambda.LambdaClient;
+import software.amazon.awssdk.services.lambda.LambdaServiceClientConfiguration;
 import software.amazon.awssdk.services.lambda.model.AliasConfiguration;
 import software.amazon.awssdk.services.lambda.model.CreateAliasRequest;
 import software.amazon.awssdk.services.lambda.model.CreateAliasResponse;
@@ -302,6 +303,11 @@ public class AmazonLambdaClientMock implements LambdaClient {
         result.version("$LATEST");
         result.tracingConfig(TracingConfigResponse.builder().mode(TracingMode.PASS_THROUGH).build());
         return result.build();
+    }
+
+    @Override
+    public LambdaServiceClientConfiguration serviceClientConfiguration() {
+        return null;
     }
 
     @Override
