@@ -1326,6 +1326,38 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * Factory for creating RowMapper.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.sql.RowMapperFactory&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param rowMapperFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSqlEndpointConsumerBuilder rowMapperFactory(
+                org.apache.camel.component.sql.RowMapperFactory rowMapperFactory) {
+            doSetProperty("rowMapperFactory", rowMapperFactory);
+            return this;
+        }
+        /**
+         * Factory for creating RowMapper.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.sql.RowMapperFactory&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param rowMapperFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSqlEndpointConsumerBuilder rowMapperFactory(
+                String rowMapperFactory) {
+            doSetProperty("rowMapperFactory", rowMapperFactory);
+            return this;
+        }
+        /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
@@ -1900,6 +1932,38 @@ public interface SqlEndpointBuilderFactory {
             return this;
         }
         /**
+         * Factory for creating RowMapper.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.sql.RowMapperFactory&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param rowMapperFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSqlEndpointProducerBuilder rowMapperFactory(
+                org.apache.camel.component.sql.RowMapperFactory rowMapperFactory) {
+            doSetProperty("rowMapperFactory", rowMapperFactory);
+            return this;
+        }
+        /**
+         * Factory for creating RowMapper.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.sql.RowMapperFactory&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param rowMapperFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSqlEndpointProducerBuilder rowMapperFactory(
+                String rowMapperFactory) {
+            doSetProperty("rowMapperFactory", rowMapperFactory);
+            return this;
+        }
+        /**
          * Configures the Spring JdbcTemplate with the key/values from the Map.
          * 
          * The option is a: &lt;code&gt;java.util.Map&amp;lt;java.lang.String,
@@ -2318,6 +2382,38 @@ public interface SqlEndpointBuilderFactory {
         default AdvancedSqlEndpointBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
             doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
+            return this;
+        }
+        /**
+         * Factory for creating RowMapper.
+         * 
+         * The option is a:
+         * &lt;code&gt;org.apache.camel.component.sql.RowMapperFactory&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param rowMapperFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSqlEndpointBuilder rowMapperFactory(
+                org.apache.camel.component.sql.RowMapperFactory rowMapperFactory) {
+            doSetProperty("rowMapperFactory", rowMapperFactory);
+            return this;
+        }
+        /**
+         * Factory for creating RowMapper.
+         * 
+         * The option will be converted to a
+         * &lt;code&gt;org.apache.camel.component.sql.RowMapperFactory&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param rowMapperFactory the value to set
+         * @return the dsl builder
+         */
+        default AdvancedSqlEndpointBuilder rowMapperFactory(
+                String rowMapperFactory) {
+            doSetProperty("rowMapperFactory", rowMapperFactory);
             return this;
         }
         /**
