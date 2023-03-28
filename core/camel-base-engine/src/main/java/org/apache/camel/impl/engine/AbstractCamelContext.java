@@ -703,7 +703,7 @@ public abstract class AbstractCamelContext extends BaseService
             try {
                 stopServices(oldComponent);
             } catch (Exception e) {
-                LOG.warn("Error stopping component " + oldComponent + ". This exception will be ignored.", e);
+                LOG.warn("Error stopping component {}. This exception will be ignored.", oldComponent, e);
             }
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 strategy.onComponentRemove(componentName, oldComponent);
@@ -767,7 +767,7 @@ public abstract class AbstractCamelContext extends BaseService
                     try {
                         stopServices(oldEndpoint);
                     } catch (Exception e) {
-                        LOG.warn("Error stopping endpoint " + oldEndpoint + ". This exception will be ignored.", e);
+                        LOG.warn("Error stopping endpoint {}. This exception will be ignored.", oldEndpoint, e);
                     }
                     answer.add(oldEndpoint);
                     toRemove.add(entry.getKey());
@@ -2547,9 +2547,8 @@ public abstract class AbstractCamelContext extends BaseService
                 vetoed = veto;
                 return;
             } else {
-                LOG.error("Error starting CamelContext (" + camelContextExtension.getName() + ") due to exception thrown: "
-                          + e.getMessage(),
-                        e);
+                LOG.error("Error starting CamelContext ({}) due to exception thrown: {}", camelContextExtension.getName(),
+                          e.getMessage(), e);
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
