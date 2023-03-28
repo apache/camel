@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.sqs.SqsClient;
+import software.amazon.awssdk.services.sqs.SqsServiceClientConfiguration;
 import software.amazon.awssdk.services.sqs.model.BatchResultErrorEntry;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityRequest;
 import software.amazon.awssdk.services.sqs.model.ChangeMessageVisibilityResponse;
@@ -226,6 +227,11 @@ public class AmazonSQSClientMock implements SqsClient {
             }
         }
         return SetQueueAttributesResponse.builder().build();
+    }
+
+    @Override
+    public SqsServiceClientConfiguration serviceClientConfiguration() {
+        return null;
     }
 
     @Override
