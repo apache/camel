@@ -273,7 +273,7 @@ public abstract class AbstractCamelContext extends BaseService
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<>();
     private final StopWatch stopWatch = new StopWatch(false);
     private final Map<Class<?>, Object> extensions = new ConcurrentHashMap<>();
-    private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(() -> new HashSet<>());
+    private final ThreadLocal<Set<String>> componentsInCreation = ThreadLocal.withInitial(HashSet::new);
     private VetoCamelContextStartException vetoed;
     private String managementName;
     private ClassLoader applicationContextClassLoader;
@@ -385,12 +385,7 @@ public abstract class AbstractCamelContext extends BaseService
         this.bootstraps.add(new DefaultServiceBootstrapCloseable(this));
 
         // add a cleaner for FactoryFinder used only when bootstrapping the context
-        this.bootstraps.add(new BootstrapCloseable() {
-            @Override
-            public void close() throws IOException {
-                bootstrapFactories.clear();
-            }
-        });
+        this.bootstraps.add(bootstrapFactories::clear);
 
         this.internalServiceManager = new InternalServiceManager(this, internalRouteStartupManager, startupListeners);
 
@@ -592,12 +587,9 @@ public abstract class AbstractCamelContext extends BaseService
             final AtomicBoolean created = new AtomicBoolean();
 
             // atomic operation to get/create a component. Avoid global locks.
-            final Component component = components.computeIfAbsent(name, new Function<String, Component>() {
-                @Override
-                public Component apply(String comp) {
-                    created.set(true);
-                    return initComponent(name, autoCreateComponents);
-                }
+            final Component component = components.computeIfAbsent(name, comp -> {
+                created.set(true);
+                return initComponent(name, autoCreateComponents);
             });
 
             // Start the component after its creation as if it is a component proxy
@@ -1575,53 +1567,52 @@ public abstract class AbstractCamelContext extends BaseService
     public Language resolveLanguage(String name) {
         LOG.debug("Resolving language: {}", name);
 
-        return languages.computeIfAbsent(name, new Function<String, Language>() {
-            @Override
-            public Language apply(String s) {
-                StartupStep step = null;
-                // only record startup step during startup (not started)
-                if (!isStarted() && startupStepRecorder.isEnabled()) {
-                    step = startupStepRecorder.beginStep(Language.class, name, "Resolve Language");
+        return languages.computeIfAbsent(name, s -> doResolveLanguage(name));
+    }
+
+    private Language doResolveLanguage(String name) {
+        StartupStep step = null;
+        // only record startup step during startup (not started)
+        if (!isStarted() && startupStepRecorder.isEnabled()) {
+            step = startupStepRecorder.beginStep(Language.class, name, "Resolve Language");
+        }
+
+        final CamelContext camelContext = getCamelContextReference();
+
+        // as first iteration, check if there is a language instance for the given name
+        // bound to the registry
+        Language language = ResolverHelper.lookupLanguageInRegistryWithFallback(camelContext, name);
+
+        if (language == null) {
+            // language not known, then use resolver
+            language = camelContextExtension.getLanguageResolver().resolveLanguage(name, camelContext);
+        }
+
+        if (language != null) {
+            if (language instanceof Service) {
+                try {
+                    Service service = (Service) language;
+                    // init service first
+                    CamelContextAware.trySetCamelContext(service, camelContext);
+                    ServiceHelper.initService(service);
+                    startService(service);
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeCamelException(e);
                 }
-
-                final CamelContext camelContext = getCamelContextReference();
-
-                // as first iteration, check if there is a language instance for the given name
-                // bound to the registry
-                Language language = ResolverHelper.lookupLanguageInRegistryWithFallback(camelContext, name);
-
-                if (language == null) {
-                    // language not known, then use resolver
-                    language = camelContextExtension.getLanguageResolver().resolveLanguage(name, camelContext);
-                }
-
-                if (language != null) {
-                    if (language instanceof Service) {
-                        try {
-                            Service service = (Service) language;
-                            // init service first
-                            CamelContextAware.trySetCamelContext(service, camelContext);
-                            ServiceHelper.initService(service);
-                            startService(service);
-                        } catch (Exception e) {
-                            throw RuntimeCamelException.wrapRuntimeCamelException(e);
-                        }
-                    }
-
-                    // inject CamelContext if aware
-                    CamelContextAware.trySetCamelContext(language, camelContext);
-
-                    for (LifecycleStrategy strategy : lifecycleStrategies) {
-                        strategy.onLanguageCreated(name, language);
-                    }
-                }
-
-                if (step != null) {
-                    startupStepRecorder.endStep(step);
-                }
-                return language;
             }
-        });
+
+            // inject CamelContext if aware
+            CamelContextAware.trySetCamelContext(language, camelContext);
+
+            for (LifecycleStrategy strategy : lifecycleStrategies) {
+                strategy.onLanguageCreated(name, language);
+            }
+        }
+
+        if (step != null) {
+            startupStepRecorder.endStep(step);
+        }
+        return language;
     }
 
     // Properties
@@ -3656,37 +3647,37 @@ public abstract class AbstractCamelContext extends BaseService
         applicationContextClassLoader = classLoader;
     }
 
+    private DataFormat doResolveDataFormat(String name) {
+        StartupStep step = null;
+        // only record startup step during startup (not started)
+        if (!isStarted() && startupStepRecorder.isEnabled()) {
+            step = startupStepRecorder.beginStep(DataFormat.class, name, "Resolve DataFormat");
+        }
+
+        final DataFormat df = Optional
+                .ofNullable(ResolverHelper.lookupDataFormatInRegistryWithFallback(getCamelContextReference(), name))
+                .orElseGet(() -> camelContextExtension.getDataFormatResolver().createDataFormat(name,
+                        getCamelContextReference()));
+
+        if (df != null) {
+            // inject CamelContext if aware
+            CamelContextAware.trySetCamelContext(df, getCamelContextReference());
+
+            for (LifecycleStrategy strategy : lifecycleStrategies) {
+                strategy.onDataFormatCreated(name, df);
+            }
+        }
+
+        if (step != null) {
+            startupStepRecorder.endStep(step);
+        }
+
+        return df;
+    }
+
     @Override
     public DataFormat resolveDataFormat(String name) {
-        final DataFormat answer = dataformats.computeIfAbsent(name, s -> {
-            StartupStep step = null;
-            // only record startup step during startup (not started)
-            if (!isStarted() && startupStepRecorder.isEnabled()) {
-                step = startupStepRecorder.beginStep(DataFormat.class, name, "Resolve DataFormat");
-            }
-
-            DataFormat df = Optional
-                    .ofNullable(ResolverHelper.lookupDataFormatInRegistryWithFallback(getCamelContextReference(), name))
-                    .orElseGet(() -> camelContextExtension.getDataFormatResolver().createDataFormat(name,
-                            getCamelContextReference()));
-
-            if (df != null) {
-                // inject CamelContext if aware
-                CamelContextAware.trySetCamelContext(df, getCamelContextReference());
-
-                for (LifecycleStrategy strategy : lifecycleStrategies) {
-                    strategy.onDataFormatCreated(name, df);
-                }
-            }
-
-            if (step != null) {
-                startupStepRecorder.endStep(step);
-            }
-
-            return df;
-        });
-
-        return answer;
+        return dataformats.computeIfAbsent(name, s -> doResolveDataFormat(name));
     }
 
     @Override
