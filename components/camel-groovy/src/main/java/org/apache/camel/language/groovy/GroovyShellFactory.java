@@ -33,8 +33,8 @@ public interface GroovyShellFactory {
     /**
      * This method provide a way to define some global variables that will be applied to all the groovy script context.
      *
-     * @param exchange the camel exchange in process.
-     * @return the global variables that will be applied to all the groovy script context.
+     * @param  exchange the camel exchange in process.
+     * @return          the global variables that will be applied to all the groovy script context.
      */
     default Map<String, Object> getVariables(Exchange exchange) {
         return Collections.emptyMap();
