@@ -125,10 +125,9 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
     @UriParam(label = "advanced", prefix = "template.", multiValue = true,
               description = "Configures the Spring JdbcTemplate with the key/values from the Map")
     private Map<String, Object> templateOptions;
-
     @UriParam(label = "advanced",
               description = "Factory for creating RowMapper")
-    private RowMapperFactory rowMapperFactory = new DefaultRowMapperFactory();
+    private RowMapperFactory rowMapperFactory;
 
     public DefaultSqlEndpoint() {
     }
@@ -527,4 +526,12 @@ public abstract class DefaultSqlEndpoint extends DefaultPollingEndpoint {
         }
     }
 
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
+        if (rowMapperFactory == null) {
+            rowMapperFactory = new DefaultRowMapperFactory();
+        }
+    }
 }
