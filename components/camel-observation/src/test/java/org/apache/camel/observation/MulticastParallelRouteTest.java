@@ -25,13 +25,27 @@ class MulticastParallelRouteTest extends CamelMicrometerObservationTestSupport {
 
     private static SpanTestData[] testdata = {
             new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-                    .setParentId(2),
-            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-                    .setParentId(2),
-            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-                    .setParentId(3),
-            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
                     .setKind(SpanKind.SERVER)
+                    .setParentId(1),
+            new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
+                    .setParentId(4)
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
+                    .setKind(SpanKind.SERVER)
+                    .setParentId(3),
+            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
+                    .setParentId(4)
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
+                    .setKind(SpanKind.SERVER)
+                    .setParentId(5),
+            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
+                    .setParentId(6)
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+                    .setKind(SpanKind.SERVER).setParentId(7),
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+                    .setKind(SpanKind.CLIENT)
     };
 
     MulticastParallelRouteTest() {

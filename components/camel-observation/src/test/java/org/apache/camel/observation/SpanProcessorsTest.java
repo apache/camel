@@ -29,14 +29,27 @@ class SpanProcessorsTest extends CamelMicrometerObservationTestSupport {
 
     private static final SpanTestData[] TEST_DATA = {
             new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
-                    .setParentId(2)
-                    .addTag("b-tag", "request-header-value"),
-            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
-                    .setParentId(2),
-            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
-                    .setParentId(3),
-            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
                     .setKind(SpanKind.SERVER)
+                    .setParentId(1)
+                    .addTag("b-tag", "request-header-value"),
+            new SpanTestData().setLabel("seda:b server").setUri("seda://b").setOperation("b")
+                    .setKind(SpanKind.CLIENT)
+                    .setParentId(4),
+            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
+                    .setKind(SpanKind.SERVER)
+                    .setParentId(3),
+            new SpanTestData().setLabel("seda:c server").setUri("seda://c").setOperation("c")
+                    .setKind(SpanKind.CLIENT)
+                    .setParentId(4),
+            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
+                    .setKind(SpanKind.SERVER)
+                    .setParentId(5),
+            new SpanTestData().setLabel("seda:a server").setUri("seda://a").setOperation("a")
+                    .setKind(SpanKind.CLIENT)
+                    .setParentId(6),
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+                    .setKind(SpanKind.SERVER).setParentId(7),
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start").setKind(SpanKind.CLIENT)
     };
 
     SpanProcessorsTest() {

@@ -25,13 +25,25 @@ class CustomComponentNameRouteTest extends CamelMicrometerObservationTestSupport
 
     private static SpanTestData[] testdata = {
             new SpanTestData().setLabel("myseda:b server").setUri("myseda://b").setOperation("b")
-                    .setParentId(2),
-            new SpanTestData().setLabel("myseda:c server").setUri("myseda://c").setOperation("c")
-                    .setParentId(2),
-            new SpanTestData().setLabel("myseda:a server").setUri("myseda://a").setOperation("a")
-                    .setParentId(3),
-            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
                     .setKind(SpanKind.SERVER)
+                    .setParentId(1),
+            new SpanTestData().setLabel("myseda:b server").setUri("myseda://b").setOperation("b").setKind(SpanKind.CLIENT)
+                    .setParentId(4),
+            new SpanTestData().setLabel("myseda:c server").setUri("myseda://c").setOperation("c")
+                    .setKind(SpanKind.SERVER)
+                    .setParentId(3),
+            new SpanTestData().setLabel("myseda:c server").setUri("myseda://c").setOperation("c").setKind(SpanKind.CLIENT)
+                    .setParentId(4),
+            new SpanTestData().setLabel("myseda:a server").setUri("myseda://a").setOperation("a")
+                    .setKind(SpanKind.SERVER)
+                    .setParentId(5),
+            new SpanTestData().setLabel("myseda:a server").setUri("myseda://a").setOperation("a")
+                    .setParentId(6)
+                    .setKind(SpanKind.CLIENT),
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+                    .setKind(SpanKind.SERVER).setParentId(7),
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+                    .setKind(SpanKind.CLIENT)
     };
 
     CustomComponentNameRouteTest() {

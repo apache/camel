@@ -28,7 +28,10 @@ class TwoServiceWithExcludeTest extends CamelMicrometerObservationTestSupport {
 
     private static SpanTestData[] testdata = {
             new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
-                    .setKind(SpanKind.SERVER)
+                    .setParentId(1)
+                    .setKind(SpanKind.SERVER),
+            new SpanTestData().setLabel("ServiceA server").setUri("direct://ServiceA").setOperation("ServiceA")
+                    .setKind(SpanKind.CLIENT)
     };
 
     TwoServiceWithExcludeTest() {
