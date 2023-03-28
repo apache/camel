@@ -40,7 +40,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
@@ -2118,7 +2117,7 @@ public abstract class AbstractCamelContext extends BaseService
         try {
             super.init();
         } catch (RuntimeCamelException e) {
-            if (e.getCause() != null && e.getCause() instanceof VetoCamelContextStartException) {
+            if (e.getCause() instanceof VetoCamelContextStartException) {
                 vetoed = (VetoCamelContextStartException) e.getCause();
             } else {
                 throw e;
@@ -2130,7 +2129,6 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.info("CamelContext ({}) vetoed to not initialize due to: {}", camelContextExtension.getName(),
                     vetoed.getMessage());
             failOnStartup(vetoed);
-            return;
         }
     }
 
@@ -2194,7 +2192,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void doBuild() throws Exception {
-        StopWatch watch = new StopWatch();
+        final StopWatch watch = new StopWatch();
 
         // auto-detect step recorder from classpath if none has been explicit configured
         if (startupStepRecorder.getClass().getSimpleName().equals("DefaultStartupStepRecorder")) {
@@ -2260,9 +2258,11 @@ public abstract class AbstractCamelContext extends BaseService
 
         startupStepRecorder.endStep(step);
 
-        buildTaken = watch.taken();
-        LOG.debug("Apache Camel {} ({}) built in {}", getVersion(), camelContextExtension.getName(),
-                TimeUtils.printDuration(buildTaken, true));
+        if (LOG.isDebugEnabled()) {
+            buildTaken = watch.taken();
+            LOG.debug("Apache Camel {} ({}) built in {}", getVersion(), camelContextExtension.getName(),
+                    TimeUtils.printDuration(buildTaken, true));
+        }
     }
 
     protected void resetBuildTime() {
@@ -2272,7 +2272,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public void doInit() throws Exception {
-        StopWatch watch = new StopWatch();
+        final StopWatch watch = new StopWatch();
 
         vetoed = null;
 
@@ -2478,9 +2478,11 @@ public abstract class AbstractCamelContext extends BaseService
 
         startupStepRecorder.endStep(step);
 
-        initTaken = watch.taken();
-        LOG.debug("Apache Camel {} ({}) initialized in {}", getVersion(), camelContextExtension.getName(),
-                TimeUtils.printDuration(initTaken, true));
+        if (LOG.isDebugEnabled()) {
+            initTaken = watch.taken();
+            LOG.debug("Apache Camel {} ({}) initialized in {}", getVersion(), camelContextExtension.getName(),
+                    TimeUtils.printDuration(initTaken, true));
+        }
     }
 
     @Override
@@ -2548,7 +2550,7 @@ public abstract class AbstractCamelContext extends BaseService
                 return;
             } else {
                 LOG.error("Error starting CamelContext ({}) due to exception thrown: {}", camelContextExtension.getName(),
-                          e.getMessage(), e);
+                        e.getMessage(), e);
                 throw RuntimeCamelException.wrapRuntimeException(e);
             }
         }
@@ -2827,7 +2829,7 @@ public abstract class AbstractCamelContext extends BaseService
             // log if stream caching is not in use as this can help people to
             // enable it if they use streams
             LOG.debug("StreamCaching is not in use. If using streams then it's recommended to enable stream caching."
-                      + " See more details at http://camel.apache.org/stream-caching.html");
+                      + " See more details at https://camel.apache.org/stream-caching.html");
         }
 
         if (isAllowUseOriginalMessage()) {
