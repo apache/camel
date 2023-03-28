@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.groovy;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -61,7 +62,7 @@ public class GroovyExpression extends ExpressionSupport {
         Set<GroovyShellFactory> shellFactories = exchange.getContext().getRegistry().findByType(GroovyShellFactory.class);
         GroovyShellFactory shellFactory = null;
         String fileName = null;
-        Map<String, Object> variables = null;
+        Map<String, Object> variables = Collections.emptyMap();
         if (shellFactories.size() == 1) {
             shellFactory = shellFactories.iterator().next();
             fileName = shellFactory.getFileName(exchange);
@@ -79,12 +80,11 @@ public class GroovyExpression extends ExpressionSupport {
         }
         // New instance of the script
         Script script = ObjectHelper.newInstance(scriptClass, Script.class);
-        if (null != variables) {
-            Binding binding = script.getBinding();
-            for (Map.Entry<String, Object> variableEntry : variables.entrySet()) {
-                binding.setVariable(variableEntry.getKey(), variableEntry.getValue());
-            }
+        Binding binding = script.getBinding();
+        for (Map.Entry<String, Object> variableEntry : variables.entrySet()) {
+            binding.setVariable(variableEntry.getKey(), variableEntry.getValue());
         }
+
         return script;
     }
 
