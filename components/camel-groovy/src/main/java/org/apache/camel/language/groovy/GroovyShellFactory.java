@@ -16,10 +16,11 @@
  */
 package org.apache.camel.language.groovy;
 
+import java.util.Collections;
+import java.util.Map;
+
 import groovy.lang.GroovyShell;
 import org.apache.camel.Exchange;
-
-import java.util.Map;
 
 public interface GroovyShellFactory {
 
@@ -36,7 +37,6 @@ public interface GroovyShellFactory {
      * @return the global variables that will be applied to all the groovy script context.
      */
     default Map<String, Object> getVariables(Exchange exchange) {
-        return null;
+        return Collections.emptyMap();
     }
-
 }
