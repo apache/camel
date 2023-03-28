@@ -282,7 +282,7 @@ public abstract class AbstractCamelContext extends BaseService
     private volatile RestConfiguration restConfiguration;
     private volatile VaultConfiguration vaultConfiguration = new VaultConfiguration();
 
-    private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<>();
+    private final List<RoutePolicyFactory> routePolicyFactories = new ArrayList<>();
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
