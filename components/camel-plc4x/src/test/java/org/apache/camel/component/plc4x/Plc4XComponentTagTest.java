@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.plc4x;
 
-import java.util.*;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
-public class Plc4XComponentTest extends CamelTestSupport {
+public class Plc4XComponentTagTest extends CamelTestSupport {
 
     @Test
     public void testSimpleRouting() throws Exception {
@@ -41,11 +41,6 @@ public class Plc4XComponentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                Map<String, String> tags = new HashMap<>();
-                tags.put("Test1", "%TestQuery");
-                Plc4XEndpoint producer = getContext().getEndpoint("plc4x:mock:10.10.10.1/1/1", Plc4XEndpoint.class);
-                producer.setTags(tags);
-                producer.setAutoReconnect(true);
                 from("direct:plc4x")
                         .setBody(constant(Collections.singletonMap("test", Collections.singletonMap("testAddress", false))))
                         .to("plc4x:mock:10.10.10.1/1/1")
@@ -54,7 +49,7 @@ public class Plc4XComponentTest extends CamelTestSupport {
                         .setBody(constant(Collections.singletonMap("test2", Collections.singletonMap("testAddress2", 0x05))))
                         .to("plc4x:mock:10.10.10.1/1/1")
                         .to("mock:result");
-                from(producer)
+                from("plc4x:mock:10.10.10.1/1/1?autoReconnect=true&tag.Test1=%TestQuery")
                         .log("Got ${body}");
             }
         };

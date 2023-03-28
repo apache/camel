@@ -82,7 +82,7 @@ public class Plc4XEndpointConfigurer extends PropertyConfigurerSupport implement
     @Override
     public Object getCollectionValueType(Object target, String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "tags": return java.lang.Object.class;
+        case "tags": return java.lang.String.class;
         default: return null;
         }
     }

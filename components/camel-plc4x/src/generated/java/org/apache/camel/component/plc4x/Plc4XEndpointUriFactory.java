@@ -33,7 +33,9 @@ public class Plc4XEndpointUriFactory extends org.apache.camel.support.component.
         props.add("trigger");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         SECRET_PROPERTY_NAMES = Collections.emptySet();
-        MULTI_VALUE_PREFIXES = Collections.emptySet();
+        Set<String> prefixes = new HashSet<>(1);
+        prefixes.add("tag.");
+        MULTI_VALUE_PREFIXES = Collections.unmodifiableSet(prefixes);
     }
 
     @Override
