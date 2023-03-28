@@ -44,7 +44,8 @@ class MulticastRouteTest extends CamelMicrometerObservationTestSupport {
                     .setParentId(6),
             new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
                     .setKind(SpanKind.SERVER).setParentId(7),
-            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start").setKind(SpanKind.CLIENT)
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+                    .setKind(SpanKind.CLIENT)
     };
 
     MulticastRouteTest() {

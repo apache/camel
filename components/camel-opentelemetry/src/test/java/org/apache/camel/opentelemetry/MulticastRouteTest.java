@@ -41,7 +41,8 @@ class MulticastRouteTest extends CamelOpenTelemetryTestSupport {
                     .setParentId(6),
             new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
                     .setParentId(7),
-            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start").setKind(SpanKind.CLIENT)
+            new SpanTestData().setLabel("direct:start server").setUri("direct://start").setOperation("start")
+                    .setKind(SpanKind.CLIENT)
     };
 
     MulticastRouteTest() {
