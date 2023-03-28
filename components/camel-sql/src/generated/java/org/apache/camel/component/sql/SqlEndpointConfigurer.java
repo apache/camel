@@ -78,6 +78,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "repeatCount": target.setRepeatCount(property(camelContext, long.class, value)); return true;
         case "routeemptyresultset":
         case "routeEmptyResultSet": target.setRouteEmptyResultSet(property(camelContext, boolean.class, value)); return true;
+        case "rowmapperfactory":
+        case "rowMapperFactory": target.setRowMapperFactory(property(camelContext, org.apache.camel.component.sql.RowMapperFactory.class, value)); return true;
         case "runlogginglevel":
         case "runLoggingLevel": target.setRunLoggingLevel(property(camelContext, org.apache.camel.LoggingLevel.class, value)); return true;
         case "scheduledexecutorservice":
@@ -172,6 +174,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "repeatCount": return long.class;
         case "routeemptyresultset":
         case "routeEmptyResultSet": return boolean.class;
+        case "rowmapperfactory":
+        case "rowMapperFactory": return org.apache.camel.component.sql.RowMapperFactory.class;
         case "runlogginglevel":
         case "runLoggingLevel": return org.apache.camel.LoggingLevel.class;
         case "scheduledexecutorservice":
@@ -262,6 +266,8 @@ public class SqlEndpointConfigurer extends PropertyConfigurerSupport implements 
         case "repeatCount": return target.getRepeatCount();
         case "routeemptyresultset":
         case "routeEmptyResultSet": return target.isRouteEmptyResultSet();
+        case "rowmapperfactory":
+        case "rowMapperFactory": return target.getRowMapperFactory();
         case "runlogginglevel":
         case "runLoggingLevel": return target.getRunLoggingLevel();
         case "scheduledexecutorservice":
