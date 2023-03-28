@@ -18,7 +18,6 @@
 package org.apache.camel.test.infra.jetty.services;
 
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import javax.net.ssl.SSLContext;
 
@@ -33,6 +32,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
  * This builder can be used to build and configure a configuration holder for embedded Jetty instances
  */
 public final class JettyConfigurationBuilder {
+
     private interface ConfigurationBuilderDelegate {
         JettyConfigurationBuilder build();
     }
@@ -46,33 +46,28 @@ public final class JettyConfigurationBuilder {
         public ServletConfigurationBuilder(JettyConfigurationBuilder builder, JettyConfiguration jettyConfiguration) {
             this.jettyConfigurationBuilder = builder;
             this.jettyConfiguration = jettyConfiguration;
-
             servletHandlerConfiguration
                     = new JettyConfiguration.ServletHandlerConfiguration(jettyConfiguration.getContextPath());
         }
 
         public ServletConfigurationBuilder customize(Consumer<ServletContextHandler> customizer) {
             servletHandlerConfiguration.customize(customizer);
-
             return this;
         }
 
         public ServletConfigurationBuilder addBasicAuthUser(String username, String password, String realm) {
             servletHandlerConfiguration.addBasicAuthUser(username, password, realm);
-
             return this;
         }
 
         public ServletConfigurationBuilder addBasicAuthUser(KeyValueHolder<String, String> userInfo) {
             servletHandlerConfiguration.addBasicAuthUser(userInfo);
-
             return this;
         }
 
         public ServletConfigurationBuilder addServletConfiguration(
                 JettyConfiguration.ServletHandlerConfiguration.ServletConfiguration<?> servletConfiguration) {
             servletHandlerConfiguration.addServletConfiguration(servletConfiguration);
-
             return this;
         }
 
@@ -92,7 +87,6 @@ public final class JettyConfigurationBuilder {
         public WebSocketConfigurationBuilder(JettyConfigurationBuilder builder, JettyConfiguration jettyConfiguration) {
             this.jettyConfigurationBuilder = builder;
             this.jettyConfiguration = jettyConfiguration;
-
             wsHandlerConfiguration
                     = new JettyConfiguration.WebSocketContextHandlerConfiguration(jettyConfiguration.getContextPath());
         }
@@ -106,7 +100,6 @@ public final class JettyConfigurationBuilder {
         public WebSocketConfigurationBuilder addServletConfiguration(
                 JettyConfiguration.ServletHandlerConfiguration.ServletConfiguration<?> servletConfiguration) {
             wsHandlerConfiguration.addServletConfiguration(servletConfiguration);
-
             return this;
         }
     }
@@ -121,20 +114,17 @@ public final class JettyConfigurationBuilder {
                                                  JettyConfiguration jettyConfiguration) {
             this.jettyConfigurationBuilder = jettyConfigurationBuilder;
             this.jettyConfiguration = jettyConfiguration;
-
             this.webContextConfiguration = new JettyConfiguration.WebContextConfiguration(jettyConfiguration.getContextPath());
         }
 
         public WebAppContextConfigurationBuilder withWebApp(String webApp) {
             webContextConfiguration.setWebApp(webApp);
-
             return this;
         }
 
         @Override
         public JettyConfigurationBuilder build() {
             jettyConfiguration.setContextHandlerConfiguration(webContextConfiguration);
-
             return jettyConfigurationBuilder;
         }
     }
@@ -150,20 +140,17 @@ public final class JettyConfigurationBuilder {
                                                   JettyConfiguration jettyConfiguration) {
             this.jettyConfiguration = jettyConfiguration;
             this.jettyConfigurationBuilder = jettyConfigurationBuilder;
-
             contextHandlerConfiguration
                     = new JettyConfiguration.ContextHandlerConfiguration(jettyConfiguration.getContextPath());
         }
 
         public ContextHandlerConfigurationBuilder withErrorHandler(ErrorHandler errorHandler) {
             contextHandlerConfiguration.setErrorHandler(errorHandler);
-
             return this;
         }
 
         public ContextHandlerConfigurationBuilder withHandler(Handler handler) {
             contextHandlerConfiguration.setHandler(handler);
-
             return this;
         }
 
@@ -175,7 +162,6 @@ public final class JettyConfigurationBuilder {
         @Override
         public JettyConfigurationBuilder build() {
             jettyConfiguration.setContextHandlerConfiguration(contextHandlerConfiguration);
-
             return jettyConfigurationBuilder;
         }
     }
@@ -189,14 +175,12 @@ public final class JettyConfigurationBuilder {
                                                   JettyConfiguration jettyConfiguration) {
             this.jettyConfiguration = jettyConfiguration;
             this.jettyConfigurationBuilder = jettyConfigurationBuilder;
-
             handlerCollectionConfiguration
                     = new JettyConfiguration.HandlerCollectionConfiguration(jettyConfiguration.getContextPath());
         }
 
         public HandlerContextConfigurationBuilder addHandlers(Handler handler) {
             handlerCollectionConfiguration.addHandlers(handler);
-
             return this;
         }
 
@@ -208,7 +192,6 @@ public final class JettyConfigurationBuilder {
         @Override
         public JettyConfigurationBuilder build() {
             jettyConfiguration.setContextHandlerConfiguration(handlerCollectionConfiguration);
-
             return jettyConfigurationBuilder;
         }
     }
@@ -220,18 +203,12 @@ public final class JettyConfigurationBuilder {
 
     public JettyConfigurationBuilder withPort(int port) {
         jettyConfiguration.setPort(port);
-
         return this;
     }
 
     public JettyConfigurationBuilder withSslContext(SSLContext sslContext) {
         jettyConfiguration.setSslContext(sslContext);
-
         return this;
-    }
-
-    public JettyConfigurationBuilder withSslContext(Supplier<SSLContext> contextSupplier) {
-        return withSslContext(contextSupplier::get);
     }
 
     public ServletConfigurationBuilder withServletConfiguration() {
@@ -256,7 +233,6 @@ public final class JettyConfigurationBuilder {
 
     public JettyConfigurationBuilder withContextPath(String contextPath) {
         jettyConfiguration.setContextPath(contextPath);
-
         return this;
     }
 
