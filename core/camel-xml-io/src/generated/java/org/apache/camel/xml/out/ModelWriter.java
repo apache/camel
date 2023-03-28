@@ -25,6 +25,7 @@ package org.apache.camel.xml.out;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import org.apache.camel.model.*;

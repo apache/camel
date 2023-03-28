@@ -342,7 +342,8 @@ public final class SObjectComposite implements Serializable {
         return Stream
                 .concat(Stream.of(SObjectComposite.class, BatchRequest.class),
                         compositeRequests.stream().map(CompositeRequest::getBody).filter(Objects::nonNull)
-                                .map(Object::getClass)).distinct().toArray(Class[]::new);
+                                .map(Object::getClass))
+                .distinct().toArray(Class[]::new);
     }
 
     void addCompositeRequest(final CompositeRequest compositeRequest) {

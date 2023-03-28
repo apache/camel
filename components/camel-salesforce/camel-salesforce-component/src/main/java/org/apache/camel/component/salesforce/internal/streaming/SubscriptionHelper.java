@@ -67,12 +67,12 @@ public class SubscriptionHelper extends ServiceSupport {
     private static final String SERVER_TOO_BUSY_ERROR = "503::";
     private static final String AUTHENTICATION_INVALID = "401::Authentication invalid";
     private static final String INVALID_REPLAY_ID_PATTERN = "400::The replayId \\{.*} you provided was invalid.*";
+    private static final long TIMEOUT = 60 * 1000L;
 
     BayeuxClient client;
 
     private final SalesforceComponent component;
     private SalesforceSession session;
-    private static final long timeout = 60 * 1000L;
 
     private final Map<SalesforceConsumer, ClientSessionChannel.MessageListener> listenerMap;
     private final long maxBackoff;
@@ -275,10 +275,10 @@ public class SubscriptionHelper extends ServiceSupport {
                     // so we can still continue to doStart()
                     if (client != null) {
                         client.disconnect();
-                        boolean disconnected = client.waitFor(timeout, State.DISCONNECTED);
+                        boolean disconnected = client.waitFor(TIMEOUT, State.DISCONNECTED);
                         if (!disconnected) {
                             LOG.warn("Could not disconnect client connected to: {} after: {} msec.", getEndpointUrl(component),
-                                    timeout);
+                                    TIMEOUT);
                             client.abort();
                         }
 
@@ -354,9 +354,9 @@ public class SubscriptionHelper extends ServiceSupport {
         }
 
         client.disconnect();
-        boolean disconnected = client.waitFor(timeout, State.DISCONNECTED);
+        boolean disconnected = client.waitFor(TIMEOUT, State.DISCONNECTED);
         if (!disconnected) {
-            LOG.warn("Could not disconnect client connected to: {} after: {} msec.", getEndpointUrl(component), timeout);
+            LOG.warn("Could not disconnect client connected to: {} after: {} msec.", getEndpointUrl(component), TIMEOUT);
             client.abort();
         }
 

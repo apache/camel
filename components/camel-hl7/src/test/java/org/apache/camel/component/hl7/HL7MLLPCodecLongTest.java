@@ -70,8 +70,9 @@ public class HL7MLLPCodecLongTest extends HL7TestSupport {
         }
         message = new StringBuilder(message.substring(0, message.length() - 1));
         assertEquals(70010, message.length());
-        String out = template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", message.toString(),
-                String.class);
+        String out
+                = template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", message.toString(),
+                        String.class);
         assertEquals("some response", out);
         // END SNIPPET: e2
     }

@@ -618,8 +618,8 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
      * Nested class to accept TCP connections
      */
     class AcceptSocketThread extends Thread {
-        static final long bindTimeout = 30000;
-        static final long bindRetryDelay = 1000;
+        static final long BIND_TIMEOUT = 30000;
+        static final long BIND_RETRY_DELAY = 1000;
         Logger log = LoggerFactory.getLogger(this.getClass());
         ServerSocket serverSocket;
         List<ClientSocketThread> clientSocketThreads = new LinkedList<>();
@@ -679,10 +679,10 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
                 try {
                     serverSocket.bind(listenAddress, backlog);
                 } catch (BindException bindEx) {
-                    if (System.currentTimeMillis() < startTicks + bindTimeout) {
-                        log.warn("Unable to bind to {} - retrying in {} milliseconds", listenAddress, bindRetryDelay);
+                    if (System.currentTimeMillis() < startTicks + BIND_TIMEOUT) {
+                        log.warn("Unable to bind to {} - retrying in {} milliseconds", listenAddress, BIND_RETRY_DELAY);
                         try {
-                            Thread.sleep(bindRetryDelay);
+                            Thread.sleep(BIND_RETRY_DELAY);
                         } catch (InterruptedException interruptedEx) {
                             log.error("Wait for bind retry was interrupted - rethrowing BindException");
                             throw bindEx;

@@ -77,7 +77,7 @@ public class StAXXPathSplitChoicePerformanceManualTest extends CamelTestSupport 
         assertEquals((size / 10) * 4, tiny.get());
         assertEquals((size / 10) * 2, small.get());
         assertEquals((size / 10) * 3, med.get());
-        assertEquals((size / 10), large.get());
+        assertEquals(size / 10, large.get());
 
         assertTrue(matches, "Should complete route");
     }

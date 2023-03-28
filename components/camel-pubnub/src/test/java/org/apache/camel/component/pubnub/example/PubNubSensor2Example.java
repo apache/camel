@@ -46,18 +46,18 @@ public final class PubNubSensor2Example {
     }
 
     static class SimulatedDeviceEventGeneratorRoute extends RouteBuilder {
-        private static final String deviceEP
+        private static final String DEVICE_EP
                 = "pubnub:iot?uuid=device2&publishKey=" + PUBNUB_PUBLISH_KEY + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY;
-        private static final String devicePrivateEP = "pubnub:device2private?uuid=device2&publishKey=" + PUBNUB_PUBLISH_KEY
-                                               + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY;
+        private static final String DEVICE_PRIVATE_EP = "pubnub:device2private?uuid=device2&publishKey=" + PUBNUB_PUBLISH_KEY
+                                                        + "&subscribeKey=" + PUBNUB_SUBSCRIBE_KEY;
 
         @Override
         public void configure() {
             from("timer:device2").routeId("device-event-route")
                     .bean(PubNubSensor2Example.EventGeneratorBean.class, "getRandomEvent('device2')")
-                    .to(deviceEP);
+                    .to(DEVICE_EP);
 
-            from(devicePrivateEP)
+            from(DEVICE_PRIVATE_EP)
                     .routeId("device-unicast-route")
                     .log("Message from master to device2 : ${body}");
         }
@@ -109,9 +109,9 @@ public final class PubNubSensor2Example {
 
     record DeviceWeatherInfo(String device, int humidity, int temperature) {
 
-        private static SecureRandom rand = new SecureRandom();
+        private static final SecureRandom RAND = new SecureRandom();
         public DeviceWeatherInfo(String device) {
-            this(device, rand.nextInt(100), rand.nextInt(40));
+            this(device, RAND.nextInt(100), RAND.nextInt(40));
         }
     }
 

@@ -17,7 +17,6 @@
 package org.apache.camel.component.infinispan.remote;
 
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.camel.Processor;

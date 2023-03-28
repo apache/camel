@@ -159,7 +159,8 @@ public class JdbcAggregationRepository extends ServiceSupport
                     LOG.debug("Adding exchange with key {}", correlationId);
 
                     boolean present = jdbcTemplate.queryForObject(
-                            "SELECT COUNT(1) FROM " + getRepositoryName() + " WHERE " + ID + " = ?", Integer.class, correlationId) != 0;
+                            "SELECT COUNT(1) FROM " + getRepositoryName() + " WHERE " + ID + " = ?", Integer.class,
+                            correlationId) != 0;
 
                     // Recover existing exchange with that ID
                     if (isReturnOldExchange() && present) {
@@ -182,7 +183,8 @@ public class JdbcAggregationRepository extends ServiceSupport
                     }
 
                 } catch (Exception e) {
-                    throw new RuntimeException("Error adding to repository " + repositoryName + " with key " + correlationId, e);
+                    throw new RuntimeException(
+                            "Error adding to repository " + repositoryName + " with key " + correlationId, e);
                 }
 
                 return result;
