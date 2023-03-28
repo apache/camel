@@ -105,9 +105,9 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     private final AbstractCamelContext camelContext;
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
-    private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
+    private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
-    private Set<LogListener> logListeners;
+    private final Set<LogListener> logListeners = new LinkedHashSet<>();
     private volatile String description;
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
@@ -408,10 +408,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void addLogListener(LogListener listener) {
-        if (logListeners == null) {
-            logListeners = new LinkedHashSet<>();
-        }
-
         // avoid adding double which can happen with spring xml on spring boot
         logListeners.add(listener);
     }
