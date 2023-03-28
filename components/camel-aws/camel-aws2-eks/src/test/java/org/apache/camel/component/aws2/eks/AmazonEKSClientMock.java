@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import software.amazon.awssdk.services.eks.EksClient;
+import software.amazon.awssdk.services.eks.EksServiceClientConfiguration;
 import software.amazon.awssdk.services.eks.model.Cluster;
 import software.amazon.awssdk.services.eks.model.ClusterStatus;
 import software.amazon.awssdk.services.eks.model.CreateClusterRequest;
@@ -67,6 +68,11 @@ public class AmazonEKSClientMock implements EksClient {
         list.add("Test");
         res.clusters(list);
         return res.build();
+    }
+
+    @Override
+    public EksServiceClientConfiguration serviceClientConfiguration() {
+        return null;
     }
 
     @Override

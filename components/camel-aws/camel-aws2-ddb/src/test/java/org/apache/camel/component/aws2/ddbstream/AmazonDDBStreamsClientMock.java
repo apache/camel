@@ -30,6 +30,7 @@ import software.amazon.awssdk.services.dynamodb.model.Shard;
 import software.amazon.awssdk.services.dynamodb.model.Stream;
 import software.amazon.awssdk.services.dynamodb.model.StreamDescription;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
+import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsServiceClientConfiguration;
 
 import static org.apache.camel.component.aws2.ddbstream.ShardFixtures.STREAM_ARN;
 
@@ -40,6 +41,11 @@ class AmazonDDBStreamsClientMock implements DynamoDbStreamsClient {
     @Override
     public ListStreamsResponse listStreams(ListStreamsRequest listStreamsRequest) {
         return ListStreamsResponse.builder().streams(Stream.builder().streamArn(STREAM_ARN).build()).build();
+    }
+
+    @Override
+    public DynamoDbStreamsServiceClientConfiguration serviceClientConfiguration() {
+        return null;
     }
 
     @Override

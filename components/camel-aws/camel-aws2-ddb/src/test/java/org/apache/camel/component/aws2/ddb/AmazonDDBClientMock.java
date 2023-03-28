@@ -25,6 +25,7 @@ import java.util.Map;
 import software.amazon.awssdk.awscore.exception.AwsErrorDetails;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
+import software.amazon.awssdk.services.dynamodb.DynamoDbServiceClientConfiguration;
 import software.amazon.awssdk.services.dynamodb.model.AttributeValue;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemRequest;
 import software.amazon.awssdk.services.dynamodb.model.BatchGetItemResponse;
@@ -112,6 +113,11 @@ public class AmazonDDBClientMock implements DynamoDbClient {
     @Override
     public UpdateTableResponse updateTable(UpdateTableRequest updateTableRequest) {
         this.updateTableRequest = updateTableRequest;
+        return null;
+    }
+
+    @Override
+    public DynamoDbServiceClientConfiguration serviceClientConfiguration() {
         return null;
     }
 

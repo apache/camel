@@ -19,12 +19,18 @@ package org.apache.camel.component.aws2.ddbstream;
 import software.amazon.awssdk.services.dynamodb.model.ListStreamsRequest;
 import software.amazon.awssdk.services.dynamodb.model.ListStreamsResponse;
 import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsClient;
+import software.amazon.awssdk.services.dynamodb.streams.DynamoDbStreamsServiceClientConfiguration;
 
 class AmazonDDBStreamlessClientMock implements DynamoDbStreamsClient {
 
     @Override
     public ListStreamsResponse listStreams(ListStreamsRequest listStreamsRequest) {
         return ListStreamsResponse.builder().build();
+    }
+
+    @Override
+    public DynamoDbStreamsServiceClientConfiguration serviceClientConfiguration() {
+        return null;
     }
 
     @Override
