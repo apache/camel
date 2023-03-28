@@ -16,6 +16,7 @@
  */
 package org.apache.camel.language.groovy;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -48,7 +49,7 @@ public class GroovyExpression extends ExpressionSupport {
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         Script script = instantiateScript(exchange);
-        script.setBinding(createBinding(exchange));
+        populateBinding(script.getBinding(), exchange);
         Object value = script.run();
 
         return exchange.getContext().getTypeConverter().convertTo(type, value);
@@ -61,9 +62,11 @@ public class GroovyExpression extends ExpressionSupport {
         Set<GroovyShellFactory> shellFactories = exchange.getContext().getRegistry().findByType(GroovyShellFactory.class);
         GroovyShellFactory shellFactory = null;
         String fileName = null;
+        Map<String, Object> variables = Collections.emptyMap();
         if (shellFactories.size() == 1) {
             shellFactory = shellFactories.iterator().next();
             fileName = shellFactory.getFileName(exchange);
+            variables = shellFactory.getVariables(exchange);
         }
         final String key = fileName != null ? fileName + text : text;
         Class<Script> scriptClass = language.getScriptFromCache(key);
@@ -75,14 +78,21 @@ public class GroovyExpression extends ExpressionSupport {
                     ? shell.getClassLoader().parseClass(text, fileName) : shell.getClassLoader().parseClass(text);
             language.addScriptToCache(key, scriptClass);
         }
-
         // New instance of the script
-        return ObjectHelper.newInstance(scriptClass, Script.class);
+        Script script = ObjectHelper.newInstance(scriptClass, Script.class);
+        Binding binding = script.getBinding();
+        for (Map.Entry<String, Object> variableEntry : variables.entrySet()) {
+            binding.setVariable(variableEntry.getKey(), variableEntry.getValue());
+        }
+
+        return script;
     }
 
-    private Binding createBinding(Exchange exchange) {
+    private void populateBinding(Binding binding, Exchange exchange) {
         Map<String, Object> variables = new HashMap<>();
         ExchangeHelper.populateVariableMap(exchange, variables, true);
-        return new Binding(variables);
+        for (Map.Entry<String, Object> variableEntry : variables.entrySet()) {
+            binding.setVariable(variableEntry.getKey(), variableEntry.getValue());
+        }
     }
 }
