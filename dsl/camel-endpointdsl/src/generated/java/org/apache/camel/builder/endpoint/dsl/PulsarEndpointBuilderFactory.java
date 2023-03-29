@@ -1742,6 +1742,25 @@ public interface PulsarEndpointBuilderFactory {
         }
 
         /**
+         * Deliver the message only at or after the specified absolute
+         * timestamp. The timestamp is milliseconds and based on UTC (eg:
+         * System.currentTimeMillis) Note: messages are only delivered with
+         * delay when a consumer is consuming through a Shared subscription.
+         * With other subscription types, the messages will still be delivered
+         * immediately.
+         * 
+         * The option is a: {@code Long} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code
+         * PulsarProducerMessageDeliverAt}.
+         */
+        public String pulsarProducerMessageDeliverAt() {
+            return "PulsarProducerMessageDeliverAt";
+        }
+
+        /**
          * The message redelivery count, redelivery count maintain in pulsar
          * broker.
          * 
