@@ -86,8 +86,7 @@ public class BoxFoldersManager {
                 return folder;
             }
 
-            searchPath:
-            for (String s : path) {
+            searchPath: for (String s : path) {
                 for (BoxItem.Info itemInfo : folder) {
                     if (itemInfo instanceof BoxFolder.Info && itemInfo.getName().equals(s)) {
                         folder = (BoxFolder) itemInfo.getResource();
@@ -196,8 +195,7 @@ public class BoxFoldersManager {
                 throw new IllegalArgumentException("Paramerer 'path' can not be null");
             }
             BoxFolder folder = new BoxFolder(boxConnection, parentFolderId);
-            searchPath:
-            for (String s : path) {
+            searchPath: for (String s : path) {
                 for (BoxItem.Info itemInfo : folder) {
                     if (itemInfo instanceof BoxFolder.Info && itemInfo.getName().equals(s)) {
                         folder = (BoxFolder) itemInfo.getResource();

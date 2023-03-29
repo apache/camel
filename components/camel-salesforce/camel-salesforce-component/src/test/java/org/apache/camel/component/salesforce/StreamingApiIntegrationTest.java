@@ -56,7 +56,7 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
         Merchandise__c merchandise = new Merchandise__c();
         merchandise.setName("TestNotification");
         merchandise.setDescription__c("Merchandise for testing Streaming API updated on " +
-                ZonedDateTime.now());
+                                      ZonedDateTime.now());
         merchandise.setPrice__c(9.99);
         merchandise.setTotal_Inventory__c(1000.0);
         UpsertSObjectResult result = template().requestBody("direct:upsertSObject", merchandise,

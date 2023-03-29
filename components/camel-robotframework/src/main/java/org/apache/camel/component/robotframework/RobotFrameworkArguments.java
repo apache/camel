@@ -35,7 +35,9 @@ public class RobotFrameworkArguments {
     }
 
     protected boolean isFileValid(File file) {
-        if (file == null) return false;
+        if (file == null) {
+            return false;
+        }
         return !file.getPath().isEmpty();
     }
 

@@ -22,7 +22,7 @@ public abstract class Etcd3Constants {
 
     @Metadata(label = "producer", description = "The action to perform.\n" +
                                                 "Supported values:\n" +
-            '\n' +
+                                                '\n' +
                                                 "* set\n" +
                                                 "* get\n" +
                                                 "* delete\n",

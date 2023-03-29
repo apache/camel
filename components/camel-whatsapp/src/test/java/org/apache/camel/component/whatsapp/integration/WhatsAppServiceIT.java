@@ -22,8 +22,6 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.whatsapp.WhatsAppTestSupport;
 import org.apache.camel.component.whatsapp.model.Address;

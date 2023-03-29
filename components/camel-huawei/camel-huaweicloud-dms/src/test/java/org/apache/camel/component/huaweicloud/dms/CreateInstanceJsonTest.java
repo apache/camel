@@ -96,7 +96,7 @@ public class CreateInstanceJsonTest extends CamelTestSupport {
                             "\"enable_auto_topic\":true," +
                             "\"storage_spec_code\":\"" + testConfiguration.getProperty("storageSpecCode") + "\"," +
                             "\"enterprise_project_id\":\"" + testConfiguration.getProperty("enterpriseProjectId") + '"' +
-                '}';
+                            '}';
         template.sendBody("direct:operation", sampleBody);
         Exchange responseExchange = mock.getExchanges().get(0);
 
