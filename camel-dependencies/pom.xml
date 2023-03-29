@@ -38,6 +38,7 @@
 
     <!-- sync properties here from parent/pom.xml -->
     <properties>
+        <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
         <compiler.fork>true</compiler.fork>
         <cxf.codegenplugin.forkmode>true</cxf.codegenplugin.forkmode>
         <cxf.codegen.jvmArgs />
