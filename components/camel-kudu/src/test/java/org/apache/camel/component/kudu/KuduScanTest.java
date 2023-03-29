@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kudu;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,9 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.kudu.ColumnSchema;
+import org.apache.kudu.Type;
+import org.apache.kudu.client.KuduPredicate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -105,6 +109,34 @@ public class KuduScanTest extends AbstractKuduTest {
         assertEquals("Smith", row.get("lastname"));
         assertEquals("4359  Plainfield Avenue", row.get("address"));
 
+    }
+
+    @Test
+    public void scanWithPredicate() throws InterruptedException {
+        errorEndpoint.expectedMessageCount(0);
+        successEndpoint.expectedMessageCount(2);
+
+        // without predicate
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(KuduConstants.CAMEL_KUDU_SCAN_PREDICATE, null);
+        sendBody("direct:scan", null, headers);
+        List<Map<String, Object>> results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
+                .get(0).getIn().getBody(List.class);
+        // two records with id=1 and id=2 are expected to be returned
+        assertEquals(2, results.size());
+
+        // with predicate
+        ColumnSchema schema = new ColumnSchema.ColumnSchemaBuilder("id", Type.INT32).build();
+        KuduPredicate predicate = KuduPredicate.newComparisonPredicate(schema, KuduPredicate.ComparisonOp.EQUAL, 2);
+        headers.put(KuduConstants.CAMEL_KUDU_SCAN_PREDICATE, predicate);
+        sendBody("direct:scan", null, headers);
+        results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
+                .get(1).getIn().getBody(List.class);
+        // only one record with id=2 is expected to be returned
+        assertEquals(1, results.size());
+
+        errorEndpoint.assertIsSatisfied();
+        successEndpoint.assertIsSatisfied();
     }
 
     @Test
