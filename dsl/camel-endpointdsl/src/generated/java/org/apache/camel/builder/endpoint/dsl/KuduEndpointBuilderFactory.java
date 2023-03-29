@@ -242,6 +242,19 @@ public interface KuduEndpointBuilderFactory {
         public String kuduTableOptions() {
             return "KuduTableOptions";
         }
+
+        /**
+         * The predicate for scan operation.
+         * 
+         * The option is a: {@code org.apache.kudu.client.KuduPredicate} type.
+         * 
+         * Group: producer
+         * 
+         * @return the name of the header {@code KuduScanPredicate}.
+         */
+        public String kuduScanPredicate() {
+            return "KuduScanPredicate";
+        }
     }
     static KuduEndpointBuilder endpointBuilder(String componentName, String path) {
         class KuduEndpointBuilderImpl extends AbstractEndpointBuilder implements KuduEndpointBuilder, AdvancedKuduEndpointBuilder {
