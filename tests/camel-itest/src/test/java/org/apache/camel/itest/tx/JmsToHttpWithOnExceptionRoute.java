@@ -34,16 +34,17 @@ import static org.apache.camel.itest.TransactionSupport.transactionErrorHandler;
  * Notice we use the SpringRouteBuilder that supports transacted error handler.
  */
 public class JmsToHttpWithOnExceptionRoute extends RouteBuilder {
+
+    protected static final String NOK = "<?xml version=\"1.0\"?><reply><status>nok</status></reply>";
+    protected static final String OK = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
     protected static int counter;
+
+    private static final String NO_ACCESS = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
+
     protected int port;
 
     @Resource(name = "PROPAGATION_REQUIRED")
     protected SpringTransactionPolicy required;
-
-    protected static final String nok = "<?xml version=\"1.0\"?><reply><status>nok</status></reply>";
-    protected static final String ok = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
-
-    private static final String noAccess = "<?xml version=\"1.0\"?><reply><status>Access denied</status></reply>";
 
     @Override
     public void configure() {
@@ -58,7 +59,7 @@ public class JmsToHttpWithOnExceptionRoute extends RouteBuilder {
                 HttpOperationFailedException e = exchange.getException(HttpOperationFailedException.class);
                 return e != null && e.getStatusCode() == 404;
             }
-        }).handled(true).to("mock:JmsToHttpWithOnExceptionRoute404").transform(constant(noAccess));
+        }).handled(true).to("mock:JmsToHttpWithOnExceptionRoute404").transform(constant(NO_ACCESS));
 
         from("activemq:queue:JmsToHttpWithOnExceptionRoute")
                 // must setup policy to indicate transacted route
@@ -100,11 +101,11 @@ public class JmsToHttpWithOnExceptionRoute extends RouteBuilder {
                     return;
                 } else if ("guest".equals(user)) {
                     // not okay for guest user
-                    exchange.getMessage().setBody(nok);
+                    exchange.getMessage().setBody(NOK);
                     return;
                 }
 
-                exchange.getMessage().setBody(ok);
+                exchange.getMessage().setBody(OK);
             }
         });
     }
