@@ -576,7 +576,8 @@ public abstract class CamelTestSupport
             String dir = "target/camel-route-coverage";
             String name = className + "-" + StringHelper.before(currentTestName, "(") + ".xml";
 
-            ManagedCamelContext mc = context != null ? context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class) : null;
+            ManagedCamelContext mc
+                    = context != null ? context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class) : null;
             ManagedCamelContextMBean managedCamelContext = mc != null ? mc.getManagedCamelContext() : null;
             if (managedCamelContext == null) {
                 LOG.warn("Cannot dump route coverage to file as JMX is not enabled. "

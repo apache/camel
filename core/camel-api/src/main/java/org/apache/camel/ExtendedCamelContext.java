@@ -913,6 +913,7 @@ public interface ExtendedCamelContext {
 
     /**
      * Gets access to the internal plugin manager
+     *
      * @return the internal plugin manager
      */
     @Deprecated

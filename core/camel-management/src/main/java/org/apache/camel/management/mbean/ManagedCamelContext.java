@@ -496,7 +496,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public String dumpRouteTemplatesAsXml() throws Exception {
-        List<RouteTemplateDefinition> templates = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteTemplateDefinitions();
+        List<RouteTemplateDefinition> templates
+                = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteTemplateDefinitions();
         if (templates.isEmpty()) {
             return null;
         }

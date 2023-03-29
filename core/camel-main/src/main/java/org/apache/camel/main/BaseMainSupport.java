@@ -1316,7 +1316,8 @@ public abstract class BaseMainSupport extends BaseService {
         // set properties per console
         for (String key : keys) {
             String name = StringHelper.before(key, ".");
-            DevConsole console = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class).resolveById(name);
+            DevConsole console
+                    = camelContext.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class).resolveById(name);
             if (console == null) {
                 throw new IllegalArgumentException(
                         "Cannot resolve DevConsole with id: " + name);
