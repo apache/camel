@@ -16,7 +16,6 @@
  */
 package org.apache.camel.language.groovy;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -48,25 +47,25 @@ public class GroovyExpression extends ExpressionSupport {
 
     @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        Script script = instantiateScript(exchange);
-        populateBinding(script.getBinding(), exchange);
+        Map<String, Object> globalVariables = new HashMap<>();
+        Script script = instantiateScript(exchange, globalVariables);
+        script.setBinding(createBinding(exchange, globalVariables));
         Object value = script.run();
 
         return exchange.getContext().getTypeConverter().convertTo(type, value);
     }
 
     @SuppressWarnings("unchecked")
-    private Script instantiateScript(Exchange exchange) {
+    private Script instantiateScript(Exchange exchange, Map<String, Object> globalVariables) {
         // Get the script from the cache, or create a new instance
         GroovyLanguage language = (GroovyLanguage) exchange.getContext().resolveLanguage("groovy");
         Set<GroovyShellFactory> shellFactories = exchange.getContext().getRegistry().findByType(GroovyShellFactory.class);
         GroovyShellFactory shellFactory = null;
         String fileName = null;
-        Map<String, Object> variables = Collections.emptyMap();
         if (shellFactories.size() == 1) {
             shellFactory = shellFactories.iterator().next();
             fileName = shellFactory.getFileName(exchange);
-            variables = shellFactory.getVariables(exchange);
+            globalVariables.putAll(shellFactory.getVariables(exchange));
         }
         final String key = fileName != null ? fileName + text : text;
         Class<Script> scriptClass = language.getScriptFromCache(key);
@@ -79,20 +78,12 @@ public class GroovyExpression extends ExpressionSupport {
             language.addScriptToCache(key, scriptClass);
         }
         // New instance of the script
-        Script script = ObjectHelper.newInstance(scriptClass, Script.class);
-        Binding binding = script.getBinding();
-        for (Map.Entry<String, Object> variableEntry : variables.entrySet()) {
-            binding.setVariable(variableEntry.getKey(), variableEntry.getValue());
-        }
-
-        return script;
+        return ObjectHelper.newInstance(scriptClass, Script.class);
     }
 
-    private void populateBinding(Binding binding, Exchange exchange) {
-        Map<String, Object> variables = new HashMap<>();
+    private Binding createBinding(Exchange exchange, Map<String, Object> globalVariables) {
+        Map<String, Object> variables = new HashMap<>(globalVariables);
         ExchangeHelper.populateVariableMap(exchange, variables, true);
-        for (Map.Entry<String, Object> variableEntry : variables.entrySet()) {
-            binding.setVariable(variableEntry.getKey(), variableEntry.getValue());
-        }
+        return new Binding(variables);
     }
 }
