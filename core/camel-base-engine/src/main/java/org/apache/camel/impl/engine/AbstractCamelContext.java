@@ -2089,7 +2089,7 @@ public abstract class AbstractCamelContext extends BaseService
         for (LifecycleStrategy strategy : lifecycleStrategies) {
             try {
                 strategy.onContextStarted(this);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 LOG.warn("Lifecycle strategy {} failed on CamelContext ({}) due to: {}. This exception will be ignored",
                         strategy,
                         camelContextExtension.getName(),
@@ -2116,7 +2116,7 @@ public abstract class AbstractCamelContext extends BaseService
         for (LifecycleStrategy strategy : lifecycleStrategies) {
             try {
                 strategy.onContextStopping(this);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 LOG.warn("Lifecycle strategy {} failed on CamelContext ({}) due to: {}. This exception will be ignored",
                         strategy,
                         camelContextExtension.getName(),
@@ -2873,7 +2873,7 @@ public abstract class AbstractCamelContext extends BaseService
             if (shutdownStrategy != null) {
                 shutdownStrategy.shutdownForced(this, camelContextExtension.getRouteStartupOrder());
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.warn("Error occurred while shutting down routes. This exception will be ignored.", e);
         }
 
@@ -2947,7 +2947,7 @@ public abstract class AbstractCamelContext extends BaseService
             for (LifecycleStrategy strategy : lifecycleStrategies) {
                 strategy.onContextStopped(this);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             LOG.warn("Error occurred while stopping lifecycle strategies. This exception will be ignored.", e);
         }
 
