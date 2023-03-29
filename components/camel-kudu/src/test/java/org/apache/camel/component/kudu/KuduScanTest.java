@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kudu;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -132,6 +133,57 @@ public class KuduScanTest extends AbstractKuduTest {
         results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
                 .get(1).getIn().getBody(List.class);
         assertEquals(1, results.size(), "only one record with id=2 is expected to be returned");
+
+        errorEndpoint.assertIsSatisfied();
+        successEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void scanWithColumnNames() throws InterruptedException {
+        errorEndpoint.expectedMessageCount(0);
+        successEndpoint.expectedMessageCount(2);
+
+        // without column names
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(KuduConstants.CAMEL_KUDU_SCAN_COLUMN_NAMES, null);
+        sendBody("direct:scan", null, headers);
+        List<Map<String, Object>> results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
+                .get(0).getIn().getBody(List.class);
+        assertEquals(5, results.get(0).size(), "returned rows are expected to have 5 columns");
+
+        // with column names
+        List<String> columnNames = Arrays.asList("id", "name");
+        headers.put(KuduConstants.CAMEL_KUDU_SCAN_COLUMN_NAMES, columnNames);
+        sendBody("direct:scan", null, headers);
+        results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges().get(1).getIn().getBody(List.class);
+        Map<String, Object> result = results.get(0);
+        assertEquals(2, result.size(), "returned rows are expected to have only 2 columns");
+        for (String name : columnNames) {
+            assertTrue(result.containsKey(name), "returned columns are expected to be identical to the specified ones");
+        }
+
+        errorEndpoint.assertIsSatisfied();
+        successEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void scanWithLimit() throws InterruptedException {
+        errorEndpoint.expectedMessageCount(0);
+        successEndpoint.expectedMessageCount(2);
+
+        // without limit
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(KuduConstants.CAMEL_KUDU_SCAN_LIMIT, null);
+        sendBody("direct:scan", null, headers);
+        List<Map<String, Object>> results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
+                .get(0).getIn().getBody(List.class);
+        assertEquals(2, results.size(), "returned result is expected to have 2 rows");
+
+        // with limit
+        headers.put(KuduConstants.CAMEL_KUDU_SCAN_LIMIT, 1L);
+        sendBody("direct:scan", null, headers);
+        results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges().get(1).getIn().getBody(List.class);
+        assertEquals(1, results.size(), "returned result is expected to have only 1 row");
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
