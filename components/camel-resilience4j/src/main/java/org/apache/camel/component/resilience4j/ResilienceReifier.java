@@ -194,7 +194,8 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
             final String ref = parseString(definition.getConfiguration());
 
             loadProperties(properties, Suppliers.firstNotNull(
-                    () -> camelContext.getCamelContextExtension().getContextPlugin(Model.class).getResilience4jConfiguration(ref),
+                    () -> camelContext.getCamelContextExtension().getContextPlugin(Model.class)
+                            .getResilience4jConfiguration(ref),
                     () -> mandatoryLookup(ref, Resilience4jConfigurationDefinition.class)),
                     configurer);
         }
