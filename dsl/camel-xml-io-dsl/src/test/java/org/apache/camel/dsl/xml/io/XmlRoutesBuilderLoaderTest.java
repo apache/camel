@@ -17,6 +17,7 @@
 package org.apache.camel.dsl.xml.io;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.ResourceHelper;
@@ -119,11 +120,12 @@ public class XmlRoutesBuilderLoaderTest {
                          + "  </routeConfiguration>"
                          + "</routeConfigurations>";
         Resource resource = ResourceHelper.fromString("in-memory.xml", content);
-        RouteBuilder builder = (RouteBuilder) new XmlRoutesBuilderLoader().loadRoutesBuilder(resource);
+        RouteConfigurationBuilder builder
+                = (RouteConfigurationBuilder) new XmlRoutesBuilderLoader().loadRoutesBuilder(resource);
         DefaultCamelContext camelContext = new DefaultCamelContext();
         builder.setCamelContext(camelContext);
         builder.configuration();
 
-        assertFalse(camelContext.getRouteConfigurationDefinitions().isEmpty());
+        assertFalse(builder.getRouteConfigurationCollection().getRouteConfigurations().isEmpty());
     }
 }

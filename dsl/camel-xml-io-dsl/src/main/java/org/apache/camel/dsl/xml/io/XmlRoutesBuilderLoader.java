@@ -23,7 +23,6 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.RouteConfigurationBuilder;
 import org.apache.camel.dsl.support.RouteBuilderLoaderSupport;
-import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteConfigurationDefinition;
 import org.apache.camel.model.RouteConfigurationsDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -78,7 +77,7 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             }
 
             private void addRoutes(RoutesDefinition routes) {
-                CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
+                CamelContextAware.trySetCamelContext(routes, getCamelContext());
 
                 // xml routes must be prepared in the same way java-dsl (via RoutesDefinition)
                 // so create a copy and use the fluent builder to add the route
@@ -88,9 +87,12 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
             }
 
             private void addConfigurations(RouteConfigurationsDefinition configurations) {
-                CamelContextAware.trySetCamelContext(getRouteCollection(), getCamelContext());
+                CamelContextAware.trySetCamelContext(configurations, getCamelContext());
+
+                // xml routes must be prepared in the same way java-dsl (via RouteConfigurationDefinition)
+                // so create a copy and use the fluent builder to add the route
                 for (RouteConfigurationDefinition config : configurations.getRouteConfigurations()) {
-                    ((ModelCamelContext) getCamelContext()).addRouteConfiguration(config);
+                    getRouteConfigurationCollection().routeConfiguration(config);
                 }
             }
         };
