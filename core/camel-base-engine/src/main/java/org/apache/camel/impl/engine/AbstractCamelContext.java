@@ -1074,18 +1074,7 @@ public abstract class AbstractCamelContext extends BaseService
         internalRouteStartupManager.doStartOrResumeRoutes(routeServices, true, true, false, false);
     }
 
-    public void stopAllRoutes() throws Exception {
-        RouteController controller = getRouteController();
-        if (controller == null) {
-            // in case we are called during shutdown and controller is null
-            return;
-        }
-
-        // stop all routes in reverse order that they were started
-        Comparator<RouteStartupOrder> comparator = Comparator.comparingInt(RouteStartupOrder::getStartupOrder);
-        if (shutdownStrategy == null || shutdownStrategy.isShutdownRoutesInReverseOrder()) {
-            comparator = comparator.reversed();
-        }
+    private void doStopRoutes(RouteController controller, Comparator<RouteStartupOrder> comparator) throws Exception {
         List<RouteStartupOrder> routesOrdered = new ArrayList<>(camelContextExtension.getRouteStartupOrder());
         routesOrdered.sort(comparator);
         for (RouteStartupOrder order : routesOrdered) {
@@ -1102,6 +1091,21 @@ public abstract class AbstractCamelContext extends BaseService
                 stopRoute(route.getRouteId(), LoggingLevel.DEBUG);
             }
         }
+    }
+
+    public void stopAllRoutes() throws Exception {
+        RouteController controller = getRouteController();
+        if (controller == null) {
+            // in case we are called during shutdown and controller is null
+            return;
+        }
+
+        // stop all routes in reverse order that they were started
+        Comparator<RouteStartupOrder> comparator = Comparator.comparingInt(RouteStartupOrder::getStartupOrder);
+        if (shutdownStrategy == null || shutdownStrategy.isShutdownRoutesInReverseOrder()) {
+            comparator = comparator.reversed();
+        }
+        doStopRoutes(controller, comparator);
 
         if (startupSummaryLevel != StartupSummaryLevel.Oneline
                 && startupSummaryLevel != StartupSummaryLevel.Off) {
@@ -1115,22 +1119,7 @@ public abstract class AbstractCamelContext extends BaseService
         if (shutdownStrategy == null || shutdownStrategy.isShutdownRoutesInReverseOrder()) {
             comparator = comparator.reversed();
         }
-        List<RouteStartupOrder> routesOrdered = new ArrayList<>(camelContextExtension.getRouteStartupOrder());
-        routesOrdered.sort(comparator);
-        for (RouteStartupOrder order : routesOrdered) {
-            Route route = order.getRoute();
-            boolean stopped = getRouteController().getRouteStatus(route.getRouteId()).isStopped();
-            if (!stopped) {
-                stopRoute(route.getRouteId(), LoggingLevel.DEBUG);
-            }
-        }
-        // stop any remainder routes
-        for (Route route : getRoutes()) {
-            boolean stopped = getRouteController().getRouteStatus(route.getRouteId()).isStopped();
-            if (!stopped) {
-                stopRoute(route.getRouteId(), LoggingLevel.DEBUG);
-            }
-        }
+        doStopRoutes(getRouteController(), comparator);
 
         // do not be noisy when removing routes
         // as this is used by route-reload functionality, so lets be brief
@@ -1411,6 +1400,27 @@ public abstract class AbstractCamelContext extends BaseService
         }
     }
 
+    private static String toResourcePath(Package clazz, String languageName) {
+        String packageName = clazz.getName();
+        packageName = packageName.replace('.', '/');
+        return packageName + "/" + languageName + ".json";
+    }
+
+    private String doLoadResource(String resourceName, String path, String resourceType) throws IOException {
+        final ClassResolver resolver = getClassResolver();
+        InputStream inputStream = resolver.loadResourceAsStream(path);
+        LOG.debug("Loading {} JSON Schema for: {} using class resolver: {} -> {}", resourceType, resourceName, resolver,
+                inputStream);
+        if (inputStream != null) {
+            try {
+                return IOHelper.loadText(inputStream);
+            } finally {
+                IOHelper.close(inputStream);
+            }
+        }
+        return null;
+    }
+
     public String getComponentParameterJsonSchema(String componentName) throws IOException {
         // use the component factory finder to find the package name of the
         // component class, which is the location
@@ -1427,19 +1437,11 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
-        String packageName = clazz.getPackage().getName();
-        packageName = packageName.replace('.', '/');
-        String path = packageName + "/" + componentName + ".json";
+        String path = toResourcePath(clazz.getPackage(), componentName);
 
-        ClassResolver resolver = getClassResolver();
-        InputStream inputStream = resolver.loadResourceAsStream(path);
-        LOG.debug("Loading component JSON Schema for: {} using class resolver: {} -> {}", componentName, resolver, inputStream);
+        String inputStream = doLoadResource(componentName, path, "component");
         if (inputStream != null) {
-            try {
-                return IOHelper.loadText(inputStream);
-            } finally {
-                IOHelper.close(inputStream);
-            }
+            return inputStream;
         }
 
         return null;
@@ -1455,20 +1457,11 @@ public abstract class AbstractCamelContext extends BaseService
             return null;
         }
 
-        String packageName = clazz.getPackage().getName();
-        packageName = packageName.replace('.', '/');
-        String path = packageName + "/" + dataFormatName + ".json";
+        String path = toResourcePath(clazz.getPackage(), dataFormatName);
 
-        ClassResolver resolver = getClassResolver();
-        InputStream inputStream = resolver.loadResourceAsStream(path);
-        LOG.debug("Loading dataformat JSON Schema for: {} using class resolver: {} -> {}", dataFormatName, resolver,
-                inputStream);
+        String inputStream = doLoadResource(dataFormatName, path, "dataformat");
         if (inputStream != null) {
-            try {
-                return IOHelper.loadText(inputStream);
-            } finally {
-                IOHelper.close(inputStream);
-            }
+            return inputStream;
         }
         return null;
     }
@@ -1483,19 +1476,11 @@ public abstract class AbstractCamelContext extends BaseService
             return null;
         }
 
-        String packageName = clazz.getPackage().getName();
-        packageName = packageName.replace('.', '/');
-        String path = packageName + "/" + languageName + ".json";
+        String path = toResourcePath(clazz.getPackage(), languageName);
 
-        ClassResolver resolver = getClassResolver();
-        InputStream inputStream = resolver.loadResourceAsStream(path);
-        LOG.debug("Loading language JSON Schema for: {} using class resolver: {} -> {}", languageName, resolver, inputStream);
+        String inputStream = doLoadResource(languageName, path, "language");
         if (inputStream != null) {
-            try {
-                return IOHelper.loadText(inputStream);
-            } finally {
-                IOHelper.close(inputStream);
-            }
+            return inputStream;
         }
         return null;
     }
@@ -1509,15 +1494,9 @@ public abstract class AbstractCamelContext extends BaseService
         String[] subPackages = new String[] { "", "/config", "/dataformat", "/language", "/loadbalancer", "/rest" };
         for (String sub : subPackages) {
             String path = CamelContextHelper.MODEL_DOCUMENTATION_PREFIX + sub + "/" + eipName + ".json";
-            ClassResolver resolver = getClassResolver();
-            InputStream inputStream = resolver.loadResourceAsStream(path);
+            String inputStream = doLoadResource(eipName, path, "eip");
             if (inputStream != null) {
-                LOG.debug("Loading eip JSON Schema for: {} using class resolver: {} -> {}", eipName, resolver, inputStream);
-                try {
-                    return IOHelper.loadText(inputStream);
-                } finally {
-                    IOHelper.close(inputStream);
-                }
+                return inputStream;
             }
         }
         return null;
