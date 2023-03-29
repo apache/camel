@@ -678,12 +678,9 @@ public final class EntityParser {
 
             // Get Content-Type and Content-Transfer-Encoding
             ContentType dispositionNotificationContentType = null;
-            String dispositionNotificationContentTransferEncoding = null;
             for (Header header : headers) {
                 if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TYPE)) {
                     dispositionNotificationContentType = ContentType.parse(header.getValue());
-                } else if (header.getName().equalsIgnoreCase(AS2Header.CONTENT_TRANSFER_ENCODING)) {
-                    dispositionNotificationContentTransferEncoding = header.getValue();
                 }
             }
             if (dispositionNotificationContentType == null) {
