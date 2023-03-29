@@ -27,7 +27,6 @@ import java.util.Properties;
 
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.codegen.AbstractSalesforceExecution;
-import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.jupiter.api.Test;
@@ -51,10 +50,10 @@ public class AbstractSalesforceMojoIntegrationTest {
             protected AbstractSalesforceExecution getSalesforceExecution() {
                 return new AbstractSalesforceExecution() {
                     @Override
-                    protected void executeWithClient(RestClient client) {
-                        assertThat(client).isNotNull();
+                    protected void executeWithClient() {
+                        assertThat(getRestClient()).isNotNull();
 
-                        client.getGlobalObjects(NO_HEADERS, (response, headers, exception) -> {
+                        getRestClient().getGlobalObjects(NO_HEADERS, (response, headers, exception) -> {
                             assertThat(exception).isNull();
                         });
                     }

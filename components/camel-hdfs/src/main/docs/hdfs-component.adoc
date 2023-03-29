@@ -75,6 +75,7 @@ include::partial$component-endpoint-headers.adoc[]
 * BYTE for writing a byte, the java Byte class is mapped into a BYTE
 * BYTES for writing a sequence of bytes. It maps the java ByteBuffer
 class
+* SHORT for writing java short
 * INT for writing java integer
 * FLOAT for writing java float
 * LONG for writing java long

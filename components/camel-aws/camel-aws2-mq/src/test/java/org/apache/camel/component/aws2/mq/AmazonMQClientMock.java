@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import software.amazon.awssdk.services.mq.MqClient;
+import software.amazon.awssdk.services.mq.MqServiceClientConfiguration;
 import software.amazon.awssdk.services.mq.model.BrokerState;
 import software.amazon.awssdk.services.mq.model.BrokerSummary;
 import software.amazon.awssdk.services.mq.model.ConfigurationId;
@@ -90,6 +91,11 @@ public class AmazonMQClientMock implements MqClient {
         cId.revision(12);
         builder.brokerId("1").configuration(cId.build());
         return builder.build();
+    }
+
+    @Override
+    public MqServiceClientConfiguration serviceClientConfiguration() {
+        return null;
     }
 
     @Override

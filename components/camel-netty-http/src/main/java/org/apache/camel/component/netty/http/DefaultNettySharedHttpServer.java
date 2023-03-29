@@ -121,7 +121,7 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
                 = new HttpServerSharedInitializerFactory(configuration, channelFactory, camelContext);
 
         // thread factory and pattern
-        String port = Matcher.quoteReplacement("" + configuration.getPort());
+        String port = Matcher.quoteReplacement(Integer.toString(configuration.getPort()));
         String pattern = threadPattern;
         pattern = pattern.replaceFirst("#port#", port);
         ThreadFactory tf = new CamelThreadFactory(pattern, "NettySharedHttpServer", true);

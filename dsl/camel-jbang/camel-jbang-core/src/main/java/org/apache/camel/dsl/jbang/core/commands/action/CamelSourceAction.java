@@ -72,13 +72,13 @@ public class CamelSourceAction extends ActionBaseCommand {
         this.pid = pids.get(0);
 
         // ensure output file is deleted before executing action
-        File outputFile = getOutputFile("" + pid);
+        File outputFile = getOutputFile(Long.toString(pid));
         FileUtil.deleteFile(outputFile);
 
         JsonObject root = new JsonObject();
         root.put("action", "source");
         root.put("filter", "*");
-        File file = getActionFile("" + pid);
+        File file = getActionFile(Long.toString(pid));
         try {
             IOHelper.writeText(root.toJson(), file);
         } catch (Exception e) {

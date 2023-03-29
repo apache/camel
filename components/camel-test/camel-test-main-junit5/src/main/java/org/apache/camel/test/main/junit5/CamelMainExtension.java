@@ -145,7 +145,8 @@ final class CamelMainExtension
             String name = String.format("%s-%s.xml", className, StringHelper.before(currentTestName, "("));
 
             final ModelCamelContext camelContext = getContextStore(context).get(CONTEXT, CamelMainContext.class).context();
-            ManagedCamelContext mc = camelContext == null ? null : camelContext.getExtension(ManagedCamelContext.class);
+            ManagedCamelContext mc = camelContext == null
+                    ? null : camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class);
             ManagedCamelContextMBean managedCamelContext = mc == null ? null : mc.getManagedCamelContext();
             if (managedCamelContext == null) {
                 LOG.warn("Cannot dump route coverage to file as JMX is not enabled. "

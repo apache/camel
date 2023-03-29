@@ -10,6 +10,13 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 XML parsers & XML transformers has been made more secure by disabling DOCTYPE and/or access to external DTD/Schema.
 
+==== UseOriginalMessage / UseOriginalBody
+
+When `useOriginalMessage` or `useOriginalBody` is enabled in `OnException`, `OnCompletion` or error handlers,
+then the original message body is defensively copied and if possible converted to `StreamCache` to ensure
+the body can be re-read when accessed. Previously the original body was not converted to `StreamCache` which
+could lead to the body not able to be read or the stream has been closed.
+
 === camel-console
 
 The class `org.apache.camel.impl.console.AbstractDevConsole` has moved from `camel-console` to `camel-support`
@@ -112,6 +119,28 @@ The `certificatePath` parameter can now be specified as resource: for user point
 
 The deprecated option `componentName` was removed. Please use either `producerComponentName` or `consumerComponentName`.
 
+=== Deprecated Components
+
+The following components that had been marked as deprecated, were removed in this release:
+
+* camel-dozer
+* camel-cmis
+
+== Backlog Tracing
+
+The option `backlogTracing=true` now automatic enabled the tracer on startup. The previous behavior
+was _surprisingly_ that the tracer was only made available, and had to be manually enabled afterwards.
+The old behavior can be archived by setting `backlogTracingStandby=true`.
+
+Move the following class from `org.apache.camel.api.management.mbean.BacklogTracerEventMessage` in `camel-management-api` JAR
+to `org.apache.camel.spi.BacklogTracerEventMessage` in `camel-api` JAR.
+
+
+== Camel Spring Boot
+
+The `camel-spring-boot` dependency no longer includes `camel-spring-xml`. To use legacy Spring XML files `<beans>`
+with Camel on Spring Boot, then include the `camel-spring-boot-xml-starter` dependency.
+
 === camel-micrometer-starter
 
 The `uri` tags are now static instead of dynamic (by default), as potential too many tags generated due to URI with dynamic values.
@@ -134,19 +163,3 @@ Then calling _myservice_ would before require to include the context-path, such 
 Now the context-path is not in use, and the endpoint can be called with `http://localhost:8080/myservice`.
 
 NOTE: The `platform-http-starter` can also be used with Rest DSL.
-
-=== Deprecated Components
-
-The following components that had been marked as deprecated, were removed in this release:
-
-* camel-dozer
-* camel-cmis
-
-== Backlog Tracing
-
-The option `backlogTracing=true` now automatic enabled the tracer on startup. The previous behavior
-was _surprisingly_ that the tracer was only made available, and had to be manually enabled afterwards.
-The old behavior can be archived by setting `backlogTracingStandby=true`.
-
-Move the following class from `org.apache.camel.api.management.mbean.BacklogTracerEventMessage` in `camel-management-api` JAR
-to `org.apache.camel.spi.BacklogTracerEventMessage` in `camel-api` JAR.

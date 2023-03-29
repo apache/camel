@@ -425,7 +425,7 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition>
      * @return       the builder
      */
     public RouteDefinition delayer(long delay) {
-        setDelayer("" + delay);
+        setDelayer(Long.toString(delay));
         return this;
     }
 

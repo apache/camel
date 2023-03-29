@@ -28,6 +28,7 @@ import org.apache.camel.component.salesforce.internal.processor.BulkApiV2Process
 import org.apache.camel.component.salesforce.internal.processor.CompositeApiProcessor;
 import org.apache.camel.component.salesforce.internal.processor.CompositeSObjectCollectionsProcessor;
 import org.apache.camel.component.salesforce.internal.processor.JsonRestProcessor;
+import org.apache.camel.component.salesforce.internal.processor.PubSubApiProcessor;
 import org.apache.camel.component.salesforce.internal.processor.RawProcessor;
 import org.apache.camel.component.salesforce.internal.processor.SalesforceProcessor;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -63,6 +64,8 @@ public class SalesforceProducer extends DefaultAsyncProducer {
             processor = new CompositeSObjectCollectionsProcessor(endpoint);
         } else if (isRawOperation(operationName)) {
             processor = new RawProcessor(endpoint);
+        } else if (isPubSubOperation(operationName)) {
+            processor = new PubSubApiProcessor(endpoint);
         } else {
             processor = new JsonRestProcessor(endpoint);
         }
@@ -152,6 +155,10 @@ public class SalesforceProducer extends DefaultAsyncProducer {
 
     private static boolean isRawOperation(OperationName operationName) {
         return operationName == OperationName.RAW;
+    }
+
+    private static boolean isPubSubOperation(OperationName operationName) {
+        return operationName == OperationName.PUBSUB_PUBLISH;
     }
 
     @Override

@@ -31,9 +31,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelContext;
@@ -82,8 +84,12 @@ public class SalesforceSession extends ServiceSupport {
 
     private volatile String accessToken;
     private volatile String instanceUrl;
+    private volatile String id;
+    private volatile String orgId;
 
-    private CamelContext camelContext;
+    private final CamelContext camelContext;
+    private final AtomicBoolean loggingIn = new AtomicBoolean();
+    private CountDownLatch latch = new CountDownLatch(1);
 
     public SalesforceSession(CamelContext camelContext, SalesforceHttpClient httpClient, long timeout,
                              SalesforceLoginConfig config) {
@@ -99,6 +105,54 @@ public class SalesforceSession extends ServiceSupport {
 
         this.objectMapper = JsonUtils.createObjectMapper();
         this.listeners = new CopyOnWriteArraySet<>();
+    }
+
+    public void attemptLoginUntilSuccessful(long backoffIncrement, long maxBackoff) {
+        // if another thread is logging in, we will just wait until it's successful
+        if (!loggingIn.compareAndSet(false, true)) {
+            LOG.debug("waiting on login from another thread");
+            // TODO: This is janky
+            try {
+                while (latch == null) {
+                    Thread.sleep(100);
+                }
+                latch.await();
+            } catch (InterruptedException ex) {
+                throw new RuntimeException("Failed to login.", ex);
+            }
+            LOG.debug("done waiting");
+            return;
+        }
+        LOG.debug("Attempting to login, no other threads logging in");
+        latch = new CountDownLatch(1);
+
+        long backoff = 0;
+
+        try {
+            for (;;) {
+                try {
+                    if (isStoppingOrStopped()) {
+                        return;
+                    }
+                    login(getAccessToken());
+                    break;
+                } catch (SalesforceException e) {
+                    backoff = backoff + backoffIncrement;
+                    if (backoff > maxBackoff) {
+                        backoff = maxBackoff;
+                    }
+                    LOG.warn(String.format("Salesforce login failed. Pausing for %d milliseconds", backoff), e);
+                    try {
+                        Thread.sleep(backoff);
+                    } catch (InterruptedException ex) {
+                        throw new RuntimeException("Failed to login.", ex);
+                    }
+                }
+            }
+        } finally {
+            loggingIn.set(false);
+            latch.countDown();
+        }
     }
 
     public synchronized String login(String oldToken) throws SalesforceException {
@@ -133,7 +187,6 @@ public class SalesforceSession extends ServiceSupport {
                 throw new SalesforceException("Unexpected login error: " + e.getCause().getMessage(), e.getCause());
             }
         }
-
         return accessToken;
     }
 
@@ -259,6 +312,8 @@ public class SalesforceSession extends ServiceSupport {
                     LOG.info("Login successful");
                     accessToken = token.getAccessToken();
                     instanceUrl = Optional.ofNullable(config.getInstanceUrl()).orElse(token.getInstanceUrl());
+                    id = token.getId();
+                    orgId = id.substring(id.indexOf("id/") + 3, id.indexOf("id/") + 21);
                     // strip trailing '/'
                     int lastChar = instanceUrl.length() - 1;
                     if (instanceUrl.charAt(lastChar) == '/') {
@@ -345,6 +400,14 @@ public class SalesforceSession extends ServiceSupport {
 
     public String getInstanceUrl() {
         return instanceUrl;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getOrgId() {
+        return orgId;
     }
 
     public boolean addListener(SalesforceSessionListener listener) {

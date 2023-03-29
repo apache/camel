@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import software.amazon.awssdk.services.kafka.KafkaClient;
+import software.amazon.awssdk.services.kafka.KafkaServiceClientConfiguration;
 import software.amazon.awssdk.services.kafka.model.ClusterInfo;
 import software.amazon.awssdk.services.kafka.model.ClusterState;
 import software.amazon.awssdk.services.kafka.model.CreateClusterRequest;
@@ -45,6 +46,11 @@ public class AmazonMSKClientMock implements KafkaClient {
         info.add(info1.build());
         result.clusterInfoList(info);
         return result.build();
+    }
+
+    @Override
+    public KafkaServiceClientConfiguration serviceClientConfiguration() {
+        return null;
     }
 
     @Override

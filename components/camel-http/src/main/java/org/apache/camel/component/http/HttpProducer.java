@@ -25,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -145,7 +144,7 @@ public class HttpProducer extends DefaultProducer {
         boolean cookies = !getEndpoint().getComponent().isCookieManagementDisabled();
         if (cookies && getEndpoint().isClearExpiredCookies() && !getEndpoint().isBridgeEndpoint()) {
             // create the cookies before the invocation
-            getEndpoint().getCookieStore().clearExpired(Instant.now());
+            getEndpoint().getCookieStore().clearExpired(new Date());
         }
 
         // if we bridge endpoint then we need to skip matching headers with the HTTP_QUERY to avoid sending

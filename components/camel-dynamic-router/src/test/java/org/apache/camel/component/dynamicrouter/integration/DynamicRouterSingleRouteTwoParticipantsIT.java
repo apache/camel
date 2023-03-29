@@ -61,6 +61,9 @@ public class DynamicRouterSingleRouteTwoParticipantsIT {
     @EndpointInject("mock:three")
     MockEndpoint mockThree;
 
+    @EndpointInject("mock:four")
+    MockEndpoint mockFour;
+
     @Produce("direct:start")
     ProducerTemplate start;
 
@@ -72,6 +75,8 @@ public class DynamicRouterSingleRouteTwoParticipantsIT {
     DynamicRouterControlMessage oddSubscribeMsg;
 
     DynamicRouterControlMessage allSubscribeMsg;
+
+    DynamicRouterControlMessage allSubscribeMsgLowerPriority;
 
     @BeforeEach
     void setup() {
@@ -98,10 +103,21 @@ public class DynamicRouterSingleRouteTwoParticipantsIT {
         // Create a subscription that accepts an exchange when the message body contains any number
         // The destination URI is for the endpoint "mockThree"
         allSubscribeMsg = new SubscribeMessageBuilder()
-                .id("allNumberSubscription")
+                .id("everyNumberSubscription")
                 .channel("test")
                 .priority(1)
                 .endpointUri(mockThree.getEndpointUri())
+                .predicate(body().regex("^\\d+$"))
+                .build();
+
+        // Create a subscription that has an id that is lexically smaller than the rest, but a
+        // priority number that is higher than the rest to test that priority is working properly.
+        // The destination URI is for the endpoint "mockFour"
+        allSubscribeMsgLowerPriority = new SubscribeMessageBuilder()
+                .id("aLowerPrioritySubscription")
+                .channel("test")
+                .priority(10)
+                .endpointUri(mockFour.getEndpointUri())
                 .predicate(body().regex("^\\d+$"))
                 .build();
     }
@@ -141,6 +157,25 @@ public class DynamicRouterSingleRouteTwoParticipantsIT {
         // the participant that wants all message content conflicts with everyone else.  Since
         // that subscription has the highest priority (lowest number), it will receive all
         subscribe(Arrays.asList(allSubscribeMsg, evenSubscribeMsg, oddSubscribeMsg));
+
+        sendMessagesAndAssert();
+    }
+
+    /**
+     * This test shows what happens when there are conflicting rules. The first matching subscriber wins. When two
+     * subscribers have registered at the same priority level, and the predicates match for both, then it is not clearly
+     * determined which subscriber will receive the exchange.
+     *
+     * @throws InterruptedException if interrupted while waiting for mocks to be satisfied
+     */
+    @Test
+    void testConsumersWithDifferentPriorities() throws InterruptedException {
+        mockThree.expectedBodiesReceivedInAnyOrder(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        mockFour.setExpectedCount(0);
+
+        // Subscribe with filters that perform the same evaluation, but the difference
+        // is in message priority.
+        subscribe(List.of(allSubscribeMsg, allSubscribeMsgLowerPriority));
 
         sendMessagesAndAssert();
     }

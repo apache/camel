@@ -506,7 +506,7 @@ public abstract class CamelTestSupport
         String exclude = getRouteFilterExcludePattern();
         if (include != null || exclude != null) {
             LOG.info("Route filtering pattern: include={}, exclude={}", include, exclude);
-            context.getExtension(Model.class).setRouteFilterPattern(include, exclude);
+            context.getCamelContextExtension().getContextPlugin(Model.class).setRouteFilterPattern(include, exclude);
         }
 
         // prepare for in-between tests
@@ -576,7 +576,8 @@ public abstract class CamelTestSupport
             String dir = "target/camel-route-coverage";
             String name = className + '-' + StringHelper.before(currentTestName, "(") + ".xml";
 
-            ManagedCamelContext mc = context != null ? context.getExtension(ManagedCamelContext.class) : null;
+            ManagedCamelContext mc
+                    = context != null ? context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class) : null;
             ManagedCamelContextMBean managedCamelContext = mc != null ? mc.getManagedCamelContext() : null;
             if (managedCamelContext == null) {
                 LOG.warn("Cannot dump route coverage to file as JMX is not enabled. "

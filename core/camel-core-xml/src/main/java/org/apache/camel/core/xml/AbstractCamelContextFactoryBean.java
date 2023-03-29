@@ -407,7 +407,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (healthCheckRegistry != null) {
             healthCheckRegistry.setCamelContext(getContext());
             LOG.debug("Using HealthCheckRegistry: {}", healthCheckRegistry);
-            getContext().setExtension(HealthCheckRegistry.class, healthCheckRegistry);
+            getContext().getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, healthCheckRegistry);
         } else {
             // okay attempt to inject this camel context into existing health check (if any)
             healthCheckRegistry = HealthCheckRegistry.get(getContext());
@@ -429,7 +429,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (devConsoleRegistry != null) {
             devConsoleRegistry.setCamelContext(getContext());
             LOG.debug("Using DevConsoleRegistry: {}", devConsoleRegistry);
-            getContext().setExtension(DevConsoleRegistry.class, devConsoleRegistry);
+            getContext().getCamelContextExtension().addContextPlugin(DevConsoleRegistry.class, devConsoleRegistry);
         } else {
             // okay attempt to inject this camel context into existing dev console (if any)
             devConsoleRegistry = DevConsoleRegistry.get(getContext());

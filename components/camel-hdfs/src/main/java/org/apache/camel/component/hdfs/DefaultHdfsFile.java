@@ -36,6 +36,7 @@ import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.ShortWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 
@@ -93,6 +94,7 @@ abstract class DefaultHdfsFile<T extends Closeable, U extends Closeable> impleme
             writables.put(ByteBuffer.class, new HdfsWritableFactories.HdfsBytesWritableFactory());
             writables.put(Double.class, new HdfsWritableFactories.HdfsDoubleWritableFactory());
             writables.put(Float.class, new HdfsWritableFactories.HdfsFloatWritableFactory());
+            writables.put(Short.class, new HdfsWritableFactories.HdfsShortWritableFactory());
             writables.put(Integer.class, new HdfsWritableFactories.HdfsIntWritableFactory());
             writables.put(Long.class, new HdfsWritableFactories.HdfsLongWritableFactory());
             writables.put(String.class, new HdfsWritableFactories.HdfsTextWritableFactory());
@@ -105,6 +107,7 @@ abstract class DefaultHdfsFile<T extends Closeable, U extends Closeable> impleme
             readables.put(BytesWritable.class, new HdfsWritableFactories.HdfsBytesWritableFactory());
             readables.put(DoubleWritable.class, new HdfsWritableFactories.HdfsDoubleWritableFactory());
             readables.put(FloatWritable.class, new HdfsWritableFactories.HdfsFloatWritableFactory());
+            readables.put(ShortWritable.class, new HdfsWritableFactories.HdfsShortWritableFactory());
             readables.put(IntWritable.class, new HdfsWritableFactories.HdfsIntWritableFactory());
             readables.put(LongWritable.class, new HdfsWritableFactories.HdfsLongWritableFactory());
             readables.put(Text.class, new HdfsWritableFactories.HdfsTextWritableFactory());

@@ -321,7 +321,8 @@ public class CustomizersTest {
                 new TokenizeLanguage());
         context.getCamelContextExtension().getRegistry().bind(
                 "tokenize-customizer",
-                LanguageCustomizer.forType(TokenizeLanguage.class, target -> target.setGroup("" + counter.incrementAndGet())));
+                LanguageCustomizer.forType(TokenizeLanguage.class,
+                        target -> target.setGroup(Integer.toString(counter.incrementAndGet()))));
 
         Language l1 = context.resolveLanguage("tokenize");
         assertTrue(l1 instanceof TokenizeLanguage);
@@ -343,7 +344,8 @@ public class CustomizersTest {
         DefaultCamelContext context = new DefaultCamelContext();
         context.getCamelContextExtension().getRegistry().bind(
                 "tokenize-customizer",
-                LanguageCustomizer.forType(TokenizeLanguage.class, target -> target.setGroup("" + counter.incrementAndGet())));
+                LanguageCustomizer.forType(TokenizeLanguage.class,
+                        target -> target.setGroup(Integer.toString(counter.incrementAndGet()))));
 
         // singleton language so its customized once
         Language l1 = context.resolveLanguage("tokenize");
@@ -367,7 +369,8 @@ public class CustomizersTest {
                 LanguageCustomizer.Policy.none());
         context.getCamelContextExtension().getRegistry().bind(
                 "tokenize-customizer",
-                LanguageCustomizer.forType(TokenizeLanguage.class, target -> target.setGroup("" + counter.incrementAndGet())));
+                LanguageCustomizer.forType(TokenizeLanguage.class,
+                        target -> target.setGroup(Integer.toString(counter.incrementAndGet()))));
 
         // singleton language so its customized once
         Language l1 = context.resolveLanguage("tokenize");

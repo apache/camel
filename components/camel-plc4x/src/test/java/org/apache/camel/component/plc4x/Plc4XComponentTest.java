@@ -41,7 +41,7 @@ public class Plc4XComponentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                Map<String, Object> tags = new HashMap<>();
+                Map<String, String> tags = new HashMap<>();
                 tags.put("Test1", "%TestQuery");
                 Plc4XEndpoint producer = getContext().getEndpoint("plc4x:mock:10.10.10.1/1/1", Plc4XEndpoint.class);
                 producer.setTags(tags);

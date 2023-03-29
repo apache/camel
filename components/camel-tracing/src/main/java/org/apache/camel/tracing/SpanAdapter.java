@@ -33,6 +33,26 @@ public interface SpanAdapter {
 
     void setTag(String key, Boolean value);
 
+    default void setLowCardinalityTag(Tag key, String value) {
+        setTag(key, value);
+    }
+
+    default void setLowCardinalityTag(Tag key, Number value) {
+        setTag(key, value);
+    }
+
+    default void setLowCardinalityTag(String key, String value) {
+        setTag(key, value);
+    }
+
+    default void setLowCardinalityTag(String key, Number value) {
+        setTag(key, value);
+    }
+
+    default void setLowCardinalityTag(String key, Boolean value) {
+        setTag(key, value);
+    }
+
     void log(Map<String, String> log);
 
     String traceId();

@@ -29,6 +29,8 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
         case "dataSource": target.setDataSource(property(camelContext, javax.sql.DataSource.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
+        case "rowmapperfactory":
+        case "rowMapperFactory": target.setRowMapperFactory(property(camelContext, org.apache.camel.component.sql.RowMapperFactory.class, value)); return true;
         case "useplaceholder":
         case "usePlaceholder": target.setUsePlaceholder(property(camelContext, boolean.class, value)); return true;
         default: return false;
@@ -37,7 +39,7 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
 
     @Override
     public String[] getAutowiredNames() {
-        return new String[]{"dataSource"};
+        return new String[]{"dataSource","rowMapperFactory"};
     }
 
     @Override
@@ -51,6 +53,8 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
         case "dataSource": return javax.sql.DataSource.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
+        case "rowmapperfactory":
+        case "rowMapperFactory": return org.apache.camel.component.sql.RowMapperFactory.class;
         case "useplaceholder":
         case "usePlaceholder": return boolean.class;
         default: return null;
@@ -69,6 +73,8 @@ public class SqlComponentConfigurer extends PropertyConfigurerSupport implements
         case "dataSource": return target.getDataSource();
         case "lazystartproducer":
         case "lazyStartProducer": return target.isLazyStartProducer();
+        case "rowmapperfactory":
+        case "rowMapperFactory": return target.getRowMapperFactory();
         case "useplaceholder":
         case "usePlaceholder": return target.isUsePlaceholder();
         default: return null;

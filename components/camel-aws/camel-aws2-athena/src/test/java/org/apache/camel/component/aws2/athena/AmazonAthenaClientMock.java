@@ -21,6 +21,7 @@ import java.util.Queue;
 
 import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.services.athena.AthenaClient;
+import software.amazon.awssdk.services.athena.AthenaServiceClientConfiguration;
 import software.amazon.awssdk.services.athena.model.ColumnInfo;
 import software.amazon.awssdk.services.athena.model.Datum;
 import software.amazon.awssdk.services.athena.model.GetQueryExecutionRequest;
@@ -109,6 +110,11 @@ public class AmazonAthenaClientMock implements AthenaClient {
         return StartQueryExecutionResponse.builder()
                 .queryExecutionId(result)
                 .build();
+    }
+
+    @Override
+    public AthenaServiceClientConfiguration serviceClientConfiguration() {
+        return null;
     }
 
     @Override

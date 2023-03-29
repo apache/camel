@@ -19,6 +19,7 @@ package org.apache.camel.spi;
 import java.io.File;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.StaticService;
 import org.apache.camel.StreamCache;
 
@@ -234,5 +235,14 @@ public interface StreamCachingStrategy extends StaticService {
      *                  the body
      */
     StreamCache cache(Exchange exchange);
+
+    /**
+     * Caches the body aas a {@link StreamCache}.
+     *
+     * @param  message the message
+     * @return         the body cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache
+     *                 the body
+     */
+    StreamCache cache(Message message);
 
 }

@@ -45,7 +45,8 @@ public class ManagedInlinedProcessorTest extends ManagementTestSupport {
         Long counter = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(1L, counter.longValue());
 
-        ManagedProcessorMBean mb = context.getExtension(ManagedCamelContext.class).getManagedProcessor("custom");
+        ManagedProcessorMBean mb
+                = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedProcessor("custom");
         assertNotNull(mb);
         assertEquals(1L, mb.getExchangesCompleted());
     }

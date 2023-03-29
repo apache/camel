@@ -113,7 +113,8 @@ public final class RouteCoverageXmlParser {
                 if (id != null) {
                     try {
                         if ("route".equals(qName)) {
-                            ManagedRouteMBean route = camelContext.getExtension(ManagedCamelContext.class).getManagedRoute(id);
+                            ManagedRouteMBean route = camelContext.getCamelContextExtension()
+                                    .getContextPlugin(ManagedCamelContext.class).getManagedRoute(id);
                             if (route != null) {
                                 long total = route.getExchangesTotal();
                                 el.setAttribute("exchangesTotal", "" + total);
@@ -126,7 +127,8 @@ public final class RouteCoverageXmlParser {
                             if (parent != null) {
                                 String routeId = parent.getAttribute("id");
                                 ManagedRouteMBean route
-                                        = camelContext.getExtension(ManagedCamelContext.class).getManagedRoute(routeId);
+                                        = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
+                                                .getManagedRoute(routeId);
                                 if (route != null) {
                                     long total = route.getExchangesTotal();
                                     el.setAttribute("exchangesTotal", "" + total);
@@ -138,7 +140,8 @@ public final class RouteCoverageXmlParser {
                             }
                         } else {
                             ManagedProcessorMBean processor
-                                    = camelContext.getExtension(ManagedCamelContext.class).getManagedProcessor(id);
+                                    = camelContext.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
+                                            .getManagedProcessor(id);
                             if (processor != null) {
                                 long total = processor.getExchangesTotal();
                                 el.setAttribute("exchangesTotal", "" + total);

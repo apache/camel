@@ -10,6 +10,8 @@ languages (DSL) as listed below:
 * xref:components::spring-summary.adoc[Spring XML] - A XML based DSL in classic Spring XML files.
 * xref:components:others:yaml-dsl.adoc[Yaml DSL] for creating routes using YAML format.
 * xref:rest-dsl.adoc[Rest DSL] - A DSL to define REST services using REST verbs.
+* xref:components:others:groovy-dsl.adoc[Groovy DSL] - A Groovy-based DSL to create routes leveraging closures and a specific Groovy extension module.
+* xref:components:others:kotlin-dsl.adoc[Kotlin DSL] - A Kotlin-based DSL.
 * xref:bean-integration.adoc[Annotation DSL] - Use annotations in Java beans.
 
 == See Also

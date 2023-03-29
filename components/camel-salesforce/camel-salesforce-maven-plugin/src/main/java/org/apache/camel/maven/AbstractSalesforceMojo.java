@@ -155,7 +155,7 @@ public abstract class AbstractSalesforceMojo extends AbstractMojo {
             setup();
             execution.execute();
         } catch (Exception e) {
-            throw new MojoExecutionException(e.getMessage());
+            throw new MojoExecutionException(e.getMessage(), e);
         }
 
     }

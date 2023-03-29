@@ -53,7 +53,6 @@ import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.apache.hc.client5.http.config.ConnectionConfig;
 import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.cookie.CookieStore;
 import org.apache.hc.client5.http.impl.DefaultRedirectStrategy;
@@ -118,10 +117,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
                             + " A timeout value of zero is interpreted as an infinite timeout.",
               javaType = "org.apache.hc.core5.util.Timeout")
     protected Timeout connectTimeout = Timeout.ofMinutes(3);
-    @Metadata(label = "timeout", defaultValue = "null (undefined)",
-              description = "Determines the default socket timeout value for I/O operations.",
-              javaType = "org.apache.hc.core5.util.Timeout")
-    protected Timeout socketTimeout;
     @Metadata(label = "timeout", defaultValue = "3 minutes",
               description = "Determines the default socket timeout value for blocking I/O operations.",
               javaType = "org.apache.hc.core5.util.Timeout")
@@ -315,15 +310,11 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         if (!Timeout.ofMilliseconds(0).equals(valResponseTimeout)) {
             httpClientOptions.put("responseTimeout", valResponseTimeout);
         }
-        final Map<String, Object> httpConnectionOptions = new HashMap<>();
         Timeout valConnectTimeout = getAndRemoveParameter(parameters, "connectTimeout", Timeout.class, connectTimeout);
         if (!Timeout.ofMinutes(3).equals(valConnectTimeout)) {
-            httpConnectionOptions.put("connectTimeout", valConnectTimeout);
+            httpClientOptions.put("connectTimeout", valConnectTimeout);
         }
-        Timeout valSocketTimeout = getAndRemoveParameter(parameters, "socketTimeout", Timeout.class, socketTimeout);
-        if (valSocketTimeout != null) {
-            httpConnectionOptions.put("socketTimeout", valSocketTimeout);
-        }
+        final Map<String, Object> httpConnectionOptions = new HashMap<>();
         Timeout valSoTimeout = getAndRemoveParameter(parameters, "soTimeout", Timeout.class, soTimeout);
         if (!Timeout.ofMinutes(3).equals(valSoTimeout)) {
             httpConnectionOptions.put("soTimeout", valSoTimeout);
@@ -396,7 +387,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         final HttpClientBuilder clientBuilder = createHttpClientBuilder(uri, parameters, httpClientOptions);
         HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
         endpoint.setResponseTimeout(valResponseTimeout);
-        endpoint.setSocketTimeout(valSocketTimeout);
         endpoint.setSoTimeout(valSoTimeout);
         endpoint.setConnectTimeout(valConnectTimeout);
         endpoint.setConnectionRequestTimeout(valConnectionRequestTimeout);
@@ -480,11 +470,9 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         httpConnectionOptions.putAll(PropertiesHelper.extractProperties(parameters, "httpConnection."));
         SocketConfig.Builder socketConfigBuilder = SocketConfig.custom();
         PropertyBindingSupport.bindProperties(getCamelContext(), socketConfigBuilder, httpConnectionOptions);
-        ConnectionConfig.Builder connectionConfigBuilder = ConnectionConfig.custom();
-        PropertyBindingSupport.bindProperties(getCamelContext(), connectionConfigBuilder, httpConnectionOptions);
 
         return createConnectionManager(connectionRegistry, maxTotalConnections, connectionsPerRoute,
-                socketConfigBuilder.build(), connectionConfigBuilder.build());
+                socketConfigBuilder.build());
     }
 
     protected HttpClientBuilder createHttpClientBuilder(
@@ -554,7 +542,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
 
     protected HttpClientConnectionManager createConnectionManager(
             Registry<ConnectionSocketFactory> registry, int maxTotalConnections, int connectionsPerRoute,
-            SocketConfig defaultSocketConfig, ConnectionConfig defaultConnectionConfig) {
+            SocketConfig defaultSocketConfig) {
         // setup the connection live time
         PoolingHttpClientConnectionManager answer = new PoolingHttpClientConnectionManager(
                 registry, PoolConcurrencyPolicy.STRICT, TimeValue.ofMilliseconds(getConnectionTimeToLive()), null);
@@ -566,7 +554,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
             answer.setMaxTotal(localMaxTotalConnections);
         }
         answer.setDefaultSocketConfig(defaultSocketConfig);
-        answer.setDefaultConnectionConfig(defaultConnectionConfig);
         int localConnectionsPerRoute = connectionsPerRoute;
         if (localConnectionsPerRoute == 0) {
             localConnectionsPerRoute = getConnectionsPerRoute();
@@ -794,20 +781,6 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
      */
     public void setConnectTimeout(Timeout connectTimeout) {
         this.connectTimeout = connectTimeout;
-    }
-
-    public Timeout getSocketTimeout() {
-        return socketTimeout;
-    }
-
-    /**
-     * Determines the default socket timeout value for I/O operations.
-     * <p>
-     * Default: {@code null} (undefined)
-     * </p>
-     */
-    public void setSocketTimeout(Timeout socketTimeout) {
-        this.socketTimeout = socketTimeout;
     }
 
     public Timeout getSoTimeout() {

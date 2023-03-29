@@ -85,8 +85,8 @@
         <name>ConnectedApp</name>
     </types>
     <types>
-        <members>ChangeEvents</members>
-        <name>PlatformEventChannel</name>
+        <members>ChangeEvents_AccountChangeEvent</members>
+        <name>PlatformEventChannelMember</name>
     </types>
-    <version>45.0</version>
+    <version>55.0</version>
 </Package>

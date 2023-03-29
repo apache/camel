@@ -153,6 +153,16 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "pkChunkingParent": getOrCreateConfig(target).setPkChunkingParent(property(camelContext, java.lang.String.class, value)); return true;
         case "pkchunkingstartrow":
         case "pkChunkingStartRow": getOrCreateConfig(target).setPkChunkingStartRow(property(camelContext, java.lang.String.class, value)); return true;
+        case "pubsubbatchsize":
+        case "pubSubBatchSize": getOrCreateConfig(target).setPubSubBatchSize(property(camelContext, int.class, value)); return true;
+        case "pubsubdeserializetype":
+        case "pubSubDeserializeType": getOrCreateConfig(target).setPubSubDeserializeType(property(camelContext, org.apache.camel.component.salesforce.PubSubDeserializeType.class, value)); return true;
+        case "pubsubhost":
+        case "pubSubHost": target.setPubSubHost(property(camelContext, java.lang.String.class, value)); return true;
+        case "pubsubpojoclass":
+        case "pubSubPojoClass": getOrCreateConfig(target).setPubSubPojoClass(property(camelContext, java.lang.String.class, value)); return true;
+        case "pubsubport":
+        case "pubSubPort": target.setPubSubPort(property(camelContext, int.class, value)); return true;
         case "querylocator":
         case "queryLocator": getOrCreateConfig(target).setQueryLocator(property(camelContext, java.lang.String.class, value)); return true;
         case "rawhttpheaders":
@@ -167,6 +177,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "rawQueryParameters": getOrCreateConfig(target).setRawQueryParameters(property(camelContext, java.lang.String.class, value)); return true;
         case "refreshtoken":
         case "refreshToken": target.setRefreshToken(property(camelContext, java.lang.String.class, value)); return true;
+        case "replaypreset":
+        case "replayPreset": getOrCreateConfig(target).setReplayPreset(property(camelContext, com.salesforce.eventbus.protobuf.ReplayPreset.class, value)); return true;
         case "reportid":
         case "reportId": getOrCreateConfig(target).setReportId(property(camelContext, java.lang.String.class, value)); return true;
         case "reportmetadata":
@@ -337,6 +349,16 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "pkChunkingParent": return java.lang.String.class;
         case "pkchunkingstartrow":
         case "pkChunkingStartRow": return java.lang.String.class;
+        case "pubsubbatchsize":
+        case "pubSubBatchSize": return int.class;
+        case "pubsubdeserializetype":
+        case "pubSubDeserializeType": return org.apache.camel.component.salesforce.PubSubDeserializeType.class;
+        case "pubsubhost":
+        case "pubSubHost": return java.lang.String.class;
+        case "pubsubpojoclass":
+        case "pubSubPojoClass": return java.lang.String.class;
+        case "pubsubport":
+        case "pubSubPort": return int.class;
         case "querylocator":
         case "queryLocator": return java.lang.String.class;
         case "rawhttpheaders":
@@ -351,6 +373,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "rawQueryParameters": return java.lang.String.class;
         case "refreshtoken":
         case "refreshToken": return java.lang.String.class;
+        case "replaypreset":
+        case "replayPreset": return com.salesforce.eventbus.protobuf.ReplayPreset.class;
         case "reportid":
         case "reportId": return java.lang.String.class;
         case "reportmetadata":
@@ -522,6 +546,16 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "pkChunkingParent": return getOrCreateConfig(target).getPkChunkingParent();
         case "pkchunkingstartrow":
         case "pkChunkingStartRow": return getOrCreateConfig(target).getPkChunkingStartRow();
+        case "pubsubbatchsize":
+        case "pubSubBatchSize": return getOrCreateConfig(target).getPubSubBatchSize();
+        case "pubsubdeserializetype":
+        case "pubSubDeserializeType": return getOrCreateConfig(target).getPubSubDeserializeType();
+        case "pubsubhost":
+        case "pubSubHost": return target.getPubSubHost();
+        case "pubsubpojoclass":
+        case "pubSubPojoClass": return getOrCreateConfig(target).getPubSubPojoClass();
+        case "pubsubport":
+        case "pubSubPort": return target.getPubSubPort();
         case "querylocator":
         case "queryLocator": return getOrCreateConfig(target).getQueryLocator();
         case "rawhttpheaders":
@@ -536,6 +570,8 @@ public class SalesforceComponentConfigurer extends PropertyConfigurerSupport imp
         case "rawQueryParameters": return getOrCreateConfig(target).getRawQueryParameters();
         case "refreshtoken":
         case "refreshToken": return target.getRefreshToken();
+        case "replaypreset":
+        case "replayPreset": return getOrCreateConfig(target).getReplayPreset();
         case "reportid":
         case "reportId": return getOrCreateConfig(target).getReportId();
         case "reportmetadata":

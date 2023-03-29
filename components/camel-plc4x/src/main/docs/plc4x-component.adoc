@@ -21,8 +21,9 @@ The Camel Component for PLC4X allows you to create routes using the PLC4X API to
 plc4x://driver[?options]
 ------------------------------
 
-The bucket will be created if it don't already exists. +
- You can append query options to the URI in the following format,
+The bucket will be created if it doesn't already exist.
+
+You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
 
@@ -63,18 +64,23 @@ where `$\{camel-version}` must be replaced by the actual version of Camel.
 
 
 == Consumer
+
 The consumer supports one-time reading or Triggered Reading. To read from
-the PLC, use a  `Map<String,String>` containing the Alias and Queries for the Data you want.
+the PLC, use a  `Map<String,String>` containing the Alias and Queries for the Data you want (tags).
+
+You can configure the _tags_ using `tag.key=value` in the URI, and you can repeat this for multiple tags.
 
 The Body created by the Consumer will be a `Map<String,Object>` containing the Aliases and their associated value
 read from the PLC.
 
 == Polling Consumer
+
 The polling consumer supports consecutive reading. The input and output is the same as for the regular consumer.
 
 == Producer
+
 To write data to the PLC, we also use a `Map`. The difference with the Producer is that the `Value` of the Map has also to
-be a Map. Also, this `Map` has to be set into the `Body` of the `Message`
+be a `Map`. Also, this `Map` has to be set into the `Body` of the `Message`
 
 The used `Map` would be a `Map<String,Map<String,Object>` where the `Map<String,Object>` represent the Query and the
 data we want to write to it.

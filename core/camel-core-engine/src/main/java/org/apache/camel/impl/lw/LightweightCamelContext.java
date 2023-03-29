@@ -208,16 +208,6 @@ public class LightweightCamelContext implements CamelContext, CatalogCamelContex
     }
 
     @Override
-    public <T> T getExtension(Class<T> type) {
-        return delegate.getExtension(type);
-    }
-
-    @Override
-    public <T> void setExtension(Class<T> type, T module) {
-        delegate.setExtension(type, module);
-    }
-
-    @Override
     public void start() {
         delegate.start();
     }

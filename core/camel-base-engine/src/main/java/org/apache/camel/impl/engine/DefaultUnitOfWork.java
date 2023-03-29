@@ -32,6 +32,7 @@ import org.apache.camel.Message;
 import org.apache.camel.PooledExchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
@@ -101,6 +102,11 @@ public class DefaultUnitOfWork implements UnitOfWork {
 
         if (allowUseOriginalMessage) {
             this.originalInMessage = exchange.getIn().copy();
+            // if the input body is streaming we need to cache it, so we can access the original input message
+            StreamCache cache = context.getStreamCachingStrategy().cache(this.originalInMessage);
+            if (cache != null) {
+                this.originalInMessage.setBody(cache);
+            }
         }
 
         // inject breadcrumb header if enabled

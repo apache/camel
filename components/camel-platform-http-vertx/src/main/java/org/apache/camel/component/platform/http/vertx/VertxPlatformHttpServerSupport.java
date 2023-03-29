@@ -60,12 +60,9 @@ public final class VertxPlatformHttpServerSupport {
         bodyHandler.setMergeFormAttributes(configuration.getBodyHandler().isMergeFormAttributes());
         bodyHandler.setPreallocateBodyBuffer(configuration.getBodyHandler().isPreallocateBodyBuffer());
 
-        return new Handler<RoutingContext>() {
-            @Override
-            public void handle(RoutingContext event) {
-                event.request().resume();
-                bodyHandler.handle(event);
-            }
+        return (RoutingContext event) -> {
+            event.request().resume();
+            bodyHandler.handle(event);
         };
     }
 
@@ -78,51 +75,48 @@ public final class VertxPlatformHttpServerSupport {
     static Handler<RoutingContext> createCorsHandler(VertxPlatformHttpServerConfiguration configuration) {
         final VertxPlatformHttpServerConfiguration.Cors corsConfig = configuration.getCors();
 
-        return new Handler<RoutingContext>() {
-            @Override
-            public void handle(RoutingContext event) {
-                final HttpServerRequest request = event.request();
-                final HttpServerResponse response = event.response();
-                final String origin = request.getHeader(HttpHeaders.ORIGIN);
+        return (RoutingContext event) -> {
+            final HttpServerRequest request = event.request();
+            final HttpServerResponse response = event.response();
+            final String origin = request.getHeader(HttpHeaders.ORIGIN);
 
-                if (origin == null) {
-                    event.next();
+            if (origin == null) {
+                event.next();
+            } else {
+                final String requestedMethods = request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD);
+                if (requestedMethods != null) {
+                    processHeaders(response, HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, requestedMethods,
+                            corsConfig.getMethods());
+                }
+
+                final String requestedHeaders = request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS);
+                if (requestedHeaders != null) {
+                    processHeaders(response, HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, requestedHeaders,
+                            corsConfig.getHeaders());
+                }
+
+                final boolean allowsOrigin
+                        = ObjectHelper.isEmpty(corsConfig.getOrigins()) || corsConfig.getOrigins().contains(origin);
+                if (allowsOrigin) {
+                    response.headers().set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
+                }
+
+                response.headers().set(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+
+                if (ObjectHelper.isNotEmpty(corsConfig.getExposedHeaders())) {
+                    response.headers().set(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,
+                            String.join(",", corsConfig.getExposedHeaders()));
+                }
+
+                if (request.method().equals(HttpMethod.OPTIONS)) {
+                    if ((requestedHeaders != null || requestedMethods != null)
+                            && corsConfig.getAccessControlMaxAge() != null) {
+                        response.putHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE,
+                                String.valueOf(corsConfig.getAccessControlMaxAge().getSeconds()));
+                    }
+                    response.end();
                 } else {
-                    final String requestedMethods = request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD);
-                    if (requestedMethods != null) {
-                        processHeaders(response, HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, requestedMethods,
-                                corsConfig.getMethods());
-                    }
-
-                    final String requestedHeaders = request.getHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS);
-                    if (requestedHeaders != null) {
-                        processHeaders(response, HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, requestedHeaders,
-                                corsConfig.getHeaders());
-                    }
-
-                    final boolean allowsOrigin
-                            = ObjectHelper.isEmpty(corsConfig.getOrigins()) || corsConfig.getOrigins().contains(origin);
-                    if (allowsOrigin) {
-                        response.headers().set(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin);
-                    }
-
-                    response.headers().set(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
-
-                    if (ObjectHelper.isNotEmpty(corsConfig.getExposedHeaders())) {
-                        response.headers().set(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,
-                                String.join(",", corsConfig.getExposedHeaders()));
-                    }
-
-                    if (request.method().equals(HttpMethod.OPTIONS)) {
-                        if ((requestedHeaders != null || requestedMethods != null)
-                                && corsConfig.getAccessControlMaxAge() != null) {
-                            response.putHeader(HttpHeaders.ACCESS_CONTROL_MAX_AGE,
-                                    String.valueOf(corsConfig.getAccessControlMaxAge().getSeconds()));
-                        }
-                        response.end();
-                    } else {
-                        event.next();
-                    }
+                    event.next();
                 }
             }
         };

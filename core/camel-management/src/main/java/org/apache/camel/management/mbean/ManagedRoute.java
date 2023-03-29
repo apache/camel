@@ -394,7 +394,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     @Override
     public String dumpRouteAsXml(boolean resolvePlaceholders, boolean resolveDelegateEndpoints) throws Exception {
         String id = route.getId();
-        RouteDefinition def = context.getExtension(Model.class).getRouteDefinition(id);
+        RouteDefinition def = context.getCamelContextExtension().getContextPlugin(Model.class).getRouteDefinition(id);
         if (def != null) {
             ExtendedCamelContext ecc = context.getCamelContextExtension();
             return ecc.getModelToXMLDumper().dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);

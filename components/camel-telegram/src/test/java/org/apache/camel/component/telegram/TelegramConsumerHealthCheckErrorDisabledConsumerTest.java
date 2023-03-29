@@ -42,7 +42,7 @@ public class TelegramConsumerHealthCheckErrorDisabledConsumerTest extends Telegr
         CamelContext context = super.createCamelContext();
 
         // enabling routes health check is a bit cumbersome via low-level Java code
-        HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
+        HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
         HealthCheckRepository repo = hcr.getRepository("routes").orElse((HealthCheckRepository) hcr.resolveById("routes"));
         repo.setEnabled(true);
         hcr.register(repo);
@@ -57,7 +57,7 @@ public class TelegramConsumerHealthCheckErrorDisabledConsumerTest extends Telegr
 
     @Test
     public void testReceptionOfTwoMessages() {
-        HealthCheckRegistry hcr = context.getExtension(HealthCheckRegistry.class);
+        HealthCheckRegistry hcr = context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
         HealthCheckRepository repo = hcr.getRepository("routes").get();
 
         // should not be UP from the start as routes can be started

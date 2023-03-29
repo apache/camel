@@ -21,24 +21,23 @@ import java.util.Map;
 
 import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PahoComponentVerifierExtensionTest extends CamelTestSupport {
+public class PahoComponentVerifierExtensionTest {
 
-    // *************************************************
-    // Tests (parameters)
-    // *************************************************
-    @Override
-    public boolean isUseRouteBuilder() {
-        return false;
-    }
+    @Order(1)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
 
     @Test
     public void testParameters() {
-        Component component = context().getComponent("paho");
+        Component component = camelContextExtension.getContext().getComponent("paho");
 
         ComponentVerifierExtension verifier
                 = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
@@ -53,7 +52,7 @@ public class PahoComponentVerifierExtensionTest extends CamelTestSupport {
 
     @Test
     public void testConnectivity() {
-        Component component = context().getComponent("paho");
+        Component component = camelContextExtension.getContext().getComponent("paho");
         ComponentVerifierExtension verifier
                 = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
 

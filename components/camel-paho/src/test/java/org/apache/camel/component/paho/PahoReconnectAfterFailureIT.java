@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
@@ -30,17 +31,28 @@ import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.infra.artemis.services.ArtemisMQTTService;
-import org.apache.camel.test.junit5.CamelTestSupport;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.TransientCamelContextExtension;
+import org.apache.camel.test.infra.core.annotations.ContextFixture;
+import org.apache.camel.test.infra.core.annotations.RouteFixture;
+import org.apache.camel.test.infra.core.api.ConfigurableContext;
+import org.apache.camel.test.infra.core.api.ConfigurableRoute;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class PahoReconnectAfterFailureTest extends CamelTestSupport {
+public class PahoReconnectAfterFailureIT implements ConfigurableRoute, ConfigurableContext {
 
     public static final String TESTING_ROUTE_ID = "testingRoute";
+
+    @Order(1)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new TransientCamelContextExtension();
 
     ArtemisMQTTService broker;
 
@@ -50,32 +62,33 @@ public class PahoReconnectAfterFailureTest extends CamelTestSupport {
     @EndpointInject("mock:test")
     MockEndpoint mock;
 
+    @ContextFixture
     @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
+    public void configureContext(CamelContext context) {
         // Setup supervisor to restart routes because paho consumer
         // is not able to recover automatically on startup
         SupervisingRouteController supervising = context.getRouteController().supervising();
         supervising.setBackOffDelay(500);
         supervising.setIncludeRoutes("paho:*");
-        return context;
     }
 
+    @RouteFixture
     @Override
+    public void createRouteBuilder(CamelContext context) throws Exception {
+        final RouteBuilder routeBuilder = createRouteBuilder();
+
+        if (routeBuilder != null) {
+            context.addRoutes(routeBuilder);
+        }
+    }
+
     @AfterEach
-    public void tearDown() throws Exception {
-        super.tearDown();
+    public void tearDown() {
         if (broker != null) {
             broker.shutdown();
         }
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
@@ -97,7 +110,7 @@ public class PahoReconnectAfterFailureTest extends CamelTestSupport {
 
     @Test
     public void startConsumerShouldReconnectMqttClientAfterFailures() throws Exception {
-        RouteController routeController = context.getRouteController();
+        RouteController routeController = camelContextExtension.getContext().getRouteController();
 
         assertNotEquals(ServiceStatus.Started, routeController.getRouteStatus(TESTING_ROUTE_ID),
                 "Broker down, expecting  route not to be started");
@@ -114,6 +127,7 @@ public class PahoReconnectAfterFailureTest extends CamelTestSupport {
         mock.expectedBodiesReceived(msg);
 
         // When
+        ProducerTemplate template = camelContextExtension.getProducerTemplate();
         template.sendBody("paho:queue?lazyStartProducer=true&brokerUrl=tcp://localhost:" + port, msg);
 
         // Then
@@ -125,6 +139,7 @@ public class PahoReconnectAfterFailureTest extends CamelTestSupport {
         String msg = "msg";
         mock.expectedBodiesReceived(msg);
 
+        ProducerTemplate template = camelContextExtension.getProducerTemplate();
         try {
             template.sendBody("direct:test", "notSentMessage");
             fail("Broker is down, paho producer should fail");
@@ -140,8 +155,9 @@ public class PahoReconnectAfterFailureTest extends CamelTestSupport {
         mock.assertIsSatisfied(10000);
     }
 
-    private void startBroker() throws Exception {
+    private void startBroker() {
         broker = new ArtemisMQTTService(port);
         broker.initialize();
     }
+
 }

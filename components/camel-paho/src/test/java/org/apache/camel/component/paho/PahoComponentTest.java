@@ -18,18 +18,30 @@ package org.apache.camel.component.paho;
 
 import java.io.UnsupportedEncodingException;
 
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.infra.core.CamelContextExtension;
+import org.apache.camel.test.infra.core.DefaultCamelContextExtension;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class PahoComponentTest extends PahoTestSupport {
 
+    @Order(2)
+    @RegisterExtension
+    public static CamelContextExtension camelContextExtension = new DefaultCamelContextExtension();
+    protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
     @EndpointInject("mock:test")
     MockEndpoint mock;
 
@@ -37,17 +49,12 @@ public class PahoComponentTest extends PahoTestSupport {
     MockEndpoint testCustomizedPahoMock;
 
     @Override
-    protected boolean useJmx() {
-        return false;
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() {
                 PahoComponent customizedPaho = new PahoComponent();
-                context.addComponent("customizedPaho", customizedPaho);
+                getContext().addComponent("customizedPaho", customizedPaho);
 
                 from("direct:test").to("paho:queue?brokerUrl=" + service.serviceAddress());
                 from("paho:queue?brokerUrl=" + service.serviceAddress()).to("mock:test");
@@ -77,7 +84,7 @@ public class PahoComponentTest extends PahoTestSupport {
         // Then
         assertEquals("/test/topic", endpoint.getTopic());
         assertEquals("sampleClient", endpoint.getConfiguration().getClientId());
-        assertEquals("" + service.serviceAddress(), endpoint.getConfiguration().getBrokerUrl());
+        assertEquals(service.serviceAddress(), endpoint.getConfiguration().getBrokerUrl());
         assertEquals(2, endpoint.getConfiguration().getQos());
         assertEquals(PahoPersistence.FILE, endpoint.getConfiguration().getPersistence());
     }
@@ -169,5 +176,16 @@ public class PahoComponentTest extends PahoTestSupport {
 
         // Then
         mock.assertIsSatisfied();
+    }
+
+    @Override
+    public CamelContextExtension getCamelContextExtension() {
+        return camelContextExtension;
+    }
+
+    @BeforeEach
+    void setUpRequirements() {
+        template = getCamelContextExtension().getProducerTemplate();
+        consumer = getCamelContextExtension().getConsumerTemplate();
     }
 }

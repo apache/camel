@@ -53,7 +53,8 @@ public class MainHealthCheckExcludedPatternTest {
             CamelContext camelContext = main.getCamelContext();
             assertNotNull(camelContext);
 
-            HealthCheckRegistry healthCheckRegistry = camelContext.getExtension(HealthCheckRegistry.class);
+            HealthCheckRegistry healthCheckRegistry
+                    = camelContext.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
             assertNotNull(healthCheckRegistry);
 
             Optional<HealthCheckRepository> routes = healthCheckRegistry.getRepository("routes");
@@ -96,7 +97,8 @@ public class MainHealthCheckExcludedPatternTest {
             // register custom health check
             camelContext.getRegistry().bind("custom", healthCheck);
 
-            HealthCheckRegistry healthCheckRegistry = camelContext.getExtension(HealthCheckRegistry.class);
+            HealthCheckRegistry healthCheckRegistry
+                    = camelContext.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
             assertNotNull(healthCheckRegistry);
 
             Optional<HealthCheckRepository> repository = healthCheckRegistry.getRepository("registry-health-check-repository");
@@ -137,7 +139,8 @@ public class MainHealthCheckExcludedPatternTest {
                 }
             };
 
-            HealthCheckRegistry healthCheckRegistry = camelContext.getExtension(HealthCheckRegistry.class);
+            HealthCheckRegistry healthCheckRegistry
+                    = camelContext.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class);
             assertNotNull(healthCheckRegistry);
 
             List<HealthCheck> healthChecks = healthCheckRegistry.stream().collect(Collectors.toList());

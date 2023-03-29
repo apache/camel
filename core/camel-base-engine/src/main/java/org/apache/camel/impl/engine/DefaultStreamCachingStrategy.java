@@ -214,12 +214,16 @@ public class DefaultStreamCachingStrategy extends ServiceSupport implements Came
 
     @Override
     public StreamCache cache(Exchange exchange) {
-        Message message = exchange.getMessage();
+        return cache(exchange.getMessage());
+    }
+
+    @Override
+    public StreamCache cache(Message message) {
         StreamCache cache = null;
         // try convert to stream cache
         Object body = message.getBody();
         if (body != null) {
-            cache = camelContext.getTypeConverter().convertTo(StreamCache.class, exchange, body);
+            cache = camelContext.getTypeConverter().convertTo(StreamCache.class, message.getExchange(), body);
         }
         if (cache != null) {
             if (LOG.isTraceEnabled()) {

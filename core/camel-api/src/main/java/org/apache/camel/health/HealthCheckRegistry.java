@@ -108,7 +108,7 @@ public interface HealthCheckRegistry extends CamelContextAware, StaticService, I
      * could integrate such checks within its health endpoint or make it available only as separate endpoint.
      */
     static HealthCheckRegistry get(CamelContext context) {
-        return context != null ? context.getExtension(HealthCheckRegistry.class) : null;
+        return context != null ? context.getCamelContextExtension().getContextPlugin(HealthCheckRegistry.class) : null;
     }
 
     /**

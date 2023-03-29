@@ -68,7 +68,7 @@ public class CamelMicroProfileHealthTestSupport extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         HealthCheckRegistry registry = new CamelMicroProfileHealthCheckRegistry();
-        camelContext.setExtension(HealthCheckRegistry.class, registry);
+        camelContext.getCamelContextExtension().addContextPlugin(HealthCheckRegistry.class, registry);
         return camelContext;
     }
 

@@ -97,7 +97,8 @@ public class CamelRouteCoverageDumper {
             String name = objectName.getKeyProperty("name");
             name = ObjectName.unquote(name);
 
-            ManagedProcessorMBean managedProcessor = context.getExtension(ManagedCamelContext.class).getManagedProcessor(name);
+            ManagedProcessorMBean managedProcessor
+                    = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedProcessor(name);
 
             if (managedProcessor != null) {
                 if (processorsForRoute.get(routeId) == null) {
@@ -154,7 +155,8 @@ public class CamelRouteCoverageDumper {
 
         // log processor coverage for each route
         for (Route route : context.getRoutes()) {
-            ManagedRouteMBean managedRoute = context.getExtension(ManagedCamelContext.class).getManagedRoute(route.getId());
+            ManagedRouteMBean managedRoute = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class)
+                    .getManagedRoute(route.getId());
             if (managedRoute.getExchangesTotal() == 0) {
                 uncoveredRoutes.add(route.getId());
             }

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import software.amazon.awssdk.services.ecs.EcsClient;
+import software.amazon.awssdk.services.ecs.EcsServiceClientConfiguration;
 import software.amazon.awssdk.services.ecs.model.Cluster;
 import software.amazon.awssdk.services.ecs.model.CreateClusterRequest;
 import software.amazon.awssdk.services.ecs.model.CreateClusterResponse;
@@ -67,6 +68,11 @@ public class AmazonECSClientMock implements EcsClient {
         list.add("Test");
         res.clusterArns(list);
         return res.build();
+    }
+
+    @Override
+    public EcsServiceClientConfiguration serviceClientConfiguration() {
+        return null;
     }
 
     @Override

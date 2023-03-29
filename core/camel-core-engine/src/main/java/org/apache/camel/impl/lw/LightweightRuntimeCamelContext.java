@@ -419,16 +419,6 @@ public class LightweightRuntimeCamelContext implements CamelContext, CatalogCame
     }
 
     @Override
-    public <T> T getExtension(Class<T> type) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <T> void setExtension(Class<T> type, T module) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean isVetoStarted() {
         throw new UnsupportedOperationException();
     }

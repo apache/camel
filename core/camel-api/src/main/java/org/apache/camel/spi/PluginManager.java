@@ -14,15 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+
+package org.apache.camel.spi;
 
 /**
- * Extended {@link Exchange} which contains the methods and APIs that are not intended for Camel end users but used
- * internally by Camel for optimization purposes, SPI, custom components, or more advanced used-cases with Camel.
- *
- * This interface is deprecated. Use {@link ExchangeExtension}
+ * A manager for internal plugins. This is part of the internal Camel API and not meant for public usage.
  */
-@Deprecated
-public interface ExtendedExchange extends Exchange {
 
+public interface PluginManager {
+    /**
+     * Gets a plugin of the given type.
+     *
+     * @param  type the type of the extension
+     * @return      the extension, or <tt>null</tt> if no extension has been installed.
+     */
+    <T> T getContextPlugin(Class<T> type);
+
+    /**
+     * Allows installation of custom plugins to the Camel context.
+     *
+     * @param type   the type of the extension
+     * @param module the instance of the extension
+     */
+    <T> void addContextPlugin(Class<T> type, T module);
 }

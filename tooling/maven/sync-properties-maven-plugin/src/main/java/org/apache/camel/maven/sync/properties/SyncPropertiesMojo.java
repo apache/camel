@@ -58,7 +58,6 @@ public class SyncPropertiesMojo extends AbstractMojo {
         File sourcePom = new File(dir, "pom.xml");
         dir = PackageHelper.findCamelDirectory(baseDir, "camel-dependencies");
         File targetPom = new File(dir, "pom.xml");
-        dir = PackageHelper.findCamelDirectory(baseDir, "etc");
 
         try {
             String sourceStr = IOHelper.toString(ReaderFactory.newXmlReader(Files.newInputStream(sourcePom.toPath())));

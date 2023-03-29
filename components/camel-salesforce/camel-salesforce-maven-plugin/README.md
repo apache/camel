@@ -1,8 +1,14 @@
 # Maven plugin for camel-salesforce component #
 
-This plugin generates DTOs for the [Camel Salesforce Component](https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-component). 
+This plugin generates DTOs for use with the [Camel Salesforce Component](https://github.com/apache/camel/tree/main/components/camel-salesforce/camel-salesforce-component).  
 
 ## Usage ##
+              
+This plugin provides three maven goals:
+                         
+* The `generate` goal generates DTOs for use with the REST API.
+* The `generatePubSub` goal generates Apache Avro `SpecificRecord` subclasses for use with the PubSub API.
+* The `schema` goal generates JSON Schemas that correspond to objects used with the REST API.
 
 The plugin configuration has the following properties.
 
@@ -14,6 +20,7 @@ The plugin configuration has the following properties.
 * version - Salesforce Rest API version, defaults to 25.0
 * outputDirectory - Directory where to place generated DTOs, defaults to ${project.build.directory}/generated-sources/camel-salesforce
 * includes - List of SObject types to include
+* topics - List of topics to include, .e.g., `/event/BatchApexErrorEvent`. This property only applies to the `generatePubSub` goal.
 * excludes - List of SObject types to exclude
 * includePattern - Java RegEx for SObject types to include
 * excludePattern - Java RegEx for SObject types to exclude

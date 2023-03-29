@@ -39,9 +39,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Salesforce consumer.
+ * The Salesforce Streaming API consumer.
  */
-public class SalesforceConsumer extends DefaultConsumer {
+public class StreamingApiConsumer extends DefaultConsumer {
 
     private enum MessageKind {
         CHANGE_EVENT,
@@ -59,7 +59,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(SalesforceConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StreamingApiConsumer.class);
 
     private static final String CREATED_DATE_PROPERTY = "createdDate";
     private static final String EVENT_PROPERTY = "event";
@@ -81,7 +81,7 @@ public class SalesforceConsumer extends DefaultConsumer {
     private final SubscriptionHelper subscriptionHelper;
     private final String topicName;
 
-    public SalesforceConsumer(final SalesforceEndpoint endpoint, final Processor processor, final SubscriptionHelper helper) {
+    public StreamingApiConsumer(final SalesforceEndpoint endpoint, final Processor processor, final SubscriptionHelper helper) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         final ObjectMapper configuredObjectMapper = endpoint.getConfiguration().getObjectMapper();

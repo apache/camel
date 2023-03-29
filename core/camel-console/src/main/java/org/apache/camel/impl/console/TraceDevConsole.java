@@ -62,7 +62,7 @@ public class TraceDevConsole extends AbstractDevConsole {
     protected String doCallText(Map<String, Object> options) {
         StringBuilder sb = new StringBuilder();
 
-        BacklogTracer tracer = getCamelContext().getExtension(BacklogTracer.class);
+        BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
             for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
                 addMessage(t);
@@ -90,7 +90,7 @@ public class TraceDevConsole extends AbstractDevConsole {
     protected JsonObject doCallJson(Map<String, Object> options) {
         JsonObject root = new JsonObject();
 
-        BacklogTracer tracer = getCamelContext().getExtension(BacklogTracer.class);
+        BacklogTracer tracer = getCamelContext().getCamelContextExtension().getContextPlugin(BacklogTracer.class);
         if (tracer != null) {
             for (BacklogTracerEventMessage t : tracer.dumpAllTracedMessages()) {
                 addMessage(t);

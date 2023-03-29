@@ -133,7 +133,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
 
             // try to let resolver see if it can resolve it, its not always
             // possible
-            type = camelContext.getExtension(Model.class).resolveDataFormatDefinition(ref);
+            type = camelContext.getCamelContextExtension().getContextPlugin(Model.class).resolveDataFormatDefinition(ref);
 
             if (type == null) {
                 dataFormat = camelContext.resolveDataFormat(ref);

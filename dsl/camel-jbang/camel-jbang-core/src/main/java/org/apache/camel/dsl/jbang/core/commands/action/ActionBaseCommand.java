@@ -97,7 +97,7 @@ abstract class ActionBaseCommand extends CamelCommand {
 
     JsonObject loadStatus(long pid) {
         try {
-            File f = getStatusFile("" + pid);
+            File f = getStatusFile(Long.toString(pid));
             if (f != null) {
                 FileInputStream fis = new FileInputStream(f);
                 String text = IOHelper.loadText(fis);

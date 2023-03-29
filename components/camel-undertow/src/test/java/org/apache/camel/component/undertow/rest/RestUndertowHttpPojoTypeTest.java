@@ -43,7 +43,8 @@ public class RestUndertowHttpPojoTypeTest extends BaseUndertowTest {
         // Wasn't clear if there's a way to put this test into camel-core just to test the model
         // perhaps without starting the Camel Context?
 
-        List<RestDefinition> restDefinitions = context().getExtension(Model.class).getRestDefinitions();
+        List<RestDefinition> restDefinitions
+                = context().getCamelContextExtension().getContextPlugin(Model.class).getRestDefinitions();
         assertNotNull(restDefinitions);
         assertTrue(restDefinitions.size() > 0);
 

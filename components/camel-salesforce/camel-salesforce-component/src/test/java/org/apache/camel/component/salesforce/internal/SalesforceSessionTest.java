@@ -100,7 +100,15 @@ public class SalesforceSessionTest {
         when(request.send()).thenReturn(response);
 
         when(response.getStatus()).thenReturn(HttpStatus.OK_200);
-        when(response.getContentAsString()).thenReturn("{\"instance_url\": \"https://eu11.salesforce.com\"}");
+        when(response.getContentAsString()).thenReturn("{\n" +
+                                                       "  \"access_token\": \"00D4100000xxxxx!faketoken\",\n" +
+                                                       "  \"instance_url\": \"https://eu11.salesforce.com\",\n" +
+                                                       "  \"id\": \"https://login.salesforce.com/id/00D4100000xxxxxxxx/0054100000xxxxxxxx\",\n"
+                                                       +
+                                                       "  \"token_type\": \"Bearer\",\n" +
+                                                       "  \"issued_at\": \"1674496911543\",\n" +
+                                                       "  \"signature\": \"/ai5/F+LXEocLQZKdO4uwLblDszPUibL/Dfcn82R9VI=\"\n" +
+                                                       "}");
 
         session.login(null);
         return session;

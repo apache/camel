@@ -197,7 +197,7 @@ public final class VertxHttpServer {
 
                 ctx.response().putHeader("content-type", "text/plain");
 
-                DevConsoleRegistry dcr = context.getExtension(DevConsoleRegistry.class);
+                DevConsoleRegistry dcr = context.getCamelContextExtension().getContextPlugin(DevConsoleRegistry.class);
                 if (dcr == null || !dcr.isEnabled()) {
                     ctx.end("Developer Console is not enabled");
                     return;

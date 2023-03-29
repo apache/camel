@@ -37,7 +37,8 @@ public class CamelJmxConsumerTest extends CamelTestSupport {
         getMockEndpoint("mock:result").message(0).body().contains("<newValue>true</newValue>");
 
         // change the attribute so JMX triggers
-        ManagedRouteMBean mr = context.getExtension(ManagedCamelContext.class).getManagedRoute("foo");
+        ManagedRouteMBean mr
+                = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedRoute("foo");
         mr.setTracing(true);
 
         MockEndpoint.assertIsSatisfied(context);

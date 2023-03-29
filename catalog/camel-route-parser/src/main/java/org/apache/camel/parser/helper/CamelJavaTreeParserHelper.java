@@ -246,12 +246,12 @@ public final class CamelJavaTreeParserHelper {
             int pos = mi.getName().getStartPosition();
             int line = findLineNumber(fullyQualifiedFileName, pos);
             if (line > -1) {
-                newNode.setLineNumber("" + line);
+                newNode.setLineNumber(Integer.toString(line));
             }
             pos = mi.getName().getStartPosition() + mi.getName().getLength();
             line = findLineNumber(fullyQualifiedFileName, pos);
             if (line > -1) {
-                newNode.setLineNumberEnd("" + line);
+                newNode.setLineNumberEnd(Integer.toString(line));
             }
             newNode.setFileName(fullyQualifiedFileName);
             newNode.setClassName(clazz.getQualifiedName());

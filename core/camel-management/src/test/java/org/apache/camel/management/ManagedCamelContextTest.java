@@ -60,7 +60,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
     @Test
     public void testManagedCamelContextClient() throws Exception {
-        ManagedCamelContextMBean client = context.getExtension(ManagedCamelContext.class).getManagedCamelContext();
+        ManagedCamelContextMBean client
+                = context.getCamelContextExtension().getContextPlugin(ManagedCamelContext.class).getManagedCamelContext();
         assertNotNull(client);
 
         assertEquals("my-camel-context", client.getCamelId());

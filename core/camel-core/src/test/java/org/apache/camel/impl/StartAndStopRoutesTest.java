@@ -60,7 +60,7 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
         // lets mutate the route...
         FromDefinition fromType = route.getInput();
         fromType.setUri("direct:test.C");
-        context.getExtension(Model.class).addRouteDefinition(route);
+        context.getCamelContextExtension().getContextPlugin(Model.class).addRouteDefinition(route);
 
         // now lets check it works
         // send from C over B to results

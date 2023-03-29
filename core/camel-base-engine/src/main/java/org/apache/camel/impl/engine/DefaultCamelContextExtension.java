@@ -18,7 +18,6 @@
 package org.apache.camel.impl.engine;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +80,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
+import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
@@ -106,9 +106,10 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     private final AbstractCamelContext camelContext;
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
-    private List<InterceptStrategy> interceptStrategies = new ArrayList<>();
+    private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
-    private Set<LogListener> logListeners;
+    private final Set<LogListener> logListeners = new LinkedHashSet<>();
+    private final PluginManager pluginManager = new DefaultContextPluginManager();
     private volatile String description;
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
@@ -219,7 +220,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public List<Service> getServices() {
-        return Collections.unmodifiableList(camelContext.servicesToStop);
+        return camelContext.getInternalServiceManager().getServices();
     }
 
     @Override
@@ -261,7 +262,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
-        camelContext.beanPostProcessor = camelContext.doAddService(beanPostProcessor);
+        camelContext.beanPostProcessor = camelContext.getInternalServiceManager().addService(beanPostProcessor);
     }
 
     @Override
@@ -299,7 +300,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     public void setComponentResolver(ComponentResolver componentResolver) {
-        camelContext.componentResolver = camelContext.doAddService(componentResolver);
+        camelContext.componentResolver = camelContext.getInternalServiceManager().addService(componentResolver);
     }
 
     public ComponentNameResolver getComponentNameResolver() {
@@ -314,7 +315,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     public void setComponentNameResolver(ComponentNameResolver componentNameResolver) {
-        camelContext.componentNameResolver = camelContext.doAddService(componentNameResolver);
+        camelContext.componentNameResolver = camelContext.getInternalServiceManager().addService(componentNameResolver);
     }
 
     public LanguageResolver getLanguageResolver() {
@@ -329,7 +330,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     public void setLanguageResolver(LanguageResolver languageResolver) {
-        camelContext.languageResolver = camelContext.doAddService(languageResolver);
+        camelContext.languageResolver = camelContext.getInternalServiceManager().addService(languageResolver);
     }
 
     public ConfigurerResolver getConfigurerResolver() {
@@ -344,7 +345,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     public void setConfigurerResolver(ConfigurerResolver configurerResolver) {
-        camelContext.configurerResolver = camelContext.doAddService(configurerResolver);
+        camelContext.configurerResolver = camelContext.getInternalServiceManager().addService(configurerResolver);
     }
 
     public UriFactoryResolver getUriFactoryResolver() {
@@ -359,7 +360,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     public void setUriFactoryResolver(UriFactoryResolver uriFactoryResolver) {
-        camelContext.uriFactoryResolver = camelContext.doAddService(uriFactoryResolver);
+        camelContext.uriFactoryResolver = camelContext.getInternalServiceManager().addService(uriFactoryResolver);
     }
 
     @Override
@@ -409,10 +410,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void addLogListener(LogListener listener) {
-        if (logListeners == null) {
-            logListeners = new LinkedHashSet<>();
-        }
-
         // avoid adding double which can happen with spring xml on spring boot
         logListeners.add(listener);
     }
@@ -454,7 +451,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory) {
-        camelContext.unitOfWorkFactory = camelContext.doAddService(unitOfWorkFactory);
+        camelContext.unitOfWorkFactory = camelContext.getInternalServiceManager().addService(unitOfWorkFactory);
     }
 
     @Override
@@ -528,7 +525,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setFactoryFinderResolver(FactoryFinderResolver factoryFinderResolver) {
-        camelContext.factoryFinderResolver = camelContext.doAddService(factoryFinderResolver);
+        camelContext.factoryFinderResolver = camelContext.getInternalServiceManager().addService(factoryFinderResolver);
     }
 
     @Override
@@ -550,7 +547,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setPackageScanClassResolver(PackageScanClassResolver packageScanClassResolver) {
-        camelContext.packageScanClassResolver = camelContext.doAddService(packageScanClassResolver);
+        camelContext.packageScanClassResolver = camelContext.getInternalServiceManager().addService(packageScanClassResolver);
     }
 
     @Override
@@ -567,7 +564,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setPackageScanResourceResolver(PackageScanResourceResolver packageScanResourceResolver) {
-        camelContext.packageScanResourceResolver = camelContext.doAddService(packageScanResourceResolver);
+        camelContext.packageScanResourceResolver
+                = camelContext.getInternalServiceManager().addService(packageScanResourceResolver);
     }
 
     @Override
@@ -584,7 +582,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setModelJAXBContextFactory(final ModelJAXBContextFactory modelJAXBContextFactory) {
-        camelContext.modelJAXBContextFactory = camelContext.doAddService(modelJAXBContextFactory);
+        camelContext.modelJAXBContextFactory = camelContext.getInternalServiceManager().addService(modelJAXBContextFactory);
     }
 
     @Override
@@ -601,7 +599,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setNodeIdFactory(NodeIdFactory idFactory) {
-        camelContext.nodeIdFactory = camelContext.doAddService(idFactory);
+        camelContext.nodeIdFactory = camelContext.getInternalServiceManager().addService(idFactory);
     }
 
     @Override
@@ -618,7 +616,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setModelineFactory(ModelineFactory modelineFactory) {
-        camelContext.modelineFactory = camelContext.doAddService(modelineFactory);
+        camelContext.modelineFactory = camelContext.getInternalServiceManager().addService(modelineFactory);
     }
 
     @Override
@@ -635,7 +633,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setPeriodTaskResolver(PeriodTaskResolver periodTaskResolver) {
-        camelContext.periodTaskResolver = camelContext.doAddService(periodTaskResolver);
+        camelContext.periodTaskResolver = camelContext.getInternalServiceManager().addService(periodTaskResolver);
     }
 
     public PeriodTaskScheduler getPeriodTaskScheduler() {
@@ -650,7 +648,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     public void setPeriodTaskScheduler(PeriodTaskScheduler periodTaskScheduler) {
-        camelContext.periodTaskScheduler = camelContext.doAddService(periodTaskScheduler);
+        camelContext.periodTaskScheduler = camelContext.getInternalServiceManager().addService(periodTaskScheduler);
     }
 
     @Override
@@ -717,7 +715,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager asyncProcessorAwaitManager) {
-        camelContext.asyncProcessorAwaitManager = camelContext.doAddService(asyncProcessorAwaitManager);
+        camelContext.asyncProcessorAwaitManager
+                = camelContext.getInternalServiceManager().addService(asyncProcessorAwaitManager);
     }
 
     @Override
@@ -734,7 +733,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setBeanIntrospection(BeanIntrospection beanIntrospection) {
-        camelContext.beanIntrospection = camelContext.doAddService(beanIntrospection);
+        camelContext.beanIntrospection = camelContext.getInternalServiceManager().addService(beanIntrospection);
     }
 
     @Override
@@ -761,7 +760,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setDataFormatResolver(DataFormatResolver dataFormatResolver) {
-        camelContext.dataFormatResolver = camelContext.doAddService(dataFormatResolver);
+        camelContext.dataFormatResolver = camelContext.getInternalServiceManager().addService(dataFormatResolver);
     }
 
     @Override
@@ -778,7 +777,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setHealthCheckResolver(HealthCheckResolver healthCheckResolver) {
-        camelContext.healthCheckResolver = camelContext.doAddService(healthCheckResolver);
+        camelContext.healthCheckResolver = camelContext.getInternalServiceManager().addService(healthCheckResolver);
     }
 
     public DevConsoleResolver getDevConsoleResolver() {
@@ -793,7 +792,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     public void setDevConsoleResolver(DevConsoleResolver devConsoleResolver) {
-        camelContext.devConsoleResolver = camelContext.doAddService(devConsoleResolver);
+        camelContext.devConsoleResolver = camelContext.getInternalServiceManager().addService(devConsoleResolver);
     }
 
     @Override
@@ -820,7 +819,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setProcessorFactory(ProcessorFactory processorFactory) {
-        camelContext.processorFactory = camelContext.doAddService(processorFactory);
+        camelContext.processorFactory = camelContext.getInternalServiceManager().addService(processorFactory);
     }
 
     @Override
@@ -837,7 +836,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setInternalProcessorFactory(InternalProcessorFactory internalProcessorFactory) {
-        camelContext.internalProcessorFactory = camelContext.doAddService(internalProcessorFactory);
+        camelContext.internalProcessorFactory = camelContext.getInternalServiceManager().addService(internalProcessorFactory);
     }
 
     @Override
@@ -854,7 +853,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory) {
-        camelContext.interceptEndpointFactory = camelContext.doAddService(interceptEndpointFactory);
+        camelContext.interceptEndpointFactory = camelContext.getInternalServiceManager().addService(interceptEndpointFactory);
     }
 
     @Override
@@ -881,7 +880,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setHeadersMapFactory(HeadersMapFactory headersMapFactory) {
-        camelContext.headersMapFactory = camelContext.doAddService(headersMapFactory);
+        camelContext.headersMapFactory = camelContext.getInternalServiceManager().addService(headersMapFactory);
     }
 
     @Override
@@ -898,7 +897,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setRoutesLoader(RoutesLoader routesLoader) {
-        camelContext.routesLoader = camelContext.doAddService(routesLoader);
+        camelContext.routesLoader = camelContext.getInternalServiceManager().addService(routesLoader);
     }
 
     @Override
@@ -915,7 +914,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setResourceLoader(ResourceLoader resourceLoader) {
-        camelContext.resourceLoader = camelContext.doAddService(resourceLoader);
+        camelContext.resourceLoader = camelContext.getInternalServiceManager().addService(resourceLoader);
     }
 
     public ModelToXMLDumper getModelToXMLDumper() {
@@ -930,7 +929,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     public void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper) {
-        camelContext.modelToXMLDumper = camelContext.doAddService(modelToXMLDumper);
+        camelContext.modelToXMLDumper = camelContext.getInternalServiceManager().addService(modelToXMLDumper);
     }
 
     public RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory() {
@@ -962,7 +961,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog) {
-        camelContext.runtimeCamelCatalog = camelContext.doAddService(runtimeCamelCatalog);
+        camelContext.runtimeCamelCatalog = camelContext.getInternalServiceManager().addService(runtimeCamelCatalog);
     }
 
     @Override
@@ -998,7 +997,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setExchangeFactoryManager(ExchangeFactoryManager exchangeFactoryManager) {
-        camelContext.exchangeFactoryManager = camelContext.doAddService(exchangeFactoryManager);
+        camelContext.exchangeFactoryManager = camelContext.getInternalServiceManager().addService(exchangeFactoryManager);
     }
 
     @Override
@@ -1036,7 +1035,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
         // special for executorServiceManager as want to stop it manually so
         // false in stopOnShutdown
-        camelContext.reactiveExecutor = camelContext.doAddService(reactiveExecutor, false);
+        camelContext.reactiveExecutor = camelContext.getInternalServiceManager().addService(reactiveExecutor, false);
     }
 
     @Override
@@ -1152,5 +1151,30 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     public String getTestExcludeRoutes() {
         return camelContext.getTestExcludeRoutes();
+    }
+
+    @Override
+    public PluginManager getPluginManager() {
+        return pluginManager;
+    }
+
+    @Override
+    public <T> T getContextPlugin(Class<T> type) {
+        T ret = pluginManager.getContextPlugin(type);
+
+        // Note: this is because of interfaces like Model which are still tightly coupled with the context
+        if (ret == null) {
+            if (type.isInstance(camelContext)) {
+                return type.cast(camelContext);
+            }
+        }
+
+        return ret;
+    }
+
+    @Override
+    public <T> void addContextPlugin(Class<T> type, T module) {
+        final T addedModule = camelContext.getInternalServiceManager().addService(module);
+        pluginManager.addContextPlugin(type, addedModule);
     }
 }

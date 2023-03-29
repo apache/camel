@@ -210,7 +210,7 @@ public class StringHelperTest {
         int count = StringHelper.countChar(value, ',') + 1;
         it = splitOnCharacterAsIterator(value, ',', count);
         for (int i = 0; i < 100; i++) {
-            assertEquals("" + i, it.next());
+            assertEquals(Integer.toString(i), it.next());
         }
         assertFalse(it.hasNext());
     }

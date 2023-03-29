@@ -371,20 +371,8 @@ public final class PropertyBindingSupport {
         Method method = findBestSetterMethod(camelContext, newClass, key, fluentBuilder, allowPrivateSetter, ignoreCase);
         if (method != null) {
             Class<?> parameterType = method.getParameterTypes()[0];
-            Object obj = null;
-            // special for properties/map/list/array
-            if (Properties.class.isAssignableFrom(parameterType)) {
-                obj = new Properties();
-            } else if (Map.class.isAssignableFrom(parameterType)) {
-                obj = new LinkedHashMap<>();
-            } else if (Collection.class.isAssignableFrom(parameterType)) {
-                obj = new ArrayList<>();
-            } else if (parameterType.isArray()) {
-                obj = Array.newInstance(parameterType.getComponentType(), 0);
-            }
-            if (obj == null && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
-                obj = camelContext.getInjector().newInstance(parameterType);
-            }
+            Object obj = getObjectForType(camelContext, parameterType);
+
             if (obj != null) {
                 org.apache.camel.support.ObjectHelper.invokeMethod(method, newTarget, obj);
                 answer = obj;
@@ -410,20 +398,7 @@ public final class PropertyBindingSupport {
             parameterType = ((PropertyConfigurerGetter) configurer).getOptionType(key, true);
         }
         if (parameterType != null) {
-            Object obj = null;
-            // special for properties/map/list/array
-            if (Properties.class.isAssignableFrom(parameterType)) {
-                obj = new Properties();
-            } else if (Map.class.isAssignableFrom(parameterType)) {
-                obj = new LinkedHashMap<>();
-            } else if (Collection.class.isAssignableFrom(parameterType)) {
-                obj = new ArrayList<>();
-            } else if (parameterType.isArray()) {
-                obj = Array.newInstance(parameterType.getComponentType(), 0);
-            }
-            if (obj == null && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
-                obj = camelContext.getInjector().newInstance(parameterType);
-            }
+            Object obj = getObjectForType(camelContext, parameterType);
             if (obj != null) {
                 boolean hit = configurer.configure(camelContext, newTarget, undashKey(key), obj, ignoreCase);
                 if (hit) {
@@ -432,6 +407,41 @@ public final class PropertyBindingSupport {
             }
         }
         return answer;
+    }
+
+    private static Object getObjectForCollectionType(Class<?> type) {
+        if (Properties.class.isAssignableFrom(type)) {
+            return new Properties();
+        } else if (Map.class.isAssignableFrom(type)) {
+            return new LinkedHashMap<>();
+        } else if (Collection.class.isAssignableFrom(type)) {
+            return new ArrayList<>();
+        } else if (type.isArray()) {
+            return Array.newInstance(type.getComponentType(), 0);
+        }
+
+        return null;
+    }
+
+    private static Object getObjectForCollectionType(Class<?> type, String errorMessage) {
+        Object ret = getObjectForCollectionType(type);
+
+        // not a map or list
+        if (ret == null) {
+            throw new IllegalArgumentException(errorMessage);
+        }
+
+        return ret;
+    }
+
+    private static Object getObjectForType(CamelContext camelContext, Class<?> parameterType) {
+        // special for properties/map/list/array
+        Object obj = getObjectForCollectionType(parameterType);
+
+        if (obj == null && org.apache.camel.util.ObjectHelper.hasDefaultPublicNoArgConstructor(parameterType)) {
+            obj = camelContext.getInjector().newInstance(parameterType);
+        }
+        return obj;
     }
 
     private static boolean doSetPropertyValue(
@@ -561,15 +571,7 @@ public final class PropertyBindingSupport {
             if (getter != null) {
                 // what type does it have
                 Class<?> returnType = getter.getReturnType();
-                if (Properties.class.isAssignableFrom(returnType)) {
-                    obj = new Properties();
-                } else if (Map.class.isAssignableFrom(returnType)) {
-                    obj = new LinkedHashMap<>();
-                } else if (Collection.class.isAssignableFrom(returnType)) {
-                    obj = new ArrayList<>();
-                } else if (returnType.isArray()) {
-                    obj = Array.newInstance(returnType.getComponentType(), 0);
-                }
+                obj = getObjectForCollectionType(returnType);
             } else {
                 // fallback as map type
                 obj = new LinkedHashMap<>();
@@ -660,15 +662,8 @@ public final class PropertyBindingSupport {
             if (returnType == null) {
                 return false;
             }
-            if (Properties.class.isAssignableFrom(returnType)) {
-                obj = new Properties();
-            } else if (Map.class.isAssignableFrom(returnType)) {
-                obj = new LinkedHashMap<>();
-            } else if (Collection.class.isAssignableFrom(returnType)) {
-                obj = new ArrayList<>();
-            } else if (returnType.isArray()) {
-                obj = Array.newInstance(returnType.getComponentType(), 0);
-            }
+            obj = getObjectForCollectionType(returnType);
+
             if (obj != null) {
                 // set
                 boolean hit = configurer.configure(camelContext, target, undashKey, obj, ignoreCase);
@@ -916,21 +911,10 @@ public final class PropertyBindingSupport {
 
         if (answer == null) {
             if (lookupKey != null) {
-                if (Properties.class.isAssignableFrom(type)) {
-                    answer = new Properties();
-                } else if (Map.class.isAssignableFrom(type)) {
-                    answer = new LinkedHashMap<>();
-                } else if (Collection.class.isAssignableFrom(type)) {
-                    answer = new ArrayList<>();
-                } else if (type.isArray()) {
-                    answer = Array.newInstance(type.getComponentType(), 0);
-                } else {
-                    // not a map or list
-                    throw new IllegalArgumentException(
-                            "Cannot set property: " + property
-                                                       + " as either a Map/List/array because target bean is not a Map, List or array type: "
-                                                       + target);
-                }
+                answer = getObjectForCollectionType(type, "Cannot set property: " + property
+                                                          + " as either a Map/List/array because target bean is not a Map, List or array type: "
+                                                          + target);
+
                 boolean hit = configurer.configure(context, target, undashKey, answer, ignoreCase);
                 if (!hit) {
                     throw new IllegalArgumentException(
@@ -1047,21 +1031,9 @@ public final class PropertyBindingSupport {
 
         if (answer == null) {
             if (lookupKey != null) {
-                if (Properties.class.isAssignableFrom(type)) {
-                    answer = new Properties();
-                } else if (Map.class.isAssignableFrom(type)) {
-                    answer = new LinkedHashMap<>();
-                } else if (Collection.class.isAssignableFrom(type)) {
-                    answer = new ArrayList<>();
-                } else if (type.isArray()) {
-                    answer = Array.newInstance(type.getComponentType(), 0);
-                } else {
-                    // not a map or list
-                    throw new IllegalArgumentException(
-                            "Cannot set property: " + property
-                                                       + " as either a Map/List/array because target bean is not a Map, List or array type: "
-                                                       + target);
-                }
+                answer = getObjectForCollectionType(type, "Cannot set property: " + property
+                                                          + " as either a Map/List/array because target bean is not a Map, List or array type: "
+                                                          + target);
                 boolean hit = false;
                 try {
                     hit = introspection.setProperty(context, target, key, answer);

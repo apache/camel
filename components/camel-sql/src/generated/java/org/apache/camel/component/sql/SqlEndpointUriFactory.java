@@ -21,7 +21,7 @@ public class SqlEndpointUriFactory extends org.apache.camel.support.component.En
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(46);
+        Set<String> props = new HashSet<>(47);
         props.add("allowNamedParameters");
         props.add("alwaysPopulateStatement");
         props.add("backoffErrorThreshold");
@@ -54,6 +54,7 @@ public class SqlEndpointUriFactory extends org.apache.camel.support.component.En
         props.add("query");
         props.add("repeatCount");
         props.add("routeEmptyResultSet");
+        props.add("rowMapperFactory");
         props.add("runLoggingLevel");
         props.add("scheduledExecutorService");
         props.add("scheduler");

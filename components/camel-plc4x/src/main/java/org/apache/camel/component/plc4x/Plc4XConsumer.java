@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 public class Plc4XConsumer extends DefaultConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(Plc4XConsumer.class);
 
-    private final Map<String, Object> tags;
+    private final Map<String, String> tags;
     private final String trigger;
     private final Plc4XEndpoint plc4XEndpoint;
 
@@ -118,7 +118,7 @@ public class Plc4XConsumer extends DefaultConsumer {
     }
 
     private void startTriggered() throws ScraperException {
-        ScraperConfiguration configuration = getScraperConfig(validateTags());
+        ScraperConfiguration configuration = getScraperConfig(tags);
         TriggerCollector collector = new TriggerCollectorImpl(plc4XEndpoint.getPlcDriverManager());
 
         TriggeredScraperImpl scraper = new TriggeredScraperImpl(configuration, (job, alias, response) -> {
@@ -140,21 +140,6 @@ public class Plc4XConsumer extends DefaultConsumer {
         }, collector);
         scraper.start();
         collector.start();
-    }
-
-    private Map<String, String> validateTags() {
-        Map<String, String> map = new HashMap<>();
-        for (Map.Entry<String, Object> tag : tags.entrySet()) {
-            if (tag.getValue() instanceof String) {
-                map.put(tag.getKey(), (String) tag.getValue());
-            }
-        }
-        if (map.size() != tags.size()) {
-            LOGGER.error("At least one entry does not match the format : Map.Entry<String,String> ");
-            return null;
-        } else {
-            return map;
-        }
     }
 
     private ScraperConfigurationTriggeredImpl getScraperConfig(Map<String, String> tagList) {

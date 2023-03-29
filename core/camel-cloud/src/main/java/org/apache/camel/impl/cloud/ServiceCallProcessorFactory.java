@@ -146,7 +146,8 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
 
     private ServiceCallConfigurationDefinition retrieveDefaultConfig(CamelContext camelContext) {
         // check if a default configuration is bound to the registry
-        ServiceCallConfigurationDefinition config = camelContext.getExtension(Model.class).getServiceCallConfiguration(null);
+        ServiceCallConfigurationDefinition config
+                = camelContext.getCamelContextExtension().getContextPlugin(Model.class).getServiceCallConfiguration(null);
 
         if (config == null) {
             // Or if it is in the registry
@@ -171,7 +172,8 @@ public class ServiceCallProcessorFactory extends TypedProcessorFactory<ServiceCa
             config = lookup(camelContext, definition.getConfigurationRef(), ServiceCallConfigurationDefinition.class);
             if (config == null) {
                 // and fallback as service configuration
-                config = camelContext.getExtension(Model.class).getServiceCallConfiguration(definition.getConfigurationRef());
+                config = camelContext.getCamelContextExtension().getContextPlugin(Model.class)
+                        .getServiceCallConfiguration(definition.getConfigurationRef());
             }
         }
 
