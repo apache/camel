@@ -17,6 +17,7 @@
 package org.apache.camel.component.cassandra;
 
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 
 import com.datastax.oss.driver.api.core.ConsistencyLevel;
 import com.datastax.oss.driver.api.core.CqlSession;
@@ -41,6 +42,8 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.utils.cassandra.CassandraExtraCodecs;
 import org.apache.camel.utils.cassandra.CassandraSessionHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Integrate with Cassandra 2.0+ using the CQL3 API (not the Thrift API). Based on Cassandra Java Driver provided by
@@ -49,6 +52,7 @@ import org.apache.camel.utils.cassandra.CassandraSessionHolder;
 @UriEndpoint(firstVersion = "2.15.0", scheme = "cql", title = "Cassandra CQL", syntax = "cql:beanRef:hosts:port/keyspace",
              category = { Category.DATABASE, Category.NOSQL }, headersClass = CassandraConstants.class)
 public class CassandraEndpoint extends ScheduledPollEndpoint {
+    private static final Logger LOG = LoggerFactory.getLogger(CassandraEndpoint.class);
 
     private volatile CassandraSessionHolder sessionHolder;
 
@@ -165,7 +169,11 @@ public class CassandraEndpoint extends ScheduledPollEndpoint {
 
         if (extraTypeCodecs != null) {
             String[] c = extraTypeCodecs.split(",");
-            System.err.println(c.toString());
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(Arrays.toString(c));
+            }
+
             for (String codec : c) {
                 if (ObjectHelper.isNotEmpty(CassandraExtraCodecs.valueOf(codec))) {
                     sessionBuilder.addTypeCodecs(CassandraExtraCodecs.valueOf(codec).codec());
