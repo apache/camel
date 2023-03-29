@@ -85,7 +85,7 @@ public class SagaTimeoutTest extends ContextTestSupport {
         CamelExecutionException ex = assertThrows(CamelExecutionException.class,
                 () -> {
                     template.sendBody("direct:saga-multi-participants", "Hello");
-            });
+                });
 
         assertEquals("Cannot begin: status is COMPENSATED", ex.getCause().getMessage());
         end.assertIsSatisfied();

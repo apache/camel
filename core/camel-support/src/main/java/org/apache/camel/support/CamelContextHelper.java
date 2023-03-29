@@ -338,8 +338,7 @@ public final class CamelContextHelper {
      * Gets the maximum simple cache size.
      * <p/>
      * Will use the property set on CamelContext with the key {@link Exchange#MAXIMUM_SIMPLE_CACHE_SIZE}. If no property
-     * has been set, then it will fallback to return a size of 1000.
-     * Use value of 0 or negative to disable the cache.
+     * has been set, then it will fallback to return a size of 1000. Use value of 0 or negative to disable the cache.
      *
      * @param  camelContext             the camel context
      * @return                          the maximum cache size
