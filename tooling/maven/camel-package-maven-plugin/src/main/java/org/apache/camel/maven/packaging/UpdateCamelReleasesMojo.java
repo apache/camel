@@ -66,19 +66,19 @@ public class UpdateCamelReleasesMojo extends AbstractGeneratorMojo {
         try {
             getLog().info("Updating Camel release information from camel-website");
             List<String> links = fetchCamelReleaseLinks(GIT_CAMEL_URL);
-            updateCamelRelease(links, "camel-releases.json");
+            updateCamelRelease("Camel", links, "camel-releases.json");
 
             links = fetchCamelReleaseLinks(GIT_CAMEL_QUARKUS_URL);
-            updateCamelRelease(links, "camel-quarkus-releases.json");
+            updateCamelRelease("Camel Quarkus", links, "camel-quarkus-releases.json");
         } catch (Exception e) {
             throw new MojoExecutionException(e);
         }
     }
 
-    private void updateCamelRelease(List<String> links, String fileName) throws Exception {
+    private void updateCamelRelease(String kind, List<String> links, String fileName) throws Exception {
         List<ReleaseModel> releases = processReleases(links);
         releases.sort(Comparator.comparing(ReleaseModel::getVersion));
-        getLog().info("Found " + releases.size() + " releases");
+        getLog().info("Found " + releases.size() + " " + kind + " releases");
 
         JsonArray arr = new JsonArray();
         for (ReleaseModel r : releases) {
