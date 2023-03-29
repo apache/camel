@@ -3478,11 +3478,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     public boolean isJMXDisabled() {
         String override = System.getProperty(JmxSystemPropertyKeys.DISABLED);
-        if (override != null) {
-            return "true".equals(override);
-        } else {
-            return disableJMX;
-        }
+        return Boolean.valueOf(override);
     }
 
     void enableDebugging(DebuggerFactory df) throws Exception {
