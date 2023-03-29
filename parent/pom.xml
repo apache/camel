@@ -33,6 +33,7 @@
     <description>Camel Parent POM</description>
 
     <properties>
+        <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
         <compiler.fork>true</compiler.fork>
         <cxf.codegenplugin.forkmode>true</cxf.codegenplugin.forkmode>
         <cxf.codegen.jvmArgs />
@@ -2782,7 +2783,13 @@
                     <version>${maven-jar-plugin-version}</version>
                     <configuration>
                         <archive>
-                            <manifestFile>${camel.osgi.manifest}</manifestFile>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>false</addDefaultSpecificationEntries>
+                            </manifest>
+                            <manifestEntries>
+                                <Build-Date>${maven.build.timestamp}</Build-Date>
+                            </manifestEntries>
                         </archive>
                     </configuration>
                 </plugin>
