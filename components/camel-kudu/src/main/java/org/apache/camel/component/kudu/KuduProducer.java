@@ -27,6 +27,7 @@ import org.apache.kudu.client.Delete;
 import org.apache.kudu.client.Insert;
 import org.apache.kudu.client.KuduClient;
 import org.apache.kudu.client.KuduException;
+import org.apache.kudu.client.KuduPredicate;
 import org.apache.kudu.client.KuduTable;
 import org.apache.kudu.client.PartialRow;
 import org.apache.kudu.client.Update;
@@ -175,6 +176,7 @@ public class KuduProducer extends DefaultProducer {
     }
 
     private void doScan(Exchange exchange, String tableName) throws KuduException {
-        exchange.getIn().setBody(KuduUtils.doScan(tableName, endpoint.getKuduClient()));
+        KuduPredicate predicate = (KuduPredicate) exchange.getIn().getHeader(KuduConstants.CAMEL_KUDU_SCAN_PREDICATE);
+        exchange.getIn().setBody(KuduUtils.doScan(tableName, endpoint.getKuduClient(), predicate));
     }
 }
