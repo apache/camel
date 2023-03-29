@@ -32,6 +32,7 @@ import org.apache.hadoop.io.IOUtils;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.ShortWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 
@@ -152,6 +153,25 @@ public class HdfsWritableFactories {
         public Object read(Writable writable, Holder<Integer> size) {
             size.setValue(SIZE);
             return ((FloatWritable) writable).get();
+        }
+    }
+
+    public static final class HdfsShortWritableFactory implements HdfsWritableFactory {
+
+        private static final int SIZE = 2;
+
+        @Override
+        public Writable create(Object value, TypeConverter typeConverter, Holder<Integer> size) {
+            size.setValue(SIZE);
+            ShortWritable writable = new ShortWritable();
+            writable.set(typeConverter.convertTo(Short.class, value));
+            return writable;
+        }
+
+        @Override
+        public Object read(Writable writable, Holder<Integer> size) {
+            size.setValue(SIZE);
+            return ((ShortWritable) writable).get();
         }
     }
 

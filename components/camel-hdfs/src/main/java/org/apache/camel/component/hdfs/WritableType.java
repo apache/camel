@@ -24,6 +24,7 @@ import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.ShortWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
@@ -47,6 +48,13 @@ public enum WritableType {
         @Override
         public Class<ByteWritable> getWritableClass() {
             return ByteWritable.class;
+        }
+    },
+
+    SHORT {
+        @Override
+        public Class<ShortWritable> getWritableClass() {
+            return ShortWritable.class;
         }
     },
 
