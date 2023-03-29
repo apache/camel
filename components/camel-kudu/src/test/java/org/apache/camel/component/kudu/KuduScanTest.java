@@ -122,8 +122,7 @@ public class KuduScanTest extends AbstractKuduTest {
         sendBody("direct:scan", null, headers);
         List<Map<String, Object>> results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
                 .get(0).getIn().getBody(List.class);
-        // two records with id=1 and id=2 are expected to be returned
-        assertEquals(2, results.size());
+        assertEquals(2, results.size(), "two records with id=1 and id=2 are expected to be returned");
 
         // with predicate
         ColumnSchema schema = new ColumnSchema.ColumnSchemaBuilder("id", Type.INT32).build();
@@ -132,8 +131,7 @@ public class KuduScanTest extends AbstractKuduTest {
         sendBody("direct:scan", null, headers);
         results = (List<Map<String, Object>>) successEndpoint.getReceivedExchanges()
                 .get(1).getIn().getBody(List.class);
-        // only one record with id=2 is expected to be returned
-        assertEquals(1, results.size());
+        assertEquals(1, results.size(), "only one record with id=2 is expected to be returned");
 
         errorEndpoint.assertIsSatisfied();
         successEndpoint.assertIsSatisfied();
