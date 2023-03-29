@@ -164,6 +164,7 @@ import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.DefaultThreadPoolFactory;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.LRUCacheFactory;
@@ -2132,7 +2133,7 @@ public abstract class AbstractCamelContext extends BaseService
         final StopWatch watch = new StopWatch();
 
         // auto-detect step recorder from classpath if none has been explicit configured
-        if (startupStepRecorder.getClass().getSimpleName().equals("DefaultStartupStepRecorder")) {
+        if (startupStepRecorder.getClass().equals(DefaultStartupStepRecorder.class)) {
             StartupStepRecorder fr = camelContextExtension.getBootstrapFactoryFinder()
                     .newInstance(StartupStepRecorder.FACTORY, StartupStepRecorder.class).orElse(null);
             if (fr != null) {
@@ -2785,14 +2786,14 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         // lets log at INFO level if we are not using the default reactive executor
-        if (!camelContextExtension.getReactiveExecutor().getClass().getSimpleName().equals("DefaultReactiveExecutor")) {
+        if (!camelContextExtension.getReactiveExecutor().getClass().equals(DefaultReactiveExecutor.class)) {
             LOG.info("Using ReactiveExecutor: {}", camelContextExtension.getReactiveExecutor());
         } else {
             LOG.debug("Using ReactiveExecutor: {}", camelContextExtension.getReactiveExecutor());
         }
 
         // lets log at INFO level if we are not using the default thread pool factory
-        if (!getExecutorServiceManager().getThreadPoolFactory().getClass().getSimpleName().equals("DefaultThreadPoolFactory")) {
+        if (!getExecutorServiceManager().getThreadPoolFactory().getClass().equals(DefaultThreadPoolFactory.class)) {
             LOG.info("Using ThreadPoolFactory: {}", getExecutorServiceManager().getThreadPoolFactory());
         } else {
             LOG.debug("Using ThreadPoolFactory: {}", getExecutorServiceManager().getThreadPoolFactory());
