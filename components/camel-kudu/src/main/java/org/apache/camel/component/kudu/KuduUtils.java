@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.client.KuduClient;
 import org.apache.kudu.client.KuduException;
+import org.apache.kudu.client.KuduPredicate;
 import org.apache.kudu.client.KuduScanner;
 import org.apache.kudu.client.KuduScannerIterator;
 import org.apache.kudu.client.KuduTable;
@@ -57,6 +58,11 @@ public final class KuduUtils {
     }
 
     public static List<Map<String, Object>> doScan(String tableName, KuduClient connection) throws KuduException {
+        return doScan(tableName, connection, null);
+    }
+
+    public static List<Map<String, Object>> doScan(String tableName, KuduClient connection, KuduPredicate predicate)
+            throws KuduException {
         LOG.trace("Scanning table {}", tableName);
         KuduTable table = connection.openTable(tableName);
 
@@ -66,9 +72,11 @@ public final class KuduUtils {
             projectColumns.add(columnSchema.getName());
         }
 
-        KuduScanner scanner = connection.newScannerBuilder(table)
-                .setProjectedColumnNames(projectColumns)
-                .build();
+        KuduScanner.KuduScannerBuilder builder = connection.newScannerBuilder(table);
+        if (predicate != null) {
+            builder.addPredicate(predicate);
+        }
+        KuduScanner scanner = builder.setProjectedColumnNames(projectColumns).build();
         return KuduUtils.scannerToList(table, scanner);
     }
 }
