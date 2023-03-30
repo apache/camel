@@ -362,7 +362,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.setRegistry(registry);
     }
 
-     protected AbstractCamelContext(boolean build) {
+    protected AbstractCamelContext(boolean build) {
         // create a provisional (temporary) endpoint registry at first since end
         // users may access endpoints before CamelContext is started
         // we will later transfer the endpoints to the actual
