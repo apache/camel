@@ -30,6 +30,10 @@ one of each out of the box.
 
 The option `camel.main.routesReloadRestartDuration` has changed its default value from `true` to `false`.
 
+=== camel-azure-cosmosdb
+
+The option `itemPartitionKey` has been updated. Now it's a String and not a PartitionKey POJO anymore. More details in CAMEL-19222.
+
 === camel-http-common
 
 The API in `org.apache.camel.http.common.HttpBinding` has changed slightly to be more reusable.
