@@ -153,6 +153,10 @@ serializer located in the `camel-xml-io` module instead of the JAXB based one fr
 
 == Component changes
 
+=== camel-azure-cosmosdb
+
+The `itemPartitionKey` has been updated. It's now a String a not a PartitionKey anymore. More details in CAMEL-19222.
+
 === camel-caffeine
 
 The `keyType` parameter has been removed. The Key for the cache will now be only `String` type. More information in CAMEL-18877.
