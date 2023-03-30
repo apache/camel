@@ -348,7 +348,7 @@ public abstract class AbstractCamelContext extends BaseService
      * <p/>
      * Use one of the other constructors to force use an explicit registry.
      */
-    public AbstractCamelContext() {
+    protected AbstractCamelContext() {
         this(true);
     }
 
@@ -357,12 +357,12 @@ public abstract class AbstractCamelContext extends BaseService
      *
      * @param registry the registry
      */
-    public AbstractCamelContext(Registry registry) {
+    protected AbstractCamelContext(Registry registry) {
         this();
         camelContextExtension.setRegistry(registry);
     }
 
-    public AbstractCamelContext(boolean build) {
+     protected AbstractCamelContext(boolean build) {
         // create a provisional (temporary) endpoint registry at first since end
         // users may access endpoints before CamelContext is started
         // we will later transfer the endpoints to the actual
