@@ -123,4 +123,8 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
         }
     }
 
+    @Override
+    public long position() {
+        return -1;
+    }
 }

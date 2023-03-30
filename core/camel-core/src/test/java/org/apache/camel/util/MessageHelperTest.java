@@ -80,6 +80,11 @@ public class MessageHelperTest {
             public long length() {
                 return 0;
             }
+
+            @Override
+            public long position() {
+                return 0;
+            }
         });
         MessageHelper.resetStreamCache(message);
         assertTrue(reset.get(), "Should have reset the stream cache");

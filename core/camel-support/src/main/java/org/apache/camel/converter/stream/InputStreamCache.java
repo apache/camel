@@ -56,4 +56,8 @@ public final class InputStreamCache extends ByteArrayInputStream implements Stre
     public long length() {
         return count;
     }
+
+    public long position() {
+        return available() - count;
+    }
 }

@@ -31,11 +31,13 @@ import org.apache.camel.util.IOHelper;
  */
 public class ByteArrayInputStreamCache extends FilterInputStream implements StreamCache {
 
+    private final ByteArrayInputStream bais;
     private final int length;
     private byte[] byteArrayForCopy;
 
     public ByteArrayInputStreamCache(ByteArrayInputStream in) {
         super(in);
+        this.bais = in;
         this.length = in.available();
     }
 
@@ -74,5 +76,10 @@ public class ByteArrayInputStreamCache extends FilterInputStream implements Stre
     @Override
     public long length() {
         return length;
+    }
+
+    @Override
+    public long position() {
+        return length - bais.available();
     }
 }

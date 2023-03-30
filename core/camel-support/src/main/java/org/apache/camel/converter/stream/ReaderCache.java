@@ -69,6 +69,11 @@ public class ReaderCache extends StringReader implements StreamCache {
         return data.length();
     }
 
+    @Override
+    public long position() {
+        return -1;
+    }
+
     String getData() {
         return data;
     }

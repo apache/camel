@@ -117,6 +117,11 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
     }
 
     @Override
+    public long position() {
+        return -1;
+    }
+
+    @Override
     public int available() throws IOException {
         return getInputStream().available();
     }

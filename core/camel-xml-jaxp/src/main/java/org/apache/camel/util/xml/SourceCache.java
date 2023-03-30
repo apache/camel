@@ -60,4 +60,9 @@ public final class SourceCache extends StringSource implements StreamCache {
     public long length() {
         return length;
     }
+
+    @Override
+    public long position() {
+        return -1;
+    }
 }

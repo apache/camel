@@ -77,4 +77,11 @@ public interface StreamCache {
      */
     long length();
 
+    /**
+     * Read position
+     *
+     * @return position or -1 if not supported in the cached implementation
+     */
+    long position();
+
 }
