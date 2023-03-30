@@ -1310,26 +1310,7 @@ public interface CosmosDbEndpointBuilderFactory {
          * Cosmos DB database service. A partition key identifies the partition
          * where the item is stored in.
          * 
-         * The option is a:
-         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
-         * 
-         * Group: producer
-         * 
-         * @param itemPartitionKey the value to set
-         * @return the dsl builder
-         */
-        default CosmosDbEndpointProducerBuilder itemPartitionKey(
-                com.azure.cosmos.models.PartitionKey itemPartitionKey) {
-            doSetProperty("itemPartitionKey", itemPartitionKey);
-            return this;
-        }
-        /**
-         * Sets partition key. Represents a partition key value in the Azure
-         * Cosmos DB database service. A partition key identifies the partition
-         * where the item is stored in.
-         * 
-         * The option will be converted to a
-         * &lt;code&gt;com.azure.cosmos.models.PartitionKey&lt;/code&gt; type.
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
          * Group: producer
          * 
