@@ -1516,7 +1516,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         NodeIdFactory nodeIdFactory = getBeanForType(NodeIdFactory.class);
         if (nodeIdFactory != null) {
             LOG.info("Using custom NodeIdFactory: {}", nodeIdFactory);
-            getContext().getCamelContextExtension().setNodeIdFactory(nodeIdFactory);
+            getContext().getCamelContextExtension().addContextPlugin(NodeIdFactory.class, nodeIdFactory);
         }
         StreamCachingStrategy streamCachingStrategy = getBeanForType(StreamCachingStrategy.class);
         if (streamCachingStrategy != null) {

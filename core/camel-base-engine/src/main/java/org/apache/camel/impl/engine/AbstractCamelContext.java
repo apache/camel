@@ -234,7 +234,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile RuntimeCamelCatalog runtimeCamelCatalog;
     volatile PackageScanClassResolver packageScanClassResolver;
     volatile PackageScanResourceResolver packageScanResourceResolver;
-    volatile NodeIdFactory nodeIdFactory;
     volatile ModelineFactory modelineFactory;
     volatile ProcessorFactory processorFactory;
     volatile PeriodTaskResolver periodTaskResolver;
@@ -2129,6 +2128,8 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void doBuild() throws Exception {
         final StopWatch watch = new StopWatch();
+
+        getCamelContextExtension().addContextPlugin(NodeIdFactory.class, createNodeIdFactory());
 
         // auto-detect step recorder from classpath if none has been explicit configured
         if (startupStepRecorder.getClass().getSimpleName().equals("DefaultStartupStepRecorder")) {
@@ -4175,10 +4176,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
         camelContextExtension.setBeanPostProcessor(beanPostProcessor);
-    }
-
-    public void setNodeIdFactory(NodeIdFactory factory) {
-        camelContextExtension.setNodeIdFactory(factory);
     }
 
     public void setDataFormatResolver(DataFormatResolver dataFormatResolver) {

@@ -81,8 +81,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ModelineFactory": target.setModelineFactory(property(camelContext, org.apache.camel.spi.ModelineFactory.class, value)); return true;
         case "name":
         case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
-        case "nodeidfactory":
-        case "NodeIdFactory": target.setNodeIdFactory(property(camelContext, org.apache.camel.spi.NodeIdFactory.class, value)); return true;
         case "packagescanclassresolver":
         case "PackageScanClassResolver": target.setPackageScanClassResolver(property(camelContext, org.apache.camel.spi.PackageScanClassResolver.class, value)); return true;
         case "packagescanresourceresolver":
@@ -182,8 +180,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ModelineFactory": return org.apache.camel.spi.ModelineFactory.class;
         case "name":
         case "Name": return java.lang.String.class;
-        case "nodeidfactory":
-        case "NodeIdFactory": return org.apache.camel.spi.NodeIdFactory.class;
         case "packagescanclassresolver":
         case "PackageScanClassResolver": return org.apache.camel.spi.PackageScanClassResolver.class;
         case "packagescanresourceresolver":
@@ -284,8 +280,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ModelineFactory": return target.getModelineFactory();
         case "name":
         case "Name": return target.getName();
-        case "nodeidfactory":
-        case "NodeIdFactory": return target.getNodeIdFactory();
         case "packagescanclassresolver":
         case "PackageScanClassResolver": return target.getPackageScanClassResolver();
         case "packagescanresourceresolver":

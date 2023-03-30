@@ -54,7 +54,6 @@ import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelineFactory;
-import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
@@ -313,20 +312,6 @@ public interface ExtendedCamelContext {
      * @param errorHandlerFactory the builder
      */
     void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory);
-
-    /**
-     * Gets the node id factory
-     *
-     * @return the node id factory
-     */
-    NodeIdFactory getNodeIdFactory();
-
-    /**
-     * Uses a custom node id factory when generating auto assigned ids to the nodes in the route definitions
-     *
-     * @param factory custom factory to use
-     */
-    void setNodeIdFactory(NodeIdFactory factory);
 
     /**
      * Gets the {@link ComponentResolver} to use.

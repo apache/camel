@@ -65,6 +65,7 @@ import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ModelReifierFactory;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RouteTemplateLoaderListener;
 import org.apache.camel.spi.RouteTemplateParameterSource;
@@ -162,7 +163,7 @@ public class DefaultModel implements Model {
     @Override
     public synchronized RouteConfigurationDefinition getRouteConfigurationDefinition(String id) {
         for (RouteConfigurationDefinition def : routesConfigurations) {
-            if (def.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory()).equals(id)) {
+            if (def.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)).equals(id)) {
                 return def;
             }
         }
@@ -294,7 +295,7 @@ public class DefaultModel implements Model {
     @Override
     public synchronized RouteDefinition getRouteDefinition(String id) {
         for (RouteDefinition route : routeDefinitions) {
-            if (route.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory()).equals(id)) {
+            if (route.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)).equals(id)) {
                 return route;
             }
         }
@@ -309,7 +310,7 @@ public class DefaultModel implements Model {
     @Override
     public RouteTemplateDefinition getRouteTemplateDefinition(String id) {
         for (RouteTemplateDefinition route : routeTemplateDefinitions) {
-            if (route.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory()).equals(id)) {
+            if (route.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)).equals(id)) {
                 return route;
             }
         }
