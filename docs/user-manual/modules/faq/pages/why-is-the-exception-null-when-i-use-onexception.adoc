@@ -8,7 +8,7 @@ If you use `onException` to handle exceptions, such as shown below:
   .process(new Processor() {
     @Override
     public void process(Exchange exchange) throws Exception {
-      Exception cause = exchange.getException());
+      Exception cause = exchange.getException();
       // why cause exception is null ???
     }
   })
