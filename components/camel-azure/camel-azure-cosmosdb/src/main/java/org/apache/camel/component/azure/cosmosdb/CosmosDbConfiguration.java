@@ -20,7 +20,6 @@ import com.azure.cosmos.ConsistencyLevel;
 import com.azure.cosmos.CosmosAsyncClient;
 import com.azure.cosmos.models.ChangeFeedProcessorOptions;
 import com.azure.cosmos.models.CosmosQueryRequestOptions;
-import com.azure.cosmos.models.PartitionKey;
 import com.azure.cosmos.models.ThroughputProperties;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
