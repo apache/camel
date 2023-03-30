@@ -44,7 +44,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
@@ -244,23 +243,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
         // return original text as is
         return text;
-    }
-
-    @Override
-    public CamelBeanPostProcessor getBeanPostProcessor() {
-        if (camelContext.beanPostProcessor == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.beanPostProcessor == null) {
-                    setBeanPostProcessor(camelContext.createBeanPostProcessor());
-                }
-            }
-        }
-        return camelContext.beanPostProcessor;
-    }
-
-    @Override
-    public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
-        camelContext.beanPostProcessor = camelContext.getInternalServiceManager().addService(beanPostProcessor);
     }
 
     @Override

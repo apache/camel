@@ -25,6 +25,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -81,7 +82,7 @@ public class CamelProduceInterfaceEventNotifierTest extends ContextTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        postProcessor = context.getCamelContextExtension().getBeanPostProcessor();
+        postProcessor = PluginHelper.getBeanPostProcessor(context);
     }
 
     interface FooService {

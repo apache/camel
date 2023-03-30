@@ -80,6 +80,7 @@ import org.apache.camel.support.ClassicUuidGenerator;
 import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.OffUuidGenerator;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.RouteWatcherReloadStrategy;
 import org.apache.camel.support.ShortUuidGenerator;
 import org.apache.camel.support.SimpleUuidGenerator;
@@ -135,7 +136,7 @@ public final class DefaultConfigurationConfigurer {
         ecc.getStartupStepRecorder().setRecordingProfile(config.getStartupRecorderProfile());
 
         ecc.setLightweight(config.isLightweight());
-        ecc.getBeanPostProcessor().setEnabled(config.isBeanPostProcessorEnabled());
+        PluginHelper.getBeanPostProcessor(ecc).setEnabled(config.isBeanPostProcessorEnabled());
         ecc.getBeanIntrospection().setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());
         if (config.getBeanIntrospectionLoggingLevel() != null) {
             ecc.getBeanIntrospection().setLoggingLevel(config.getBeanIntrospectionLoggingLevel());

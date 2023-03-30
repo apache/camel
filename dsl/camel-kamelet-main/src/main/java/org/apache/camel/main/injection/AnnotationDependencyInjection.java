@@ -40,6 +40,7 @@ import org.apache.camel.spi.CamelBeanPostProcessorInjector;
 import org.apache.camel.spi.CompilePostProcessor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -60,7 +61,7 @@ public final class AnnotationDependencyInjection {
 
     public static void initAnnotationBasedDependencyInjection(CamelContext context) {
         Registry registry = context.getRegistry();
-        CamelBeanPostProcessor cbbp = context.getCamelContextExtension().getBeanPostProcessor();
+        CamelBeanPostProcessor cbbp = PluginHelper.getBeanPostProcessor(context);
 
         // camel / common
         registry.bind("CamelTypeConverterCompilePostProcessor", new TypeConverterCompilePostProcessor());
@@ -108,7 +109,7 @@ public final class AnnotationDependencyInjection {
             BindToRegistry bir = instance.getClass().getAnnotation(BindToRegistry.class);
             Configuration cfg = instance.getClass().getAnnotation(Configuration.class);
             if (bir != null || cfg != null || instance instanceof CamelConfiguration) {
-                CamelBeanPostProcessor bpp = camelContext.getCamelContextExtension().getBeanPostProcessor();
+                CamelBeanPostProcessor bpp = PluginHelper.getBeanPostProcessor(camelContext);
                 if (bir != null && ObjectHelper.isNotEmpty(bir.value())) {
                     name = bir.value();
                 } else if (cfg != null && ObjectHelper.isNotEmpty(cfg.value())) {
@@ -278,7 +279,7 @@ public final class AnnotationDependencyInjection {
     private static void bindBean(CamelContext context, String name, Object instance, boolean postProcess) {
         // to support hot reloading of beans then we need to enable unbind mode in bean post processor
         Registry registry = context.getRegistry();
-        CamelBeanPostProcessor bpp = context.getCamelContextExtension().getBeanPostProcessor();
+        CamelBeanPostProcessor bpp = PluginHelper.getBeanPostProcessor(context);
         bpp.setUnbindEnabled(true);
         try {
             // re-bind the bean to the registry

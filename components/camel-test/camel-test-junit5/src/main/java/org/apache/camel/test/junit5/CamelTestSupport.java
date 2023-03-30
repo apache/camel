@@ -58,6 +58,7 @@ import org.apache.camel.spi.PropertiesSource;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.BreakpointSupport;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.CamelRouteCoverageDumper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
@@ -690,9 +691,9 @@ public abstract class CamelTestSupport
         boolean spring = hasClassAnnotation("org.springframework.boot.test.context.SpringBootTest",
                 "org.springframework.context.annotation.ComponentScan");
         if (!spring) {
-            context.getCamelContextExtension().getBeanPostProcessor().postProcessBeforeInitialization(this,
+            PluginHelper.getBeanPostProcessor(context).postProcessBeforeInitialization(this,
                     getClass().getName());
-            context.getCamelContextExtension().getBeanPostProcessor().postProcessAfterInitialization(this,
+            PluginHelper.getBeanPostProcessor(context).postProcessAfterInitialization(this,
                     getClass().getName());
         }
     }
