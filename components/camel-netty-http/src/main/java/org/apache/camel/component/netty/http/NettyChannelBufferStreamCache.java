@@ -103,6 +103,11 @@ public final class NettyChannelBufferStreamCache extends InputStream implements 
         return buffer.readableBytes();
     }
 
+    @Override
+    public long position() {
+        return buffer.readerIndex();
+    }
+
     /**
      * Release the buffer when we are done using it.
      */

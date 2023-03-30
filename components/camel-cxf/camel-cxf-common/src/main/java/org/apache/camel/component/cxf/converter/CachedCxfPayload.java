@@ -177,6 +177,11 @@ public class CachedCxfPayload<T> extends CxfPayload<T> implements StreamCache {
     }
 
     @Override
+    public long position() {
+        return -1;
+    }
+
+    @Override
     public StreamCache copy(Exchange exchange) throws IOException {
         return new CachedCxfPayload<>(this, exchange);
     }
