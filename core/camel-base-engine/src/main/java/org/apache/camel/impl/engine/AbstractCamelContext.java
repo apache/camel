@@ -169,6 +169,7 @@ import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.ResolverHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -212,7 +213,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ProcessorExchangeFactory processorExchangeFactory;
     volatile ReactiveExecutor reactiveExecutor;
     volatile Registry registry;
-    volatile ComponentResolver componentResolver;
     volatile ComponentNameResolver componentNameResolver;
     volatile LanguageResolver languageResolver;
     volatile ConfigurerResolver configurerResolver;
@@ -385,6 +385,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.addContextPlugin(CamelBeanPostProcessor.class, createBeanPostProcessor());
         camelContextExtension.addContextPlugin(CamelDependencyInjectionAnnotationFactory.class,
                 createDependencyInjectionAnnotationFactory());
+        camelContextExtension.addContextPlugin(ComponentResolver.class, createComponentResolver());
 
         if (build) {
             try {
@@ -578,7 +579,7 @@ public abstract class AbstractCamelContext extends BaseService
             try {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Using ComponentResolver: {} to resolve component with name: {}",
-                            camelContextExtension.getComponentResolver(), name);
+                            PluginHelper.getComponentResolver(camelContextExtension), name);
                 }
 
                 // Mark the component as being created so we can detect circular
@@ -618,7 +619,8 @@ public abstract class AbstractCamelContext extends BaseService
 
                 component = ResolverHelper.lookupComponentInRegistryWithFallback(getCamelContextReference(), name);
                 if (component == null) {
-                    component = camelContextExtension.getComponentResolver().resolveComponent(name, getCamelContextReference());
+                    component = PluginHelper.getComponentResolver(camelContextExtension).resolveComponent(name,
+                            getCamelContextReference());
                 }
 
                 if (component != null) {
@@ -3271,7 +3273,6 @@ public abstract class AbstractCamelContext extends BaseService
         getPropertiesComponent();
 
         camelContextExtension.getLanguageResolver();
-        camelContextExtension.getComponentResolver();
         camelContextExtension.getComponentNameResolver();
         camelContextExtension.getDataFormatResolver();
         camelContextExtension.getHealthCheckResolver();
@@ -3297,7 +3298,6 @@ public abstract class AbstractCamelContext extends BaseService
         injector = null;
         languageResolver = null;
         dataFormatResolver = null;
-        componentResolver = null;
         typeConverterRegistry = null;
         typeConverter = null;
         reactiveExecutor = null;

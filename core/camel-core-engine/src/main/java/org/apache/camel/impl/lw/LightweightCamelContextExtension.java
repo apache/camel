@@ -46,7 +46,6 @@ import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.ComponentNameResolver;
-import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
@@ -125,16 +124,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setModelJAXBContextFactory(ModelJAXBContextFactory modelJAXBContextFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ComponentResolver getComponentResolver() {
-        return camelContext.getCamelContextExtension().getComponentResolver();
-    }
-
-    @Override
-    public void setComponentResolver(ComponentResolver componentResolver) {
         throw new UnsupportedOperationException();
     }
 
