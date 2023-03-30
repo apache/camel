@@ -19,11 +19,10 @@ package org.apache.camel.component.avro.processors;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.avro.test.TestReflection;
-import org.apache.camel.avro.test.TestReflectionImpl;
 
 public class ReflectionInOutProcessor implements Processor {
 
-    private TestReflection testReflection = new TestReflectionImpl();
+    private TestReflection testReflection;
 
     public ReflectionInOutProcessor(TestReflection testReflection) {
         this.testReflection = testReflection;
@@ -34,7 +33,7 @@ public class ReflectionInOutProcessor implements Processor {
         Object body = exchange.getIn().getBody();
         if (body instanceof Object[] && ((Object[]) body).length == 0) {
             exchange.getMessage().setBody(testReflection.getTestPojo());
-        } else if (body instanceof Object) {
+        } else if (body != null) {
             exchange.getMessage().setBody(testReflection.increaseAge((Integer) body));
         }
     }

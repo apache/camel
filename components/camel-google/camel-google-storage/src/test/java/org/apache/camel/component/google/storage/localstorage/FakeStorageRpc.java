@@ -142,10 +142,6 @@ class FakeStorageRpc extends StorageRpcTestBase {
                     pageToken = (String) e.getValue();
                     break;
                 case PREFIX:
-                    preprefix = (String) e.getValue();
-                    if (preprefix.startsWith("/")) {
-                        preprefix = preprefix.substring(1);
-                    }
                     break;
                 case DELIMITER:
                     //delimiter = (String) e.getValue();

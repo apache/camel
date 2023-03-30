@@ -81,7 +81,6 @@ public class ArangoGraphQueriesIT extends BaseGraph {
         assertTrue(result.getMessage().getBody() instanceof Collection);
 
         Collection<String> list = (Collection<String>) result.getMessage().getBody();
-        list = (Collection<String>) result.getMessage().getBody();
         assertEquals(3, list.size());
         assertThat(list, hasItems("A", "B", "D"));
 
