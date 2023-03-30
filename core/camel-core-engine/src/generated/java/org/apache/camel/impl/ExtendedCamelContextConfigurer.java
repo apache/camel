@@ -61,8 +61,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "InterceptEndpointFactory": target.setInterceptEndpointFactory(property(camelContext, org.apache.camel.spi.InterceptEndpointFactory.class, value)); return true;
         case "internalprocessorfactory":
         case "InternalProcessorFactory": target.setInternalProcessorFactory(property(camelContext, org.apache.camel.spi.InternalProcessorFactory.class, value)); return true;
-        case "languageresolver":
-        case "LanguageResolver": target.setLanguageResolver(property(camelContext, org.apache.camel.spi.LanguageResolver.class, value)); return true;
         case "lightweight":
         case "Lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
         case "modeljaxbcontextfactory":
@@ -152,8 +150,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "InterceptEndpointFactory": return org.apache.camel.spi.InterceptEndpointFactory.class;
         case "internalprocessorfactory":
         case "InternalProcessorFactory": return org.apache.camel.spi.InternalProcessorFactory.class;
-        case "languageresolver":
-        case "LanguageResolver": return org.apache.camel.spi.LanguageResolver.class;
         case "lightweight":
         case "Lightweight": return boolean.class;
         case "modeljaxbcontextfactory":
@@ -244,8 +240,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "InterceptEndpointFactory": return target.getInterceptEndpointFactory();
         case "internalprocessorfactory":
         case "InternalProcessorFactory": return target.getInternalProcessorFactory();
-        case "languageresolver":
-        case "LanguageResolver": return target.getLanguageResolver();
         case "lightweight":
         case "Lightweight": return target.isLightweight();
         case "modeljaxbcontextfactory":

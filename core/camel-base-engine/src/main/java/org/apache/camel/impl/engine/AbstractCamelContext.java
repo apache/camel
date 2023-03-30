@@ -213,7 +213,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ProcessorExchangeFactory processorExchangeFactory;
     volatile ReactiveExecutor reactiveExecutor;
     volatile Registry registry;
-    volatile LanguageResolver languageResolver;
     volatile ConfigurerResolver configurerResolver;
     volatile UriFactoryResolver uriFactoryResolver;
     volatile DataFormatResolver dataFormatResolver;
@@ -386,6 +385,7 @@ public abstract class AbstractCamelContext extends BaseService
                 createDependencyInjectionAnnotationFactory());
         camelContextExtension.addContextPlugin(ComponentResolver.class, createComponentResolver());
         camelContextExtension.addContextPlugin(ComponentNameResolver.class, createComponentNameResolver());
+        camelContextExtension.addContextPlugin(LanguageResolver.class, createLanguageResolver());
 
         if (build) {
             try {
@@ -1523,7 +1523,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         if (language == null) {
             // language not known, then use resolver
-            language = camelContextExtension.getLanguageResolver().resolveLanguage(name, camelContext);
+            language = PluginHelper.getLanguageResolver(camelContextExtension).resolveLanguage(name, camelContext);
         }
 
         if (language != null) {
@@ -3272,7 +3272,6 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.getConfigurerResolver();
         getPropertiesComponent();
 
-        camelContextExtension.getLanguageResolver();
         camelContextExtension.getDataFormatResolver();
         camelContextExtension.getHealthCheckResolver();
 
@@ -3295,7 +3294,6 @@ public abstract class AbstractCamelContext extends BaseService
      */
     protected void forceStopLazyInitialization() {
         injector = null;
-        languageResolver = null;
         dataFormatResolver = null;
         typeConverterRegistry = null;
         typeConverter = null;

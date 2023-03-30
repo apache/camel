@@ -58,7 +58,6 @@ import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.InternalProcessorFactory;
-import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
@@ -123,16 +122,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setModelJAXBContextFactory(ModelJAXBContextFactory modelJAXBContextFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public LanguageResolver getLanguageResolver() {
-        return camelContext.getCamelContextExtension().getLanguageResolver();
-    }
-
-    @Override
-    public void setLanguageResolver(LanguageResolver languageResolver) {
         throw new UnsupportedOperationException();
     }
 

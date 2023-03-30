@@ -43,7 +43,6 @@ import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.InternalProcessorFactory;
-import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
@@ -286,16 +285,6 @@ public interface ExtendedCamelContext {
      * @param errorHandlerFactory the builder
      */
     void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory);
-
-    /**
-     * Gets the {@link LanguageResolver} to use.
-     */
-    LanguageResolver getLanguageResolver();
-
-    /**
-     * Sets a custom {@link LanguageResolver} to use.
-     */
-    void setLanguageResolver(LanguageResolver languageResolver);
 
     /**
      * Gets the current data format resolver

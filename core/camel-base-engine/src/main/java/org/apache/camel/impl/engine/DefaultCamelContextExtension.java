@@ -60,7 +60,6 @@ import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.InternalProcessorFactory;
-import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
@@ -245,21 +244,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public ManagementMBeanAssembler getManagementMBeanAssembler() {
         return camelContext.managementMBeanAssembler;
-    }
-
-    public LanguageResolver getLanguageResolver() {
-        if (camelContext.languageResolver == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.languageResolver == null) {
-                    setLanguageResolver(camelContext.createLanguageResolver());
-                }
-            }
-        }
-        return camelContext.languageResolver;
-    }
-
-    public void setLanguageResolver(LanguageResolver languageResolver) {
-        camelContext.languageResolver = camelContext.getInternalServiceManager().addService(languageResolver);
     }
 
     public ConfigurerResolver getConfigurerResolver() {
