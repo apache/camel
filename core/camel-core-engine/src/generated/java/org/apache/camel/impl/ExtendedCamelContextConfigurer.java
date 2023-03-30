@@ -35,8 +35,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BootstrapConfigurerResolver": target.setBootstrapConfigurerResolver(property(camelContext, org.apache.camel.spi.ConfigurerResolver.class, value)); return true;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": target.setBootstrapFactoryFinder(property(camelContext, org.apache.camel.spi.FactoryFinder.class, value)); return true;
-        case "cliconnectorfactory":
-        case "CliConnectorFactory": target.setCliConnectorFactory(property(camelContext, org.apache.camel.spi.CliConnectorFactory.class, value)); return true;
         case "componentnameresolver":
         case "ComponentNameResolver": target.setComponentNameResolver(property(camelContext, org.apache.camel.spi.ComponentNameResolver.class, value)); return true;
         case "componentresolver":
@@ -138,8 +136,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BootstrapConfigurerResolver": return org.apache.camel.spi.ConfigurerResolver.class;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return org.apache.camel.spi.FactoryFinder.class;
-        case "cliconnectorfactory":
-        case "CliConnectorFactory": return org.apache.camel.spi.CliConnectorFactory.class;
         case "componentnameresolver":
         case "ComponentNameResolver": return org.apache.camel.spi.ComponentNameResolver.class;
         case "componentresolver":
@@ -242,8 +238,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BootstrapConfigurerResolver": return target.getBootstrapConfigurerResolver();
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return target.getBootstrapFactoryFinder();
-        case "cliconnectorfactory":
-        case "CliConnectorFactory": return target.getCliConnectorFactory();
         case "componentnameresolver":
         case "ComponentNameResolver": return target.getComponentNameResolver();
         case "componentresolver":

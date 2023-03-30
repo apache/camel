@@ -356,7 +356,7 @@ public class KameletMain extends MainCommandLineSupport {
         if (!stub) {
             // setup cli-connector if not already done
             if (answer.hasService(CliConnector.class) == null) {
-                CliConnectorFactory ccf = answer.getCliConnectorFactory();
+                CliConnectorFactory ccf = answer.getCamelContextExtension().getContextPlugin(CliConnectorFactory.class);
                 if (ccf != null && ccf.isEnabled()) {
                     CliConnector connector = ccf.createConnector();
                     try {
