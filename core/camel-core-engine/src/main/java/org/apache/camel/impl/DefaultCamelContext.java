@@ -481,15 +481,6 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
     }
 
     @Override
-    public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
-            throws Exception {
-        if (model == null && isLightweight()) {
-            throw new IllegalStateException("Access to model not supported in lightweight mode");
-        }
-        return model.addRouteFromTemplate(routeId, routeTemplateId, routeTemplateContext);
-    }
-
-    @Override
     public String addRouteFromTemplate(
             String routeId, String routeTemplateId, String prefixId, RouteTemplateContext routeTemplateContext)
             throws Exception {

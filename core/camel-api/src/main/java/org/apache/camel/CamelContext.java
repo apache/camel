@@ -633,23 +633,6 @@ public interface CamelContext extends CamelContextLifecycle, RuntimeConfiguratio
      * Camel end users should favour using {@link org.apache.camel.builder.TemplatedRouteBuilder} which is a fluent
      * builder with more functionality than this API.
      *
-     * @param      routeId              the id of the new route to add (optional)
-     * @param      routeTemplateId      the id of the route template (mandatory)
-     * @param      routeTemplateContext the route template context (mandatory)
-     * @return                          the id of the route added (for example when an id was auto assigned)
-     * @throws     Exception            is thrown if error creating and adding the new route
-     * @deprecated                      use {@link #addRouteFromTemplate(String, String, String, RouteTemplateContext)}
-     */
-    @Deprecated
-    String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
-            throws Exception;
-
-    /**
-     * Adds a new route from a given route template.
-     *
-     * Camel end users should favour using {@link org.apache.camel.builder.TemplatedRouteBuilder} which is a fluent
-     * builder with more functionality than this API.
-     *
      * @param  routeId              the id of the new route to add (optional)
      * @param  routeTemplateId      the id of the route template (mandatory)
      * @param  prefixId             prefix to use for all node ids (not route id). Use null for no prefix. (optional)

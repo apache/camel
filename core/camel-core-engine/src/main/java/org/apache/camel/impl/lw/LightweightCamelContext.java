@@ -1271,12 +1271,6 @@ public class LightweightCamelContext implements CamelContext, CatalogCamelContex
     }
 
     @Override
-    public String addRouteFromTemplate(String routeId, String routeTemplateId, RouteTemplateContext routeTemplateContext)
-            throws Exception {
-        return getModelCamelContext().addRouteFromTemplate(routeId, routeTemplateId, routeTemplateContext);
-    }
-
-    @Override
     public String addRouteFromTemplate(
             String routeId, String routeTemplateId, String prefixId, RouteTemplateContext routeTemplateContext)
             throws Exception {
