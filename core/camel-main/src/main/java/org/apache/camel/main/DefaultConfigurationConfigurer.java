@@ -366,7 +366,7 @@ public final class DefaultConfigurationConfigurer {
         }
         CliConnectorFactory ccf = getSingleBeanOfType(registry, CliConnectorFactory.class);
         if (ccf != null) {
-            ecc.getCamelContextExtension().setCliConnectorFactory(ccf);
+            ecc.getCamelContextExtension().addContextPlugin(CliConnectorFactory.class, ccf);
         }
         PropertiesComponent pc = getSingleBeanOfType(registry, PropertiesComponent.class);
         if (pc != null) {

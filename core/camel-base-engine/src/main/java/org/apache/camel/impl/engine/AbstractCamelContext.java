@@ -225,7 +225,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ManagementStrategy managementStrategy;
     volatile ManagementMBeanAssembler managementMBeanAssembler;
     volatile HeadersMapFactory headersMapFactory;
-    volatile CliConnectorFactory cliConnectorFactory;
     volatile BeanProxyFactory beanProxyFactory;
     volatile BeanProcessorFactory beanProcessorFactory;
     volatile RoutesLoader routesLoader;
@@ -2285,7 +2284,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // setup cli-connector if not already done
         if (hasService(CliConnector.class) == null) {
-            CliConnectorFactory ccf = camelContextExtension.getCliConnectorFactory();
+            CliConnectorFactory ccf = getCamelContextExtension().getContextPlugin(CliConnectorFactory.class);
             if (ccf != null && ccf.isEnabled()) {
                 CliConnector connector = ccf.createConnector();
                 addService(connector, true);
@@ -4086,8 +4085,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected abstract HeadersMapFactory createHeadersMapFactory();
 
-    protected abstract CliConnectorFactory createCliConnectorFactory();
-
     protected abstract BeanProxyFactory createBeanProxyFactory();
 
     protected abstract AnnotationBasedProcessorFactory createAnnotationBasedProcessorFactory();
@@ -4258,10 +4255,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     public void setStartupStepRecorder(StartupStepRecorder startupStepRecorder) {
         camelContextExtension.setStartupStepRecorder(startupStepRecorder);
-    }
-
-    public CliConnectorFactory getCliConnectorFactory() {
-        return camelContextExtension.getCliConnectorFactory();
     }
 
     public void addRoute(Route route) {

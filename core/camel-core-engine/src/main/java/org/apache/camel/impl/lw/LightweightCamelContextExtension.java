@@ -47,7 +47,6 @@ import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
-import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
@@ -524,16 +523,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setHeadersMapFactory(HeadersMapFactory factory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public CliConnectorFactory getCliConnectorFactory() {
-        return camelContext.getCamelContextExtension().getCliConnectorFactory();
-    }
-
-    @Override
-    public void setCliConnectorFactory(CliConnectorFactory cliConnectorFactory) {
         throw new UnsupportedOperationException();
     }
 

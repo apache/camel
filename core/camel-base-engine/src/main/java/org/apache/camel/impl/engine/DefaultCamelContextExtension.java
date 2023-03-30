@@ -46,7 +46,6 @@ import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
-import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
@@ -1112,23 +1111,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setStartupStepRecorder(StartupStepRecorder startupStepRecorder) {
         camelContext.startupStepRecorder = startupStepRecorder;
-    }
-
-    @Override
-    public CliConnectorFactory getCliConnectorFactory() {
-        if (camelContext.cliConnectorFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.cliConnectorFactory == null) {
-                    setCliConnectorFactory(camelContext.createCliConnectorFactory());
-                }
-            }
-        }
-        return camelContext.cliConnectorFactory;
-    }
-
-    @Override
-    public void setCliConnectorFactory(CliConnectorFactory cliConnectorFactory) {
-        camelContext.cliConnectorFactory = cliConnectorFactory;
     }
 
     @Override

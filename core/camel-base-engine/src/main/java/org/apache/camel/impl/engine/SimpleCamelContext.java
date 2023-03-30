@@ -128,6 +128,13 @@ public class SimpleCamelContext extends AbstractCamelContext {
     }
 
     @Override
+    public void doBuild() throws Exception {
+        super.doBuild();
+
+        getCamelContextExtension().addContextPlugin(CliConnectorFactory.class, createCliConnectorFactory());
+    }
+
+    @Override
     protected HealthCheckRegistry createHealthCheckRegistry() {
         Optional<HealthCheckRegistry> result = ResolverHelper.resolveService(
                 getCamelContextReference(),
@@ -424,8 +431,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
         return result.orElseGet(DefaultHeadersMapFactory::new);
     }
 
-    @Override
-    protected CliConnectorFactory createCliConnectorFactory() {
+    private CliConnectorFactory createCliConnectorFactory() {
         // lookup in registry first
         CliConnectorFactory ccf = getCamelContextReference().getRegistry().findSingleByType(CliConnectorFactory.class);
         if (ccf != null) {

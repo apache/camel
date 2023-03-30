@@ -32,7 +32,6 @@ import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
-import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
@@ -795,16 +794,6 @@ public interface ExtendedCamelContext {
      * Sets the {@link StartupStepRecorder} to use.
      */
     void setStartupStepRecorder(StartupStepRecorder startupStepRecorder);
-
-    /**
-     * Gets the {@link CliConnectorFactory} (optional).
-     */
-    CliConnectorFactory getCliConnectorFactory();
-
-    /**
-     * Sets the {@link CliConnectorFactory} to use.
-     */
-    void setCliConnectorFactory(CliConnectorFactory cliConnectorFactory);
 
     /**
      * Internal API for adding routes. Do not use this as end user.
