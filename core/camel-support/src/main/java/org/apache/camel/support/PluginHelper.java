@@ -21,6 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
+import org.apache.camel.spi.ComponentResolver;
 
 public final class PluginHelper {
     private PluginHelper() {
@@ -59,5 +60,19 @@ public final class PluginHelper {
     public static CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory(
             ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(CamelDependencyInjectionAnnotationFactory.class);
+    }
+
+    /**
+     * Gets the {@link ComponentResolver} to use.
+     */
+    public static ComponentResolver getComponentResolver(CamelContext camelContext) {
+        return getComponentResolver(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link ComponentResolver} to use.
+     */
+    public static ComponentResolver getComponentResolver(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ComponentResolver.class);
     }
 }

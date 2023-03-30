@@ -31,7 +31,6 @@ import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.ComponentNameResolver;
-import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
@@ -288,16 +287,6 @@ public interface ExtendedCamelContext {
      * @param errorHandlerFactory the builder
      */
     void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory);
-
-    /**
-     * Gets the {@link ComponentResolver} to use.
-     */
-    ComponentResolver getComponentResolver();
-
-    /**
-     * Sets a custom {@link ComponentResolver} to use.
-     */
-    void setComponentResolver(ComponentResolver componentResolver);
 
     /**
      * Gets the {@link ComponentNameResolver} to use.
