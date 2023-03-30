@@ -315,7 +315,7 @@ And in XML:
 
   <interceptSendToEndpoint uri="kafka*">
     <to uri="bean:beforeKafka"/>
-  </intercept>
+  </interceptSendToEndpoint>
 
   <route>
     <from uri="jms:queue:order"/>
@@ -350,7 +350,7 @@ And in XML:
 
   <interceptSendToEndpoint uri="kafka*" afterUri="bean:afterKafka">
     <to uri="bean:beforeKafka"/>
-  </intercept>
+  </interceptSendToEndpoint>
 
   <route>
     <from uri="jms:queue:order"/>
@@ -388,7 +388,7 @@ And in XML:
 
   <interceptSendToEndpoint uri="kafka*" skipSendToOriginalEndpoint="true">
     <to uri="mock:kafka"/>
-  </intercept>
+  </interceptSendToEndpoint>
 
   <route>
     <from uri="jms:queue:order"/>
@@ -427,7 +427,7 @@ And in XML:
   <interceptSendToEndpoint uri="kafka*" skipSendToOriginalEndpoint="true">
     <when><simple>${header.biztype} == 'TEST'</simple></when>
     <log message="TEST message detected - is NOT send to kafka"/>
-  </intercept>
+  </interceptSendToEndpoint>
 
   <route>
     <from uri="jms:queue:order"/>
