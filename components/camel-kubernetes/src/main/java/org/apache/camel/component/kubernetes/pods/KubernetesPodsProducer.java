@@ -73,8 +73,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
                 doCreatePod(exchange);
                 break;
 
-            case KubernetesOperations.REPLACE_POD_OPERATION:
-                doReplacePod(exchange);
+            case KubernetesOperations.UPDATE_POD_OPERATION:
+                doUpdatePod(exchange);
                 break;
 
             case KubernetesOperations.DELETE_POD_OPERATION:
@@ -129,8 +129,8 @@ public class KubernetesPodsProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, pod);
     }
 
-    protected void doReplacePod(Exchange exchange) {
-        doCreateOrUpdatePod(exchange, "Replace", Resource::replace);
+    protected void doUpdatePod(Exchange exchange) {
+        doCreateOrUpdatePod(exchange, "Update", Resource::update);
     }
 
     protected void doCreatePod(Exchange exchange) {

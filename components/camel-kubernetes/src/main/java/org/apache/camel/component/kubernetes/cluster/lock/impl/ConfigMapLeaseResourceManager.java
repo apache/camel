@@ -56,7 +56,7 @@ public class ConfigMapLeaseResourceManager implements KubernetesLeaseResourceMan
         return client.configMaps()
                 .inNamespace(leaseResource.getMetadata().getNamespace())
                 .resource(updatedConfigMap)
-                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).replace();
+                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).update();
     }
 
     @Override
@@ -65,7 +65,7 @@ public class ConfigMapLeaseResourceManager implements KubernetesLeaseResourceMan
         return client.configMaps()
                 .inNamespace(leaseResource.getMetadata().getNamespace())
                 .resource(updatedConfigMap)
-                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).replace();
+                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).update();
     }
 
     @Override

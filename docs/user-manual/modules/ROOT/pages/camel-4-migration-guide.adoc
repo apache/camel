@@ -184,6 +184,13 @@ The API in `org.apache.camel.http.common.HttpBinding` has changed slightly to be
 The `parseBody` method now takes in `HttpServletRequest` as input parameter. And all `HttpMessage`
 has been changed to generic `Message` types.
 
+=== camel-kubernetes
+
+The `io.fabric8:kubernetes-client` library has been upgraded and some deprecated API usage has been removed. Operations previously prefixed with `replace` are now prefixed with `update`.
+
+For example `replaceConfigMap` is now `updateConfigMap`, `replacePod` is now `updatePod` etc. The corresponding 
+constants in class `KubernetesOperations` are also renamed. `REPLACE_CONFIGMAP_OPERATION` is now `UPDATE_CONFIGMAP_OPERATION`, `REPLACE_POD_OPERATION` is now `UPDATE_POD_OPERATION` etc.
+
 === camel-micrometer
 
 The metrics has been renamed to follow Micrometer naming convention https://micrometer.io/docs/concepts#_naming_meters[Naming Meters].

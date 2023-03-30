@@ -75,8 +75,8 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
                 doCreateResourceQuota(exchange);
                 break;
 
-            case KubernetesOperations.REPLACE_RESOURCE_QUOTA_OPERATION:
-                doReplaceResourceQuota(exchange);
+            case KubernetesOperations.UPDATE_RESOURCE_QUOTA_OPERATION:
+                doUpdateResourceQuota(exchange);
                 break;
 
             case KubernetesOperations.DELETE_RESOURCE_QUOTA_OPERATION:
@@ -135,8 +135,8 @@ public class KubernetesResourcesQuotaProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, rq);
     }
 
-    protected void doReplaceResourceQuota(Exchange exchange) {
-        doCreateOrUpdateResourceQuota(exchange, "Replace", Resource::replace);
+    protected void doUpdateResourceQuota(Exchange exchange) {
+        doCreateOrUpdateResourceQuota(exchange, "Update", Resource::update);
     }
 
     protected void doCreateResourceQuota(Exchange exchange) {

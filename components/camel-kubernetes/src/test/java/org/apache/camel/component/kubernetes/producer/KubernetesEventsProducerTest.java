@@ -121,7 +121,7 @@ public class KubernetesEventsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    void replaceEvent() {
+    void updateEvent() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         String reason = "SomeReason";
         Event event1 = new EventBuilder().withNewMetadata().withName("event1").withNamespace("test").withLabels(labels).and()
@@ -132,7 +132,7 @@ public class KubernetesEventsProducerTest extends KubernetesTestSupport {
                 .once();
         server.expect().put().withPath("/apis/events.k8s.io/v1/namespaces/test/events/event1").andReturn(200, event1).once();
 
-        Exchange ex = template.request("direct:replace", exchange -> {
+        Exchange ex = template.request("direct:update", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENTS_LABELS, labels);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_EVENT_NAME, "event1");
@@ -172,7 +172,7 @@ public class KubernetesEventsProducerTest extends KubernetesTestSupport {
                         .to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=listEventsByLabels");
                 from("direct:get").to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=getEvent");
                 from("direct:create").to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=createEvent");
-                from("direct:replace").to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=replaceEvent");
+                from("direct:update").to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=updateEvent");
                 from("direct:delete").to("kubernetes-events:///?kubernetesClient=#kubernetesClient&operation=deleteEvent");
             }
         };

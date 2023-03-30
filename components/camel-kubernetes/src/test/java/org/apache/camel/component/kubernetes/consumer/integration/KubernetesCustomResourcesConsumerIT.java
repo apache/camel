@@ -102,7 +102,7 @@ public class KubernetesCustomResourcesConsumerIT extends KubernetesTestSupport {
                 .endSpec()
                 .build();
 
-        CLIENT.resource(crd).createOrReplace();
+        CLIENT.resource(crd).serverSideApply();
     }
 
     @AfterAll

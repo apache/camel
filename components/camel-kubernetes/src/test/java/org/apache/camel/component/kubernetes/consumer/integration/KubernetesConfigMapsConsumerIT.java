@@ -108,11 +108,11 @@ public class KubernetesConfigMapsConsumerIT extends KubernetesTestSupport {
 
     @Test
     @Order(3)
-    void replaceConfigMap() {
+    void updateConfigMap() {
         configureMock();
 
         Map<String, String> configMapData = Map.of("test1", "test1");
-        Exchange ex = template.request("direct:replaceConfigmap", exchange -> {
+        Exchange ex = template.request("direct:updateConfigmap", exchange -> {
             exchange.getIn().removeHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "default");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "test1");
@@ -156,8 +156,8 @@ public class KubernetesConfigMapsConsumerIT extends KubernetesTestSupport {
                 from("direct:createConfigmap")
                         .toF("kubernetes-config-maps://%s?oauthToken=%s&operation=createConfigMap", host,
                                 authToken);
-                from("direct:replaceConfigmap")
-                        .toF("kubernetes-config-maps://%s?oauthToken=%s&operation=replaceConfigMap", host,
+                from("direct:updateConfigmap")
+                        .toF("kubernetes-config-maps://%s?oauthToken=%s&operation=updateConfigMap", host,
                                 authToken);
 
                 from("direct:deleteConfigmap")

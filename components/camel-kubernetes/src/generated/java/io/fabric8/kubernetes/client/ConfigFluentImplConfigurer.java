@@ -103,8 +103,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "RequestRetryBackoffLimit": target.withRequestRetryBackoffLimit(property(camelContext, int.class, value)); return true;
         case "requesttimeout":
         case "RequestTimeout": target.withRequestTimeout(property(camelContext, int.class, value)); return true;
-        case "rollingtimeout":
-        case "RollingTimeout": target.withRollingTimeout(property(camelContext, long.class, value)); return true;
         case "scaletimeout":
         case "ScaleTimeout": target.withScaleTimeout(property(camelContext, long.class, value)); return true;
         case "tlsversions":
@@ -115,8 +113,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "TrustStoreFile": target.withTrustStoreFile(property(camelContext, java.lang.String.class, value)); return true;
         case "truststorepassphrase":
         case "TrustStorePassphrase": target.withTrustStorePassphrase(property(camelContext, java.lang.String.class, value)); return true;
-        case "uploadconnectiontimeout":
-        case "UploadConnectionTimeout": target.withUploadConnectionTimeout(property(camelContext, int.class, value)); return true;
         case "uploadrequesttimeout":
         case "UploadRequestTimeout": target.withUploadRequestTimeout(property(camelContext, int.class, value)); return true;
         case "useragent":
@@ -220,8 +216,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "RequestRetryBackoffLimit": return int.class;
         case "requesttimeout":
         case "RequestTimeout": return int.class;
-        case "rollingtimeout":
-        case "RollingTimeout": return long.class;
         case "scaletimeout":
         case "ScaleTimeout": return long.class;
         case "tlsversions":
@@ -232,8 +226,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "TrustStoreFile": return java.lang.String.class;
         case "truststorepassphrase":
         case "TrustStorePassphrase": return java.lang.String.class;
-        case "uploadconnectiontimeout":
-        case "UploadConnectionTimeout": return int.class;
         case "uploadrequesttimeout":
         case "UploadRequestTimeout": return int.class;
         case "useragent":
@@ -338,8 +330,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "RequestRetryBackoffLimit": return target.getRequestRetryBackoffLimit();
         case "requesttimeout":
         case "RequestTimeout": return target.getRequestTimeout();
-        case "rollingtimeout":
-        case "RollingTimeout": return target.getRollingTimeout();
         case "scaletimeout":
         case "ScaleTimeout": return target.getScaleTimeout();
         case "tlsversions":
@@ -350,8 +340,6 @@ public class ConfigFluentImplConfigurer extends org.apache.camel.support.compone
         case "TrustStoreFile": return target.getTrustStoreFile();
         case "truststorepassphrase":
         case "TrustStorePassphrase": return target.getTrustStorePassphrase();
-        case "uploadconnectiontimeout":
-        case "UploadConnectionTimeout": return target.getUploadConnectionTimeout();
         case "uploadrequesttimeout":
         case "UploadRequestTimeout": return target.getUploadRequestTimeout();
         case "useragent":

@@ -46,7 +46,7 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
         return client.leases()
                 .inNamespace(leaseResource.getMetadata().getNamespace())
                 .resource(updatedLease)
-                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).replace();
+                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).update();
     }
 
     @Override
@@ -55,7 +55,7 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
         return client.leases()
                 .inNamespace(leaseResource.getMetadata().getNamespace())
                 .resource(updatedLease)
-                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).replace();
+                .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).update();
     }
 
     @Override
@@ -70,7 +70,7 @@ public class NativeLeaseResourceManager implements KubernetesLeaseResourceManage
             return client.leases()
                     .inNamespace(leaseResource.getMetadata().getNamespace())
                     .resource(updatedLease)
-                    .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).replace();
+                    .lockResourceVersion(leaseResource.getMetadata().getResourceVersion()).update();
         }
         return leaseResource;
     }

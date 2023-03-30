@@ -73,8 +73,8 @@ public class KubernetesHPAProducer extends DefaultProducer {
                 doCreateHPA(exchange);
                 break;
 
-            case KubernetesOperations.REPLACE_HPA_OPERATION:
-                doReplaceHPA(exchange);
+            case KubernetesOperations.UPDATE_HPA_OPERATION:
+                doUpdateHPA(exchange);
                 break;
 
             case KubernetesOperations.DELETE_HPA_OPERATION:
@@ -129,8 +129,8 @@ public class KubernetesHPAProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, hpa);
     }
 
-    protected void doReplaceHPA(Exchange exchange) {
-        doCreateOrUpdateHPA(exchange, "Replace", Resource::replace);
+    protected void doUpdateHPA(Exchange exchange) {
+        doCreateOrUpdateHPA(exchange, "Update", Resource::update);
     }
 
     protected void doCreateHPA(Exchange exchange) {

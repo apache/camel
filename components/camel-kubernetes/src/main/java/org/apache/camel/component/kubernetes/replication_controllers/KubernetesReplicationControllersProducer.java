@@ -75,8 +75,8 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
                 doCreateReplicationController(exchange);
                 break;
 
-            case KubernetesOperations.REPLACE_REPLICATION_CONTROLLER_OPERATION:
-                doReplaceReplicationController(exchange);
+            case KubernetesOperations.UPDATE_REPLICATION_CONTROLLER_OPERATION:
+                doUpdateReplicationController(exchange);
                 break;
 
             case KubernetesOperations.DELETE_REPLICATION_CONTROLLER_OPERATION:
@@ -146,8 +146,8 @@ public class KubernetesReplicationControllersProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, rc);
     }
 
-    protected void doReplaceReplicationController(Exchange exchange) {
-        doCreateOrUpdateReplicationController(exchange, "Replace", Resource::replace);
+    protected void doUpdateReplicationController(Exchange exchange) {
+        doCreateOrUpdateReplicationController(exchange, "Update", Resource::update);
     }
 
     protected void doCreateReplicationController(Exchange exchange) {

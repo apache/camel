@@ -116,7 +116,7 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    void replaceService() {
+    void updateService() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         ServiceSpec spec = new ServiceSpecBuilder().withExternalName("SomeExternalName").build();
         Service se1 = new ServiceBuilder().withNewMetadata().withName("se1").withNamespace("test").withLabels(labels).and()
@@ -127,7 +127,7 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
                 .times(2);
         server.expect().put().withPath("/api/v1/namespaces/test/services/se1").andReturn(200, se1).once();
 
-        Exchange ex = template.request("direct:replaceService", exchange -> {
+        Exchange ex = template.request("direct:updateService", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_LABELS, labels);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_SERVICE_NAME, "se1");
@@ -170,8 +170,8 @@ public class KubernetesServicesProducerTest extends KubernetesTestSupport {
                         .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=getService");
                 from("direct:createService")
                         .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=createService");
-                from("direct:replaceService")
-                        .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=replaceService");
+                from("direct:updateService")
+                        .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=updateService");
                 from("direct:deleteService")
                         .to("kubernetes-services:///?kubernetesClient=#kubernetesClient&operation=deleteService");
             }

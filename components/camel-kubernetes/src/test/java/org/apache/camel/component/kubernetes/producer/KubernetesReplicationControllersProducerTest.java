@@ -123,7 +123,7 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
     }
 
     @Test
-    void replaceReplicationController() {
+    void updateReplicationController() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         ReplicationControllerSpec spec = new ReplicationControllerSpecBuilder().withReplicas(13).build();
         ReplicationController rc1 = new ReplicationControllerBuilder().withNewMetadata().withName("rc1").withNamespace("test")
@@ -135,7 +135,7 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
                 .once();
         server.expect().put().withPath("/api/v1/namespaces/test/replicationcontrollers/rc1").andReturn(200, rc1).once();
 
-        Exchange ex = template.request("direct:replaceReplicationController", exchange -> {
+        Exchange ex = template.request("direct:updateReplicationController", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLERS_LABELS, labels);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_REPLICATION_CONTROLLER_NAME, "rc1");
@@ -212,8 +212,8 @@ public class KubernetesReplicationControllersProducerTest extends KubernetesTest
                         "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=scaleReplicationController");
                 from("direct:createReplicationController").to(
                         "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=createReplicationController");
-                from("direct:replaceReplicationController").to(
-                        "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=replaceReplicationController");
+                from("direct:updateReplicationController").to(
+                        "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=updateReplicationController");
                 from("direct:deleteReplicationController").to(
                         "kubernetes-replication-controllers:///?kubernetesClient=#kubernetesClient&operation=deleteReplicationController");
             }

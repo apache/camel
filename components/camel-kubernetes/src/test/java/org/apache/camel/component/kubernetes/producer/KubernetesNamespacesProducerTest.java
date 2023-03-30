@@ -90,14 +90,14 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    void replaceNamespace() {
+    void updateNamespace() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         Namespace ns1 = new NamespaceBuilder().withNewMetadata().withName("ns1").withLabels(labels).endMetadata().build();
         server.expect().get().withPath("/api/v1/namespaces/ns1")
                 .andReturn(200, new NamespaceBuilder().withNewMetadata().withName("ns1").endMetadata().build()).once();
         server.expect().put().withPath("/api/v1/namespaces/ns1").andReturn(200, ns1).once();
 
-        Exchange ex = template.request("direct:replaceNamespace", exchange -> {
+        Exchange ex = template.request("direct:updateNamespace", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "ns1");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_LABELS, labels);
         });
@@ -130,8 +130,8 @@ public class KubernetesNamespacesProducerTest extends KubernetesTestSupport {
                 from("direct:getNs").to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=getNamespace");
                 from("direct:createNamespace")
                         .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=createNamespace");
-                from("direct:replaceNamespace")
-                        .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=replaceNamespace");
+                from("direct:updateNamespace")
+                        .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=updateNamespace");
                 from("direct:deleteNamespace")
                         .to("kubernetes-namespaces:///?kubernetesClient=#kubernetesClient&operation=deleteNamespace");
             }

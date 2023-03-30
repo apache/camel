@@ -41,7 +41,7 @@ include::partial$component-endpoint-headers.adoc[]
 - listEventsByLabels
 - getEvent
 - createEvent
-- replaceEvent
+- updateEvent
 - deleteEvent
 
 == Kubernetes Events Producer Examples
@@ -138,7 +138,7 @@ The message headers that can be used to create an event are `CamelKubernetesEven
 
 In case the supported message headers are not enough for a specific use case, it is still possible to set the message body with an object of type `io.fabric8.kubernetes.api.model.events.v1.EventBuilder` representing a prefilled builder to use when creating the event. Please note that the labels, name of event and name of namespace are always set from the message headers, even when the builder is provided.
 
-- replaceEvent: this operation replaces an existing event
+- updateEvent: this operation updates an existing event
 
 The behavior is exactly the same as `createEvent`, only the name of the operation is different.
 

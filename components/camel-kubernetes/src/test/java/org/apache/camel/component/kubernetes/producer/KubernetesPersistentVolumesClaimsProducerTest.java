@@ -107,7 +107,7 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends KubernetesTes
     }
 
     @Test
-    void replacePersistentVolumeClaim() {
+    void updatePersistentVolumeClaim() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         PersistentVolumeClaimSpec spec = new PersistentVolumeClaimSpecBuilder().withVolumeName("SomeVolumeName").build();
         PersistentVolumeClaim vc1 = new PersistentVolumeClaimBuilder().withNewMetadata().withName("vc1").withNamespace("test")
@@ -119,7 +119,7 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends KubernetesTes
                 .once();
         server.expect().put().withPath("/api/v1/namespaces/test/persistentvolumeclaims/vc1").andReturn(200, vc1).once();
 
-        Exchange ex = template.request("direct:replace", exchange -> {
+        Exchange ex = template.request("direct:update", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_CLAIMS_LABELS, labels);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUME_CLAIM_NAME, "vc1");
@@ -161,8 +161,8 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends KubernetesTes
                         "kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesClaimsByLabels");
                 from("direct:create").to(
                         "kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=createPersistentVolumeClaim");
-                from("direct:replace").to(
-                        "kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=replacePersistentVolumeClaim");
+                from("direct:update").to(
+                        "kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=updatePersistentVolumeClaim");
                 from("direct:delete").to(
                         "kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=deletePersistentVolumeClaim");
             }

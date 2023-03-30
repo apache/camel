@@ -73,8 +73,8 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
                 doCreateConfigMap(exchange);
                 break;
 
-            case KubernetesOperations.REPLACE_CONFIGMAP_OPERATION:
-                doReplaceConfigMap(exchange);
+            case KubernetesOperations.UPDATE_CONFIGMAP_OPERATION:
+                doUpdateConfigMap(exchange);
                 break;
 
             case KubernetesOperations.DELETE_CONFIGMAP_OPERATION:
@@ -120,8 +120,8 @@ public class KubernetesConfigMapsProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, configMap);
     }
 
-    protected void doReplaceConfigMap(Exchange exchange) {
-        doCreateOrUpdateConfigMap(exchange, "Replace", Resource::replace);
+    protected void doUpdateConfigMap(Exchange exchange) {
+        doCreateOrUpdateConfigMap(exchange, "Update", Resource::update);
     }
 
     protected void doCreateConfigMap(Exchange exchange) {

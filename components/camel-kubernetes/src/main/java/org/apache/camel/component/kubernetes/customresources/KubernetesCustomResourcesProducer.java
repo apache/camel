@@ -91,8 +91,8 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
                 doCreate(exchange, namespace);
                 break;
 
-            case KubernetesOperations.REPLACE_CUSTOMRESOURCE:
-                doReplace(exchange, namespace);
+            case KubernetesOperations.UPDATE_CUSTOMRESOURCE:
+                doUpdate(exchange, namespace);
                 break;
 
             default:
@@ -187,15 +187,15 @@ public class KubernetesCustomResourcesProducer extends DefaultProducer {
 
     }
 
-    protected void doReplace(Exchange exchange, String namespaceName) {
-        doCreateOrReplace(exchange, namespaceName, Resource::replace);
+    protected void doUpdate(Exchange exchange, String namespaceName) {
+        doCreateOrUpdate(exchange, namespaceName, Resource::update);
     }
 
     protected void doCreate(Exchange exchange, String namespaceName) {
-        doCreateOrReplace(exchange, namespaceName, Resource::create);
+        doCreateOrUpdate(exchange, namespaceName, Resource::create);
     }
 
-    private void doCreateOrReplace(
+    private void doCreateOrUpdate(
             Exchange exchange, String namespaceName,
             Function<Resource<GenericKubernetesResource>, GenericKubernetesResource> operation) {
         String customResourceInstance = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_CRD_INSTANCE, String.class);

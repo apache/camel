@@ -79,8 +79,8 @@ public class KubernetesJobProducer extends DefaultProducer {
                 doCreateJob(exchange);
                 break;
 
-            case KubernetesOperations.REPLACE_JOB_OPERATION:
-                doReplaceJob(exchange);
+            case KubernetesOperations.UPDATE_JOB_OPERATION:
+                doUpdateJob(exchange);
                 break;
 
             case KubernetesOperations.DELETE_JOB_OPERATION:
@@ -128,8 +128,8 @@ public class KubernetesJobProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, job);
     }
 
-    protected void doReplaceJob(Exchange exchange) {
-        doCreateOrUpdateJob(exchange, "Replace", Resource::replace);
+    protected void doUpdateJob(Exchange exchange) {
+        doCreateOrUpdateJob(exchange, "Update", Resource::update);
     }
 
     protected void doCreateJob(Exchange exchange) {

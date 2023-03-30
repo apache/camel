@@ -76,8 +76,8 @@ public class KubernetesEventsProducer extends DefaultProducer {
                 doCreateEvent(exchange);
                 break;
 
-            case KubernetesOperations.REPLACE_EVENT_OPERATION:
-                doReplaceEvent(exchange);
+            case KubernetesOperations.UPDATE_EVENT_OPERATION:
+                doUpdateEvent(exchange);
                 break;
 
             case KubernetesOperations.DELETE_EVENT_OPERATION:
@@ -135,8 +135,8 @@ public class KubernetesEventsProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, event);
     }
 
-    protected void doReplaceEvent(Exchange exchange) {
-        doCreateOrUpdateEvent(exchange, "Replace", Resource::replace);
+    protected void doUpdateEvent(Exchange exchange) {
+        doCreateOrUpdateEvent(exchange, "Update", Resource::update);
     }
 
     protected void doCreateEvent(Exchange exchange) {

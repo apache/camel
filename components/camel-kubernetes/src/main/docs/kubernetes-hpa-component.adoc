@@ -40,7 +40,7 @@ include::partial$component-endpoint-headers.adoc[]
 - listHPAByLabels
 - getHPA
 - createHPA
-- replaceHPA
+- updateHPA
 - deleteHPA
 
 == Kubernetes HPA Producer Examples

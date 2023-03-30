@@ -103,7 +103,7 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    void replaceDeployment() {
+    void updateDeployment() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         DeploymentSpec spec = new DeploymentSpecBuilder().withReplicas(13).build();
         Deployment de1
@@ -115,7 +115,7 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
                 .once();
         server.expect().put().withPath("/apis/apps/v1/namespaces/test/deployments/de1").andReturn(200, de1).once();
 
-        Exchange ex = template.request("direct:replaceDeployment", exchange -> {
+        Exchange ex = template.request("direct:updateDeployment", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, labels);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, "de1");
@@ -190,8 +190,8 @@ public class KubernetesDeploymentsProducerTest extends KubernetesTestSupport {
                         .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=deleteDeployment");
                 from("direct:createDeployment")
                         .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=createDeployment");
-                from("direct:replaceDeployment")
-                        .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=replaceDeployment");
+                from("direct:updateDeployment")
+                        .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=updateDeployment");
                 from("direct:scaleDeployment")
                         .toF("kubernetes-deployments:///?kubernetesClient=#kubernetesClient&operation=scaleDeployment");
             }

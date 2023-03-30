@@ -123,7 +123,7 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    void replacePod() {
+    void updatePod() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         PodSpec spec = new PodSpecBuilder().withHostname("SomeHostname").build();
         Pod pod1 = new PodBuilder().withNewMetadata().withName("pod1").withNamespace("test").withLabels(labels).and()
@@ -133,7 +133,7 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
                 .once();
         server.expect().put().withPath("/api/v1/namespaces/test/pods/pod1").andReturn(200, pod1).once();
 
-        Exchange ex = template.request("direct:replacePod", exchange -> {
+        Exchange ex = template.request("direct:updatePod", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PODS_LABELS, labels);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_NAME, "pod1");
@@ -173,7 +173,7 @@ public class KubernetesPodsProducerTest extends KubernetesTestSupport {
                         .to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=listPodsByLabels");
                 from("direct:getPod").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=getPod");
                 from("direct:createPod").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=createPod");
-                from("direct:replacePod").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=replacePod");
+                from("direct:updatePod").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=updatePod");
                 from("direct:deletePod").to("kubernetes-pods:///?kubernetesClient=#kubernetesClient&operation=deletePod");
             }
         };
