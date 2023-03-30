@@ -213,7 +213,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ProcessorExchangeFactory processorExchangeFactory;
     volatile ReactiveExecutor reactiveExecutor;
     volatile Registry registry;
-    volatile ComponentNameResolver componentNameResolver;
     volatile LanguageResolver languageResolver;
     volatile ConfigurerResolver configurerResolver;
     volatile UriFactoryResolver uriFactoryResolver;
@@ -386,6 +385,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.addContextPlugin(CamelDependencyInjectionAnnotationFactory.class,
                 createDependencyInjectionAnnotationFactory());
         camelContextExtension.addContextPlugin(ComponentResolver.class, createComponentResolver());
+        camelContextExtension.addContextPlugin(ComponentNameResolver.class, createComponentNameResolver());
 
         if (build) {
             try {
@@ -3273,7 +3273,6 @@ public abstract class AbstractCamelContext extends BaseService
         getPropertiesComponent();
 
         camelContextExtension.getLanguageResolver();
-        camelContextExtension.getComponentNameResolver();
         camelContextExtension.getDataFormatResolver();
         camelContextExtension.getHealthCheckResolver();
 
