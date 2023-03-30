@@ -92,6 +92,7 @@ import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.NormalizedUri;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -728,7 +729,7 @@ public class LightweightRuntimeCamelContext implements CamelContext, CatalogCame
                 }
             }
             // language not known or not singleton, then use resolver
-            answer = lwCamelContextExtension.getLanguageResolver().resolveLanguage(language, reference);
+            answer = PluginHelper.getLanguageResolver(lwCamelContextExtension).resolveLanguage(language, reference);
             // inject CamelContext if aware
             if (answer != null) {
                 CamelContextAware.trySetCamelContext(answer, reference);
