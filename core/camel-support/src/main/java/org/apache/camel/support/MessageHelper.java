@@ -588,9 +588,16 @@ public final class MessageHelper {
         if (includeBody) {
             sb.append(prefix);
             sb.append("  <body");
-            String type = ObjectHelper.classCanonicalName(message.getBody());
+            Object body = message.getBody();
+            String type = ObjectHelper.classCanonicalName(body);
             if (type != null) {
                 sb.append(" type=\"").append(type).append("\"");
+            }
+            if (body instanceof StreamCache) {
+                long pos = ((StreamCache) body).position();
+                if (pos != -1) {
+                    sb.append(" position=\"").append(pos).append("\"");
+                }
             }
             sb.append(">");
 
@@ -959,11 +966,17 @@ public final class MessageHelper {
         if (includeBody) {
             JsonObject jb = new JsonObject();
             jo.put("body", jb);
-            String type = ObjectHelper.classCanonicalName(message.getBody());
+            Object body = message.getBody();
+            String type = ObjectHelper.classCanonicalName(body);
             if (type != null) {
                 jb.put("type", type);
             }
-
+            if (body instanceof StreamCache) {
+                long pos = ((StreamCache) body).position();
+                if (pos != -1) {
+                    jb.put("position", pos);
+                }
+            }
             String data = extractBodyForLogging(message, null, allowCachedStreams, allowStreams, allowFiles, maxChars);
             if (data != null) {
                 jb.put("value", Jsoner.escape(data));

@@ -740,7 +740,7 @@ public class CamelTraceAction extends ActionBaseCommand {
 
         // body and type
         JsonObject jo = r.message.getMap("body");
-        TableRow bodyRow = new TableRow("Body", jo.getString("type"), null, jo.get("value"));
+        TableRow bodyRow = new TableRow("Body", jo.getString("type"), null, jo.get("value"), jo.getLong("position"));
         String tab5 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(bodyRow), Arrays.asList(
                 new Column().dataAlign(HorizontalAlign.LEFT)
                         .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
@@ -896,16 +896,26 @@ public class CamelTraceAction extends ActionBaseCommand {
         String type;
         String key;
         Object value;
+        Long position;
 
         TableRow(String kind, String type, String key, Object value) {
+            this(kind, type, key, value, null);
+        }
+
+        TableRow(String kind, String type, String key, Object value, Long position) {
             this.kind = kind;
             this.type = type;
             this.key = key;
             this.value = value;
+            this.position = position;
         }
 
         String valueAsString() {
             return value != null ? value.toString() : "null";
+        }
+
+        String positionAsString() {
+            return position != null ? position.toString() : "null";
         }
 
         String valueAsStringPretty() {
@@ -992,6 +1002,10 @@ public class CamelTraceAction extends ActionBaseCommand {
                 s = type.substring(21);
             } else if (type.startsWith("java.lang.") || type.startsWith("java.util.")) {
                 s = type.substring(10);
+            } else if (type.startsWith("org.apache.camel.support.")) {
+                s = type.substring(25);
+            } else if (type.startsWith("org.apache.camel.converter.stream.")) {
+                s = type.substring(34);
             } else {
                 s = type;
             }
@@ -1010,13 +1024,22 @@ public class CamelTraceAction extends ActionBaseCommand {
                 s = type.substring(21);
             } else if (type.startsWith("java.lang.") || type.startsWith("java.util.")) {
                 s = type.substring(10);
+            } else if (type.startsWith("org.apache.camel.support.")) {
+                s = type.substring(25);
+            } else if (type.startsWith("org.apache.camel.converter.stream.")) {
+                s = type.substring(34);
             } else {
                 s = type;
             }
             s = "(" + s + ")";
             int l = valueLength();
-            if (l != -1) {
+            long p = posLength();
+            if (l != -1 & p != -1) {
+                s = s + " (position: " + p + " length: " + l + ")";
+            } else if (l != -1) {
                 s = s + " (length: " + l + ")";
+            } else if (p != -1) {
+                s = s + " (position: " + p + ")";
             }
             if (loggingColor) {
                 s = Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(s).reset().toString();
@@ -1055,6 +1078,14 @@ public class CamelTraceAction extends ActionBaseCommand {
                 return -1;
             } else {
                 return valueAsString().length();
+            }
+        }
+
+        long posLength() {
+            if (position == null) {
+                return -1;
+            } else {
+                return position;
             }
         }
 
