@@ -64,7 +64,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "itemid":
         case "itemId": getOrCreateConfiguration(target).setItemId(property(camelContext, java.lang.String.class, value)); return true;
         case "itempartitionkey":
-        case "itemPartitionKey": getOrCreateConfiguration(target).setItemPartitionKey(property(camelContext, com.azure.cosmos.models.PartitionKey.class, value)); return true;
+        case "itemPartitionKey": getOrCreateConfiguration(target).setItemPartitionKey(property(camelContext, java.lang.String.class, value)); return true;
         case "lazystartproducer":
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "leasecontainername":
@@ -131,7 +131,7 @@ public class CosmosDbComponentConfigurer extends PropertyConfigurerSupport imple
         case "itemid":
         case "itemId": return java.lang.String.class;
         case "itempartitionkey":
-        case "itemPartitionKey": return com.azure.cosmos.models.PartitionKey.class;
+        case "itemPartitionKey": return java.lang.String.class;
         case "lazystartproducer":
         case "lazyStartProducer": return boolean.class;
         case "leasecontainername":
