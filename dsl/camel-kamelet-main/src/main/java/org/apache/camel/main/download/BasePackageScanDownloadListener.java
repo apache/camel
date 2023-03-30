@@ -29,6 +29,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Configuration;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.support.PluginHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +90,7 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
             }
         }
 
-        CamelBeanPostProcessor postProcessor = camelContext.getCamelContextExtension().getBeanPostProcessor();
+        CamelBeanPostProcessor postProcessor = PluginHelper.getBeanPostProcessor(camelContext);
         // prepare the directly configured instances
         for (Object configuration : configs) {
             postProcessor.postProcessBeforeInitialization(configuration, configuration.getClass().getName());

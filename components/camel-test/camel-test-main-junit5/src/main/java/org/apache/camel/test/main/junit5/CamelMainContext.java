@@ -40,6 +40,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.BreakpointSupport;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.platform.commons.support.HierarchyTraversalMode;
 
@@ -148,7 +149,7 @@ final class CamelMainContext implements ExtensionContext.Store.CloseableResource
             configureShutdownTimeout(camelContext);
             configureDebuggerIfNeeded(camelContext);
             initCamelContext(camelContext);
-            final CamelBeanPostProcessor beanPostProcessor = extendedCamelContext.getBeanPostProcessor();
+            final CamelBeanPostProcessor beanPostProcessor = PluginHelper.getBeanPostProcessor(extendedCamelContext);
             for (Object instance : instances) {
                 initInstance(beanPostProcessor, instance);
                 replaceBeansInRegistry(camelContext.getRegistry(), instance);

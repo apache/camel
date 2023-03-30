@@ -19,7 +19,9 @@ package org.apache.camel.impl.engine;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
+import org.apache.camel.support.PluginHelper;
 
 /**
  * Default implementation of the {@link CamelDependencyInjectionAnnotationFactory}.
@@ -48,10 +50,10 @@ public class DefaultDependencyInjectionAnnotationFactory
         return () -> {
             if (beanPostProcess) {
                 try {
-                    camelContext.getCamelContextExtension().getBeanPostProcessor()
-                            .postProcessBeforeInitialization(bean, beanName);
-                    camelContext.getCamelContextExtension().getBeanPostProcessor()
-                            .postProcessAfterInitialization(bean, beanName);
+                    final CamelBeanPostProcessor beanPostProcessor = PluginHelper.getBeanPostProcessor(camelContext);
+
+                    beanPostProcessor.postProcessBeforeInitialization(bean, beanName);
+                    beanPostProcessor.postProcessAfterInitialization(bean, beanName);
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeException(e);
                 }

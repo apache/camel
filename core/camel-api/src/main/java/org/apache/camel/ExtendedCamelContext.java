@@ -30,7 +30,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
@@ -269,18 +268,6 @@ public interface ExtendedCamelContext {
      * Sets a custom processor exchange factory to use.
      */
     void setProcessorExchangeFactory(ProcessorExchangeFactory processorExchangeFactory);
-
-    /**
-     * Returns the bean post processor used to do any bean customization.
-     *
-     * @return the bean post processor.
-     */
-    CamelBeanPostProcessor getBeanPostProcessor();
-
-    /**
-     * Sets a custom bean post processor to use.
-     */
-    void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor);
 
     /**
      * Returns the annotation dependency injection factory.

@@ -212,7 +212,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ProcessorExchangeFactory processorExchangeFactory;
     volatile ReactiveExecutor reactiveExecutor;
     volatile Registry registry;
-    volatile CamelBeanPostProcessor beanPostProcessor;
     volatile CamelDependencyInjectionAnnotationFactory dependencyInjectionAnnotationFactory;
     volatile ComponentResolver componentResolver;
     volatile ComponentNameResolver componentNameResolver;
@@ -383,6 +382,8 @@ public abstract class AbstractCamelContext extends BaseService
         this.bootstraps.add(bootstrapFactories::clear);
 
         this.internalServiceManager = new InternalServiceManager(this, internalRouteStartupManager, startupListeners);
+
+        camelContextExtension.addContextPlugin(CamelBeanPostProcessor.class, createBeanPostProcessor());
 
         if (build) {
             try {
@@ -2652,7 +2653,7 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected void doStartCamel() throws Exception {
-        if (!camelContextExtension.getBeanPostProcessor().isEnabled()) {
+        if (!camelContextExtension.getContextPlugin(CamelBeanPostProcessor.class).isEnabled()) {
             LOG.info("BeanPostProcessor is disabled. Dependency injection of Camel annotations in beans is not supported.");
         }
         if (LOG.isDebugEnabled()) {
@@ -4168,14 +4169,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     public void setProcessorExchangeFactory(ProcessorExchangeFactory processorExchangeFactory) {
         camelContextExtension.setProcessorExchangeFactory(processorExchangeFactory);
-    }
-
-    public CamelBeanPostProcessor getBeanPostProcessor() {
-        return camelContextExtension.getBeanPostProcessor();
-    }
-
-    public void setBeanPostProcessor(CamelBeanPostProcessor beanPostProcessor) {
-        camelContextExtension.setBeanPostProcessor(beanPostProcessor);
     }
 
     public void setDataFormatResolver(DataFormatResolver dataFormatResolver) {

@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +61,7 @@ public class DefaultCamelBeanPostProcessorTest extends ContextTestSupport {
     @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
-        postProcessor = context.getCamelContextExtension().getBeanPostProcessor();
+        postProcessor = PluginHelper.getBeanPostProcessor(context);
     }
 
     @BindToRegistry

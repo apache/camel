@@ -63,6 +63,7 @@ import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.SimpleEventNotifierSupport;
@@ -307,7 +308,7 @@ public abstract class BaseMainSupport extends BaseService {
 
         // lets use Camel's bean post processor on any existing configuration classes
         // so the instance has some support for dependency injection
-        CamelBeanPostProcessor postProcessor = camelContext.getCamelContextExtension().getBeanPostProcessor();
+        CamelBeanPostProcessor postProcessor = PluginHelper.getBeanPostProcessor(camelContext);
 
         // discover configurations from the registry
         Set<CamelConfiguration> registryConfigurations = camelContext.getRegistry().findByType(CamelConfiguration.class);
@@ -608,7 +609,7 @@ public abstract class BaseMainSupport extends BaseService {
             configurer.setRoutesCollector(routesCollector);
         }
 
-        configurer.setBeanPostProcessor(camelContext.getCamelContextExtension().getBeanPostProcessor());
+        configurer.setBeanPostProcessor(PluginHelper.getBeanPostProcessor(camelContext));
         configurer.setRoutesBuilders(mainConfigurationProperties.getRoutesBuilders());
         configurer.setRoutesBuilderClasses(mainConfigurationProperties.getRoutesBuilderClasses());
         if (mainConfigurationProperties.isBasePackageScanEnabled()) {
@@ -631,7 +632,7 @@ public abstract class BaseMainSupport extends BaseService {
             configurer.setRoutesCollector(routesCollector);
         }
 
-        configurer.setBeanPostProcessor(camelContext.getCamelContextExtension().getBeanPostProcessor());
+        configurer.setBeanPostProcessor(PluginHelper.getBeanPostProcessor(camelContext));
         configurer.setRoutesBuilders(mainConfigurationProperties.getRoutesBuilders());
         configurer.setRoutesBuilderClasses(mainConfigurationProperties.getRoutesBuilderClasses());
         if (mainConfigurationProperties.isBasePackageScanEnabled()) {

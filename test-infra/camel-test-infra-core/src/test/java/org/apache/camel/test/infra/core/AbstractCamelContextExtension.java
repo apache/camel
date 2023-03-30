@@ -19,6 +19,7 @@ package org.apache.camel.test.infra.core;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.infra.core.annotations.ContextProvider;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
@@ -39,9 +40,9 @@ abstract class AbstractCamelContextExtension implements CamelContextExtension {
     }
 
     protected void setupBeanPostProcessors(CamelContext context, Object testInstance) throws Exception {
-        context.getCamelContextExtension().getBeanPostProcessor().postProcessBeforeInitialization(testInstance,
+        PluginHelper.getBeanPostProcessor(context).postProcessBeforeInitialization(testInstance,
                 testInstance.getClass().getName());
-        context.getCamelContextExtension().getBeanPostProcessor().postProcessAfterInitialization(testInstance,
+        PluginHelper.getBeanPostProcessor(context).postProcessAfterInitialization(testInstance,
                 testInstance.getClass().getName());
     }
 }

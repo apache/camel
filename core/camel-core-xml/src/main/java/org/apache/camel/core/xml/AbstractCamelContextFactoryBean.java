@@ -142,6 +142,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.slf4j.Logger;
@@ -1156,7 +1157,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             context.setStartupSummaryLevel(getStartupSummaryLevel());
         }
         if (getBeanPostProcessorEnabled() != null) {
-            CamelBeanPostProcessor cbpp = context.getCamelContextExtension().getBeanPostProcessor();
+            CamelBeanPostProcessor cbpp = PluginHelper.getBeanPostProcessor(context);
             if (cbpp != null) {
                 cbpp.setEnabled(CamelContextHelper.parseBoolean(context, getBeanPostProcessorEnabled()));
             }

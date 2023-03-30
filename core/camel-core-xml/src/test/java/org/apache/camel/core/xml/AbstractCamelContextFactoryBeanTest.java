@@ -136,7 +136,8 @@ public class AbstractCamelContextFactoryBeanTest {
         when(context.getManagementNameStrategy()).thenReturn(mock(ManagementNameStrategy.class));
         when(context.getExecutorServiceManager()).thenReturn(mock(ExecutorServiceManager.class));
         when(context.getInflightRepository()).thenReturn(mock(InflightRepository.class));
-        when(context.getCamelContextExtension().getBeanPostProcessor()).thenReturn(mock(CamelBeanPostProcessor.class));
+        when(context.getCamelContextExtension().getContextPlugin(CamelBeanPostProcessor.class))
+                .thenReturn(mock(CamelBeanPostProcessor.class));
 
         @SuppressWarnings("unchecked")
         final AbstractCamelContextFactoryBean<ModelCamelContext> factory = mock(AbstractCamelContextFactoryBean.class);
