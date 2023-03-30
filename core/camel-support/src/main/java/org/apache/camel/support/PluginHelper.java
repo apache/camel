@@ -21,6 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
+import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 
 public final class PluginHelper {
@@ -74,5 +75,19 @@ public final class PluginHelper {
      */
     public static ComponentResolver getComponentResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(ComponentResolver.class);
+    }
+
+    /**
+     * Gets the {@link ComponentNameResolver} to use.
+     */
+    public static ComponentNameResolver getComponentNameResolver(CamelContext camelContext) {
+        return getComponentNameResolver(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link ComponentNameResolver} to use.
+     */
+    public static ComponentNameResolver getComponentNameResolver(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ComponentNameResolver.class);
     }
 }

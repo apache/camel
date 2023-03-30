@@ -44,7 +44,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.Debugger;
@@ -246,21 +245,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public ManagementMBeanAssembler getManagementMBeanAssembler() {
         return camelContext.managementMBeanAssembler;
-    }
-
-    public ComponentNameResolver getComponentNameResolver() {
-        if (camelContext.componentNameResolver == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.componentNameResolver == null) {
-                    setComponentNameResolver(camelContext.createComponentNameResolver());
-                }
-            }
-        }
-        return camelContext.componentNameResolver;
-    }
-
-    public void setComponentNameResolver(ComponentNameResolver componentNameResolver) {
-        camelContext.componentNameResolver = camelContext.getInternalServiceManager().addService(componentNameResolver);
     }
 
     public LanguageResolver getLanguageResolver() {
