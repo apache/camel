@@ -42,7 +42,7 @@ public class CalculatorSyncServerImpl implements Calculator.Iface {
 
     @Override
     public int calculate(int logId, Work work) throws TException {
-        int val = 0;
+        int val;
         switch (work.op) {
             case ADD:
                 val = work.num1 + work.num2;

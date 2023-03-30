@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.ironmq;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.Gson;
@@ -29,8 +28,8 @@ public final class GsonUtil {
     }
 
     static class IronMqMessage {
-        private Map<String, Object> headers = new HashMap<>();
-        private String body;
+        private Map<String, Object> headers;
+        private final String body;
 
         IronMqMessage(String body, Map<String, Object> headers) {
             this.headers = headers;

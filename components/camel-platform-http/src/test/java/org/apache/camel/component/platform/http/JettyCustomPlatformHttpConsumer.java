@@ -74,7 +74,7 @@ public class JettyCustomPlatformHttpConsumer extends DefaultConsumer {
                 try {
                     BufferedReader reader = httpServletRequest.getReader();
                     String bodyRequest = "";
-                    String strCurrentLine = "";
+                    String strCurrentLine;
                     while ((strCurrentLine = reader.readLine()) != null) {
                         bodyRequest += strCurrentLine;
                     }

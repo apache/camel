@@ -55,8 +55,6 @@ public abstract class SjmsConnectionTestSupport {
                 || getConnectionUri().startsWith("vm")) {
             vmTestConnectionFactory = new ActiveMQConnectionFactory(
                     VM_BROKER_CONNECT_STRING);
-        } else {
-            createBroker();
         }
     }
 
@@ -79,13 +77,6 @@ public abstract class SjmsConnectionTestSupport {
             cf = new ActiveMQConnectionFactory(uri);
         }
         return cf;
-    }
-
-    protected void createBroker() throws Exception {
-        String connectString = getConnectionUri();
-        if (ObjectHelper.isEmpty(connectString)) {
-            connectString = TCP_BROKER_CONNECT_STRING;
-        }
     }
 
     public void setTestConnectionFactory(

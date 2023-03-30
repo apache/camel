@@ -20,7 +20,7 @@ import java.util.Map;
 
 public class ConnectionParamsConfiguration {
 
-    private String host = "localhost:27017";
+    private String host;
     private String user;
     private String password;
     private String adminDB = "admin";
