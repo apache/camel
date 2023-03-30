@@ -914,10 +914,6 @@ public class CamelTraceAction extends ActionBaseCommand {
             return value != null ? value.toString() : "null";
         }
 
-        String positionAsString() {
-            return position != null ? position.toString() : "null";
-        }
-
         String valueAsStringPretty() {
             if (value == null) {
                 return "null";
@@ -1033,13 +1029,13 @@ public class CamelTraceAction extends ActionBaseCommand {
             }
             s = "(" + s + ")";
             int l = valueLength();
-            long p = posLength();
+            long p = position != null ? position : -1;
             if (l != -1 & p != -1) {
-                s = s + " (position: " + p + " length: " + l + ")";
+                s = s + " (pos: " + p + " length: " + l + ")";
             } else if (l != -1) {
                 s = s + " (length: " + l + ")";
             } else if (p != -1) {
-                s = s + " (position: " + p + ")";
+                s = s + " (pos: " + p + ")";
             }
             if (loggingColor) {
                 s = Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(s).reset().toString();
@@ -1078,14 +1074,6 @@ public class CamelTraceAction extends ActionBaseCommand {
                 return -1;
             } else {
                 return valueAsString().length();
-            }
-        }
-
-        long posLength() {
-            if (position == null) {
-                return -1;
-            } else {
-                return position;
             }
         }
 
