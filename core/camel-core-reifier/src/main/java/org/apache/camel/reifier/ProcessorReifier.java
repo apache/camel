@@ -114,6 +114,7 @@ import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.CamelContextHelper;
@@ -814,7 +815,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
     protected Processor createProcessor(ProcessorDefinition<?> output) throws Exception {
         // ensure node has id assigned
-        String outputId = output.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory());
+        String outputId = output.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         StartupStep step = camelContext.getCamelContextExtension().getStartupStepRecorder().beginStep(ProcessorReifier.class, outputId, "Create processor");
 
         Processor processor = null;
@@ -883,7 +884,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     }
 
     protected String getId(OptionalIdentifiedDefinition<?> def) {
-        return def.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory());
+        return def.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
     }
 
     /**

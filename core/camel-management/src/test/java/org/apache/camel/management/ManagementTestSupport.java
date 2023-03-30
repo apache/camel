@@ -30,7 +30,6 @@ import javax.management.ReflectionException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NamedNode;
-import org.apache.camel.impl.engine.AbstractCamelContext;
 import org.apache.camel.spi.NodeIdFactory;
 
 import static org.apache.camel.management.DefaultManagementAgent.DEFAULT_DOMAIN;
@@ -81,15 +80,19 @@ public abstract class ManagementTestSupport extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext ctx = super.createCamelContext();
-        ((AbstractCamelContext) ctx).setNodeIdFactory(new NodeIdFactory() {
+        ctx.getCamelContextExtension().addContextPlugin(NodeIdFactory.class, buildNodeIdFactory());
+        return ctx;
+    }
+
+    private static NodeIdFactory buildNodeIdFactory() {
+        return new NodeIdFactory() {
             private AtomicInteger counter = new AtomicInteger();
 
             @Override
             public String createId(NamedNode definition) {
                 return definition.getShortName() + counter.incrementAndGet();
             }
-        });
-        return ctx;
+        };
     }
 
     public ObjectName getContextObjectName() throws MalformedObjectNameException {

@@ -58,11 +58,7 @@ public class CustomIdFactoryTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // use our own id factory so we can generate the keys we like to
                 // use
-                context.getCamelContextExtension().setNodeIdFactory(new NodeIdFactory() {
-                    public String createId(NamedNode definition) {
-                        return "#" + definition.getShortName() + ++counter + "#";
-                    }
-                });
+                context.getCamelContextExtension().addContextPlugin(NodeIdFactory.class, buildNodeIdFactory());
 
                 // add our debugger so we can debug camel routes when we send in
                 // messages
@@ -74,6 +70,10 @@ public class CustomIdFactoryTest extends ContextTestSupport {
                         .to("mock:other").end();
             }
         };
+    }
+
+    private static NodeIdFactory buildNodeIdFactory() {
+        return definition -> "#" + definition.getShortName() + ++counter + "#";
     }
 
     /**

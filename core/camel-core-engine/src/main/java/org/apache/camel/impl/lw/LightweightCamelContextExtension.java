@@ -68,7 +68,6 @@ import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelineFactory;
-import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
@@ -679,16 +678,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void registerEndpointCallback(EndpointStrategy strategy) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public NodeIdFactory getNodeIdFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setNodeIdFactory(NodeIdFactory factory) {
         throw new UnsupportedOperationException();
     }
 

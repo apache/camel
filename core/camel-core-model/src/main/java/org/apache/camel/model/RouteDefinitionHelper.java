@@ -34,6 +34,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -179,7 +180,7 @@ public final class RouteDefinitionHelper {
                 int attempts = 0;
                 while (!done && attempts < 1000) {
                     attempts++;
-                    id = route.idOrCreate(ecc.getNodeIdFactory());
+                    id = route.idOrCreate(ecc.getContextPlugin(NodeIdFactory.class));
                     if (customIds.contains(id)) {
                         // reset id and try again
                         route.setId(null);
@@ -745,7 +746,7 @@ public final class RouteDefinitionHelper {
      */
     public static void forceAssignIds(CamelContext context, final ProcessorDefinition processor) {
         // force id on the child
-        processor.idOrCreate(context.getCamelContextExtension().getNodeIdFactory());
+        processor.idOrCreate(context.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
 
         // if there was a custom id assigned, then make sure to support property
         // placeholders

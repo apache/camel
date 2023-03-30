@@ -97,6 +97,7 @@ import org.apache.camel.model.rest.RestSecurityDefinition;
 import org.apache.camel.model.rest.SecurityDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.FileUtil;
@@ -541,7 +542,7 @@ public class RestOpenApiReader {
             } else if (rest.getId() != null) {
                 operationId = getValue(camelContext, rest.getId());
             } else {
-                verb.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory());
+                verb.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
                 operationId = verb.getId();
             }
             op.operationId = operationId;

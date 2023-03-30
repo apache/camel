@@ -46,6 +46,7 @@ import org.apache.camel.spi.ErrorHandlerAware;
 import org.apache.camel.spi.InternalProcessor;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.slf4j.Logger;
@@ -96,7 +97,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         }
 
         // create route
-        String id = definition.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory());
+        String id = definition.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         String desc = definition.getDescriptionText();
         Route route = camelContext.getCamelContextExtension().getRouteFactory().createRoute(camelContext, definition, id,
                 desc, endpoint, definition.getResource());
@@ -202,7 +203,8 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
                 ProcessorReifier<?> reifier = ProcessorReifier.reifier(route, output);
 
                 // ensure node has id assigned
-                String outputId = output.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory());
+                String outputId
+                        = output.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
                 String eip = reifier.getClass().getSimpleName().replace("Reifier", "");
                 StartupStep step = camelContext.getCamelContextExtension().getStartupStepRecorder()
                         .beginStep(ProcessorReifier.class, outputId, "Create " + eip + " Processor");

@@ -442,7 +442,7 @@ public final class DefaultConfigurationConfigurer {
         }
         NodeIdFactory nif = getSingleBeanOfType(registry, NodeIdFactory.class);
         if (nif != null) {
-            ecc.getCamelContextExtension().setNodeIdFactory(nif);
+            ecc.getCamelContextExtension().addContextPlugin(NodeIdFactory.class, nif);
         }
         MessageHistoryFactory mhf = getSingleBeanOfType(registry, MessageHistoryFactory.class);
         if (mhf != null) {

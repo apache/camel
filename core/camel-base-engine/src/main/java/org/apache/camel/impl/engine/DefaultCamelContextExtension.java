@@ -73,7 +73,6 @@ import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelineFactory;
-import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
@@ -582,23 +581,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setModelJAXBContextFactory(final ModelJAXBContextFactory modelJAXBContextFactory) {
         camelContext.modelJAXBContextFactory = camelContext.getInternalServiceManager().addService(modelJAXBContextFactory);
-    }
-
-    @Override
-    public NodeIdFactory getNodeIdFactory() {
-        if (camelContext.nodeIdFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.nodeIdFactory == null) {
-                    setNodeIdFactory(camelContext.createNodeIdFactory());
-                }
-            }
-        }
-        return camelContext.nodeIdFactory;
-    }
-
-    @Override
-    public void setNodeIdFactory(NodeIdFactory idFactory) {
-        camelContext.nodeIdFactory = camelContext.getInternalServiceManager().addService(idFactory);
     }
 
     @Override

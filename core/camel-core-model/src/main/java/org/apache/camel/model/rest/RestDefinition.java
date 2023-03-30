@@ -38,6 +38,7 @@ import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Metadata;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
@@ -815,7 +816,7 @@ public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition>
         String from = "rest-api:" + configuration.getApiContextPath();
         String routeId = configuration.getApiContextRouteId();
         if (routeId == null) {
-            routeId = answer.idOrCreate(camelContext.getCamelContextExtension().getNodeIdFactory());
+            routeId = answer.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         }
 
         // append options

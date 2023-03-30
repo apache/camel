@@ -30,6 +30,7 @@ import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.service.ServiceHelper;
 
@@ -50,14 +51,15 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         this.processor = processor;
         this.definition = definition;
         this.nodeLevel = ProcessorDefinitionHelper.getNodeLevel(definition);
-        this.id = definition.idOrCreate(context.getCamelContextExtension().getNodeIdFactory());
+        this.id = definition.idOrCreate(context.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         StepDefinition step;
         if (definition instanceof StepDefinition) {
             step = (StepDefinition) definition;
         } else {
             step = ProcessorDefinitionHelper.findFirstParentOfType(StepDefinition.class, definition, true);
         }
-        this.stepId = step != null ? step.idOrCreate(context.getCamelContextExtension().getNodeIdFactory()) : null;
+        this.stepId = step != null
+                ? step.idOrCreate(context.getCamelContextExtension().getContextPlugin(NodeIdFactory.class)) : null;
         this.sourceLocation = definition.getLocation();
         if (sourceLocation == null) {
             RouteDefinition rd = ProcessorDefinitionHelper.getRoute(definition);
