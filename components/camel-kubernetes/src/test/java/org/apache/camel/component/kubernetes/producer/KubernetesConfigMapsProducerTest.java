@@ -132,7 +132,7 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    void replaceConfigMap() {
+    void updateConfigMap() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         Map<String, String> data = Map.of("my.data.key", "my.data.value");
         ConfigMap cm1 = new ConfigMapBuilder().withNewMetadata().withName("cm1").withNamespace("test").withLabels(labels).and()
@@ -143,7 +143,7 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
                 .once();
         server.expect().put().withPath("/api/v1/namespaces/test/configmaps/cm1").andReturn(200, cm1).once();
 
-        Exchange ex = template.request("direct:replaceConfigMap", exchange -> {
+        Exchange ex = template.request("direct:updateConfigMap", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAPS_LABELS, labels);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_CONFIGMAP_NAME, "cm1");
@@ -185,8 +185,8 @@ public class KubernetesConfigMapsProducerTest extends KubernetesTestSupport {
                         .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=getConfigMap");
                 from("direct:createConfigMap")
                         .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=createConfigMap");
-                from("direct:replaceConfigMap")
-                        .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=replaceConfigMap");
+                from("direct:updateConfigMap")
+                        .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=updateConfigMap");
                 from("direct:deleteConfigMap")
                         .to("kubernetes-config-maps:///?kubernetesClient=#kubernetesClient&operation=deleteConfigMap");
             }

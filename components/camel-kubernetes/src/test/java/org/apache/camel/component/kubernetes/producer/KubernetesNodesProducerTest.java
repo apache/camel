@@ -96,13 +96,13 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    void replaceNodeTest() {
+    void updateNodeTest() {
         ObjectMeta meta = new ObjectMeta();
         meta.setName("test");
         server.expect().get().withPath("/api/v1/nodes/test").andReturn(200, new NodeBuilder().build()).once();
         server.expect().put().withPath("/api/v1/nodes/test").andReturn(200, new NodeBuilder().withMetadata(meta).build())
                 .once();
-        Exchange ex = template.request("direct:replaceNode", exchange -> {
+        Exchange ex = template.request("direct:updateNode", exchange -> {
             Map<String, String> labels = new HashMap<>();
             labels.put("key1", "value1");
             labels.put("key2", "value2");
@@ -139,7 +139,7 @@ public class KubernetesNodesProducerTest extends KubernetesTestSupport {
                 from("direct:listByLabels")
                         .toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=listNodesByLabels");
                 from("direct:createNode").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=createNode");
-                from("direct:replaceNode").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=replaceNode");
+                from("direct:updateNode").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=updateNode");
                 from("direct:deleteNode").toF("kubernetes-nodes:///?kubernetesClient=#kubernetesClient&operation=deleteNode");
             }
         };

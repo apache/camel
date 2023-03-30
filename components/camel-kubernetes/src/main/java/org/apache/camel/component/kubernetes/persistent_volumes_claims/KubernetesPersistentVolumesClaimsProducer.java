@@ -73,8 +73,8 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
                 doCreatePersistentVolumeClaim(exchange);
                 break;
 
-            case KubernetesOperations.REPLACE_PERSISTENT_VOLUME_CLAIM_OPERATION:
-                doReplacePersistentVolumeClaim(exchange);
+            case KubernetesOperations.UPDATE_PERSISTENT_VOLUME_CLAIM_OPERATION:
+                doUpdatePersistentVolumeClaim(exchange);
                 break;
 
             case KubernetesOperations.DELETE_PERSISTENT_VOLUME_CLAIM_OPERATION:
@@ -134,8 +134,8 @@ public class KubernetesPersistentVolumesClaimsProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, pvc);
     }
 
-    protected void doReplacePersistentVolumeClaim(Exchange exchange) {
-        doCreateOrUpdatePersistentVolumeClaim(exchange, "Replace", Resource::replace);
+    protected void doUpdatePersistentVolumeClaim(Exchange exchange) {
+        doCreateOrUpdatePersistentVolumeClaim(exchange, "Update", Resource::update);
     }
 
     protected void doCreatePersistentVolumeClaim(Exchange exchange) {

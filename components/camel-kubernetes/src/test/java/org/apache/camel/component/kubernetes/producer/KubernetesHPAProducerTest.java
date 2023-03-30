@@ -127,7 +127,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    void replaceHPATest() {
+    void updateHPATest() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         HorizontalPodAutoscalerSpec spec = new HorizontalPodAutoscalerSpecBuilder().withMinReplicas(13).build();
         HorizontalPodAutoscaler hpa1 = new HorizontalPodAutoscalerBuilder().withNewMetadata().withName("hpa1")
@@ -141,7 +141,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
                 .andReturn(200, hpa1)
                 .once();
 
-        Exchange ex = template.request("direct:replaceHPA", exchange -> {
+        Exchange ex = template.request("direct:updateHPA", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_LABELS, labels);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_HPA_NAME, "hpa1");
@@ -183,7 +183,7 @@ public class KubernetesHPAProducerTest extends KubernetesTestSupport {
                         .to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=listHPAByLabels");
                 from("direct:getHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=getHPA");
                 from("direct:createHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=createHPA");
-                from("direct:replaceHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=replaceHPA");
+                from("direct:updateHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=updateHPA");
                 from("direct:deleteHPA").to("kubernetes-hpa:///?kubernetesClient=#kubernetesClient&operation=deleteHPA");
             }
         };

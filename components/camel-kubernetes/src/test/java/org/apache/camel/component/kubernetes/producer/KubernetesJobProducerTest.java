@@ -118,7 +118,7 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
     }
 
     @Test
-    void replaceJobTest() {
+    void updateJobTest() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         JobSpec spec = new JobSpecBuilder().withBackoffLimit(13).withSelector(new LabelSelector())
                 .withTemplate(new PodTemplateSpecBuilder().build()).build();
@@ -132,7 +132,7 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
                 .times(2);
         server.expect().put().withPath("/apis/batch/v1/namespaces/test/jobs/j1").andReturn(200, j1).once();
 
-        Exchange ex = template.request("direct:replace", exchange -> {
+        Exchange ex = template.request("direct:update", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_JOB_LABELS, labels);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_JOB_NAME, "j1");
@@ -172,7 +172,7 @@ public class KubernetesJobProducerTest extends KubernetesTestSupport {
                 from("direct:listByLabels").to("kubernetes-job:foo?operation=listJobByLabels");
                 from("direct:get").to("kubernetes-job:foo?operation=getJob");
                 from("direct:create").to("kubernetes-job:foo?operation=createJob");
-                from("direct:replace").to("kubernetes-job:foo?operation=replaceJob");
+                from("direct:update").to("kubernetes-job:foo?operation=updateJob");
                 from("direct:delete").to("kubernetes-job:foo?operation=deleteJob");
             }
         };

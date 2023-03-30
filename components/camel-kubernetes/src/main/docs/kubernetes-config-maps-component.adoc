@@ -41,7 +41,7 @@ include::partial$component-endpoint-headers.adoc[]
 - listConfigMapsByLabels
 - getConfigMap
 - createConfigMap
-- replaceConfigMap
+- updateConfigMap
 - deleteConfigMap
 
 == Kubernetes ConfigMaps Producer Examples

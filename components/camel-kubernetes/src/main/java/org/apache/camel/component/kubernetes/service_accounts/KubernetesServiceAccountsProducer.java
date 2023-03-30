@@ -71,8 +71,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
                 doCreateServiceAccount(exchange);
                 break;
 
-            case KubernetesOperations.REPLACE_SERVICE_ACCOUNT_OPERATION:
-                doReplaceServiceAccount(exchange);
+            case KubernetesOperations.UPDATE_SERVICE_ACCOUNT_OPERATION:
+                doUpdateServiceAccount(exchange);
                 break;
 
             case KubernetesOperations.DELETE_SERVICE_ACCOUNT_OPERATION:
@@ -130,8 +130,8 @@ public class KubernetesServiceAccountsProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, sa);
     }
 
-    protected void doReplaceServiceAccount(Exchange exchange) {
-        doCreateOrUpdateServiceAccount(exchange, "Replace", Resource::replace);
+    protected void doUpdateServiceAccount(Exchange exchange) {
+        doCreateOrUpdateServiceAccount(exchange, "Update", Resource::update);
     }
 
     protected void doCreateServiceAccount(Exchange exchange) {

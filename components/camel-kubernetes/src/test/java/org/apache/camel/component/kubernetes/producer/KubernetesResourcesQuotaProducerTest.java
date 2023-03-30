@@ -84,7 +84,7 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
     }
 
     @Test
-    void replaceResourceQuota() {
+    void updateResourceQuota() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         ResourceQuotaSpec spec = new ResourceQuotaSpecBuilder().withScopes("SomeScope").build();
         ResourceQuota rq1
@@ -95,7 +95,7 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
                 .once();
         server.expect().put().withPath("/api/v1/namespaces/test/resourcequotas/rq1").andReturn(200, rq1).once();
 
-        Exchange ex = template.request("direct:replace", exchange -> {
+        Exchange ex = template.request("direct:update", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_LABELS, labels);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_RESOURCES_QUOTA_NAME, "rq1");
@@ -134,8 +134,8 @@ public class KubernetesResourcesQuotaProducerTest extends KubernetesTestSupport 
                         .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=listResourcesQuota");
                 from("direct:create")
                         .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=createResourceQuota");
-                from("direct:replace")
-                        .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=replaceResourceQuota");
+                from("direct:update")
+                        .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=updateResourceQuota");
                 from("direct:delete")
                         .to("kubernetes-resources-quota:///?kubernetesClient=#kubernetesClient&operation=deleteResourceQuota");
             }

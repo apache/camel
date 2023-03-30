@@ -72,8 +72,8 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
                 doCreateNamespace(exchange);
                 break;
 
-            case KubernetesOperations.REPLACE_NAMESPACE_OPERATION:
-                doReplaceNamespace(exchange);
+            case KubernetesOperations.UPDATE_NAMESPACE_OPERATION:
+                doUpdateNamespace(exchange);
                 break;
 
             case KubernetesOperations.DELETE_NAMESPACE_OPERATION:
@@ -114,8 +114,8 @@ public class KubernetesNamespacesProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, namespace);
     }
 
-    protected void doReplaceNamespace(Exchange exchange) {
-        doCreateOrUpdateNamespace(exchange, "Replace", Resource::replace);
+    protected void doUpdateNamespace(Exchange exchange) {
+        doCreateOrUpdateNamespace(exchange, "Update", Resource::update);
     }
 
     protected void doCreateNamespace(Exchange exchange) {

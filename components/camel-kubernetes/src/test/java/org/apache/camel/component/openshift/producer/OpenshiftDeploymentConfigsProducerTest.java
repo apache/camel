@@ -104,7 +104,7 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
     }
 
     @Test
-    void replaceDeploymentConfig() {
+    void updateDeploymentConfig() {
         Map<String, String> labels = Map.of("my.label.key", "my.label.value");
         DeploymentConfigSpec spec = new DeploymentConfigSpecBuilder().withReplicas(13).build();
         DeploymentConfig de1
@@ -116,7 +116,7 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
         server.expect().put().withPath("/apis/apps.openshift.io/v1/namespaces/test/deploymentconfigs/de1").andReturn(200, de1)
                 .once();
 
-        Exchange ex = template.request("direct:replace", exchange -> {
+        Exchange ex = template.request("direct:update", exchange -> {
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, "test");
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, labels);
             exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, "de1");
@@ -191,8 +191,8 @@ public class OpenshiftDeploymentConfigsProducerTest extends KubernetesTestSuppor
                         .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=listDeploymentConfigsByLabels");
                 from("direct:create")
                         .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=createDeploymentConfig");
-                from("direct:replace")
-                        .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=replaceDeploymentConfig");
+                from("direct:update")
+                        .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=updateDeploymentConfig");
                 from("direct:delete")
                         .toF("openshift-deploymentconfigs:///?kubernetesClient=#kubernetesClient&operation=deleteDeploymentConfig");
                 from("direct:scale")

@@ -73,8 +73,8 @@ public class KubernetesNodesProducer extends DefaultProducer {
                 doCreateNode(exchange);
                 break;
 
-            case KubernetesOperations.REPLACE_NODE_OPERATION:
-                doReplaceNode(exchange);
+            case KubernetesOperations.UPDATE_NODE_OPERATION:
+                doUpdateNode(exchange);
                 break;
 
             case KubernetesOperations.DELETE_NODE_OPERATION:
@@ -113,8 +113,8 @@ public class KubernetesNodesProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, node);
     }
 
-    protected void doReplaceNode(Exchange exchange) {
-        doCreateOrUpdateNode(exchange, "Replace", Resource::replace);
+    protected void doUpdateNode(Exchange exchange) {
+        doCreateOrUpdateNode(exchange, "Update", Resource::update);
     }
 
     protected void doCreateNode(Exchange exchange) {

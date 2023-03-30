@@ -78,8 +78,8 @@ public class OpenshiftDeploymentConfigsProducer extends DefaultProducer {
                 doCreateDeployment(exchange);
                 break;
 
-            case KubernetesOperations.REPLACE_DEPLOYMENT_CONFIG:
-                doReplaceDeployment(exchange);
+            case KubernetesOperations.UPDATE_DEPLOYMENT_CONFIG:
+                doUpdateDeployment(exchange);
                 break;
 
             case KubernetesOperations.SCALE_DEPLOYMENT_CONFIG:
@@ -139,8 +139,8 @@ public class OpenshiftDeploymentConfigsProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, deploymentConfigDeleted);
     }
 
-    protected void doReplaceDeployment(Exchange exchange) {
-        doCreateOrUpdateDeployment(exchange, "Replace", Resource::replace);
+    protected void doUpdateDeployment(Exchange exchange) {
+        doCreateOrUpdateDeployment(exchange, "Update", Resource::update);
     }
 
     protected void doCreateDeployment(Exchange exchange) {

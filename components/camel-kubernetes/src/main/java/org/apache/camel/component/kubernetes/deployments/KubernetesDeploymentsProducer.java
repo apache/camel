@@ -79,8 +79,8 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
                 doCreateDeployment(exchange);
                 break;
 
-            case KubernetesOperations.REPLACE_DEPLOYMENT:
-                doReplaceDeployment(exchange);
+            case KubernetesOperations.UPDATE_DEPLOYMENT:
+                doUpdateDeployment(exchange);
                 break;
 
             case KubernetesOperations.SCALE_DEPLOYMENT:
@@ -139,8 +139,8 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, deploymentDeleted);
     }
 
-    protected void doReplaceDeployment(Exchange exchange) {
-        doCreateOrUpdateDeployment(exchange, "Replace", Resource::replace);
+    protected void doUpdateDeployment(Exchange exchange) {
+        doCreateOrUpdateDeployment(exchange, "Update", Resource::update);
     }
 
     protected void doCreateDeployment(Exchange exchange) {

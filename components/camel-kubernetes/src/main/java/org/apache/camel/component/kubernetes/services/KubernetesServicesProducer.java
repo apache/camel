@@ -73,8 +73,8 @@ public class KubernetesServicesProducer extends DefaultProducer {
                 doCreateService(exchange);
                 break;
 
-            case KubernetesOperations.REPLACE_SERVICE_OPERATION:
-                doReplaceService(exchange);
+            case KubernetesOperations.UPDATE_SERVICE_OPERATION:
+                doUpdateService(exchange);
                 break;
 
             case KubernetesOperations.DELETE_SERVICE_OPERATION:
@@ -136,8 +136,8 @@ public class KubernetesServicesProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, service);
     }
 
-    protected void doReplaceService(Exchange exchange) {
-        doCreateOrUpdateService(exchange, "Replace", Resource::replace);
+    protected void doUpdateService(Exchange exchange) {
+        doCreateOrUpdateService(exchange, "Update", Resource::update);
     }
 
     protected void doCreateService(Exchange exchange) {

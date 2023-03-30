@@ -71,8 +71,8 @@ public class KubernetesSecretsProducer extends DefaultProducer {
                 doCreateSecret(exchange);
                 break;
 
-            case KubernetesOperations.REPLACE_SECRET_OPERATION:
-                doReplaceSecret(exchange);
+            case KubernetesOperations.UPDATE_SECRET_OPERATION:
+                doUpdateSecret(exchange);
                 break;
 
             case KubernetesOperations.DELETE_SECRET_OPERATION:
@@ -127,8 +127,8 @@ public class KubernetesSecretsProducer extends DefaultProducer {
         prepareOutboundMessage(exchange, secret);
     }
 
-    protected void doReplaceSecret(Exchange exchange) {
-        doCreateOrUpdateSecret(exchange, "Replace", Resource::replace);
+    protected void doUpdateSecret(Exchange exchange) {
+        doCreateOrUpdateSecret(exchange, "Update", Resource::update);
     }
 
     protected void doCreateSecret(Exchange exchange) {

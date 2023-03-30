@@ -23,7 +23,7 @@ public final class KubernetesOperations {
     public static final String LIST_NAMESPACE_BY_LABELS_OPERATION = "listNamespacesByLabels";
     public static final String GET_NAMESPACE_OPERATION = "getNamespace";
     public static final String CREATE_NAMESPACE_OPERATION = "createNamespace";
-    public static final String REPLACE_NAMESPACE_OPERATION = "replaceNamespace";
+    public static final String UPDATE_NAMESPACE_OPERATION = "updateNamespace";
     public static final String DELETE_NAMESPACE_OPERATION = "deleteNamespace";
 
     // Services
@@ -31,7 +31,7 @@ public final class KubernetesOperations {
     public static final String LIST_SERVICES_BY_LABELS_OPERATION = "listServicesByLabels";
     public static final String GET_SERVICE_OPERATION = "getService";
     public static final String CREATE_SERVICE_OPERATION = "createService";
-    public static final String REPLACE_SERVICE_OPERATION = "replaceService";
+    public static final String UPDATE_SERVICE_OPERATION = "updateService";
     public static final String DELETE_SERVICE_OPERATION = "deleteService";
 
     // Replication Controllers
@@ -39,7 +39,7 @@ public final class KubernetesOperations {
     public static final String LIST_REPLICATION_CONTROLLERS_BY_LABELS_OPERATION = "listReplicationControllersByLabels";
     public static final String GET_REPLICATION_CONTROLLER_OPERATION = "getReplicationController";
     public static final String CREATE_REPLICATION_CONTROLLER_OPERATION = "createReplicationController";
-    public static final String REPLACE_REPLICATION_CONTROLLER_OPERATION = "replaceReplicationController";
+    public static final String UPDATE_REPLICATION_CONTROLLER_OPERATION = "updateReplicationController";
     public static final String DELETE_REPLICATION_CONTROLLER_OPERATION = "deleteReplicationController";
     public static final String SCALE_REPLICATION_CONTROLLER_OPERATION = "scaleReplicationController";
 
@@ -48,7 +48,7 @@ public final class KubernetesOperations {
     public static final String LIST_PODS_BY_LABELS_OPERATION = "listPodsByLabels";
     public static final String GET_POD_OPERATION = "getPod";
     public static final String CREATE_POD_OPERATION = "createPod";
-    public static final String REPLACE_POD_OPERATION = "replacePod";
+    public static final String UPDATE_POD_OPERATION = "updatePod";
     public static final String DELETE_POD_OPERATION = "deletePod";
 
     // Persistent Volumes
@@ -61,7 +61,7 @@ public final class KubernetesOperations {
     public static final String LIST_PERSISTENT_VOLUMES_CLAIMS_BY_LABELS_OPERATION = "listPersistentVolumesClaimsByLabels";
     public static final String GET_PERSISTENT_VOLUME_CLAIM_OPERATION = "getPersistentVolumeClaim";
     public static final String CREATE_PERSISTENT_VOLUME_CLAIM_OPERATION = "createPersistentVolumeClaim";
-    public static final String REPLACE_PERSISTENT_VOLUME_CLAIM_OPERATION = "replacePersistentVolumeClaim";
+    public static final String UPDATE_PERSISTENT_VOLUME_CLAIM_OPERATION = "updatePersistentVolumeClaim";
     public static final String DELETE_PERSISTENT_VOLUME_CLAIM_OPERATION = "deletePersistentVolumeClaim";
 
     // Secrets
@@ -69,7 +69,7 @@ public final class KubernetesOperations {
     public static final String LIST_SECRETS_BY_LABELS_OPERATION = "listSecretsByLabels";
     public static final String GET_SECRET_OPERATION = "getSecret";
     public static final String CREATE_SECRET_OPERATION = "createSecret";
-    public static final String REPLACE_SECRET_OPERATION = "replaceSecret";
+    public static final String UPDATE_SECRET_OPERATION = "updateSecret";
     public static final String DELETE_SECRET_OPERATION = "deleteSecret";
 
     // Resources quota
@@ -77,7 +77,7 @@ public final class KubernetesOperations {
     public static final String LIST_RESOURCES_QUOTA_BY_LABELS_OPERATION = "listResourcesQuotaByLabels";
     public static final String GET_RESOURCE_QUOTA_OPERATION = "getResourceQuota";
     public static final String CREATE_RESOURCE_QUOTA_OPERATION = "createResourceQuota";
-    public static final String REPLACE_RESOURCE_QUOTA_OPERATION = "replaceResourceQuota";
+    public static final String UPDATE_RESOURCE_QUOTA_OPERATION = "updateResourceQuota";
     public static final String DELETE_RESOURCE_QUOTA_OPERATION = "deleteResourceQuota";
 
     // Service Accounts
@@ -85,7 +85,7 @@ public final class KubernetesOperations {
     public static final String LIST_SERVICE_ACCOUNTS_BY_LABELS_OPERATION = "listServiceAccountsByLabels";
     public static final String GET_SERVICE_ACCOUNT_OPERATION = "getServiceAccount";
     public static final String CREATE_SERVICE_ACCOUNT_OPERATION = "createServiceAccount";
-    public static final String REPLACE_SERVICE_ACCOUNT_OPERATION = "replaceServiceAccount";
+    public static final String UPDATE_SERVICE_ACCOUNT_OPERATION = "updateServiceAccount";
     public static final String DELETE_SERVICE_ACCOUNT_OPERATION = "deleteServiceAccount";
 
     // Nodes
@@ -93,7 +93,7 @@ public final class KubernetesOperations {
     public static final String LIST_NODES_BY_LABELS_OPERATION = "listNodesByLabels";
     public static final String GET_NODE_OPERATION = "getNode";
     public static final String CREATE_NODE_OPERATION = "createNode";
-    public static final String REPLACE_NODE_OPERATION = "replaceNode";
+    public static final String UPDATE_NODE_OPERATION = "updateNode";
     public static final String DELETE_NODE_OPERATION = "deleteNode";
 
     // HPA
@@ -101,7 +101,7 @@ public final class KubernetesOperations {
     public static final String LIST_HPA_BY_LABELS_OPERATION = "listHPAByLabels";
     public static final String GET_HPA_OPERATION = "getHPA";
     public static final String CREATE_HPA_OPERATION = "createHPA";
-    public static final String REPLACE_HPA_OPERATION = "replaceHPA";
+    public static final String UPDATE_HPA_OPERATION = "updateHPA";
     public static final String DELETE_HPA_OPERATION = "deleteHPA";
 
     // Deployments
@@ -110,7 +110,7 @@ public final class KubernetesOperations {
     public static final String GET_DEPLOYMENT = "getDeployment";
     public static final String DELETE_DEPLOYMENT = "deleteDeployment";
     public static final String CREATE_DEPLOYMENT = "createDeployment";
-    public static final String REPLACE_DEPLOYMENT = "replaceDeployment";
+    public static final String UPDATE_DEPLOYMENT = "updateDeployment";
     public static final String SCALE_DEPLOYMENT = "scaleDeployment";
 
     // Config Maps
@@ -119,7 +119,7 @@ public final class KubernetesOperations {
     public static final String GET_CONFIGMAP_OPERATION = "getConfigMap";
     public static final String CREATE_CONFIGMAP_OPERATION = "createConfigMap";
     public static final String DELETE_CONFIGMAP_OPERATION = "deleteConfigMap";
-    public static final String REPLACE_CONFIGMAP_OPERATION = "replaceConfigMap";
+    public static final String UPDATE_CONFIGMAP_OPERATION = "updateConfigMap";
 
     // Events
     public static final String LIST_EVENTS_OPERATION = "listEvents";
@@ -127,7 +127,7 @@ public final class KubernetesOperations {
     public static final String GET_EVENT_OPERATION = "getEvent";
     public static final String CREATE_EVENT_OPERATION = "createEvent";
     public static final String DELETE_EVENT_OPERATION = "deleteEvent";
-    public static final String REPLACE_EVENT_OPERATION = "replaceEvent";
+    public static final String UPDATE_EVENT_OPERATION = "updateEvent";
 
     // Builds
     public static final String LIST_BUILD = "listBuilds";
@@ -144,7 +144,7 @@ public final class KubernetesOperations {
     public static final String LIST_JOB_BY_LABELS_OPERATION = "listJobByLabels";
     public static final String GET_JOB_OPERATION = "getJob";
     public static final String CREATE_JOB_OPERATION = "createJob";
-    public static final String REPLACE_JOB_OPERATION = "replaceJob";
+    public static final String UPDATE_JOB_OPERATION = "updateJob";
     public static final String DELETE_JOB_OPERATION = "deleteJob";
 
     // Custom Resources
@@ -153,7 +153,7 @@ public final class KubernetesOperations {
     public static final String GET_CUSTOMRESOURCE = "getCustomResource";
     public static final String DELETE_CUSTOMRESOURCE = "deleteCustomResource";
     public static final String CREATE_CUSTOMRESOURCE = "createCustomResource";
-    public static final String REPLACE_CUSTOMRESOURCE = "replaceCustomResource";
+    public static final String UPDATE_CUSTOMRESOURCE = "updateCustomResource";
 
     // Deployment Configs
     public static final String LIST_DEPLOYMENT_CONFIGS = "listDeploymentConfigs";
@@ -161,7 +161,7 @@ public final class KubernetesOperations {
     public static final String GET_DEPLOYMENT_CONFIG = "getDeploymentConfig";
     public static final String DELETE_DEPLOYMENT_CONFIG = "deleteDeploymentConfig";
     public static final String CREATE_DEPLOYMENT_CONFIG = "createDeploymentConfig";
-    public static final String REPLACE_DEPLOYMENT_CONFIG = "replaceDeploymentConfig";
+    public static final String UPDATE_DEPLOYMENT_CONFIG = "updateDeploymentConfig";
     public static final String SCALE_DEPLOYMENT_CONFIG = "scaleDeploymentConfig";
 
     private KubernetesOperations() {

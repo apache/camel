@@ -69,7 +69,7 @@ public class ConfigMapPropertiesFunctionRouteTest extends KubernetesTestSupport 
 
         Map<String, String> data = Map.of("foo", "123", "bar", "Moes Bar");
         ConfigMap cm = new ConfigMapBuilder().editOrNewMetadata().withName("myconfig").endMetadata().withData(data).build();
-        this.cm = client.resource(cm).createOrReplace();
+        this.cm = client.resource(cm).serverSideApply();
 
         return context;
     }
