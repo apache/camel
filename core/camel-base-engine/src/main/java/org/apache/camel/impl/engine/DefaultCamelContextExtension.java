@@ -44,7 +44,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
@@ -243,24 +242,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
         // return original text as is
         return text;
-    }
-
-    @Override
-    public CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory() {
-        if (camelContext.dependencyInjectionAnnotationFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.dependencyInjectionAnnotationFactory == null) {
-                    setDependencyInjectionAnnotationFactory(camelContext.createDependencyInjectionAnnotationFactory());
-                }
-            }
-        }
-        return camelContext.dependencyInjectionAnnotationFactory;
-    }
-
-    @Override
-    public void setDependencyInjectionAnnotationFactory(
-            CamelDependencyInjectionAnnotationFactory dependencyInjectionAnnotationFactory) {
-        camelContext.dependencyInjectionAnnotationFactory = dependencyInjectionAnnotationFactory;
     }
 
     @Override

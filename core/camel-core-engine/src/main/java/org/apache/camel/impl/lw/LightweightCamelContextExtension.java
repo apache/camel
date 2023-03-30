@@ -45,7 +45,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
@@ -286,16 +285,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public List<RouteStartupOrder> getRouteStartupOrder() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory() {
-        return camelContext.getCamelContextExtension().getDependencyInjectionAnnotationFactory();
-    }
-
-    @Override
-    public void setDependencyInjectionAnnotationFactory(CamelDependencyInjectionAnnotationFactory factory) {
         throw new UnsupportedOperationException();
     }
 

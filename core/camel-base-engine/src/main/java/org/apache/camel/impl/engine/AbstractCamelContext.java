@@ -212,7 +212,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ProcessorExchangeFactory processorExchangeFactory;
     volatile ReactiveExecutor reactiveExecutor;
     volatile Registry registry;
-    volatile CamelDependencyInjectionAnnotationFactory dependencyInjectionAnnotationFactory;
     volatile ComponentResolver componentResolver;
     volatile ComponentNameResolver componentNameResolver;
     volatile LanguageResolver languageResolver;
@@ -384,6 +383,8 @@ public abstract class AbstractCamelContext extends BaseService
         this.internalServiceManager = new InternalServiceManager(this, internalRouteStartupManager, startupListeners);
 
         camelContextExtension.addContextPlugin(CamelBeanPostProcessor.class, createBeanPostProcessor());
+        camelContextExtension.addContextPlugin(CamelDependencyInjectionAnnotationFactory.class,
+                createDependencyInjectionAnnotationFactory());
 
         if (build) {
             try {

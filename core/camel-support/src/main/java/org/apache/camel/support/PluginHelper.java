@@ -20,6 +20,7 @@ package org.apache.camel.support;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 
 public final class PluginHelper {
     private PluginHelper() {
@@ -42,5 +43,21 @@ public final class PluginHelper {
      */
     public static CamelBeanPostProcessor getBeanPostProcessor(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(CamelBeanPostProcessor.class);
+    }
+
+    /**
+     * Returns the annotation dependency injection factory.
+     */
+    public static CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory(CamelContext camelContext) {
+        return getDependencyInjectionAnnotationFactory(camelContext.getCamelContextExtension());
+
+    }
+
+    /**
+     * Returns the annotation dependency injection factory.
+     */
+    public static CamelDependencyInjectionAnnotationFactory getDependencyInjectionAnnotationFactory(
+            ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(CamelDependencyInjectionAnnotationFactory.class);
     }
 }

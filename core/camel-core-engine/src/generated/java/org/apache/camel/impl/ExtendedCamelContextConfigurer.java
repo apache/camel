@@ -43,8 +43,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DataFormatResolver": target.setDataFormatResolver(property(camelContext, org.apache.camel.spi.DataFormatResolver.class, value)); return true;
         case "deferservicefactory":
         case "DeferServiceFactory": target.setDeferServiceFactory(property(camelContext, org.apache.camel.spi.DeferServiceFactory.class, value)); return true;
-        case "dependencyinjectionannotationfactory":
-        case "DependencyInjectionAnnotationFactory": target.setDependencyInjectionAnnotationFactory(property(camelContext, org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory.class, value)); return true;
         case "description":
         case "Description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "devconsoleresolver":
@@ -140,8 +138,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DataFormatResolver": return org.apache.camel.spi.DataFormatResolver.class;
         case "deferservicefactory":
         case "DeferServiceFactory": return org.apache.camel.spi.DeferServiceFactory.class;
-        case "dependencyinjectionannotationfactory":
-        case "DependencyInjectionAnnotationFactory": return org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory.class;
         case "description":
         case "Description": return java.lang.String.class;
         case "devconsoleresolver":
@@ -238,8 +234,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DataFormatResolver": return target.getDataFormatResolver();
         case "deferservicefactory":
         case "DeferServiceFactory": return target.getDeferServiceFactory();
-        case "dependencyinjectionannotationfactory":
-        case "DependencyInjectionAnnotationFactory": return target.getDependencyInjectionAnnotationFactory();
         case "description":
         case "Description": return target.getDescription();
         case "devconsoleresolver":

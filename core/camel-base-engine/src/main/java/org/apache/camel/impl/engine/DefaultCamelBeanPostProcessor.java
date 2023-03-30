@@ -35,6 +35,7 @@ import org.apache.camel.PropertyInject;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelBeanPostProcessorInjector;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -493,8 +494,8 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
             getOrLookupCamelContext().getRegistry().unbind(name);
         }
         // use dependency injection factory to perform the task of binding the bean to registry
-        Runnable task = getOrLookupCamelContext().getCamelContextExtension()
-                .getDependencyInjectionAnnotationFactory().createBindToRegistryFactory(name, bean, beanName, beanPostProcess);
+        Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(getOrLookupCamelContext())
+                .createBindToRegistryFactory(name, bean, beanName, beanPostProcess);
         task.run();
     }
 
@@ -509,8 +510,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
                 getOrLookupCamelContext().getRegistry().unbind(name);
             }
             // use dependency injection factory to perform the task of binding the bean to registry
-            Runnable task = getOrLookupCamelContext().getCamelContextExtension()
-                    .getDependencyInjectionAnnotationFactory()
+            Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(getOrLookupCamelContext())
                     .createBindToRegistryFactory(name, value, beanName, beanPostProcess);
             task.run();
         }
@@ -528,8 +528,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
                 getOrLookupCamelContext().getRegistry().unbind(name);
             }
             // use dependency injection factory to perform the task of binding the bean to registry
-            Runnable task = getOrLookupCamelContext().getCamelContextExtension()
-                    .getDependencyInjectionAnnotationFactory()
+            Runnable task = PluginHelper.getDependencyInjectionAnnotationFactory(getOrLookupCamelContext())
                     .createBindToRegistryFactory(name, value, beanName, beanPostProcess);
             task.run();
         }
