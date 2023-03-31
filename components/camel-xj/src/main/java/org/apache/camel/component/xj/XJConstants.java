@@ -18,6 +18,7 @@
 package org.apache.camel.component.xj;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,7 +70,7 @@ public final class XJConstants {
     static final String JSON_WRITER_MIXED_CONTENT_TEXT_KEY = "#text";
 
     static {
-        final Map<JsonToken, String> jsonTypeTypeMap = new HashMap<>();
+        final Map<JsonToken, String> jsonTypeTypeMap = new EnumMap<>(JsonToken.class);
         jsonTypeTypeMap.put(JsonToken.START_OBJECT, "object");
         jsonTypeTypeMap.put(JsonToken.END_OBJECT, "object");
         jsonTypeTypeMap.put(JsonToken.START_ARRAY, "array");

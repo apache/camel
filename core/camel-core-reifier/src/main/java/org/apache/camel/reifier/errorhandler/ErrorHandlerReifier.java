@@ -17,10 +17,7 @@
 package org.apache.camel.reifier.errorhandler;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 
 import org.apache.camel.CamelContext;
@@ -246,7 +243,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         if (definition == null) {
             return null;
         }
-        Map<RedeliveryOption, String> policy = new HashMap<>();
+        Map<RedeliveryOption, String> policy = new EnumMap<>(RedeliveryOption.class);
         setOption(policy, RedeliveryOption.maximumRedeliveries, definition.getMaximumRedeliveries());
         setOption(policy, RedeliveryOption.redeliveryDelay, definition.getRedeliveryDelay(), "1000");
         setOption(policy, RedeliveryOption.asyncDelayedRedelivery, definition.getAsyncDelayedRedelivery());

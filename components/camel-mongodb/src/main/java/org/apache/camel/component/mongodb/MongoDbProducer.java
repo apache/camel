@@ -16,13 +16,7 @@
  */
 package org.apache.camel.component.mongodb;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -78,8 +72,8 @@ public class MongoDbProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbProducer.class);
 
-    private final Map<MongoDbOperation, Processor> operations = new HashMap<>();
-    private MongoDbEndpoint endpoint;
+    private final Map<MongoDbOperation, Processor> operations = new EnumMap<>(MongoDbOperation.class);
+    private final MongoDbEndpoint endpoint;
 
     {
         bind(MongoDbOperation.aggregate, createDoAggregate());
