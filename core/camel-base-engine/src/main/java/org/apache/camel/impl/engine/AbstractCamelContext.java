@@ -201,8 +201,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     // start auto assigning route ids using numbering 1000 and upwards
     final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
-    final Map<String, FactoryFinder> bootstrapFactories = new ConcurrentHashMap<>();
-    volatile FactoryFinder bootstrapFactoryFinder;
+
     final Object lock = new Object();
     final RouteController internalRouteController = new InternalRouteController(this);
     volatile DeferServiceFactory deferServiceFactory;
@@ -369,9 +368,6 @@ public abstract class AbstractCamelContext extends BaseService
 
         // add the default bootstrap closer
         this.bootstraps.add(new DefaultServiceBootstrapCloseable(this));
-
-        // add a cleaner for FactoryFinder used only when bootstrapping the context
-        this.bootstraps.add(bootstrapFactories::clear);
 
         this.internalServiceManager = new InternalServiceManager(this, internalRouteStartupManager, startupListeners);
 
