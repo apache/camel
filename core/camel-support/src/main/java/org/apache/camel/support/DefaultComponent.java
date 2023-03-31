@@ -375,11 +375,11 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         }
         if (defaultName != null) {
             if (componentPropertyConfigurer == null) {
-                componentPropertyConfigurer = getCamelContext().getCamelContextExtension().getConfigurerResolver()
+                componentPropertyConfigurer = PluginHelper.getConfigurerResolver(getCamelContext())
                         .resolvePropertyConfigurer(defaultName + "-component-configurer", getCamelContext());
             }
             if (endpointPropertyConfigurer == null) {
-                endpointPropertyConfigurer = getCamelContext().getCamelContextExtension().getConfigurerResolver()
+                endpointPropertyConfigurer = PluginHelper.getConfigurerResolver(getCamelContext())
                         .resolvePropertyConfigurer(defaultName + "-endpoint-configurer", getCamelContext());
             }
         }

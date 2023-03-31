@@ -25,6 +25,7 @@ import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 
 /**
@@ -39,7 +40,7 @@ public class JaxbRestBindingJaxbDataFormatFactory implements RestBindingJaxbData
             DataFormat jaxb, DataFormat outJaxb)
             throws Exception {
         // lookup configurer
-        PropertyConfigurer configurer = camelContext.getCamelContextExtension().getConfigurerResolver()
+        PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
                 .resolvePropertyConfigurer("jaxb-dataformat-configurer", camelContext);
         if (configurer == null) {
             throw new IllegalStateException("Cannot find configurer for dataformat: jaxb");

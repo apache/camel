@@ -23,6 +23,7 @@ import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.LanguageResolver;
 
 public final class PluginHelper {
@@ -104,5 +105,19 @@ public final class PluginHelper {
      */
     public static LanguageResolver getLanguageResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(LanguageResolver.class);
+    }
+
+    /**
+     * Gets the {@link ConfigurerResolver} to use.
+     */
+    public static ConfigurerResolver getConfigurerResolver(CamelContext camelContext) {
+        return getConfigurerResolver(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link ConfigurerResolver} to use.
+     */
+    public static ConfigurerResolver getConfigurerResolver(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ConfigurerResolver.class);
     }
 }

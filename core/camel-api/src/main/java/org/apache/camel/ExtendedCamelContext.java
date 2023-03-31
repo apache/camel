@@ -683,16 +683,6 @@ public interface ExtendedCamelContext {
     void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog);
 
     /**
-     * Gets the {@link ConfigurerResolver} to use.
-     */
-    ConfigurerResolver getConfigurerResolver();
-
-    /**
-     * Sets the {@link ConfigurerResolver} to use.
-     */
-    void setConfigurerResolver(ConfigurerResolver configurerResolver);
-
-    /**
      * Gets the {@link UriFactoryResolver} to use.
      */
     UriFactoryResolver getUriFactoryResolver();

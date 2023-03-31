@@ -33,8 +33,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BootstrapConfigurerResolver": target.setBootstrapConfigurerResolver(property(camelContext, org.apache.camel.spi.ConfigurerResolver.class, value)); return true;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": target.setBootstrapFactoryFinder(property(camelContext, org.apache.camel.spi.FactoryFinder.class, value)); return true;
-        case "configurerresolver":
-        case "ConfigurerResolver": target.setConfigurerResolver(property(camelContext, org.apache.camel.spi.ConfigurerResolver.class, value)); return true;
         case "dataformatresolver":
         case "DataFormatResolver": target.setDataFormatResolver(property(camelContext, org.apache.camel.spi.DataFormatResolver.class, value)); return true;
         case "deferservicefactory":
@@ -122,8 +120,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BootstrapConfigurerResolver": return org.apache.camel.spi.ConfigurerResolver.class;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return org.apache.camel.spi.FactoryFinder.class;
-        case "configurerresolver":
-        case "ConfigurerResolver": return org.apache.camel.spi.ConfigurerResolver.class;
         case "dataformatresolver":
         case "DataFormatResolver": return org.apache.camel.spi.DataFormatResolver.class;
         case "deferservicefactory":
@@ -212,8 +208,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BootstrapConfigurerResolver": return target.getBootstrapConfigurerResolver();
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return target.getBootstrapFactoryFinder();
-        case "configurerresolver":
-        case "ConfigurerResolver": return target.getConfigurerResolver();
         case "dataformatresolver":
         case "DataFormatResolver": return target.getDataFormatResolver();
         case "deferservicefactory":

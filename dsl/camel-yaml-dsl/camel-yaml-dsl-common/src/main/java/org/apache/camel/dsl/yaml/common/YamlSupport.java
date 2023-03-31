@@ -34,6 +34,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.CamelContextCustomizer;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -75,7 +76,7 @@ public final class YamlSupport {
 
         if (configurer == null) {
             // see if there is a configurer for it
-            configurer = context.getCamelContextExtension().getConfigurerResolver()
+            configurer = PluginHelper.getConfigurerResolver(context)
                     .resolvePropertyConfigurer(target.getClass().getSimpleName(), context);
         }
 

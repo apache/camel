@@ -35,6 +35,7 @@ import org.apache.camel.Component;
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.IOHelper;
@@ -249,8 +250,7 @@ public final class MainHelper {
         if (targetConfigurer == null) {
             String name = target.getClass().getName();
             // see if there is a configurer for it
-            targetConfigurer = context.getCamelContextExtension()
-                    .getConfigurerResolver().resolvePropertyConfigurer(name, context);
+            targetConfigurer = PluginHelper.getConfigurerResolver(context).resolvePropertyConfigurer(name, context);
         }
 
         PropertyConfigurer sourceConfigurer = null;
@@ -262,8 +262,7 @@ public final class MainHelper {
         if (sourceConfigurer == null) {
             String name = source.getClass().getName();
             // see if there is a configurer for it
-            sourceConfigurer = context.getCamelContextExtension()
-                    .getConfigurerResolver().resolvePropertyConfigurer(name, context);
+            sourceConfigurer = PluginHelper.getConfigurerResolver(context).resolvePropertyConfigurer(name, context);
         }
 
         if (targetConfigurer != null && sourceConfigurer instanceof ExtendedPropertyConfigurerGetter) {

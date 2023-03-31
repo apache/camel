@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.support.PluginHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +60,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
         }
 
         // use reflection free configurer (if possible)
-        PropertyConfigurer configurer = context.getCamelContextExtension().getConfigurerResolver()
+        PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(componentConfiguration.getName(), context);
         if (configurer instanceof ExtendedPropertyConfigurerGetter) {
             ExtendedPropertyConfigurerGetter getter = (ExtendedPropertyConfigurerGetter) configurer;
@@ -105,7 +106,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
     }
 
     public void getEndpointProperties(CamelContext context, Object endpointConfiguration, Map<String, Object> properties) {
-        PropertyConfigurer configurer = context.getCamelContextExtension().getConfigurerResolver()
+        PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(endpointConfiguration.getClass().getName(), context);
         // use reflection free configurer (if possible)
         if (configurer instanceof ExtendedPropertyConfigurerGetter) {
@@ -141,7 +142,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
     public Set<String> getValidEndpointProperties(CamelContext context, Object endpointConfiguration) {
         Set<String> fields = new HashSet<>();
 
-        PropertyConfigurer configurer = context.getCamelContextExtension().getConfigurerResolver()
+        PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(endpointConfiguration.getClass().getName(), context);
         // use reflection free configurer (if possible)
         if (configurer instanceof ExtendedPropertyConfigurerGetter) {
@@ -162,7 +163,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
     }
 
     public void getConfigurationProperties(CamelContext context, Object endpointConfiguration, Map<String, Object> properties) {
-        PropertyConfigurer configurer = context.getCamelContextExtension().getConfigurerResolver()
+        PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(endpointConfiguration.getClass().getName(), context);
         // use reflection free configurer (if possible)
         if (configurer instanceof ExtendedPropertyConfigurerGetter) {

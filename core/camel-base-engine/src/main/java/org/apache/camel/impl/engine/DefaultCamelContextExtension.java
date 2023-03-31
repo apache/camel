@@ -246,21 +246,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         return camelContext.managementMBeanAssembler;
     }
 
-    public ConfigurerResolver getConfigurerResolver() {
-        if (camelContext.configurerResolver == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.configurerResolver == null) {
-                    setConfigurerResolver(camelContext.createConfigurerResolver());
-                }
-            }
-        }
-        return camelContext.configurerResolver;
-    }
-
-    public void setConfigurerResolver(ConfigurerResolver configurerResolver) {
-        camelContext.configurerResolver = camelContext.getInternalServiceManager().addService(configurerResolver);
-    }
-
     public UriFactoryResolver getUriFactoryResolver() {
         if (camelContext.uriFactoryResolver == null) {
             synchronized (camelContext.lock) {

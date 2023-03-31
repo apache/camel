@@ -27,6 +27,7 @@ import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 
 /**
@@ -113,7 +114,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
         final Map<String, Object> componentProperties = new HashMap<>();
         // copy component configuration, if set
         if (configuration != null) {
-            PropertyConfigurer configurer = getCamelContext().getCamelContextExtension().getConfigurerResolver()
+            PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(getCamelContext())
                     .resolvePropertyConfigurer(configuration.getClass().getName(), getCamelContext());
             // use reflection free configurer (if possible)
             if (configurer instanceof ExtendedPropertyConfigurerGetter) {
@@ -132,7 +133,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
 
         // create endpoint configuration with component properties
         final T endpointConfiguration = collection.getEndpointConfiguration(name);
-        PropertyConfigurer configurer = getCamelContext().getCamelContextExtension().getConfigurerResolver()
+        PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(getCamelContext())
                 .resolvePropertyConfigurer(endpointConfiguration.getClass().getName(), getCamelContext());
         PropertyBindingSupport.build()
                 .withConfigurer(configurer)
