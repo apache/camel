@@ -393,6 +393,7 @@
         <olingo2-version>2.0.11</olingo2-version>
         <olingo4-version>4.8.0</olingo4-version>
         <ognl-version>3.3.4</ognl-version>
+        <openapi-generator>6.2.1</openapi-generator>
         <openjpa-version>3.2.2</openjpa-version>
         <openstack4j-version>3.10</openstack4j-version>
         <opentelemetry-version>1.23.1</opentelemetry-version>
