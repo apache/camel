@@ -494,6 +494,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 for (Throwable t : suppressed) {
                     if (t == previous) {
                         found = true;
+                        break;
                     }
                 }
                 if (!found) {
@@ -983,6 +984,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 for (Throwable t : suppressed) {
                     if (t == previous) {
                         found = true;
+                        break;
                     }
                 }
                 if (!found) {
