@@ -111,6 +111,7 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
                         || parameter.isAnnotationPresent(ExchangeProperty.class)
                         || parameter.isAnnotationPresent(Body.class)) {
                     canUseBinding = true;
+                    break;
                 }
             }
         }

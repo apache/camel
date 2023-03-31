@@ -56,6 +56,7 @@ public class CalendarCalendarListIT extends AbstractGoogleCalendarTestSupport {
         for (CalendarListEntry calendarListEntry : items) {
             if (calendar.getSummary().equals(calendarListEntry.getSummary())) {
                 found = true;
+                break;
             }
         }
         return found;
