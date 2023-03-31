@@ -24,14 +24,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-import java.util.StringJoiner;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -67,6 +68,10 @@ abstract class ExportBaseCommand extends CamelCommand {
     @CommandLine.Option(names = { "--profile" }, scope = CommandLine.ScopeType.INHERIT, defaultValue = "application",
                         description = "Profile to use, which refers to loading properties file with the given profile name. By default application.properties is loaded.")
     protected String profile;
+
+    @CommandLine.Option(names = { "--repos" },
+                        description = "Additional maven repositories (Use commas to separate multiple repositories)")
+    protected String repos;
 
     @CommandLine.Option(names = {
             "--dep", "--deps" }, description = "Add additional dependencies (Use commas to separate multiple dependencies).")
@@ -546,12 +551,12 @@ abstract class ExportBaseCommand extends CamelCommand {
      * @param  camelVersion the camel version
      * @return              repositories or null if none are in use
      */
-    protected static String getMavenRepos(File settings, Properties prop, String camelVersion) throws Exception {
-        StringJoiner sj = new StringJoiner(",");
+    protected String getMavenRepos(File settings, Properties prop, String camelVersion) throws Exception {
+        Set<String> answer = new LinkedHashSet<>();
 
-        String repos = prop.getProperty("camel.jbang.repos");
-        if (repos != null) {
-            sj.add(repos);
+        String propRepos = prop.getProperty("camel.jbang.repos");
+        if (propRepos != null) {
+            answer.add(propRepos);
         }
 
         if (camelVersion == null) {
@@ -559,7 +564,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         }
         // include apache snapshot repo if we use SNAPSHOT version of Camel
         if (camelVersion.endsWith("-SNAPSHOT")) {
-            sj.add("https://repository.apache.org/content/groups/snapshots/");
+            answer.add("https://repository.apache.org/content/groups/snapshots/");
         }
 
         // there may be additional extra repositories
@@ -567,11 +572,15 @@ abstract class ExportBaseCommand extends CamelCommand {
         for (String line : lines) {
             if (line.startsWith("repository=")) {
                 String r = StringHelper.after(line, "repository=");
-                sj.add(r);
+                answer.add(r);
             }
         }
 
-        return sj.toString();
+        if (this.repos != null) {
+            Collections.addAll(answer, this.repos.split(","));
+        }
+
+        return String.join(",", answer);
     }
 
     protected static boolean hasModeline(File settings) {

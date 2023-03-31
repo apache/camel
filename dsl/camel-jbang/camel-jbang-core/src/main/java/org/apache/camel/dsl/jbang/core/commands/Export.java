@@ -88,6 +88,7 @@ public class Export extends ExportBaseCommand {
     protected Integer export(ExportBaseCommand cmd) throws Exception {
         // copy properties from this to cmd
         cmd.profile = this.profile;
+        cmd.repos = this.repos;
         cmd.dependencies = this.dependencies;
         cmd.runtime = this.runtime;
         cmd.gav = this.gav;
