@@ -750,6 +750,11 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
         camelContext.getCamelContextExtension().addContextPlugin(type, module);
     }
 
+    @Override
+    public <T> void lazyAddContextPlugin(Class<T> type, Supplier<T> module) {
+        camelContext.getCamelContextExtension().lazyAddContextPlugin(type, module);
+    }
+
     Endpoint doGetEndpoint(String uri, boolean normalized, boolean prototype) {
         StringHelper.notEmpty(uri, "uri");
         // in case path has property placeholders then try to let property

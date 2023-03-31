@@ -925,4 +925,15 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         final T addedModule = camelContext.getInternalServiceManager().addService(module);
         pluginManager.addContextPlugin(type, addedModule);
     }
+
+    @Override
+    public <T> void lazyAddContextPlugin(Class<T> type, Supplier<T> module) {
+        pluginManager.lazyAddContextPlugin(type, () -> lazyInitAndAdd(module));
+    }
+
+    private <T> T lazyInitAndAdd(Supplier<T> supplier) {
+        T module = supplier.get();
+
+        return camelContext.getInternalServiceManager().addService(module);
+    }
 }
