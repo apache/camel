@@ -47,7 +47,6 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PluginManager;
@@ -322,20 +321,6 @@ public interface ExtendedCamelContext {
      * @param devConsoleResolver the resolver
      */
     void setDevConsoleResolver(DevConsoleResolver devConsoleResolver);
-
-    /**
-     * Returns the package scanning resource resolver
-     *
-     * @return the resolver
-     */
-    PackageScanResourceResolver getPackageScanResourceResolver();
-
-    /**
-     * Sets the package scanning resource resolver to use
-     *
-     * @param resolver the resolver
-     */
-    void setPackageScanResourceResolver(PackageScanResourceResolver resolver);
 
     /**
      * Gets the default FactoryFinder which will be used for the loading the factory class from META-INF

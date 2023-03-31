@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.PluginHelper;
 
 public class DefaultComponentNameResolver implements ComponentNameResolver {
 
@@ -32,8 +33,7 @@ public class DefaultComponentNameResolver implements ComponentNameResolver {
     @Override
     public Set<String> resolveNames(CamelContext camelContext) {
         try {
-            return camelContext.getCamelContextExtension()
-                    .getPackageScanResourceResolver()
+            return PluginHelper.getPackageScanResourceResolver(camelContext)
                     .findResources(RESOURCE_PATH)
                     .stream()
                     .map(Resource::getLocation)

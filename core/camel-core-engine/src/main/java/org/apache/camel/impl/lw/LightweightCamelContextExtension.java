@@ -61,7 +61,6 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PluginManager;
@@ -262,16 +261,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PackageScanResourceResolver getPackageScanResourceResolver() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setPackageScanResourceResolver(PackageScanResourceResolver resolver) {
         throw new UnsupportedOperationException();
     }
 
