@@ -62,7 +62,6 @@ import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
-import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
@@ -366,23 +365,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public FactoryFinder getFactoryFinder(String path) {
         return factories.computeIfAbsent(path, camelContext::createFactoryFinder);
-    }
-
-    @Override
-    public ModelJAXBContextFactory getModelJAXBContextFactory() {
-        if (camelContext.modelJAXBContextFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.modelJAXBContextFactory == null) {
-                    setModelJAXBContextFactory(camelContext.createModelJAXBContextFactory());
-                }
-            }
-        }
-        return camelContext.modelJAXBContextFactory;
-    }
-
-    @Override
-    public void setModelJAXBContextFactory(final ModelJAXBContextFactory modelJAXBContextFactory) {
-        camelContext.modelJAXBContextFactory = camelContext.getInternalServiceManager().addService(modelJAXBContextFactory);
     }
 
     @Override

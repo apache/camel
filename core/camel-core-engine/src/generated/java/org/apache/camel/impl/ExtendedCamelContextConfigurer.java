@@ -57,8 +57,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "InternalProcessorFactory": target.setInternalProcessorFactory(property(camelContext, org.apache.camel.spi.InternalProcessorFactory.class, value)); return true;
         case "lightweight":
         case "Lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
-        case "modeljaxbcontextfactory":
-        case "ModelJAXBContextFactory": target.setModelJAXBContextFactory(property(camelContext, org.apache.camel.spi.ModelJAXBContextFactory.class, value)); return true;
         case "modeltoxmldumper":
         case "ModelToXMLDumper": target.setModelToXMLDumper(property(camelContext, org.apache.camel.spi.ModelToXMLDumper.class, value)); return true;
         case "modelinefactory":
@@ -134,8 +132,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "InternalProcessorFactory": return org.apache.camel.spi.InternalProcessorFactory.class;
         case "lightweight":
         case "Lightweight": return boolean.class;
-        case "modeljaxbcontextfactory":
-        case "ModelJAXBContextFactory": return org.apache.camel.spi.ModelJAXBContextFactory.class;
         case "modeltoxmldumper":
         case "ModelToXMLDumper": return org.apache.camel.spi.ModelToXMLDumper.class;
         case "modelinefactory":
@@ -212,8 +208,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "InternalProcessorFactory": return target.getInternalProcessorFactory();
         case "lightweight":
         case "Lightweight": return target.isLightweight();
-        case "modeljaxbcontextfactory":
-        case "ModelJAXBContextFactory": return target.getModelJAXBContextFactory();
         case "modeltoxmldumper":
         case "ModelToXMLDumper": return target.getModelToXMLDumper();
         case "modelinefactory":

@@ -43,7 +43,6 @@ import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
-import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
@@ -420,20 +419,6 @@ public interface ExtendedCamelContext {
      * @param routeFactory the custom factory
      */
     void setRouteFactory(RouteFactory routeFactory);
-
-    /**
-     * Returns the JAXB Context factory used to create Models.
-     *
-     * @return the JAXB Context factory used to create Models.
-     */
-    ModelJAXBContextFactory getModelJAXBContextFactory();
-
-    /**
-     * Sets a custom JAXB Context factory to be used
-     *
-     * @param modelJAXBContextFactory a JAXB Context factory
-     */
-    void setModelJAXBContextFactory(ModelJAXBContextFactory modelJAXBContextFactory);
 
     /**
      * Gets the {@link DeferServiceFactory} to use.
