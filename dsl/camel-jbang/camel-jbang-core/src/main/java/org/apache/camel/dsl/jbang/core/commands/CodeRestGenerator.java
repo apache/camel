@@ -57,7 +57,7 @@ public class CodeRestGenerator extends CamelCommand {
     @CommandLine.Option(names = { "-d", "--dto" }, description = "Data Objects")
     private boolean generateDataObjects;
     @CommandLine.Option(names = { "-run", "--runtime" }, description = "Runtime (quarkus, spring-boot)",
-            defaultValue = "quarkus")
+                        defaultValue = "quarkus")
     private String runtime;
     @CommandLine.Option(names = { "-p", "--package" }, description = "Package for generated models", defaultValue = "model")
     private String packageName;
