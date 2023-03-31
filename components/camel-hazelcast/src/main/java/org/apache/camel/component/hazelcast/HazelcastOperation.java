@@ -66,7 +66,7 @@ public enum HazelcastOperation {
     READ_ONCE_TAIL("readOnceTail"),
     CAPACITY("capacity");
 
-    private static HazelcastOperation[] values = values();
+    private static final HazelcastOperation[] VALUES = values();
     private final String operation;
 
     HazelcastOperation(String operation) {
@@ -77,7 +77,7 @@ public enum HazelcastOperation {
         if (name == null) {
             return null;
         }
-        for (HazelcastOperation hazelcastOperation : values) {
+        for (HazelcastOperation hazelcastOperation : VALUES) {
             if (hazelcastOperation.toString().equalsIgnoreCase(name) || hazelcastOperation.name().equalsIgnoreCase(name)) {
                 return hazelcastOperation;
             }

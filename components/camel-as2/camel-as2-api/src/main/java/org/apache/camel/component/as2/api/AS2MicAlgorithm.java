@@ -28,8 +28,8 @@ public enum AS2MicAlgorithm {
     SHA_1(Constants.SHA_1_JDK_ALGORITHM_NAME, Constants.SHA_1_AS2_ALGORITHM_NAME),
     MD5(Constants.MD5_JDK_ALGORITHM_NAME, Constants.MD5_AS2_ALGORITHM_NAME);
 
-    private String jdkAlgorithmName;
-    private String as2AlgorithmName;
+    private final String jdkAlgorithmName;
+    private final String as2AlgorithmName;
 
     private AS2MicAlgorithm(String jdkAlgorithmName, String as2AlgorithmName) {
         this.jdkAlgorithmName = jdkAlgorithmName;

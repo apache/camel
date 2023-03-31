@@ -117,7 +117,7 @@ public enum UriType {
      */
     URI50B(SystemQueryOption.$filter, SystemQueryOption.$orderby, SystemQueryOption.$skip, SystemQueryOption.$top);
 
-    private ArrayList<SystemQueryOption> whiteList = new ArrayList<>();
+    private final ArrayList<SystemQueryOption> whiteList = new ArrayList<>();
 
     UriType(final SystemQueryOption... compatibleQueryOptions) {
         for (SystemQueryOption queryOption : compatibleQueryOptions) {

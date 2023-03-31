@@ -53,8 +53,8 @@ public enum HL7Charset {
     UTF_32("UNICODE UTF-32", "UTF-32"),
     UTF_8("UNICODE UTF-8", "UTF-8");
 
-    private String hl7CharsetName;
-    private String javaCharsetName;
+    private final String hl7CharsetName;
+    private final String javaCharsetName;
 
     HL7Charset(String hl7CharsetName, String javaCharsetName) {
         this.hl7CharsetName = hl7CharsetName;
