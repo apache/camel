@@ -239,7 +239,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile AsyncProcessorAwaitManager asyncProcessorAwaitManager;
     volatile ModelJAXBContextFactory modelJAXBContextFactory;
     volatile UnitOfWorkFactory unitOfWorkFactory;
-    volatile ScheduledExecutorService errorHandlerExecutorService;
     volatile BeanIntrospection beanIntrospection;
     volatile boolean eventNotificationApplicable;
     volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
@@ -2926,10 +2925,10 @@ public abstract class AbstractCamelContext extends BaseService
         // the stop order is important
 
         // shutdown default error handler thread pool
+        final ScheduledExecutorService errorHandlerExecutorService = PluginHelper.getErrorHandlerExecutorService(this);
         if (errorHandlerExecutorService != null) {
             // force shutting down the thread pool
             getExecutorServiceManager().shutdownNow(errorHandlerExecutorService);
-            errorHandlerExecutorService = null;
         }
 
         // shutdown debugger

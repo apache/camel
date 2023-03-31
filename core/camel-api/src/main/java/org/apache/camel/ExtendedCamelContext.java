@@ -19,7 +19,6 @@ package org.apache.camel;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.console.DevConsoleResolver;
@@ -533,11 +532,6 @@ public interface ExtendedCamelContext {
      * Gets the {@link BeanProcessorFactory} to use.
      */
     BeanProcessorFactory getBeanProcessorFactory();
-
-    /**
-     * Gets the default shared thread pool for error handlers which leverages this for asynchronous redelivery tasks.
-     */
-    ScheduledExecutorService getErrorHandlerExecutorService();
 
     /**
      * Adds the given interceptor strategy

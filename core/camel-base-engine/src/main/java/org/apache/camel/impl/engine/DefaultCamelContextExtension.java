@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
@@ -305,19 +304,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
         this.errorHandlerFactory = errorHandlerFactory;
-    }
-
-    @Override
-    public ScheduledExecutorService getErrorHandlerExecutorService() {
-        if (camelContext.errorHandlerExecutorService == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.errorHandlerExecutorService == null) {
-                    // setup default thread pool for error handler
-                    camelContext.errorHandlerExecutorService = camelContext.createErrorHandlerExecutorService();
-                }
-            }
-        }
-        return camelContext.errorHandlerExecutorService;
     }
 
     @Override
