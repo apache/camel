@@ -29,7 +29,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
@@ -388,18 +387,6 @@ public interface ExtendedCamelContext {
      * @see         #getDefaultFactoryFinder()
      */
     FactoryFinder getBootstrapFactoryFinder(String path);
-
-    /**
-     * Gets the bootstrap {@link ConfigurerResolver} to use. This bootstrap resolver is only intended to be used during
-     * bootstrap (starting) CamelContext.
-     */
-    ConfigurerResolver getBootstrapConfigurerResolver();
-
-    /**
-     * sets the bootstrap {@link ConfigurerResolver} to use. This bootstrap resolver is only intended to be used during
-     * bootstrap (starting) CamelContext.
-     */
-    void setBootstrapConfigurerResolver(ConfigurerResolver configurerResolver);
 
     /**
      * Gets the FactoryFinder which will be used for the loading the factory class from META-INF in the given path

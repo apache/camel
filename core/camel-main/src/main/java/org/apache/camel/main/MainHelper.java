@@ -297,8 +297,7 @@ public final class MainHelper {
         if (configurer == null) {
             String name = target.getClass().getName();
             // see if there is a configurer for it (use bootstrap)
-            configurer = context.getCamelContextExtension()
-                    .getBootstrapConfigurerResolver().resolvePropertyConfigurer(name, context);
+            configurer = PluginHelper.getBootstrapConfigurerResolver(context).resolvePropertyConfigurer(name, context);
         }
 
         try {

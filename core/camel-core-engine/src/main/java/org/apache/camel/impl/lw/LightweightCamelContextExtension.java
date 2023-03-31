@@ -44,7 +44,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
@@ -290,16 +289,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public FactoryFinder getDefaultFactoryFinder() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ConfigurerResolver getBootstrapConfigurerResolver() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setBootstrapConfigurerResolver(ConfigurerResolver configurerResolver) {
         throw new UnsupportedOperationException();
     }
 

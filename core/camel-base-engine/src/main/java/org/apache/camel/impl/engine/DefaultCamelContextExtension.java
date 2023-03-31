@@ -43,7 +43,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DebuggerFactory;
@@ -336,25 +335,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public FactoryFinder getDefaultFactoryFinder() {
         return getFactoryFinder(FactoryFinder.DEFAULT_PATH);
-    }
-
-    @Override
-    public ConfigurerResolver getBootstrapConfigurerResolver() {
-        if (camelContext.bootstrapConfigurerResolver == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.bootstrapConfigurerResolver == null) {
-                    camelContext.bootstrapConfigurerResolver = new BootstrapConfigurerResolver(
-                            getFactoryFinderResolver().resolveBootstrapFactoryFinder(camelContext.getClassResolver(),
-                                    ConfigurerResolver.RESOURCE_PATH));
-                }
-            }
-        }
-        return camelContext.bootstrapConfigurerResolver;
-    }
-
-    @Override
-    public void setBootstrapConfigurerResolver(ConfigurerResolver configurerResolver) {
-        camelContext.bootstrapConfigurerResolver = configurerResolver;
     }
 
     @Override
