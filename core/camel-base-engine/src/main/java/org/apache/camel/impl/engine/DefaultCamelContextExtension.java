@@ -87,9 +87,9 @@ import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.UnitOfWorkFactory;
-import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.NormalizedUri;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -244,21 +244,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public ManagementMBeanAssembler getManagementMBeanAssembler() {
         return camelContext.managementMBeanAssembler;
-    }
-
-    public UriFactoryResolver getUriFactoryResolver() {
-        if (camelContext.uriFactoryResolver == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.uriFactoryResolver == null) {
-                    setUriFactoryResolver(camelContext.createUriFactoryResolver());
-                }
-            }
-        }
-        return camelContext.uriFactoryResolver;
-    }
-
-    public void setUriFactoryResolver(UriFactoryResolver uriFactoryResolver) {
-        camelContext.uriFactoryResolver = camelContext.getInternalServiceManager().addService(uriFactoryResolver);
     }
 
     @Override
@@ -982,7 +967,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public EndpointUriFactory getEndpointUriFactory(String scheme) {
-        return getUriFactoryResolver().resolveFactory(scheme, camelContext);
+        return PluginHelper.getUriFactoryResolver(this).resolveFactory(scheme, camelContext);
     }
 
     @Override

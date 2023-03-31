@@ -67,7 +67,6 @@ import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.UnitOfWorkFactory;
-import org.apache.camel.spi.UriFactoryResolver;
 
 /**
  * Extended {@link CamelContext} which contains the methods and APIs that are not primary intended for Camel end users
@@ -681,16 +680,6 @@ public interface ExtendedCamelContext {
      * Sets the {@link RuntimeCamelCatalog} to use.
      */
     void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog);
-
-    /**
-     * Gets the {@link UriFactoryResolver} to use.
-     */
-    UriFactoryResolver getUriFactoryResolver();
-
-    /**
-     * Sets the {@link UriFactoryResolver} to use.
-     */
-    void setUriFactoryResolver(UriFactoryResolver uriFactoryResolver);
 
     /**
      * Internal {@link RouteController} that are only used internally by Camel to perform basic route operations. Do not

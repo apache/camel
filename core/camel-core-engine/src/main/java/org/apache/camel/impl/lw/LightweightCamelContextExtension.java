@@ -83,7 +83,6 @@ import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.UnitOfWorkFactory;
-import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -760,16 +759,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
                 throw new UnsupportedOperationException();
             }
         };
-    }
-
-    @Override
-    public UriFactoryResolver getUriFactoryResolver() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setUriFactoryResolver(UriFactoryResolver uriFactoryResolver) {
-        throw new UnsupportedOperationException();
     }
 
     @Override

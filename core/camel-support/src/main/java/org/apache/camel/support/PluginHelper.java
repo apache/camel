@@ -25,6 +25,7 @@ import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.spi.UriFactoryResolver;
 
 public final class PluginHelper {
     private PluginHelper() {
@@ -119,5 +120,19 @@ public final class PluginHelper {
      */
     public static ConfigurerResolver getConfigurerResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(ConfigurerResolver.class);
+    }
+
+    /**
+     * Gets the {@link UriFactoryResolver} to use.
+     */
+    public static UriFactoryResolver getUriFactoryResolver(CamelContext camelContext) {
+        return getUriFactoryResolver(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link UriFactoryResolver} to use.
+     */
+    public static UriFactoryResolver getUriFactoryResolver(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(UriFactoryResolver.class);
     }
 }
