@@ -29,6 +29,7 @@ import org.apache.camel.builder.LambdaRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
@@ -169,8 +170,7 @@ public class DefaultRoutesCollector implements RoutesCollector {
             CamelContext camelContext,
             String excludePattern,
             String includePattern) {
-        final ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
-        final PackageScanResourceResolver resolver = ecc.getPackageScanResourceResolver();
+        final PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
         final String[] includes = includePattern != null ? includePattern.split(",") : null;
         final String[] excludes = excludePattern != null ? excludePattern.split(",") : null;
 

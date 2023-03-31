@@ -18,6 +18,7 @@ package org.apache.camel.impl.engine;
 
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,7 +27,7 @@ public class DefaultPackageScanResourceResolverTest {
     @Test
     public void testFileResourcesScan() throws Exception {
         final DefaultCamelContext ctx = new DefaultCamelContext();
-        final PackageScanResourceResolver resolver = ctx.getCamelContextExtension().getPackageScanResourceResolver();
+        final PackageScanResourceResolver resolver = PluginHelper.getPackageScanResourceResolver(ctx);
 
         assertThat(resolver.findResources("file:src/test/resources/org/apache/camel/impl/engine/**/*.xml"))
                 .hasSize(4)

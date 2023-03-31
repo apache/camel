@@ -310,7 +310,7 @@ public class KameletMain extends MainCommandLineSupport {
             ClassLoader dynamicCL = createApplicationContextClassLoader();
             answer.setApplicationContextClassLoader(dynamicCL);
             PluginHelper.getPackageScanClassResolver(answer).addClassLoader(dynamicCL);
-            answer.getCamelContextExtension().getPackageScanResourceResolver().addClassLoader(dynamicCL);
+            PluginHelper.getPackageScanResourceResolver(answer).addClassLoader(dynamicCL);
 
             KnownReposResolver known = new KnownReposResolver(camelContext);
             known.loadKnownDependencies();

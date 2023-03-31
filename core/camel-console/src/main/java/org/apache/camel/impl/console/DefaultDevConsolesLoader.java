@@ -24,6 +24,7 @@ import org.apache.camel.console.DevConsole;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,7 @@ public class DefaultDevConsolesLoader {
 
     public DefaultDevConsolesLoader(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.resolver = camelContext.getCamelContextExtension().getPackageScanResourceResolver();
+        this.resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
         this.devConsoleResolver = camelContext.getCamelContextExtension().getDevConsoleResolver();
     }
 

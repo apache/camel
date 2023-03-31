@@ -65,8 +65,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ModelineFactory": target.setModelineFactory(property(camelContext, org.apache.camel.spi.ModelineFactory.class, value)); return true;
         case "name":
         case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
-        case "packagescanresourceresolver":
-        case "PackageScanResourceResolver": target.setPackageScanResourceResolver(property(camelContext, org.apache.camel.spi.PackageScanResourceResolver.class, value)); return true;
         case "periodtaskresolver":
         case "PeriodTaskResolver": target.setPeriodTaskResolver(property(camelContext, org.apache.camel.spi.PeriodTaskResolver.class, value)); return true;
         case "periodtaskscheduler":
@@ -144,8 +142,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ModelineFactory": return org.apache.camel.spi.ModelineFactory.class;
         case "name":
         case "Name": return java.lang.String.class;
-        case "packagescanresourceresolver":
-        case "PackageScanResourceResolver": return org.apache.camel.spi.PackageScanResourceResolver.class;
         case "periodtaskresolver":
         case "PeriodTaskResolver": return org.apache.camel.spi.PeriodTaskResolver.class;
         case "periodtaskscheduler":
@@ -224,8 +220,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ModelineFactory": return target.getModelineFactory();
         case "name":
         case "Name": return target.getName();
-        case "packagescanresourceresolver":
-        case "PackageScanResourceResolver": return target.getPackageScanResourceResolver();
         case "periodtaskresolver":
         case "PeriodTaskResolver": return target.getPeriodTaskResolver();
         case "periodtaskscheduler":
