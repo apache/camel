@@ -37,4 +37,12 @@ public interface PluginManager {
      * @param module the instance of the extension
      */
     <T> void addContextPlugin(Class<T> type, T module);
+
+    /**
+     * Allows lazy installation of custom plugins to the Camel context.
+     *
+     * @param type   the type of the extension
+     * @param module the instance of the extension
+     */
+    <T> void lazyAddContextPlugin(Class<T> type, Supplier<T> module);
 }
