@@ -541,16 +541,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public ConfigurerResolver getConfigurerResolver() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setConfigurerResolver(ConfigurerResolver configurerResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void addRoute(Route route) {
         throw new UnsupportedOperationException();
     }

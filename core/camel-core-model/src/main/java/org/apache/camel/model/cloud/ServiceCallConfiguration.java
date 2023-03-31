@@ -36,6 +36,7 @@ import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.PluginHelper;
 
 @XmlType(name = "serviceCallConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -101,7 +102,7 @@ public abstract class ServiceCallConfiguration extends IdentifiedType {
     protected Map<String, Object> getConfiguredOptions(CamelContext context, Object target) {
         Map<String, Object> answer = new HashMap<>();
 
-        PropertyConfigurer configurer = context.getCamelContextExtension().getConfigurerResolver()
+        PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(target.getClass().getName(), context);
         // use reflection free configurer (if possible)
         if (configurer instanceof ExtendedPropertyConfigurerGetter) {

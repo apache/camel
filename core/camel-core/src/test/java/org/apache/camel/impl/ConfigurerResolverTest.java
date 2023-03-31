@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,7 @@ public class ConfigurerResolverTest extends ContextTestSupport {
 
     @Test
     public void testConfigurerResolver() throws Exception {
-        PropertyConfigurer resolver = context.getCamelContextExtension().getConfigurerResolver()
+        PropertyConfigurer resolver = PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(context.getClass().getName(), context);
         Assertions.assertNotNull(resolver);
 

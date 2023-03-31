@@ -30,6 +30,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerGetter;
 import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.support.PluginHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -128,7 +129,7 @@ public class MainAutowiredLifecycleStrategy extends LifecycleStrategySupport imp
     }
 
     private void autwire(String name, String kind, Object target) {
-        PropertyConfigurer pc = camelContext.getCamelContextExtension().getConfigurerResolver()
+        PropertyConfigurer pc = PluginHelper.getConfigurerResolver(camelContext)
                 .resolvePropertyConfigurer(name + "-" + kind, camelContext);
         if (pc instanceof PropertyConfigurerGetter) {
             PropertyConfigurerGetter getter = (PropertyConfigurerGetter) pc;

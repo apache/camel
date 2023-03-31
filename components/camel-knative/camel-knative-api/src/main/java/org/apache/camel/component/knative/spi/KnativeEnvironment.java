@@ -32,6 +32,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.Configurer;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.ResourceHelper;
 
@@ -143,7 +144,7 @@ public class KnativeEnvironment {
                 .withProperties(properties)
                 .withRemoveParameters(true)
                 .withConfigurer(
-                        econtext.getConfigurerResolver().resolvePropertyConfigurer(KnativeEnvironment.class.getName(), context))
+                        PluginHelper.getConfigurerResolver(econtext).resolvePropertyConfigurer(KnativeEnvironment.class.getName(), context))
                 .withMandatory(true)
                 .bind();
 

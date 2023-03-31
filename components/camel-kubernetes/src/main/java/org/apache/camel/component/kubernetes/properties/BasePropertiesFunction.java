@@ -33,6 +33,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.LocationHelper;
@@ -105,8 +106,8 @@ abstract class BasePropertiesFunction extends ServiceSupport implements Properti
             if (!properties.isEmpty()) {
                 ConfigBuilder config = new ConfigBuilder();
 
-                PropertyConfigurer configurer = camelContext.getCamelContextExtension()
-                        .getConfigurerResolver().resolvePropertyConfigurer(ConfigBuilder.class.getName(), camelContext);
+                PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
+                        .resolvePropertyConfigurer(ConfigBuilder.class.getName(), camelContext);
 
                 // use copy to keep track of which options was configureed or not
                 OrderedLocationProperties copy = new OrderedLocationProperties();

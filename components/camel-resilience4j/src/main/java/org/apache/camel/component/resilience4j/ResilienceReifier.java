@@ -37,6 +37,7 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.ExtendedPropertyConfigurerGetter;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.function.Suppliers;
 
@@ -176,8 +177,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
     Resilience4jConfigurationDefinition buildResilience4jConfiguration() throws Exception {
         Map<String, Object> properties = new HashMap<>();
 
-        final PropertyConfigurer configurer = camelContext.getCamelContextExtension()
-                .getConfigurerResolver()
+        final PropertyConfigurer configurer = PluginHelper.getConfigurerResolver(camelContext)
                 .resolvePropertyConfigurer(Resilience4jConfigurationDefinition.class.getName(), camelContext);
 
         // Extract properties from default configuration, the one configured on

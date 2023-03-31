@@ -55,8 +55,7 @@ public final class PropertyConfigurerHelper {
         if (configurer == null) {
             String name = target.getClass().getName();
             // see if there is a configurer for it
-            configurer = context.getCamelContextExtension()
-                    .getConfigurerResolver()
+            configurer = PluginHelper.getConfigurerResolver(context)
                     .resolvePropertyConfigurer(name, context);
         }
 
@@ -76,8 +75,7 @@ public final class PropertyConfigurerHelper {
 
         String name = targetType.getName();
         // see if there is a configurer for it
-        return context.getCamelContextExtension()
-                .getConfigurerResolver()
+        return PluginHelper.getConfigurerResolver(context)
                 .resolvePropertyConfigurer(name, context);
     }
 

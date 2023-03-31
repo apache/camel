@@ -72,6 +72,7 @@ import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.PropertyConfigurerAware;
 import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -332,7 +333,7 @@ public abstract class DataFormatReifier<T extends DataFormatDefinition> extends 
         }
         if (configurer == null) {
             String configurerName = name + "-dataformat-configurer";
-            configurer = camelContext.getCamelContextExtension().getConfigurerResolver()
+            configurer = PluginHelper.getConfigurerResolver(camelContext)
                     .resolvePropertyConfigurer(configurerName, camelContext);
         }
         return configurer;

@@ -72,6 +72,7 @@ import org.apache.camel.spi.RouteTemplateParameterSource;
 import org.apache.camel.spi.ScriptingLanguage;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.RouteTemplateHelper;
 import org.apache.camel.support.ScriptHelper;
@@ -720,8 +721,7 @@ public class DefaultModel implements Model {
 
         if (configurer == null) {
             // see if there is a configurer for it
-            configurer = context.getCamelContextExtension()
-                    .getConfigurerResolver()
+            configurer = PluginHelper.getConfigurerResolver(context)
                     .resolvePropertyConfigurer(target.getClass().getSimpleName(), context);
         }
 

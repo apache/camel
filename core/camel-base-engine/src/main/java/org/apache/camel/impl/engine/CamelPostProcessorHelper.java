@@ -50,6 +50,7 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.PropertyConfigurer;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -418,7 +419,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         String[] names = new String[] {
                 type.getName() + "-configurer", type.getSimpleName() + "-configurer", rootKey + "-configurer" };
         for (String n : names) {
-            configurer = ecc.getCamelContextExtension().getConfigurerResolver().resolvePropertyConfigurer(n, ecc);
+            configurer = PluginHelper.getConfigurerResolver(ecc).resolvePropertyConfigurer(n, ecc);
             if (configurer != null) {
                 break;
             }
