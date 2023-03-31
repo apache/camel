@@ -60,4 +60,11 @@ public class DefaultContextPluginManager implements PluginManager {
             }
         }
     }
+
+    @Override
+    public <T> void lazyAddContextPlugin(Class<T> type, Supplier<T> module) {
+        if (module != null) {
+            extensions.put(type, module);
+        }
+    }
 }

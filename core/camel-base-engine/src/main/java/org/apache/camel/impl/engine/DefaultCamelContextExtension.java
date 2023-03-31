@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
@@ -63,7 +64,6 @@ import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
-import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
@@ -365,23 +365,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public FactoryFinder getFactoryFinder(String path) {
         return factories.computeIfAbsent(path, camelContext::createFactoryFinder);
-    }
-
-    @Override
-    public ModelineFactory getModelineFactory() {
-        if (camelContext.modelineFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.modelineFactory == null) {
-                    setModelineFactory(camelContext.createModelineFactory());
-                }
-            }
-        }
-        return camelContext.modelineFactory;
-    }
-
-    @Override
-    public void setModelineFactory(ModelineFactory modelineFactory) {
-        camelContext.modelineFactory = camelContext.getInternalServiceManager().addService(modelineFactory);
     }
 
     @Override

@@ -17,6 +17,8 @@
 
 package org.apache.camel.spi;
 
+import java.util.function.Supplier;
+
 /**
  * A manager for internal plugins. This is part of the internal Camel API and not meant for public usage.
  */

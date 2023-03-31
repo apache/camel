@@ -59,8 +59,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
         case "modeltoxmldumper":
         case "ModelToXMLDumper": target.setModelToXMLDumper(property(camelContext, org.apache.camel.spi.ModelToXMLDumper.class, value)); return true;
-        case "modelinefactory":
-        case "ModelineFactory": target.setModelineFactory(property(camelContext, org.apache.camel.spi.ModelineFactory.class, value)); return true;
         case "name":
         case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "periodtaskresolver":
@@ -134,8 +132,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Lightweight": return boolean.class;
         case "modeltoxmldumper":
         case "ModelToXMLDumper": return org.apache.camel.spi.ModelToXMLDumper.class;
-        case "modelinefactory":
-        case "ModelineFactory": return org.apache.camel.spi.ModelineFactory.class;
         case "name":
         case "Name": return java.lang.String.class;
         case "periodtaskresolver":
@@ -210,8 +206,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Lightweight": return target.isLightweight();
         case "modeltoxmldumper":
         case "ModelToXMLDumper": return target.getModelToXMLDumper();
-        case "modelinefactory":
-        case "ModelineFactory": return target.getModelineFactory();
         case "name":
         case "Name": return target.getName();
         case "periodtaskresolver":

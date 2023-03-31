@@ -19,6 +19,7 @@ package org.apache.camel;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.console.DevConsoleResolver;
@@ -44,7 +45,6 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelToXMLDumper;
-import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
@@ -691,16 +691,6 @@ public interface ExtendedCamelContext {
      * @param basePackageScan the base package name
      */
     void setBasePackageScan(String basePackageScan);
-
-    /**
-     * Gets the {@link ModelineFactory}.
-     */
-    ModelineFactory getModelineFactory();
-
-    /**
-     * Sets a custom {@link ModelineFactory}.
-     */
-    void setModelineFactory(ModelineFactory modelineFactory);
 
     /**
      * The {@link CamelContext} have additional phases that are not defined in {@link ServiceStatus} and this method

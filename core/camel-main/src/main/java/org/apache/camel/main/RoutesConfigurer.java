@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RouteConfigurationsBuilder;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
@@ -262,8 +261,7 @@ public class RoutesConfigurer {
             throw RuntimeCamelException.wrapRuntimeException(e);
         }
 
-        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
-        ModelineFactory factory = ecc.getModelineFactory();
+        ModelineFactory factory = PluginHelper.getModelineFactory(camelContext);
 
         for (Resource resource : resources) {
             LOG.debug("Parsing modeline: {}", resource);
