@@ -53,7 +53,6 @@ import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
@@ -343,7 +342,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
             synchronized (camelContext.lock) {
                 if (camelContext.bootstrapFactoryFinder == null) {
                     camelContext.bootstrapFactoryFinder
-                            = getFactoryFinderResolver().resolveBootstrapFactoryFinder(camelContext.getClassResolver());
+                            = PluginHelper.getFactoryFinderResolver(this)
+                                    .resolveBootstrapFactoryFinder(camelContext.getClassResolver());
                 }
             }
         }
@@ -358,23 +358,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public FactoryFinder getBootstrapFactoryFinder(String path) {
         return camelContext.bootstrapFactories.computeIfAbsent(path, camelContext::createBootstrapFactoryFinder);
-    }
-
-    @Override
-    public FactoryFinderResolver getFactoryFinderResolver() {
-        if (camelContext.factoryFinderResolver == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.factoryFinderResolver == null) {
-                    camelContext.factoryFinderResolver = camelContext.createFactoryFinderResolver();
-                }
-            }
-        }
-        return camelContext.factoryFinderResolver;
-    }
-
-    @Override
-    public void setFactoryFinderResolver(FactoryFinderResolver factoryFinderResolver) {
-        camelContext.factoryFinderResolver = camelContext.getInternalServiceManager().addService(factoryFinderResolver);
     }
 
     @Override

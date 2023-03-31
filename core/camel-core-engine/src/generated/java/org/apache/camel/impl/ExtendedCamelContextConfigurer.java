@@ -47,8 +47,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactory": target.setExchangeFactory(property(camelContext, org.apache.camel.spi.ExchangeFactory.class, value)); return true;
         case "exchangefactorymanager":
         case "ExchangeFactoryManager": target.setExchangeFactoryManager(property(camelContext, org.apache.camel.spi.ExchangeFactoryManager.class, value)); return true;
-        case "factoryfinderresolver":
-        case "FactoryFinderResolver": target.setFactoryFinderResolver(property(camelContext, org.apache.camel.spi.FactoryFinderResolver.class, value)); return true;
         case "headersmapfactory":
         case "HeadersMapFactory": target.setHeadersMapFactory(property(camelContext, org.apache.camel.spi.HeadersMapFactory.class, value)); return true;
         case "healthcheckresolver":
@@ -130,8 +128,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactory": return org.apache.camel.spi.ExchangeFactory.class;
         case "exchangefactorymanager":
         case "ExchangeFactoryManager": return org.apache.camel.spi.ExchangeFactoryManager.class;
-        case "factoryfinderresolver":
-        case "FactoryFinderResolver": return org.apache.camel.spi.FactoryFinderResolver.class;
         case "headersmapfactory":
         case "HeadersMapFactory": return org.apache.camel.spi.HeadersMapFactory.class;
         case "healthcheckresolver":
@@ -214,8 +210,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactory": return target.getExchangeFactory();
         case "exchangefactorymanager":
         case "ExchangeFactoryManager": return target.getExchangeFactoryManager();
-        case "factoryfinderresolver":
-        case "FactoryFinderResolver": return target.getFactoryFinderResolver();
         case "headersmapfactory":
         case "HeadersMapFactory": return target.getHeadersMapFactory();
         case "healthcheckresolver":

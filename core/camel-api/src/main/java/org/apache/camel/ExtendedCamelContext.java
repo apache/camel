@@ -36,7 +36,6 @@ import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
@@ -395,20 +394,6 @@ public interface ExtendedCamelContext {
      * @return      the factory finder
      */
     FactoryFinder getFactoryFinder(String path);
-
-    /**
-     * Gets the factory finder resolver to use
-     *
-     * @return the factory finder resolver
-     */
-    FactoryFinderResolver getFactoryFinderResolver();
-
-    /**
-     * Sets the factory finder resolver to use.
-     *
-     * @param resolver the factory finder resolver
-     */
-    void setFactoryFinderResolver(FactoryFinderResolver resolver);
 
     /**
      * Gets the current {@link org.apache.camel.spi.ProcessorFactory}

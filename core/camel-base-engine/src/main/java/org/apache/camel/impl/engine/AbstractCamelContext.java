@@ -234,7 +234,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile InternalProcessorFactory internalProcessorFactory;
     volatile InterceptEndpointFactory interceptEndpointFactory;
     volatile RouteFactory routeFactory;
-    volatile FactoryFinderResolver factoryFinderResolver;
     volatile AsyncProcessorAwaitManager asyncProcessorAwaitManager;
     volatile ModelJAXBContextFactory modelJAXBContextFactory;
     volatile UnitOfWorkFactory unitOfWorkFactory;
@@ -384,6 +383,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.addContextPlugin(LanguageResolver.class, createLanguageResolver());
         camelContextExtension.addContextPlugin(ConfigurerResolver.class, createConfigurerResolver());
         camelContextExtension.addContextPlugin(UriFactoryResolver.class, createUriFactoryResolver());
+        camelContextExtension.addContextPlugin(FactoryFinderResolver.class, createFactoryFinderResolver());
 
         if (build) {
             try {
@@ -3262,7 +3262,6 @@ public abstract class AbstractCamelContext extends BaseService
         getClassResolver();
         camelContextExtension.getRegistry();
         camelContextExtension.getBootstrapFactoryFinder();
-        camelContextExtension.getFactoryFinderResolver();
         getTypeConverterRegistry();
         getInjector();
         camelContextExtension.getDefaultFactoryFinder();
@@ -3350,11 +3349,12 @@ public abstract class AbstractCamelContext extends BaseService
     }
 
     protected FactoryFinder createBootstrapFactoryFinder(String path) {
-        return camelContextExtension.getFactoryFinderResolver().resolveBootstrapFactoryFinder(getClassResolver(), path);
+        return PluginHelper.getFactoryFinderResolver(camelContextExtension).resolveBootstrapFactoryFinder(getClassResolver(),
+                path);
     }
 
     protected FactoryFinder createFactoryFinder(String path) {
-        return camelContextExtension.getFactoryFinderResolver().resolveFactoryFinder(getClassResolver(), path);
+        return PluginHelper.getFactoryFinderResolver(camelContextExtension).resolveFactoryFinder(getClassResolver(), path);
     }
 
     @Override
