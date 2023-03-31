@@ -78,7 +78,7 @@ public class Jt400Configuration {
          */
         SAME(MessageQueue.SAME);
 
-        private String jt400Value;
+        private final String jt400Value;
 
         private MessageAction(final String jt400Value) {
             this.jt400Value = jt400Value;
