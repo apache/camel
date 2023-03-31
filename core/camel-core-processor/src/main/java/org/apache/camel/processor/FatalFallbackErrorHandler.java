@@ -119,6 +119,7 @@ public class FatalFallbackErrorHandler extends DelegateAsyncProcessor implements
                             for (Throwable t : suppressed) {
                                 if (t == previous) {
                                     found = true;
+                                    break;
                                 }
                             }
                             if (!found) {
