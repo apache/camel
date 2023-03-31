@@ -144,7 +144,8 @@ public class KnativeEnvironment {
                 .withProperties(properties)
                 .withRemoveParameters(true)
                 .withConfigurer(
-                        PluginHelper.getConfigurerResolver(econtext).resolvePropertyConfigurer(KnativeEnvironment.class.getName(), context))
+                        PluginHelper.getConfigurerResolver(econtext)
+                                .resolvePropertyConfigurer(KnativeEnvironment.class.getName(), context))
                 .withMandatory(true)
                 .bind();
 
