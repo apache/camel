@@ -47,7 +47,6 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
@@ -323,20 +322,6 @@ public interface ExtendedCamelContext {
      * @param devConsoleResolver the resolver
      */
     void setDevConsoleResolver(DevConsoleResolver devConsoleResolver);
-
-    /**
-     * Returns the package scanning class resolver
-     *
-     * @return the resolver
-     */
-    PackageScanClassResolver getPackageScanClassResolver();
-
-    /**
-     * Sets the package scanning class resolver to use
-     *
-     * @param resolver the resolver
-     */
-    void setPackageScanClassResolver(PackageScanClassResolver resolver);
 
     /**
      * Returns the package scanning resource resolver

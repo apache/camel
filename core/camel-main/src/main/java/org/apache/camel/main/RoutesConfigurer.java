@@ -31,6 +31,7 @@ import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
@@ -153,8 +154,7 @@ public class RoutesConfigurer {
 
         if (getBasePackageScan() != null) {
             String[] pkgs = getBasePackageScan().split(",");
-            Set<Class<?>> set = camelContext.getCamelContextExtension()
-                    .getPackageScanClassResolver()
+            Set<Class<?>> set = PluginHelper.getPackageScanClassResolver(camelContext)
                     .findImplementations(RoutesBuilder.class, pkgs);
             for (Class<?> routeClazz : set) {
                 Object builder = camelContext.getInjector().newInstance(routeClazz);

@@ -22,6 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.SimpleTypeConverter;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ReflectionHelper;
@@ -97,7 +98,7 @@ public class DefaultMapStructFinder extends ServiceSupport implements MapStructM
         if (mapperPackageName != null) {
             String[] names = mapperPackageName.split(",");
             ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
-            var set = ecc.getPackageScanClassResolver()
+            var set = PluginHelper.getPackageScanClassResolver(ecc)
                     .findByFilter(f -> f.getName().endsWith("Mapper"), names);
             if (!set.isEmpty()) {
                 int converters = 0;

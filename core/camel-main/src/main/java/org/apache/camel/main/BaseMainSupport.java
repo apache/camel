@@ -268,7 +268,7 @@ public abstract class BaseMainSupport extends BaseService {
         // auto-detect camel configurations via base package scanning
         String basePackage = camelContext.getCamelContextExtension().getBasePackageScan();
         if (basePackage != null) {
-            PackageScanClassResolver pscr = camelContext.getCamelContextExtension().getPackageScanClassResolver();
+            PackageScanClassResolver pscr = PluginHelper.getPackageScanClassResolver(camelContext);
             Set<Class<?>> found1 = pscr.findImplementations(CamelConfiguration.class, basePackage);
             Set<Class<?>> found2 = pscr.findAnnotated(Configuration.class, basePackage);
             Set<Class<?>> found = new LinkedHashSet<>();

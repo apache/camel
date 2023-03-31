@@ -61,6 +61,7 @@ import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.startup.jfr.FlightRecorderStartupStepRecorder;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
@@ -308,7 +309,7 @@ public class KameletMain extends MainCommandLineSupport {
         if (download) {
             ClassLoader dynamicCL = createApplicationContextClassLoader();
             answer.setApplicationContextClassLoader(dynamicCL);
-            answer.getCamelContextExtension().getPackageScanClassResolver().addClassLoader(dynamicCL);
+            PluginHelper.getPackageScanClassResolver(answer).addClassLoader(dynamicCL);
             answer.getCamelContextExtension().getPackageScanResourceResolver().addClassLoader(dynamicCL);
 
             KnownReposResolver known = new KnownReposResolver(camelContext);

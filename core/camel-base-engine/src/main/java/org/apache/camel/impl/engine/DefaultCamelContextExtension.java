@@ -66,7 +66,6 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
@@ -368,23 +367,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public FactoryFinder getFactoryFinder(String path) {
         return factories.computeIfAbsent(path, camelContext::createFactoryFinder);
-    }
-
-    @Override
-    public PackageScanClassResolver getPackageScanClassResolver() {
-        if (camelContext.packageScanClassResolver == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.packageScanClassResolver == null) {
-                    setPackageScanClassResolver(camelContext.createPackageScanClassResolver());
-                }
-            }
-        }
-        return camelContext.packageScanClassResolver;
-    }
-
-    @Override
-    public void setPackageScanClassResolver(PackageScanClassResolver packageScanClassResolver) {
-        camelContext.packageScanClassResolver = camelContext.getInternalServiceManager().addService(packageScanClassResolver);
     }
 
     @Override

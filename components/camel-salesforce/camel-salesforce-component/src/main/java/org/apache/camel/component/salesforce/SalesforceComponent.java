@@ -42,6 +42,7 @@ import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelp
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -351,7 +352,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
 
     private Map<String, Class<?>> parsePackages() {
         Map<String, Class<?>> result = new HashMap<>();
-        Set<Class<?>> classes = getCamelContext().getCamelContextExtension().getPackageScanClassResolver()
+        Set<Class<?>> classes = PluginHelper.getPackageScanClassResolver(getCamelContext())
                 .findImplementations(AbstractDTOBase.class, getPackagesAsArray());
         for (Class<?> aClass : classes) {
             result.put(aClass.getSimpleName(), aClass);
@@ -362,7 +363,7 @@ public class SalesforceComponent extends DefaultComponent implements SSLContextP
     private Map<String, Class<?>> scanEventClasses() {
         Map<String, Class<?>> result = new HashMap<>();
 
-        Set<Class<?>> classes = getCamelContext().getCamelContextExtension().getPackageScanClassResolver()
+        Set<Class<?>> classes = PluginHelper.getPackageScanClassResolver(getCamelContext())
                 .findImplementations(SpecificRecord.class, SALESFORCE_EVENTBUS_PACKAGE);
         for (Class<?> aClass : classes) {
             result.put(aClass.getName(), aClass);
