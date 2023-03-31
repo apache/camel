@@ -66,7 +66,7 @@ public class BasePackageScanDownloadListener implements ArtifactDownloadListener
     protected void basePackageScanConfiguration(String basePackage, File file) throws Exception {
         Collection<CamelConfiguration> configs = new ArrayList<>();
         // we only want to scan via isolated classloader
-        PackageScanClassResolver pscr = camelContext.getCamelContextExtension().getPackageScanClassResolver();
+        PackageScanClassResolver pscr = PluginHelper.getPackageScanClassResolver(camelContext);
         Set<Class<?>> found1 = pscr.findImplementations(CamelConfiguration.class, basePackage);
         Set<Class<?>> found2 = pscr.findAnnotated(Configuration.class, basePackage);
         Set<Class<?>> found = new LinkedHashSet<>();

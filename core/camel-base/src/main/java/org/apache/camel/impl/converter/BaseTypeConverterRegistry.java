@@ -38,6 +38,7 @@ import org.apache.camel.TypeConverterLoaderException;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterLoader;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -286,7 +287,7 @@ public abstract class BaseTypeConverterRegistry extends CoreTypeConverterRegistr
             injector = camelContext.getInjector();
         }
         if (resolver == null && camelContext != null) {
-            resolver = camelContext.getCamelContextExtension().getPackageScanClassResolver();
+            resolver = PluginHelper.getPackageScanClassResolver(camelContext);
         }
 
         List<FallbackTypeConverter> fallbacks = new ArrayList<>();

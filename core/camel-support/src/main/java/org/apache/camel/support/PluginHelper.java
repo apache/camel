@@ -28,6 +28,7 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.UriFactoryResolver;
 
 public final class PluginHelper {
@@ -185,5 +186,23 @@ public final class PluginHelper {
      */
     public static FactoryFinderResolver getFactoryFinderResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(FactoryFinderResolver.class);
+    }
+
+    /**
+     * Returns the package scanning class resolver
+     *
+     * @return the resolver
+     */
+    public static PackageScanClassResolver getPackageScanClassResolver(CamelContext camelContext) {
+        return getPackageScanClassResolver(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Returns the package scanning class resolver
+     *
+     * @return the resolver
+     */
+    public static PackageScanClassResolver getPackageScanClassResolver(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(PackageScanClassResolver.class);
     }
 }

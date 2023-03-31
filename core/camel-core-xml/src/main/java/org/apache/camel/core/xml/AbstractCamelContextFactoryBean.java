@@ -202,7 +202,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         PackageScanClassResolver packageResolver = getBeanForType(PackageScanClassResolver.class);
         if (packageResolver != null) {
             LOG.info("Using custom PackageScanClassResolver: {}", packageResolver);
-            getContext().getCamelContextExtension().setPackageScanClassResolver(packageResolver);
+            getContext().getCamelContextExtension().addContextPlugin(PackageScanClassResolver.class, packageResolver);
         }
 
         // also set type converter registry as early as possible

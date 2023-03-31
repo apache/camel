@@ -53,6 +53,7 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.PluginHelper;
 
 @ManagedResource(description = "Managed CamelContext")
 public class ManagedCamelContext extends ManagedPerformanceCounter implements TimerListener, ManagedCamelContextMBean {
@@ -181,7 +182,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     @Override
     public String getPackageScanClassResolver() {
-        return context.getCamelContextExtension().getPackageScanClassResolver().getClass().getName();
+        return PluginHelper.getPackageScanClassResolver(context).getClass().getName();
     }
 
     @Override

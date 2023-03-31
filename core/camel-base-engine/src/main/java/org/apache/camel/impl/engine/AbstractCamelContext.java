@@ -224,7 +224,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ModelToXMLDumper modelToXMLDumper;
     volatile RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory;
     volatile RuntimeCamelCatalog runtimeCamelCatalog;
-    volatile PackageScanClassResolver packageScanClassResolver;
     volatile PackageScanResourceResolver packageScanResourceResolver;
     volatile ModelineFactory modelineFactory;
     volatile ProcessorFactory processorFactory;
@@ -380,6 +379,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.addContextPlugin(ConfigurerResolver.class, createConfigurerResolver());
         camelContextExtension.addContextPlugin(UriFactoryResolver.class, createUriFactoryResolver());
         camelContextExtension.addContextPlugin(FactoryFinderResolver.class, createFactoryFinderResolver());
+        camelContextExtension.addContextPlugin(PackageScanClassResolver.class, createPackageScanClassResolver());
 
         if (build) {
             try {
@@ -2657,7 +2657,7 @@ public abstract class AbstractCamelContext extends BaseService
             LOG.debug(
                     "Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}, RouteController={}",
                     getClassResolver(),
-                    camelContextExtension.getPackageScanClassResolver(), getApplicationContextClassLoader(),
+                    PluginHelper.getPackageScanClassResolver(camelContextExtension), getApplicationContextClassLoader(),
                     getRouteController());
         }
         if (isStreamCaching()) {
@@ -4163,10 +4163,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     public void setDataFormatResolver(DataFormatResolver dataFormatResolver) {
         camelContextExtension.setDataFormatResolver(dataFormatResolver);
-    }
-
-    public PackageScanClassResolver getPackageScanClassResolver() {
-        return camelContextExtension.getPackageScanClassResolver();
     }
 
     public FactoryFinder getBootstrapFactoryFinder() {
