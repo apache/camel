@@ -17,6 +17,8 @@
 
 package org.apache.camel.support;
 
+import java.util.concurrent.ScheduledExecutorService;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.CamelBeanPostProcessor;
@@ -134,5 +136,19 @@ public final class PluginHelper {
      */
     public static UriFactoryResolver getUriFactoryResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(UriFactoryResolver.class);
+    }
+
+    /**
+     * Gets the default shared thread pool for error handlers which leverages this for asynchronous redelivery tasks.
+     */
+    public static ScheduledExecutorService getErrorHandlerExecutorService(CamelContext camelContext) {
+        return getErrorHandlerExecutorService(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the default shared thread pool for error handlers which leverages this for asynchronous redelivery tasks.
+     */
+    public static ScheduledExecutorService getErrorHandlerExecutorService(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ScheduledExecutorService.class);
     }
 }

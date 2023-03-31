@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
@@ -421,11 +420,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public BeanProcessorFactory getBeanProcessorFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ScheduledExecutorService getErrorHandlerExecutorService() {
         throw new UnsupportedOperationException();
     }
 

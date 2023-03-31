@@ -18,6 +18,7 @@ package org.apache.camel.impl.engine;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -132,6 +133,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
         super.doBuild();
 
         getCamelContextExtension().addContextPlugin(CliConnectorFactory.class, createCliConnectorFactory());
+        getCamelContextExtension().addContextPlugin(ScheduledExecutorService.class, createErrorHandlerExecutorService());
     }
 
     @Override
