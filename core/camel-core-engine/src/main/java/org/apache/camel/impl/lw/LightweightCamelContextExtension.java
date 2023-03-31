@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -58,7 +59,6 @@ import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelToXMLDumper;
-import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
@@ -285,16 +285,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setProcessorFactory(ProcessorFactory processorFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ModelineFactory getModelineFactory() {
-        return camelContext.getCamelContextExtension().getModelineFactory();
-    }
-
-    @Override
-    public void setModelineFactory(ModelineFactory modelineFactory) {
         throw new UnsupportedOperationException();
     }
 
