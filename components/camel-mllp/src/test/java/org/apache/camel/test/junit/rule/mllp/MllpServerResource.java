@@ -1054,7 +1054,7 @@ public class MllpServerResource implements BeforeEachCallback, AfterEachCallback
                         instream = clientSocket.getInputStream();
                     } catch (IOException ioEx) {
                         if (clientSocket.isClosed()) {
-                            log.debug("Client socket was closed - ignoring exception", clientSocket);
+                            log.debug("Client socket was closed - ignoring exception");
                             break;
                         } else {
                             throw new MllpJUnitResourceException("Unexpected IOException encounted getting input stream", ioEx);
