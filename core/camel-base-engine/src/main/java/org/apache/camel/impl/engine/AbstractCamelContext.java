@@ -203,7 +203,6 @@ public abstract class AbstractCamelContext extends BaseService
     final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
     final Map<String, FactoryFinder> bootstrapFactories = new ConcurrentHashMap<>();
     volatile FactoryFinder bootstrapFactoryFinder;
-    volatile ConfigurerResolver bootstrapConfigurerResolver;
     final Object lock = new Object();
     final RouteController internalRouteController = new InternalRouteController(this);
     volatile DeferServiceFactory deferServiceFactory;
@@ -3267,7 +3266,6 @@ public abstract class AbstractCamelContext extends BaseService
         getTypeConverterRegistry();
         getInjector();
         camelContextExtension.getDefaultFactoryFinder();
-        camelContextExtension.getBootstrapConfigurerResolver();
         getPropertiesComponent();
 
         camelContextExtension.getDataFormatResolver();

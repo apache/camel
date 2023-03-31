@@ -151,4 +151,20 @@ public final class PluginHelper {
     public static ScheduledExecutorService getErrorHandlerExecutorService(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(ScheduledExecutorService.class);
     }
+
+    /**
+     * Gets the bootstrap {@link ConfigurerResolver} to use. This bootstrap resolver is only intended to be used during
+     * bootstrap (starting) CamelContext.
+     */
+    public static ConfigurerResolver getBootstrapConfigurerResolver(CamelContext camelContext) {
+        return getBootstrapConfigurerResolver(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the bootstrap {@link ConfigurerResolver} to use. This bootstrap resolver is only intended to be used during
+     * bootstrap (starting) CamelContext.
+     */
+    public static ConfigurerResolver getBootstrapConfigurerResolver(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ConfigurerResolver.class);
+    }
 }

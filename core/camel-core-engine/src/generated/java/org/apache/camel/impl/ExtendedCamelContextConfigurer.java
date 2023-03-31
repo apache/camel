@@ -29,8 +29,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "beanintrospection":
         case "BeanIntrospection": target.setBeanIntrospection(property(camelContext, org.apache.camel.spi.BeanIntrospection.class, value)); return true;
-        case "bootstrapconfigurerresolver":
-        case "BootstrapConfigurerResolver": target.setBootstrapConfigurerResolver(property(camelContext, org.apache.camel.spi.ConfigurerResolver.class, value)); return true;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": target.setBootstrapFactoryFinder(property(camelContext, org.apache.camel.spi.FactoryFinder.class, value)); return true;
         case "dataformatresolver":
@@ -114,8 +112,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BasePackageScan": return java.lang.String.class;
         case "beanintrospection":
         case "BeanIntrospection": return org.apache.camel.spi.BeanIntrospection.class;
-        case "bootstrapconfigurerresolver":
-        case "BootstrapConfigurerResolver": return org.apache.camel.spi.ConfigurerResolver.class;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return org.apache.camel.spi.FactoryFinder.class;
         case "dataformatresolver":
@@ -200,8 +196,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BasePackageScan": return target.getBasePackageScan();
         case "beanintrospection":
         case "BeanIntrospection": return target.getBeanIntrospection();
-        case "bootstrapconfigurerresolver":
-        case "BootstrapConfigurerResolver": return target.getBootstrapConfigurerResolver();
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return target.getBootstrapFactoryFinder();
         case "dataformatresolver":
