@@ -28,6 +28,7 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.UriFactoryResolver;
@@ -223,5 +224,23 @@ public final class PluginHelper {
      */
     public static PackageScanResourceResolver getPackageScanResourceResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(PackageScanResourceResolver.class);
+    }
+
+    /**
+     * Returns the JAXB Context factory used to create Models.
+     *
+     * @return the JAXB Context factory used to create Models.
+     */
+    public static ModelJAXBContextFactory getModelJAXBContextFactory(CamelContext camelContext) {
+        return getModelJAXBContextFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Returns the JAXB Context factory used to create Models.
+     *
+     * @return the JAXB Context factory used to create Models.
+     */
+    public static ModelJAXBContextFactory getModelJAXBContextFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ModelJAXBContextFactory.class);
     }
 }

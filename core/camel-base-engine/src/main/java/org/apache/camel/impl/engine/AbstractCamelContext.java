@@ -232,7 +232,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile InterceptEndpointFactory interceptEndpointFactory;
     volatile RouteFactory routeFactory;
     volatile AsyncProcessorAwaitManager asyncProcessorAwaitManager;
-    volatile ModelJAXBContextFactory modelJAXBContextFactory;
     volatile UnitOfWorkFactory unitOfWorkFactory;
     volatile BeanIntrospection beanIntrospection;
     volatile boolean eventNotificationApplicable;

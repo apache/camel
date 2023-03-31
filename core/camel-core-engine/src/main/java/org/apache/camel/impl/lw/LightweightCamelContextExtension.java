@@ -57,7 +57,6 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
-import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.NormalizedEndpointUri;
@@ -106,16 +105,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setRegistry(Registry registry) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ModelJAXBContextFactory getModelJAXBContextFactory() {
-        return camelContext.getCamelContextExtension().getModelJAXBContextFactory();
-    }
-
-    @Override
-    public void setModelJAXBContextFactory(ModelJAXBContextFactory modelJAXBContextFactory) {
         throw new UnsupportedOperationException();
     }
 

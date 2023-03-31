@@ -407,7 +407,7 @@ public final class DefaultConfigurationConfigurer {
         }
         ModelJAXBContextFactory mjcf = getSingleBeanOfType(registry, ModelJAXBContextFactory.class);
         if (mjcf != null) {
-            ecc.getCamelContextExtension().setModelJAXBContextFactory(mjcf);
+            ecc.getCamelContextExtension().addContextPlugin(ModelJAXBContextFactory.class, mjcf);
         }
         ClassResolver cr = getSingleBeanOfType(registry, ClassResolver.class);
         if (cr != null) {

@@ -57,6 +57,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.KeyValueHolder;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
@@ -68,7 +69,7 @@ public final class JaxbHelper {
     }
 
     public static JAXBContext getJAXBContext(CamelContext context) throws Exception {
-        return (JAXBContext) context.getCamelContextExtension().getModelJAXBContextFactory().newJAXBContext();
+        return (JAXBContext) PluginHelper.getModelJAXBContextFactory(context).newJAXBContext();
     }
 
     /**

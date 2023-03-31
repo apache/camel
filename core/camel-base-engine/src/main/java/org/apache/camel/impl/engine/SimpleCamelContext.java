@@ -135,6 +135,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
 
         getCamelContextExtension().addContextPlugin(CliConnectorFactory.class, createCliConnectorFactory());
         getCamelContextExtension().addContextPlugin(ScheduledExecutorService.class, createErrorHandlerExecutorService());
+        getCamelContextExtension().addContextPlugin(ModelJAXBContextFactory.class, createModelJAXBContextFactory());
     }
 
     @Override

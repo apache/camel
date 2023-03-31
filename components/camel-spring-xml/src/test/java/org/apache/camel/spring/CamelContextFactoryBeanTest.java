@@ -20,6 +20,7 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.spring.xml.CamelContextFactoryBean;
 import org.apache.camel.support.DefaultUuidGenerator;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.xml.jaxb.DefaultModelJAXBContextFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,7 +69,7 @@ public class CamelContextFactoryBeanTest {
         factory.afterPropertiesSet();
 
         ModelJAXBContextFactory modelJAXBContextFactory
-                = factory.getContext().getCamelContextExtension().getModelJAXBContextFactory();
+                = PluginHelper.getModelJAXBContextFactory(factory.getContext());
 
         assertTrue(modelJAXBContextFactory instanceof CustomModelJAXBContextFactory);
     }
