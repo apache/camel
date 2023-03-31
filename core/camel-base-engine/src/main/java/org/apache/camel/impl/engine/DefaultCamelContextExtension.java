@@ -98,6 +98,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private final List<InterceptStrategy> interceptStrategies = new ArrayList<>();
     private final Map<String, FactoryFinder> factories = new ConcurrentHashMap<>();
+    private final Map<String, FactoryFinder> bootstrapFactories = new ConcurrentHashMap<>();
     private final Set<LogListener> logListeners = new LinkedHashSet<>();
     private final PluginManager pluginManager = new DefaultContextPluginManager();
     private volatile String description;
@@ -105,6 +106,10 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private ErrorHandlerFactory errorHandlerFactory;
     private String basePackageScan;
     private boolean lightweight;
+
+    private final Object lock = new Object();
+
+    private volatile FactoryFinder bootstrapFactoryFinder;
 
     public DefaultCamelContextExtension(AbstractCamelContext camelContext) {
         this.camelContext = camelContext;
@@ -338,26 +343,26 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public FactoryFinder getBootstrapFactoryFinder() {
-        if (camelContext.bootstrapFactoryFinder == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.bootstrapFactoryFinder == null) {
-                    camelContext.bootstrapFactoryFinder
+        if (bootstrapFactoryFinder == null) {
+            synchronized (lock) {
+                if (bootstrapFactoryFinder == null) {
+                    bootstrapFactoryFinder
                             = PluginHelper.getFactoryFinderResolver(this)
                                     .resolveBootstrapFactoryFinder(camelContext.getClassResolver());
                 }
             }
         }
-        return camelContext.bootstrapFactoryFinder;
+        return bootstrapFactoryFinder;
     }
 
     @Override
     public void setBootstrapFactoryFinder(FactoryFinder factoryFinder) {
-        camelContext.bootstrapFactoryFinder = factoryFinder;
+        bootstrapFactoryFinder = factoryFinder;
     }
 
     @Override
     public FactoryFinder getBootstrapFactoryFinder(String path) {
-        return camelContext.bootstrapFactories.computeIfAbsent(path, camelContext::createBootstrapFactoryFinder);
+        return bootstrapFactories.computeIfAbsent(path, camelContext::createBootstrapFactoryFinder);
     }
 
     @Override
