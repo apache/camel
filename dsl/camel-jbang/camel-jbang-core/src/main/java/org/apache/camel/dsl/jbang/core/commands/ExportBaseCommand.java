@@ -178,6 +178,44 @@ abstract class ExportBaseCommand extends CamelCommand {
         return profile;
     }
 
+    protected static String mavenRepositoriesAsPomXml(String repos) {
+        StringBuilder sb = new StringBuilder();
+        int i = 1;
+        sb.append("    <repositories>\n");
+        for (String repo : repos.split(",")) {
+            sb.append("        <repository>\n");
+            sb.append("            <id>custom").append(i++).append("</id>\n");
+            sb.append("            <url>").append(repo).append("</url>\n");
+            if (repo.contains("snapshots")) {
+                sb.append("            <releases>\n");
+                sb.append("                <enabled>false</enabled>\n");
+                sb.append("            </releases>\n");
+                sb.append("            <snapshots>\n");
+                sb.append("                <enabled>true</enabled>\n");
+                sb.append("            </snapshots>\n");
+            }
+            sb.append("        </repository>\n");
+        }
+        sb.append("    </repositories>\n");
+        sb.append("    <pluginRepositories>\n");
+        for (String repo : repos.split(",")) {
+            sb.append("        <pluginRepository>\n");
+            sb.append("            <id>custom").append(i++).append("</id>\n");
+            sb.append("            <url>").append(repo).append("</url>\n");
+            if (repo.contains("snapshots")) {
+                sb.append("            <releases>\n");
+                sb.append("                <enabled>false</enabled>\n");
+                sb.append("            </releases>\n");
+                sb.append("            <snapshots>\n");
+                sb.append("                <enabled>true</enabled>\n");
+                sb.append("            </snapshots>\n");
+            }
+            sb.append("        </pluginRepository>\n");
+        }
+        sb.append("    </pluginRepositories>\n");
+        return sb.toString();
+    }
+
     protected abstract Integer export() throws Exception;
 
     protected static String getScheme(String name) {
