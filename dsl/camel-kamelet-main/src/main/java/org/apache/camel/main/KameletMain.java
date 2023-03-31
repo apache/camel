@@ -59,6 +59,7 @@ import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.startup.jfr.FlightRecorderStartupStepRecorder;
 import org.apache.camel.support.service.ServiceHelper;
 
@@ -445,7 +446,8 @@ public class KameletMain extends MainCommandLineSupport {
             answer.setClassResolver(new DependencyDownloaderClassResolver(answer, known));
             answer.getCamelContextExtension().addContextPlugin(ComponentResolver.class,
                     new DependencyDownloaderComponentResolver(answer, stub));
-            answer.getCamelContextExtension().setUriFactoryResolver(new DependencyDownloaderUriFactoryResolver(answer));
+            answer.getCamelContextExtension().addContextPlugin(UriFactoryResolver.class,
+                    new DependencyDownloaderUriFactoryResolver(answer));
             answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer));
             answer.getCamelContextExtension().addContextPlugin(LanguageResolver.class, new DependencyDownloaderLanguageResolver(answer));
             answer.setResourceLoader(new DependencyDownloaderResourceLoader(answer));

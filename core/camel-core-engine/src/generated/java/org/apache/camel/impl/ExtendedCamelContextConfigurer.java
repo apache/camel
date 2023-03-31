@@ -99,8 +99,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "StartupStepRecorder": target.setStartupStepRecorder(property(camelContext, org.apache.camel.spi.StartupStepRecorder.class, value)); return true;
         case "unitofworkfactory":
         case "UnitOfWorkFactory": target.setUnitOfWorkFactory(property(camelContext, org.apache.camel.spi.UnitOfWorkFactory.class, value)); return true;
-        case "urifactoryresolver":
-        case "UriFactoryResolver": target.setUriFactoryResolver(property(camelContext, org.apache.camel.spi.UriFactoryResolver.class, value)); return true;
         default: return false;
         }
     }
@@ -186,8 +184,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "StartupStepRecorder": return org.apache.camel.spi.StartupStepRecorder.class;
         case "unitofworkfactory":
         case "UnitOfWorkFactory": return org.apache.camel.spi.UnitOfWorkFactory.class;
-        case "urifactoryresolver":
-        case "UriFactoryResolver": return org.apache.camel.spi.UriFactoryResolver.class;
         default: return null;
         }
     }
@@ -274,8 +270,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "StartupStepRecorder": return target.getStartupStepRecorder();
         case "unitofworkfactory":
         case "UnitOfWorkFactory": return target.getUnitOfWorkFactory();
-        case "urifactoryresolver":
-        case "UriFactoryResolver": return target.getUriFactoryResolver();
         default: return null;
         }
     }
