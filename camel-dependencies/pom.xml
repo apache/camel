@@ -403,7 +403,7 @@
         <openstack4j-version>3.10</openstack4j-version>
         <opentelemetry-version>1.23.1</opentelemetry-version>
         <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
-        <optaplanner-version>8.32.0.Final</optaplanner-version>
+        <optaplanner-version>9.37.0.Final</optaplanner-version>
         <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
         <paho-version>1.2.5</paho-version>
         <partial-build-plugin-version>2.7</partial-build-plugin-version>
