@@ -79,7 +79,7 @@
         <axiom-version>1.2.14</axiom-version>
         <azure-sdk-bom-version>1.2.11</azure-sdk-bom-version>
         <azure-storage-blob-changefeed-version>12.0.0-beta.18</azure-storage-blob-changefeed-version>
-        <bouncycastle-version>1.71</bouncycastle-version>
+        <bouncycastle-version>1.72</bouncycastle-version>
         <box-java-sdk-version>2.58.0</box-java-sdk-version>
         <braintree-gateway-version>3.21.0</braintree-gateway-version>
         <build-helper-maven-plugin-version>3.2.0</build-helper-maven-plugin-version>
