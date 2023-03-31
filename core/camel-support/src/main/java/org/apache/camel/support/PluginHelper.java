@@ -26,6 +26,7 @@ import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
+import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.UriFactoryResolver;
 
@@ -166,5 +167,23 @@ public final class PluginHelper {
      */
     public static ConfigurerResolver getBootstrapConfigurerResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(ConfigurerResolver.class);
+    }
+
+    /**
+     * Gets the factory finder resolver to use
+     *
+     * @return the factory finder resolver
+     */
+    public static FactoryFinderResolver getFactoryFinderResolver(CamelContext camelContext) {
+        return getFactoryFinderResolver(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the factory finder resolver to use
+     *
+     * @return the factory finder resolver
+     */
+    public static FactoryFinderResolver getFactoryFinderResolver(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(FactoryFinderResolver.class);
     }
 }

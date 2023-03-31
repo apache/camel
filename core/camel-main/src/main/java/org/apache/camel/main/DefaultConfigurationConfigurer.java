@@ -415,7 +415,7 @@ public final class DefaultConfigurationConfigurer {
         }
         FactoryFinderResolver ffr = getSingleBeanOfType(registry, FactoryFinderResolver.class);
         if (ffr != null) {
-            ecc.getCamelContextExtension().setFactoryFinderResolver(ffr);
+            ecc.getCamelContextExtension().addContextPlugin(FactoryFinderResolver.class, ffr);
         }
         RouteController rc = getSingleBeanOfType(registry, RouteController.class);
         if (rc != null) {

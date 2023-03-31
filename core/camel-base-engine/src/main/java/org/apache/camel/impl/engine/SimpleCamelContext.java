@@ -92,6 +92,7 @@ import org.apache.camel.spi.ValidatorRegistry;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.DefaultUuidGenerator;
 import org.apache.camel.support.NormalizedUri;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResolverHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -270,7 +271,7 @@ public class SimpleCamelContext extends AbstractCamelContext {
     @Override
     protected PeriodTaskResolver createPeriodTaskResolver() {
         // we need a factory finder
-        FactoryFinder finder = getCamelContextExtension().getFactoryFinderResolver()
+        FactoryFinder finder = PluginHelper.getFactoryFinderResolver(getCamelContextExtension())
                 .resolveBootstrapFactoryFinder(getClassResolver(), PeriodTaskResolver.RESOURCE_PATH);
         return new DefaultPeriodTaskResolver(finder);
     }

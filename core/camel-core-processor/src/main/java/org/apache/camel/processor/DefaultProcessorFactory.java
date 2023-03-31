@@ -33,6 +33,7 @@ import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.PluginHelper;
 
 /**
  * Default {@link ProcessorFactory} that supports using 3rd party Camel components to implement the EIP
@@ -63,7 +64,7 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
     public Processor createChildProcessor(Route route, NamedNode definition, boolean mandatory) throws Exception {
         String name = definition.getClass().getSimpleName();
         if (finder == null) {
-            finder = route.getCamelContext().getCamelContextExtension().getFactoryFinderResolver()
+            finder = PluginHelper.getFactoryFinderResolver(route.getCamelContext())
                     .resolveBootstrapFactoryFinder(route.getCamelContext().getClassResolver(), RESOURCE_PATH);
         }
         try {
@@ -85,7 +86,7 @@ public class DefaultProcessorFactory implements ProcessorFactory, BootstrapClose
     public Processor createProcessor(Route route, NamedNode definition) throws Exception {
         String name = definition.getClass().getSimpleName();
         if (finder == null) {
-            finder = route.getCamelContext().getCamelContextExtension().getFactoryFinderResolver()
+            finder = PluginHelper.getFactoryFinderResolver(route.getCamelContext())
                     .resolveBootstrapFactoryFinder(route.getCamelContext().getClassResolver(), RESOURCE_PATH);
         }
         ProcessorFactory pc = finder.newInstance(name, ProcessorFactory.class).orElse(null);
