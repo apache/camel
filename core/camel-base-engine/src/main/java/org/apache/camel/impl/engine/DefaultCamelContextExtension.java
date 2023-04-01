@@ -38,7 +38,6 @@ import org.apache.camel.Service;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
-import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DebuggerFactory;
@@ -587,18 +586,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     public void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory) {
         camelContext.annotationBasedProcessorFactory = annotationBasedProcessorFactory;
-    }
-
-    @Override
-    public BeanProxyFactory getBeanProxyFactory() {
-        if (camelContext.beanProxyFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.beanProxyFactory == null) {
-                    camelContext.setBeanProxyFactory(camelContext.createBeanProxyFactory());
-                }
-            }
-        }
-        return camelContext.beanProxyFactory;
     }
 
     @Override

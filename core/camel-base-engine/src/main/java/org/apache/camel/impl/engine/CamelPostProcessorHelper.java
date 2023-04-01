@@ -254,8 +254,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                     // lets create a proxy
                     try {
                         // use proxy service
-                        BeanProxyFactory factory
-                                = endpoint.getCamelContext().getCamelContextExtension().getBeanProxyFactory();
+                        BeanProxyFactory factory = PluginHelper.getBeanProxyFactory(endpoint.getCamelContext());
                         return factory.createProxy(endpoint, binding, type);
                     } catch (Exception e) {
                         throw createProxyInstantiationRuntimeException(type, endpoint, e);

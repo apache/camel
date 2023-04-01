@@ -25,7 +25,6 @@ import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
-import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
@@ -341,11 +340,6 @@ public interface ExtendedCamelContext {
     void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory);
 
     /**
-     * Gets the {@link BeanProxyFactory} to use.
-     */
-    BeanProxyFactory getBeanProxyFactory();
-
-    /**
      * Gets the {@link BeanProcessorFactory} to use.
      */
     BeanProcessorFactory getBeanProcessorFactory();
@@ -459,7 +453,6 @@ public interface ExtendedCamelContext {
      */
     EndpointUriFactory getEndpointUriFactory(String scheme);
 
-
     /**
      * Gets the {@link RuntimeCamelCatalog} if available on the classpath.
      */
@@ -467,6 +460,7 @@ public interface ExtendedCamelContext {
     default RuntimeCamelCatalog getRuntimeCamelCatalog() {
         return getContextPlugin(RuntimeCamelCatalog.class);
     }
+
     /**
      * Gets the {@link StartupStepRecorder} to use.
      */

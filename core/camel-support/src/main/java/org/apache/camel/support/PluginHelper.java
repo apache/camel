@@ -25,6 +25,7 @@ import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ComponentNameResolver;
@@ -485,6 +486,19 @@ public final class PluginHelper {
     public static RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory(
             ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(RestBindingJaxbDataFormatFactory.class);
+    }
 
+    /**
+     * Gets the {@link BeanProxyFactory} to use.
+     */
+    public static BeanProxyFactory getBeanProxyFactory(CamelContext camelContext) {
+        return getBeanProxyFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link BeanProxyFactory} to use.
+     */
+    public static BeanProxyFactory getBeanProxyFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(BeanProxyFactory.class);
     }
 }

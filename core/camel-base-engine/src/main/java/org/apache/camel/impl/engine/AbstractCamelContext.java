@@ -214,7 +214,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ManagementStrategy managementStrategy;
     volatile ManagementMBeanAssembler managementMBeanAssembler;
     volatile HeadersMapFactory headersMapFactory;
-    volatile BeanProxyFactory beanProxyFactory;
     volatile BeanProcessorFactory beanProcessorFactory;
     volatile ResourceLoader resourceLoader;
     volatile ModelToXMLDumper modelToXMLDumper;
@@ -379,6 +378,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(RoutesLoader.class, this::createRoutesLoader);
         camelContextExtension.lazyAddContextPlugin(AsyncProcessorAwaitManager.class, this::createAsyncProcessorAwaitManager);
         camelContextExtension.lazyAddContextPlugin(RuntimeCamelCatalog.class, this::createRuntimeCamelCatalog);
+        camelContextExtension.lazyAddContextPlugin(BeanProxyFactory.class, this::createBeanProxyFactory);
 
         if (build) {
             try {
@@ -3943,10 +3943,6 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setStartupSummaryLevel(StartupSummaryLevel startupSummaryLevel) {
         this.startupSummaryLevel = startupSummaryLevel;
-    }
-
-    public void setBeanProxyFactory(BeanProxyFactory beanProxyFactory) {
-        this.beanProxyFactory = internalServiceManager.addService(beanProxyFactory);
     }
 
     public void setBeanProcessorFactory(BeanProcessorFactory beanProcessorFactory) {
