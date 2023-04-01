@@ -501,23 +501,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public RuntimeCamelCatalog getRuntimeCamelCatalog() {
-        if (camelContext.runtimeCamelCatalog == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.runtimeCamelCatalog == null) {
-                    setRuntimeCamelCatalog(camelContext.createRuntimeCamelCatalog());
-                }
-            }
-        }
-        return camelContext.runtimeCamelCatalog;
-    }
-
-    @Override
-    public void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog) {
-        camelContext.runtimeCamelCatalog = camelContext.getInternalServiceManager().addService(runtimeCamelCatalog);
-    }
-
-    @Override
     public ExchangeFactory getExchangeFactory() {
         if (camelContext.exchangeFactory == null) {
             synchronized (camelContext.lock) {

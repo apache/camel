@@ -460,16 +460,6 @@ public interface ExtendedCamelContext {
     void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory);
 
     /**
-     * Gets the {@link RuntimeCamelCatalog} if available on the classpath.
-     */
-    RuntimeCamelCatalog getRuntimeCamelCatalog();
-
-    /**
-     * Sets the {@link RuntimeCamelCatalog} to use.
-     */
-    void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog);
-
-    /**
      * Internal {@link RouteController} that are only used internally by Camel to perform basic route operations. Do not
      * use this as end user.
      */
@@ -480,6 +470,14 @@ public interface ExtendedCamelContext {
      */
     EndpointUriFactory getEndpointUriFactory(String scheme);
 
+
+    /**
+     * Gets the {@link RuntimeCamelCatalog} if available on the classpath.
+     */
+    @Deprecated
+    default RuntimeCamelCatalog getRuntimeCamelCatalog() {
+        return getContextPlugin(RuntimeCamelCatalog.class);
+    }
     /**
      * Gets the {@link StartupStepRecorder} to use.
      */
