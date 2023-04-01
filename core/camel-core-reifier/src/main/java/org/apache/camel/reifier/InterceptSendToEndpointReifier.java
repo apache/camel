@@ -26,6 +26,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.InterceptSendToEndpointCallback;
+import org.apache.camel.support.PluginHelper;
 
 public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSendToEndpointDefinition> {
 
@@ -43,7 +44,7 @@ public class InterceptSendToEndpointReifier extends ProcessorReifier<InterceptSe
         if (afterUri != null) {
             ToDefinition to = new ToDefinition(afterUri);
             // at first use custom factory
-            afterProcessor = camelContext.getCamelContextExtension().getProcessorFactory().createProcessor(route, to);
+            afterProcessor = PluginHelper.getProcessorFactory(camelContext).createProcessor(route, to);
             // fallback to default implementation if factory did not create the processor
             if (afterProcessor == null) {
                 afterProcessor = createProcessor(to);

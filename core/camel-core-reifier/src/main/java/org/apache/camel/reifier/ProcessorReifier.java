@@ -115,9 +115,11 @@ import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
+import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ReifierStrategy;
 import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -572,8 +574,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     protected Processor createChildProcessor(boolean mandatory) throws Exception {
         Processor children = null;
         // at first use custom factory
-        if (camelContext.getCamelContextExtension().getProcessorFactory() != null) {
-            children = camelContext.getCamelContextExtension().getProcessorFactory().createChildProcessor(route,
+        final ProcessorFactory processorFactory = PluginHelper.getProcessorFactory(camelContext);
+        if (processorFactory != null) {
+            children = processorFactory.createChildProcessor(route,
                     definition, mandatory);
         }
         // fallback to default implementation if factory did not create the
@@ -820,8 +823,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
 
         Processor processor = null;
         // at first use custom factory
-        if (camelContext.getCamelContextExtension().getProcessorFactory() != null) {
-            processor = camelContext.getCamelContextExtension().getProcessorFactory().createProcessor(route, output);
+        final ProcessorFactory processorFactory = PluginHelper.getProcessorFactory(camelContext);
+        if (processorFactory != null) {
+            processor = processorFactory.createProcessor(route, output);
         }
         // fallback to default implementation if factory did not create the processor
         if (processor == null) {
@@ -842,8 +846,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         preCreateProcessor();
 
         // at first use custom factory
-        if (camelContext.getCamelContextExtension().getProcessorFactory() != null) {
-            processor = camelContext.getCamelContextExtension().getProcessorFactory().createProcessor(route, definition);
+        final ProcessorFactory processorFactory = PluginHelper.getProcessorFactory(camelContext);
+        if (processorFactory != null) {
+            processor = processorFactory.createProcessor(route, definition);
         }
         // fallback to default implementation if factory did not create the
         // processor
