@@ -37,14 +37,12 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.console.DevConsoleResolver;
-import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.DeferServiceFactory;
@@ -65,8 +63,6 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.PeriodTaskResolver;
-import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
@@ -368,38 +364,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public PeriodTaskResolver getPeriodTaskResolver() {
-        if (camelContext.periodTaskResolver == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.periodTaskResolver == null) {
-                    setPeriodTaskResolver(camelContext.createPeriodTaskResolver());
-                }
-            }
-        }
-        return camelContext.periodTaskResolver;
-    }
-
-    @Override
-    public void setPeriodTaskResolver(PeriodTaskResolver periodTaskResolver) {
-        camelContext.periodTaskResolver = camelContext.getInternalServiceManager().addService(periodTaskResolver);
-    }
-
-    public PeriodTaskScheduler getPeriodTaskScheduler() {
-        if (camelContext.periodTaskScheduler == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.periodTaskScheduler == null) {
-                    setPeriodTaskScheduler(camelContext.createPeriodTaskScheduler());
-                }
-            }
-        }
-        return camelContext.periodTaskScheduler;
-    }
-
-    public void setPeriodTaskScheduler(PeriodTaskScheduler periodTaskScheduler) {
-        camelContext.periodTaskScheduler = camelContext.getInternalServiceManager().addService(periodTaskScheduler);
-    }
-
-    @Override
     public void setupManagement(Map<String, Object> options) {
         LOG.trace("Setting up management");
 
@@ -492,40 +456,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setBasePackageScan(String basePackageScan) {
         this.basePackageScan = basePackageScan;
-    }
-
-    @Override
-    public DataFormatResolver getDataFormatResolver() {
-        if (camelContext.dataFormatResolver == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.dataFormatResolver == null) {
-                    setDataFormatResolver(camelContext.createDataFormatResolver());
-                }
-            }
-        }
-        return camelContext.dataFormatResolver;
-    }
-
-    @Override
-    public void setDataFormatResolver(DataFormatResolver dataFormatResolver) {
-        camelContext.dataFormatResolver = camelContext.getInternalServiceManager().addService(dataFormatResolver);
-    }
-
-    @Override
-    public HealthCheckResolver getHealthCheckResolver() {
-        if (camelContext.healthCheckResolver == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.healthCheckResolver == null) {
-                    setHealthCheckResolver(camelContext.createHealthCheckResolver());
-                }
-            }
-        }
-        return camelContext.healthCheckResolver;
-    }
-
-    @Override
-    public void setHealthCheckResolver(HealthCheckResolver healthCheckResolver) {
-        camelContext.healthCheckResolver = camelContext.getInternalServiceManager().addService(healthCheckResolver);
     }
 
     public DevConsoleResolver getDevConsoleResolver() {

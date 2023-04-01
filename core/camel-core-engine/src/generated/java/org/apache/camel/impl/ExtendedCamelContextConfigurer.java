@@ -31,8 +31,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BeanIntrospection": target.setBeanIntrospection(property(camelContext, org.apache.camel.spi.BeanIntrospection.class, value)); return true;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": target.setBootstrapFactoryFinder(property(camelContext, org.apache.camel.spi.FactoryFinder.class, value)); return true;
-        case "dataformatresolver":
-        case "DataFormatResolver": target.setDataFormatResolver(property(camelContext, org.apache.camel.spi.DataFormatResolver.class, value)); return true;
         case "deferservicefactory":
         case "DeferServiceFactory": target.setDeferServiceFactory(property(camelContext, org.apache.camel.spi.DeferServiceFactory.class, value)); return true;
         case "description":
@@ -49,8 +47,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactoryManager": target.setExchangeFactoryManager(property(camelContext, org.apache.camel.spi.ExchangeFactoryManager.class, value)); return true;
         case "headersmapfactory":
         case "HeadersMapFactory": target.setHeadersMapFactory(property(camelContext, org.apache.camel.spi.HeadersMapFactory.class, value)); return true;
-        case "healthcheckresolver":
-        case "HealthCheckResolver": target.setHealthCheckResolver(property(camelContext, org.apache.camel.health.HealthCheckResolver.class, value)); return true;
         case "interceptendpointfactory":
         case "InterceptEndpointFactory": target.setInterceptEndpointFactory(property(camelContext, org.apache.camel.spi.InterceptEndpointFactory.class, value)); return true;
         case "internalprocessorfactory":
@@ -61,10 +57,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ModelToXMLDumper": target.setModelToXMLDumper(property(camelContext, org.apache.camel.spi.ModelToXMLDumper.class, value)); return true;
         case "name":
         case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
-        case "periodtaskresolver":
-        case "PeriodTaskResolver": target.setPeriodTaskResolver(property(camelContext, org.apache.camel.spi.PeriodTaskResolver.class, value)); return true;
-        case "periodtaskscheduler":
-        case "PeriodTaskScheduler": target.setPeriodTaskScheduler(property(camelContext, org.apache.camel.spi.PeriodTaskScheduler.class, value)); return true;
         case "processorexchangefactory":
         case "ProcessorExchangeFactory": target.setProcessorExchangeFactory(property(camelContext, org.apache.camel.spi.ProcessorExchangeFactory.class, value)); return true;
         case "processorfactory":
@@ -104,8 +96,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BeanIntrospection": return org.apache.camel.spi.BeanIntrospection.class;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return org.apache.camel.spi.FactoryFinder.class;
-        case "dataformatresolver":
-        case "DataFormatResolver": return org.apache.camel.spi.DataFormatResolver.class;
         case "deferservicefactory":
         case "DeferServiceFactory": return org.apache.camel.spi.DeferServiceFactory.class;
         case "description":
@@ -122,8 +112,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactoryManager": return org.apache.camel.spi.ExchangeFactoryManager.class;
         case "headersmapfactory":
         case "HeadersMapFactory": return org.apache.camel.spi.HeadersMapFactory.class;
-        case "healthcheckresolver":
-        case "HealthCheckResolver": return org.apache.camel.health.HealthCheckResolver.class;
         case "interceptendpointfactory":
         case "InterceptEndpointFactory": return org.apache.camel.spi.InterceptEndpointFactory.class;
         case "internalprocessorfactory":
@@ -134,10 +122,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ModelToXMLDumper": return org.apache.camel.spi.ModelToXMLDumper.class;
         case "name":
         case "Name": return java.lang.String.class;
-        case "periodtaskresolver":
-        case "PeriodTaskResolver": return org.apache.camel.spi.PeriodTaskResolver.class;
-        case "periodtaskscheduler":
-        case "PeriodTaskScheduler": return org.apache.camel.spi.PeriodTaskScheduler.class;
         case "processorexchangefactory":
         case "ProcessorExchangeFactory": return org.apache.camel.spi.ProcessorExchangeFactory.class;
         case "processorfactory":
@@ -178,8 +162,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BeanIntrospection": return target.getBeanIntrospection();
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return target.getBootstrapFactoryFinder();
-        case "dataformatresolver":
-        case "DataFormatResolver": return target.getDataFormatResolver();
         case "deferservicefactory":
         case "DeferServiceFactory": return target.getDeferServiceFactory();
         case "description":
@@ -196,8 +178,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactoryManager": return target.getExchangeFactoryManager();
         case "headersmapfactory":
         case "HeadersMapFactory": return target.getHeadersMapFactory();
-        case "healthcheckresolver":
-        case "HealthCheckResolver": return target.getHealthCheckResolver();
         case "interceptendpointfactory":
         case "InterceptEndpointFactory": return target.getInterceptEndpointFactory();
         case "internalprocessorfactory":
@@ -208,10 +188,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ModelToXMLDumper": return target.getModelToXMLDumper();
         case "name":
         case "Name": return target.getName();
-        case "periodtaskresolver":
-        case "PeriodTaskResolver": return target.getPeriodTaskResolver();
-        case "periodtaskscheduler":
-        case "PeriodTaskScheduler": return target.getPeriodTaskScheduler();
         case "processorexchangefactory":
         case "ProcessorExchangeFactory": return target.getProcessorExchangeFactory();
         case "processorfactory":

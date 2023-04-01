@@ -85,7 +85,7 @@ public class BeanOverloadedCovariantMethodTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").bean(MySuperBean.class, "hello(String)").to("mock:result");
+                from("direct:start").bean(MySuperBean.class, "hello(String.class)").to("mock:result");
 
             }
         });

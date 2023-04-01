@@ -21,17 +21,21 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
+import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.PeriodTaskResolver;
+import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.UriFactoryResolver;
 
 public final class PluginHelper {
@@ -259,4 +263,67 @@ public final class PluginHelper {
         return extendedCamelContext.getContextPlugin(ModelineFactory.class);
     }
 
+    /**
+     * Gets the current data format resolver
+     *
+     * @return the resolver
+     */
+    public static DataFormatResolver getDataFormatResolver(CamelContext camelContext) {
+        return getDataFormatResolver(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the current data format resolver
+     *
+     * @return the resolver
+     */
+    public static DataFormatResolver getDataFormatResolver(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(DataFormatResolver.class);
+    }
+
+    /**
+     * Gets the period task resolver
+     */
+    public static PeriodTaskResolver getPeriodTaskResolver(CamelContext camelContext) {
+        return getPeriodTaskResolver(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the period task resolver
+     */
+    public static PeriodTaskResolver getPeriodTaskResolver(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(PeriodTaskResolver.class);
+    }
+
+    /**
+     * Gets the period task scheduler
+     */
+    public static PeriodTaskScheduler getPeriodTaskScheduler(CamelContext camelContext) {
+        return getPeriodTaskScheduler(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the period task scheduler
+     */
+    public static PeriodTaskScheduler getPeriodTaskScheduler(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(PeriodTaskScheduler.class);
+    }
+
+    /**
+     * Gets the current health check resolver
+     *
+     * @return the resolver
+     */
+    public static HealthCheckResolver getHealthCheckResolver(CamelContext camelContext) {
+        return getHealthCheckResolver(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the current health check resolver
+     *
+     * @return the resolver
+     */
+    public static HealthCheckResolver getHealthCheckResolver(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(HealthCheckResolver.class);
+    }
 }

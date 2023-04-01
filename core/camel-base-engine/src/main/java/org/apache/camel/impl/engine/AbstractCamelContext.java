@@ -211,8 +211,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ProcessorExchangeFactory processorExchangeFactory;
     volatile ReactiveExecutor reactiveExecutor;
     volatile Registry registry;
-    volatile DataFormatResolver dataFormatResolver;
-    volatile HealthCheckResolver healthCheckResolver;
     volatile DevConsoleResolver devConsoleResolver;
     volatile ManagementStrategy managementStrategy;
     volatile ManagementMBeanAssembler managementMBeanAssembler;
@@ -225,8 +223,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory;
     volatile RuntimeCamelCatalog runtimeCamelCatalog;
     volatile ProcessorFactory processorFactory;
-    volatile PeriodTaskResolver periodTaskResolver;
-    volatile PeriodTaskScheduler periodTaskScheduler;
     volatile InternalProcessorFactory internalProcessorFactory;
     volatile InterceptEndpointFactory interceptEndpointFactory;
     volatile RouteFactory routeFactory;
@@ -380,6 +376,10 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.addContextPlugin(PackageScanResourceResolver.class, createPackageScanResourceResolver());
         camelContextExtension.lazyAddContextPlugin(ModelineFactory.class, this::createModelineFactory);
         camelContextExtension.lazyAddContextPlugin(ModelJAXBContextFactory.class, this::createModelJAXBContextFactory);
+        camelContextExtension.addContextPlugin(DataFormatResolver.class, createDataFormatResolver());
+        camelContextExtension.lazyAddContextPlugin(PeriodTaskResolver.class, this::createPeriodTaskResolver);
+        camelContextExtension.lazyAddContextPlugin(PeriodTaskScheduler.class, this::createPeriodTaskScheduler);
+        camelContextExtension.lazyAddContextPlugin(HealthCheckResolver.class, this::createHealthCheckResolver);
 
         if (build) {
             try {
@@ -3263,9 +3263,6 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.getDefaultFactoryFinder();
         getPropertiesComponent();
 
-        camelContextExtension.getDataFormatResolver();
-        camelContextExtension.getHealthCheckResolver();
-
         getExecutorServiceManager();
         camelContextExtension.getExchangeFactoryManager();
         camelContextExtension.getExchangeFactory();
@@ -3285,7 +3282,6 @@ public abstract class AbstractCamelContext extends BaseService
      */
     protected void forceStopLazyInitialization() {
         injector = null;
-        dataFormatResolver = null;
         typeConverterRegistry = null;
         typeConverter = null;
         reactiveExecutor = null;
@@ -3585,7 +3581,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         final DataFormat df = Optional
                 .ofNullable(ResolverHelper.lookupDataFormatInRegistryWithFallback(getCamelContextReference(), name))
-                .orElseGet(() -> camelContextExtension.getDataFormatResolver().createDataFormat(name,
+                .orElseGet(() -> PluginHelper.getDataFormatResolver(camelContextExtension).createDataFormat(name,
                         getCamelContextReference()));
 
         if (df != null) {
@@ -3617,7 +3613,8 @@ public abstract class AbstractCamelContext extends BaseService
             step = startupStepRecorder.beginStep(DataFormat.class, name, "Create DataFormat");
         }
 
-        DataFormat answer = camelContextExtension.getDataFormatResolver().createDataFormat(name, getCamelContextReference());
+        DataFormat answer
+                = PluginHelper.getDataFormatResolver(camelContextExtension).createDataFormat(name, getCamelContextReference());
 
         // inject CamelContext if aware
         CamelContextAware.trySetCamelContext(answer, getCamelContextReference());
@@ -4159,10 +4156,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     public void setProcessorExchangeFactory(ProcessorExchangeFactory processorExchangeFactory) {
         camelContextExtension.setProcessorExchangeFactory(processorExchangeFactory);
-    }
-
-    public void setDataFormatResolver(DataFormatResolver dataFormatResolver) {
-        camelContextExtension.setDataFormatResolver(dataFormatResolver);
     }
 
     public FactoryFinder getBootstrapFactoryFinder() {

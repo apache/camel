@@ -226,7 +226,7 @@ public final class HealthCheckHelper {
             if (check.isEmpty()) {
                 // use resolver to load from classpath if needed
                 HealthCheckResolver resolver
-                        = context.getCamelContextExtension().getHealthCheckResolver();
+                        = context.getCamelContextExtension().getContextPlugin(HealthCheckResolver.class);
                 HealthCheck hc = resolver.resolveHealthCheck(id);
                 if (hc != null) {
                     check = Optional.of(hc);
@@ -272,7 +272,7 @@ public final class HealthCheckHelper {
             if (repo.isEmpty()) {
                 // use resolver to load from classpath if needed
                 HealthCheckResolver resolver
-                        = context.getCamelContextExtension().getHealthCheckResolver();
+                        = context.getCamelContextExtension().getContextPlugin(HealthCheckResolver.class);
                 HealthCheckRepository hr = resolver.resolveHealthCheckRepository(id);
                 if (hr != null) {
                     repo = Optional.of(hr);

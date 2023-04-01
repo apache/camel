@@ -40,7 +40,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").bean(MyBean.class, "order(MyOrder)").to("mock:result");
+                from("direct:start").bean(MyBean.class, "order(MyOrder.class)").to("mock:result");
 
             }
         });
@@ -58,7 +58,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").bean(MyBean.class, "order(Unknown)").to("mock:result");
+                from("direct:start").bean(MyBean.class, "order(Unknown.class)").to("mock:result");
 
             }
         });
@@ -70,7 +70,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
         } catch (CamelExecutionException e) {
             NoTypeConversionAvailableException cause
                     = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
-            assertEquals("Unknown", cause.getValue());
+            assertEquals("Unknown.class", cause.getValue());
         }
     }
 
@@ -79,7 +79,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").bean(MyBean.class, "order(MyOrder,Boolean)").to("mock:result");
+                from("direct:start").bean(MyBean.class, "order(MyOrder.class,Boolean.class)").to("mock:result");
 
             }
         });
@@ -98,7 +98,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .bean(MyBean.class, "order(org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$MyOrder)")
+                        .bean(MyBean.class, "order(org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$MyOrder.class)")
                         .to("mock:result");
 
             }
@@ -118,7 +118,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                        .bean(MyBean.class, "order(org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$Unknown)")
+                        .bean(MyBean.class, "order(org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$Unknown.class)")
                         .to("mock:result");
 
             }
@@ -131,7 +131,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
         } catch (CamelExecutionException e) {
             NoTypeConversionAvailableException cause
                     = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
-            assertEquals("org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$Unknown", cause.getValue());
+            assertEquals("org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$Unknown.class", cause.getValue());
         }
     }
 
@@ -142,7 +142,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                         .bean(MyBean.class,
-                                "order(org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$MyOrder,Boolean)")
+                                "order(org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$MyOrder.class,Boolean.class)")
                         .to("mock:result");
 
             }

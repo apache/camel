@@ -23,14 +23,12 @@ import java.util.function.Supplier;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.console.DevConsoleResolver;
-import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
@@ -46,8 +44,6 @@ import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.PeriodTaskResolver;
-import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
@@ -278,34 +274,6 @@ public interface ExtendedCamelContext {
      * @param errorHandlerFactory the builder
      */
     void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory);
-
-    /**
-     * Gets the current data format resolver
-     *
-     * @return the resolver
-     */
-    DataFormatResolver getDataFormatResolver();
-
-    /**
-     * Sets a custom data format resolver
-     *
-     * @param dataFormatResolver the resolver
-     */
-    void setDataFormatResolver(DataFormatResolver dataFormatResolver);
-
-    /**
-     * Gets the current health check resolver
-     *
-     * @return the resolver
-     */
-    HealthCheckResolver getHealthCheckResolver();
-
-    /**
-     * Sets a custom health check resolver
-     *
-     * @param healthCheckResolver the resolver
-     */
-    void setHealthCheckResolver(HealthCheckResolver healthCheckResolver);
 
     /**
      * Gets the current dev console resolver
@@ -697,26 +665,6 @@ public interface ExtendedCamelContext {
      * provides the phase ordinal value.
      */
     byte getStatusPhase();
-
-    /**
-     * Gets the period task scheduler
-     */
-    PeriodTaskScheduler getPeriodTaskScheduler();
-
-    /**
-     * To use a custom period task scheduler
-     */
-    void setPeriodTaskScheduler(PeriodTaskScheduler periodTaskScheduler);
-
-    /**
-     * Gets the period task resolver
-     */
-    PeriodTaskResolver getPeriodTaskResolver();
-
-    /**
-     * To use a custom period task resolver
-     */
-    void setPeriodTaskResolver(PeriodTaskResolver periodTaskResolver);
 
     /**
      * Gets access to the internal plugin manager

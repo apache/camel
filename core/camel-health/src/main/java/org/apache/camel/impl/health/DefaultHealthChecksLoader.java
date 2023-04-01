@@ -44,7 +44,7 @@ public class DefaultHealthChecksLoader {
     public DefaultHealthChecksLoader(CamelContext camelContext) {
         this.camelContext = camelContext;
         this.resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
-        this.healthCheckResolver = camelContext.getCamelContextExtension().getHealthCheckResolver();
+        this.healthCheckResolver = PluginHelper.getHealthCheckResolver(camelContext);
     }
 
     public Collection<HealthCheck> loadHealthChecks() {

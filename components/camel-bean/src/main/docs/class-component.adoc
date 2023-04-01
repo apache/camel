@@ -54,7 +54,9 @@ component but by specifying the fully qualified classname instead. +
 
 [source,java]
 -------------------------------------------------------------------------------------------------
-    from("direct:start").to("class:org.apache.camel.component.bean.MyFooBean").to("mock:result");
+from("direct:start")
+    .to("class:org.apache.camel.component.bean.MyFooBean")
+    .to("mock:result");
 -------------------------------------------------------------------------------------------------
 
 You can also specify which method to invoke on the `MyFooBean`, for
@@ -62,7 +64,9 @@ example `hello`:
 
 [source,java]
 --------------------------------------------------------------------------------------------------------------
-    from("direct:start").to("class:org.apache.camel.component.bean.MyFooBean?method=hello").to("mock:result");
+from("direct:start")
+    .to("class:org.apache.camel.component.bean.MyFooBean?method=hello")
+    .to("mock:result");
 --------------------------------------------------------------------------------------------------------------
 
 == Setting properties on the created instance
@@ -72,9 +76,9 @@ instance, for example if it has a `setPrefix` method:
 
 [source,java]
 ---------------------------------------------------------------------------------
-   from("direct:start")
-        .to("class:org.apache.camel.component.bean.MyPrefixBean?bean.prefix=Bye")
-        .to("mock:result");
+from("direct:start")
+    .to("class:org.apache.camel.component.bean.MyPrefixBean?bean.prefix=Bye")
+    .to("mock:result");
 ---------------------------------------------------------------------------------
 
 And you can also use the `#` syntax to refer to properties to be looked
@@ -82,9 +86,9 @@ up in the Registry.
 
 [source,java]
 --------------------------------------------------------------------------------
-    from("direct:start")
-        .to("class:org.apache.camel.component.bean.MyPrefixBean?bean.cool=#foo")
-        .to("mock:result");
+from("direct:start")
+    .to("class:org.apache.camel.component.bean.MyPrefixBean?bean.cool=#foo")
+    .to("mock:result");
 --------------------------------------------------------------------------------
 
 Which will lookup a bean from the Registry with the
@@ -96,7 +100,6 @@ id `foo` and invoke the `setCool` method on the created instance of the
 See more details at the xref:bean-component.adoc[Bean] component as the *class*
 component works in much the same way.
 ====
-
 
 
 include::spring-boot:partial$starter.adoc[]

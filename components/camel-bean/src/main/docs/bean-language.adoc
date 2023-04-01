@@ -37,7 +37,7 @@ from("activemq:topic:OrdersTopic")
 ----
 
 TIP: It is also possible to omit the method name, then Camel would have to choose the best suitable
-method to use; this process is a little bit complex, so it is good practice to specify the method name,
+method to use; this process is a complex, so it is good practice to specify the method name,
 
 And in XML DSL
 
