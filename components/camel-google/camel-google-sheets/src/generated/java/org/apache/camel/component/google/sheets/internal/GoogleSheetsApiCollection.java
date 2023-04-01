@@ -5,10 +5,10 @@
 package org.apache.camel.component.google.sheets.internal;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import org.apache.camel.component.google.sheets.GoogleSheetsConfiguration;
 import org.apache.camel.component.google.sheets.SheetsSpreadsheetsEndpointConfiguration;
@@ -26,20 +26,20 @@ public final class GoogleSheetsApiCollection extends ApiCollection<GoogleSheetsA
     private static GoogleSheetsApiCollection collection;
 
     private GoogleSheetsApiCollection() {
-        final Map<String, String> aliases = new HashMap<String, String>();
-        final Map<GoogleSheetsApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<String, String> aliases = new HashMap<>();
+        final Map<GoogleSheetsApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(GoogleSheetsApiName.class);
         final Map<Class<? extends ApiMethod>, GoogleSheetsApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleSheetsApiName.SPREADSHEETS, new ApiMethodHelper<SheetsSpreadsheetsApiMethod>(SheetsSpreadsheetsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleSheetsApiName.SPREADSHEETS, new ApiMethodHelper<>(SheetsSpreadsheetsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(SheetsSpreadsheetsApiMethod.class, GoogleSheetsApiName.SPREADSHEETS);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleSheetsApiName.DATA, new ApiMethodHelper<SheetsSpreadsheetsValuesApiMethod>(SheetsSpreadsheetsValuesApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleSheetsApiName.DATA, new ApiMethodHelper<>(SheetsSpreadsheetsValuesApiMethod.class, aliases, nullableArgs));
         apiMethods.put(SheetsSpreadsheetsValuesApiMethod.class, GoogleSheetsApiName.DATA);
 
         setApiHelpers(apiHelpers);

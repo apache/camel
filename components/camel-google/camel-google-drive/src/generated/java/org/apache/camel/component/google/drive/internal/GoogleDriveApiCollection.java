@@ -5,10 +5,10 @@
 package org.apache.camel.component.google.drive.internal;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import org.apache.camel.component.google.drive.GoogleDriveConfiguration;
 import org.apache.camel.component.google.drive.DriveAboutEndpointConfiguration;
@@ -38,80 +38,80 @@ public final class GoogleDriveApiCollection extends ApiCollection<GoogleDriveApi
     private static GoogleDriveApiCollection collection;
 
     private GoogleDriveApiCollection() {
-        final Map<String, String> aliases = new HashMap<String, String>();
-        final Map<GoogleDriveApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<String, String> aliases = new HashMap<>();
+        final Map<GoogleDriveApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(GoogleDriveApiName.class);
         final Map<Class<? extends ApiMethod>, GoogleDriveApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_ABOUT, new ApiMethodHelper<DriveAboutApiMethod>(DriveAboutApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleDriveApiName.DRIVE_ABOUT, new ApiMethodHelper<>(DriveAboutApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveAboutApiMethod.class, GoogleDriveApiName.DRIVE_ABOUT);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_APPS, new ApiMethodHelper<DriveAppsApiMethod>(DriveAppsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleDriveApiName.DRIVE_APPS, new ApiMethodHelper<>(DriveAppsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveAppsApiMethod.class, GoogleDriveApiName.DRIVE_APPS);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_CHANGES, new ApiMethodHelper<DriveChangesApiMethod>(DriveChangesApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleDriveApiName.DRIVE_CHANGES, new ApiMethodHelper<>(DriveChangesApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveChangesApiMethod.class, GoogleDriveApiName.DRIVE_CHANGES);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_CHANNELS, new ApiMethodHelper<DriveChannelsApiMethod>(DriveChannelsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleDriveApiName.DRIVE_CHANNELS, new ApiMethodHelper<>(DriveChannelsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveChannelsApiMethod.class, GoogleDriveApiName.DRIVE_CHANNELS);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_CHILDREN, new ApiMethodHelper<DriveChildrenApiMethod>(DriveChildrenApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleDriveApiName.DRIVE_CHILDREN, new ApiMethodHelper<>(DriveChildrenApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveChildrenApiMethod.class, GoogleDriveApiName.DRIVE_CHILDREN);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_COMMENTS, new ApiMethodHelper<DriveCommentsApiMethod>(DriveCommentsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleDriveApiName.DRIVE_COMMENTS, new ApiMethodHelper<>(DriveCommentsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveCommentsApiMethod.class, GoogleDriveApiName.DRIVE_COMMENTS);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_FILES, new ApiMethodHelper<DriveFilesApiMethod>(DriveFilesApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleDriveApiName.DRIVE_FILES, new ApiMethodHelper<>(DriveFilesApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveFilesApiMethod.class, GoogleDriveApiName.DRIVE_FILES);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_PARENTS, new ApiMethodHelper<DriveParentsApiMethod>(DriveParentsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleDriveApiName.DRIVE_PARENTS, new ApiMethodHelper<>(DriveParentsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveParentsApiMethod.class, GoogleDriveApiName.DRIVE_PARENTS);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_PERMISSIONS, new ApiMethodHelper<DrivePermissionsApiMethod>(DrivePermissionsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleDriveApiName.DRIVE_PERMISSIONS, new ApiMethodHelper<>(DrivePermissionsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DrivePermissionsApiMethod.class, GoogleDriveApiName.DRIVE_PERMISSIONS);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_PROPERTIES, new ApiMethodHelper<DrivePropertiesApiMethod>(DrivePropertiesApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleDriveApiName.DRIVE_PROPERTIES, new ApiMethodHelper<>(DrivePropertiesApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DrivePropertiesApiMethod.class, GoogleDriveApiName.DRIVE_PROPERTIES);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_DRIVES, new ApiMethodHelper<DriveDrivesApiMethod>(DriveDrivesApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleDriveApiName.DRIVE_DRIVES, new ApiMethodHelper<>(DriveDrivesApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveDrivesApiMethod.class, GoogleDriveApiName.DRIVE_DRIVES);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_TEAMDRIVES, new ApiMethodHelper<DriveTeamdrivesApiMethod>(DriveTeamdrivesApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleDriveApiName.DRIVE_TEAMDRIVES, new ApiMethodHelper<>(DriveTeamdrivesApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveTeamdrivesApiMethod.class, GoogleDriveApiName.DRIVE_TEAMDRIVES);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_REPLIES, new ApiMethodHelper<DriveRepliesApiMethod>(DriveRepliesApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleDriveApiName.DRIVE_REPLIES, new ApiMethodHelper<>(DriveRepliesApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveRepliesApiMethod.class, GoogleDriveApiName.DRIVE_REPLIES);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleDriveApiName.DRIVE_REVISIONS, new ApiMethodHelper<DriveRevisionsApiMethod>(DriveRevisionsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleDriveApiName.DRIVE_REVISIONS, new ApiMethodHelper<>(DriveRevisionsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(DriveRevisionsApiMethod.class, GoogleDriveApiName.DRIVE_REVISIONS);
 
         setApiHelpers(apiHelpers);

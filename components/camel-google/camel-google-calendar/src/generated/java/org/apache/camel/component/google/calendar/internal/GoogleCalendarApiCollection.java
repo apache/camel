@@ -5,10 +5,10 @@
 package org.apache.camel.component.google.calendar.internal;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import org.apache.camel.component.google.calendar.GoogleCalendarConfiguration;
 import org.apache.camel.component.google.calendar.CalendarAclEndpointConfiguration;
@@ -32,50 +32,50 @@ public final class GoogleCalendarApiCollection extends ApiCollection<GoogleCalen
     private static GoogleCalendarApiCollection collection;
 
     private GoogleCalendarApiCollection() {
-        final Map<String, String> aliases = new HashMap<String, String>();
-        final Map<GoogleCalendarApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<String, String> aliases = new HashMap<>();
+        final Map<GoogleCalendarApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(GoogleCalendarApiName.class);
         final Map<Class<? extends ApiMethod>, GoogleCalendarApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleCalendarApiName.ACL, new ApiMethodHelper<CalendarAclApiMethod>(CalendarAclApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleCalendarApiName.ACL, new ApiMethodHelper<>(CalendarAclApiMethod.class, aliases, nullableArgs));
         apiMethods.put(CalendarAclApiMethod.class, GoogleCalendarApiName.ACL);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleCalendarApiName.LIST, new ApiMethodHelper<CalendarCalendarListApiMethod>(CalendarCalendarListApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleCalendarApiName.LIST, new ApiMethodHelper<>(CalendarCalendarListApiMethod.class, aliases, nullableArgs));
         apiMethods.put(CalendarCalendarListApiMethod.class, GoogleCalendarApiName.LIST);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleCalendarApiName.CALENDARS, new ApiMethodHelper<CalendarCalendarsApiMethod>(CalendarCalendarsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleCalendarApiName.CALENDARS, new ApiMethodHelper<>(CalendarCalendarsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(CalendarCalendarsApiMethod.class, GoogleCalendarApiName.CALENDARS);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleCalendarApiName.CHANNELS, new ApiMethodHelper<CalendarChannelsApiMethod>(CalendarChannelsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleCalendarApiName.CHANNELS, new ApiMethodHelper<>(CalendarChannelsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(CalendarChannelsApiMethod.class, GoogleCalendarApiName.CHANNELS);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleCalendarApiName.COLORS, new ApiMethodHelper<CalendarColorsApiMethod>(CalendarColorsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleCalendarApiName.COLORS, new ApiMethodHelper<>(CalendarColorsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(CalendarColorsApiMethod.class, GoogleCalendarApiName.COLORS);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleCalendarApiName.FREEBUSY, new ApiMethodHelper<CalendarFreebusyApiMethod>(CalendarFreebusyApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleCalendarApiName.FREEBUSY, new ApiMethodHelper<>(CalendarFreebusyApiMethod.class, aliases, nullableArgs));
         apiMethods.put(CalendarFreebusyApiMethod.class, GoogleCalendarApiName.FREEBUSY);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleCalendarApiName.EVENTS, new ApiMethodHelper<CalendarEventsApiMethod>(CalendarEventsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleCalendarApiName.EVENTS, new ApiMethodHelper<>(CalendarEventsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(CalendarEventsApiMethod.class, GoogleCalendarApiName.EVENTS);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleCalendarApiName.SETTINGS, new ApiMethodHelper<CalendarSettingsApiMethod>(CalendarSettingsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleCalendarApiName.SETTINGS, new ApiMethodHelper<>(CalendarSettingsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(CalendarSettingsApiMethod.class, GoogleCalendarApiName.SETTINGS);
 
         setApiHelpers(apiHelpers);
