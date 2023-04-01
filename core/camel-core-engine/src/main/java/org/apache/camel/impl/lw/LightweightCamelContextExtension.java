@@ -241,16 +241,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public RouteFactory getRouteFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRouteFactory(RouteFactory routeFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public DeferServiceFactory getDeferServiceFactory() {
         throw new UnsupportedOperationException();
     }

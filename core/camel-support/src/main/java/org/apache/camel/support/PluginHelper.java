@@ -40,6 +40,7 @@ import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.UriFactoryResolver;
 
 public final class PluginHelper {
@@ -401,5 +402,23 @@ public final class PluginHelper {
      */
     public static InterceptEndpointFactory getInterceptEndpointFactory(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(InterceptEndpointFactory.class);
+    }
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.RouteFactory}
+     *
+     * @return the factory
+     */
+    public static RouteFactory getRouteFactory(CamelContext camelContext) {
+        return getRouteFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.RouteFactory}
+     *
+     * @return the factory
+     */
+    public static RouteFactory getRouteFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(RouteFactory.class);
     }
 }
