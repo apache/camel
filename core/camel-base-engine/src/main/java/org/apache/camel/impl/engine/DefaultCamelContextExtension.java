@@ -54,7 +54,6 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
@@ -464,23 +463,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setLightweight(boolean lightweight) {
         this.lightweight = lightweight;
-    }
-
-    @Override
-    public InternalProcessorFactory getInternalProcessorFactory() {
-        if (camelContext.internalProcessorFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.internalProcessorFactory == null) {
-                    setInternalProcessorFactory(camelContext.createInternalProcessorFactory());
-                }
-            }
-        }
-        return camelContext.internalProcessorFactory;
-    }
-
-    @Override
-    public void setInternalProcessorFactory(InternalProcessorFactory internalProcessorFactory) {
-        camelContext.internalProcessorFactory = camelContext.getInternalServiceManager().addService(internalProcessorFactory);
     }
 
     @Override

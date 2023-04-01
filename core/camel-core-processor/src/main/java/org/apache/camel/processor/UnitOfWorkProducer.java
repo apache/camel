@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
@@ -43,7 +44,7 @@ public final class UnitOfWorkProducer extends DefaultAsyncProducer {
         this.producer = producer;
         // wrap in unit of work
         CamelContext ecc = producer.getEndpoint().getCamelContext();
-        this.processor = ecc.getCamelContextExtension().getInternalProcessorFactory()
+        this.processor = PluginHelper.getInternalProcessorFactory(ecc)
                 .addUnitOfWorkProcessorAdvice(ecc, producer, null);
     }
 

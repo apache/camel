@@ -37,7 +37,6 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
@@ -315,20 +314,6 @@ public interface ExtendedCamelContext {
      * @return      the factory finder
      */
     FactoryFinder getFactoryFinder(String path);
-
-    /**
-     * Gets the current {@link org.apache.camel.spi.InternalProcessorFactory}
-     *
-     * @return the factory
-     */
-    InternalProcessorFactory getInternalProcessorFactory();
-
-    /**
-     * Sets a custom {@link org.apache.camel.spi.InternalProcessorFactory}
-     *
-     * @param internalProcessorFactory the custom factory
-     */
-    void setInternalProcessorFactory(InternalProcessorFactory internalProcessorFactory);
 
     /**
      * Gets the current {@link org.apache.camel.spi.InterceptEndpointFactory}

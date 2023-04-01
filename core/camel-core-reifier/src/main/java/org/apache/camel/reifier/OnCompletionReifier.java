@@ -26,6 +26,7 @@ import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnCompletionMode;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.OnCompletionProcessor;
+import org.apache.camel.support.PluginHelper;
 
 public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition> {
 
@@ -52,7 +53,7 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
         Processor childProcessor = this.createChildProcessor(true);
 
         // wrap the on completion route in a unit of work processor
-        AsyncProcessor target = camelContext.getCamelContextExtension().getInternalProcessorFactory()
+        AsyncProcessor target = PluginHelper.getInternalProcessorFactory(camelContext)
                 .addUnitOfWorkProcessorAdvice(camelContext, childProcessor, route);
 
         route.setOnCompletion(getId(definition), target);

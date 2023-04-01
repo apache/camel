@@ -66,6 +66,7 @@ import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.EventHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
@@ -186,7 +187,7 @@ public class MulticastProcessor extends AsyncProcessorSupport
                               boolean parallelAggregate) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
-        this.internalProcessorFactory = camelContext.getCamelContextExtension().getInternalProcessorFactory();
+        this.internalProcessorFactory = PluginHelper.getInternalProcessorFactory(camelContext);
         this.route = route;
         this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
         this.processors = processors;

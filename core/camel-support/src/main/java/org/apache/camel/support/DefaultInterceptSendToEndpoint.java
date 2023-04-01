@@ -134,7 +134,7 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
     @Override
     public AsyncProducer createAsyncProducer() throws Exception {
         AsyncProducer producer = delegate.createAsyncProducer();
-        return camelContext.getCamelContextExtension().getInternalProcessorFactory()
+        return PluginHelper.getInternalProcessorFactory(camelContext)
                 .createInterceptSendToEndpointProcessor(this, delegate, producer, skip);
     }
 
