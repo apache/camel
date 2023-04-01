@@ -398,8 +398,8 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         if (vc.aws().isRefreshEnabled()) {
-            Optional<Runnable> task = camelContext.getCamelContextExtension()
-                    .getPeriodTaskResolver().newInstance("aws-secret-refresh", Runnable.class);
+            Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
+                    .newInstance("aws-secret-refresh", Runnable.class);
             if (task.isPresent()) {
                 long period = vc.aws().getRefreshPeriod();
                 Runnable r = task.get();
@@ -417,8 +417,8 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         if (vc.gcp().isRefreshEnabled()) {
-            Optional<Runnable> task = camelContext.getCamelContextExtension()
-                    .getPeriodTaskResolver().newInstance("gcp-secret-refresh", Runnable.class);
+            Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
+                    .newInstance("gcp-secret-refresh", Runnable.class);
             if (task.isPresent()) {
                 long period = vc.gcp().getRefreshPeriod();
                 Runnable r = task.get();
@@ -436,8 +436,8 @@ public abstract class BaseMainSupport extends BaseService {
         }
 
         if (vc.azure().isRefreshEnabled()) {
-            Optional<Runnable> task = camelContext.getCamelContextExtension()
-                    .getPeriodTaskResolver().newInstance("azure-secret-refresh", Runnable.class);
+            Optional<Runnable> task = PluginHelper.getPeriodTaskResolver(camelContext)
+                    .newInstance("azure-secret-refresh", Runnable.class);
             if (task.isPresent()) {
                 long period = vc.azure().getRefreshPeriod();
                 Runnable r = task.get();

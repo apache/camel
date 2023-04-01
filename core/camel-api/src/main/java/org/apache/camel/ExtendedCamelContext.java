@@ -45,7 +45,6 @@ import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
@@ -692,16 +691,6 @@ public interface ExtendedCamelContext {
      * To use a custom period task scheduler
      */
     void setPeriodTaskScheduler(PeriodTaskScheduler periodTaskScheduler);
-
-    /**
-     * Gets the period task resolver
-     */
-    PeriodTaskResolver getPeriodTaskResolver();
-
-    /**
-     * To use a custom period task resolver
-     */
-    void setPeriodTaskResolver(PeriodTaskResolver periodTaskResolver);
 
     /**
      * Gets access to the internal plugin manager
