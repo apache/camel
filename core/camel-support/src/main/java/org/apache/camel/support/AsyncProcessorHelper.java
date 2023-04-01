@@ -43,7 +43,7 @@ public final class AsyncProcessorHelper {
      */
     public static void process(final AsyncProcessor processor, final Exchange exchange) throws Exception {
         final AsyncProcessorAwaitManager awaitManager
-                = exchange.getContext().getCamelContextExtension().getAsyncProcessorAwaitManager();
+                = PluginHelper.getAsyncProcessorAwaitManager(exchange.getContext());
         awaitManager.process(processor, exchange);
     }
 

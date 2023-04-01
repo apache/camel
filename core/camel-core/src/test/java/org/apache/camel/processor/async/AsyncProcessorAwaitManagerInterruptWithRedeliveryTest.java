@@ -26,6 +26,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -50,9 +51,10 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
 
     @Test
     public void testAsyncAwaitInterrupt() throws Exception {
-        context.getCamelContextExtension().getAsyncProcessorAwaitManager().getStatistics().setStatisticsEnabled(true);
+        final AsyncProcessorAwaitManager asyncProcessorAwaitManager = PluginHelper.getAsyncProcessorAwaitManager(context);
+        asyncProcessorAwaitManager.getStatistics().setStatisticsEnabled(true);
 
-        assertEquals(0, context.getCamelContextExtension().getAsyncProcessorAwaitManager().size());
+        assertEquals(0, asyncProcessorAwaitManager.size());
 
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:result").expectedMessageCount(0);
@@ -72,10 +74,10 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
         // Check we have not reached the full 5 re-deliveries
         verify(bean, atMost(4)).callMe();
 
-        assertEquals(0, context.getCamelContextExtension().getAsyncProcessorAwaitManager().size());
+        assertEquals(0, asyncProcessorAwaitManager.size());
         assertEquals(1,
-                context.getCamelContextExtension().getAsyncProcessorAwaitManager().getStatistics().getThreadsBlocked());
-        assertEquals(1, context.getCamelContextExtension().getAsyncProcessorAwaitManager().getStatistics()
+                asyncProcessorAwaitManager.getStatistics().getThreadsBlocked());
+        assertEquals(1, asyncProcessorAwaitManager.getStatistics()
                 .getThreadsInterrupted());
     }
 
@@ -89,16 +91,17 @@ public class AsyncProcessorAwaitManagerInterruptWithRedeliveryTest extends Conte
             }
 
             // Get our blocked thread
-            int size = context.getCamelContextExtension().getAsyncProcessorAwaitManager().size();
+            final AsyncProcessorAwaitManager asyncProcessorAwaitManager = PluginHelper.getAsyncProcessorAwaitManager(context);
+            int size = asyncProcessorAwaitManager.size();
             assertEquals(1, size);
 
             Collection<AsyncProcessorAwaitManager.AwaitThread> threads
-                    = context.getCamelContextExtension().getAsyncProcessorAwaitManager().browse();
+                    = asyncProcessorAwaitManager.browse();
             AsyncProcessorAwaitManager.AwaitThread thread = threads.iterator().next();
 
             // Interrupt it
             String id = thread.getExchange().getExchangeId();
-            context.getCamelContextExtension().getAsyncProcessorAwaitManager().interrupt(id);
+            asyncProcessorAwaitManager.interrupt(id);
         }).start();
     }
 

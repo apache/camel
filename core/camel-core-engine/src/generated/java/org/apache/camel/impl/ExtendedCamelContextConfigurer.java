@@ -23,8 +23,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "annotationbasedprocessorfactory":
         case "AnnotationBasedProcessorFactory": target.setAnnotationBasedProcessorFactory(property(camelContext, org.apache.camel.spi.AnnotationBasedProcessorFactory.class, value)); return true;
-        case "asyncprocessorawaitmanager":
-        case "AsyncProcessorAwaitManager": target.setAsyncProcessorAwaitManager(property(camelContext, org.apache.camel.spi.AsyncProcessorAwaitManager.class, value)); return true;
         case "basepackagescan":
         case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "beanintrospection":
@@ -76,8 +74,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "annotationbasedprocessorfactory":
         case "AnnotationBasedProcessorFactory": return org.apache.camel.spi.AnnotationBasedProcessorFactory.class;
-        case "asyncprocessorawaitmanager":
-        case "AsyncProcessorAwaitManager": return org.apache.camel.spi.AsyncProcessorAwaitManager.class;
         case "basepackagescan":
         case "BasePackageScan": return java.lang.String.class;
         case "beanintrospection":
@@ -130,8 +126,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "annotationbasedprocessorfactory":
         case "AnnotationBasedProcessorFactory": return target.getAnnotationBasedProcessorFactory();
-        case "asyncprocessorawaitmanager":
-        case "AsyncProcessorAwaitManager": return target.getAsyncProcessorAwaitManager();
         case "basepackagescan":
         case "BasePackageScan": return target.getBasePackageScan();
         case "beanintrospection":
