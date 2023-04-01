@@ -44,6 +44,7 @@ import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.ErrorHandler;
 import org.apache.camel.spi.Language;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends AbstractReifier {
@@ -477,7 +478,7 @@ public abstract class ErrorHandlerReifier<T extends ErrorHandlerFactory> extends
         }
         if (processor != null) {
             // must wrap the processor in an UoW
-            processor = camelContext.getCamelContextExtension().getInternalProcessorFactory()
+            processor = PluginHelper.getInternalProcessorFactory(camelContext)
                     .addUnitOfWorkProcessorAdvice(camelContext, processor, route);
         }
         return processor;

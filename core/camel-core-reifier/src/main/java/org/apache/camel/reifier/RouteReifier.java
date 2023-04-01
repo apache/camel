@@ -49,6 +49,7 @@ import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
+import org.apache.camel.support.PluginHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -232,7 +233,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         target.setRouteId(id);
 
         // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-        InternalProcessor internal = camelContext.getCamelContextExtension().getInternalProcessorFactory()
+        InternalProcessor internal = PluginHelper.getInternalProcessorFactory(camelContext)
                 .addUnitOfWorkProcessorAdvice(camelContext, target, route);
 
         // configure route policy

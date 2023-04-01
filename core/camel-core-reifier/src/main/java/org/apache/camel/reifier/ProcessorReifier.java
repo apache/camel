@@ -630,7 +630,7 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
     protected Channel wrapChannel(Processor processor, ProcessorDefinition<?> child, Boolean inheritErrorHandler)
             throws Exception {
         // put a channel in between this and each output to control the route flow logic
-        Channel channel = camelContext.getCamelContextExtension().getInternalProcessorFactory()
+        Channel channel = PluginHelper.getInternalProcessorFactory(camelContext)
                 .createChannel(camelContext);
 
         // add interceptor strategies to the channel must be in this order:

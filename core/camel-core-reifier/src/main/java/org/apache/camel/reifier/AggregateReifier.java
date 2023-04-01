@@ -33,6 +33,7 @@ import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
 import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.support.PluginHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,7 @@ public class AggregateReifier extends ProcessorReifier<AggregateDefinition> {
         Processor childProcessor = this.createChildProcessor(true);
 
         // wrap the aggregate route in a unit of work processor
-        AsyncProcessor target = camelContext.getCamelContextExtension().getInternalProcessorFactory()
+        AsyncProcessor target = PluginHelper.getInternalProcessorFactory(camelContext)
                 .addUnitOfWorkProcessorAdvice(camelContext, childProcessor, route);
 
         Expression correlation = createExpression(definition.getExpression());

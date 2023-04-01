@@ -29,6 +29,7 @@ import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.DefaultExchangeComparator;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
@@ -73,7 +74,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         Expression expression = createExpression(definition.getExpression());
 
         // and wrap in unit of work
-        AsyncProcessor target = camelContext.getCamelContextExtension().getInternalProcessorFactory()
+        AsyncProcessor target = PluginHelper.getInternalProcessorFactory(camelContext)
                 .addUnitOfWorkProcessorAdvice(camelContext, processor, route);
 
         ObjectHelper.notNull(config, "config", this);
@@ -110,7 +111,7 @@ public class ResequenceReifier extends ProcessorReifier<ResequenceDefinition> {
         Processor processor = this.createChildProcessor(true);
         Expression expression = createExpression(definition.getExpression());
 
-        AsyncProcessor target = camelContext.getCamelContextExtension().getInternalProcessorFactory()
+        AsyncProcessor target = PluginHelper.getInternalProcessorFactory(camelContext)
                 .addUnitOfWorkProcessorAdvice(camelContext, processor, route);
 
         ObjectHelper.notNull(config, "config", this);

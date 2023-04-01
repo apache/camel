@@ -52,7 +52,6 @@ import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelToXMLDumper;
@@ -239,16 +238,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public FactoryFinder getFactoryFinder(String path) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public InternalProcessorFactory getInternalProcessorFactory() {
-        return camelContext.getCamelContextExtension().getInternalProcessorFactory();
-    }
-
-    @Override
-    public void setInternalProcessorFactory(InternalProcessorFactory internalProcessorFactory) {
         throw new UnsupportedOperationException();
     }
 

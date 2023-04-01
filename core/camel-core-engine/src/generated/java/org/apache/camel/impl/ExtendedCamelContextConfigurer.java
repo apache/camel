@@ -47,8 +47,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "HeadersMapFactory": target.setHeadersMapFactory(property(camelContext, org.apache.camel.spi.HeadersMapFactory.class, value)); return true;
         case "interceptendpointfactory":
         case "InterceptEndpointFactory": target.setInterceptEndpointFactory(property(camelContext, org.apache.camel.spi.InterceptEndpointFactory.class, value)); return true;
-        case "internalprocessorfactory":
-        case "InternalProcessorFactory": target.setInternalProcessorFactory(property(camelContext, org.apache.camel.spi.InternalProcessorFactory.class, value)); return true;
         case "lightweight":
         case "Lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
         case "modeltoxmldumper":
@@ -108,8 +106,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "HeadersMapFactory": return org.apache.camel.spi.HeadersMapFactory.class;
         case "interceptendpointfactory":
         case "InterceptEndpointFactory": return org.apache.camel.spi.InterceptEndpointFactory.class;
-        case "internalprocessorfactory":
-        case "InternalProcessorFactory": return org.apache.camel.spi.InternalProcessorFactory.class;
         case "lightweight":
         case "Lightweight": return boolean.class;
         case "modeltoxmldumper":
@@ -170,8 +166,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "HeadersMapFactory": return target.getHeadersMapFactory();
         case "interceptendpointfactory":
         case "InterceptEndpointFactory": return target.getInterceptEndpointFactory();
-        case "internalprocessorfactory":
-        case "InternalProcessorFactory": return target.getInternalProcessorFactory();
         case "lightweight":
         case "Lightweight": return target.isLightweight();
         case "modeltoxmldumper":
