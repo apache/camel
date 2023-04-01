@@ -105,16 +105,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public DevConsoleResolver getDevConsoleResolver() {
-        return camelContext.getCamelContextExtension().getDevConsoleResolver();
-    }
-
-    @Override
-    public void setDevConsoleResolver(DevConsoleResolver devConsoleResolver) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String getName() {
         return camelContext.getCamelContextExtension().getName();
     }

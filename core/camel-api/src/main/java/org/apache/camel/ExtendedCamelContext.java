@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
-import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
@@ -274,20 +273,6 @@ public interface ExtendedCamelContext {
      * @param errorHandlerFactory the builder
      */
     void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory);
-
-    /**
-     * Gets the current dev console resolver
-     *
-     * @return the resolver
-     */
-    DevConsoleResolver getDevConsoleResolver();
-
-    /**
-     * Sets a custom dev console resolver
-     *
-     * @param devConsoleResolver the resolver
-     */
-    void setDevConsoleResolver(DevConsoleResolver devConsoleResolver);
 
     /**
      * Gets the default FactoryFinder which will be used for the loading the factory class from META-INF

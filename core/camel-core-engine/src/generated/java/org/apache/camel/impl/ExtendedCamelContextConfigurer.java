@@ -35,8 +35,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": target.setDeferServiceFactory(property(camelContext, org.apache.camel.spi.DeferServiceFactory.class, value)); return true;
         case "description":
         case "Description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
-        case "devconsoleresolver":
-        case "DevConsoleResolver": target.setDevConsoleResolver(property(camelContext, org.apache.camel.console.DevConsoleResolver.class, value)); return true;
         case "errorhandlerfactory":
         case "ErrorHandlerFactory": target.setErrorHandlerFactory(property(camelContext, org.apache.camel.ErrorHandlerFactory.class, value)); return true;
         case "eventnotificationapplicable":
@@ -100,8 +98,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": return org.apache.camel.spi.DeferServiceFactory.class;
         case "description":
         case "Description": return java.lang.String.class;
-        case "devconsoleresolver":
-        case "DevConsoleResolver": return org.apache.camel.console.DevConsoleResolver.class;
         case "errorhandlerfactory":
         case "ErrorHandlerFactory": return org.apache.camel.ErrorHandlerFactory.class;
         case "eventnotificationapplicable":
@@ -166,8 +162,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": return target.getDeferServiceFactory();
         case "description":
         case "Description": return target.getDescription();
-        case "devconsoleresolver":
-        case "DevConsoleResolver": return target.getDevConsoleResolver();
         case "errorhandlerfactory":
         case "ErrorHandlerFactory": return target.getErrorHandlerFactory();
         case "eventnotificationapplicable":

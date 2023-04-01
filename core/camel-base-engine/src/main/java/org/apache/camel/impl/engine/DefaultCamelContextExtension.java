@@ -458,21 +458,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         this.basePackageScan = basePackageScan;
     }
 
-    public DevConsoleResolver getDevConsoleResolver() {
-        if (camelContext.devConsoleResolver == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.devConsoleResolver == null) {
-                    setDevConsoleResolver(camelContext.createDevConsoleResolver());
-                }
-            }
-        }
-        return camelContext.devConsoleResolver;
-    }
-
-    public void setDevConsoleResolver(DevConsoleResolver devConsoleResolver) {
-        camelContext.devConsoleResolver = camelContext.getInternalServiceManager().addService(devConsoleResolver);
-    }
-
     @Override
     public boolean isLightweight() {
         return lightweight;
