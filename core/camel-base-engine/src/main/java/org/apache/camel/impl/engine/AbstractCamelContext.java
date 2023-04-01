@@ -216,7 +216,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile HeadersMapFactory headersMapFactory;
     volatile BeanProxyFactory beanProxyFactory;
     volatile BeanProcessorFactory beanProcessorFactory;
-    volatile RoutesLoader routesLoader;
     volatile ResourceLoader resourceLoader;
     volatile ModelToXMLDumper modelToXMLDumper;
     volatile RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory;
