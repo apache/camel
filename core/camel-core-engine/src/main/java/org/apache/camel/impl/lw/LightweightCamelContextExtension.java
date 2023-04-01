@@ -39,7 +39,6 @@ import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
-import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
@@ -262,11 +261,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public BeanProxyFactory getBeanProxyFactory() {
         throw new UnsupportedOperationException();
     }
 
