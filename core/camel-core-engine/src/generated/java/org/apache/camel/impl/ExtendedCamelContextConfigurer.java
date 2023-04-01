@@ -31,8 +31,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BeanIntrospection": target.setBeanIntrospection(property(camelContext, org.apache.camel.spi.BeanIntrospection.class, value)); return true;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": target.setBootstrapFactoryFinder(property(camelContext, org.apache.camel.spi.FactoryFinder.class, value)); return true;
-        case "dataformatresolver":
-        case "DataFormatResolver": target.setDataFormatResolver(property(camelContext, org.apache.camel.spi.DataFormatResolver.class, value)); return true;
         case "deferservicefactory":
         case "DeferServiceFactory": target.setDeferServiceFactory(property(camelContext, org.apache.camel.spi.DeferServiceFactory.class, value)); return true;
         case "description":
@@ -104,8 +102,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BeanIntrospection": return org.apache.camel.spi.BeanIntrospection.class;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return org.apache.camel.spi.FactoryFinder.class;
-        case "dataformatresolver":
-        case "DataFormatResolver": return org.apache.camel.spi.DataFormatResolver.class;
         case "deferservicefactory":
         case "DeferServiceFactory": return org.apache.camel.spi.DeferServiceFactory.class;
         case "description":
@@ -178,8 +174,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BeanIntrospection": return target.getBeanIntrospection();
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return target.getBootstrapFactoryFinder();
-        case "dataformatresolver":
-        case "DataFormatResolver": return target.getDataFormatResolver();
         case "deferservicefactory":
         case "DeferServiceFactory": return target.getDeferServiceFactory();
         case "description":

@@ -26,6 +26,7 @@ import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
+import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ModelJAXBContextFactory;
@@ -259,4 +260,21 @@ public final class PluginHelper {
         return extendedCamelContext.getContextPlugin(ModelineFactory.class);
     }
 
+    /**
+     * Gets the current data format resolver
+     *
+     * @return the resolver
+     */
+    public static DataFormatResolver getDataFormatResolver(CamelContext camelContext) {
+        return getDataFormatResolver(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the current data format resolver
+     *
+     * @return the resolver
+     */
+    public static DataFormatResolver getDataFormatResolver(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(DataFormatResolver.class);
+    }
 }

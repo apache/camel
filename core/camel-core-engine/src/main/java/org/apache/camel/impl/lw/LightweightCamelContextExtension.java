@@ -45,7 +45,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
@@ -105,16 +104,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setRegistry(Registry registry) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public DataFormatResolver getDataFormatResolver() {
-        return camelContext.getCamelContextExtension().getDataFormatResolver();
-    }
-
-    @Override
-    public void setDataFormatResolver(DataFormatResolver dataFormatResolver) {
         throw new UnsupportedOperationException();
     }
 

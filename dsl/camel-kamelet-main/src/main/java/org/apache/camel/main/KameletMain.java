@@ -57,6 +57,7 @@ import org.apache.camel.main.util.ExtraFilesClassLoader;
 import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.UriFactoryResolver;
@@ -449,7 +450,7 @@ public class KameletMain extends MainCommandLineSupport {
                     new DependencyDownloaderComponentResolver(answer, stub));
             answer.getCamelContextExtension().addContextPlugin(UriFactoryResolver.class,
                     new DependencyDownloaderUriFactoryResolver(answer));
-            answer.setDataFormatResolver(new DependencyDownloaderDataFormatResolver(answer));
+            answer.getCamelContextExtension().addContextPlugin(DataFormatResolver.class, new DependencyDownloaderDataFormatResolver(answer));
             answer.getCamelContextExtension().addContextPlugin(LanguageResolver.class,
                     new DependencyDownloaderLanguageResolver(answer));
             answer.setResourceLoader(new DependencyDownloaderResourceLoader(answer));

@@ -44,7 +44,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.DeferServiceFactory;
@@ -494,24 +493,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         this.basePackageScan = basePackageScan;
     }
 
-    @Override
-    public DataFormatResolver getDataFormatResolver() {
-        if (camelContext.dataFormatResolver == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.dataFormatResolver == null) {
-                    setDataFormatResolver(camelContext.createDataFormatResolver());
-                }
-            }
-        }
-        return camelContext.dataFormatResolver;
-    }
-
-    @Override
-    public void setDataFormatResolver(DataFormatResolver dataFormatResolver) {
-        camelContext.dataFormatResolver = camelContext.getInternalServiceManager().addService(dataFormatResolver);
-    }
-
-    @Override
     public HealthCheckResolver getHealthCheckResolver() {
         if (camelContext.healthCheckResolver == null) {
             synchronized (camelContext.lock) {

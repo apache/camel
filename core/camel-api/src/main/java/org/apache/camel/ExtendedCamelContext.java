@@ -30,7 +30,6 @@ import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
@@ -278,20 +277,6 @@ public interface ExtendedCamelContext {
      * @param errorHandlerFactory the builder
      */
     void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory);
-
-    /**
-     * Gets the current data format resolver
-     *
-     * @return the resolver
-     */
-    DataFormatResolver getDataFormatResolver();
-
-    /**
-     * Sets a custom data format resolver
-     *
-     * @param dataFormatResolver the resolver
-     */
-    void setDataFormatResolver(DataFormatResolver dataFormatResolver);
 
     /**
      * Gets the current health check resolver
