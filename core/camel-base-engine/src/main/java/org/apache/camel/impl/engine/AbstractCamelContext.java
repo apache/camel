@@ -221,7 +221,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ModelToXMLDumper modelToXMLDumper;
     volatile RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory;
     volatile RuntimeCamelCatalog runtimeCamelCatalog;
-    volatile InterceptEndpointFactory interceptEndpointFactory;
     volatile RouteFactory routeFactory;
     volatile AsyncProcessorAwaitManager asyncProcessorAwaitManager;
     volatile UnitOfWorkFactory unitOfWorkFactory;
@@ -380,6 +379,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(DevConsoleResolver.class, this::createDevConsoleResolver);
         camelContextExtension.lazyAddContextPlugin(ProcessorFactory.class, this::createProcessorFactory);
         camelContextExtension.lazyAddContextPlugin(InternalProcessorFactory.class, this::createInternalProcessorFactory);
+        camelContextExtension.lazyAddContextPlugin(InterceptEndpointFactory.class, this::createInterceptEndpointFactory);
 
         if (build) {
             try {

@@ -35,7 +35,6 @@ import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
-import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
@@ -314,20 +313,6 @@ public interface ExtendedCamelContext {
      * @return      the factory finder
      */
     FactoryFinder getFactoryFinder(String path);
-
-    /**
-     * Gets the current {@link org.apache.camel.spi.InterceptEndpointFactory}
-     *
-     * @return the factory
-     */
-    InterceptEndpointFactory getInterceptEndpointFactory();
-
-    /**
-     * Sets a custom {@link org.apache.camel.spi.InterceptEndpointFactory}
-     *
-     * @param interceptEndpointFactory the custom factory
-     */
-    void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory);
 
     /**
      * Gets the current {@link org.apache.camel.spi.RouteFactory}

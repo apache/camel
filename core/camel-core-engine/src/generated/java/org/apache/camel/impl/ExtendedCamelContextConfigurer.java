@@ -45,8 +45,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactoryManager": target.setExchangeFactoryManager(property(camelContext, org.apache.camel.spi.ExchangeFactoryManager.class, value)); return true;
         case "headersmapfactory":
         case "HeadersMapFactory": target.setHeadersMapFactory(property(camelContext, org.apache.camel.spi.HeadersMapFactory.class, value)); return true;
-        case "interceptendpointfactory":
-        case "InterceptEndpointFactory": target.setInterceptEndpointFactory(property(camelContext, org.apache.camel.spi.InterceptEndpointFactory.class, value)); return true;
         case "lightweight":
         case "Lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
         case "modeltoxmldumper":
@@ -104,8 +102,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactoryManager": return org.apache.camel.spi.ExchangeFactoryManager.class;
         case "headersmapfactory":
         case "HeadersMapFactory": return org.apache.camel.spi.HeadersMapFactory.class;
-        case "interceptendpointfactory":
-        case "InterceptEndpointFactory": return org.apache.camel.spi.InterceptEndpointFactory.class;
         case "lightweight":
         case "Lightweight": return boolean.class;
         case "modeltoxmldumper":
@@ -164,8 +160,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactoryManager": return target.getExchangeFactoryManager();
         case "headersmapfactory":
         case "HeadersMapFactory": return target.getHeadersMapFactory();
-        case "interceptendpointfactory":
-        case "InterceptEndpointFactory": return target.getInterceptEndpointFactory();
         case "lightweight":
         case "Lightweight": return target.isLightweight();
         case "modeltoxmldumper":
