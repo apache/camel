@@ -47,8 +47,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactoryManager": target.setExchangeFactoryManager(property(camelContext, org.apache.camel.spi.ExchangeFactoryManager.class, value)); return true;
         case "headersmapfactory":
         case "HeadersMapFactory": target.setHeadersMapFactory(property(camelContext, org.apache.camel.spi.HeadersMapFactory.class, value)); return true;
-        case "healthcheckresolver":
-        case "HealthCheckResolver": target.setHealthCheckResolver(property(camelContext, org.apache.camel.health.HealthCheckResolver.class, value)); return true;
         case "interceptendpointfactory":
         case "InterceptEndpointFactory": target.setInterceptEndpointFactory(property(camelContext, org.apache.camel.spi.InterceptEndpointFactory.class, value)); return true;
         case "internalprocessorfactory":
@@ -114,8 +112,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactoryManager": return org.apache.camel.spi.ExchangeFactoryManager.class;
         case "headersmapfactory":
         case "HeadersMapFactory": return org.apache.camel.spi.HeadersMapFactory.class;
-        case "healthcheckresolver":
-        case "HealthCheckResolver": return org.apache.camel.health.HealthCheckResolver.class;
         case "interceptendpointfactory":
         case "InterceptEndpointFactory": return org.apache.camel.spi.InterceptEndpointFactory.class;
         case "internalprocessorfactory":
@@ -182,8 +178,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactoryManager": return target.getExchangeFactoryManager();
         case "headersmapfactory":
         case "HeadersMapFactory": return target.getHeadersMapFactory();
-        case "healthcheckresolver":
-        case "HealthCheckResolver": return target.getHealthCheckResolver();
         case "interceptendpointfactory":
         case "InterceptEndpointFactory": return target.getInterceptEndpointFactory();
         case "internalprocessorfactory":

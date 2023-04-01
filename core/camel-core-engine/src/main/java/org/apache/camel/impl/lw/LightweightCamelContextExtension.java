@@ -38,7 +38,6 @@ import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.console.DevConsoleResolver;
-import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
@@ -59,7 +58,6 @@ import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
@@ -103,16 +101,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setRegistry(Registry registry) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public HealthCheckResolver getHealthCheckResolver() {
-        return camelContext.getCamelContextExtension().getHealthCheckResolver();
-    }
-
-    @Override
-    public void setHealthCheckResolver(HealthCheckResolver healthCheckResolver) {
         throw new UnsupportedOperationException();
     }
 

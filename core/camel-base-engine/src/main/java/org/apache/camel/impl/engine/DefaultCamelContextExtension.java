@@ -37,7 +37,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.console.DevConsoleResolver;
-import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
@@ -64,7 +63,6 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ProcessorFactory;
@@ -458,22 +456,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setBasePackageScan(String basePackageScan) {
         this.basePackageScan = basePackageScan;
-    }
-
-    public HealthCheckResolver getHealthCheckResolver() {
-        if (camelContext.healthCheckResolver == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.healthCheckResolver == null) {
-                    setHealthCheckResolver(camelContext.createHealthCheckResolver());
-                }
-            }
-        }
-        return camelContext.healthCheckResolver;
-    }
-
-    @Override
-    public void setHealthCheckResolver(HealthCheckResolver healthCheckResolver) {
-        camelContext.healthCheckResolver = camelContext.getInternalServiceManager().addService(healthCheckResolver);
     }
 
     public DevConsoleResolver getDevConsoleResolver() {
