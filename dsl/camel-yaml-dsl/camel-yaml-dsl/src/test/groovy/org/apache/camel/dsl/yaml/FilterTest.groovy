@@ -16,20 +16,19 @@
  */
 package org.apache.camel.dsl.yaml
 
-import org.apache.camel.FailedToCreateRouteException
 import org.apache.camel.component.mock.MockEndpoint
-import org.apache.camel.dsl.yaml.common.YamlDeserializationMode
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.FilterDefinition
 import org.apache.camel.model.ToDefinition
 import org.apache.camel.model.language.ExpressionDefinition
 import org.apache.camel.spi.Resource
+import org.apache.camel.support.PluginHelper
 
 class FilterTest extends YamlTestSupport {
 
     def "filter definition (#resource.location)"(Resource resource) {
         when:
-            context.routesLoader.loadRoutes(resource)
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
             with(context.routeDefinitions[0].outputs[0], FilterDefinition) {
                 with(expression, ExpressionDefinition) {

@@ -446,16 +446,6 @@ public interface ExtendedCamelContext {
     void setEventNotificationApplicable(boolean eventNotificationApplicable);
 
     /**
-     * Gets the {@link RoutesLoader} to be used.
-     */
-    RoutesLoader getRoutesLoader();
-
-    /**
-     * Sets a custom {@link RoutesLoader} to be used.
-     */
-    void setRoutesLoader(RoutesLoader routesLoader);
-
-    /**
      * Gets the {@link ResourceLoader} to be used.
      */
     ResourceLoader getResourceLoader();

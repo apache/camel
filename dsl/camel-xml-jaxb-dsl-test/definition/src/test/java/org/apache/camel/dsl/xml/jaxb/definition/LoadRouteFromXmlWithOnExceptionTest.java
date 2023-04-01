@@ -22,6 +22,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,7 +47,7 @@ public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
         ExtendedCamelContext ecc = context.getCamelContextExtension();
         Resource resource
                 = ecc.getResourceLoader().resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barOnExceptionRoute.xml");
-        ecc.getRoutesLoader().loadRoutes(resource);
+        PluginHelper.getRoutesLoader(ecc).loadRoutes(resource);
         context.start();
 
         assertNotNull(context.getRoute("bar"), "Loaded bar route should be there");

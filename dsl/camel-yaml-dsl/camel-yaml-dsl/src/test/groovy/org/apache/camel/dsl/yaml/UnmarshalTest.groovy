@@ -19,12 +19,13 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.UnmarshalDefinition
 import org.apache.camel.spi.Resource
+import org.apache.camel.support.PluginHelper
 
 class UnmarshalTest extends YamlTestSupport {
 
     def "unmarshal definition (#resource.location, #expected)"(Resource resource, String expected) {
         when:
-            context.routesLoader.loadRoutes(resource)
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
             with(context.routeDefinitions[0].outputs[0], UnmarshalDefinition) {
                 with(dataFormatType) {
@@ -78,7 +79,7 @@ class UnmarshalTest extends YamlTestSupport {
 
     def "unmarshal definition with allow null body (#resource.location, #expected)"(Resource resource, String expected) {
         when:
-            context.routesLoader.loadRoutes(resource)
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
             with(context.routeDefinitions[0].outputs[0], UnmarshalDefinition) {
                 allowNullBody == expected

@@ -380,6 +380,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(InternalProcessorFactory.class, this::createInternalProcessorFactory);
         camelContextExtension.lazyAddContextPlugin(InterceptEndpointFactory.class, this::createInterceptEndpointFactory);
         camelContextExtension.lazyAddContextPlugin(RouteFactory.class, this::createRouteFactory);
+        camelContextExtension.lazyAddContextPlugin(RoutesLoader.class, this::createRoutesLoader);
 
         if (build) {
             try {
@@ -4188,14 +4189,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
         camelContextExtension.setReactiveExecutor(reactiveExecutor);
-    }
-
-    public RoutesLoader getRoutesLoader() {
-        return camelContextExtension.getRoutesLoader();
-    }
-
-    public void setRoutesLoader(RoutesLoader routesLoader) {
-        camelContextExtension.setRoutesLoader(routesLoader);
     }
 
     public ResourceLoader getResourceLoader() {

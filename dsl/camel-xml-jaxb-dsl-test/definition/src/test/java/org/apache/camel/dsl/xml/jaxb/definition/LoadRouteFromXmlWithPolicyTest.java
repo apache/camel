@@ -25,6 +25,7 @@ import org.apache.camel.Route;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,7 +50,7 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
         ExtendedCamelContext ecc = context.getCamelContextExtension();
         Resource resource
                 = ecc.getResourceLoader().resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barPolicyRoute.xml");
-        ecc.getRoutesLoader().loadRoutes(resource);
+        PluginHelper.getRoutesLoader(ecc).loadRoutes(resource);
         context.start();
 
         assertNotNull(context.getRoute("foo"), "Loaded foo route should be there");

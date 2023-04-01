@@ -60,6 +60,7 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.startup.jfr.FlightRecorderStartupStepRecorder;
 import org.apache.camel.support.PluginHelper;
@@ -529,7 +530,7 @@ public class KameletMain extends MainCommandLineSupport {
         if (download) {
             // use resolvers that can auto downloaded
             camelContext.getCamelContextExtension()
-                    .setRoutesLoader(new DependencyDownloaderRoutesLoader(camelContext));
+                    .addContextPlugin(RoutesLoader.class, new DependencyDownloaderRoutesLoader(camelContext));
         } else {
             super.configureRoutesLoader(camelContext);
         }

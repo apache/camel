@@ -21,12 +21,13 @@ import org.apache.camel.model.ResequenceDefinition
 import org.apache.camel.model.config.StreamResequencerConfig
 import org.apache.camel.model.language.SimpleExpression
 import org.apache.camel.spi.Resource
+import org.apache.camel.support.PluginHelper
 
 class ResequenceTest extends YamlTestSupport {
 
     def "resequence definition (#resource.location)"(Resource resource) {
         when:
-            context.routesLoader.loadRoutes(resource)
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
             with(context.routeDefinitions[0].outputs[0], ResequenceDefinition) {
                 with (expression, SimpleExpression) {
