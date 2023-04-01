@@ -44,7 +44,7 @@ public class DefaultDevConsolesLoader {
     public DefaultDevConsolesLoader(CamelContext camelContext) {
         this.camelContext = camelContext;
         this.resolver = PluginHelper.getPackageScanResourceResolver(camelContext);
-        this.devConsoleResolver = camelContext.getCamelContextExtension().getDevConsoleResolver();
+        this.devConsoleResolver = PluginHelper.getDevConsoleResolver(camelContext);
     }
 
     public Collection<DevConsole> loadDevConsoles() {
