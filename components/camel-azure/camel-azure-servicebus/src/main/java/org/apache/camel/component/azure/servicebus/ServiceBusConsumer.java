@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.azure.servicebus;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
@@ -39,7 +39,8 @@ public class ServiceBusConsumer extends DefaultConsumer {
     private ServiceBusReceiverAsyncClientWrapper clientWrapper;
     private ServiceBusReceiverOperations operations;
 
-    private final Map<ServiceBusConsumerOperationDefinition, Runnable> operationsToExecute = new HashMap<>();
+    private final Map<ServiceBusConsumerOperationDefinition, Runnable> operationsToExecute
+            = new EnumMap<>(ServiceBusConsumerOperationDefinition.class);
 
     {
         bind(ServiceBusConsumerOperationDefinition.peekMessages, this::peekMessages);

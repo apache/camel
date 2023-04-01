@@ -19,7 +19,7 @@ package org.apache.camel.component.aws2.sqs;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import org.apache.camel.Category;
@@ -241,7 +241,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
 
         // creates a new queue, or returns the URL of an existing one
         CreateQueueRequest.Builder request = CreateQueueRequest.builder().queueName(configuration.getQueueName());
-        Map<QueueAttributeName, String> attributes = new HashMap<QueueAttributeName, String>();
+        Map<QueueAttributeName, String> attributes = new EnumMap<>(QueueAttributeName.class);
         if (getConfiguration().isFifoQueue()) {
             attributes.put(QueueAttributeName.FIFO_QUEUE, String.valueOf(true));
             boolean useContentBasedDeduplication
@@ -304,7 +304,7 @@ public class Sqs2Endpoint extends ScheduledPollEndpoint implements HeaderFilterS
 
     private void updateQueueAttributes(SqsClient client) throws IOException {
         SetQueueAttributesRequest.Builder request = SetQueueAttributesRequest.builder().queueUrl(queueUrl);
-        Map<QueueAttributeName, String> attributes = new HashMap<QueueAttributeName, String>();
+        Map<QueueAttributeName, String> attributes = new EnumMap<>(QueueAttributeName.class);
         if (getConfiguration().getDefaultVisibilityTimeout() != null) {
             attributes.put(QueueAttributeName.VISIBILITY_TIMEOUT,
                     String.valueOf(getConfiguration().getDefaultVisibilityTimeout()));

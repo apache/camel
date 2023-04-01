@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.azure.cosmosdb;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
@@ -50,7 +50,8 @@ public class CosmosDbProducer extends DefaultAsyncProducer {
 
     private CosmosAsyncClientWrapper clientWrapper;
     private CosmosDbConfigurationOptionsProxy configurationOptionsProxy;
-    private final Map<CosmosDbOperationsDefinition, BiConsumer<Exchange, AsyncCallback>> operations = new HashMap<>();
+    private final Map<CosmosDbOperationsDefinition, BiConsumer<Exchange, AsyncCallback>> operations
+            = new EnumMap<>(CosmosDbOperationsDefinition.class);
 
     {
         bind(CosmosDbOperationsDefinition.listDatabases, listDatabases());
