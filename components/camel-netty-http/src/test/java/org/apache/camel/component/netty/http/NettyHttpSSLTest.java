@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty.http;
 
 import java.net.URL;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.net.ssl.SSLSession;
@@ -64,8 +65,9 @@ public class NettyHttpSSLTest extends BaseNettyTest {
     }
 
     protected void restoreSystemProperties() {
-        for (Object key : originalValues.keySet()) {
-            Object value = originalValues.get(key);
+        for (Map.Entry<Object, Object> entry : originalValues.entrySet()) {
+            Object key = entry.getKey();
+            Object value = entry.getValue();
             if (NULL_VALUE_MARKER.equals(value)) {
                 System.clearProperty((String) key);
             } else {

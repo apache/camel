@@ -156,8 +156,8 @@ public class CsvMarshalHeaderWithCustomMarshallFactoryTest extends CamelTestSupp
         @Override
         protected Iterable<?> getMapRecordValues(Map<?, ?> map) {
             List<String> result = new ArrayList<>(map.size());
-            for (Object key : map.keySet()) {
-                result.add((String) map.get(key));
+            for (Object o : map.values()) {
+                result.add((String) o);
             }
             return result;
         }
