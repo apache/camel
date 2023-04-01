@@ -21,6 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ComponentNameResolver;
@@ -306,5 +307,23 @@ public final class PluginHelper {
      */
     public static PeriodTaskScheduler getPeriodTaskScheduler(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(PeriodTaskScheduler.class);
+    }
+
+    /**
+     * Gets the current health check resolver
+     *
+     * @return the resolver
+     */
+    public static HealthCheckResolver getHealthCheckResolver(CamelContext camelContext) {
+        return getHealthCheckResolver(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the current health check resolver
+     *
+     * @return the resolver
+     */
+    public static HealthCheckResolver getHealthCheckResolver(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(HealthCheckResolver.class);
     }
 }

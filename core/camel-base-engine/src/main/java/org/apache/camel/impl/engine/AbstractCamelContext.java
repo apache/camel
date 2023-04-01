@@ -211,7 +211,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ProcessorExchangeFactory processorExchangeFactory;
     volatile ReactiveExecutor reactiveExecutor;
     volatile Registry registry;
-    volatile HealthCheckResolver healthCheckResolver;
     volatile DevConsoleResolver devConsoleResolver;
     volatile ManagementStrategy managementStrategy;
     volatile ManagementMBeanAssembler managementMBeanAssembler;
@@ -380,6 +379,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.addContextPlugin(DataFormatResolver.class, createDataFormatResolver());
         camelContextExtension.lazyAddContextPlugin(PeriodTaskResolver.class, this::createPeriodTaskResolver);
         camelContextExtension.lazyAddContextPlugin(PeriodTaskScheduler.class, this::createPeriodTaskScheduler);
+        camelContextExtension.lazyAddContextPlugin(HealthCheckResolver.class, this::createHealthCheckResolver);
 
         if (build) {
             try {
@@ -3262,8 +3262,6 @@ public abstract class AbstractCamelContext extends BaseService
         getInjector();
         camelContextExtension.getDefaultFactoryFinder();
         getPropertiesComponent();
-
-        camelContextExtension.getHealthCheckResolver();
 
         getExecutorServiceManager();
         camelContextExtension.getExchangeFactoryManager();
