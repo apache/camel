@@ -52,7 +52,6 @@ import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
-import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
@@ -463,23 +462,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setLightweight(boolean lightweight) {
         this.lightweight = lightweight;
-    }
-
-    @Override
-    public InterceptEndpointFactory getInterceptEndpointFactory() {
-        if (camelContext.interceptEndpointFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.interceptEndpointFactory == null) {
-                    setInterceptEndpointFactory(camelContext.createInterceptEndpointFactory());
-                }
-            }
-        }
-        return camelContext.interceptEndpointFactory;
-    }
-
-    @Override
-    public void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory) {
-        camelContext.interceptEndpointFactory = camelContext.getInternalServiceManager().addService(interceptEndpointFactory);
     }
 
     @Override

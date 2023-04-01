@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -51,7 +52,7 @@ public class InterceptSendToEndpointCallback implements EndpointStrategy {
         } else if (matchURI == null || matchPattern(uri, matchURI)) {
             // only proxy if the uri is matched decorate endpoint with
             // our proxy should be false by default
-            return camelContext.getCamelContextExtension().getInterceptEndpointFactory()
+            return PluginHelper.getInterceptEndpointFactory(camelContext)
                     .createInterceptSendToEndpoint(camelContext, endpoint, skip, before, after);
         } else {
             // no proxy so return regular endpoint

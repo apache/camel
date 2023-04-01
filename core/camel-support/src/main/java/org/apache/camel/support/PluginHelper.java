@@ -30,6 +30,7 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ModelJAXBContextFactory;
@@ -382,5 +383,23 @@ public final class PluginHelper {
      */
     public static InternalProcessorFactory getInternalProcessorFactory(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(InternalProcessorFactory.class);
+    }
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.InterceptEndpointFactory}
+     *
+     * @return the factory
+     */
+    public static InterceptEndpointFactory getInterceptEndpointFactory(CamelContext camelContext) {
+        return getInterceptEndpointFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.InterceptEndpointFactory}
+     *
+     * @return the factory
+     */
+    public static InterceptEndpointFactory getInterceptEndpointFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(InterceptEndpointFactory.class);
     }
 }

@@ -50,7 +50,6 @@ import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
-import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
@@ -238,16 +237,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public FactoryFinder getFactoryFinder(String path) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public InterceptEndpointFactory getInterceptEndpointFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory) {
         throw new UnsupportedOperationException();
     }
 
