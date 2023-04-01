@@ -21,6 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
@@ -454,5 +455,19 @@ public final class PluginHelper {
      */
     public static AsyncProcessorAwaitManager getAsyncProcessorAwaitManager(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(AsyncProcessorAwaitManager.class);
+    }
+
+    /**
+     * Gets the {@link RuntimeCamelCatalog} if available on the classpath.
+     */
+    public static RuntimeCamelCatalog getRuntimeCamelCatalog(CamelContext camelContext) {
+        return getRuntimeCamelCatalog(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link RuntimeCamelCatalog} if available on the classpath.
+     */
+    public static RuntimeCamelCatalog getRuntimeCamelCatalog(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(RuntimeCamelCatalog.class);
     }
 }
