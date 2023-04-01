@@ -687,8 +687,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedHeaderValuesReceivedInAnyOrder(String name, Object... values) {
-        List<Object> valueList = new ArrayList<>();
-        valueList.addAll(Arrays.asList(values));
+        List<Object> valueList = new ArrayList<>(Arrays.asList(values));
         expectedHeaderValuesReceivedInAnyOrder(name, valueList);
     }
 
@@ -776,8 +775,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedPropertyValuesReceivedInAnyOrder(String name, Object... values) {
-        List<Object> valueList = new ArrayList<>();
-        valueList.addAll(Arrays.asList(values));
+        List<Object> valueList = new ArrayList<>(Arrays.asList(values));
         expectedPropertyValuesReceivedInAnyOrder(name, valueList);
     }
 
@@ -866,8 +864,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedBodiesReceived(Object... bodies) {
-        List<Object> bodyList = new ArrayList<>();
-        bodyList.addAll(Arrays.asList(bodies));
+        List<Object> bodyList = new ArrayList<>(Arrays.asList(bodies));
         expectedBodiesReceived(bodyList);
     }
 
@@ -932,8 +929,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * <b>Important:</b> This overrides any previous set value using {@link #expectedMessageCount(int)}
      */
     public void expectedBodiesReceivedInAnyOrder(Object... bodies) {
-        List<Object> bodyList = new ArrayList<>();
-        bodyList.addAll(Arrays.asList(bodies));
+        List<Object> bodyList = new ArrayList<>(Arrays.asList(bodies));
         expectedBodiesReceivedInAnyOrder(bodyList);
     }
 

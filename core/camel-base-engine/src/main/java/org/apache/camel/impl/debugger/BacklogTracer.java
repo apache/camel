@@ -340,8 +340,7 @@ public final class BacklogTracer extends ServiceSupport implements org.apache.ca
 
     @Override
     public List<BacklogTracerEventMessage> dumpAllTracedMessages() {
-        List<BacklogTracerEventMessage> answer = new ArrayList<>();
-        answer.addAll(queue);
+        List<BacklogTracerEventMessage> answer = new ArrayList<>(queue);
         if (isRemoveOnDump()) {
             queue.clear();
         }

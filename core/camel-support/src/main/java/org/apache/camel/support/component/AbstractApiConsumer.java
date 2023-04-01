@@ -57,8 +57,7 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T>
     @Override
     protected int poll() throws Exception {
         // invoke the consumer method
-        final Map<String, Object> args = new HashMap<>();
-        args.putAll(endpoint.getEndpointProperties());
+        final Map<String, Object> args = new HashMap<>(endpoint.getEndpointProperties());
 
         // let the endpoint and the Consumer intercept properties
         endpoint.interceptProperties(args);

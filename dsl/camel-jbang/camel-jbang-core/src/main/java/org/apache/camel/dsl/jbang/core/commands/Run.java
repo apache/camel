@@ -606,8 +606,7 @@ public class Run extends CamelCommand {
     }
 
     protected int runCamelVersion(KameletMain main) throws Exception {
-        List<String> cmds = new ArrayList<>();
-        cmds.addAll(spec.commandLine().getParseResult().originalArgs());
+        List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
 
         if (background) {
             cmds.remove("--background=true");
@@ -642,8 +641,7 @@ public class Run extends CamelCommand {
     }
 
     protected int runBackground(KameletMain main) throws Exception {
-        List<String> cmds = new ArrayList<>();
-        cmds.addAll(spec.commandLine().getParseResult().originalArgs());
+        List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
 
         cmds.remove("--background=true");
         cmds.remove("--background");
@@ -693,8 +691,7 @@ public class Run extends CamelCommand {
         String fn = WORK_DIR + "/CustomCamelJBang.java";
         Files.write(Paths.get(fn), content.getBytes(StandardCharsets.UTF_8));
 
-        List<String> cmds = new ArrayList<>();
-        cmds.addAll(spec.commandLine().getParseResult().originalArgs());
+        List<String> cmds = new ArrayList<>(spec.commandLine().getParseResult().originalArgs());
 
         if (background) {
             cmds.remove("--background=true");
