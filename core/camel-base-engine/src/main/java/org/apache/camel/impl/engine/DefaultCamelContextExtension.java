@@ -465,23 +465,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public RouteFactory getRouteFactory() {
-        if (camelContext.routeFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.routeFactory == null) {
-                    setRouteFactory(camelContext.createRouteFactory());
-                }
-            }
-        }
-        return camelContext.routeFactory;
-    }
-
-    @Override
-    public void setRouteFactory(RouteFactory routeFactory) {
-        camelContext.routeFactory = routeFactory;
-    }
-
-    @Override
     public HeadersMapFactory getHeadersMapFactory() {
         return camelContext.headersMapFactory;
     }

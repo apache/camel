@@ -48,7 +48,6 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
-import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
@@ -313,20 +312,6 @@ public interface ExtendedCamelContext {
      * @return      the factory finder
      */
     FactoryFinder getFactoryFinder(String path);
-
-    /**
-     * Gets the current {@link org.apache.camel.spi.RouteFactory}
-     *
-     * @return the factory
-     */
-    RouteFactory getRouteFactory();
-
-    /**
-     * Sets a custom {@link org.apache.camel.spi.RouteFactory}
-     *
-     * @param routeFactory the custom factory
-     */
-    void setRouteFactory(RouteFactory routeFactory);
 
     /**
      * Gets the {@link DeferServiceFactory} to use.
