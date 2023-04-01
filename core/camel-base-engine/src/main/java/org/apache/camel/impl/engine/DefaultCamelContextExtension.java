@@ -35,7 +35,6 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
-import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -65,7 +64,6 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
-import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.StartupStepRecorder;
@@ -483,21 +481,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     public void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper) {
         camelContext.modelToXMLDumper = camelContext.getInternalServiceManager().addService(modelToXMLDumper);
-    }
-
-    public RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory() {
-        if (camelContext.restBindingJaxbDataFormatFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.restBindingJaxbDataFormatFactory == null) {
-                    setRestBindingJaxbDataFormatFactory(camelContext.createRestBindingJaxbDataFormatFactory());
-                }
-            }
-        }
-        return camelContext.restBindingJaxbDataFormatFactory;
-    }
-
-    public void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory) {
-        camelContext.restBindingJaxbDataFormatFactory = restBindingJaxbDataFormatFactory;
     }
 
     @Override

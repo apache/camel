@@ -42,6 +42,7 @@ import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.UriFactoryResolver;
@@ -469,5 +470,21 @@ public final class PluginHelper {
      */
     public static RuntimeCamelCatalog getRuntimeCamelCatalog(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(RuntimeCamelCatalog.class);
+    }
+
+    /**
+     * Gets the {@link RestBindingJaxbDataFormatFactory} to be used.
+     */
+    public static RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory(CamelContext camelContext) {
+        return getRestBindingJaxbDataFormatFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link RestBindingJaxbDataFormatFactory} to be used.
+     */
+    public static RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory(
+            ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(RestBindingJaxbDataFormatFactory.class);
+
     }
 }
