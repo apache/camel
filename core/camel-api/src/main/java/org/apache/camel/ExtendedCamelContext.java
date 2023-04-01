@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
@@ -49,7 +48,6 @@ import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
-import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.UnitOfWorkFactory;
 
@@ -383,20 +381,6 @@ public interface ExtendedCamelContext {
      * Adds a {@link LogListener}.
      */
     void addLogListener(LogListener listener);
-
-    /**
-     * Gets the {@link org.apache.camel.AsyncProcessor} await manager.
-     *
-     * @return the manager
-     */
-    AsyncProcessorAwaitManager getAsyncProcessorAwaitManager();
-
-    /**
-     * Sets a custom {@link org.apache.camel.AsyncProcessor} await manager.
-     *
-     * @param manager the manager
-     */
-    void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager);
 
     /**
      * Gets the {@link BeanIntrospection}

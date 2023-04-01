@@ -118,7 +118,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
 
         this.camelContext = camelContext;
         this.reactiveExecutor = camelContext.getCamelContextExtension().getReactiveExecutor();
-        this.awaitManager = camelContext.getCamelContextExtension().getAsyncProcessorAwaitManager();
+        this.awaitManager = PluginHelper.getAsyncProcessorAwaitManager(camelContext);
         this.shutdownStrategy = camelContext.getShutdownStrategy();
         this.redeliveryProcessor = redeliveryProcessor;
         this.deadLetter = deadLetter;

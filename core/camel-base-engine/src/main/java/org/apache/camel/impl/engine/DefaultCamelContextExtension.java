@@ -37,7 +37,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
@@ -405,24 +404,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
             LOG.warn("Error setting up management due {}", e.getMessage());
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }
-    }
-
-    @Override
-    public AsyncProcessorAwaitManager getAsyncProcessorAwaitManager() {
-        if (camelContext.asyncProcessorAwaitManager == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.asyncProcessorAwaitManager == null) {
-                    setAsyncProcessorAwaitManager(camelContext.createAsyncProcessorAwaitManager());
-                }
-            }
-        }
-        return camelContext.asyncProcessorAwaitManager;
-    }
-
-    @Override
-    public void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager asyncProcessorAwaitManager) {
-        camelContext.asyncProcessorAwaitManager
-                = camelContext.getInternalServiceManager().addService(asyncProcessorAwaitManager);
     }
 
     @Override

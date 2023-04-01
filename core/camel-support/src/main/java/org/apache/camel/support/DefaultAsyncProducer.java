@@ -36,7 +36,7 @@ public abstract class DefaultAsyncProducer extends DefaultProducer implements As
     @Override
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorAwaitManager awaitManager
-                = exchange.getContext().getCamelContextExtension().getAsyncProcessorAwaitManager();
+                = PluginHelper.getAsyncProcessorAwaitManager(exchange.getContext());
         awaitManager.process(this, exchange);
     }
 

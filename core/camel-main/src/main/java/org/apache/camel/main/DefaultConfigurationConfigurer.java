@@ -383,7 +383,7 @@ public final class DefaultConfigurationConfigurer {
         }
         AsyncProcessorAwaitManager apam = getSingleBeanOfType(registry, AsyncProcessorAwaitManager.class);
         if (apam != null) {
-            ecc.getCamelContextExtension().setAsyncProcessorAwaitManager(apam);
+            ecc.getCamelContextExtension().addContextPlugin(AsyncProcessorAwaitManager.class, apam);
         }
         ManagementStrategy ms = getSingleBeanOfType(registry, ManagementStrategy.class);
         if (ms != null) {

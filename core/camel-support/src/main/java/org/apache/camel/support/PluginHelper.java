@@ -23,6 +23,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckResolver;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ComponentNameResolver;
@@ -430,11 +431,28 @@ public final class PluginHelper {
         return getRoutesLoader(camelContext.getCamelContextExtension());
     }
 
-
     /**
      * Gets the {@link RoutesLoader} to be used.
      */
     public static RoutesLoader getRoutesLoader(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(RoutesLoader.class);
+    }
+
+    /**
+     * Gets the {@link org.apache.camel.AsyncProcessor} await manager.
+     *
+     * @return the manager
+     */
+    public static AsyncProcessorAwaitManager getAsyncProcessorAwaitManager(CamelContext camelContext) {
+        return getAsyncProcessorAwaitManager(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link org.apache.camel.AsyncProcessor} await manager.
+     *
+     * @return the manager
+     */
+    public static AsyncProcessorAwaitManager getAsyncProcessorAwaitManager(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(AsyncProcessorAwaitManager.class);
     }
 }
