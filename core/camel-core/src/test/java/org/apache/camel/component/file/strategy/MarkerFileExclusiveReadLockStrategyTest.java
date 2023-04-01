@@ -59,12 +59,14 @@ public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport 
 
         String content = new String(Files.readAllBytes(testFile("out/file1.dat")));
         String[] lines = content.split(LS);
+        assertEquals(20, lines.length);
         for (int i = 0; i < 20; i++) {
             assertEquals("Line " + i, lines[i]);
         }
 
         content = new String(Files.readAllBytes(testFile("out/file2.dat")));
         lines = content.split(LS);
+        assertEquals(20, lines.length);
         for (int i = 0; i < 20; i++) {
             assertEquals("Line " + i, lines[i]);
         }
