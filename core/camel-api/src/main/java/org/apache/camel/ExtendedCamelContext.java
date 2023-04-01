@@ -45,7 +45,6 @@ import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
-import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.StartupStepRecorder;
@@ -448,16 +447,6 @@ public interface ExtendedCamelContext {
      * Sets a custom {@link ModelToXMLDumper} to be used.
      */
     void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper);
-
-    /**
-     * Gets the {@link RestBindingJaxbDataFormatFactory} to be used.
-     */
-    RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory();
-
-    /**
-     * Sets a custom {@link RestBindingJaxbDataFormatFactory} to be used.
-     */
-    void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory);
 
     /**
      * Internal {@link RouteController} that are only used internally by Camel to perform basic route operations. Do not

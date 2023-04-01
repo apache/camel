@@ -57,8 +57,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Registry": target.setRegistry(property(camelContext, org.apache.camel.spi.Registry.class, value)); return true;
         case "resourceloader":
         case "ResourceLoader": target.setResourceLoader(property(camelContext, org.apache.camel.spi.ResourceLoader.class, value)); return true;
-        case "restbindingjaxbdataformatfactory":
-        case "RestBindingJaxbDataFormatFactory": target.setRestBindingJaxbDataFormatFactory(property(camelContext, org.apache.camel.spi.RestBindingJaxbDataFormatFactory.class, value)); return true;
         case "startupsteprecorder":
         case "StartupStepRecorder": target.setStartupStepRecorder(property(camelContext, org.apache.camel.spi.StartupStepRecorder.class, value)); return true;
         case "unitofworkfactory":
@@ -106,8 +104,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Registry": return org.apache.camel.spi.Registry.class;
         case "resourceloader":
         case "ResourceLoader": return org.apache.camel.spi.ResourceLoader.class;
-        case "restbindingjaxbdataformatfactory":
-        case "RestBindingJaxbDataFormatFactory": return org.apache.camel.spi.RestBindingJaxbDataFormatFactory.class;
         case "startupsteprecorder":
         case "StartupStepRecorder": return org.apache.camel.spi.StartupStepRecorder.class;
         case "unitofworkfactory":
@@ -156,8 +152,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Registry": return target.getRegistry();
         case "resourceloader":
         case "ResourceLoader": return target.getResourceLoader();
-        case "restbindingjaxbdataformatfactory":
-        case "RestBindingJaxbDataFormatFactory": return target.getRestBindingJaxbDataFormatFactory();
         case "startupsteprecorder":
         case "StartupStepRecorder": return target.getStartupStepRecorder();
         case "unitofworkfactory":

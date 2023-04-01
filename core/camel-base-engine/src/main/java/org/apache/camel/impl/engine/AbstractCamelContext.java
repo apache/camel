@@ -218,7 +218,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile BeanProcessorFactory beanProcessorFactory;
     volatile ResourceLoader resourceLoader;
     volatile ModelToXMLDumper modelToXMLDumper;
-    volatile RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory;
     volatile UnitOfWorkFactory unitOfWorkFactory;
     volatile BeanIntrospection beanIntrospection;
     volatile boolean eventNotificationApplicable;
@@ -4196,10 +4195,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     public ModelToXMLDumper getModelToXMLDumper() {
         return camelContextExtension.getModelToXMLDumper();
-    }
-
-    public RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory() {
-        return camelContextExtension.getRestBindingJaxbDataFormatFactory();
     }
 
     public EndpointUriFactory getEndpointUriFactory(String scheme) {
