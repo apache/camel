@@ -158,6 +158,20 @@ serializer located in the `camel-xml-io` module instead of the JAXB based one fr
 
 The `itemPartitionKey` has been updated. It's now a String a not a PartitionKey anymore. More details in CAMEL-19222.
 
+=== camel-bean
+
+When using the `method` option to refer to a specific method, and using parameter types and values, such as:
+`"bean:myBean?method=foo(com.foo.MyOrder, true)"` then any class types must now be using `.class` syntax,
+i.e. `com.foo.MyOrder` should now be `com.foo.MyOrder.class`.
+
+The example from above should now be as follows:
+
+    "bean:myBean?method=foo(com.foo.MyOrder.class, true)"
+
+This also applies to Java types such as String, int, etc:
+
+    "bean:myBean?method=bar(String.class, int.class)"
+
 === camel-caffeine
 
 The `keyType` parameter has been removed. The Key for the cache will now be only `String` type. More information in CAMEL-18877.
