@@ -45,7 +45,6 @@ import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
-import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
@@ -316,20 +315,6 @@ public interface ExtendedCamelContext {
      * @return      the factory finder
      */
     FactoryFinder getFactoryFinder(String path);
-
-    /**
-     * Gets the current {@link org.apache.camel.spi.ProcessorFactory}
-     *
-     * @return the factory, can be <tt>null</tt> if no custom factory has been set
-     */
-    ProcessorFactory getProcessorFactory();
-
-    /**
-     * Sets a custom {@link org.apache.camel.spi.ProcessorFactory}
-     *
-     * @param processorFactory the custom factory
-     */
-    void setProcessorFactory(ProcessorFactory processorFactory);
 
     /**
      * Gets the current {@link org.apache.camel.spi.InternalProcessorFactory}

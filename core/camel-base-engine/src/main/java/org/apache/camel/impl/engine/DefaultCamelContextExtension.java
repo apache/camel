@@ -36,7 +36,6 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
-import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
@@ -65,7 +64,6 @@ import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
-import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
@@ -466,23 +464,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setLightweight(boolean lightweight) {
         this.lightweight = lightweight;
-    }
-
-    @Override
-    public ProcessorFactory getProcessorFactory() {
-        if (camelContext.processorFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.processorFactory == null) {
-                    setProcessorFactory(camelContext.createProcessorFactory());
-                }
-            }
-        }
-        return camelContext.processorFactory;
-    }
-
-    @Override
-    public void setProcessorFactory(ProcessorFactory processorFactory) {
-        camelContext.processorFactory = camelContext.getInternalServiceManager().addService(processorFactory);
     }
 
     @Override

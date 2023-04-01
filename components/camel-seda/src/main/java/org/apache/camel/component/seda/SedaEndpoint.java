@@ -44,6 +44,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -267,8 +268,8 @@ public class SedaEndpoint extends DefaultEndpoint implements AsyncEndpoint, Brow
             // create multicast processor
             multicastStarted = false;
 
-            consumerMulticastProcessor = (AsyncProcessor) getCamelContext().getCamelContextExtension()
-                    .getProcessorFactory().createProcessor(getCamelContext(), "MulticastProcessor",
+            consumerMulticastProcessor = (AsyncProcessor) PluginHelper.getProcessorFactory(getCamelContext())
+                    .createProcessor(getCamelContext(), "MulticastProcessor",
                             new Object[] { processors, multicastExecutor, false });
         }
     }

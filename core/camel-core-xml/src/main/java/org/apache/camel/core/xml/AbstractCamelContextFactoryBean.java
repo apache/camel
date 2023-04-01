@@ -1503,7 +1503,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         ProcessorFactory processorFactory = getBeanForType(ProcessorFactory.class);
         if (processorFactory != null) {
             LOG.info("Using custom ProcessorFactory: {}", processorFactory);
-            getContext().getCamelContextExtension().setProcessorFactory(processorFactory);
+            getContext().getCamelContextExtension().addContextPlugin(ProcessorFactory.class, processorFactory);
         }
         Debugger debugger = getBeanForType(Debugger.class);
         if (debugger != null) {

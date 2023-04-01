@@ -40,6 +40,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -115,15 +116,15 @@ public class KnativeEndpoint extends DefaultEndpoint {
         if (replyProcessor != null) {
             list.add(replyProcessor);
         }
-        CamelContext ecc = getCamelContext();
+        CamelContext camelContext = getCamelContext();
         Processor pipeline
-                = ecc.getCamelContextExtension().getProcessorFactory().createProcessor(ecc, "Pipeline", new Object[] { list });
+                = PluginHelper.getProcessorFactory(camelContext).createProcessor(camelContext, "Pipeline", new Object[] { list });
 
         Consumer consumer = getComponent().getConsumerFactory().createConsumer(this,
                 createTransportConfiguration(service), service, pipeline);
 
         PropertyBindingSupport.build()
-                .withCamelContext(getCamelContext())
+                .withCamelContext(camelContext)
                 .withProperties(configuration.getTransportOptions())
                 .withRemoveParameters(false)
                 .withMandatory(false)

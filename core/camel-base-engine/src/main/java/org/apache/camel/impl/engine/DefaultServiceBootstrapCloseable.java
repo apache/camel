@@ -79,7 +79,7 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
         }
 
         // clear processor factory
-        ProcessorFactory pf = camelContextExtension.getProcessorFactory();
+        ProcessorFactory pf = PluginHelper.getProcessorFactory(camelContextExtension);
         if (pf instanceof BootstrapCloseable) {
             try {
                 ((BootstrapCloseable) pf).close();
@@ -87,7 +87,6 @@ public class DefaultServiceBootstrapCloseable implements BootstrapCloseable {
                 LOG.warn("Error during closing bootstrap service. This exception is ignored", e);
             }
         }
-        camelContextExtension.setProcessorFactory(null);
 
         // clear bootstrap factory finder
         FactoryFinder ff = camelContextExtension.getBootstrapFactoryFinder();

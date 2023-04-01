@@ -37,6 +37,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
+import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.UriFactoryResolver;
 
 public final class PluginHelper {
@@ -345,4 +346,23 @@ public final class PluginHelper {
     public static DevConsoleResolver getDevConsoleResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(DevConsoleResolver.class);
     }
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.ProcessorFactory}
+     *
+     * @return the factory, can be <tt>null</tt> if no custom factory has been set
+     */
+    public static ProcessorFactory getProcessorFactory(CamelContext camelContext) {
+        return getProcessorFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.ProcessorFactory}
+     *
+     * @return the factory, can be <tt>null</tt> if no custom factory has been set
+     */
+    public static ProcessorFactory getProcessorFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ProcessorFactory.class);
+    }
+
 }

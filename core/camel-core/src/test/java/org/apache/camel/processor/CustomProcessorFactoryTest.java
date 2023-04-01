@@ -36,7 +36,7 @@ public class CustomProcessorFactoryTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         // register our custom factory
-        context.getCamelContextExtension().setProcessorFactory(new MyFactory());
+        context.getCamelContextExtension().addContextPlugin(ProcessorFactory.class, new MyFactory());
         return context;
     }
     // END SNIPPET: e1
