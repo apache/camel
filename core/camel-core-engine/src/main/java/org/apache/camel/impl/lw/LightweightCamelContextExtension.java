@@ -694,16 +694,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public void setPeriodTaskScheduler(PeriodTaskScheduler periodTaskScheduler) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PeriodTaskScheduler getPeriodTaskScheduler() {
-        return camelContext.getCamelContextExtension().getPeriodTaskScheduler();
-    }
-
-    @Override
     public PluginManager getPluginManager() {
         return camelContext.getCamelContextExtension().getPluginManager();
     }

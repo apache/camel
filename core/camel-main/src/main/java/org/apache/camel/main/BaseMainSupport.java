@@ -411,7 +411,7 @@ public abstract class BaseMainSupport extends BaseService {
                     ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
                     camelContext.addService(reloader);
                 }
-                PeriodTaskScheduler scheduler = getCamelContext().getCamelContextExtension().getPeriodTaskScheduler();
+                PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(getCamelContext());
                 scheduler.schedulePeriodTask(r, period);
             }
         }
@@ -430,7 +430,7 @@ public abstract class BaseMainSupport extends BaseService {
                     ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
                     camelContext.addService(reloader);
                 }
-                PeriodTaskScheduler scheduler = getCamelContext().getCamelContextExtension().getPeriodTaskScheduler();
+                PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(getCamelContext());
                 scheduler.schedulePeriodTask(r, period);
             }
         }
@@ -449,7 +449,7 @@ public abstract class BaseMainSupport extends BaseService {
                     ContextReloadStrategy reloader = new DefaultContextReloadStrategy();
                     camelContext.addService(reloader);
                 }
-                PeriodTaskScheduler scheduler = getCamelContext().getCamelContextExtension().getPeriodTaskScheduler();
+                PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(getCamelContext());
                 scheduler.schedulePeriodTask(r, period);
             }
         }

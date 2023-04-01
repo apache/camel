@@ -365,21 +365,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         return factories.computeIfAbsent(path, camelContext::createFactoryFinder);
     }
 
-    public PeriodTaskScheduler getPeriodTaskScheduler() {
-        if (camelContext.periodTaskScheduler == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.periodTaskScheduler == null) {
-                    setPeriodTaskScheduler(camelContext.createPeriodTaskScheduler());
-                }
-            }
-        }
-        return camelContext.periodTaskScheduler;
-    }
-
-    public void setPeriodTaskScheduler(PeriodTaskScheduler periodTaskScheduler) {
-        camelContext.periodTaskScheduler = camelContext.getInternalServiceManager().addService(periodTaskScheduler);
-    }
-
     @Override
     public void setupManagement(Map<String, Object> options) {
         LOG.trace("Setting up management");

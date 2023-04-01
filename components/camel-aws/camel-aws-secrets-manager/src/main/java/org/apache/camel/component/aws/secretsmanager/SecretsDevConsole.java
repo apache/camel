@@ -26,6 +26,7 @@ import org.apache.camel.component.aws.secretsmanager.vault.CloudTrailReloadTrigg
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesFunction;
 import org.apache.camel.spi.annotations.DevConsole;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
@@ -54,7 +55,7 @@ public class SecretsDevConsole extends AbstractDevConsole {
         }
         AwsVaultConfiguration aws = getCamelContext().getVaultConfiguration().getAwsVaultConfiguration();
         if (aws != null && aws.isRefreshEnabled()) {
-            PeriodTaskScheduler scheduler = getCamelContext().getCamelContextExtension().getPeriodTaskScheduler();
+            PeriodTaskScheduler scheduler = PluginHelper.getPeriodTaskScheduler(getCamelContext());
             secretsRefreshTask = scheduler.getTaskByType(CloudTrailReloadTriggerTask.class);
         }
     }

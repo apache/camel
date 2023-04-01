@@ -59,8 +59,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ModelToXMLDumper": target.setModelToXMLDumper(property(camelContext, org.apache.camel.spi.ModelToXMLDumper.class, value)); return true;
         case "name":
         case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
-        case "periodtaskscheduler":
-        case "PeriodTaskScheduler": target.setPeriodTaskScheduler(property(camelContext, org.apache.camel.spi.PeriodTaskScheduler.class, value)); return true;
         case "processorexchangefactory":
         case "ProcessorExchangeFactory": target.setProcessorExchangeFactory(property(camelContext, org.apache.camel.spi.ProcessorExchangeFactory.class, value)); return true;
         case "processorfactory":
@@ -128,8 +126,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ModelToXMLDumper": return org.apache.camel.spi.ModelToXMLDumper.class;
         case "name":
         case "Name": return java.lang.String.class;
-        case "periodtaskscheduler":
-        case "PeriodTaskScheduler": return org.apache.camel.spi.PeriodTaskScheduler.class;
         case "processorexchangefactory":
         case "ProcessorExchangeFactory": return org.apache.camel.spi.ProcessorExchangeFactory.class;
         case "processorfactory":
@@ -198,8 +194,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ModelToXMLDumper": return target.getModelToXMLDumper();
         case "name":
         case "Name": return target.getName();
-        case "periodtaskscheduler":
-        case "PeriodTaskScheduler": return target.getPeriodTaskScheduler();
         case "processorexchangefactory":
         case "ProcessorExchangeFactory": return target.getProcessorExchangeFactory();
         case "processorfactory":
