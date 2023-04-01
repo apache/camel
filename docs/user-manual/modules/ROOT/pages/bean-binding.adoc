@@ -11,7 +11,7 @@ NOTE: This requires to include `camel-bean` as dependency on the classpath.
 The binding of a Camel xref:components:eips:message.adoc[Message] to a bean method call
 can occur in different ways, in the following order of importance:
 
-* if the message contains the header *CamelBeanMethodName* then that
+* if the message contains the header `Exchange.BEAN_METHOD_NAME` / `CamelBeanMethodName` then that
 method is invoked, converting the message to the type of the method's
 parameter.
 ** You can qualify parameter types to select
@@ -33,7 +33,7 @@ can use the same mechanism to integrate Camel into any other
 messaging/remoting frameworks.
 * the type of the body is used to find a matching method; an
 error is thrown if a single method cannot be chosen unambiguously.
-* you can also use Exchange as the parameter itself, but then the return
+* you can also use `Exchange` as the parameter itself, but then the return
 type must be void.
 * if the bean class is private (or package-private), interface methods
 will be preferred since Camel can't invoke class methods on such beans
@@ -54,11 +54,10 @@ wait for completion and would not impose any timeouts automatically.
 It's extremely useful to
 monitor `org.apache.camel.spi.InflightRepository` for any hanging messages.
 
-Note that completing with `"null"` won't set outbody message body to null,
+Note that completing with `"null"` won't set out body message body to `null`,
 but would keep message intact. This is useful to support methods that
 don't modify exchange and return `CompletableFuture<Void>`. To set body to
-null, just add Exchange method parameter and directly modify exchange
-messages.
+null, just add `Exchange` method parameter and directly modify exchange messages.
 
 Examples:
 
@@ -93,14 +92,14 @@ The following Camel-specific types are automatically bound:
 * `java.lang.Exception`
 
 So, if you declare any of these types, they will be provided by Camel.
-*Note that `Exception` will bind to the caught exception of the
+*Note that `Exception` will bind to the caught exception in the
 xref:exchange.adoc[Exchange]* - so it's often usable if you employ a
-xref:components::bean-component.adoc[Pojo] to handle, e.g., an `onException` route.
+xref:components::bean-component.adoc[Bean] to handle, e.g., an `onException` route.
 
 What is most interesting is that Camel will also try to bind the body of
 the xref:exchange.adoc[Exchange] to the first parameter of the method
-signature (albeit not of any of the types above). So if, for instance,
-we declare a parameter as `String body`, then Camel will bind the IN
+signature (albeit not any of the types above). So if, for instance,
+we declare a parameter as `String body`, then Camel will bind the message
 body to this type. Camel will also automatically convert to the type
 declared in the method signature.
 
@@ -222,8 +221,7 @@ the method option
 means you can use, e.g., `$\{body}`, `${header.foo}` and others
 xref:components:languages:simple-language.adoc[Simple] tokens. Notice the tokens must be enclosed with
 `${ }`.
-
-Any other value is considered to be a type declaration instead - see the
+* The value ends with `.class` then it's a type declaration instead - see the
 next section about specifying types for overloaded methods.
 
 When invoking a xref:components:eips:bean-eip.adoc[Bean] you can instruct Camel to invoke a
@@ -327,7 +325,7 @@ use `.to` instead as shown:
 === Using type qualifiers to select among overloaded methods
 
 If you have a xref:components:eips:bean-eip.adoc[Bean] with overloaded methods, you can now
-specify parameter types in the method name so Camel can match the method
+specify parameter types (must use `.class` style, eg `com.foo.MyClass.class`) in the method name so Camel can match the method
 you intend to use.
 
 Given the following bean:
@@ -335,7 +333,7 @@ Given the following bean:
 [source,java]
 ----
  from("direct:start")
-    .bean(MyBean.class, "hello(String)")
+    .bean(MyBean.class, "hello(String.class)")
     .to("mock:result");
 ----
 
@@ -346,12 +344,12 @@ do as follows in the Camel route:
 [source,java]
 ----
 from("direct:start")
-    .bean(MyBean.class, "hello(String,String)")
+    .bean(MyBean.class, "hello(String.class, String.class)")
     .to("mock:result"); 
 ----
 
-We can also use a `*` as wildcard so we can just say we want to execute
-the method with 2 parameters we do
+We can also use a `*` as wildcard, so we can just say we want to execute
+the method with 2 parameters we do:
 
 [source,java]
 ----
@@ -368,7 +366,7 @@ the FQN, and *not* the simple name "MyOrder", then follow this example:
 
 [source,java]
 ----
-.bean(OrderService.class, "doSomething(com.foo.MyOrder)")
+.bean(OrderService.class, "doSomething(com.foo.MyOrder.class)")
 ----
 
 Camel currently only supports either specifying parameter binding or
@@ -377,5 +375,5 @@ at the same time, such as
 
 [source,text]
 ----
-doSomething(com.foo.MyOrder ${body}, boolean ${header.high})
+doSomething(com.foo.MyOrder.class ${body}, boolean ${header.high})
 ----

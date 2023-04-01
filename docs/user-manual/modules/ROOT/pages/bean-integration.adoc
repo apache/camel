@@ -17,8 +17,8 @@ The following annotations is supported and inject by Camel's
 |=======================================================================
 |Annotation |Description
 |`@EndpointInject` |To inject an endpoint, see more details at xref:pojo-producing.adoc[POJO Producing].
-|`@BeanInject` |To inject a bean obtained from the Registry. See xref:bean-injection.adoc[Bean Injection].
-|`@BeanConfigInject` |To inject a configuration bean obtained from the Registry. The bean is a POJO that represents
+|`@BeanInject` |To inject a bean obtained from the xref:registry.adoc[Registry]. See xref:bean-injection.adoc[Bean Injection].
+|`@BeanConfigInject` |To inject a configuration bean obtained from the xref:registry.adoc[Registry]. The bean is a POJO that represents
 a set of configuration options, which is automatic configured with values loaded via Camel xref:using-propertyplaceholder.adoc[Property Placeholders].
 |`@PropertyInject` |To inject a value using property placeholder.
 |`@Produce` |To inject a producer to send message to an endpoint. See xref:pojo-producing.adoc[POJO Producing].
