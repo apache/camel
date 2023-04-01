@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.platform.http.spi;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * An HTTP method.
