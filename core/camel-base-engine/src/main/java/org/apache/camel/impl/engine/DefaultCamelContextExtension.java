@@ -64,7 +64,6 @@ import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
@@ -364,23 +363,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public FactoryFinder getFactoryFinder(String path) {
         return factories.computeIfAbsent(path, camelContext::createFactoryFinder);
-    }
-
-    @Override
-    public PeriodTaskResolver getPeriodTaskResolver() {
-        if (camelContext.periodTaskResolver == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.periodTaskResolver == null) {
-                    setPeriodTaskResolver(camelContext.createPeriodTaskResolver());
-                }
-            }
-        }
-        return camelContext.periodTaskResolver;
-    }
-
-    @Override
-    public void setPeriodTaskResolver(PeriodTaskResolver periodTaskResolver) {
-        camelContext.periodTaskResolver = camelContext.getInternalServiceManager().addService(periodTaskResolver);
     }
 
     public PeriodTaskScheduler getPeriodTaskScheduler() {

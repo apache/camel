@@ -33,6 +33,7 @@ import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
+import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.UriFactoryResolver;
 
 public final class PluginHelper {
@@ -276,5 +277,19 @@ public final class PluginHelper {
      */
     public static DataFormatResolver getDataFormatResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(DataFormatResolver.class);
+    }
+
+    /**
+     * Gets the period task resolver
+     */
+    public static PeriodTaskResolver getPeriodTaskResolver(CamelContext camelContext) {
+        return getPeriodTaskResolver(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the period task resolver
+     */
+    public static PeriodTaskResolver getPeriodTaskResolver(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(PeriodTaskResolver.class);
     }
 }

@@ -59,7 +59,6 @@ import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
-import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
@@ -695,11 +694,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public PeriodTaskResolver getPeriodTaskResolver() {
-        return camelContext.getCamelContextExtension().getPeriodTaskResolver();
-    }
-
-    @Override
     public void setPeriodTaskScheduler(PeriodTaskScheduler periodTaskScheduler) {
         throw new UnsupportedOperationException();
     }
@@ -707,11 +701,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     @Override
     public PeriodTaskScheduler getPeriodTaskScheduler() {
         return camelContext.getCamelContextExtension().getPeriodTaskScheduler();
-    }
-
-    @Override
-    public void setPeriodTaskResolver(PeriodTaskResolver periodTaskResolver) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
