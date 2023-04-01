@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 import org.apache.camel.Category;
@@ -379,7 +379,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     public Set<PosixFilePermission> getPermissions() {
-        Set<PosixFilePermission> permissions = new HashSet<>();
+        Set<PosixFilePermission> permissions = EnumSet.noneOf(PosixFilePermission.class);
         if (ObjectHelper.isEmpty(chmod)) {
             return permissions;
         }
@@ -442,7 +442,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     }
 
     public Set<PosixFilePermission> getDirectoryPermissions() {
-        Set<PosixFilePermission> permissions = new HashSet<>();
+        Set<PosixFilePermission> permissions = EnumSet.noneOf(PosixFilePermission.class);
         if (ObjectHelper.isEmpty(chmodDirectory)) {
             return permissions;
         }

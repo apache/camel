@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.platform.http.spi;
 
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Set;
-import java.util.TreeSet;
 
 /**
  * An HTTP method.
@@ -36,7 +35,7 @@ public enum Method {
     CONNECT,
     PATCH;
 
-    private static final Set<Method> ALL = Collections.unmodifiableSet(new TreeSet<>(Arrays.asList(values())));
+    private static final Set<Method> ALL = Collections.unmodifiableSet(EnumSet.allOf(Method.class));
 
     public static Set<Method> getAll() {
         return ALL;
@@ -60,7 +59,7 @@ public enum Method {
         } else if (methods.length == 1) {
             return Collections.singleton(Method.valueOf(methods[0]));
         } else {
-            Set<Method> result = new TreeSet<>();
+            Set<Method> result = EnumSet.noneOf(Method.class);
             for (String method : methods) {
                 result.add(Method.valueOf(method.trim()));
             }

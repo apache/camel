@@ -17,7 +17,7 @@
 package org.apache.camel.component.file.watch;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 import io.methvin.watcher.hashing.FileHasher;
@@ -47,7 +47,7 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
               enums = "CREATE,MODIFY,DELETE",
               description = "Comma separated list of events to watch.",
               defaultValue = "CREATE,MODIFY,DELETE")
-    private Set<FileEventEnum> events = new HashSet<>(Arrays.asList(FileEventEnum.values()));
+    private Set<FileEventEnum> events = EnumSet.copyOf(Arrays.asList(FileEventEnum.values()));
 
     @UriParam(label = "consumer", description = "Auto create directory if does not exists.", defaultValue = "true")
     private boolean autoCreate = true;
@@ -139,11 +139,11 @@ public class FileWatchEndpoint extends DefaultEndpoint implements MultipleConsum
     @SuppressWarnings("unused") //called via reflection
     public void setEvents(String commaSeparatedEvents) {
         String[] stringArray = commaSeparatedEvents.split(",");
-        Set<FileEventEnum> eventsSet = new HashSet<>();
+        Set<FileEventEnum> eventsSet = EnumSet.noneOf(FileEventEnum.class);
         for (String event : stringArray) {
             eventsSet.add(FileEventEnum.valueOf(event.trim()));
         }
-        events = eventsSet.isEmpty() ? new HashSet<>(Arrays.asList(FileEventEnum.values())) : eventsSet;
+        events = eventsSet.isEmpty() ? EnumSet.copyOf(Arrays.asList(FileEventEnum.values())) : eventsSet;
     }
 
     public boolean isAutoCreate() {
