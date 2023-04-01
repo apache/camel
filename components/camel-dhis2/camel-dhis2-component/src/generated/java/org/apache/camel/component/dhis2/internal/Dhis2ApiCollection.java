@@ -5,10 +5,10 @@
 package org.apache.camel.component.dhis2.internal;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import org.apache.camel.component.dhis2.Dhis2Configuration;
 import org.apache.camel.component.dhis2.Dhis2PostEndpointConfiguration;
@@ -27,25 +27,25 @@ public final class Dhis2ApiCollection extends ApiCollection<Dhis2ApiName, Dhis2C
     private static Dhis2ApiCollection collection;
 
     private Dhis2ApiCollection() {
-        final Map<String, String> aliases = new HashMap<String, String>();
-        final Map<Dhis2ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<String, String> aliases = new HashMap<>();
+        final Map<Dhis2ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(Dhis2ApiName.class);
         final Map<Class<? extends ApiMethod>, Dhis2ApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;
 
         aliases.clear();
         nullableArgs = Arrays.asList("resource", "queryParams");
-        apiHelpers.put(Dhis2ApiName.POST, new ApiMethodHelper<Dhis2PostApiMethod>(Dhis2PostApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(Dhis2ApiName.POST, new ApiMethodHelper<>(Dhis2PostApiMethod.class, aliases, nullableArgs));
         apiMethods.put(Dhis2PostApiMethod.class, Dhis2ApiName.POST);
 
         aliases.clear();
         nullableArgs = Arrays.asList("skipEvents", "skipAggregate", "lastYears", "interval");
-        apiHelpers.put(Dhis2ApiName.RESOURCE_TABLES, new ApiMethodHelper<Dhis2ResourceTablesApiMethod>(Dhis2ResourceTablesApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(Dhis2ApiName.RESOURCE_TABLES, new ApiMethodHelper<>(Dhis2ResourceTablesApiMethod.class, aliases, nullableArgs));
         apiMethods.put(Dhis2ResourceTablesApiMethod.class, Dhis2ApiName.RESOURCE_TABLES);
 
         aliases.clear();
         nullableArgs = Arrays.asList("itemType", "paging", "fields", "filter", "queryParams");
-        apiHelpers.put(Dhis2ApiName.GET, new ApiMethodHelper<Dhis2GetApiMethod>(Dhis2GetApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(Dhis2ApiName.GET, new ApiMethodHelper<>(Dhis2GetApiMethod.class, aliases, nullableArgs));
         apiMethods.put(Dhis2GetApiMethod.class, Dhis2ApiName.GET);
 
         setApiHelpers(apiHelpers);

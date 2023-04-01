@@ -5,10 +5,10 @@
 package org.apache.camel.component.as2.internal;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import org.apache.camel.component.as2.AS2Configuration;
 import org.apache.camel.component.as2.AS2ClientManagerEndpointConfiguration;
@@ -26,20 +26,20 @@ public final class AS2ApiCollection extends ApiCollection<AS2ApiName, AS2Configu
     private static AS2ApiCollection collection;
 
     private AS2ApiCollection() {
-        final Map<String, String> aliases = new HashMap<String, String>();
-        final Map<AS2ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<String, String> aliases = new HashMap<>();
+        final Map<AS2ApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(AS2ApiName.class);
         final Map<Class<? extends ApiMethod>, AS2ApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;
 
         aliases.clear();
         nullableArgs = Arrays.asList("ediMessageTransferEncoding", "signingAlgorithm", "signingCertificateChain", "signingPrivateKey", "compressionAlgorithm", "dispositionNotificationTo", "signedReceiptMicAlgorithms", "encryptingAlgorithm", "encryptingCertificateChain", "attachedFileName");
-        apiHelpers.put(AS2ApiName.CLIENT, new ApiMethodHelper<AS2ClientManagerApiMethod>(AS2ClientManagerApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(AS2ApiName.CLIENT, new ApiMethodHelper<>(AS2ClientManagerApiMethod.class, aliases, nullableArgs));
         apiMethods.put(AS2ClientManagerApiMethod.class, AS2ApiName.CLIENT);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(AS2ApiName.SERVER, new ApiMethodHelper<AS2ServerManagerApiMethod>(AS2ServerManagerApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(AS2ApiName.SERVER, new ApiMethodHelper<>(AS2ServerManagerApiMethod.class, aliases, nullableArgs));
         apiMethods.put(AS2ServerManagerApiMethod.class, AS2ApiName.SERVER);
 
         setApiHelpers(apiHelpers);

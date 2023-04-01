@@ -5,10 +5,10 @@
 package org.apache.camel.component.google.mail.internal;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 import org.apache.camel.component.google.mail.GoogleMailConfiguration;
 import org.apache.camel.component.google.mail.GmailUsersThreadsEndpointConfiguration;
@@ -31,45 +31,45 @@ public final class GoogleMailApiCollection extends ApiCollection<GoogleMailApiNa
     private static GoogleMailApiCollection collection;
 
     private GoogleMailApiCollection() {
-        final Map<String, String> aliases = new HashMap<String, String>();
-        final Map<GoogleMailApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new HashMap<>();
+        final Map<String, String> aliases = new HashMap<>();
+        final Map<GoogleMailApiName, ApiMethodHelper<? extends ApiMethod>> apiHelpers = new EnumMap<>(GoogleMailApiName.class);
         final Map<Class<? extends ApiMethod>, GoogleMailApiName> apiMethods = new HashMap<>();
 
         List<String> nullableArgs;
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleMailApiName.THREADS, new ApiMethodHelper<GmailUsersThreadsApiMethod>(GmailUsersThreadsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleMailApiName.THREADS, new ApiMethodHelper<>(GmailUsersThreadsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(GmailUsersThreadsApiMethod.class, GoogleMailApiName.THREADS);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleMailApiName.MESSAGES, new ApiMethodHelper<GmailUsersMessagesApiMethod>(GmailUsersMessagesApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleMailApiName.MESSAGES, new ApiMethodHelper<>(GmailUsersMessagesApiMethod.class, aliases, nullableArgs));
         apiMethods.put(GmailUsersMessagesApiMethod.class, GoogleMailApiName.MESSAGES);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleMailApiName.ATTACHMENTS, new ApiMethodHelper<GmailUsersMessagesAttachmentsApiMethod>(GmailUsersMessagesAttachmentsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleMailApiName.ATTACHMENTS, new ApiMethodHelper<>(GmailUsersMessagesAttachmentsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(GmailUsersMessagesAttachmentsApiMethod.class, GoogleMailApiName.ATTACHMENTS);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleMailApiName.LABELS, new ApiMethodHelper<GmailUsersLabelsApiMethod>(GmailUsersLabelsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleMailApiName.LABELS, new ApiMethodHelper<>(GmailUsersLabelsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(GmailUsersLabelsApiMethod.class, GoogleMailApiName.LABELS);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleMailApiName.HISTORY, new ApiMethodHelper<GmailUsersHistoryApiMethod>(GmailUsersHistoryApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleMailApiName.HISTORY, new ApiMethodHelper<>(GmailUsersHistoryApiMethod.class, aliases, nullableArgs));
         apiMethods.put(GmailUsersHistoryApiMethod.class, GoogleMailApiName.HISTORY);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleMailApiName.DRAFTS, new ApiMethodHelper<GmailUsersDraftsApiMethod>(GmailUsersDraftsApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleMailApiName.DRAFTS, new ApiMethodHelper<>(GmailUsersDraftsApiMethod.class, aliases, nullableArgs));
         apiMethods.put(GmailUsersDraftsApiMethod.class, GoogleMailApiName.DRAFTS);
 
         aliases.clear();
         nullableArgs = Arrays.asList();
-        apiHelpers.put(GoogleMailApiName.USERS, new ApiMethodHelper<GmailUsersApiMethod>(GmailUsersApiMethod.class, aliases, nullableArgs));
+        apiHelpers.put(GoogleMailApiName.USERS, new ApiMethodHelper<>(GmailUsersApiMethod.class, aliases, nullableArgs));
         apiMethods.put(GmailUsersApiMethod.class, GoogleMailApiName.USERS);
 
         setApiHelpers(apiHelpers);
