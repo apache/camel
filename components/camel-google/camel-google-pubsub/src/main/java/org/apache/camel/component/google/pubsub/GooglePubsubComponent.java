@@ -17,7 +17,7 @@
 package org.apache.camel.component.google.pubsub;
 
 import java.io.IOException;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -198,7 +198,7 @@ public class GooglePubsubComponent extends DefaultComponent {
 
         if (synchronousPullRetryableCodes != null) {
             // retrieve the default retryable codes and add the ones specified as a component option
-            Set<StatusCode.Code> retryableCodes = new HashSet<>(builder.pullSettings().getRetryableCodes());
+            Set<StatusCode.Code> retryableCodes = EnumSet.copyOf(builder.pullSettings().getRetryableCodes());
             Set<StatusCode.Code> customRetryableCodes = Stream.of(synchronousPullRetryableCodes.split(","))
                     .map(String::trim)
                     .map(StatusCode.Code::valueOf)
