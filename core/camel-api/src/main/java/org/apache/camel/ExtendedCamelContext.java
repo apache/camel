@@ -683,16 +683,6 @@ public interface ExtendedCamelContext {
     byte getStatusPhase();
 
     /**
-     * Gets the period task scheduler
-     */
-    PeriodTaskScheduler getPeriodTaskScheduler();
-
-    /**
-     * To use a custom period task scheduler
-     */
-    void setPeriodTaskScheduler(PeriodTaskScheduler periodTaskScheduler);
-
-    /**
      * Gets access to the internal plugin manager
      *
      * @return the internal plugin manager

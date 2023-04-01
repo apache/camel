@@ -34,6 +34,7 @@ import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
+import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.UriFactoryResolver;
 
 public final class PluginHelper {
@@ -291,5 +292,19 @@ public final class PluginHelper {
      */
     public static PeriodTaskResolver getPeriodTaskResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(PeriodTaskResolver.class);
+    }
+
+    /**
+     * Gets the period task scheduler
+     */
+    public static PeriodTaskScheduler getPeriodTaskScheduler(CamelContext camelContext) {
+        return getPeriodTaskScheduler(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the period task scheduler
+     */
+    public static PeriodTaskScheduler getPeriodTaskScheduler(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(PeriodTaskScheduler.class);
     }
 }
