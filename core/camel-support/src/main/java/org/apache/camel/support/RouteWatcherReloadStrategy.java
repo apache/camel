@@ -247,7 +247,7 @@ public class RouteWatcherReloadStrategy extends FileWatcherResourceReloadStrateg
 
             // reload those other routes that was stopped and removed as we want to keep running those
             Set<String> ids
-                    = getCamelContext().getCamelContextExtension().getRoutesLoader().updateRoutes(sources);
+                    = PluginHelper.getRoutesLoader(getCamelContext()).updateRoutes(sources);
 
             // update okay, so clear as we do not need to remember those anymore
             previousSources.clear();

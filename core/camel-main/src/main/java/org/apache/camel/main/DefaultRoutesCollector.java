@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.LambdaRouteBuilder;
@@ -139,14 +138,13 @@ public class DefaultRoutesCollector implements RoutesCollector {
             String excludePattern,
             String includePattern) {
 
-        final ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
         final List<RoutesBuilder> answer = new ArrayList<>();
         final String[] includes = includePattern != null ? includePattern.split(",") : null;
 
         StopWatch watch = new StopWatch();
         Collection<Resource> accepted = findRouteResourcesFromDirectory(camelContext, excludePattern, includePattern);
         try {
-            Collection<RoutesBuilder> builders = ecc.getRoutesLoader().findRoutesBuilders(accepted);
+            Collection<RoutesBuilder> builders = PluginHelper.getRoutesLoader(camelContext).findRoutesBuilders(accepted);
             if (!builders.isEmpty()) {
                 log.debug("Found {} route builder from locations: {}", builders.size(), includes);
                 answer.addAll(builders);

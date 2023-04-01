@@ -270,7 +270,7 @@ public class RoutesConfigurer {
         // the resource may also have additional configurations which we need to detect via pre-parsing
         for (Resource resource : resources) {
             LOG.debug("Pre-parsing: {}", resource);
-            RoutesLoader loader = camelContext.getCamelContextExtension().getRoutesLoader();
+            RoutesLoader loader = PluginHelper.getRoutesLoader(camelContext);
             loader.preParseRoute(resource);
         }
 

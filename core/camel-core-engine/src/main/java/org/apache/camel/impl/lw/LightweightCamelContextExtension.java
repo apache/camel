@@ -442,16 +442,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public void setRoutesLoader(RoutesLoader routesLoader) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public RoutesLoader getRoutesLoader() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public ResourceLoader getResourceLoader() {
         throw new UnsupportedOperationException();
     }

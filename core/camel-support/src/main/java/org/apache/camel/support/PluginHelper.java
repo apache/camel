@@ -41,6 +41,7 @@ import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RouteFactory;
+import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.UriFactoryResolver;
 
 public final class PluginHelper {
@@ -420,5 +421,20 @@ public final class PluginHelper {
      */
     public static RouteFactory getRouteFactory(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(RouteFactory.class);
+    }
+
+    /**
+     * Gets the {@link RoutesLoader} to be used.
+     */
+    public static RoutesLoader getRoutesLoader(CamelContext camelContext) {
+        return getRoutesLoader(camelContext.getCamelContextExtension());
+    }
+
+
+    /**
+     * Gets the {@link RoutesLoader} to be used.
+     */
+    public static RoutesLoader getRoutesLoader(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(RoutesLoader.class);
     }
 }

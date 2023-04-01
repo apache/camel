@@ -68,9 +68,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
-import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RouteStartupOrder;
-import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.support.EndpointHelper;
@@ -472,23 +470,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setHeadersMapFactory(HeadersMapFactory headersMapFactory) {
         camelContext.headersMapFactory = camelContext.getInternalServiceManager().addService(headersMapFactory);
-    }
-
-    @Override
-    public RoutesLoader getRoutesLoader() {
-        if (camelContext.routesLoader == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.routesLoader == null) {
-                    setRoutesLoader(camelContext.createRoutesLoader());
-                }
-            }
-        }
-        return camelContext.routesLoader;
-    }
-
-    @Override
-    public void setRoutesLoader(RoutesLoader routesLoader) {
-        camelContext.routesLoader = camelContext.getInternalServiceManager().addService(routesLoader);
     }
 
     @Override

@@ -24,6 +24,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.PluginHelper;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -39,7 +40,7 @@ public class JshSourceLoaderTest {
     void testLoadRoutes(String location) throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
             Resource resource = context.getResourceLoader().resolveResource(location);
-            Collection<RoutesBuilder> builders = context.getRoutesLoader().findRoutesBuilders(resource);
+            Collection<RoutesBuilder> builders = PluginHelper.getRoutesLoader(context).findRoutesBuilders(resource);
 
             assertThat(builders).hasSize(1);
 

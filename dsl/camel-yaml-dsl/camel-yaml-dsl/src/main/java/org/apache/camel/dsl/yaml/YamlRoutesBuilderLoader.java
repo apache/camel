@@ -63,6 +63,7 @@ import org.apache.camel.spi.DependencyStrategy;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.RoutesLoader;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.URISupport;
@@ -507,8 +508,7 @@ public class YamlRoutesBuilderLoader extends YamlRoutesBuilderLoaderSupport {
                     @Override
                     public void configure(CamelContext camelContext) {
                         try {
-                            camelContext.getCamelContextExtension()
-                                    .getRoutesLoader().loadRoutes(res);
+                            PluginHelper.getRoutesLoader(camelContext).loadRoutes(res);
                         } catch (Exception e) {
                             throw new RuntimeCamelException(
                                     "Error loading sources from resource: " + res + " due to " + e.getMessage(), e);
