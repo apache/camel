@@ -28,6 +28,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
+import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ComponentNameResolver;
