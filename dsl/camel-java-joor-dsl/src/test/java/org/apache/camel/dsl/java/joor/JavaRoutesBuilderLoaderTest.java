@@ -45,7 +45,7 @@ public class JavaRoutesBuilderLoaderTest {
     })
     void testLoadRoutes(String location) throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            Resource resource = context.getResourceLoader().resolveResource(location);
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(location);
             Collection<RoutesBuilder> builders = PluginHelper.getRoutesLoader(context).findRoutesBuilders(resource);
 
             assertThat(builders).hasSize(1);
@@ -69,7 +69,7 @@ public class JavaRoutesBuilderLoaderTest {
         final String location = "/routes/MyRoutesWithNestedClass.java";
 
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            Resource resource = context.getResourceLoader().resolveResource(location);
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(location);
             Collection<RoutesBuilder> builders = PluginHelper.getRoutesLoader(context).findRoutesBuilders(resource);
 
             assertThat(builders).hasSize(1);
@@ -95,7 +95,7 @@ public class JavaRoutesBuilderLoaderTest {
         final String location = "/routes/MyRoutesWithRestConfiguration.java";
 
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            Resource resource = context.getResourceLoader().resolveResource(location);
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(location);
             Collection<RoutesBuilder> builders = PluginHelper.getRoutesLoader(context).findRoutesBuilders(resource);
 
             assertThat(builders).hasSize(1);
@@ -114,7 +114,7 @@ public class JavaRoutesBuilderLoaderTest {
         final String location = "/routes/MyRoutesWithModel.java";
 
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            Resource resource = context.getResourceLoader().resolveResource(location);
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(location);
             Collection<RoutesBuilder> builders = PluginHelper.getRoutesLoader(context).findRoutesBuilders(resource);
 
             assertThat(builders).hasSize(1);

@@ -416,23 +416,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         camelContext.headersMapFactory = camelContext.getInternalServiceManager().addService(headersMapFactory);
     }
 
-    @Override
-    public ResourceLoader getResourceLoader() {
-        if (camelContext.resourceLoader == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.resourceLoader == null) {
-                    setResourceLoader(camelContext.createResourceLoader());
-                }
-            }
-        }
-        return camelContext.resourceLoader;
-    }
-
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        camelContext.resourceLoader = camelContext.getInternalServiceManager().addService(resourceLoader);
-    }
-
     public ModelToXMLDumper getModelToXMLDumper() {
         if (camelContext.modelToXMLDumper == null) {
             synchronized (camelContext.lock) {

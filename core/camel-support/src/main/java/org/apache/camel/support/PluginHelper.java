@@ -44,6 +44,7 @@ import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutesLoader;
@@ -530,5 +531,19 @@ public final class PluginHelper {
      */
     public static BeanIntrospection getBeanIntrospection(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(BeanIntrospection.class);
+    }
+
+    /**
+     * Gets the {@link ResourceLoader} to be used.
+     */
+    public static ResourceLoader getResourceLoader(CamelContext camelContext) {
+        return getResourceLoader(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link ResourceLoader} to be used.
+     */
+    public static ResourceLoader getResourceLoader(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ResourceLoader.class);
     }
 }

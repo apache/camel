@@ -39,7 +39,7 @@ public class JshSourceLoaderTest {
     })
     void testLoadRoutes(String location) throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            Resource resource = context.getResourceLoader().resolveResource(location);
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(location);
             Collection<RoutesBuilder> builders = PluginHelper.getRoutesLoader(context).findRoutesBuilders(resource);
 
             assertThat(builders).hasSize(1);

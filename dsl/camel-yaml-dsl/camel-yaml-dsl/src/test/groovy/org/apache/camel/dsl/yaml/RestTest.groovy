@@ -26,6 +26,7 @@ import org.apache.camel.model.rest.ParamDefinition
 import org.apache.camel.model.rest.PostDefinition
 import org.apache.camel.model.rest.RestDefinition
 import org.apache.camel.model.rest.VerbDefinition
+import org.apache.camel.support.PluginHelper
 
 class RestTest extends YamlTestSupport {
 
@@ -170,7 +171,7 @@ class RestTest extends YamlTestSupport {
     def "load rest (full)"() {
         setup:
             def rloc = 'classpath:/routes/rest-dsl.yaml'
-            def rdsl = context.resourceLoader.resolveResource(rloc)
+            def rdsl = PluginHelper.getResourceLoader(context).resolveResource(rloc)
         when:
             loadRoutes rdsl
         then:
@@ -181,7 +182,7 @@ class RestTest extends YamlTestSupport {
     def "load rest (generated)"() {
         setup:
             def rloc = 'classpath:/rest-dsl/generated-rest-dsl.yaml'
-            def rdsl = context.resourceLoader.resolveResource(rloc)
+            def rdsl = PluginHelper.getResourceLoader(context).resolveResource(rloc)
         when:
             loadRoutes rdsl
         then:
@@ -192,7 +193,7 @@ class RestTest extends YamlTestSupport {
     def "load rest (allowableValues)"() {
         setup:
             def rloc = 'classpath:/routes/rest-allowable-values-dsl.yaml'
-            def rdsl = context.resourceLoader.resolveResource(rloc)
+            def rdsl = PluginHelper.getResourceLoader(context).resolveResource(rloc)
         when:
             loadRoutes rdsl
         then:

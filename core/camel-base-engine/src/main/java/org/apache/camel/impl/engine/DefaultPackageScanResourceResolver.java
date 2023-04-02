@@ -37,11 +37,11 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.IOHelper;
@@ -83,8 +83,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                 findInClasspath(root, resources, subPattern);
             }
         } else {
-            final ExtendedCamelContext ecc = getCamelContext().getCamelContextExtension();
-            final ResourceLoader loader = ecc.getResourceLoader();
+            final ResourceLoader loader = PluginHelper.getResourceLoader(getCamelContext());
 
             // its a single resource so load it directly
             resources.add(loader.resolveResource(location));
@@ -97,8 +96,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             String subPattern)
             throws Exception {
 
-        final ExtendedCamelContext ecc = getCamelContext().getCamelContextExtension();
-        final ResourceLoader loader = ecc.getResourceLoader();
+        final ResourceLoader loader = PluginHelper.getResourceLoader(getCamelContext());
 
         for (Path path : ResourceHelper.findInFileSystem(dir.toPath(), subPattern)) {
             resources.add(loader.resolveResource("file:" + path.toString()));
@@ -245,8 +243,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
             boolean match = PATH_MATCHER.match(subPattern, shortName);
             log.debug("Found resource: {} matching pattern: {} -> {}", shortName, subPattern, match);
             if (match) {
-                final ExtendedCamelContext ecc = getCamelContext().getCamelContextExtension();
-                final ResourceLoader loader = ecc.getResourceLoader();
+                final ResourceLoader loader = PluginHelper.getResourceLoader(getCamelContext());
 
                 resources.add(loader.resolveResource(name));
             }
@@ -322,8 +319,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver
                 boolean match = PATH_MATCHER.match(subPattern, name);
                 log.debug("Found resource: {} matching pattern: {} -> {}", name, subPattern, match);
                 if (match) {
-                    final ExtendedCamelContext ecc = getCamelContext().getCamelContextExtension();
-                    final ResourceLoader loader = ecc.getResourceLoader();
+                    final ResourceLoader loader = PluginHelper.getResourceLoader(getCamelContext());
 
                     resources.add(loader.resolveResource("file:" + file.getPath()));
                 }

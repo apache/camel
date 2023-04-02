@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.LoggerHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
@@ -42,8 +43,7 @@ public final class ConsoleHelper {
         List<JsonObject> code = new ArrayList<>();
         try {
             location = LoggerHelper.stripSourceLocationLineNumber(location);
-            Resource resource = camelContext.getCamelContextExtension().getResourceLoader()
-                    .resolveResource(location);
+            Resource resource = PluginHelper.getResourceLoader(camelContext).resolveResource(location);
             if (resource != null) {
                 LineNumberReader reader = new LineNumberReader(resource.getReader());
                 int i = 0;
@@ -77,8 +77,7 @@ public final class ConsoleHelper {
 
         try {
             location = LoggerHelper.stripSourceLocationLineNumber(location);
-            Resource resource = camelContext.getCamelContextExtension().getResourceLoader()
-                    .resolveResource(location);
+            Resource resource = PluginHelper.getResourceLoader(camelContext).resolveResource(location);
             if (resource != null) {
                 LineNumberReader reader = new LineNumberReader(resource.getReader());
                 int i = 0;

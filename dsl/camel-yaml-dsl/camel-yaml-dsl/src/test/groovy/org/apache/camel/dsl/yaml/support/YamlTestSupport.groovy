@@ -30,6 +30,7 @@ import org.apache.camel.impl.DefaultCamelContext
 import org.apache.camel.model.RouteTemplateDefinition
 import org.apache.camel.spi.HasCamelContext
 import org.apache.camel.spi.Resource
+import org.apache.camel.spi.ResourceLoader
 import org.apache.camel.support.PluginHelper
 import org.apache.camel.support.ResourceHelper
 import spock.lang.AutoCleanup

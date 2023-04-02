@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.xml.io;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -53,11 +52,10 @@ public class XmlLoadTest {
 
             // START SNIPPET: e1
             // load route from XML and add them to the existing camel context
-            ExtendedCamelContext ecc = context.getCamelContextExtension();
-            Resource resource = ecc.getResourceLoader().resolveResource(
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
                     "/org/apache/camel/dsl/xml/io/barRoute.xml");
 
-            PluginHelper.getRoutesLoader(ecc).loadRoutes(resource);
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
             // END SNIPPET: e1
             assertNotNull(context.getRoute("bar"), "Loaded bar route should be there");
@@ -77,11 +75,10 @@ public class XmlLoadTest {
             context.start();
 
             // load route from XML and add them to the existing camel context
-            ExtendedCamelContext ecc = context.getCamelContextExtension();
-            Resource resource = ecc.getResourceLoader().resolveResource(
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
                     "/org/apache/camel/dsl/xml/io/bar2.xml");
 
-            PluginHelper.getRoutesLoader(ecc).loadRoutes(resource);
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
             assertNotNull(context.getRoute("bar2"), "Loaded bar2 route should be there");
             assertEquals(1, context.getRoutes().size());

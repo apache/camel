@@ -53,8 +53,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ReactiveExecutor": target.setReactiveExecutor(property(camelContext, org.apache.camel.spi.ReactiveExecutor.class, value)); return true;
         case "registry":
         case "Registry": target.setRegistry(property(camelContext, org.apache.camel.spi.Registry.class, value)); return true;
-        case "resourceloader":
-        case "ResourceLoader": target.setResourceLoader(property(camelContext, org.apache.camel.spi.ResourceLoader.class, value)); return true;
         case "startupsteprecorder":
         case "StartupStepRecorder": target.setStartupStepRecorder(property(camelContext, org.apache.camel.spi.StartupStepRecorder.class, value)); return true;
         default: return false;
@@ -96,8 +94,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ReactiveExecutor": return org.apache.camel.spi.ReactiveExecutor.class;
         case "registry":
         case "Registry": return org.apache.camel.spi.Registry.class;
-        case "resourceloader":
-        case "ResourceLoader": return org.apache.camel.spi.ResourceLoader.class;
         case "startupsteprecorder":
         case "StartupStepRecorder": return org.apache.camel.spi.StartupStepRecorder.class;
         default: return null;
@@ -140,8 +136,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ReactiveExecutor": return target.getReactiveExecutor();
         case "registry":
         case "Registry": return target.getRegistry();
-        case "resourceloader":
-        case "ResourceLoader": return target.getResourceLoader();
         case "startupsteprecorder":
         case "StartupStepRecorder": return target.getStartupStepRecorder();
         default: return null;

@@ -37,7 +37,7 @@ public class JavaScriptRoutesBuilderLoaderTest {
     })
     void routesCanBeLoaded(String location) throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            Resource resource = context.getResourceLoader().resolveResource(location);
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(location);
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
             assertThat(context.getRouteDefinitions())
@@ -53,7 +53,7 @@ public class JavaScriptRoutesBuilderLoaderTest {
     @Test
     void componentsCanBeCustomized() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            Resource resource = context.getResourceLoader()
+            Resource resource = PluginHelper.getResourceLoader(context)
                     .resolveResource("/routes/routes-with-component-configuration.js");
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
@@ -66,7 +66,7 @@ public class JavaScriptRoutesBuilderLoaderTest {
     @Test
     void contextCanBeCustomized() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            Resource resource = context.getResourceLoader()
+            Resource resource = PluginHelper.getResourceLoader(context)
                     .resolveResource("/routes/routes-with-context-configuration.js");
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
@@ -77,7 +77,7 @@ public class JavaScriptRoutesBuilderLoaderTest {
     @Test
     void processorsCanBeCreated() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            Resource resource = context.getResourceLoader().resolveResource("/routes/routes-with-processors.js");
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource("/routes/routes-with-processors.js");
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
             context.start();
@@ -94,7 +94,7 @@ public class JavaScriptRoutesBuilderLoaderTest {
     @Test
     void restCanBeConfigured() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            Resource resource = context.getResourceLoader()
+            Resource resource = PluginHelper.getResourceLoader(context)
                     .resolveResource("/routes/routes-with-rest-configuration.js");
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
@@ -108,7 +108,7 @@ public class JavaScriptRoutesBuilderLoaderTest {
     @Test
     void restDslCanBeDefined() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            Resource resource = context.getResourceLoader().resolveResource("/routes/routes-with-rest-dsl.js");
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource("/routes/routes-with-rest-dsl.js");
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
             assertThat(context.getRestDefinitions()).hasSize(1);
@@ -130,7 +130,7 @@ public class JavaScriptRoutesBuilderLoaderTest {
     @Test
     void modulesCanBeImported() throws Exception {
         try (DefaultCamelContext context = new DefaultCamelContext()) {
-            Resource resource = context.getResourceLoader().resolveResource("/routes/routes-with-modules.js");
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource("/routes/routes-with-modules.js");
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
             assertThat(context.getRouteDefinitions()).hasSize(1);
