@@ -84,7 +84,7 @@ public class VertxHttpProducer extends DefaultAsyncProducer {
                     if (CONTENT_TYPE_FORM_URLENCODED.equals(contentType)) {
                         MultiMap map = MultiMap.caseInsensitiveMultiMap();
                         Map<String, Object> formParams = URISupport.parseQuery((String) body);
-                        formParams.keySet().forEach(key -> map.add(key, String.valueOf(formParams.get(key))));
+                        formParams.forEach((key, o) -> map.add(key, String.valueOf(o)));
                         request.sendForm(map, resultHandler);
                     } else {
                         // Fallback to send as Buffer

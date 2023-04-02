@@ -33,6 +33,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -130,7 +131,7 @@ public class DefaultServiceCallProcessor extends AsyncProcessorSupport {
     @Override
     protected void doBuild() throws Exception {
         ObjectHelper.notNull(camelContext, "camel context");
-        processorFactory = camelContext.getCamelContextExtension().getProcessorFactory();
+        processorFactory = PluginHelper.getProcessorFactory(camelContext);
     }
 
     @Override

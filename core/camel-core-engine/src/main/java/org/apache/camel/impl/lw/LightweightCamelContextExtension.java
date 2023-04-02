@@ -37,7 +37,6 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
-import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
@@ -51,16 +50,13 @@ import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
-import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
-import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
@@ -101,16 +97,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setRegistry(Registry registry) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public DevConsoleResolver getDevConsoleResolver() {
-        return camelContext.getCamelContextExtension().getDevConsoleResolver();
-    }
-
-    @Override
-    public void setDevConsoleResolver(DevConsoleResolver devConsoleResolver) {
         throw new UnsupportedOperationException();
     }
 
@@ -251,36 +237,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public FactoryFinder getFactoryFinder(String path) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ProcessorFactory getProcessorFactory() {
-        return camelContext.getCamelContextExtension().getProcessorFactory();
-    }
-
-    @Override
-    public void setProcessorFactory(ProcessorFactory processorFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public InternalProcessorFactory getInternalProcessorFactory() {
-        return camelContext.getCamelContextExtension().getInternalProcessorFactory();
-    }
-
-    @Override
-    public void setInternalProcessorFactory(InternalProcessorFactory internalProcessorFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public InterceptEndpointFactory getInterceptEndpointFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory) {
         throw new UnsupportedOperationException();
     }
 

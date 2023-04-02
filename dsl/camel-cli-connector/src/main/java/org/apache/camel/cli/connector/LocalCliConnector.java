@@ -47,6 +47,7 @@ import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.support.DefaultContextReloadStrategy;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
@@ -539,8 +540,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private JsonObject collectVaults() {
         JsonObject root = new JsonObject();
         // aws-secrets is optional
-        Optional<DevConsole> dcAws = camelContext.getCamelContextExtension()
-                .getDevConsoleResolver().lookupDevConsole("aws-secrets");
+        Optional<DevConsole> dcAws = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("aws-secrets");
         if (dcAws.isPresent()) {
             JsonObject json = (JsonObject) dcAws.get().call(DevConsole.MediaType.JSON);
             if (json != null) {
@@ -548,8 +548,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         }
         // gcp-secrets is optional
-        Optional<DevConsole> dcGcp = camelContext.getCamelContextExtension()
-                .getDevConsoleResolver().lookupDevConsole("gcp-secrets");
+        Optional<DevConsole> dcGcp = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("gcp-secrets");
         if (dcGcp.isPresent()) {
             JsonObject json = (JsonObject) dcGcp.get().call(DevConsole.MediaType.JSON);
             if (json != null) {
@@ -557,8 +556,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         }
         // azure-secrets is optional
-        Optional<DevConsole> dcAzure = camelContext.getCamelContextExtension()
-                .getDevConsoleResolver().lookupDevConsole("azure-secrets");
+        Optional<DevConsole> dcAzure = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("azure-secrets");
         if (dcAzure.isPresent()) {
             JsonObject json = (JsonObject) dcAzure.get().call(DevConsole.MediaType.JSON);
             if (json != null) {
@@ -573,8 +571,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
         // platform-http is optional
         if (camelContext.hasComponent("platform-http") != null) {
-            Optional<DevConsole> dc = camelContext.getCamelContextExtension()
-                    .getDevConsoleResolver().lookupDevConsole("platform-http");
+            Optional<DevConsole> dc = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("platform-http");
             if (dc.isPresent()) {
                 JsonObject json = (JsonObject) dc.get().call(DevConsole.MediaType.JSON);
                 if (json != null) {
@@ -583,8 +580,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         }
         // netty is optional
-        Optional<DevConsole> dc = camelContext.getCamelContextExtension()
-                .getDevConsoleResolver().lookupDevConsole("netty");
+        Optional<DevConsole> dc = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("netty");
         if (dc.isPresent()) {
             JsonObject json = (JsonObject) dc.get().call(DevConsole.MediaType.JSON);
             if (json != null) {
@@ -592,8 +588,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         }
         // mina is optional
-        dc = camelContext.getCamelContextExtension()
-                .getDevConsoleResolver().lookupDevConsole("mina");
+        dc = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("mina");
         if (dc.isPresent()) {
             JsonObject json = (JsonObject) dc.get().call(DevConsole.MediaType.JSON);
             if (json != null) {
@@ -601,8 +596,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         }
         // mllp is optional
-        dc = camelContext.getCamelContextExtension()
-                .getDevConsoleResolver().lookupDevConsole("mllp");
+        dc = PluginHelper.getDevConsoleResolver(camelContext).lookupDevConsole("mllp");
         if (dc.isPresent()) {
             JsonObject json = (JsonObject) dc.get().call(DevConsole.MediaType.JSON);
             if (json != null) {

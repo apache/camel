@@ -435,7 +435,7 @@ public final class DefaultConfigurationConfigurer {
         }
         ProcessorFactory pf = getSingleBeanOfType(registry, ProcessorFactory.class);
         if (pf != null) {
-            ecc.getCamelContextExtension().setProcessorFactory(pf);
+            ecc.getCamelContextExtension().addContextPlugin(ProcessorFactory.class, pf);
         }
         Debugger debugger = getSingleBeanOfType(registry, Debugger.class);
         if (debugger != null) {

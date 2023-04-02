@@ -211,7 +211,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ProcessorExchangeFactory processorExchangeFactory;
     volatile ReactiveExecutor reactiveExecutor;
     volatile Registry registry;
-    volatile DevConsoleResolver devConsoleResolver;
     volatile ManagementStrategy managementStrategy;
     volatile ManagementMBeanAssembler managementMBeanAssembler;
     volatile HeadersMapFactory headersMapFactory;
@@ -222,9 +221,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ModelToXMLDumper modelToXMLDumper;
     volatile RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory;
     volatile RuntimeCamelCatalog runtimeCamelCatalog;
-    volatile ProcessorFactory processorFactory;
-    volatile InternalProcessorFactory internalProcessorFactory;
-    volatile InterceptEndpointFactory interceptEndpointFactory;
     volatile RouteFactory routeFactory;
     volatile AsyncProcessorAwaitManager asyncProcessorAwaitManager;
     volatile UnitOfWorkFactory unitOfWorkFactory;
@@ -380,6 +376,10 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(PeriodTaskResolver.class, this::createPeriodTaskResolver);
         camelContextExtension.lazyAddContextPlugin(PeriodTaskScheduler.class, this::createPeriodTaskScheduler);
         camelContextExtension.lazyAddContextPlugin(HealthCheckResolver.class, this::createHealthCheckResolver);
+        camelContextExtension.lazyAddContextPlugin(DevConsoleResolver.class, this::createDevConsoleResolver);
+        camelContextExtension.lazyAddContextPlugin(ProcessorFactory.class, this::createProcessorFactory);
+        camelContextExtension.lazyAddContextPlugin(InternalProcessorFactory.class, this::createInternalProcessorFactory);
+        camelContextExtension.lazyAddContextPlugin(InterceptEndpointFactory.class, this::createInterceptEndpointFactory);
 
         if (build) {
             try {

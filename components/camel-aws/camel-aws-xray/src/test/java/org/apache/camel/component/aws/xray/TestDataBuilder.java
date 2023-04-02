@@ -143,28 +143,28 @@ final class TestDataBuilder {
             if (!annotations.isEmpty()) {
                 ret += ", annotations: {";
                 StringBuilder sb = new StringBuilder();
-                for (String key : annotations.keySet()) {
+                for (Map.Entry<String, Object> entry : annotations.entrySet()) {
                     if (sb.length() > 0) {
                         sb.append(", ");
                     }
-                    sb.append(key).append("->").append(annotations.get(key));
+                    sb.append(entry.getKey()).append("->").append(entry.getValue());
                 }
                 ret += sb.toString() + "}";
             }
             if (!metadata.isEmpty()) {
                 ret += ", metadata: {";
                 StringBuilder sb = new StringBuilder();
-                for (String namespace : metadata.keySet()) {
+                for (Map.Entry<String, Map<String, Object>> entry : metadata.entrySet()) {
                     if (sb.length() > 0) {
                         sb.append(", ");
                     }
-                    sb.append(namespace).append(": [");
+                    sb.append(entry.getKey()).append(": [");
                     boolean first = true;
-                    for (String key : metadata.get(namespace).keySet()) {
+                    for (String key : entry.getValue().keySet()) {
                         if (!first) {
                             sb.append(", ");
                         }
-                        sb.append(key).append("->").append(metadata.get(namespace).get(key));
+                        sb.append(key).append("->").append(entry.getValue().get(key));
                         first = false;
                     }
                     sb.append("]");

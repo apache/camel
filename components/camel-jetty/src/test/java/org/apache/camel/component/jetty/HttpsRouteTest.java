@@ -105,8 +105,9 @@ public class HttpsRouteTest extends BaseJettyTest {
     }
 
     protected void restoreSystemProperties() {
-        for (Object key : originalValues.keySet()) {
-            Object value = originalValues.get(key);
+        for (Map.Entry<Object, Object> entry : originalValues.entrySet()) {
+            Object key = entry.getKey();
+            Object value = entry.getValue();
             if (NULL_VALUE_MARKER.equals(value)) {
                 System.clearProperty((String) key);
             } else {

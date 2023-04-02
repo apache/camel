@@ -516,8 +516,8 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     private void addAttachment(DataSource ds, String attFileName, Map<String, String> headers) {
         DefaultAttachment attachment = new DefaultAttachment(ds);
         if (headers != null) {
-            for (String headerName : headers.keySet()) {
-                attachment.addHeader(headerName, headers.get(headerName));
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                attachment.addHeader(entry.getKey(), entry.getValue());
             }
         }
         in.addAttachmentObject(attFileName, attachment);
@@ -532,8 +532,8 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
         DataSource ds = new ByteArrayDataSource(attText, attContentType);
         DefaultAttachment attachment = new DefaultAttachment(ds);
         if (headers != null) {
-            for (String headerName : headers.keySet()) {
-                attachment.addHeader(headerName, headers.get(headerName));
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
+                attachment.addHeader(entry.getKey(), entry.getValue());
             }
         }
         in.addAttachmentObject(attFileName, attachment);

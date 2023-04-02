@@ -312,9 +312,9 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
             Predicate<Map<String, String>> condition, long time, TimeUnit unit) {
         Awaitility.waitAtMost(time, unit).until(() -> {
             Map<String, String> leaders = new HashMap<>();
-            for (String partition : partitionRecorders.keySet()) {
+            for (Map.Entry<String, List<LeaderRecorder>> entry : partitionRecorders.entrySet()) {
                 String leader = null;
-                for (LeaderRecorder recorder : partitionRecorders.get(partition)) {
+                for (LeaderRecorder recorder : entry.getValue()) {
                     String partitionLeader = recorder.getCurrentLeader();
                     if (partitionLeader == null || isCurrentLeader(leader, partitionLeader)) {
                         return false;
@@ -324,7 +324,7 @@ public class KubernetesClusterServiceTest extends CamelTestSupport {
                 if (leader == null) {
                     return false;
                 }
-                leaders.put(partition, leader);
+                leaders.put(entry.getKey(), leader);
             }
             return condition.test(leaders);
         });

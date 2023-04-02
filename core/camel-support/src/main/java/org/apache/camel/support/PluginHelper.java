@@ -21,6 +21,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
@@ -29,6 +30,8 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.FactoryFinderResolver;
+import org.apache.camel.spi.InterceptEndpointFactory;
+import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.ModelineFactory;
@@ -36,6 +39,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
+import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.UriFactoryResolver;
 
 public final class PluginHelper {
@@ -325,5 +329,77 @@ public final class PluginHelper {
      */
     public static HealthCheckResolver getHealthCheckResolver(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(HealthCheckResolver.class);
+    }
+
+    /**
+     * Gets the current dev console resolver
+     *
+     * @return the resolver
+     */
+    public static DevConsoleResolver getDevConsoleResolver(CamelContext camelContext) {
+        return getDevConsoleResolver(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the current dev console resolver
+     *
+     * @return the resolver
+     */
+    public static DevConsoleResolver getDevConsoleResolver(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(DevConsoleResolver.class);
+    }
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.ProcessorFactory}
+     *
+     * @return the factory, can be <tt>null</tt> if no custom factory has been set
+     */
+    public static ProcessorFactory getProcessorFactory(CamelContext camelContext) {
+        return getProcessorFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.ProcessorFactory}
+     *
+     * @return the factory, can be <tt>null</tt> if no custom factory has been set
+     */
+    public static ProcessorFactory getProcessorFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ProcessorFactory.class);
+    }
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.InternalProcessorFactory}
+     *
+     * @return the factory
+     */
+    public static InternalProcessorFactory getInternalProcessorFactory(CamelContext camelContext) {
+        return getInternalProcessorFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.InternalProcessorFactory}
+     *
+     * @return the factory
+     */
+    public static InternalProcessorFactory getInternalProcessorFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(InternalProcessorFactory.class);
+    }
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.InterceptEndpointFactory}
+     *
+     * @return the factory
+     */
+    public static InterceptEndpointFactory getInterceptEndpointFactory(CamelContext camelContext) {
+        return getInterceptEndpointFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.InterceptEndpointFactory}
+     *
+     * @return the factory
+     */
+    public static InterceptEndpointFactory getInterceptEndpointFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(InterceptEndpointFactory.class);
     }
 }

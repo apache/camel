@@ -18,6 +18,7 @@ package org.apache.camel.maven.dsl.yaml.support;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
@@ -41,9 +42,7 @@ public final class ToolingSupport {
             }
 
             String[] elements = item.split(",");
-            for (String element : elements) {
-                answer.add(element);
-            }
+            answer.addAll(Arrays.asList(elements));
         }
 
         return answer.stream();

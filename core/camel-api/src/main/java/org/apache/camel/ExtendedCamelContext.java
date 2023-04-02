@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
-import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
@@ -36,9 +35,7 @@ import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
-import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
@@ -46,7 +43,6 @@ import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
-import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
@@ -276,20 +272,6 @@ public interface ExtendedCamelContext {
     void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory);
 
     /**
-     * Gets the current dev console resolver
-     *
-     * @return the resolver
-     */
-    DevConsoleResolver getDevConsoleResolver();
-
-    /**
-     * Sets a custom dev console resolver
-     *
-     * @param devConsoleResolver the resolver
-     */
-    void setDevConsoleResolver(DevConsoleResolver devConsoleResolver);
-
-    /**
      * Gets the default FactoryFinder which will be used for the loading the factory class from META-INF
      *
      * @return the default factory finder
@@ -331,48 +313,6 @@ public interface ExtendedCamelContext {
      * @return      the factory finder
      */
     FactoryFinder getFactoryFinder(String path);
-
-    /**
-     * Gets the current {@link org.apache.camel.spi.ProcessorFactory}
-     *
-     * @return the factory, can be <tt>null</tt> if no custom factory has been set
-     */
-    ProcessorFactory getProcessorFactory();
-
-    /**
-     * Sets a custom {@link org.apache.camel.spi.ProcessorFactory}
-     *
-     * @param processorFactory the custom factory
-     */
-    void setProcessorFactory(ProcessorFactory processorFactory);
-
-    /**
-     * Gets the current {@link org.apache.camel.spi.InternalProcessorFactory}
-     *
-     * @return the factory
-     */
-    InternalProcessorFactory getInternalProcessorFactory();
-
-    /**
-     * Sets a custom {@link org.apache.camel.spi.InternalProcessorFactory}
-     *
-     * @param internalProcessorFactory the custom factory
-     */
-    void setInternalProcessorFactory(InternalProcessorFactory internalProcessorFactory);
-
-    /**
-     * Gets the current {@link org.apache.camel.spi.InterceptEndpointFactory}
-     *
-     * @return the factory
-     */
-    InterceptEndpointFactory getInterceptEndpointFactory();
-
-    /**
-     * Sets a custom {@link org.apache.camel.spi.InterceptEndpointFactory}
-     *
-     * @param interceptEndpointFactory the custom factory
-     */
-    void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory);
 
     /**
      * Gets the current {@link org.apache.camel.spi.RouteFactory}

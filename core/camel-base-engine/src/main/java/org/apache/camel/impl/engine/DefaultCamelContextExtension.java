@@ -36,7 +36,6 @@ import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
-import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
@@ -53,9 +52,7 @@ import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.HeadersMapFactory;
-import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
@@ -65,7 +62,6 @@ import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
-import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
@@ -458,21 +454,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         this.basePackageScan = basePackageScan;
     }
 
-    public DevConsoleResolver getDevConsoleResolver() {
-        if (camelContext.devConsoleResolver == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.devConsoleResolver == null) {
-                    setDevConsoleResolver(camelContext.createDevConsoleResolver());
-                }
-            }
-        }
-        return camelContext.devConsoleResolver;
-    }
-
-    public void setDevConsoleResolver(DevConsoleResolver devConsoleResolver) {
-        camelContext.devConsoleResolver = camelContext.getInternalServiceManager().addService(devConsoleResolver);
-    }
-
     @Override
     public boolean isLightweight() {
         return lightweight;
@@ -481,57 +462,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setLightweight(boolean lightweight) {
         this.lightweight = lightweight;
-    }
-
-    @Override
-    public ProcessorFactory getProcessorFactory() {
-        if (camelContext.processorFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.processorFactory == null) {
-                    setProcessorFactory(camelContext.createProcessorFactory());
-                }
-            }
-        }
-        return camelContext.processorFactory;
-    }
-
-    @Override
-    public void setProcessorFactory(ProcessorFactory processorFactory) {
-        camelContext.processorFactory = camelContext.getInternalServiceManager().addService(processorFactory);
-    }
-
-    @Override
-    public InternalProcessorFactory getInternalProcessorFactory() {
-        if (camelContext.internalProcessorFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.internalProcessorFactory == null) {
-                    setInternalProcessorFactory(camelContext.createInternalProcessorFactory());
-                }
-            }
-        }
-        return camelContext.internalProcessorFactory;
-    }
-
-    @Override
-    public void setInternalProcessorFactory(InternalProcessorFactory internalProcessorFactory) {
-        camelContext.internalProcessorFactory = camelContext.getInternalServiceManager().addService(internalProcessorFactory);
-    }
-
-    @Override
-    public InterceptEndpointFactory getInterceptEndpointFactory() {
-        if (camelContext.interceptEndpointFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.interceptEndpointFactory == null) {
-                    setInterceptEndpointFactory(camelContext.createInterceptEndpointFactory());
-                }
-            }
-        }
-        return camelContext.interceptEndpointFactory;
-    }
-
-    @Override
-    public void setInterceptEndpointFactory(InterceptEndpointFactory interceptEndpointFactory) {
-        camelContext.interceptEndpointFactory = camelContext.getInternalServiceManager().addService(interceptEndpointFactory);
     }
 
     @Override

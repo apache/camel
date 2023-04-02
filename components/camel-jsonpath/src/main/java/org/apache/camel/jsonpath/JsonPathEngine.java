@@ -139,7 +139,7 @@ public class JsonPathEngine {
             // write each row as a string but keep it as a list/iterable
             if (answer instanceof Iterable) {
                 List<String> list = new ArrayList<>();
-                Iterable it = (Iterable) answer;
+                Iterable<Object> it = (Iterable<Object>) answer;
                 for (Object o : it) {
                     if (adapter != null) {
                         String json = adapter.writeAsString(o, exchange);
@@ -150,13 +150,13 @@ public class JsonPathEngine {
                 }
                 return list;
             } else if (answer instanceof Map) {
-                Map map = (Map) answer;
-                for (Object key : map.keySet()) {
-                    Object value = map.get(key);
+                Map<Object, Object> map = (Map<Object, Object>) answer;
+                for (Map.Entry<Object, Object> entry : map.entrySet()) {
+                    Object value = entry.getValue();
                     if (adapter != null) {
                         String json = adapter.writeAsString(value, exchange);
                         if (json != null) {
-                            map.put(key, json);
+                            map.put(entry.getKey(), json);
                         }
                     }
                 }

@@ -36,6 +36,7 @@ import org.apache.camel.spi.SharedInternalProcessor;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultEndpointUtilizationStatistics;
 import org.apache.camel.support.EventHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.StopWatch;
@@ -79,8 +80,8 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
         // internal processor used for sending
         sharedInternalProcessor
-                = this.camelContext.getCamelContextExtension()
-                        .getInternalProcessorFactory().createSharedCamelInternalProcessor(camelContext);
+                = PluginHelper.getInternalProcessorFactory(this.camelContext)
+                        .createSharedCamelInternalProcessor(camelContext);
     }
 
     protected ProducerServicePool createServicePool(CamelContext camelContext, int cacheSize) {

@@ -76,9 +76,7 @@ public final class HostUtils {
         for (Map.Entry<String, Set<InetAddress>> entry : interfaceAddressMap.entrySet()) {
             Set<InetAddress> addresses = entry.getValue();
             if (!addresses.isEmpty()) {
-                for (InetAddress address : addresses) {
-                    allAddresses.add(address);
-                }
+                allAddresses.addAll(addresses);
             }
         }
         return allAddresses;

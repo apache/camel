@@ -35,8 +35,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": target.setDeferServiceFactory(property(camelContext, org.apache.camel.spi.DeferServiceFactory.class, value)); return true;
         case "description":
         case "Description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
-        case "devconsoleresolver":
-        case "DevConsoleResolver": target.setDevConsoleResolver(property(camelContext, org.apache.camel.console.DevConsoleResolver.class, value)); return true;
         case "errorhandlerfactory":
         case "ErrorHandlerFactory": target.setErrorHandlerFactory(property(camelContext, org.apache.camel.ErrorHandlerFactory.class, value)); return true;
         case "eventnotificationapplicable":
@@ -47,10 +45,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactoryManager": target.setExchangeFactoryManager(property(camelContext, org.apache.camel.spi.ExchangeFactoryManager.class, value)); return true;
         case "headersmapfactory":
         case "HeadersMapFactory": target.setHeadersMapFactory(property(camelContext, org.apache.camel.spi.HeadersMapFactory.class, value)); return true;
-        case "interceptendpointfactory":
-        case "InterceptEndpointFactory": target.setInterceptEndpointFactory(property(camelContext, org.apache.camel.spi.InterceptEndpointFactory.class, value)); return true;
-        case "internalprocessorfactory":
-        case "InternalProcessorFactory": target.setInternalProcessorFactory(property(camelContext, org.apache.camel.spi.InternalProcessorFactory.class, value)); return true;
         case "lightweight":
         case "Lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
         case "modeltoxmldumper":
@@ -59,8 +53,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "processorexchangefactory":
         case "ProcessorExchangeFactory": target.setProcessorExchangeFactory(property(camelContext, org.apache.camel.spi.ProcessorExchangeFactory.class, value)); return true;
-        case "processorfactory":
-        case "ProcessorFactory": target.setProcessorFactory(property(camelContext, org.apache.camel.spi.ProcessorFactory.class, value)); return true;
         case "reactiveexecutor":
         case "ReactiveExecutor": target.setReactiveExecutor(property(camelContext, org.apache.camel.spi.ReactiveExecutor.class, value)); return true;
         case "registry":
@@ -100,8 +92,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": return org.apache.camel.spi.DeferServiceFactory.class;
         case "description":
         case "Description": return java.lang.String.class;
-        case "devconsoleresolver":
-        case "DevConsoleResolver": return org.apache.camel.console.DevConsoleResolver.class;
         case "errorhandlerfactory":
         case "ErrorHandlerFactory": return org.apache.camel.ErrorHandlerFactory.class;
         case "eventnotificationapplicable":
@@ -112,10 +102,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactoryManager": return org.apache.camel.spi.ExchangeFactoryManager.class;
         case "headersmapfactory":
         case "HeadersMapFactory": return org.apache.camel.spi.HeadersMapFactory.class;
-        case "interceptendpointfactory":
-        case "InterceptEndpointFactory": return org.apache.camel.spi.InterceptEndpointFactory.class;
-        case "internalprocessorfactory":
-        case "InternalProcessorFactory": return org.apache.camel.spi.InternalProcessorFactory.class;
         case "lightweight":
         case "Lightweight": return boolean.class;
         case "modeltoxmldumper":
@@ -124,8 +110,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Name": return java.lang.String.class;
         case "processorexchangefactory":
         case "ProcessorExchangeFactory": return org.apache.camel.spi.ProcessorExchangeFactory.class;
-        case "processorfactory":
-        case "ProcessorFactory": return org.apache.camel.spi.ProcessorFactory.class;
         case "reactiveexecutor":
         case "ReactiveExecutor": return org.apache.camel.spi.ReactiveExecutor.class;
         case "registry":
@@ -166,8 +150,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "DeferServiceFactory": return target.getDeferServiceFactory();
         case "description":
         case "Description": return target.getDescription();
-        case "devconsoleresolver":
-        case "DevConsoleResolver": return target.getDevConsoleResolver();
         case "errorhandlerfactory":
         case "ErrorHandlerFactory": return target.getErrorHandlerFactory();
         case "eventnotificationapplicable":
@@ -178,10 +160,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ExchangeFactoryManager": return target.getExchangeFactoryManager();
         case "headersmapfactory":
         case "HeadersMapFactory": return target.getHeadersMapFactory();
-        case "interceptendpointfactory":
-        case "InterceptEndpointFactory": return target.getInterceptEndpointFactory();
-        case "internalprocessorfactory":
-        case "InternalProcessorFactory": return target.getInternalProcessorFactory();
         case "lightweight":
         case "Lightweight": return target.isLightweight();
         case "modeltoxmldumper":
@@ -190,8 +168,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Name": return target.getName();
         case "processorexchangefactory":
         case "ProcessorExchangeFactory": return target.getProcessorExchangeFactory();
-        case "processorfactory":
-        case "ProcessorFactory": return target.getProcessorFactory();
         case "reactiveexecutor":
         case "ReactiveExecutor": return target.getReactiveExecutor();
         case "registry":

@@ -233,8 +233,6 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
         map.put("B", "BB");
         map.put("C", "CC");
 
-        final Set<String> keys = map.keySet();
-
         cache.putAll(map);
 
         final MockEndpoint mock = getMockEndpoint("mock:result");
@@ -248,9 +246,9 @@ public class CaffeineLoadCacheProducerTest extends CaffeineLoadCacheTestSupport 
         MockEndpoint.assertIsSatisfied(context);
 
         final Map<String, String> elements = exchange.getMessage().getBody(Map.class);
-        keys.forEach(k -> {
+        map.forEach((k, s) -> {
             assertTrue(elements.containsKey(k));
-            assertEquals(map.get(k), elements.get(k));
+            assertEquals(s, elements.get(k));
         });
     }
 
