@@ -35,6 +35,7 @@ import org.apache.camel.LineNumberAware;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.xml.io.MXParser;
 import org.apache.camel.xml.io.XmlPullParser;
 import org.apache.camel.xml.io.XmlPullParserException;
@@ -105,6 +106,9 @@ public class BaseParser {
             String name = parser.getAttributeName(i);
             String ns = parser.getAttributeNamespace(i);
             String val = parser.getAttributeValue(i);
+            if (name.equals("uri") || name.endsWith("Uri")) {
+                val = URISupport.removeNoiseFromUri(val);
+            }
             if (Objects.equals(ns, "") || Objects.equals(ns, namespace)) {
                 if (attributeHandler == null || !attributeHandler.accept(definition, name, val)) {
                     handleUnexpectedAttribute(namespace, name);
