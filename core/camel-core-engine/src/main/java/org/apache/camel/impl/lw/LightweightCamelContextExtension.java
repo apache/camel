@@ -252,11 +252,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public BeanProcessorFactory getBeanProcessorFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public List<InterceptStrategy> getInterceptStrategies() {
         throw new UnsupportedOperationException();
     }

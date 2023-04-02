@@ -214,7 +214,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ManagementStrategy managementStrategy;
     volatile ManagementMBeanAssembler managementMBeanAssembler;
     volatile HeadersMapFactory headersMapFactory;
-    volatile BeanProcessorFactory beanProcessorFactory;
     volatile ResourceLoader resourceLoader;
     volatile ModelToXMLDumper modelToXMLDumper;
     volatile BeanIntrospection beanIntrospection;
@@ -383,6 +382,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(UnitOfWorkFactory.class, this::createUnitOfWorkFactory);
         camelContextExtension.lazyAddContextPlugin(BeanIntrospection.class, this::createBeanIntrospection);
         camelContextExtension.lazyAddContextPlugin(ResourceLoader.class, this::createResourceLoader);
+        camelContextExtension.lazyAddContextPlugin(BeanProcessorFactory.class, this::createBeanProcessorFactory);
 
         if (build) {
             try {
@@ -3947,10 +3947,6 @@ public abstract class AbstractCamelContext extends BaseService
     @Override
     public void setStartupSummaryLevel(StartupSummaryLevel startupSummaryLevel) {
         this.startupSummaryLevel = startupSummaryLevel;
-    }
-
-    public void setBeanProcessorFactory(BeanProcessorFactory beanProcessorFactory) {
-        this.beanProcessorFactory = internalServiceManager.addService(beanProcessorFactory);
     }
 
     public boolean isLogJvmUptime() {

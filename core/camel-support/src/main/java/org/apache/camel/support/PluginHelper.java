@@ -26,6 +26,7 @@ import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
@@ -545,5 +546,19 @@ public final class PluginHelper {
      */
     public static ResourceLoader getResourceLoader(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(ResourceLoader.class);
+    }
+
+    /**
+     * Gets the {@link BeanProcessorFactory} to use.
+     */
+    public static BeanProcessorFactory getBeanProcessorFactory(CamelContext camelContext) {
+        return getBeanProcessorFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link BeanProcessorFactory} to use.
+     */
+    public static BeanProcessorFactory getBeanProcessorFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(BeanProcessorFactory.class);
     }
 }

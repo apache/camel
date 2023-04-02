@@ -327,11 +327,6 @@ public interface ExtendedCamelContext {
     void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory);
 
     /**
-     * Gets the {@link BeanProcessorFactory} to use.
-     */
-    BeanProcessorFactory getBeanProcessorFactory();
-
-    /**
      * Adds the given interceptor strategy
      *
      * @param interceptStrategy the strategy
