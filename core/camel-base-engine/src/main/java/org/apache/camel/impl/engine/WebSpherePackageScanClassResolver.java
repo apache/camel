@@ -43,7 +43,7 @@ public class WebSpherePackageScanClassResolver extends DefaultPackageScanClassRe
      * @return        <tt>true</tt> if IBM classloader, <tt>false</tt> otherwise.
      */
     public static boolean isWebSphereClassLoader(ClassLoader loader) {
-        return loader != null ? loader.getClass().getName().startsWith("com.ibm.") : false;
+        return loader != null && loader.getClass().getName().startsWith("com.ibm.");
     }
 
     /**

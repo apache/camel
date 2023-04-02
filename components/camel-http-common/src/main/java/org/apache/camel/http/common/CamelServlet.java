@@ -83,7 +83,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         this.servletName = config.getServletName();
 
         final String asyncParam = config.getInitParameter(ASYNC_PARAM);
-        this.async = asyncParam == null ? false : ObjectHelper.toBoolean(asyncParam);
+        this.async = asyncParam != null && ObjectHelper.toBoolean(asyncParam);
         this.forceAwait = Boolean.parseBoolean(config.getInitParameter(FORCE_AWAIT_PARAM));
         this.executorRef = config.getInitParameter(EXECUTOR_REF_PARAM);
         log.trace("servlet '{}' initialized with: async={}", servletName, async);

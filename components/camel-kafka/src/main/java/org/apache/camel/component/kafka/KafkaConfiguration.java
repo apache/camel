@@ -693,7 +693,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     public boolean isAutoCommitEnable() {
-        return offsetRepository == null ? autoCommitEnable : false;
+        return offsetRepository == null && autoCommitEnable;
     }
 
     public boolean getAutoCommitEnable() {
