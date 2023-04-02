@@ -57,19 +57,14 @@ public class VertXThreadPoolFactory extends DefaultThreadPoolFactory implements 
     }
 
     @Override
-    protected void doInit() throws Exception {
-        super.doInit();
+    protected void doStart() throws Exception {
+        super.doStart();
         if (vertx == null) {
             Set<Vertx> set = getCamelContext().getRegistry().findByType(Vertx.class);
             if (set.size() == 1) {
                 vertx = set.iterator().next();
             }
         }
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
         if (vertx == null) {
             throw new IllegalArgumentException("VertX instance must be configured.");
         }
