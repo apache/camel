@@ -48,7 +48,8 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadFile() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("file:src/test/resources/log4j2.properties");
+        Resource resource
+                = PluginHelper.getResourceLoader(context).resolveResource("file:src/test/resources/log4j2.properties");
 
         try (InputStream is = resource.getInputStream()) {
             assertNotNull(is);
@@ -65,7 +66,8 @@ public class ResourceLoaderTest extends TestSupport {
         copyFile(new File("src/test/resources/log4j2.properties"), new File("target/data/my space/log4j2.properties"));
 
         DefaultCamelContext context = new DefaultCamelContext();
-        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("file:target/data/my%20space/log4j2.properties");
+        Resource resource
+                = PluginHelper.getResourceLoader(context).resolveResource("file:target/data/my%20space/log4j2.properties");
 
         try (InputStream is = resource.getInputStream()) {
             assertNotNull(is);
@@ -229,7 +231,8 @@ public class ResourceLoaderTest extends TestSupport {
     @Test
     public void testLoadFileAsUrl() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("file:src/test/resources/log4j2.properties");
+        Resource resource
+                = PluginHelper.getResourceLoader(context).resolveResource("file:src/test/resources/log4j2.properties");
 
         URL url = resource.getURI().toURL();
         assertNotNull(url);

@@ -285,7 +285,8 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                             LOG.debug("Accepted Modified/Created file: {}", name);
                             try {
                                 // must use file resource loader as we cannot load from classpath
-                                Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource("file:" + name);
+                                Resource resource
+                                        = PluginHelper.getResourceLoader(getCamelContext()).resolveResource("file:" + name);
                                 getResourceReload().onReload(name, resource);
                                 incSucceededCounter();
                             } catch (Exception e) {

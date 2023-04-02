@@ -44,7 +44,8 @@ public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
     @Test
     public void testLoadRouteFromXmlWitOnException() throws Exception {
         Resource resource
-                = PluginHelper.getResourceLoader(context).resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barOnExceptionRoute.xml");
+                = PluginHelper.getResourceLoader(context)
+                        .resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barOnExceptionRoute.xml");
         PluginHelper.getRoutesLoader(context).loadRoutes(resource);
         context.start();
 

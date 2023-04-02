@@ -33,7 +33,8 @@ public class RouteTemplateLoadFromXmlTest extends ContextTestSupport {
     public void testDefineRouteTemplate() throws Exception {
         assertEquals(0, context.getRouteTemplateDefinitions().size());
 
-        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barTemplate.xml");
+        Resource resource = PluginHelper.getResourceLoader(context)
+                .resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barTemplate.xml");
         PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
         assertEquals(1, context.getRouteTemplateDefinitions().size());
@@ -47,7 +48,8 @@ public class RouteTemplateLoadFromXmlTest extends ContextTestSupport {
     public void testCreateRouteFromRouteTemplate() throws Exception {
         assertEquals(0, context.getRouteTemplateDefinitions().size());
 
-        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barTemplate.xml");
+        Resource resource = PluginHelper.getResourceLoader(context)
+                .resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barTemplate.xml");
         PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
         assertEquals(1, context.getRouteTemplateDefinitions().size());

@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.DeferServiceFactory;
@@ -43,11 +42,9 @@ import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.StartupStepRecorder;
-import org.apache.camel.spi.UnitOfWorkFactory;
 
 /**
  * Extended {@link CamelContext} which contains the methods and APIs that are not primary intended for Camel end users

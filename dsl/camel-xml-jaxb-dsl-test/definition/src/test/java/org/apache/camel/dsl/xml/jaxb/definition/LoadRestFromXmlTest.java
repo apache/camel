@@ -52,7 +52,8 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
         foo.assertIsSatisfied();
 
         // load rest from XML and add them to the existing camel context
-        Resource resource = PluginHelper.getResourceLoader(context).resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barRest.xml");
+        Resource resource = PluginHelper.getResourceLoader(context)
+                .resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barRest.xml");
         PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
         assertNotNull(context.getRoute("route1"), "Loaded rest route should be there");
