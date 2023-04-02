@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.mongodb;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Set;
 
 import com.mongodb.client.MongoClient;
 import org.apache.camel.CamelContext;
