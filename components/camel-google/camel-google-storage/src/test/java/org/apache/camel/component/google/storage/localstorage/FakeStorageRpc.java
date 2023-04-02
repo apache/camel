@@ -314,9 +314,10 @@ class FakeStorageRpc extends StorageRpcTestBase {
             throws StorageException {
         // if non-null, then we check the file's at that generation.
         Long generationMatch = null;
-        for (Option op : options.keySet()) {
+        for (Map.Entry<Option, ?> entry : options.entrySet()) {
+            Option op = entry.getKey();
             if (op.equals(StorageRpc.Option.IF_GENERATION_MATCH)) {
-                generationMatch = (Long) options.get(op);
+                generationMatch = (Long) entry.getValue();
             } else {
                 throw new UnsupportedOperationException("Unknown option: " + op);
             }
@@ -349,9 +350,10 @@ class FakeStorageRpc extends StorageRpcTestBase {
             StorageObject from, Map<Option, ?> options, long position, OutputStream outputStream) {
         // if non-null, then we check the file's at that generation.
         Long generationMatch = null;
-        for (Option op : options.keySet()) {
+        for (Map.Entry<Option, ?> entry : options.entrySet()) {
+            Option op = entry.getKey();
             if (op.equals(StorageRpc.Option.IF_GENERATION_MATCH)) {
-                generationMatch = (Long) options.get(op);
+                generationMatch = (Long) entry.getValue();
             } else {
                 throw new UnsupportedOperationException("Unknown option: " + op);
             }
@@ -383,10 +385,10 @@ class FakeStorageRpc extends StorageRpcTestBase {
         String key = fullname(object);
         // if non-null, then we check the file's at that generation.
         Long generationMatch = null;
-        for (Option option : options.keySet()) {
+        for (Map.Entry<Option, ?> entry : options.entrySet()) {
             // this is a bit of a hack, since we don't implement generations.
-            if (option == Option.IF_GENERATION_MATCH) {
-                generationMatch = (Long) options.get(option);
+            if (entry.getKey() == Option.IF_GENERATION_MATCH) {
+                generationMatch = (Long) entry.getValue();
             }
         }
         checkGeneration(key, generationMatch);
@@ -460,10 +462,10 @@ class FakeStorageRpc extends StorageRpcTestBase {
 
         // if non-null, then we check the file's at that generation.
         Long generationMatch = null;
-        for (Option option : rewriteRequest.targetOptions.keySet()) {
+        for (Map.Entry<Option, ?> entry : rewriteRequest.targetOptions.entrySet()) {
             // this is a bit of a hack, since we don't implement generations.
-            if (option == Option.IF_GENERATION_MATCH) {
-                generationMatch = (Long) rewriteRequest.targetOptions.get(option);
+            if (entry.getKey() == Option.IF_GENERATION_MATCH) {
+                generationMatch = (Long) entry.getValue();
             }
         }
 
