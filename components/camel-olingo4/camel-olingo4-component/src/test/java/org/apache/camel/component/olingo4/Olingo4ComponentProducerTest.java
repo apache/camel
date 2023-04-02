@@ -32,6 +32,8 @@ import org.apache.camel.component.olingo4.api.batch.Olingo4BatchQueryRequest;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchRequest;
 import org.apache.camel.component.olingo4.api.batch.Olingo4BatchResponse;
 import org.apache.camel.component.olingo4.api.batch.Operation;
+import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.support.PluginHelper;
 import org.apache.olingo.client.api.domain.ClientCollectionValue;
 import org.apache.olingo.client.api.domain.ClientComplexValue;
 import org.apache.olingo.client.api.domain.ClientEntity;
@@ -80,8 +82,9 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getCamelContextExtension().getBeanIntrospection().setLoggingLevel(LoggingLevel.INFO);
-        context.getCamelContextExtension().getBeanIntrospection().setExtendedStatistics(true);
+        final BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(context);
+        beanIntrospection.setLoggingLevel(LoggingLevel.INFO);
+        beanIntrospection.setExtendedStatistics(true);
         return context;
     }
 
@@ -143,7 +146,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         assertNotNull(unbFuncReturn);
 
         // should be reflection free
-        long counter = context.getCamelContextExtension().getBeanIntrospection().getInvokedCounter();
+        long counter = PluginHelper.getBeanIntrospection(context).getInvokedCounter();
         assertEquals(0, counter);
     }
 

@@ -42,6 +42,7 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ContextReloadStrategy;
@@ -137,11 +138,12 @@ public final class DefaultConfigurationConfigurer {
 
         ecc.setLightweight(config.isLightweight());
         PluginHelper.getBeanPostProcessor(ecc).setEnabled(config.isBeanPostProcessorEnabled());
-        ecc.getBeanIntrospection().setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());
+        final BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(ecc);
+        beanIntrospection.setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());
         if (config.getBeanIntrospectionLoggingLevel() != null) {
-            ecc.getBeanIntrospection().setLoggingLevel(config.getBeanIntrospectionLoggingLevel());
+            beanIntrospection.setLoggingLevel(config.getBeanIntrospectionLoggingLevel());
         }
-        ecc.getBeanIntrospection().afterPropertiesConfigured(camelContext);
+        beanIntrospection.afterPropertiesConfigured(camelContext);
 
         if ("pooled".equals(config.getExchangeFactory())) {
             ecc.setExchangeFactory(new PooledExchangeFactory());

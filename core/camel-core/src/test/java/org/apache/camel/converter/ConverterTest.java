@@ -36,6 +36,7 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.DefaultExchange;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.junit.jupiter.api.BeforeEach;
@@ -192,7 +193,7 @@ public class ConverterTest extends TestSupport {
 
         CamelContext context = new DefaultCamelContext();
         context.start();
-        BeanIntrospection bi = context.getCamelContextExtension().getBeanIntrospection();
+        BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
 
         assertDoesNotThrow(() -> bi.setProperty(context, converter, bean, "foo", "4", null, true, true, true),
                 "Setting an int property in a bean, should have succeeded without throwing exceptions");

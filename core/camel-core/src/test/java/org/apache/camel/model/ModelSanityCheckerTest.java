@@ -29,6 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultPackageScanClassResolver;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,7 @@ public class ModelSanityCheckerTest {
     public void testSanity() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
-        BeanIntrospection bi = context.getCamelContextExtension().getBeanIntrospection();
+        BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
 
         Set<Class<?>> classes = discoverJaxbClasses();
         assertNotNull(classes);
