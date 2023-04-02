@@ -794,4 +794,17 @@ public final class URISupport {
         return joined.toString();
     }
 
+    public static String removeNoiseFromUri(String uri) {
+        String before = StringHelper.before(uri, "?");
+        String after = StringHelper.after(uri, "?");
+
+        if (before != null && after != null) {
+            String changed = after.replaceAll("&\\s+", "&").trim();
+            if (!after.equals(changed)) {
+                String newAtr = before.trim() + "?" + changed;
+                return newAtr;
+            }
+        }
+        return uri;
+    }
 }
