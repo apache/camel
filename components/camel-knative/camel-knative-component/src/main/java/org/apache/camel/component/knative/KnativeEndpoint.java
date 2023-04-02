@@ -118,7 +118,8 @@ public class KnativeEndpoint extends DefaultEndpoint {
         }
         CamelContext camelContext = getCamelContext();
         Processor pipeline
-                = PluginHelper.getProcessorFactory(camelContext).createProcessor(camelContext, "Pipeline", new Object[] { list });
+                = PluginHelper.getProcessorFactory(camelContext).createProcessor(camelContext, "Pipeline",
+                        new Object[] { list });
 
         Consumer consumer = getComponent().getConsumerFactory().createConsumer(this,
                 createTransportConfiguration(service), service, pipeline);
