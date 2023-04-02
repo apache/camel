@@ -810,8 +810,8 @@ public final class URISupport {
 
     /**
      * Remove whitespace noise from uri, xxxUri attributes, eg new lines, and tabs etc, which allows end users to format
-     * their Camel routes in more human-readable format, but at runtime those attributes must be trimmed.
-     * The parser removes most of the noise, but keeps spaces in the attribute values
+     * their Camel routes in more human-readable format, but at runtime those attributes must be trimmed. The parser
+     * removes most of the noise, but keeps spaces in the attribute values
      */
     public static String removeNoiseFromUri(String uri) {
         String before = StringHelper.before(uri, "?");
