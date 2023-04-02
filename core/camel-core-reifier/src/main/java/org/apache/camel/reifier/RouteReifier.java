@@ -100,7 +100,7 @@ public class RouteReifier extends ProcessorReifier<RouteDefinition> {
         // create route
         String id = definition.idOrCreate(camelContext.getCamelContextExtension().getContextPlugin(NodeIdFactory.class));
         String desc = definition.getDescriptionText();
-        Route route = camelContext.getCamelContextExtension().getRouteFactory().createRoute(camelContext, definition, id,
+        Route route = PluginHelper.getRouteFactory(camelContext).createRoute(camelContext, definition, id,
                 desc, endpoint, definition.getResource());
 
         // configure error handler

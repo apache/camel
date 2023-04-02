@@ -359,7 +359,7 @@ public class RestProducer extends DefaultAsyncProducer {
 
         if (jaxb != null) {
             // to setup JAXB we need to use camel-jaxb
-            camelContext.getCamelContextExtension().getRestBindingJaxbDataFormatFactory()
+            PluginHelper.getRestBindingJaxbDataFormatFactory(camelContext)
                     .setupJaxb(camelContext, configuration, type, null, outType, null, jaxb, outJaxb);
         }
 

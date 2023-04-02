@@ -22,6 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,7 +62,7 @@ public class XmlLoadRestTest {
             Resource resource = ecc.getResourceLoader().resolveResource(
                     "/org/apache/camel/dsl/xml/io/barRest.xml");
 
-            context.getRoutesLoader().loadRoutes(resource);
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
             assertEquals(2, context.getRoutes().size());
 

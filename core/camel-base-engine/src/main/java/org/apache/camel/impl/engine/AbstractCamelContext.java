@@ -214,15 +214,9 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ManagementStrategy managementStrategy;
     volatile ManagementMBeanAssembler managementMBeanAssembler;
     volatile HeadersMapFactory headersMapFactory;
-    volatile BeanProxyFactory beanProxyFactory;
     volatile BeanProcessorFactory beanProcessorFactory;
-    volatile RoutesLoader routesLoader;
     volatile ResourceLoader resourceLoader;
     volatile ModelToXMLDumper modelToXMLDumper;
-    volatile RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory;
-    volatile RuntimeCamelCatalog runtimeCamelCatalog;
-    volatile RouteFactory routeFactory;
-    volatile AsyncProcessorAwaitManager asyncProcessorAwaitManager;
     volatile UnitOfWorkFactory unitOfWorkFactory;
     volatile BeanIntrospection beanIntrospection;
     volatile boolean eventNotificationApplicable;
@@ -380,6 +374,13 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(ProcessorFactory.class, this::createProcessorFactory);
         camelContextExtension.lazyAddContextPlugin(InternalProcessorFactory.class, this::createInternalProcessorFactory);
         camelContextExtension.lazyAddContextPlugin(InterceptEndpointFactory.class, this::createInterceptEndpointFactory);
+        camelContextExtension.lazyAddContextPlugin(RouteFactory.class, this::createRouteFactory);
+        camelContextExtension.lazyAddContextPlugin(RoutesLoader.class, this::createRoutesLoader);
+        camelContextExtension.lazyAddContextPlugin(AsyncProcessorAwaitManager.class, this::createAsyncProcessorAwaitManager);
+        camelContextExtension.lazyAddContextPlugin(RuntimeCamelCatalog.class, this::createRuntimeCamelCatalog);
+        camelContextExtension.lazyAddContextPlugin(RestBindingJaxbDataFormatFactory.class,
+                this::createRestBindingJaxbDataFormatFactory);
+        camelContextExtension.lazyAddContextPlugin(BeanProxyFactory.class, this::createBeanProxyFactory);
 
         if (build) {
             try {
@@ -2877,6 +2878,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // shutdown await manager to trigger interrupt of blocked threads to
         // attempt to free these threads graceful
+        final AsyncProcessorAwaitManager asyncProcessorAwaitManager = PluginHelper.getAsyncProcessorAwaitManager(this);
         InternalServiceManager.shutdownServices(this, asyncProcessorAwaitManager);
 
         // we need also to include routes which failed to start to ensure all resources get stopped when stopping Camel
@@ -3285,7 +3287,6 @@ public abstract class AbstractCamelContext extends BaseService
         typeConverterRegistry = null;
         typeConverter = null;
         reactiveExecutor = null;
-        asyncProcessorAwaitManager = null;
         exchangeFactory = null;
         exchangeFactoryManager = null;
         processorExchangeFactory = null;
@@ -3946,10 +3947,6 @@ public abstract class AbstractCamelContext extends BaseService
         this.startupSummaryLevel = startupSummaryLevel;
     }
 
-    public void setBeanProxyFactory(BeanProxyFactory beanProxyFactory) {
-        this.beanProxyFactory = internalServiceManager.addService(beanProxyFactory);
-    }
-
     public void setBeanProcessorFactory(BeanProcessorFactory beanProcessorFactory) {
         this.beanProcessorFactory = internalServiceManager.addService(beanProcessorFactory);
     }
@@ -4170,10 +4167,6 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.addInterceptStrategy(interceptStrategy);
     }
 
-    public AsyncProcessorAwaitManager getAsyncProcessorAwaitManager() {
-        return camelContextExtension.getAsyncProcessorAwaitManager();
-    }
-
     public BeanIntrospection getBeanIntrospection() {
         return camelContextExtension.getBeanIntrospection();
     }
@@ -4190,14 +4183,6 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.setReactiveExecutor(reactiveExecutor);
     }
 
-    public RoutesLoader getRoutesLoader() {
-        return camelContextExtension.getRoutesLoader();
-    }
-
-    public void setRoutesLoader(RoutesLoader routesLoader) {
-        camelContextExtension.setRoutesLoader(routesLoader);
-    }
-
     public ResourceLoader getResourceLoader() {
         return camelContextExtension.getResourceLoader();
     }
@@ -4208,10 +4193,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     public ModelToXMLDumper getModelToXMLDumper() {
         return camelContextExtension.getModelToXMLDumper();
-    }
-
-    public RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory() {
-        return camelContextExtension.getRestBindingJaxbDataFormatFactory();
     }
 
     public EndpointUriFactory getEndpointUriFactory(String scheme) {

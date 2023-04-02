@@ -35,12 +35,9 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
-import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
-import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DebuggerFactory;
@@ -66,11 +63,8 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
-import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
-import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RouteStartupOrder;
-import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.support.EndpointHelper;
@@ -410,24 +404,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public AsyncProcessorAwaitManager getAsyncProcessorAwaitManager() {
-        if (camelContext.asyncProcessorAwaitManager == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.asyncProcessorAwaitManager == null) {
-                    setAsyncProcessorAwaitManager(camelContext.createAsyncProcessorAwaitManager());
-                }
-            }
-        }
-        return camelContext.asyncProcessorAwaitManager;
-    }
-
-    @Override
-    public void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager asyncProcessorAwaitManager) {
-        camelContext.asyncProcessorAwaitManager
-                = camelContext.getInternalServiceManager().addService(asyncProcessorAwaitManager);
-    }
-
-    @Override
     public BeanIntrospection getBeanIntrospection() {
         if (camelContext.beanIntrospection == null) {
             synchronized (camelContext.lock) {
@@ -465,23 +441,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public RouteFactory getRouteFactory() {
-        if (camelContext.routeFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.routeFactory == null) {
-                    setRouteFactory(camelContext.createRouteFactory());
-                }
-            }
-        }
-        return camelContext.routeFactory;
-    }
-
-    @Override
-    public void setRouteFactory(RouteFactory routeFactory) {
-        camelContext.routeFactory = routeFactory;
-    }
-
-    @Override
     public HeadersMapFactory getHeadersMapFactory() {
         return camelContext.headersMapFactory;
     }
@@ -489,23 +448,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setHeadersMapFactory(HeadersMapFactory headersMapFactory) {
         camelContext.headersMapFactory = camelContext.getInternalServiceManager().addService(headersMapFactory);
-    }
-
-    @Override
-    public RoutesLoader getRoutesLoader() {
-        if (camelContext.routesLoader == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.routesLoader == null) {
-                    setRoutesLoader(camelContext.createRoutesLoader());
-                }
-            }
-        }
-        return camelContext.routesLoader;
-    }
-
-    @Override
-    public void setRoutesLoader(RoutesLoader routesLoader) {
-        camelContext.routesLoader = camelContext.getInternalServiceManager().addService(routesLoader);
     }
 
     @Override
@@ -538,38 +480,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     public void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper) {
         camelContext.modelToXMLDumper = camelContext.getInternalServiceManager().addService(modelToXMLDumper);
-    }
-
-    public RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory() {
-        if (camelContext.restBindingJaxbDataFormatFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.restBindingJaxbDataFormatFactory == null) {
-                    setRestBindingJaxbDataFormatFactory(camelContext.createRestBindingJaxbDataFormatFactory());
-                }
-            }
-        }
-        return camelContext.restBindingJaxbDataFormatFactory;
-    }
-
-    public void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory) {
-        camelContext.restBindingJaxbDataFormatFactory = restBindingJaxbDataFormatFactory;
-    }
-
-    @Override
-    public RuntimeCamelCatalog getRuntimeCamelCatalog() {
-        if (camelContext.runtimeCamelCatalog == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.runtimeCamelCatalog == null) {
-                    setRuntimeCamelCatalog(camelContext.createRuntimeCamelCatalog());
-                }
-            }
-        }
-        return camelContext.runtimeCamelCatalog;
-    }
-
-    @Override
-    public void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog) {
-        camelContext.runtimeCamelCatalog = camelContext.getInternalServiceManager().addService(runtimeCamelCatalog);
     }
 
     @Override
@@ -676,18 +586,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     public void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory) {
         camelContext.annotationBasedProcessorFactory = annotationBasedProcessorFactory;
-    }
-
-    @Override
-    public BeanProxyFactory getBeanProxyFactory() {
-        if (camelContext.beanProxyFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.beanProxyFactory == null) {
-                    camelContext.setBeanProxyFactory(camelContext.createBeanProxyFactory());
-                }
-            }
-        }
-        return camelContext.beanProxyFactory;
     }
 
     @Override

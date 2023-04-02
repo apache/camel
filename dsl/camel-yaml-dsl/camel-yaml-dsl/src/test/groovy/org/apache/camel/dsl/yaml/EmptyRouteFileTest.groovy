@@ -19,6 +19,7 @@ package org.apache.camel.dsl.yaml
 import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.spi.Resource
 import org.apache.camel.spi.RoutesLoader
+import org.apache.camel.support.PluginHelper
 import org.apache.camel.support.ResourceHelper
 import org.junit.jupiter.api.Assertions
 
@@ -26,7 +27,7 @@ class EmptyRouteFileTest extends YamlTestSupport {
 
     def "empty file"() {
         when:
-            RoutesLoader loader = context.getRoutesLoader()
+            RoutesLoader loader = PluginHelper.getRoutesLoader(context).getRoutesLoader()
             Resource res = ResourceHelper.fromString("dummy.yaml", "");
         then:
             try {

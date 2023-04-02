@@ -21,6 +21,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -41,7 +42,7 @@ public class CamelLoadRoutesFromXMLTest extends ContextTestSupport {
 
         // load routes from xml file
         Resource resource = camel.getResourceLoader().resolveResource("org/apache/camel/spring/myRoutes.xml");
-        camel.getRoutesLoader().loadRoutes(resource);
+        PluginHelper.getRoutesLoader(camel).loadRoutes(resource);
 
         assertEquals(2, camel.getRoutes().size());
 
@@ -77,7 +78,7 @@ public class CamelLoadRoutesFromXMLTest extends ContextTestSupport {
 
         // load updated xml
         resource = camel.getResourceLoader().resolveResource("org/apache/camel/spring/myUpdatedRoutes.xml");
-        camel.getRoutesLoader().loadRoutes(resource);
+        PluginHelper.getRoutesLoader(camel).loadRoutes(resource);
 
         assertEquals(2, camel.getRoutes().size());
 

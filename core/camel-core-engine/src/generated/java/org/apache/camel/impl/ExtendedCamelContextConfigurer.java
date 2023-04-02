@@ -23,8 +23,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "annotationbasedprocessorfactory":
         case "AnnotationBasedProcessorFactory": target.setAnnotationBasedProcessorFactory(property(camelContext, org.apache.camel.spi.AnnotationBasedProcessorFactory.class, value)); return true;
-        case "asyncprocessorawaitmanager":
-        case "AsyncProcessorAwaitManager": target.setAsyncProcessorAwaitManager(property(camelContext, org.apache.camel.spi.AsyncProcessorAwaitManager.class, value)); return true;
         case "basepackagescan":
         case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "beanintrospection":
@@ -59,14 +57,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Registry": target.setRegistry(property(camelContext, org.apache.camel.spi.Registry.class, value)); return true;
         case "resourceloader":
         case "ResourceLoader": target.setResourceLoader(property(camelContext, org.apache.camel.spi.ResourceLoader.class, value)); return true;
-        case "restbindingjaxbdataformatfactory":
-        case "RestBindingJaxbDataFormatFactory": target.setRestBindingJaxbDataFormatFactory(property(camelContext, org.apache.camel.spi.RestBindingJaxbDataFormatFactory.class, value)); return true;
-        case "routefactory":
-        case "RouteFactory": target.setRouteFactory(property(camelContext, org.apache.camel.spi.RouteFactory.class, value)); return true;
-        case "routesloader":
-        case "RoutesLoader": target.setRoutesLoader(property(camelContext, org.apache.camel.spi.RoutesLoader.class, value)); return true;
-        case "runtimecamelcatalog":
-        case "RuntimeCamelCatalog": target.setRuntimeCamelCatalog(property(camelContext, org.apache.camel.catalog.RuntimeCamelCatalog.class, value)); return true;
         case "startupsteprecorder":
         case "StartupStepRecorder": target.setStartupStepRecorder(property(camelContext, org.apache.camel.spi.StartupStepRecorder.class, value)); return true;
         case "unitofworkfactory":
@@ -80,8 +70,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "annotationbasedprocessorfactory":
         case "AnnotationBasedProcessorFactory": return org.apache.camel.spi.AnnotationBasedProcessorFactory.class;
-        case "asyncprocessorawaitmanager":
-        case "AsyncProcessorAwaitManager": return org.apache.camel.spi.AsyncProcessorAwaitManager.class;
         case "basepackagescan":
         case "BasePackageScan": return java.lang.String.class;
         case "beanintrospection":
@@ -116,14 +104,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Registry": return org.apache.camel.spi.Registry.class;
         case "resourceloader":
         case "ResourceLoader": return org.apache.camel.spi.ResourceLoader.class;
-        case "restbindingjaxbdataformatfactory":
-        case "RestBindingJaxbDataFormatFactory": return org.apache.camel.spi.RestBindingJaxbDataFormatFactory.class;
-        case "routefactory":
-        case "RouteFactory": return org.apache.camel.spi.RouteFactory.class;
-        case "routesloader":
-        case "RoutesLoader": return org.apache.camel.spi.RoutesLoader.class;
-        case "runtimecamelcatalog":
-        case "RuntimeCamelCatalog": return org.apache.camel.catalog.RuntimeCamelCatalog.class;
         case "startupsteprecorder":
         case "StartupStepRecorder": return org.apache.camel.spi.StartupStepRecorder.class;
         case "unitofworkfactory":
@@ -138,8 +118,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         switch (ignoreCase ? name.toLowerCase() : name) {
         case "annotationbasedprocessorfactory":
         case "AnnotationBasedProcessorFactory": return target.getAnnotationBasedProcessorFactory();
-        case "asyncprocessorawaitmanager":
-        case "AsyncProcessorAwaitManager": return target.getAsyncProcessorAwaitManager();
         case "basepackagescan":
         case "BasePackageScan": return target.getBasePackageScan();
         case "beanintrospection":
@@ -174,14 +152,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "Registry": return target.getRegistry();
         case "resourceloader":
         case "ResourceLoader": return target.getResourceLoader();
-        case "restbindingjaxbdataformatfactory":
-        case "RestBindingJaxbDataFormatFactory": return target.getRestBindingJaxbDataFormatFactory();
-        case "routefactory":
-        case "RouteFactory": return target.getRouteFactory();
-        case "routesloader":
-        case "RoutesLoader": return target.getRoutesLoader();
-        case "runtimecamelcatalog":
-        case "RuntimeCamelCatalog": return target.getRuntimeCamelCatalog();
         case "startupsteprecorder":
         case "StartupStepRecorder": return target.getStartupStepRecorder();
         case "unitofworkfactory":

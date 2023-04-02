@@ -23,10 +23,8 @@ import java.util.function.Supplier;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
-import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
@@ -46,11 +44,8 @@ import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
-import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
-import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RouteStartupOrder;
-import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.UnitOfWorkFactory;
 
@@ -315,20 +310,6 @@ public interface ExtendedCamelContext {
     FactoryFinder getFactoryFinder(String path);
 
     /**
-     * Gets the current {@link org.apache.camel.spi.RouteFactory}
-     *
-     * @return the factory
-     */
-    RouteFactory getRouteFactory();
-
-    /**
-     * Sets a custom {@link org.apache.camel.spi.RouteFactory}
-     *
-     * @param routeFactory the custom factory
-     */
-    void setRouteFactory(RouteFactory routeFactory);
-
-    /**
      * Gets the {@link DeferServiceFactory} to use.
      */
     DeferServiceFactory getDeferServiceFactory();
@@ -357,11 +338,6 @@ public interface ExtendedCamelContext {
      * Sets a custom {@link AnnotationBasedProcessorFactory} to use.
      */
     void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory);
-
-    /**
-     * Gets the {@link BeanProxyFactory} to use.
-     */
-    BeanProxyFactory getBeanProxyFactory();
 
     /**
      * Gets the {@link BeanProcessorFactory} to use.
@@ -398,20 +374,6 @@ public interface ExtendedCamelContext {
      * Adds a {@link LogListener}.
      */
     void addLogListener(LogListener listener);
-
-    /**
-     * Gets the {@link org.apache.camel.AsyncProcessor} await manager.
-     *
-     * @return the manager
-     */
-    AsyncProcessorAwaitManager getAsyncProcessorAwaitManager();
-
-    /**
-     * Sets a custom {@link org.apache.camel.AsyncProcessor} await manager.
-     *
-     * @param manager the manager
-     */
-    void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager);
 
     /**
      * Gets the {@link BeanIntrospection}
@@ -461,16 +423,6 @@ public interface ExtendedCamelContext {
     void setEventNotificationApplicable(boolean eventNotificationApplicable);
 
     /**
-     * Gets the {@link RoutesLoader} to be used.
-     */
-    RoutesLoader getRoutesLoader();
-
-    /**
-     * Sets a custom {@link RoutesLoader} to be used.
-     */
-    void setRoutesLoader(RoutesLoader routesLoader);
-
-    /**
      * Gets the {@link ResourceLoader} to be used.
      */
     ResourceLoader getResourceLoader();
@@ -491,26 +443,6 @@ public interface ExtendedCamelContext {
     void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper);
 
     /**
-     * Gets the {@link RestBindingJaxbDataFormatFactory} to be used.
-     */
-    RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory();
-
-    /**
-     * Sets a custom {@link RestBindingJaxbDataFormatFactory} to be used.
-     */
-    void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory);
-
-    /**
-     * Gets the {@link RuntimeCamelCatalog} if available on the classpath.
-     */
-    RuntimeCamelCatalog getRuntimeCamelCatalog();
-
-    /**
-     * Sets the {@link RuntimeCamelCatalog} to use.
-     */
-    void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog);
-
-    /**
      * Internal {@link RouteController} that are only used internally by Camel to perform basic route operations. Do not
      * use this as end user.
      */
@@ -520,6 +452,14 @@ public interface ExtendedCamelContext {
      * Gets the {@link EndpointUriFactory} for the given component name.
      */
     EndpointUriFactory getEndpointUriFactory(String scheme);
+
+    /**
+     * Gets the {@link RuntimeCamelCatalog} if available on the classpath.
+     */
+    @Deprecated
+    default RuntimeCamelCatalog getRuntimeCamelCatalog() {
+        return getContextPlugin(RuntimeCamelCatalog.class);
+    }
 
     /**
      * Gets the {@link StartupStepRecorder} to use.

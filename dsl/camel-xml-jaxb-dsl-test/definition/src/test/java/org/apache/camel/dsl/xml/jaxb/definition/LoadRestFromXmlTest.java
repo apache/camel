@@ -24,6 +24,7 @@ import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.component.rest.DummyRestProcessorFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -54,7 +55,7 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
         // load rest from XML and add them to the existing camel context
         ExtendedCamelContext ecc = context.getCamelContextExtension();
         Resource resource = ecc.getResourceLoader().resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barRest.xml");
-        ecc.getRoutesLoader().loadRoutes(resource);
+        PluginHelper.getRoutesLoader(ecc).loadRoutes(resource);
 
         assertNotNull(context.getRoute("route1"), "Loaded rest route should be there");
         assertEquals(3, context.getRoutes().size());

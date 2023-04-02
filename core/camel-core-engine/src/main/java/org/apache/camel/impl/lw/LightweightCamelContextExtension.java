@@ -36,12 +36,9 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
-import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
@@ -61,11 +58,8 @@ import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.ResourceLoader;
-import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteController;
-import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RouteStartupOrder;
-import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.SupervisingRouteController;
 import org.apache.camel.spi.UnitOfWorkFactory;
@@ -241,16 +235,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public RouteFactory getRouteFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRouteFactory(RouteFactory routeFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public DeferServiceFactory getDeferServiceFactory() {
         throw new UnsupportedOperationException();
     }
@@ -281,11 +265,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public BeanProxyFactory getBeanProxyFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public BeanProcessorFactory getBeanProcessorFactory() {
         throw new UnsupportedOperationException();
     }
@@ -297,16 +276,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public Set<LogListener> getLogListeners() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public AsyncProcessorAwaitManager getAsyncProcessorAwaitManager() {
-        return camelContext.getCamelContextExtension().getAsyncProcessorAwaitManager();
-    }
-
-    @Override
-    public void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager) {
         throw new UnsupportedOperationException();
     }
 
@@ -391,16 +360,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public RuntimeCamelCatalog getRuntimeCamelCatalog() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRuntimeCamelCatalog(RuntimeCamelCatalog runtimeCamelCatalog) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void addRoute(Route route) {
         throw new UnsupportedOperationException();
     }
@@ -438,26 +397,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void addLogListener(LogListener listener) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRestBindingJaxbDataFormatFactory(RestBindingJaxbDataFormatFactory restBindingJaxbDataFormatFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRoutesLoader(RoutesLoader routesLoader) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public RoutesLoader getRoutesLoader() {
         throw new UnsupportedOperationException();
     }
 

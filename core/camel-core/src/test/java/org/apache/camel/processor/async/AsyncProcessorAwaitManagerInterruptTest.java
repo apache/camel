@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,10 +35,10 @@ public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport 
 
     @Test
     public void testAsyncAwaitInterrupt() throws Exception {
-        context.getCamelContextExtension().getAsyncProcessorAwaitManager().getStatistics().setStatisticsEnabled(true);
+        final AsyncProcessorAwaitManager asyncProcessorAwaitManager = PluginHelper.getAsyncProcessorAwaitManager(context);
+        asyncProcessorAwaitManager.getStatistics().setStatisticsEnabled(true);
 
-        assertEquals(0, context.getCamelContextExtension().getAsyncProcessorAwaitManager().size());
-
+        assertEquals(0, asyncProcessorAwaitManager.size());
         getMockEndpoint("mock:before").expectedBodiesReceived("Hello Camel");
         getMockEndpoint("mock:after").expectedBodiesReceived("Bye Camel");
         getMockEndpoint("mock:result").expectedMessageCount(0);
@@ -51,10 +52,10 @@ public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport 
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(0, context.getCamelContextExtension().getAsyncProcessorAwaitManager().size());
+        assertEquals(0, asyncProcessorAwaitManager.size());
         assertEquals(1,
-                context.getCamelContextExtension().getAsyncProcessorAwaitManager().getStatistics().getThreadsBlocked());
-        assertEquals(1, context.getCamelContextExtension().getAsyncProcessorAwaitManager().getStatistics()
+                asyncProcessorAwaitManager.getStatistics().getThreadsBlocked());
+        assertEquals(1, asyncProcessorAwaitManager.getStatistics()
                 .getThreadsInterrupted());
     }
 
@@ -69,17 +70,19 @@ public class AsyncProcessorAwaitManagerInterruptTest extends ContextTestSupport 
                         .to("mock:after").process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                int size = context.getCamelContextExtension().getAsyncProcessorAwaitManager().size();
+                                final AsyncProcessorAwaitManager asyncProcessorAwaitManager
+                                        = PluginHelper.getAsyncProcessorAwaitManager(context);
+                                int size = asyncProcessorAwaitManager.size();
                                 log.info("async inflight: {}", size);
                                 assertEquals(1, size);
 
                                 Collection<AsyncProcessorAwaitManager.AwaitThread> threads
-                                        = context.getCamelContextExtension().getAsyncProcessorAwaitManager().browse();
+                                        = asyncProcessorAwaitManager.browse();
                                 AsyncProcessorAwaitManager.AwaitThread thread = threads.iterator().next();
 
                                 // lets interrupt it
                                 String id = thread.getExchange().getExchangeId();
-                                context.getCamelContextExtension().getAsyncProcessorAwaitManager().interrupt(id);
+                                asyncProcessorAwaitManager.interrupt(id);
                             }
                         }).transform(constant("Hi Camel")).to("mock:result");
             }

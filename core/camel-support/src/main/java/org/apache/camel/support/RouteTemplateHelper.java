@@ -86,7 +86,7 @@ public final class RouteTemplateHelper {
                              + ". This exception is ignored",
                             e);
                 }
-                ecc.getRoutesLoader().loadRoutes(res);
+                PluginHelper.getRoutesLoader(camelContext).loadRoutes(res);
                 found = true;
                 break;
             }
@@ -103,7 +103,7 @@ public final class RouteTemplateHelper {
                 path += "/";
             }
             String target = path + templateId + ".kamelet.yaml";
-            ecc.getRoutesLoader().loadRoutes(
+            PluginHelper.getRoutesLoader(camelContext).loadRoutes(
                     ecc.getResourceLoader().resolveResource(target));
         }
     }

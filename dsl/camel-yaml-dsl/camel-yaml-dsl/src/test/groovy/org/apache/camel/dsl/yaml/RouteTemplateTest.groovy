@@ -25,6 +25,7 @@ import org.apache.camel.model.LogDefinition
 import org.apache.camel.model.RouteTemplateDefinition
 import org.apache.camel.model.ToDefinition
 import org.apache.camel.spi.Resource
+import org.apache.camel.support.PluginHelper
 import org.junit.jupiter.api.Assertions
 
 class RouteTemplateTest extends YamlTestSupport {
@@ -53,7 +54,7 @@ class RouteTemplateTest extends YamlTestSupport {
 
     def "create template with beans (#resource.location)"(Resource resource) {
         setup:
-        context.routesLoader.loadRoutes(resource)
+        PluginHelper.getRoutesLoader(context).loadRoutes(resource)
 
         withMock('mock:result') {
             expectedMessageCount 1

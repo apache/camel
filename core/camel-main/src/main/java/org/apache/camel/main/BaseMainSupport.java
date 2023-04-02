@@ -59,6 +59,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RouteTemplateParameterSource;
+import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultContextReloadStrategy;
@@ -598,7 +599,7 @@ public abstract class BaseMainSupport extends BaseService {
 
     protected void configureRoutesLoader(CamelContext camelContext) {
         // use main based routes loader
-        camelContext.getCamelContextExtension().setRoutesLoader(new DefaultRoutesLoader());
+        camelContext.getCamelContextExtension().addContextPlugin(RoutesLoader.class, new DefaultRoutesLoader());
     }
 
     protected void modelineRoutes(CamelContext camelContext) throws Exception {

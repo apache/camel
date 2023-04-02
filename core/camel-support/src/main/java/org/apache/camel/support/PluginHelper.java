@@ -21,8 +21,11 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckResolver;
+import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ComponentNameResolver;
@@ -40,6 +43,9 @@ import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
+import org.apache.camel.spi.RouteFactory;
+import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.UriFactoryResolver;
 
 public final class PluginHelper {
@@ -401,5 +407,98 @@ public final class PluginHelper {
      */
     public static InterceptEndpointFactory getInterceptEndpointFactory(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(InterceptEndpointFactory.class);
+    }
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.RouteFactory}
+     *
+     * @return the factory
+     */
+    public static RouteFactory getRouteFactory(CamelContext camelContext) {
+        return getRouteFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the current {@link org.apache.camel.spi.RouteFactory}
+     *
+     * @return the factory
+     */
+    public static RouteFactory getRouteFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(RouteFactory.class);
+    }
+
+    /**
+     * Gets the {@link RoutesLoader} to be used.
+     */
+    public static RoutesLoader getRoutesLoader(CamelContext camelContext) {
+        return getRoutesLoader(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link RoutesLoader} to be used.
+     */
+    public static RoutesLoader getRoutesLoader(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(RoutesLoader.class);
+    }
+
+    /**
+     * Gets the {@link org.apache.camel.AsyncProcessor} await manager.
+     *
+     * @return the manager
+     */
+    public static AsyncProcessorAwaitManager getAsyncProcessorAwaitManager(CamelContext camelContext) {
+        return getAsyncProcessorAwaitManager(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link org.apache.camel.AsyncProcessor} await manager.
+     *
+     * @return the manager
+     */
+    public static AsyncProcessorAwaitManager getAsyncProcessorAwaitManager(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(AsyncProcessorAwaitManager.class);
+    }
+
+    /**
+     * Gets the {@link RuntimeCamelCatalog} if available on the classpath.
+     */
+    public static RuntimeCamelCatalog getRuntimeCamelCatalog(CamelContext camelContext) {
+        return getRuntimeCamelCatalog(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link RuntimeCamelCatalog} if available on the classpath.
+     */
+    public static RuntimeCamelCatalog getRuntimeCamelCatalog(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(RuntimeCamelCatalog.class);
+    }
+
+    /**
+     * Gets the {@link RestBindingJaxbDataFormatFactory} to be used.
+     */
+    public static RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory(CamelContext camelContext) {
+        return getRestBindingJaxbDataFormatFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link RestBindingJaxbDataFormatFactory} to be used.
+     */
+    public static RestBindingJaxbDataFormatFactory getRestBindingJaxbDataFormatFactory(
+            ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(RestBindingJaxbDataFormatFactory.class);
+    }
+
+    /**
+     * Gets the {@link BeanProxyFactory} to use.
+     */
+    public static BeanProxyFactory getBeanProxyFactory(CamelContext camelContext) {
+        return getBeanProxyFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link BeanProxyFactory} to use.
+     */
+    public static BeanProxyFactory getBeanProxyFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(BeanProxyFactory.class);
     }
 }

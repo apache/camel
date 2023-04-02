@@ -20,12 +20,13 @@ import org.apache.camel.dsl.yaml.support.YamlTestSupport
 import org.apache.camel.model.ThrottleDefinition
 import org.apache.camel.model.language.ConstantExpression
 import org.apache.camel.spi.Resource
+import org.apache.camel.support.PluginHelper
 
 class ThrottleTest extends YamlTestSupport {
 
     def "throttle definition (#resource.location)"(Resource resource) {
         when:
-            context.routesLoader.loadRoutes(resource)
+            PluginHelper.getRoutesLoader(context).loadRoutes(resource)
         then:
             with(context.routeDefinitions[0].outputs[0], ThrottleDefinition) {
                 with (expression, ConstantExpression) {

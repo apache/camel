@@ -29,10 +29,12 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -59,6 +61,7 @@ import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.KeyValueHolder;
+import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
@@ -270,6 +273,7 @@ public final class JaxbHelper {
     public static RoutesDefinition loadRoutesDefinition(CamelContext context, InputStream inputStream) throws Exception {
         XmlConverter xmlConverter = newXmlConverter(context);
         Document dom = xmlConverter.toDOMDocument(inputStream, null);
+        removeNoiseFromUris(dom.getDocumentElement());
 
         JAXBContext jaxbContext = getJAXBContext(context);
 
@@ -310,6 +314,7 @@ public final class JaxbHelper {
             throws Exception {
         XmlConverter xmlConverter = newXmlConverter(context);
         Document dom = xmlConverter.toDOMDocument(inputStream, null);
+        removeNoiseFromUris(dom.getDocumentElement());
 
         JAXBContext jaxbContext = getJAXBContext(context);
 
@@ -350,6 +355,7 @@ public final class JaxbHelper {
             throws Exception {
         XmlConverter xmlConverter = newXmlConverter(context);
         Document dom = xmlConverter.toDOMDocument(inputStream, null);
+        removeNoiseFromUris(dom.getDocumentElement());
 
         JAXBContext jaxbContext = getJAXBContext(context);
 
@@ -398,6 +404,7 @@ public final class JaxbHelper {
             throws Exception {
         XmlConverter xmlConverter = newXmlConverter(context);
         Document dom = xmlConverter.toDOMDocument(inputStream, null);
+        removeNoiseFromUris(dom.getDocumentElement());
 
         JAXBContext jaxbContext = getJAXBContext(context);
 
@@ -448,6 +455,7 @@ public final class JaxbHelper {
     public static RestsDefinition loadRestsDefinition(CamelContext context, InputStream inputStream) throws Exception {
         // load routes using JAXB
         Document dom = newXmlConverter(context).toDOMDocument(inputStream, null);
+        removeNoiseFromUris(dom.getDocumentElement());
 
         if (!CAMEL_NS.equals(dom.getDocumentElement().getNamespaceURI())) {
             addNamespaceToDom(dom);
@@ -474,4 +482,28 @@ public final class JaxbHelper {
 
         return answer;
     }
+
+    private static void removeNoiseFromUris(Element element) {
+        final NamedNodeMap attrs = element.getAttributes();
+
+        for (int index = 0; index < attrs.getLength(); index++) {
+            final Attr attr = (Attr) attrs.item(index);
+            final String attName = attr.getName();
+
+            if (attName.equals("uri") || attName.endsWith("Uri")) {
+                attr.setValue(URISupport.removeNoiseFromUri(attr.getValue()));
+            }
+        }
+
+        final NodeList children = element.getChildNodes();
+
+        for (int index = 0; index < children.getLength(); index++) {
+            final Node child = children.item(index);
+
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                removeNoiseFromUris((Element) child);
+            }
+        }
+    }
+
 }

@@ -27,6 +27,7 @@ import org.apache.camel.reifier.AbstractReifier;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 
 public class RestBindingReifier extends AbstractReifier {
@@ -128,7 +129,7 @@ public class RestBindingReifier extends AbstractReifier {
 
             if (jaxb != null) {
                 // to setup JAXB we need to use camel-jaxb
-                camelContext.getCamelContextExtension().getRestBindingJaxbDataFormatFactory().setupJaxb(
+                PluginHelper.getRestBindingJaxbDataFormatFactory(camelContext).setupJaxb(
                         camelContext, config,
                         parseString(definition.getType()), definition.getTypeClass(),
                         parseString(definition.getOutType()), definition.getOutTypeClass(),

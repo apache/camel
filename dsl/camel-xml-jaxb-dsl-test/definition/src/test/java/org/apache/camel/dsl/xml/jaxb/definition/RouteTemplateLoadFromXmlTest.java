@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,7 +36,7 @@ public class RouteTemplateLoadFromXmlTest extends ContextTestSupport {
 
         ExtendedCamelContext ecc = context.getCamelContextExtension();
         Resource resource = ecc.getResourceLoader().resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barTemplate.xml");
-        ecc.getRoutesLoader().loadRoutes(resource);
+        PluginHelper.getRoutesLoader(ecc).loadRoutes(resource);
 
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 
@@ -50,7 +51,7 @@ public class RouteTemplateLoadFromXmlTest extends ContextTestSupport {
 
         ExtendedCamelContext ecc = context.getCamelContextExtension();
         Resource resource = ecc.getResourceLoader().resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barTemplate.xml");
-        ecc.getRoutesLoader().loadRoutes(resource);
+        PluginHelper.getRoutesLoader(ecc).loadRoutes(resource);
 
         assertEquals(1, context.getRouteTemplateDefinitions().size());
 

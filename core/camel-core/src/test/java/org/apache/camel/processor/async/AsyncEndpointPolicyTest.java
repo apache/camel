@@ -31,6 +31,7 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -125,7 +126,7 @@ public class AsyncEndpointPolicyTest extends ContextTestSupport {
 
                 public void process(Exchange exchange) throws Exception {
                     final AsyncProcessorAwaitManager awaitManager
-                            = exchange.getContext().getCamelContextExtension().getAsyncProcessorAwaitManager();
+                            = PluginHelper.getAsyncProcessorAwaitManager(exchange.getContext());
                     awaitManager.process(this, exchange);
                 }
 

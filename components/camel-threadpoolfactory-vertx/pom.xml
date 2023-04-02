@@ -35,7 +35,7 @@
         <firstVersion>3.5.0</firstVersion>
         <label>reactive</label>
         <title>ThreadPoolFactory Vert.x</title>
-        <supportLevel>preview</supportLevel>
+        <supportLevel>Experimental</supportLevel>
     </properties>
 
     <dependencies>
