@@ -381,6 +381,7 @@ public abstract class AbstractCamelContext extends BaseService
                 this::createRestBindingJaxbDataFormatFactory);
         camelContextExtension.lazyAddContextPlugin(BeanProxyFactory.class, this::createBeanProxyFactory);
         camelContextExtension.lazyAddContextPlugin(UnitOfWorkFactory.class, this::createUnitOfWorkFactory);
+        camelContextExtension.lazyAddContextPlugin(BeanIntrospection.class, this::createBeanIntrospection);
         camelContextExtension.lazyAddContextPlugin(ResourceLoader.class, this::createResourceLoader);
 
         if (build) {
