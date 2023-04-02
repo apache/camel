@@ -320,16 +320,6 @@ public interface ExtendedCamelContext {
     void setDeferServiceFactory(DeferServiceFactory deferServiceFactory);
 
     /**
-     * Gets the {@link UnitOfWorkFactory} to use.
-     */
-    UnitOfWorkFactory getUnitOfWorkFactory();
-
-    /**
-     * Sets a custom {@link UnitOfWorkFactory} to use.
-     */
-    void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory);
-
-    /**
      * Gets the {@link AnnotationBasedProcessorFactory} to use.
      */
     AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory();
@@ -376,16 +366,6 @@ public interface ExtendedCamelContext {
     void addLogListener(LogListener listener);
 
     /**
-     * Gets the {@link BeanIntrospection}
-     */
-    BeanIntrospection getBeanIntrospection();
-
-    /**
-     * Sets a custom {@link BeanIntrospection}.
-     */
-    void setBeanIntrospection(BeanIntrospection beanIntrospection);
-
-    /**
      * Gets the {@link HeadersMapFactory} to use.
      */
     HeadersMapFactory getHeadersMapFactory();
@@ -421,16 +401,6 @@ public interface ExtendedCamelContext {
      * there are no event listeners that are listening for exchange events.
      */
     void setEventNotificationApplicable(boolean eventNotificationApplicable);
-
-    /**
-     * Gets the {@link ResourceLoader} to be used.
-     */
-    ResourceLoader getResourceLoader();
-
-    /**
-     * Sets a custom {@link ResourceLoader} to be used.
-     */
-    void setResourceLoader(ResourceLoader resourceLoader);
 
     /**
      * Gets the {@link ModelToXMLDumper} to be used.

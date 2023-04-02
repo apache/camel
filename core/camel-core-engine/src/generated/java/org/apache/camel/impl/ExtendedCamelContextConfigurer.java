@@ -25,8 +25,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AnnotationBasedProcessorFactory": target.setAnnotationBasedProcessorFactory(property(camelContext, org.apache.camel.spi.AnnotationBasedProcessorFactory.class, value)); return true;
         case "basepackagescan":
         case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
-        case "beanintrospection":
-        case "BeanIntrospection": target.setBeanIntrospection(property(camelContext, org.apache.camel.spi.BeanIntrospection.class, value)); return true;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": target.setBootstrapFactoryFinder(property(camelContext, org.apache.camel.spi.FactoryFinder.class, value)); return true;
         case "deferservicefactory":
@@ -55,12 +53,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ReactiveExecutor": target.setReactiveExecutor(property(camelContext, org.apache.camel.spi.ReactiveExecutor.class, value)); return true;
         case "registry":
         case "Registry": target.setRegistry(property(camelContext, org.apache.camel.spi.Registry.class, value)); return true;
-        case "resourceloader":
-        case "ResourceLoader": target.setResourceLoader(property(camelContext, org.apache.camel.spi.ResourceLoader.class, value)); return true;
         case "startupsteprecorder":
         case "StartupStepRecorder": target.setStartupStepRecorder(property(camelContext, org.apache.camel.spi.StartupStepRecorder.class, value)); return true;
-        case "unitofworkfactory":
-        case "UnitOfWorkFactory": target.setUnitOfWorkFactory(property(camelContext, org.apache.camel.spi.UnitOfWorkFactory.class, value)); return true;
         default: return false;
         }
     }
@@ -72,8 +66,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AnnotationBasedProcessorFactory": return org.apache.camel.spi.AnnotationBasedProcessorFactory.class;
         case "basepackagescan":
         case "BasePackageScan": return java.lang.String.class;
-        case "beanintrospection":
-        case "BeanIntrospection": return org.apache.camel.spi.BeanIntrospection.class;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return org.apache.camel.spi.FactoryFinder.class;
         case "deferservicefactory":
@@ -102,12 +94,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ReactiveExecutor": return org.apache.camel.spi.ReactiveExecutor.class;
         case "registry":
         case "Registry": return org.apache.camel.spi.Registry.class;
-        case "resourceloader":
-        case "ResourceLoader": return org.apache.camel.spi.ResourceLoader.class;
         case "startupsteprecorder":
         case "StartupStepRecorder": return org.apache.camel.spi.StartupStepRecorder.class;
-        case "unitofworkfactory":
-        case "UnitOfWorkFactory": return org.apache.camel.spi.UnitOfWorkFactory.class;
         default: return null;
         }
     }
@@ -120,8 +108,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AnnotationBasedProcessorFactory": return target.getAnnotationBasedProcessorFactory();
         case "basepackagescan":
         case "BasePackageScan": return target.getBasePackageScan();
-        case "beanintrospection":
-        case "BeanIntrospection": return target.getBeanIntrospection();
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return target.getBootstrapFactoryFinder();
         case "deferservicefactory":
@@ -150,12 +136,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ReactiveExecutor": return target.getReactiveExecutor();
         case "registry":
         case "Registry": return target.getRegistry();
-        case "resourceloader":
-        case "ResourceLoader": return target.getResourceLoader();
         case "startupsteprecorder":
         case "StartupStepRecorder": return target.getStartupStepRecorder();
-        case "unitofworkfactory":
-        case "UnitOfWorkFactory": return target.getUnitOfWorkFactory();
         default: return null;
         }
     }

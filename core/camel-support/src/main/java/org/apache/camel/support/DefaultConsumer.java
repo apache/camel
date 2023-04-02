@@ -111,8 +111,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
         // create uow (however for pooled exchanges then the uow is pre-created)
         UnitOfWork uow = exchange.getUnitOfWork();
         if (uow == null) {
-            uow = endpoint.getCamelContext().getCamelContextExtension().getUnitOfWorkFactory()
-                    .createUnitOfWork(exchange);
+            uow = PluginHelper.getUnitOfWorkFactory(endpoint.getCamelContext()).createUnitOfWork(exchange);
             exchange.getExchangeExtension().setUnitOfWork(uow);
         }
         return uow;

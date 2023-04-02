@@ -191,11 +191,11 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         // 2. then the getter with Endpoint as postfix
         // 3. then if start with on then try step 1 and 2 again, but omit the on prefix
         try {
-            Object value = getCamelContext().getCamelContextExtension().getBeanIntrospection().getOrElseProperty(bean,
+            Object value = PluginHelper.getBeanIntrospection(getCamelContext()).getOrElseProperty(bean,
                     propertyName, null, false);
             if (value == null) {
                 // try endpoint as postfix
-                value = getCamelContext().getCamelContextExtension().getBeanIntrospection().getOrElseProperty(bean,
+                value = PluginHelper.getBeanIntrospection(getCamelContext()).getOrElseProperty(bean,
                         propertyName + "Endpoint", null, false);
             }
             if (value == null && propertyName.startsWith("on")) {

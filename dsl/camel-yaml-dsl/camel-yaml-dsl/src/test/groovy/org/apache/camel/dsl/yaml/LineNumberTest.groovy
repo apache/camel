@@ -22,6 +22,7 @@ import org.apache.camel.model.FromDefinition
 import org.apache.camel.model.LogDefinition
 import org.apache.camel.model.RouteDefinition
 import org.apache.camel.model.ToDefinition
+import org.apache.camel.support.PluginHelper
 
 class LineNumberTest extends YamlTestSupport {
 
@@ -82,7 +83,7 @@ class LineNumberTest extends YamlTestSupport {
     def "line number file"() {
         setup:
         def rloc = 'classpath:/stuff/my-route.yaml'
-        def rdsl = context.resourceLoader.resolveResource(rloc)
+        def rdsl = PluginHelper.getResourceLoader(context).resolveResource(rloc)
         when:
         loadRoutes rdsl
         then:
@@ -120,7 +121,7 @@ class LineNumberTest extends YamlTestSupport {
     def "line number file with comments"() {
         setup:
         def rloc = 'classpath:/stuff/my-route-comment.yaml'
-        def rdsl = context.resourceLoader.resolveResource(rloc)
+        def rdsl = PluginHelper.getResourceLoader(context).resolveResource(rloc)
         when:
         loadRoutes rdsl
         then:

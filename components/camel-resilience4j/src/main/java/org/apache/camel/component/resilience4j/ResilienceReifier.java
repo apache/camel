@@ -216,7 +216,7 @@ public class ResilienceReifier extends ProcessorReifier<CircuitBreakerDefinition
     }
 
     private void loadProperties(Map<String, Object> properties, Optional<?> optional, PropertyConfigurer configurer) {
-        BeanIntrospection beanIntrospection = camelContext.getCamelContextExtension().getBeanIntrospection();
+        BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(camelContext);
         optional.ifPresent(bean -> {
             if (configurer instanceof ExtendedPropertyConfigurerGetter) {
                 ExtendedPropertyConfigurerGetter getter = (ExtendedPropertyConfigurerGetter) configurer;

@@ -217,7 +217,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile BeanProcessorFactory beanProcessorFactory;
     volatile ResourceLoader resourceLoader;
     volatile ModelToXMLDumper modelToXMLDumper;
-    volatile UnitOfWorkFactory unitOfWorkFactory;
     volatile BeanIntrospection beanIntrospection;
     volatile boolean eventNotificationApplicable;
     volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
@@ -381,6 +380,9 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(RestBindingJaxbDataFormatFactory.class,
                 this::createRestBindingJaxbDataFormatFactory);
         camelContextExtension.lazyAddContextPlugin(BeanProxyFactory.class, this::createBeanProxyFactory);
+        camelContextExtension.lazyAddContextPlugin(UnitOfWorkFactory.class, this::createUnitOfWorkFactory);
+        camelContextExtension.lazyAddContextPlugin(BeanIntrospection.class, this::createBeanIntrospection);
+        camelContextExtension.lazyAddContextPlugin(ResourceLoader.class, this::createResourceLoader);
 
         if (build) {
             try {
@@ -4167,28 +4169,12 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.addInterceptStrategy(interceptStrategy);
     }
 
-    public BeanIntrospection getBeanIntrospection() {
-        return camelContextExtension.getBeanIntrospection();
-    }
-
-    public void setBeanIntrospection(BeanIntrospection beanIntrospection) {
-        camelContextExtension.setBeanIntrospection(beanIntrospection);
-    }
-
     public ReactiveExecutor getReactiveExecutor() {
         return camelContextExtension.getReactiveExecutor();
     }
 
     public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
         camelContextExtension.setReactiveExecutor(reactiveExecutor);
-    }
-
-    public ResourceLoader getResourceLoader() {
-        return camelContextExtension.getResourceLoader();
-    }
-
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        camelContextExtension.setResourceLoader(resourceLoader);
     }
 
     public ModelToXMLDumper getModelToXMLDumper() {

@@ -24,6 +24,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.mail.internal.GoogleMailApiName;
 import org.apache.camel.component.google.mail.internal.GoogleMailPropertiesHelper;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.component.AbstractApiProducer;
 import org.apache.camel.support.component.ApiMethod;
 
@@ -41,7 +42,7 @@ public class GoogleMailProducer extends AbstractApiProducer<GoogleMailApiName, G
         AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
         try {
             BeanIntrospection beanIntrospection
-                    = getEndpoint().getCamelContext().getCamelContextExtension().getBeanIntrospection();
+                    = PluginHelper.getBeanIntrospection(getEndpoint().getCamelContext());
             for (Entry<String, Object> p : properties.entrySet()) {
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), request, p.getKey(), p.getValue());
             }

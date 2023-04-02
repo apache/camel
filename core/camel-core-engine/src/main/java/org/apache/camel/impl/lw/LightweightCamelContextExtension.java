@@ -245,16 +245,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public UnitOfWorkFactory getUnitOfWorkFactory() {
-        return camelContext.getCamelContextExtension().getUnitOfWorkFactory();
-    }
-
-    @Override
-    public void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory() {
         throw new UnsupportedOperationException();
     }
@@ -276,16 +266,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public Set<LogListener> getLogListeners() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public BeanIntrospection getBeanIntrospection() {
-        return camelContext.getCamelContextExtension().getBeanIntrospection();
-    }
-
-    @Override
-    public void setBeanIntrospection(BeanIntrospection beanIntrospection) {
         throw new UnsupportedOperationException();
     }
 
@@ -397,16 +377,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void addLogListener(LogListener listener) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ResourceLoader getResourceLoader() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
         throw new UnsupportedOperationException();
     }
 

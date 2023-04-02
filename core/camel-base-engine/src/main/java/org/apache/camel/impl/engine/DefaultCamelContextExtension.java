@@ -293,23 +293,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public UnitOfWorkFactory getUnitOfWorkFactory() {
-        if (camelContext.unitOfWorkFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.unitOfWorkFactory == null) {
-                    setUnitOfWorkFactory(camelContext.createUnitOfWorkFactory());
-                }
-            }
-        }
-        return camelContext.unitOfWorkFactory;
-    }
-
-    @Override
-    public void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory) {
-        camelContext.unitOfWorkFactory = camelContext.getInternalServiceManager().addService(unitOfWorkFactory);
-    }
-
-    @Override
     public boolean isEventNotificationApplicable() {
         return camelContext.eventNotificationApplicable;
     }
@@ -404,23 +387,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public BeanIntrospection getBeanIntrospection() {
-        if (camelContext.beanIntrospection == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.beanIntrospection == null) {
-                    setBeanIntrospection(camelContext.createBeanIntrospection());
-                }
-            }
-        }
-        return camelContext.beanIntrospection;
-    }
-
-    @Override
-    public void setBeanIntrospection(BeanIntrospection beanIntrospection) {
-        camelContext.beanIntrospection = camelContext.getInternalServiceManager().addService(beanIntrospection);
-    }
-
-    @Override
     public String getBasePackageScan() {
         return basePackageScan;
     }
@@ -448,23 +414,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setHeadersMapFactory(HeadersMapFactory headersMapFactory) {
         camelContext.headersMapFactory = camelContext.getInternalServiceManager().addService(headersMapFactory);
-    }
-
-    @Override
-    public ResourceLoader getResourceLoader() {
-        if (camelContext.resourceLoader == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.resourceLoader == null) {
-                    setResourceLoader(camelContext.createResourceLoader());
-                }
-            }
-        }
-        return camelContext.resourceLoader;
-    }
-
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        camelContext.resourceLoader = camelContext.getInternalServiceManager().addService(resourceLoader);
     }
 
     public ModelToXMLDumper getModelToXMLDumper() {

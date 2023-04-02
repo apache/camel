@@ -20,6 +20,7 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -51,7 +52,7 @@ public class CronPatternsTest extends CamelTestSupport {
 
     @Test
     void testPlusInURI() throws Exception {
-        BeanIntrospection bi = context.getCamelContextExtension().getBeanIntrospection();
+        BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
         bi.setExtendedStatistics(true);
         bi.setLoggingLevel(LoggingLevel.INFO);
 

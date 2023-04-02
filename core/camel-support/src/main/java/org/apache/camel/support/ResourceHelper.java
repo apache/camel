@@ -37,7 +37,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.util.AntPathMatcher;
@@ -192,8 +191,7 @@ public final class ResourceHelper {
      * @return              the {@link Resource}. Or <tt>null</tt> if not found
      */
     public static Resource resolveResource(CamelContext camelContext, String uri) {
-        final ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
-        final ResourceLoader loader = ecc.getResourceLoader();
+        final ResourceLoader loader = PluginHelper.getResourceLoader(camelContext);
         return loader.resolveResource(uri);
     }
 

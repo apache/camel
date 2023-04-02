@@ -25,6 +25,7 @@ import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckResolver;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
@@ -43,9 +44,11 @@ import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutesLoader;
+import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
 
 public final class PluginHelper {
@@ -500,5 +503,47 @@ public final class PluginHelper {
      */
     public static BeanProxyFactory getBeanProxyFactory(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(BeanProxyFactory.class);
+    }
+
+    /**
+     * Gets the {@link UnitOfWorkFactory} to use.
+     */
+    public static UnitOfWorkFactory getUnitOfWorkFactory(CamelContext camelContext) {
+        return getUnitOfWorkFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link UnitOfWorkFactory} to use.
+     */
+    public static UnitOfWorkFactory getUnitOfWorkFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(UnitOfWorkFactory.class);
+    }
+
+    /**
+     * Gets the {@link BeanIntrospection}
+     */
+    public static BeanIntrospection getBeanIntrospection(CamelContext camelContext) {
+        return getBeanIntrospection(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link BeanIntrospection}
+     */
+    public static BeanIntrospection getBeanIntrospection(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(BeanIntrospection.class);
+    }
+
+    /**
+     * Gets the {@link ResourceLoader} to be used.
+     */
+    public static ResourceLoader getResourceLoader(CamelContext camelContext) {
+        return getResourceLoader(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link ResourceLoader} to be used.
+     */
+    public static ResourceLoader getResourceLoader(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ResourceLoader.class);
     }
 }

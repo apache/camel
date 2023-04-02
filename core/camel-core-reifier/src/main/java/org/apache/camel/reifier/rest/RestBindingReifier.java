@@ -24,6 +24,7 @@ import org.apache.camel.model.rest.RestBindingDefinition;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.processor.RestBindingAdvice;
 import org.apache.camel.reifier.AbstractReifier;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.CamelContextHelper;
@@ -160,10 +161,11 @@ public class RestBindingReifier extends AbstractReifier {
             String typeName = useList ? type.substring(0, type.length() - 2) : type;
             clazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
         }
+        final BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(camelContext);
         if (clazz != null) {
-            camelContext.getCamelContextExtension().getBeanIntrospection().setProperty(camelContext, json,
+            beanIntrospection.setProperty(camelContext, json,
                     "unmarshalType", clazz);
-            camelContext.getCamelContextExtension().getBeanIntrospection().setProperty(camelContext, json, "useList",
+            beanIntrospection.setProperty(camelContext, json, "useList",
                     useList);
         }
 
@@ -182,9 +184,9 @@ public class RestBindingReifier extends AbstractReifier {
         }
 
         if (outClazz != null) {
-            camelContext.getCamelContextExtension().getBeanIntrospection().setProperty(camelContext, outJson,
+            beanIntrospection.setProperty(camelContext, outJson,
                     "unmarshalType", outClazz);
-            camelContext.getCamelContextExtension().getBeanIntrospection().setProperty(camelContext, outJson, "useList",
+            beanIntrospection.setProperty(camelContext, outJson, "useList",
                     outUseList);
         }
 

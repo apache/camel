@@ -60,6 +60,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
@@ -740,14 +741,14 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
 
         private final Route route;
         private String routeId;
-        private UnitOfWorkFactory uowFactory;
+        private final UnitOfWorkFactory uowFactory;
 
         public UnitOfWorkProcessorAdvice(Route route, CamelContext camelContext) {
             this.route = route;
             if (route != null) {
                 this.routeId = route.getRouteId();
             }
-            this.uowFactory = camelContext.getCamelContextExtension().getUnitOfWorkFactory();
+            this.uowFactory = PluginHelper.getUnitOfWorkFactory(camelContext);
             // optimize uow factory to initialize it early and once per advice
             this.uowFactory.afterPropertiesConfigured(camelContext);
         }
@@ -811,8 +812,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor implements In
             if (uowFactory != null) {
                 return uowFactory.createUnitOfWork(exchange);
             } else {
-                return exchange.getContext().getCamelContextExtension().getUnitOfWorkFactory()
-                        .createUnitOfWork(exchange);
+                return PluginHelper.getUnitOfWorkFactory(exchange.getContext()).createUnitOfWork(exchange);
             }
         }
 
