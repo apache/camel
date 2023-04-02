@@ -119,7 +119,8 @@ public class FacebookConsumer extends ScheduledPollConsumer {
 
         FacebookMethodsType result;
         // find one that takes the largest subset of endpoint parameters
-        final Set<String> argNames = new HashSet<>(FacebookPropertiesHelper.getEndpointPropertyNames(endpoint.getCamelContext(), endpoint.getConfiguration()));
+        final Set<String> argNames = new HashSet<>(
+                FacebookPropertiesHelper.getEndpointPropertyNames(endpoint.getCamelContext(), endpoint.getConfiguration()));
 
         // add reading property for polling, if it doesn't already exist!
         argNames.add(READING_PROPERTY);
