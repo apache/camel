@@ -399,7 +399,7 @@ public final class DefaultConfigurationConfigurer {
         }
         UnitOfWorkFactory uowf = getSingleBeanOfType(registry, UnitOfWorkFactory.class);
         if (uowf != null) {
-            ecc.getCamelContextExtension().setUnitOfWorkFactory(uowf);
+            ecc.getCamelContextExtension().addContextPlugin(UnitOfWorkFactory.class, uowf);
         }
         RuntimeEndpointRegistry rer = getSingleBeanOfType(registry, RuntimeEndpointRegistry.class);
         if (rer != null) {

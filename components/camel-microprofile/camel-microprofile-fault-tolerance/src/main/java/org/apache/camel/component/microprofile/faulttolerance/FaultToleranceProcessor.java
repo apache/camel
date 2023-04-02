@@ -54,6 +54,7 @@ import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -442,7 +443,7 @@ public class FaultToleranceProcessor extends AsyncProcessorSupport
                     uow = copy.getUnitOfWork();
                 } else {
                     // prepare uow on copy
-                    uow = copy.getContext().getCamelContextExtension().getUnitOfWorkFactory().createUnitOfWork(copy);
+                    uow = PluginHelper.getUnitOfWorkFactory(copy.getContext()).createUnitOfWork(copy);
                     copy.getExchangeExtension().setUnitOfWork(uow);
                     // the copy must be starting from the route where its copied from
                     Route route = ExchangeHelper.getRoute(exchange);

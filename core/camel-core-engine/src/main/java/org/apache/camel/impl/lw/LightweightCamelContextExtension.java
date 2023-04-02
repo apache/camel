@@ -245,16 +245,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public UnitOfWorkFactory getUnitOfWorkFactory() {
-        return camelContext.getCamelContextExtension().getUnitOfWorkFactory();
-    }
-
-    @Override
-    public void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory() {
         throw new UnsupportedOperationException();
     }

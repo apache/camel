@@ -293,23 +293,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public UnitOfWorkFactory getUnitOfWorkFactory() {
-        if (camelContext.unitOfWorkFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.unitOfWorkFactory == null) {
-                    setUnitOfWorkFactory(camelContext.createUnitOfWorkFactory());
-                }
-            }
-        }
-        return camelContext.unitOfWorkFactory;
-    }
-
-    @Override
-    public void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory) {
-        camelContext.unitOfWorkFactory = camelContext.getInternalServiceManager().addService(unitOfWorkFactory);
-    }
-
-    @Override
     public boolean isEventNotificationApplicable() {
         return camelContext.eventNotificationApplicable;
     }

@@ -32,7 +32,7 @@ public class CustomUnitOfWorkFactoryTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getCamelContextExtension().setUnitOfWorkFactory(new MyUnitOfWorkFactory());
+        context.getCamelContextExtension().addContextPlugin(UnitOfWorkFactory.class, new MyUnitOfWorkFactory());
         return context;
     }
 
