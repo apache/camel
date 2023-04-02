@@ -19,8 +19,8 @@ package org.apache.camel.support;
 import java.io.File;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RouteTemplateLoaderListener;
 import org.apache.camel.util.FileUtil;
 import org.slf4j.Logger;
@@ -54,8 +54,8 @@ public final class RouteTemplateHelper {
             throw new IllegalArgumentException("Location is empty");
         }
 
-        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
         boolean found = false;
+        final ResourceLoader resourceLoader = PluginHelper.getResourceLoader(camelContext);
         for (String path : location.split(",")) {
             // using dot as current dir must be expanded into absolute path
             if (".".equals(path) || "file:.".equals(path)) {
@@ -67,14 +67,14 @@ public final class RouteTemplateHelper {
             // first try resource as-is if the path has an extension
             String ext = FileUtil.onlyExt(path);
             if (ext != null && !ext.isEmpty()) {
-                res = ecc.getResourceLoader().resolveResource(name);
+                res = resourceLoader.resolveResource(name);
             }
             if (res == null || !res.exists()) {
                 if (!path.endsWith("/")) {
                     path += "/";
                 }
                 name = path + templateId + ".kamelet.yaml";
-                res = ecc.getResourceLoader().resolveResource(name);
+                res = resourceLoader.resolveResource(name);
             }
             if (res.exists()) {
                 try {
@@ -104,7 +104,7 @@ public final class RouteTemplateHelper {
             }
             String target = path + templateId + ".kamelet.yaml";
             PluginHelper.getRoutesLoader(camelContext).loadRoutes(
-                    ecc.getResourceLoader().resolveResource(target));
+                    resourceLoader.resolveResource(target));
         }
     }
 }

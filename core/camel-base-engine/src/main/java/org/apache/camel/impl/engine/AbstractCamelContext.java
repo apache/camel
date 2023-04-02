@@ -381,6 +381,7 @@ public abstract class AbstractCamelContext extends BaseService
                 this::createRestBindingJaxbDataFormatFactory);
         camelContextExtension.lazyAddContextPlugin(BeanProxyFactory.class, this::createBeanProxyFactory);
         camelContextExtension.lazyAddContextPlugin(UnitOfWorkFactory.class, this::createUnitOfWorkFactory);
+        camelContextExtension.lazyAddContextPlugin(ResourceLoader.class, this::createResourceLoader);
 
         if (build) {
             try {
@@ -4173,14 +4174,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
         camelContextExtension.setReactiveExecutor(reactiveExecutor);
-    }
-
-    public ResourceLoader getResourceLoader() {
-        return camelContextExtension.getResourceLoader();
-    }
-
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        camelContextExtension.setResourceLoader(resourceLoader);
     }
 
     public ModelToXMLDumper getModelToXMLDumper() {

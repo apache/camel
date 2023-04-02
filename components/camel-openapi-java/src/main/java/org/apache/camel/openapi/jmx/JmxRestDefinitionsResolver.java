@@ -25,13 +25,13 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.openapi.RestDefinitionsResolver;
 import org.apache.camel.openapi.RestOpenApiSupport;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.JdkService;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.xml.in.ModelParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,8 +68,7 @@ public class JmxRestDefinitionsResolver implements RestDefinitionsResolver {
             if (xml != null) {
                 LOG.debug("DumpRestAsXml:\n{}", xml);
 
-                ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
-                Resource resource = ecc.getResourceLoader().resolveResource("mem:" + xml);
+                Resource resource = PluginHelper.getResourceLoader(camelContext).resolveResource("mem:" + xml);
                 RestsDefinition rests = new ModelParser(resource).parseRestsDefinition().orElse(null);
                 if (rests != null) {
                     return rests.getRests();

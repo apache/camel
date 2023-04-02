@@ -403,16 +403,6 @@ public interface ExtendedCamelContext {
     void setEventNotificationApplicable(boolean eventNotificationApplicable);
 
     /**
-     * Gets the {@link ResourceLoader} to be used.
-     */
-    ResourceLoader getResourceLoader();
-
-    /**
-     * Sets a custom {@link ResourceLoader} to be used.
-     */
-    void setResourceLoader(ResourceLoader resourceLoader);
-
-    /**
      * Gets the {@link ModelToXMLDumper} to be used.
      */
     ModelToXMLDumper getModelToXMLDumper();

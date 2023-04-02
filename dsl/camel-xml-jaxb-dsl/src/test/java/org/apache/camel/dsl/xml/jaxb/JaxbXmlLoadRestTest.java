@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dsl.xml.jaxb;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
@@ -58,8 +57,7 @@ public class JaxbXmlLoadRestTest {
             foo.assertIsSatisfied();
 
             // load rest from XML and add them to the existing camel context
-            ExtendedCamelContext ecc = context.getCamelContextExtension();
-            Resource resource = ecc.getResourceLoader().resolveResource(
+            Resource resource = PluginHelper.getResourceLoader(context).resolveResource(
                     "/org/apache/camel/dsl/xml/jaxb/barRest.xml");
 
             PluginHelper.getRoutesLoader(context).loadRoutes(resource);

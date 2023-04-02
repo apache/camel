@@ -381,16 +381,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public ResourceLoader getResourceLoader() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void registerEndpointCallback(EndpointStrategy strategy) {
         throw new UnsupportedOperationException();
     }
