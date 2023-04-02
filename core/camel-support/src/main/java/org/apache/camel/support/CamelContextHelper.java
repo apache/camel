@@ -243,9 +243,12 @@ public final class CamelContextHelper {
      * it to the given type or throws NoSuchBeanException if not found.
      */
     public static <T> T mandatoryLookupAndConvert(CamelContext context, String name, Class<T> beanType) {
-        Object value = lookup(context, name);
+        Object value = lookup(context, name, beanType);
         if (value == null) {
-            throw new NoSuchBeanException(name, beanType.getName());
+            value = lookup(context, name);
+            if (value == null) {
+                throw new NoSuchBeanException(name, beanType.getName());
+            }
         }
         return convertTo(context, beanType, value);
     }
