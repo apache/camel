@@ -59,8 +59,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ResourceLoader": target.setResourceLoader(property(camelContext, org.apache.camel.spi.ResourceLoader.class, value)); return true;
         case "startupsteprecorder":
         case "StartupStepRecorder": target.setStartupStepRecorder(property(camelContext, org.apache.camel.spi.StartupStepRecorder.class, value)); return true;
-        case "unitofworkfactory":
-        case "UnitOfWorkFactory": target.setUnitOfWorkFactory(property(camelContext, org.apache.camel.spi.UnitOfWorkFactory.class, value)); return true;
         default: return false;
         }
     }
@@ -106,8 +104,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ResourceLoader": return org.apache.camel.spi.ResourceLoader.class;
         case "startupsteprecorder":
         case "StartupStepRecorder": return org.apache.camel.spi.StartupStepRecorder.class;
-        case "unitofworkfactory":
-        case "UnitOfWorkFactory": return org.apache.camel.spi.UnitOfWorkFactory.class;
         default: return null;
         }
     }
@@ -154,8 +150,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ResourceLoader": return target.getResourceLoader();
         case "startupsteprecorder":
         case "StartupStepRecorder": return target.getStartupStepRecorder();
-        case "unitofworkfactory":
-        case "UnitOfWorkFactory": return target.getUnitOfWorkFactory();
         default: return null;
         }
     }

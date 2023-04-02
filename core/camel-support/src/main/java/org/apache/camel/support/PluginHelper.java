@@ -46,6 +46,7 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutesLoader;
+import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
 
 public final class PluginHelper {
@@ -500,5 +501,19 @@ public final class PluginHelper {
      */
     public static BeanProxyFactory getBeanProxyFactory(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(BeanProxyFactory.class);
+    }
+
+    /**
+     * Gets the {@link UnitOfWorkFactory} to use.
+     */
+    public static UnitOfWorkFactory getUnitOfWorkFactory(CamelContext camelContext) {
+        return getUnitOfWorkFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link UnitOfWorkFactory} to use.
+     */
+    public static UnitOfWorkFactory getUnitOfWorkFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(UnitOfWorkFactory.class);
     }
 }

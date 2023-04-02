@@ -209,8 +209,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover, true);
 
         // we want the copy to have an uow
-        UnitOfWork uow = getEndpoint().getCamelContext().getCamelContextExtension().getUnitOfWorkFactory()
-                .createUnitOfWork(copy);
+        UnitOfWork uow = PluginHelper.getUnitOfWorkFactory(getEndpoint().getCamelContext()).createUnitOfWork(copy);
         copy.getExchangeExtension().setUnitOfWork(uow);
 
         return copy;
