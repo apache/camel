@@ -24,6 +24,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsApiName;
 import org.apache.camel.component.google.sheets.internal.GoogleSheetsPropertiesHelper;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.component.AbstractApiProducer;
 import org.apache.camel.support.component.ApiMethod;
 
@@ -41,7 +42,7 @@ public class GoogleSheetsProducer extends AbstractApiProducer<GoogleSheetsApiNam
         AbstractGoogleClientRequest<?> request = (AbstractGoogleClientRequest) super.doInvokeMethod(method, properties);
         try {
             BeanIntrospection beanIntrospection
-                    = getEndpoint().getCamelContext().getCamelContextExtension().getBeanIntrospection();
+                    = PluginHelper.getBeanIntrospection(getEndpoint().getCamelContext());
             for (Entry<String, Object> p : properties.entrySet()) {
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), request, p.getKey(), p.getValue());
             }

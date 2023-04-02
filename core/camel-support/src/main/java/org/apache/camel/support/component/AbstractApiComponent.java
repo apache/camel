@@ -126,7 +126,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
                     }
                 }
             } else {
-                getCamelContext().getCamelContextExtension().getBeanIntrospection().getProperties(configuration,
+                PluginHelper.getBeanIntrospection(getCamelContext()).getProperties(configuration,
                         componentProperties, null, false);
             }
         }

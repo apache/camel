@@ -366,16 +366,6 @@ public interface ExtendedCamelContext {
     void addLogListener(LogListener listener);
 
     /**
-     * Gets the {@link BeanIntrospection}
-     */
-    BeanIntrospection getBeanIntrospection();
-
-    /**
-     * Sets a custom {@link BeanIntrospection}.
-     */
-    void setBeanIntrospection(BeanIntrospection beanIntrospection);
-
-    /**
      * Gets the {@link HeadersMapFactory} to use.
      */
     HeadersMapFactory getHeadersMapFactory();

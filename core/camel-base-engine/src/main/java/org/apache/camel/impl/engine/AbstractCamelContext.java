@@ -4167,14 +4167,6 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.addInterceptStrategy(interceptStrategy);
     }
 
-    public BeanIntrospection getBeanIntrospection() {
-        return camelContextExtension.getBeanIntrospection();
-    }
-
-    public void setBeanIntrospection(BeanIntrospection beanIntrospection) {
-        camelContextExtension.setBeanIntrospection(beanIntrospection);
-    }
-
     public ReactiveExecutor getReactiveExecutor() {
         return camelContextExtension.getReactiveExecutor();
     }

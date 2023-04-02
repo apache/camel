@@ -387,23 +387,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public BeanIntrospection getBeanIntrospection() {
-        if (camelContext.beanIntrospection == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.beanIntrospection == null) {
-                    setBeanIntrospection(camelContext.createBeanIntrospection());
-                }
-            }
-        }
-        return camelContext.beanIntrospection;
-    }
-
-    @Override
-    public void setBeanIntrospection(BeanIntrospection beanIntrospection) {
-        camelContext.beanIntrospection = camelContext.getInternalServiceManager().addService(beanIntrospection);
-    }
-
-    @Override
     public String getBasePackageScan() {
         return basePackageScan;
     }

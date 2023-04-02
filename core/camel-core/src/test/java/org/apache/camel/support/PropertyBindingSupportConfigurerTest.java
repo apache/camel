@@ -58,7 +58,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
     @Test
     public void testProperties() throws Exception {
-        BeanIntrospection bi = context.getCamelContextExtension().getBeanIntrospection();
+        BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
         bi.setExtendedStatistics(true);
         bi.setLoggingLevel(LoggingLevel.WARN);
 
@@ -86,7 +86,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
     @Test
     public void testPropertiesNested() throws Exception {
-        BeanIntrospection bi = context.getCamelContextExtension().getBeanIntrospection();
+        BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
         bi.setExtendedStatistics(true);
         bi.setLoggingLevel(LoggingLevel.WARN);
 
@@ -220,7 +220,7 @@ public class PropertyBindingSupportConfigurerTest extends ContextTestSupport {
 
     @Test
     public void testPropertiesNoReflection() throws Exception {
-        BeanIntrospection bi = context.getCamelContextExtension().getBeanIntrospection();
+        BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
         bi.setExtendedStatistics(true);
         bi.setLoggingLevel(LoggingLevel.WARN);
 

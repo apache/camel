@@ -25,8 +25,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AnnotationBasedProcessorFactory": target.setAnnotationBasedProcessorFactory(property(camelContext, org.apache.camel.spi.AnnotationBasedProcessorFactory.class, value)); return true;
         case "basepackagescan":
         case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
-        case "beanintrospection":
-        case "BeanIntrospection": target.setBeanIntrospection(property(camelContext, org.apache.camel.spi.BeanIntrospection.class, value)); return true;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": target.setBootstrapFactoryFinder(property(camelContext, org.apache.camel.spi.FactoryFinder.class, value)); return true;
         case "deferservicefactory":
@@ -70,8 +68,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AnnotationBasedProcessorFactory": return org.apache.camel.spi.AnnotationBasedProcessorFactory.class;
         case "basepackagescan":
         case "BasePackageScan": return java.lang.String.class;
-        case "beanintrospection":
-        case "BeanIntrospection": return org.apache.camel.spi.BeanIntrospection.class;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return org.apache.camel.spi.FactoryFinder.class;
         case "deferservicefactory":
@@ -116,8 +112,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "AnnotationBasedProcessorFactory": return target.getAnnotationBasedProcessorFactory();
         case "basepackagescan":
         case "BasePackageScan": return target.getBasePackageScan();
-        case "beanintrospection":
-        case "BeanIntrospection": return target.getBeanIntrospection();
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return target.getBootstrapFactoryFinder();
         case "deferservicefactory":

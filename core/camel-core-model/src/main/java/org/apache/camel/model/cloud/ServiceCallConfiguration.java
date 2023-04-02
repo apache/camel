@@ -117,7 +117,7 @@ public abstract class ServiceCallConfiguration extends IdentifiedType {
                 }
             }
         } else {
-            context.getCamelContextExtension().getBeanIntrospection().getProperties(target, answer,
+            PluginHelper.getBeanIntrospection(context).getProperties(target, answer,
                     null, false);
         }
 

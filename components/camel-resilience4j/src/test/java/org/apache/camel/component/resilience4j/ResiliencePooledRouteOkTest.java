@@ -23,6 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.PooledExchangeFactory;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.CircuitBreakerConstants;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -42,7 +43,7 @@ public class ResiliencePooledRouteOkTest extends CamelTestSupport {
         CamelContext context = super.createCamelContext();
         context.getCamelContextExtension().setExchangeFactory(new PooledExchangeFactory());
 
-        bi = context.getCamelContextExtension().getBeanIntrospection();
+        bi = PluginHelper.getBeanIntrospection(context);
         bi.setLoggingLevel(LoggingLevel.INFO);
         bi.resetCounters();
 

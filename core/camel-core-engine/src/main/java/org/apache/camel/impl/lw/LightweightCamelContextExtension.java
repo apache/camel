@@ -270,16 +270,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public BeanIntrospection getBeanIntrospection() {
-        return camelContext.getCamelContextExtension().getBeanIntrospection();
-    }
-
-    @Override
-    public void setBeanIntrospection(BeanIntrospection beanIntrospection) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public HeadersMapFactory getHeadersMapFactory() {
         return camelContext.getCamelContextExtension().getHeadersMapFactory();
     }
