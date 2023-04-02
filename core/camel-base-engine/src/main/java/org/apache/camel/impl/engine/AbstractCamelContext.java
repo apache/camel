@@ -378,6 +378,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(RoutesLoader.class, this::createRoutesLoader);
         camelContextExtension.lazyAddContextPlugin(AsyncProcessorAwaitManager.class, this::createAsyncProcessorAwaitManager);
         camelContextExtension.lazyAddContextPlugin(RuntimeCamelCatalog.class, this::createRuntimeCamelCatalog);
+        camelContextExtension.lazyAddContextPlugin(RestBindingJaxbDataFormatFactory.class, this::createRestBindingJaxbDataFormatFactory);
         camelContextExtension.lazyAddContextPlugin(BeanProxyFactory.class, this::createBeanProxyFactory);
 
         if (build) {
