@@ -456,7 +456,8 @@ public class KameletMain extends MainCommandLineSupport {
                     new DependencyDownloaderDataFormatResolver(answer));
             answer.getCamelContextExtension().addContextPlugin(LanguageResolver.class,
                     new DependencyDownloaderLanguageResolver(answer));
-            answer.getCamelContextExtension().addContextPlugin(ResourceLoader.class, new DependencyDownloaderResourceLoader(answer));
+            answer.getCamelContextExtension().addContextPlugin(ResourceLoader.class,
+                    new DependencyDownloaderResourceLoader(answer));
             answer.setInjector(new KameletMainInjector(answer.getInjector(), stub));
             answer.addService(new DependencyDownloaderKamelet(answer));
             answer.getCamelContextExtension().getRegistry().bind(DownloadModelineParser.class.getSimpleName(),

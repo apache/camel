@@ -34,7 +34,8 @@ public class LoadRouteFromXmlWithInterceptTest extends ContextTestSupport {
     @Test
     public void testLoadRouteFromXmlWithIntercept() throws Exception {
         Resource resource
-                = PluginHelper.getResourceLoader(context).resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barInterceptorRoute.xml");
+                = PluginHelper.getResourceLoader(context)
+                        .resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barInterceptorRoute.xml");
         PluginHelper.getRoutesLoader(context).loadRoutes(resource);
         context.start();
 

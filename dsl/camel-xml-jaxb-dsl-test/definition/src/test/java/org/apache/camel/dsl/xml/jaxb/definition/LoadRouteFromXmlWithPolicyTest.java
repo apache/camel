@@ -47,7 +47,8 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
     @Test
     public void testLoadRouteFromXmlWitPolicy() throws Exception {
         Resource resource
-                = PluginHelper.getResourceLoader(context).resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barPolicyRoute.xml");
+                = PluginHelper.getResourceLoader(context)
+                        .resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barPolicyRoute.xml");
         PluginHelper.getRoutesLoader(context).loadRoutes(resource);
         context.start();
 

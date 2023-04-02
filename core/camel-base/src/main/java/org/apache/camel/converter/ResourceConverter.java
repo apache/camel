@@ -22,7 +22,6 @@ import java.io.Reader;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Converter;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.support.PluginHelper;
 

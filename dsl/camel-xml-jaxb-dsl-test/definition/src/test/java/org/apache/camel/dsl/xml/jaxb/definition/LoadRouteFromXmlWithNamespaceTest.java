@@ -30,7 +30,8 @@ public class LoadRouteFromXmlWithNamespaceTest extends ContextTestSupport {
     @Test
     public void testLoadRouteWithNamespaceFromXml() throws Exception {
         Resource resource
-                = PluginHelper.getResourceLoader(context).resolveResource("org/apache/camel/dsl/xml/jaxb/definition/routeWithNamespace.xml");
+                = PluginHelper.getResourceLoader(context)
+                        .resolveResource("org/apache/camel/dsl/xml/jaxb/definition/routeWithNamespace.xml");
         PluginHelper.getRoutesLoader(context).loadRoutes(resource);
         context.start();
 
