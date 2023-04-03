@@ -33,7 +33,6 @@ import org.w3c.dom.Document;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
@@ -466,8 +465,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RestsDefinition def = new RestsDefinition();
         def.setRests(rests);
 
-        ExtendedCamelContext ecc = context.getCamelContextExtension();
-        return ecc.getModelToXMLDumper().dumpModelAsXml(context, def, resolvePlaceholders, false);
+        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders, false);
     }
 
     @Override
@@ -491,8 +489,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(routes);
 
-        ExtendedCamelContext ecc = context.getCamelContextExtension();
-        return ecc.getModelToXMLDumper().dumpModelAsXml(context, def, resolvePlaceholders, resolveDelegateEndpoints);
+        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, resolvePlaceholders,
+                resolveDelegateEndpoints);
     }
 
     @Override
@@ -507,8 +505,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         RouteTemplatesDefinition def = new RouteTemplatesDefinition();
         def.setRouteTemplates(templates);
 
-        ExtendedCamelContext ecc = context.getCamelContextExtension();
-        return ecc.getModelToXMLDumper().dumpModelAsXml(context, def);
+        return PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def);
     }
 
     @Override

@@ -24,6 +24,8 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.spi.ModelToXMLDumper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.function.ThrowingConsumer;
 import org.slf4j.Logger;
@@ -237,9 +239,10 @@ public final class AdviceWith {
         }
 
         String beforeAsXml = null;
+        final ModelToXMLDumper modelToXMLDumper = PluginHelper.getModelToXMLDumper(ecc);
         if (logRoutesAsXml && LOG.isInfoEnabled()) {
             try {
-                beforeAsXml = ecc.getModelToXMLDumper().dumpModelAsXml(camelContext, definition);
+                beforeAsXml = modelToXMLDumper.dumpModelAsXml(camelContext, definition);
             } catch (Throwable e) {
                 // ignore, it may be due jaxb is not on classpath etc
             }
@@ -275,7 +278,7 @@ public final class AdviceWith {
 
         if (beforeAsXml != null && logRoutesAsXml && LOG.isInfoEnabled()) {
             try {
-                String afterAsXml = ecc.getModelToXMLDumper().dumpModelAsXml(camelContext, merged);
+                String afterAsXml = modelToXMLDumper.dumpModelAsXml(camelContext, merged);
                 LOG.info("Adviced route before/after as XML:\n{}\n\n{}", beforeAsXml, afterAsXml);
             } catch (Throwable e) {
                 // ignore, it may be due jaxb is not on classpath etc

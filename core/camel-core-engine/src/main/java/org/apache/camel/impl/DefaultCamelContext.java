@@ -81,6 +81,7 @@ import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultRegistry;
 import org.apache.camel.support.LocalBeanRegistry;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.SimpleUuidGenerator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.OrderedLocationProperties;
@@ -152,7 +153,7 @@ public class DefaultCamelContext extends SimpleCamelContext implements ModelCame
 
     @Override
     protected void doDumpRoutes() {
-        ModelToXMLDumper dumper = getModelToXMLDumper();
+        final ModelToXMLDumper dumper = PluginHelper.getModelToXMLDumper(this);
 
         int size = getRouteDefinitions().size();
         if (size > 0) {
