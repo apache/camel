@@ -21,8 +21,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.ExtendedCamelContext target = (org.apache.camel.ExtendedCamelContext) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "annotationbasedprocessorfactory":
-        case "AnnotationBasedProcessorFactory": target.setAnnotationBasedProcessorFactory(property(camelContext, org.apache.camel.spi.AnnotationBasedProcessorFactory.class, value)); return true;
         case "basepackagescan":
         case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "bootstrapfactoryfinder":
@@ -58,8 +56,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "annotationbasedprocessorfactory":
-        case "AnnotationBasedProcessorFactory": return org.apache.camel.spi.AnnotationBasedProcessorFactory.class;
         case "basepackagescan":
         case "BasePackageScan": return java.lang.String.class;
         case "bootstrapfactoryfinder":
@@ -96,8 +92,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.ExtendedCamelContext target = (org.apache.camel.ExtendedCamelContext) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "annotationbasedprocessorfactory":
-        case "AnnotationBasedProcessorFactory": return target.getAnnotationBasedProcessorFactory();
         case "basepackagescan":
         case "BasePackageScan": return target.getBasePackageScan();
         case "bootstrapfactoryfinder":
