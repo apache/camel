@@ -203,7 +203,6 @@ public abstract class AbstractCamelContext extends BaseService
     final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
 
     final RouteController internalRouteController = new InternalRouteController(this);
-    volatile boolean eventNotificationApplicable;
     volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
     int defaultRouteStartupOrder = 1000;
 
@@ -2225,8 +2224,8 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
-        // optimize - before starting routes lets check if event notifications is possible
-        eventNotificationApplicable = EventHelper.eventsApplicable(this);
+        // optimize - before starting routes lets check if event notifications are possible
+        camelContextExtension.setEventNotificationApplicable(EventHelper.eventsApplicable(this));
 
         // ensure additional type converters is loaded (either if enabled or we should use package scanning from the base)
         boolean load = loadTypeConverters || camelContextExtension.getBasePackageScan() != null;
@@ -2307,8 +2306,8 @@ public abstract class AbstractCamelContext extends BaseService
             }
         }
 
-        // optimize - before starting routes lets check if event notifications is possible
-        eventNotificationApplicable = EventHelper.eventsApplicable(this);
+        // optimize - before starting routes lets check if event notifications are possible
+        camelContextExtension.setEventNotificationApplicable(EventHelper.eventsApplicable(this));
 
         // start notifiers as services
         for (EventNotifier notifier : getManagementStrategy().getEventNotifiers()) {
