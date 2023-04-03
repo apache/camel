@@ -382,7 +382,7 @@ public final class XmlSignatureHelper {
         // avoid external entity attacks
         dbf.setFeature("http://xml.org/sax/features/external-general-entities", false);
         dbf.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        boolean isDissalowDoctypeDecl = disallowDoctypeDecl == null ? true : disallowDoctypeDecl;
+        boolean isDissalowDoctypeDecl = disallowDoctypeDecl == null || disallowDoctypeDecl;
         dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", isDissalowDoctypeDecl);
         // avoid overflow attacks
         dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);

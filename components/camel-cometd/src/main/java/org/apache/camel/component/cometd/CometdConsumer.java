@@ -90,7 +90,7 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
         }
 
         private CometdBinding createBinding(BayeuxServerImpl bayeux) {
-            boolean enableSessionHeaders = endpoint == null ? false : endpoint.isSessionHeadersEnabled();
+            boolean enableSessionHeaders = endpoint != null && endpoint.isSessionHeadersEnabled();
             return new CometdBinding(bayeux, enableSessionHeaders);
         }
 
