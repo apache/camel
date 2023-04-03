@@ -119,8 +119,7 @@ public final class BoxConnectionHelper {
             passwordField.val(configuration.getUserPassword());
 
             //submit loginPage
-            final Map<String, String> cookies = new HashMap<>();
-            cookies.putAll(loginPageResponse.cookies());
+            final Map<String, String> cookies = new HashMap<>(loginPageResponse.cookies());
 
             Connection.Response response = addProxy(loginForm.submit(), proxy)
                     .cookies(cookies)

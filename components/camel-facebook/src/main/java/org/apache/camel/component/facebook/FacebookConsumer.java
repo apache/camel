@@ -119,8 +119,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
 
         FacebookMethodsType result;
         // find one that takes the largest subset of endpoint parameters
-        final Set<String> argNames = new HashSet<>();
-        argNames.addAll(
+        final Set<String> argNames = new HashSet<>(
                 FacebookPropertiesHelper.getEndpointPropertyNames(endpoint.getCamelContext(), endpoint.getConfiguration()));
 
         // add reading property for polling, if it doesn't already exist!
@@ -215,8 +214,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
     private Map<String, Object> getMethodArguments() {
         // start by setting the Reading since and until fields,
         // these are used to avoid reading duplicate results across polls
-        Map<String, Object> arguments = new HashMap<>();
-        arguments.putAll(endpointProperties);
+        Map<String, Object> arguments = new HashMap<>(endpointProperties);
 
         Reading reading = (Reading) arguments.remove(READING_PROPERTY);
         if (reading == null) {

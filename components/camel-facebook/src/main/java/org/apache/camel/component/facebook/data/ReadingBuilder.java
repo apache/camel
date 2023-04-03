@@ -39,8 +39,7 @@ public final class ReadingBuilder {
         final Map<String, String> source = (Map<String, String>) field.get(reading);
         // create another reading, and add all fields from source
         Reading copy = new Reading();
-        final Map<String, String> copyMap = new LinkedHashMap<>();
-        copyMap.putAll(source);
+        final Map<String, String> copyMap = new LinkedHashMap<>(source);
         if (skipSinceUtil) {
             copyMap.remove("since");
             copyMap.remove("until");

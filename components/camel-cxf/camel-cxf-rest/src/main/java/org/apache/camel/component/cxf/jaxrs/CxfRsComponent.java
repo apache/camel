@@ -106,8 +106,7 @@ public class CxfRsComponent extends HeaderFilterStrategyComponent implements SSL
             // The super class (DefaultComponent) will invoke "setProperties" after this method
             // with to apply properties defined by URI query.
             if (bean.getProperties() != null) {
-                Map<String, Object> copy = new HashMap<>();
-                copy.putAll(bean.getProperties());
+                Map<String, Object> copy = new HashMap<>(bean.getProperties());
                 setProperties(answer, copy);
             }
             // setup the skipFaultLogging
