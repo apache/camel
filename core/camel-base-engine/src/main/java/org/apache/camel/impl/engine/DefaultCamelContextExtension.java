@@ -80,6 +80,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private final Set<LogListener> logListeners = new LinkedHashSet<>();
     private final PluginManager pluginManager = new DefaultContextPluginManager();
     private volatile String description;
+    private volatile ExchangeFactory exchangeFactory;
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
     private String basePackageScan;
@@ -413,21 +414,21 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public ExchangeFactory getExchangeFactory() {
-        if (camelContext.exchangeFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.exchangeFactory == null) {
+        if (exchangeFactory == null) {
+            synchronized (lock) {
+                if (exchangeFactory == null) {
                     setExchangeFactory(camelContext.createExchangeFactory());
                 }
             }
         }
-        return camelContext.exchangeFactory;
+        return exchangeFactory;
     }
 
     @Override
     public void setExchangeFactory(ExchangeFactory exchangeFactory) {
         // automatic inject camel context
         exchangeFactory.setCamelContext(camelContext);
-        camelContext.exchangeFactory = exchangeFactory;
+        this.exchangeFactory = exchangeFactory;
     }
 
     @Override
