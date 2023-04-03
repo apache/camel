@@ -16,7 +16,14 @@
  */
 package org.apache.camel.dsl.jbang.core.commands.version;
 
+import java.io.LineNumberReader;
+import java.io.StringReader;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -35,12 +42,18 @@ import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.MavenDependencyDownloader;
 import org.apache.camel.tooling.model.ReleaseModel;
+import org.apache.camel.util.StringHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "list", description = "Displays available Camel versions")
 public class VersionList extends CamelCommand {
 
     private static final String YYYY_MM_DD = "yyyy-MM-dd";
+
+    private static final String GIT_CAMEL_URL
+            = "https://raw.githubusercontent.com/apache/camel-website/main/content/releases/release-%s.md";
+    private static final String GIT_CAMEL_QUARKUS_URL
+            = "https://raw.githubusercontent.com/apache/camel-website/main/content/releases/q/release-%s.md";
 
     @CommandLine.Option(names = { "--sort" },
                         description = "Sort by version", defaultValue = "version")
@@ -112,6 +125,13 @@ public class VersionList extends CamelCommand {
             // enrich with details from catalog (if we can find any)
             String catalogVersion = "quarkus".equals(runtime) ? v[1] : v[0];
             ReleaseModel rm = releases.stream().filter(r -> catalogVersion.equals(r.getVersion())).findFirst().orElse(null);
+            if (rm == null) {
+                // unknown release but if it's an Apache Camel release we can grab from online
+                int dots = StringHelper.countChar(v[0], '.');
+                if (dots == 2) {
+                    rm = onlineRelease(runtime, row.coreVersion);
+                }
+            }
             if (rm != null) {
                 row.releaseDate = rm.getDate();
                 row.eolDate = rm.getEol();
@@ -206,6 +226,43 @@ public class VersionList extends CamelCommand {
             return false;
         }
         return VersionHelper.isGE(version, minimumVersion);
+    }
+
+    private ReleaseModel onlineRelease(String runtime, String coreVersion) throws Exception {
+        String gitUrl = String.format("quarkus".equals(runtime) ? GIT_CAMEL_QUARKUS_URL : GIT_CAMEL_URL, coreVersion);
+
+        HttpClient hc = HttpClient.newHttpClient();
+        HttpResponse<String> res = hc.send(HttpRequest.newBuilder(new URI(gitUrl)).timeout(Duration.ofSeconds(20)).build(),
+                HttpResponse.BodyHandlers.ofString());
+
+        if (res.statusCode() == 200) {
+            ReleaseModel model = new ReleaseModel();
+            LineNumberReader lr = new LineNumberReader(new StringReader(res.body()));
+            String line = lr.readLine();
+            while (line != null) {
+                if (line.startsWith("date:")) {
+                    model.setDate(line.substring(5).trim());
+                } else if (line.startsWith("version:")) {
+                    model.setVersion(line.substring(8).trim());
+                } else if (line.startsWith("eol:")) {
+                    model.setEol(line.substring(4).trim());
+                } else if (line.startsWith("kind:")) {
+                    model.setKind(line.substring(5).trim());
+                } else if (line.startsWith("jdk:")) {
+                    String s = line.substring(4).trim();
+                    if (s.startsWith("[") && s.endsWith("]")) {
+                        s = s.substring(1, s.length() - 1);
+                    }
+                    model.setJdk(s);
+                }
+                line = lr.readLine();
+            }
+            if (model.getVersion() != null) {
+                return model;
+            }
+        }
+
+        return null;
     }
 
     private static class Row {
