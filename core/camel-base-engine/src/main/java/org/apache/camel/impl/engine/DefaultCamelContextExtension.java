@@ -516,14 +516,17 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         camelContext.removeRoute(route);
     }
 
+    @Override
     public Processor createErrorHandler(Route route, Processor processor) throws Exception {
         return camelContext.createErrorHandler(route, processor);
     }
 
+    @Override
     public void disposeModel() {
         camelContext.disposeModel();
     }
 
+    @Override
     public String getTestExcludeRoutes() {
         return camelContext.getTestExcludeRoutes();
     }
