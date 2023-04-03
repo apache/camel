@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
