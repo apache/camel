@@ -3103,7 +3103,7 @@ public abstract class AbstractCamelContext extends BaseService
         }
     }
 
-    private void stopServices(Object service) throws Exception {
+    private void stopServices(Object service) {
         // allow us to do custom work before delegating to service helper
         try {
             ServiceHelper.stopService(service);
