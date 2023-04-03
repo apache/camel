@@ -84,6 +84,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ReactiveExecutor reactiveExecutor;
     private volatile Registry registry;
     private volatile ManagementStrategy managementStrategy;
+    private volatile ManagementMBeanAssembler managementMBeanAssembler;
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
     private String basePackageScan;
@@ -227,7 +228,11 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public ManagementMBeanAssembler getManagementMBeanAssembler() {
-        return camelContext.managementMBeanAssembler;
+        return managementMBeanAssembler;
+    }
+
+    void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
+        this.managementMBeanAssembler = camelContext.getInternalServiceManager().addService(managementMBeanAssembler, false);
     }
 
     @Override
