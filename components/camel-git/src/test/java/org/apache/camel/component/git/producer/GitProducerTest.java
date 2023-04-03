@@ -657,7 +657,7 @@ public class GitProducerTest extends GitTestSupport {
         List<Ref> branches = template.requestBody("direct:show-branches", "", List.class);
 
         // Check
-        Boolean branchExists = false;
+        boolean branchExists = false;
         for (Ref reference : branches) {
             if (("refs/heads/" + branchTest).equals(reference.getName())) {
                 branchExists = true;
@@ -681,7 +681,7 @@ public class GitProducerTest extends GitTestSupport {
         git.commit().setMessage(commitMessage).call();
         git.branchCreate().setName(branchTest).call();
         List<Ref> branches = git.branchList().call();
-        Boolean branchExists = false;
+        boolean branchExists = false;
         for (Ref reference : branches) {
             if (("refs/heads/" + branchTest).equals(reference.getName())) {
                 branchExists = true;
@@ -721,7 +721,7 @@ public class GitProducerTest extends GitTestSupport {
         git.commit().setMessage(commitMessage).call();
         git.branchCreate().setName(branchTest).call();
         List<Ref> branches = git.branchList().call();
-        Boolean branchExists = false;
+        boolean branchExists = false;
         for (Ref reference : branches) {
             if (("refs/heads/" + branchTest).equals(reference.getName())) {
                 branchExists = true;
