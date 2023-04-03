@@ -81,6 +81,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private final PluginManager pluginManager = new DefaultContextPluginManager();
     private volatile String description;
     private volatile ExchangeFactory exchangeFactory;
+    private volatile ProcessorExchangeFactory processorExchangeFactory;
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
     private String basePackageScan;
@@ -450,21 +451,21 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public ProcessorExchangeFactory getProcessorExchangeFactory() {
-        if (camelContext.processorExchangeFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.processorExchangeFactory == null) {
+        if (processorExchangeFactory == null) {
+            synchronized (lock) {
+                if (processorExchangeFactory == null) {
                     setProcessorExchangeFactory(camelContext.createProcessorExchangeFactory());
                 }
             }
         }
-        return camelContext.processorExchangeFactory;
+        return processorExchangeFactory;
     }
 
     @Override
     public void setProcessorExchangeFactory(ProcessorExchangeFactory processorExchangeFactory) {
         // automatic inject camel context
         processorExchangeFactory.setCamelContext(camelContext);
-        camelContext.processorExchangeFactory = processorExchangeFactory;
+        this.processorExchangeFactory = processorExchangeFactory;
     }
 
     @Override

@@ -207,7 +207,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile DeferServiceFactory deferServiceFactory;
     volatile AnnotationBasedProcessorFactory annotationBasedProcessorFactory;
     volatile ExchangeFactoryManager exchangeFactoryManager;
-    volatile ProcessorExchangeFactory processorExchangeFactory;
     volatile ReactiveExecutor reactiveExecutor;
     volatile Registry registry;
     volatile ManagementStrategy managementStrategy;
@@ -3288,7 +3287,6 @@ public abstract class AbstractCamelContext extends BaseService
         typeConverter = null;
         reactiveExecutor = null;
         exchangeFactoryManager = null;
-        processorExchangeFactory = null;
         registry = null;
     }
 
