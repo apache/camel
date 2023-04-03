@@ -284,7 +284,7 @@ public class MXParser implements XmlPullParser {
      * to compute - so it also means diminishing hash quality for long strings
      * but for XML parsing it should be good enough ...
      */
-    protected static final int fastHash(char ch[], int off, int len) {
+    protected static int fastHash(char ch[], int off, int len) {
         if (len == 0)
             return 0;
         // assert len >0
@@ -2976,13 +2976,13 @@ public class MXParser implements XmlPullParser {
     protected static boolean lookupNameStartChar[] = new boolean[LOOKUP_MAX];
     protected static boolean lookupNameChar[] = new boolean[LOOKUP_MAX];
 
-    private static final void setName(char ch)
+    private static void setName(char ch)
     // { lookupNameChar[ (int)ch / 32 ] |= (1 << (ch % 32)); }
     {
         lookupNameChar[ch] = true;
     }
 
-    private static final void setNameStart(char ch)
+    private static void setNameStart(char ch)
     // { lookupNameStartChar[ (int)ch / 32 ] |= (1 << (ch % 32)); setName(ch); }
     {
         lookupNameStartChar[ch] = true;
