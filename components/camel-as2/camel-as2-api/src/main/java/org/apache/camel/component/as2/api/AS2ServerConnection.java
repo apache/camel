@@ -51,6 +51,7 @@ public class AS2ServerConnection {
 
     private static final Logger LOG = LoggerFactory.getLogger(AS2ServerConnection.class);
 
+    private static final int DEFAULT_BUFFER_SIZE = 8192;
     private static final String REQUEST_LISTENER_THREAD_NAME_PREFIX = "AS2Svr-";
     private static final String REQUEST_HANDLER_THREAD_NAME_PREFIX = "AS2Hdlr-";
 
@@ -123,7 +124,7 @@ public class AS2ServerConnection {
         private HttpServerConnection serverConnection;
 
         public RequestHandlerThread(HttpService httpService, Socket inSocket) throws IOException {
-            final int bufSize = 8 * 1024;
+            final int bufSize = DEFAULT_BUFFER_SIZE;
             final AS2BHttpServerConnection inConn = new AS2BHttpServerConnection(bufSize);
             LOG.info("Incoming connection from {}", inSocket.getInetAddress());
             inConn.bind(inSocket);

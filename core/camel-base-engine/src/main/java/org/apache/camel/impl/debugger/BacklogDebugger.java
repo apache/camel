@@ -96,7 +96,7 @@ public final class BacklogDebugger extends ServiceSupport {
      */
     private final AtomicReference<CountDownLatch> suspend = new AtomicReference<>();
     private volatile String singleStepExchangeId;
-    private int bodyMaxChars = 128 * 1024;
+    private int bodyMaxChars = 131072; // 128 * 1024
     private boolean bodyIncludeStreams;
     private boolean bodyIncludeFiles = true;
 

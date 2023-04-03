@@ -55,6 +55,7 @@ import org.apache.http.protocol.RequestUserAgent;
 public class AS2ClientConnection {
 
     private static final int RETRIEVE_FROM_CONNECTION_POOL_TIMEOUT_SECONDS = 5;
+    private static final int DEFAULT_BUFFER_SIZE = 8192;
 
     private HttpHost targetHost;
     private HttpProcessor httpProcessor;
@@ -92,7 +93,7 @@ public class AS2ClientConnection {
                 .add(new RequestExpectContinue(true)).build();
 
         HttpConnectionFactory<HttpRoute, ManagedHttpClientConnection> connFactory = (route, config) -> {
-            return new AS2BHttpClientConnection(UUID.randomUUID().toString(), 8 * 1024);
+            return new AS2BHttpClientConnection(UUID.randomUUID().toString(), DEFAULT_BUFFER_SIZE);
         };
 
         connectionPoolManager = new PoolingHttpClientConnectionManager(connFactory);
@@ -121,7 +122,7 @@ public class AS2ClientConnection {
         };
 
         // Check if a connection can be established
-        try (AS2BHttpClientConnection testConnection = new AS2BHttpClientConnection("test", 8 * 1024)) {
+        try (AS2BHttpClientConnection testConnection = new AS2BHttpClientConnection("test", DEFAULT_BUFFER_SIZE)) {
             testConnection.bind(new Socket(targetHost.getHostName(), targetHost.getPort()));
         }
 

@@ -50,10 +50,10 @@ class AsyncJmsProducerExceptionInTXTest extends CamelBrokerClientTestSupport {
                 from("direct:transacted_start")
                         .transacted()
                         // send first 251 kb - need to exceed 500 kb in at least two steps as ActiveMQ doesn't fail in one step
-                        .setBody(constant("X".repeat(251 * 1024)))
+                        .setBody(constant("X".repeat(257024)))
                         .to("direct:jmsProducerEndpoint")
                         // send second 251 kb to exceed 500 kb and so to trigger ResourceAllocationException
-                        .setBody(constant("Y".repeat(251 * 1024)))
+                        .setBody(constant("Y".repeat(257024)))
                         .to("direct:jmsProducerEndpoint");
 
                 from("direct:jmsProducerEndpoint")
@@ -61,9 +61,9 @@ class AsyncJmsProducerExceptionInTXTest extends CamelBrokerClientTestSupport {
                         .to("activemq:queue:AsyncJmsProducerExceptionInTXTest?deliveryMode=1");
 
                 from("direct:non_transacted_start")
-                        .setBody(constant("X".repeat(251 * 1024)))
+                        .setBody(constant("X".repeat(257024)))
                         .to("direct:jmsProducerEndpoint")
-                        .setBody(constant("Y".repeat(251 * 1024)))
+                        .setBody(constant("Y".repeat(257024)))
                         .to("direct:jmsProducerEndpoint");
             }
         };

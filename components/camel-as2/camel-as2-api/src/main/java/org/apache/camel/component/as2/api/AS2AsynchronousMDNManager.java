@@ -121,7 +121,7 @@ public class AS2AsynchronousMDNManager {
 
         String requestUri = buildRequestURI(uri);
 
-        int buffSize = 8 * 1024;
+        int buffSize = 8192; // 8 * 1024
 
         try (DefaultBHttpClientConnection httpConnection = new DefaultBHttpClientConnection(buffSize)) {
 

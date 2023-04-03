@@ -80,7 +80,7 @@ public class SchemaExecution extends AbstractSalesforceExecution {
         }
 
         getLog().info(
-                String.format("Successfully generated %s JSON Types in file %s", descriptions.count() * 2, schemaFilePath));
+                String.format("Successfully generated %s JSON Types in file %s", descriptions.count() << 1, schemaFilePath));
     }
 
     @Override
