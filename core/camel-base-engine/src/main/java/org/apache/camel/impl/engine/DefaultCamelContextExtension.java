@@ -83,6 +83,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ProcessorExchangeFactory processorExchangeFactory;
     private volatile ReactiveExecutor reactiveExecutor;
     private volatile Registry registry;
+    private volatile ManagementStrategy managementStrategy;
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
     private String basePackageScan;
@@ -367,8 +368,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
         // preserve any existing event notifiers that may have been already added
         List<EventNotifier> notifiers = null;
-        if (camelContext.managementStrategy != null) {
-            notifiers = camelContext.managementStrategy.getEventNotifiers();
+        if (managementStrategy != null) {
+            notifiers = managementStrategy.getEventNotifiers();
         }
 
         try {
@@ -536,6 +537,14 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public PluginManager getPluginManager() {
         return pluginManager;
+    }
+
+    ManagementStrategy getManagementStrategy() {
+        return managementStrategy;
+    }
+
+    void setManagementStrategy(ManagementStrategy managementStrategy) {
+        this.managementStrategy = managementStrategy;
     }
 
     @Override
