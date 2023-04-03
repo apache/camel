@@ -202,7 +202,7 @@ public abstract class AbstractCamelContext extends BaseService
     // start auto assigning route ids using numbering 1000 and upwards
     final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
 
-    final Object lock = new Object();
+
     final RouteController internalRouteController = new InternalRouteController(this);
     volatile HeadersMapFactory headersMapFactory;
     volatile BeanIntrospection beanIntrospection;
@@ -210,6 +210,7 @@ public abstract class AbstractCamelContext extends BaseService
     volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
     int defaultRouteStartupOrder = 1000;
 
+    private final Object lock = new Object();
     private final DefaultCamelContextExtension camelContextExtension = new DefaultCamelContextExtension(this);
     private final AtomicInteger endpointKeyCounter = new AtomicInteger();
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<>();
