@@ -24,7 +24,6 @@ import java.util.function.Supplier;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.ExchangeFactory;
@@ -303,16 +302,6 @@ public interface ExtendedCamelContext {
      * @return      the factory finder
      */
     FactoryFinder getFactoryFinder(String path);
-
-    /**
-     * Gets the {@link DeferServiceFactory} to use.
-     */
-    DeferServiceFactory getDeferServiceFactory();
-
-    /**
-     * Sets a custom {@link DeferServiceFactory} to use.
-     */
-    void setDeferServiceFactory(DeferServiceFactory deferServiceFactory);
 
     /**
      * Gets the {@link AnnotationBasedProcessorFactory} to use.

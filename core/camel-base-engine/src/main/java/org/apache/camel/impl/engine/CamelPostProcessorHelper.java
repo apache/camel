@@ -590,8 +590,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
      */
     protected Producer createInjectionProducer(Endpoint endpoint, Object bean, String beanName) {
         try {
-            return endpoint.getCamelContext().getCamelContextExtension().getDeferServiceFactory()
-                    .createProducer(endpoint);
+            return PluginHelper.getDeferServiceFactory(endpoint.getCamelContext()).createProducer(endpoint);
         } catch (Exception e) {
             throw RuntimeCamelException.wrapRuntimeCamelException(e);
         }

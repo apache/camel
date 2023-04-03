@@ -38,7 +38,6 @@ import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.ExchangeFactory;
@@ -226,16 +225,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public FactoryFinder getFactoryFinder(String path) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public DeferServiceFactory getDeferServiceFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setDeferServiceFactory(DeferServiceFactory deferServiceFactory) {
         throw new UnsupportedOperationException();
     }
 

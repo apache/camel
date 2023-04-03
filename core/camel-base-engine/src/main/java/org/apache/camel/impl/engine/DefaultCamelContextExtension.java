@@ -39,7 +39,6 @@ import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.DebuggerFactory;
-import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.EventNotifier;
@@ -486,22 +485,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         // special for executorServiceManager as want to stop it manually so
         // false in stopOnShutdown
         camelContext.reactiveExecutor = camelContext.getInternalServiceManager().addService(reactiveExecutor, false);
-    }
-
-    @Override
-    public DeferServiceFactory getDeferServiceFactory() {
-        if (camelContext.deferServiceFactory == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.deferServiceFactory == null) {
-                    setDeferServiceFactory(camelContext.createDeferServiceFactory());
-                }
-            }
-        }
-        return camelContext.deferServiceFactory;
-    }
-
-    public void setDeferServiceFactory(DeferServiceFactory deferServiceFactory) {
-        camelContext.deferServiceFactory = deferServiceFactory;
     }
 
     @Override

@@ -27,8 +27,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": target.setBootstrapFactoryFinder(property(camelContext, org.apache.camel.spi.FactoryFinder.class, value)); return true;
-        case "deferservicefactory":
-        case "DeferServiceFactory": target.setDeferServiceFactory(property(camelContext, org.apache.camel.spi.DeferServiceFactory.class, value)); return true;
         case "description":
         case "Description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "errorhandlerfactory":
@@ -66,8 +64,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BasePackageScan": return java.lang.String.class;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return org.apache.camel.spi.FactoryFinder.class;
-        case "deferservicefactory":
-        case "DeferServiceFactory": return org.apache.camel.spi.DeferServiceFactory.class;
         case "description":
         case "Description": return java.lang.String.class;
         case "errorhandlerfactory":
@@ -106,8 +102,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "BasePackageScan": return target.getBasePackageScan();
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return target.getBootstrapFactoryFinder();
-        case "deferservicefactory":
-        case "DeferServiceFactory": return target.getDeferServiceFactory();
         case "description":
         case "Description": return target.getDescription();
         case "errorhandlerfactory":

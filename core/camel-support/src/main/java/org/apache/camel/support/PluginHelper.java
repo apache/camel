@@ -34,6 +34,7 @@ import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
+import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InternalProcessorFactory;
@@ -575,5 +576,19 @@ public final class PluginHelper {
      */
     public static ModelToXMLDumper getModelToXMLDumper(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(ModelToXMLDumper.class);
+    }
+
+    /**
+     * Gets the {@link DeferServiceFactory} to use.
+     */
+    public static DeferServiceFactory getDeferServiceFactory(CamelContext camelContext) {
+        return getDeferServiceFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link DeferServiceFactory} to use.
+     */
+    public static DeferServiceFactory getDeferServiceFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(DeferServiceFactory.class);
     }
 }
