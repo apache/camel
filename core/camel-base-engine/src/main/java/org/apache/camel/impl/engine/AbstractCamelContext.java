@@ -1409,6 +1409,7 @@ public abstract class AbstractCamelContext extends BaseService
         return null;
     }
 
+    @Override
     public String getComponentParameterJsonSchema(String componentName) throws IOException {
         // use the component factory finder to find the package name of the
         // component class, which is the location
@@ -1435,6 +1436,7 @@ public abstract class AbstractCamelContext extends BaseService
         return null;
     }
 
+    @Override
     public String getDataFormatParameterJsonSchema(String dataFormatName) throws IOException {
         // use the dataformat factory finder to find the package name of the
         // dataformat class, which is the location
@@ -1454,6 +1456,7 @@ public abstract class AbstractCamelContext extends BaseService
         return null;
     }
 
+    @Override
     public String getLanguageParameterJsonSchema(String languageName) throws IOException {
         // use the language factory finder to find the package name of the
         // language class, which is the location
@@ -1475,7 +1478,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     // Helper methods
     // -----------------------------------------------------------------------
-
+    @Override
     public String getEipParameterJsonSchema(String eipName) throws IOException {
         // the eip json schema may be in some of the sub-packages so look until
         // we find it
@@ -3455,6 +3458,7 @@ public abstract class AbstractCamelContext extends BaseService
         this.modeline = modeline;
     }
 
+    @Override
     public Boolean isDevConsole() {
         return devConsole != null && devConsole;
     }
@@ -4094,6 +4098,7 @@ public abstract class AbstractCamelContext extends BaseService
 
     public abstract String getTestExcludeRoutes();
 
+    @Override
     public ExtendedCamelContext getCamelContextExtension() {
         return camelContextExtension;
     }
@@ -4102,6 +4107,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.setName(name);
     }
 
+    @Override
     public String getName() {
         return camelContextExtension.getName();
     }
