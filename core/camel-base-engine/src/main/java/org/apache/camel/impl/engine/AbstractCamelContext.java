@@ -204,7 +204,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     final Object lock = new Object();
     final RouteController internalRouteController = new InternalRouteController(this);
-    volatile ManagementStrategy managementStrategy;
     volatile ManagementMBeanAssembler managementMBeanAssembler;
     volatile HeadersMapFactory headersMapFactory;
     volatile BeanIntrospection beanIntrospection;
@@ -2960,7 +2959,7 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         // shutdown management and lifecycle after all other services
-        InternalServiceManager.shutdownServices(this, managementStrategy);
+        InternalServiceManager.shutdownServices(this, camelContextExtension.getManagementStrategy());
         InternalServiceManager.shutdownServices(this, managementMBeanAssembler);
         InternalServiceManager.shutdownServices(this, lifecycleStrategies);
         // do not clear lifecycleStrategies as we can start Camel again and get
@@ -3372,12 +3371,12 @@ public abstract class AbstractCamelContext extends BaseService
 
     @Override
     public ManagementStrategy getManagementStrategy() {
-        return managementStrategy;
+        return camelContextExtension.getManagementStrategy();
     }
 
     @Override
     public void setManagementStrategy(ManagementStrategy managementStrategy) {
-        this.managementStrategy = managementStrategy;
+        camelContextExtension.setManagementStrategy(managementStrategy);
     }
 
     @Override
