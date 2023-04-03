@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.arangodb;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
@@ -322,8 +323,11 @@ public class ArangoDbProducer extends DefaultProducer {
                 resultClassType = resultClassType != null ? resultClassType : BaseDocument.class;
 
                 // perform query and return Collection
-                ArangoCursor<?> cursor = database.query(query, bindParameters, queryOptions, resultClassType);
-                return cursor == null ? null : cursor.asListRemaining();
+                try (ArangoCursor<?> cursor = database.query(query, bindParameters, queryOptions, resultClassType)) {
+                    return cursor == null ? null : cursor.asListRemaining();
+                } catch (IOException e) {
+                    throw new RuntimeCamelException("failed to close instance of ArangoCursor", e);
+                }
             } catch (InvalidPayloadException e) {
                 throw new RuntimeCamelException("Invalid payload for command", e);
             }
