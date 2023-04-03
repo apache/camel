@@ -204,7 +204,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     final Object lock = new Object();
     final RouteController internalRouteController = new InternalRouteController(this);
-    volatile Registry registry;
     volatile ManagementStrategy managementStrategy;
     volatile ManagementMBeanAssembler managementMBeanAssembler;
     volatile HeadersMapFactory headersMapFactory;
@@ -2974,7 +2973,7 @@ public abstract class AbstractCamelContext extends BaseService
         // shutdown type converter and registry as late as possible
         ServiceHelper.stopService(typeConverter);
         ServiceHelper.stopService(typeConverterRegistry);
-        ServiceHelper.stopService(registry);
+        ServiceHelper.stopService(camelContextExtension.getRegistry());
 
         // stop the lazy created so they can be re-created on restart
         forceStopLazyInitialization();
@@ -3285,7 +3284,6 @@ public abstract class AbstractCamelContext extends BaseService
         injector = null;
         typeConverterRegistry = null;
         typeConverter = null;
-        registry = null;
     }
 
     /**
