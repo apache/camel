@@ -207,7 +207,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile DeferServiceFactory deferServiceFactory;
     volatile AnnotationBasedProcessorFactory annotationBasedProcessorFactory;
     volatile ExchangeFactoryManager exchangeFactoryManager;
-    volatile ExchangeFactory exchangeFactory;
     volatile ProcessorExchangeFactory processorExchangeFactory;
     volatile ReactiveExecutor reactiveExecutor;
     volatile Registry registry;
@@ -3288,7 +3287,6 @@ public abstract class AbstractCamelContext extends BaseService
         typeConverterRegistry = null;
         typeConverter = null;
         reactiveExecutor = null;
-        exchangeFactory = null;
         exchangeFactoryManager = null;
         processorExchangeFactory = null;
         registry = null;
@@ -4142,14 +4140,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     public String getDescription() {
         return camelContextExtension.getDescription();
-    }
-
-    public ProcessorExchangeFactory getProcessorExchangeFactory() {
-        return camelContextExtension.getProcessorExchangeFactory();
-    }
-
-    public void setProcessorExchangeFactory(ProcessorExchangeFactory processorExchangeFactory) {
-        camelContextExtension.setProcessorExchangeFactory(processorExchangeFactory);
     }
 
     public FactoryFinder getBootstrapFactoryFinder() {
