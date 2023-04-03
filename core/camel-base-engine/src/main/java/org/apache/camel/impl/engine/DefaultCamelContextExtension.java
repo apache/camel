@@ -86,6 +86,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ManagementStrategy managementStrategy;
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
     private volatile HeadersMapFactory headersMapFactory;
+    private volatile boolean eventNotificationApplicable;
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
     private String basePackageScan;
@@ -299,12 +300,12 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public boolean isEventNotificationApplicable() {
-        return camelContext.eventNotificationApplicable;
+        return eventNotificationApplicable;
     }
 
     @Override
     public void setEventNotificationApplicable(boolean eventNotificationApplicable) {
-        camelContext.eventNotificationApplicable = eventNotificationApplicable;
+        this.eventNotificationApplicable = eventNotificationApplicable;
     }
 
     @Override
