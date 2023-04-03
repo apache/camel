@@ -82,6 +82,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ExchangeFactoryManager exchangeFactoryManager;
     private volatile ProcessorExchangeFactory processorExchangeFactory;
     private volatile ReactiveExecutor reactiveExecutor;
+    private volatile Registry registry;
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
     private String basePackageScan;
@@ -230,20 +231,20 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public Registry getRegistry() {
-        if (camelContext.registry == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.registry == null) {
+        if (registry == null) {
+            synchronized (lock) {
+                if (registry == null) {
                     setRegistry(camelContext.createRegistry());
                 }
             }
         }
-        return camelContext.registry;
+        return registry;
     }
 
     @Override
     public void setRegistry(Registry registry) {
         CamelContextAware.trySetCamelContext(registry, camelContext);
-        camelContext.registry = registry;
+        this.registry = registry;
     }
 
     @Override
