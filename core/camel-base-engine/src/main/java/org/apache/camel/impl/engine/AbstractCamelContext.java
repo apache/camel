@@ -215,7 +215,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ManagementMBeanAssembler managementMBeanAssembler;
     volatile HeadersMapFactory headersMapFactory;
     volatile ResourceLoader resourceLoader;
-    volatile ModelToXMLDumper modelToXMLDumper;
     volatile BeanIntrospection beanIntrospection;
     volatile boolean eventNotificationApplicable;
     volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
@@ -383,6 +382,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(BeanIntrospection.class, this::createBeanIntrospection);
         camelContextExtension.lazyAddContextPlugin(ResourceLoader.class, this::createResourceLoader);
         camelContextExtension.lazyAddContextPlugin(BeanProcessorFactory.class, this::createBeanProcessorFactory);
+        camelContextExtension.lazyAddContextPlugin(ModelToXMLDumper.class, this::createModelToXMLDumper);
 
         if (build) {
             try {
@@ -4171,10 +4171,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
         camelContextExtension.setReactiveExecutor(reactiveExecutor);
-    }
-
-    public ModelToXMLDumper getModelToXMLDumper() {
-        return camelContextExtension.getModelToXMLDumper();
     }
 
     public EndpointUriFactory getEndpointUriFactory(String scheme) {

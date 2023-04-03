@@ -35,8 +35,8 @@ import org.xml.sax.InputSource;
 
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
@@ -57,8 +57,7 @@ public class RestDslXmlGenerator extends RestDslGenerator<RestDslXmlGenerator> {
         document.paths.getPathItems().forEach(restDslStatement::visit);
 
         final RestsDefinition rests = emitter.result();
-        final ExtendedCamelContext ecc = context.getCamelContextExtension();
-        final String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, rests);
+        final String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, rests);
 
         final DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
         builderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);

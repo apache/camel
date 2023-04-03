@@ -28,7 +28,6 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
-import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
 import org.apache.camel.spi.ComponentNameResolver;
@@ -40,6 +39,7 @@ import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
@@ -561,5 +561,19 @@ public final class PluginHelper {
      */
     public static BeanProcessorFactory getBeanProcessorFactory(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(BeanProcessorFactory.class);
+    }
+
+    /**
+     * Gets the {@link ModelToXMLDumper} to be used.
+     */
+    public static ModelToXMLDumper getModelToXMLDumper(CamelContext camelContext) {
+        return getModelToXMLDumper(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link ModelToXMLDumper} to be used.
+     */
+    public static ModelToXMLDumper getModelToXMLDumper(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ModelToXMLDumper.class);
     }
 }

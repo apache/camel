@@ -37,7 +37,6 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
@@ -49,7 +48,6 @@ import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
-import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
@@ -318,16 +316,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void setEventNotificationApplicable(boolean eventNotificationApplicable) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ModelToXMLDumper getModelToXMLDumper() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper) {
         throw new UnsupportedOperationException();
     }
 

@@ -43,8 +43,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "HeadersMapFactory": target.setHeadersMapFactory(property(camelContext, org.apache.camel.spi.HeadersMapFactory.class, value)); return true;
         case "lightweight":
         case "Lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
-        case "modeltoxmldumper":
-        case "ModelToXMLDumper": target.setModelToXMLDumper(property(camelContext, org.apache.camel.spi.ModelToXMLDumper.class, value)); return true;
         case "name":
         case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "processorexchangefactory":
@@ -84,8 +82,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "HeadersMapFactory": return org.apache.camel.spi.HeadersMapFactory.class;
         case "lightweight":
         case "Lightweight": return boolean.class;
-        case "modeltoxmldumper":
-        case "ModelToXMLDumper": return org.apache.camel.spi.ModelToXMLDumper.class;
         case "name":
         case "Name": return java.lang.String.class;
         case "processorexchangefactory":
@@ -126,8 +122,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "HeadersMapFactory": return target.getHeadersMapFactory();
         case "lightweight":
         case "Lightweight": return target.isLightweight();
-        case "modeltoxmldumper":
-        case "ModelToXMLDumper": return target.getModelToXMLDumper();
         case "name":
         case "Name": return target.getName();
         case "processorexchangefactory":

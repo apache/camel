@@ -42,7 +42,6 @@ import org.w3c.dom.Node;
 import org.apache.camel.CamelContext;
 import org.apache.camel.DelegateEndpoint;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.converter.jaxp.XmlConverter;
@@ -54,6 +53,7 @@ import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.annotations.JdkService;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.xml.XmlLineNumberParser;
 
@@ -228,9 +228,8 @@ public class JaxbModelToXMLDumper implements ModelToXMLDumper {
             // replaced so re-create the model
             if (changed.get()) {
                 xml = context.getTypeConverter().mandatoryConvertTo(String.class, dom);
-                ExtendedCamelContext ecc = context.getCamelContextExtension();
                 NamedNode copy = modelToXml(context, xml, NamedNode.class);
-                xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, copy);
+                xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, copy);
             }
         }
 

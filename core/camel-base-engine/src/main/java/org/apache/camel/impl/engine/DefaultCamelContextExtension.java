@@ -53,7 +53,6 @@ import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.ManagementStrategyFactory;
-import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
@@ -410,21 +409,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setHeadersMapFactory(HeadersMapFactory headersMapFactory) {
         camelContext.headersMapFactory = camelContext.getInternalServiceManager().addService(headersMapFactory);
-    }
-
-    public ModelToXMLDumper getModelToXMLDumper() {
-        if (camelContext.modelToXMLDumper == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.modelToXMLDumper == null) {
-                    setModelToXMLDumper(camelContext.createModelToXMLDumper());
-                }
-            }
-        }
-        return camelContext.modelToXMLDumper;
-    }
-
-    public void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper) {
-        camelContext.modelToXMLDumper = camelContext.getInternalServiceManager().addService(modelToXMLDumper);
     }
 
     @Override

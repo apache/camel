@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
@@ -36,7 +35,6 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
-import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
@@ -393,16 +391,6 @@ public interface ExtendedCamelContext {
      * there are no event listeners that are listening for exchange events.
      */
     void setEventNotificationApplicable(boolean eventNotificationApplicable);
-
-    /**
-     * Gets the {@link ModelToXMLDumper} to be used.
-     */
-    ModelToXMLDumper getModelToXMLDumper();
-
-    /**
-     * Sets a custom {@link ModelToXMLDumper} to be used.
-     */
-    void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper);
 
     /**
      * Internal {@link RouteController} that are only used internally by Camel to perform basic route operations. Do not

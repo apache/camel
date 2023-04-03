@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -33,8 +33,7 @@ public class TwoDoTryAndThrowInInnerCatchIssueTest extends ContextTestSupport {
 
     @Test
     public void testSendThatIsCaught() throws Exception {
-        ExtendedCamelContext ecc = context.getCamelContextExtension();
-        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("myroute"));
+        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("myroute"));
         log.info(xml);
 
         getMockEndpoint("mock:catch1").expectedMessageCount(0);
