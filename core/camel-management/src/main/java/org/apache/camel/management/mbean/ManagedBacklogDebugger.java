@@ -362,8 +362,8 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
     @Override
     public String messageHistoryOnBreakpointAsXml(String nodeId) {
-        StringBuffer messageHistoryBuffer = new StringBuffer();
-        messageHistoryBuffer.append("<messageHistory>\n");
+        StringBuilder messageHistoryBuilder = new StringBuilder();
+        messageHistoryBuilder.append("<messageHistory>\n");
 
         Exchange suspendedExchange = backlogDebugger.getSuspendedExchange(nodeId);
         if (suspendedExchange != null) {
@@ -385,7 +385,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
                 long elapsed = TimeUtils.elapsedMillisSince(suspendedExchange.getCreated());
 
-                messageHistoryBuffer
+                messageHistoryBuilder
                         .append("    <messageHistoryEntry")
                         .append(" location=\"").append(StringHelper.xmlEncode(loc)).append("\"")
                         .append(" routeId=\"").append(StringHelper.xmlEncode(routeId)).append("\"")
@@ -412,7 +412,7 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
                     label = URISupport.sanitizeUri(StringHelper.limitLength(history.getNode().getLabel(), 100));
                     elapsed = history.getElapsed();
 
-                    messageHistoryBuffer
+                    messageHistoryBuilder
                             .append("    <messageHistoryEntry")
                             .append(" location=\"").append(StringHelper.xmlEncode(loc)).append("\"")
                             .append(" routeId=\"").append(StringHelper.xmlEncode(routeId)).append("\"")
@@ -423,8 +423,8 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
                 }
             }
         }
-        messageHistoryBuffer.append("</messageHistory>\n");
-        return messageHistoryBuffer.toString();
+        messageHistoryBuilder.append("</messageHistory>\n");
+        return messageHistoryBuilder.toString();
     }
 
     @Override

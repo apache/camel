@@ -96,7 +96,7 @@ public class AS2SignedDataGenerator extends CMSSignedDataGenerator {
      * @return          A <code>multipart/signed</code> content type
      */
     public ContentType createMultipartSignedContentType(String boundary) {
-        StringBuffer header = new StringBuffer(AS2MediaType.MULTIPART_SIGNED);
+        StringBuilder header = new StringBuilder(AS2MediaType.MULTIPART_SIGNED);
         header.append("; boundary=" + boundary);
         Set<String> micAlgSet = new HashSet<>();
 

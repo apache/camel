@@ -65,7 +65,7 @@ public final class SqlHelper {
     public static String translateQuery(String query, Exchange exchange) {
         Message message = exchange.getMessage();
         Matcher matcher = pattern.matcher(query);
-        StringBuffer stringBuffer = new StringBuffer();
+        StringBuilder stringBuffer = new StringBuilder();
         while (matcher.find()) {
             String paramKey = matcher.group(1);
 

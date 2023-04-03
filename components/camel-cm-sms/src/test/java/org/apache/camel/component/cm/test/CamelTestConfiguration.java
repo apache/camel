@@ -70,7 +70,7 @@ public abstract class CamelTestConfiguration extends CamelSpringTestSupport {
         final String productTokenString = prop.getProperty("cm.product-token");
         final String sender = prop.getProperty("cm.default-sender");
 
-        final StringBuffer cmUri = new StringBuffer("cm-sms:" + host)
+        final StringBuilder cmUri = new StringBuilder("cm-sms:" + host)
                 .append("?productToken=").append(productTokenString);
         if (sender != null && !sender.isEmpty()) {
             cmUri.append("&defaultFrom=").append(sender);

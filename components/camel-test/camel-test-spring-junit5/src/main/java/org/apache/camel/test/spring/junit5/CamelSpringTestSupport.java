@@ -328,7 +328,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
                 String p = properties.keySet().stream().map(Pattern::quote)
                         .collect(Collectors.joining("|", Pattern.quote("{{") + "(", ")" + Pattern.quote("}}")));
                 Matcher m = Pattern.compile(p).matcher(before);
-                StringBuffer sb = new StringBuffer(before.length());
+                StringBuilder sb = new StringBuilder(before.length());
                 while (m.find()) {
                     m.appendReplacement(sb, properties.get(m.group(1)));
                 }

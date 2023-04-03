@@ -103,7 +103,7 @@ public class SMSMessage {
 
     @Override
     public String toString() {
-        StringBuffer toS = new StringBuffer("{phoneNumber: " + phoneNumber + ", message: " + message);
+        StringBuilder toS = new StringBuilder("{phoneNumber: " + phoneNumber + ", message: " + message);
         if (from != null && !from.isEmpty()) {
             toS.append(", from: " + from);
         }
