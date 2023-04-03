@@ -378,7 +378,8 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(BeanProcessorFactory.class, this::createBeanProcessorFactory);
         camelContextExtension.lazyAddContextPlugin(ModelToXMLDumper.class, this::createModelToXMLDumper);
         camelContextExtension.lazyAddContextPlugin(DeferServiceFactory.class, this::createDeferServiceFactory);
-        camelContextExtension.lazyAddContextPlugin(AnnotationBasedProcessorFactory.class, this::createAnnotationBasedProcessorFactory);
+        camelContextExtension.lazyAddContextPlugin(AnnotationBasedProcessorFactory.class,
+                this::createAnnotationBasedProcessorFactory);
 
         if (build) {
             try {
