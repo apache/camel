@@ -199,7 +199,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     protected final InternalServiceManager internalServiceManager;
 
-    final RouteController internalRouteController = new InternalRouteController(this);
     volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
     int defaultRouteStartupOrder = 1000;
 

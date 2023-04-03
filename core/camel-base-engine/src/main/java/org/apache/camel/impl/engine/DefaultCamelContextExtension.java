@@ -78,6 +78,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private final Map<String, FactoryFinder> bootstrapFactories = new ConcurrentHashMap<>();
     private final Set<LogListener> logListeners = new LinkedHashSet<>();
     private final PluginManager pluginManager = new DefaultContextPluginManager();
+    private final RouteController internalRouteController;
 
     // start auto assigning route ids using numbering 1000 and upwards
     private final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
@@ -104,6 +105,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     public DefaultCamelContextExtension(AbstractCamelContext camelContext) {
         this.camelContext = camelContext;
+        this.internalRouteController = new InternalRouteController(camelContext);
     }
 
     @Override
@@ -536,7 +538,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public RouteController getInternalRouteController() {
-        return camelContext.internalRouteController;
+        return internalRouteController;
     }
 
     @Override
