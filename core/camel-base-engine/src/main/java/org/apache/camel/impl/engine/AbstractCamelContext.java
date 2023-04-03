@@ -204,7 +204,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     final Object lock = new Object();
     final RouteController internalRouteController = new InternalRouteController(this);
-    volatile ManagementMBeanAssembler managementMBeanAssembler;
     volatile HeadersMapFactory headersMapFactory;
     volatile BeanIntrospection beanIntrospection;
     volatile boolean eventNotificationApplicable;
@@ -1627,8 +1626,8 @@ public abstract class AbstractCamelContext extends BaseService
         this.propertiesComponent = internalServiceManager.addService(propertiesComponent);
     }
 
-    public void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
-        this.managementMBeanAssembler = internalServiceManager.addService(managementMBeanAssembler, false);
+    protected void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
+        camelContextExtension.setManagementMBeanAssembler(managementMBeanAssembler);
     }
 
     public void setAutoCreateComponents(boolean autoCreateComponents) {
@@ -2960,7 +2959,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // shutdown management and lifecycle after all other services
         InternalServiceManager.shutdownServices(this, camelContextExtension.getManagementStrategy());
-        InternalServiceManager.shutdownServices(this, managementMBeanAssembler);
+        InternalServiceManager.shutdownServices(this, camelContextExtension.getManagementMBeanAssembler());
         InternalServiceManager.shutdownServices(this, lifecycleStrategies);
         // do not clear lifecycleStrategies as we can start Camel again and get
         // the route back as before
