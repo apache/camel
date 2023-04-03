@@ -333,6 +333,21 @@ public abstract class AbstractCamelContext extends BaseService
 
         this.internalServiceManager = new InternalServiceManager(this, internalRouteStartupManager, startupListeners);
 
+        initPlugins();
+
+        if (build) {
+            try {
+                build();
+            } catch (Exception e) {
+                throw new RuntimeException("Error initializing CamelContext", e);
+            }
+        }
+    }
+
+    /**
+     * Called during object construction to initialize context plugins
+     */
+    protected void initPlugins() {
         camelContextExtension.addContextPlugin(CamelBeanPostProcessor.class, createBeanPostProcessor());
         camelContextExtension.addContextPlugin(CamelDependencyInjectionAnnotationFactory.class,
                 createDependencyInjectionAnnotationFactory());
@@ -369,14 +384,6 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(DeferServiceFactory.class, this::createDeferServiceFactory);
         camelContextExtension.lazyAddContextPlugin(AnnotationBasedProcessorFactory.class,
                 this::createAnnotationBasedProcessorFactory);
-
-        if (build) {
-            try {
-                build();
-            } catch (Exception e) {
-                throw new RuntimeException("Error initializing CamelContext", e);
-            }
-        }
     }
 
     protected static <T> T lookup(CamelContext context, String ref, Class<T> type) {
