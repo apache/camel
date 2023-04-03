@@ -103,7 +103,6 @@ import org.apache.camel.spi.DebuggerFactory;
 import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.spi.EndpointStrategy;
-import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.ExchangeFactory;
 import org.apache.camel.spi.ExchangeFactoryManager;
@@ -4111,6 +4110,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.setDescription(description);
     }
 
+    @Override
     public String getDescription() {
         return camelContextExtension.getDescription();
     }
@@ -4125,10 +4125,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
         camelContextExtension.addInterceptStrategy(interceptStrategy);
-    }
-
-    public EndpointUriFactory getEndpointUriFactory(String scheme) {
-        return camelContextExtension.getEndpointUriFactory(scheme);
     }
 
     public StartupStepRecorder getStartupStepRecorder() {
