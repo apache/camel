@@ -206,7 +206,6 @@ public abstract class AbstractCamelContext extends BaseService
     final RouteController internalRouteController = new InternalRouteController(this);
     volatile DeferServiceFactory deferServiceFactory;
     volatile AnnotationBasedProcessorFactory annotationBasedProcessorFactory;
-    volatile ExchangeFactoryManager exchangeFactoryManager;
     volatile ReactiveExecutor reactiveExecutor;
     volatile Registry registry;
     volatile ManagementStrategy managementStrategy;
@@ -3286,7 +3285,6 @@ public abstract class AbstractCamelContext extends BaseService
         typeConverterRegistry = null;
         typeConverter = null;
         reactiveExecutor = null;
-        exchangeFactoryManager = null;
         registry = null;
     }
 
