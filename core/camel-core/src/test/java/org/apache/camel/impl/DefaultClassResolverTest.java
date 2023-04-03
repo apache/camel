@@ -152,5 +152,4 @@ public class DefaultClassResolverTest {
         assertNotNull(clazz);
     }
 
-
 }
