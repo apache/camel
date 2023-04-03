@@ -214,7 +214,6 @@ public abstract class AbstractCamelContext extends BaseService
     volatile ManagementStrategy managementStrategy;
     volatile ManagementMBeanAssembler managementMBeanAssembler;
     volatile HeadersMapFactory headersMapFactory;
-    volatile ResourceLoader resourceLoader;
     volatile BeanIntrospection beanIntrospection;
     volatile boolean eventNotificationApplicable;
     volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
