@@ -396,8 +396,8 @@ public class RouteCoverageMojo extends AbstractExecMojo {
             sw.println("Route:\t" + routeId);
         }
         sw.println();
-        sw.println(String.format("%8s    %8s    %s", "Line #", "Count", "Route"));
-        sw.println(String.format("%8s    %8s    %s", "------", "-----", "-----"));
+        sw.printf("%8s    %8s    %s%n", "Line #", "Count", "Route");
+        sw.printf("%8s    %8s    %s%n", "------", "-----", "-----");
 
         int covered = 0;
         for (RouteCoverageNode node : model) {
@@ -405,7 +405,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
                 covered++;
             }
             String pad = padString(node.getLevel());
-            sw.println(String.format("%8s    %8s    %s", node.getLineNumber(), node.getCount(), pad + node.getName()));
+            sw.printf("%8s    %8s    %s%n", node.getLineNumber(), node.getCount(), pad + node.getName());
         }
 
         coveredNodes.addAndGet(covered);
