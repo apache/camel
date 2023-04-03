@@ -204,7 +204,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     final Object lock = new Object();
     final RouteController internalRouteController = new InternalRouteController(this);
-    volatile ReactiveExecutor reactiveExecutor;
     volatile Registry registry;
     volatile ManagementStrategy managementStrategy;
     volatile ManagementMBeanAssembler managementMBeanAssembler;
@@ -378,7 +377,8 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(BeanProcessorFactory.class, this::createBeanProcessorFactory);
         camelContextExtension.lazyAddContextPlugin(ModelToXMLDumper.class, this::createModelToXMLDumper);
         camelContextExtension.lazyAddContextPlugin(DeferServiceFactory.class, this::createDeferServiceFactory);
-        camelContextExtension.lazyAddContextPlugin(AnnotationBasedProcessorFactory.class, this::createAnnotationBasedProcessorFactory);
+        camelContextExtension.lazyAddContextPlugin(AnnotationBasedProcessorFactory.class,
+                this::createAnnotationBasedProcessorFactory);
 
         if (build) {
             try {
@@ -2782,10 +2782,11 @@ public abstract class AbstractCamelContext extends BaseService
         }
 
         // lets log at INFO level if we are not using the default reactive executor
-        if (!camelContextExtension.getReactiveExecutor().getClass().getSimpleName().equals("DefaultReactiveExecutor")) {
-            LOG.info("Using ReactiveExecutor: {}", camelContextExtension.getReactiveExecutor());
+        final ReactiveExecutor reactiveExecutor = camelContextExtension.getReactiveExecutor();
+        if (!reactiveExecutor.getClass().getSimpleName().equals("DefaultReactiveExecutor")) {
+            LOG.info("Using ReactiveExecutor: {}", reactiveExecutor);
         } else {
-            LOG.debug("Using ReactiveExecutor: {}", camelContextExtension.getReactiveExecutor());
+            LOG.debug("Using ReactiveExecutor: {}", reactiveExecutor);
         }
 
         // lets log at INFO level if we are not using the default thread pool factory
@@ -2968,7 +2969,7 @@ public abstract class AbstractCamelContext extends BaseService
 
         // shutdown executor service, reactive executor last
         InternalServiceManager.shutdownServices(this, executorServiceManager);
-        InternalServiceManager.shutdownServices(this, reactiveExecutor);
+        InternalServiceManager.shutdownServices(this, camelContextExtension.getReactiveExecutor());
 
         // shutdown type converter and registry as late as possible
         ServiceHelper.stopService(typeConverter);
@@ -3284,7 +3285,6 @@ public abstract class AbstractCamelContext extends BaseService
         injector = null;
         typeConverterRegistry = null;
         typeConverter = null;
-        reactiveExecutor = null;
         registry = null;
     }
 
@@ -4148,14 +4148,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
         camelContextExtension.addInterceptStrategy(interceptStrategy);
-    }
-
-    public ReactiveExecutor getReactiveExecutor() {
-        return camelContextExtension.getReactiveExecutor();
-    }
-
-    public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
-        camelContextExtension.setReactiveExecutor(reactiveExecutor);
     }
 
     public EndpointUriFactory getEndpointUriFactory(String scheme) {

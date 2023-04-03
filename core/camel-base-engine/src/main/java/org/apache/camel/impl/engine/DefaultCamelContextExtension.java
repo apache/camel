@@ -81,6 +81,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ExchangeFactory exchangeFactory;
     private volatile ExchangeFactoryManager exchangeFactoryManager;
     private volatile ProcessorExchangeFactory processorExchangeFactory;
+    private volatile ReactiveExecutor reactiveExecutor;
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
     private String basePackageScan;
@@ -469,21 +470,21 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public ReactiveExecutor getReactiveExecutor() {
-        if (camelContext.reactiveExecutor == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.reactiveExecutor == null) {
+        if (reactiveExecutor == null) {
+            synchronized (lock) {
+                if (reactiveExecutor == null) {
                     setReactiveExecutor(camelContext.createReactiveExecutor());
                 }
             }
         }
-        return camelContext.reactiveExecutor;
+        return reactiveExecutor;
     }
 
     @Override
     public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
         // special for executorServiceManager as want to stop it manually so
         // false in stopOnShutdown
-        camelContext.reactiveExecutor = camelContext.getInternalServiceManager().addService(reactiveExecutor, false);
+        this.reactiveExecutor = camelContext.getInternalServiceManager().addService(reactiveExecutor, false);
     }
 
     @Override
