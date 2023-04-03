@@ -83,6 +83,7 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
+import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextTracker;
@@ -4214,5 +4215,15 @@ public abstract class AbstractCamelContext extends BaseService
 
     InternalServiceManager getInternalServiceManager() {
         return internalServiceManager;
+    }
+
+    /*
+     * This method exists for testing purposes only: we need to make sure we don't leak bootstraps.
+     * This allows us to check for leaks without compromising the visibility/access on the DefaultCamelContextExtension.
+     * Check the test AddRoutesAtRuntimeTest for details.
+     */
+    @SuppressWarnings("unused")
+    private List<BootstrapCloseable> getBootstraps() {
+        return camelContextExtension.getBootstraps();
     }
 }
