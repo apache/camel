@@ -22,7 +22,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
-import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
@@ -302,16 +301,6 @@ public interface ExtendedCamelContext {
      * @return      the factory finder
      */
     FactoryFinder getFactoryFinder(String path);
-
-    /**
-     * Gets the {@link AnnotationBasedProcessorFactory} to use.
-     */
-    AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory();
-
-    /**
-     * Sets a custom {@link AnnotationBasedProcessorFactory} to use.
-     */
-    void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory);
 
     /**
      * Adds the given interceptor strategy

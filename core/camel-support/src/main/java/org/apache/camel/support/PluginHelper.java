@@ -24,6 +24,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckResolver;
+import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
@@ -590,5 +591,20 @@ public final class PluginHelper {
      */
     public static DeferServiceFactory getDeferServiceFactory(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(DeferServiceFactory.class);
+    }
+
+    /**
+     * Gets the {@link AnnotationBasedProcessorFactory} to use.
+     */
+    public static AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory(CamelContext camelContext) {
+        return getAnnotationBasedProcessorFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link AnnotationBasedProcessorFactory} to use.
+     */
+    public static AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory(
+            ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(AnnotationBasedProcessorFactory.class);
     }
 }
