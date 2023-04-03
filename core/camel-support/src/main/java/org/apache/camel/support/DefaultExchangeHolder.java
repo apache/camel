@@ -170,8 +170,8 @@ public class DefaultExchangeHolder implements Serializable {
             }
         }
         if (payload.properties != null) {
-            for (String key : payload.properties.keySet()) {
-                exchange.setProperty(key, payload.properties.get(key));
+            for (Map.Entry<String, Object> entry : payload.properties.entrySet()) {
+                exchange.setProperty(entry.getKey(), entry.getValue());
             }
         }
         exchange.setException(payload.exception);
