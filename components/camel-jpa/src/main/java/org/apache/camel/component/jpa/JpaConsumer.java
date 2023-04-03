@@ -406,7 +406,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         Entity entity = clazz.getAnnotation(Entity.class);
 
         // Check if the property name has been defined for Entity annotation
-        if (entity != null && !entity.name().equals("")) {
+        if (entity != null && !entity.name().isEmpty()) {
             return entity.name();
         } else {
             return null;

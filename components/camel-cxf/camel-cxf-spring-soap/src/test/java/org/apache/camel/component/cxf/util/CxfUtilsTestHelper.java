@@ -101,7 +101,7 @@ public final class CxfUtilsTestHelper {
                     declareNamespace = false;
                 }
             } else {
-                if ("xmlns".equals(name) && "".equals(attrPrefix)) {
+                if ("xmlns".equals(name) && attrPrefix.isEmpty()) {
                     writer.writeNamespace("", attr.getNodeValue());
                     if (attr.getNodeValue().equals(ns)) {
                         declareNamespace = false;

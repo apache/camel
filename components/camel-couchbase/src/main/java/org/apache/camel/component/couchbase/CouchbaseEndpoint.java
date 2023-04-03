@@ -487,7 +487,7 @@ public class CouchbaseEndpoint extends ScheduledPollEndpoint {
 
     public URI[] makeBootstrapURI() throws URISyntaxException {
 
-        if (additionalHosts == null || "".equals(additionalHosts)) {
+        if (additionalHosts == null || additionalHosts.isEmpty()) {
             return new URI[] { new URI(protocol + "://" + hostname + ":" + port + "/pools") };
         }
         return getAllUris();

@@ -66,10 +66,10 @@ public class BatchGoogleDriveClientFactory implements GoogleDriveClientFactory {
         try {
             Credential credential = authorize(clientId, clientSecret, scopes);
 
-            if (refreshToken != null && !"".equals(refreshToken)) {
+            if (refreshToken != null && !refreshToken.isEmpty()) {
                 credential.setRefreshToken(refreshToken);
             }
-            if (accessToken != null && !"".equals(accessToken)) {
+            if (accessToken != null && !accessToken.isEmpty()) {
                 credential.setAccessToken(accessToken);
             }
             return new Drive.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();

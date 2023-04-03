@@ -124,7 +124,7 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
         assumeFalse(jwtAuthentication, "Test has to be executed with standard authentication.");
 
         String enterpriseUser1Login = (String) options.get(CAMEL_TEST_ENTERPRISE_USER_LOGIN_KEY);
-        if (enterpriseUser1Login != null && "".equals(enterpriseUser1Login.trim())) {
+        if (enterpriseUser1Login != null && enterpriseUser1Login.trim().isEmpty()) {
             enterpriseUser1Login = null;
         }
 
@@ -277,10 +277,10 @@ public class BoxUsersManagerIT extends AbstractBoxITSupport {
 
         String enterpriseUser1Login = (String) options.get(CAMEL_TEST_ENTERPRISE_USER_LOGIN_KEY);
         String enterpriseUser2Login = (String) options.get(CAMEL_TEST_ENTERPRISE_USER2_LOGIN_KEY);
-        if (enterpriseUser1Login != null && "".equals(enterpriseUser1Login.trim())) {
+        if (enterpriseUser1Login != null && enterpriseUser1Login.trim().isEmpty()) {
             enterpriseUser1Login = null;
         }
-        if (enterpriseUser2Login != null && "".equals(enterpriseUser2Login.trim())) {
+        if (enterpriseUser2Login != null && enterpriseUser2Login.trim().isEmpty()) {
             enterpriseUser2Login = null;
         }
 

@@ -409,7 +409,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             }
             filterHolder.setFilter(new CamelFilterWrapper(filter));
             String pathSpec = endpoint.getPath();
-            if (pathSpec == null || "".equals(pathSpec)) {
+            if (pathSpec == null || pathSpec.isEmpty()) {
                 pathSpec = "/";
             }
             if (endpoint.isMatchOnUriPrefix()) {
@@ -445,7 +445,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         }
         filterHolder.setFilter(new CamelFilterWrapper(filter));
         String pathSpec = endpoint.getPath();
-        if (pathSpec == null || "".equals(pathSpec)) {
+        if (pathSpec == null || pathSpec.isEmpty()) {
             pathSpec = "/";
         }
         if (endpoint.isMatchOnUriPrefix()) {

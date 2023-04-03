@@ -280,7 +280,7 @@ public class JpaPollingConsumer extends PollingConsumerSupport {
         Entity entity = clazz.getAnnotation(Entity.class);
 
         // Check if the property name has been defined for Entity annotation
-        if (entity != null && !entity.name().equals("")) {
+        if (entity != null && !entity.name().isEmpty()) {
             return entity.name();
         } else {
             return null;
