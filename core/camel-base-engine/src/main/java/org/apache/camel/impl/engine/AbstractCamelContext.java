@@ -83,7 +83,6 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
-import org.apache.camel.spi.BootstrapCloseable;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.CamelContextTracker;
@@ -198,9 +197,6 @@ public abstract class AbstractCamelContext extends BaseService
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContext.class);
 
     protected final InternalServiceManager internalServiceManager;
-
-    // start auto assigning route ids using numbering 1000 and upwards
-    final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
 
     final RouteController internalRouteController = new InternalRouteController(this);
     volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
@@ -333,7 +329,7 @@ public abstract class AbstractCamelContext extends BaseService
         this.lifecycleStrategies.add(new DefaultAutowiredLifecycleStrategy(this));
 
         // add the default bootstrap closer
-        this.bootstraps.add(new DefaultServiceBootstrapCloseable(this));
+        camelContextExtension.addBootstrap(new DefaultServiceBootstrapCloseable(this));
 
         this.internalServiceManager = new InternalServiceManager(this, internalRouteStartupManager, startupListeners);
 
@@ -2490,14 +2486,7 @@ public abstract class AbstractCamelContext extends BaseService
         logStartSummary();
 
         // now Camel has been started/bootstrap is complete, then run cleanup to help free up memory etc
-        for (BootstrapCloseable bootstrap : bootstraps) {
-            try {
-                bootstrap.close();
-            } catch (Exception e) {
-                LOG.warn("Error during closing bootstrap. This exception is ignored.", e);
-            }
-        }
-        bootstraps.clear();
+        camelContextExtension.closeBootstraps();
 
         if (camelContextExtension.getExchangeFactory().isPooled()) {
             LOG.info(

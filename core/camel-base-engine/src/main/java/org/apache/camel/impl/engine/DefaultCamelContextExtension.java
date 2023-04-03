@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContextAware;
@@ -77,6 +78,10 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private final Map<String, FactoryFinder> bootstrapFactories = new ConcurrentHashMap<>();
     private final Set<LogListener> logListeners = new LinkedHashSet<>();
     private final PluginManager pluginManager = new DefaultContextPluginManager();
+
+    // start auto assigning route ids using numbering 1000 and upwards
+    private final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
+
     private volatile String description;
     private volatile ExchangeFactory exchangeFactory;
     private volatile ExchangeFactoryManager exchangeFactoryManager;
@@ -87,6 +92,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
     private volatile HeadersMapFactory headersMapFactory;
     private volatile boolean eventNotificationApplicable;
+
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
     private String basePackageScan;
@@ -195,7 +201,18 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void addBootstrap(BootstrapCloseable bootstrap) {
-        camelContext.bootstraps.add(bootstrap);
+        bootstraps.add(bootstrap);
+    }
+
+    void closeBootstraps() {
+        for (BootstrapCloseable bootstrap : bootstraps) {
+            try {
+                bootstrap.close();
+            } catch (Exception e) {
+                LOG.warn("Error during closing bootstrap. This exception is ignored.", e);
+            }
+        }
+        bootstraps.clear();
     }
 
     @Override
