@@ -94,7 +94,7 @@ public class DataLakeExchangeHeaders {
     }
 
     private static PathProperties buildPathProperties(final FileReadHeaders rh) {
-        Long contentLength;
+        long contentLength;
         if (rh.getContentLength() == null) {
             contentLength = 0L;
         } else {
