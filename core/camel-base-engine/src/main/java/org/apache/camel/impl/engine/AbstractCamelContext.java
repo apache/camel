@@ -203,7 +203,6 @@ public abstract class AbstractCamelContext extends BaseService
     final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
 
     final RouteController internalRouteController = new InternalRouteController(this);
-    volatile BeanIntrospection beanIntrospection;
     volatile boolean eventNotificationApplicable;
     volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
     int defaultRouteStartupOrder = 1000;
@@ -2826,6 +2825,7 @@ public abstract class AbstractCamelContext extends BaseService
             startupStepRecorder.endStep(step);
         }
 
+        final BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(this);
         long cacheCounter = beanIntrospection != null ? beanIntrospection.getCachedClassesCounter() : 0;
         if (cacheCounter > 0) {
             LOG.debug("Clearing BeanIntrospection cache with {} objects using during starting Camel", cacheCounter);
