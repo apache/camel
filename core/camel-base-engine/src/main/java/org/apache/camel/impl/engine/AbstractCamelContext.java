@@ -204,7 +204,6 @@ public abstract class AbstractCamelContext extends BaseService
 
     final Object lock = new Object();
     final RouteController internalRouteController = new InternalRouteController(this);
-    volatile DeferServiceFactory deferServiceFactory;
     volatile AnnotationBasedProcessorFactory annotationBasedProcessorFactory;
     volatile ReactiveExecutor reactiveExecutor;
     volatile Registry registry;
@@ -379,6 +378,7 @@ public abstract class AbstractCamelContext extends BaseService
         camelContextExtension.lazyAddContextPlugin(ResourceLoader.class, this::createResourceLoader);
         camelContextExtension.lazyAddContextPlugin(BeanProcessorFactory.class, this::createBeanProcessorFactory);
         camelContextExtension.lazyAddContextPlugin(ModelToXMLDumper.class, this::createModelToXMLDumper);
+        camelContextExtension.lazyAddContextPlugin(DeferServiceFactory.class, this::createDeferServiceFactory);
 
         if (build) {
             try {
