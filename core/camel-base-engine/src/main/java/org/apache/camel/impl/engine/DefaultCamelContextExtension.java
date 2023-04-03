@@ -215,6 +215,10 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
         bootstraps.clear();
     }
 
+    List<BootstrapCloseable> getBootstraps() {
+        return bootstraps;
+    }
+
     @Override
     public List<Service> getServices() {
         return camelContext.getInternalServiceManager().getServices();
