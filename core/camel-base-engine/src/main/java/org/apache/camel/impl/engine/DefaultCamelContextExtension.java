@@ -85,6 +85,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private volatile Registry registry;
     private volatile ManagementStrategy managementStrategy;
     private volatile ManagementMBeanAssembler managementMBeanAssembler;
+    private volatile HeadersMapFactory headersMapFactory;
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
     private String basePackageScan;
@@ -412,12 +413,29 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public HeadersMapFactory getHeadersMapFactory() {
-        return camelContext.headersMapFactory;
+        return headersMapFactory;
     }
 
     @Override
     public void setHeadersMapFactory(HeadersMapFactory headersMapFactory) {
-        camelContext.headersMapFactory = camelContext.getInternalServiceManager().addService(headersMapFactory);
+        this.headersMapFactory = camelContext.getInternalServiceManager().addService(headersMapFactory);
+    }
+
+    void initEagerMandatoryServices(boolean caseInsensitive, Supplier<HeadersMapFactory> headersMapFactorySupplier) {
+        if (this.headersMapFactory == null) {
+            // we want headers map to be created as then JVM can optimize using it as we use it per exchange/message
+            synchronized (lock) {
+                if (this.headersMapFactory == null) {
+                    if (caseInsensitive) {
+                        // use factory to find the map factory to use
+                        setHeadersMapFactory(headersMapFactorySupplier.get());
+                    } else {
+                        // case sensitive so we can use hash map
+                        setHeadersMapFactory(new HashMapHeadersMapFactory());
+                    }
+                }
+            }
+        }
     }
 
     @Override

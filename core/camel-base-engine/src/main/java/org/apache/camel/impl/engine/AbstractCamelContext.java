@@ -202,9 +202,7 @@ public abstract class AbstractCamelContext extends BaseService
     // start auto assigning route ids using numbering 1000 and upwards
     final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
 
-
     final RouteController internalRouteController = new InternalRouteController(this);
-    volatile HeadersMapFactory headersMapFactory;
     volatile BeanIntrospection beanIntrospection;
     volatile boolean eventNotificationApplicable;
     volatile StartupStepRecorder startupStepRecorder = new DefaultStartupStepRecorder();
@@ -3236,20 +3234,7 @@ public abstract class AbstractCamelContext extends BaseService
      * runtime.
      */
     protected void initEagerMandatoryServices() {
-        if (headersMapFactory == null) {
-            // we want headers map to be created as then JVM can optimize using it as we use it per exchange/message
-            synchronized (lock) {
-                if (headersMapFactory == null) {
-                    if (isCaseInsensitiveHeaders()) {
-                        // use factory to find the map factory to use
-                        camelContextExtension.setHeadersMapFactory(createHeadersMapFactory());
-                    } else {
-                        // case sensitive so we can use hash map
-                        camelContextExtension.setHeadersMapFactory(new HashMapHeadersMapFactory());
-                    }
-                }
-            }
-        }
+        camelContextExtension.initEagerMandatoryServices(isCaseInsensitiveHeaders(), this::createHeadersMapFactory);
     }
 
     protected void doStartStandardServices() {
