@@ -19,7 +19,7 @@ package org.apache.camel.component.smpp;
 public class SmppDefaultSplitter extends SmppSplitter {
 
     public static final int MAX_MSG_CHAR_SIZE = (MAX_MSG_BYTE_LENGTH << 3) / 7;
-    public static final int MAX_SEG_BYTE_SIZE = ((MAX_MSG_BYTE_LENGTH - UDHIE_HEADER_REAL_LENGTH) << 3 )/ 7;
+    public static final int MAX_SEG_BYTE_SIZE = ((MAX_MSG_BYTE_LENGTH - UDHIE_HEADER_REAL_LENGTH) << 3) / 7;
 
     public SmppDefaultSplitter(int currentLength) {
         super(MAX_MSG_CHAR_SIZE, MAX_SEG_BYTE_SIZE, currentLength);
