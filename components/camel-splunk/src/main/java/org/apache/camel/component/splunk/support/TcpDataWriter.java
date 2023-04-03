@@ -48,7 +48,7 @@ public class TcpDataWriter extends SplunkDataWriter {
 
     @Override
     protected Socket createSocket(Service service) throws IOException {
-        int p = localPort.isPresent() ? localPort.get() : port;
+        int p = localPort.orElseGet(() -> port);
         TcpInput input = (TcpInput) service.getInputs().get(String.valueOf(p));
         if (input == null) {
             throw new RuntimeException("no input defined for port " + port);
