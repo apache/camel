@@ -29,6 +29,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -47,6 +48,7 @@ import org.apache.camel.component.salesforce.api.dto.Version;
 import org.apache.camel.component.salesforce.api.dto.Versions;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Contact;
+import org.apache.camel.component.salesforce.dto.generated.ContentVersion;
 import org.apache.camel.component.salesforce.dto.generated.Document;
 import org.apache.camel.component.salesforce.dto.generated.Line_Item__c;
 import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
@@ -462,6 +464,21 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
             assertNotNull(body);
             assertTrue(body.available() > 0);
         }
+    }
+
+    @Test
+    public void testUploadBlob() throws Exception {
+        final InputStream inputStream = this.getClass().getResourceAsStream("/camel-test-doc.pdf");
+        final byte[] bytes = inputStream.readAllBytes();
+        ObjectMapper mapper = new ObjectMapper();
+        String enc = mapper.convertValue(bytes, String.class);
+        ContentVersion cv = new ContentVersion();
+        cv.setVersionDataUrl(enc);
+        cv.setPathOnClient("camel-test-doc.pdf");
+        cv.setTitle("Camel Test Doc");
+        final CreateSObjectResult result =
+                template.requestBody("salesforce:createSObject", cv, CreateSObjectResult.class);
+        assertNotNull(result.getId());
     }
 
     @Test
