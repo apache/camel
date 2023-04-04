@@ -2076,8 +2076,14 @@ public class SimpleTest extends LanguageTestSupport {
     @Test
     public void testNewEmpty() {
         assertExpressionCreateNewEmpty("list", List.class, v -> ((List) v).isEmpty());
+        assertExpressionCreateNewEmpty("LIST", List.class, v -> ((List) v).isEmpty());
+        assertExpressionCreateNewEmpty("List", List.class, v -> ((List) v).isEmpty());
         assertExpressionCreateNewEmpty("map", Map.class, v -> ((Map) v).isEmpty());
+        assertExpressionCreateNewEmpty("MAP", Map.class, v -> ((Map) v).isEmpty());
+        assertExpressionCreateNewEmpty("Map", Map.class, v -> ((Map) v).isEmpty());
         assertExpressionCreateNewEmpty("string", String.class, v -> ((String) v).isEmpty());
+        assertExpressionCreateNewEmpty("STRING", String.class, v -> ((String) v).isEmpty());
+        assertExpressionCreateNewEmpty("String", String.class, v -> ((String) v).isEmpty());
 
         assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${empty(falseSyntax}", null));
         assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${empty()}", null));

@@ -286,12 +286,10 @@ public final class SimpleExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 if ("map".equalsIgnoreCase(type)) {
                     return new HashMap<>();
-                } else if ("string".equals(type)) {
+                } else if ("string".equalsIgnoreCase(type)) {
                     return "";
-                } else if ("list".equals(type)) {
+                } else if ("list".equalsIgnoreCase(type)) {
                     return new ArrayList<>();
-                } else if ("json".equals(type)) {
-                    //TODO
                 }
                 throw new IllegalArgumentException("function empty(%s) has unknown type.".formatted(type));
             }
