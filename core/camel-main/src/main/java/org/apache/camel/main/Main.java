@@ -169,7 +169,6 @@ public class Main extends MainCommandLineSupport {
     protected CamelContext createCamelContext() {
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
-        answer.setLogJvmUptime(true); // we run in standalone mode so lets show JVM uptime
         answer.getCamelContextExtension().setRegistry(registry);
         if (mainClass != null) {
             answer.getGlobalOptions().put("CamelMainClass", mainClass.getName());
