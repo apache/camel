@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -579,7 +580,7 @@ public final class URISupport {
         String[] parts = CamelURIParser.fastParseUri(uri);
         if (parts != null) {
             // we optimized specially if an empty array is returned
-            if (parts == URI_ALREADY_NORMALIZED) {
+            if (Arrays.equals(parts, URI_ALREADY_NORMALIZED)) {
                 return uri;
             }
             // use the faster and more simple normalizer
