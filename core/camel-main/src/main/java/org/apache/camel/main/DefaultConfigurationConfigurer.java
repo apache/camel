@@ -182,7 +182,8 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getInflightRepository().setInflightBrowseEnabled(config.isInflightRepositoryBrowseEnabled());
 
         if (config.getLogDebugMaxChars() != 0) {
-            camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, Integer.toString(config.getLogDebugMaxChars()));
+            camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS,
+                    Integer.toString(config.getLogDebugMaxChars()));
         }
 
         // stream caching
