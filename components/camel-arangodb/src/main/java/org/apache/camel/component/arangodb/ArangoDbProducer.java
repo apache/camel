@@ -38,6 +38,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.MessageHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY;
 import static org.apache.camel.component.arangodb.ArangoDbConstants.AQL_QUERY_BIND_PARAMETERS;
@@ -49,6 +51,9 @@ import static org.apache.camel.component.arangodb.ArangoDbConstants.MULTI_UPDATE
 import static org.apache.camel.component.arangodb.ArangoDbConstants.RESULT_CLASS_TYPE;
 
 public class ArangoDbProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ArangoDbProducer.class);
+
     private final ArangoDbEndpoint endpoint;
     private final Map<ArangoDbOperation, Processor> operations = new EnumMap<>(ArangoDbOperation.class);
 
@@ -326,11 +331,12 @@ public class ArangoDbProducer extends DefaultProducer {
                 try (ArangoCursor<?> cursor = database.query(query, bindParameters, queryOptions, resultClassType)) {
                     return cursor == null ? null : cursor.asListRemaining();
                 } catch (IOException e) {
-                    throw new RuntimeCamelException("Failed to close instance of ArangoCursor", e);
+                    LOG.warn("Failed to close instance of ArangoCursor", e);
                 }
             } catch (InvalidPayloadException e) {
                 throw new RuntimeCamelException("Invalid payload for command", e);
             }
+            return null;
         };
     }
 
