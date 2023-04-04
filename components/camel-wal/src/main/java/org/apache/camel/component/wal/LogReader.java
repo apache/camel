@@ -165,7 +165,7 @@ public class LogReader implements AutoCloseable {
         Slot slot = new Slot();
 
         // The buffer needs to have enough space for the metadata and length.
-        if (ioBuffer.remaining() < (Integer.BYTES << 1)) {
+        if (ioBuffer.remaining() < (Integer.BYTES << 1)) { // Integer.BYTES * 2
             if (!reload()) {
                 throw new InvalidRecordException("A data slot within a record is incomplete or malformed");
             }

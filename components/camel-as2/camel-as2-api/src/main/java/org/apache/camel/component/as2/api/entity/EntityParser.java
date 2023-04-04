@@ -67,7 +67,7 @@ import org.bouncycastle.operator.InputExpanderProvider;
 
 public final class EntityParser {
 
-    private static final int DEFAULT_BUFFER_SIZE = 8192;
+    private static final int DEFAULT_BUFFER_SIZE = 8192; // 8 * 1024
 
     private EntityParser() {
     }

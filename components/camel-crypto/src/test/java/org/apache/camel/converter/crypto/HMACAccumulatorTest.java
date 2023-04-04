@@ -141,7 +141,7 @@ public class HMACAccumulatorTest {
 
     @Test
     void testBufferAdd() {
-        CircularBuffer buffer = new CircularBuffer(payload.length << 1);
+        CircularBuffer buffer = new CircularBuffer(payload.length << 1); // payload.length * 2
         buffer.write(payload, 0, payload.length);
         assertEquals(payload.length, buffer.availableForWrite());
         buffer.write(payload, 0, payload.length);
@@ -152,7 +152,7 @@ public class HMACAccumulatorTest {
 
     @Test
     void testBufferDrain() {
-        CircularBuffer buffer = new CircularBuffer(payload.length << 1);
+        CircularBuffer buffer = new CircularBuffer(payload.length << 1); // payload.length * 2
         buffer.write(payload, 0, payload.length);
 
         byte[] data = new byte[payload.length >> 1];

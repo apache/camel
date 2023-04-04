@@ -46,7 +46,7 @@ import org.apache.camel.util.json.Jsoner;
 public final class BacklogTracer extends ServiceSupport implements org.apache.camel.spi.BacklogTracer {
 
     // lets limit the tracer to 10 thousand messages in total
-    public static final int MAX_BACKLOG_SIZE = 10000;
+    public static final int MAX_BACKLOG_SIZE = 10000; // 10 * 1000
     private final CamelContext camelContext;
     private final Language simple;
     private boolean enabled;

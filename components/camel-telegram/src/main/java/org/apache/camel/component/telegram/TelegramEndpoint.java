@@ -50,7 +50,7 @@ public class TelegramEndpoint extends ScheduledPollEndpoint implements WebhookCa
     private TelegramConfiguration configuration;
     @UriParam(label = "advanced")
     private HttpClient client;
-    @UriParam(label = "advanced", defaultValue = "1048576")
+    @UriParam(label = "advanced", defaultValue = "1048576") //1024 * 1024
     private int bufferSize = 1048576; //1024 * 1024
 
     private WebhookConfiguration webhookConfiguration;

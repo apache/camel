@@ -235,7 +235,8 @@ public enum DockerOperation {
             int nParameters = params.length / 2;
 
             for (int i = 0; i < nParameters; i++) {
-                parameters.put((String) params[i << 1], (Class<?>) params[(i << 1) + 1]);
+                parameters.put((String) params[i << 1], // i * 2
+                        (Class<?>) params[(i << 1) + 1]); // i * 2 + 1
             }
         }
 

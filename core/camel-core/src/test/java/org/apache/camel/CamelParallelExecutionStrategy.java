@@ -88,7 +88,7 @@ public class CamelParallelExecutionStrategy implements ParallelExecutionConfigur
         this.nbParallelExecutions = parallelism.orElse(DEFAULT_PARALLELISM);
         Optional<Integer> poolSize = configurationParameters.get(CONFIG_CUSTOM_MAXPOOLSIZE_PROPERTY_NAME,
                 Integer::valueOf);
-        this.maxPoolSize = poolSize.orElseGet(() -> nbParallelExecutions << 8);
+        this.maxPoolSize = poolSize.orElseGet(() -> nbParallelExecutions << 8); // nbParallelExecutions * 256
 
         LOG.info(String.format("Using custom JUnit parallel execution with parallelism=%d and maxPoolSize=%d",
                 nbParallelExecutions, maxPoolSize));

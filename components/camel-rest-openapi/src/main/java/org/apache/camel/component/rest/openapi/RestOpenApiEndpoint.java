@@ -674,7 +674,7 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         int pos = 0;
-        final StringBuilder resolved = new StringBuilder(uriTemplate.length() << 1);
+        final StringBuilder resolved = new StringBuilder(uriTemplate.length() << 1); // uriTemplate.length() * 2
         while (start != -1) {
             resolved.append(uriTemplate, pos, start);
 

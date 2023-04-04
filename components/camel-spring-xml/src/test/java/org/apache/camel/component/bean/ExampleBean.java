@@ -30,6 +30,6 @@ public class ExampleBean {
     }
 
     public long timesTwo(int value) {
-        return value << 1;
+        return value << 1; // value * 2
     }
 }

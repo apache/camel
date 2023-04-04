@@ -55,7 +55,7 @@ import org.apache.http.protocol.RequestUserAgent;
 public class AS2ClientConnection {
 
     private static final int RETRIEVE_FROM_CONNECTION_POOL_TIMEOUT_SECONDS = 5;
-    private static final int DEFAULT_BUFFER_SIZE = 8192;
+    private static final int DEFAULT_BUFFER_SIZE = 8192; // 8 * 1024
 
     private HttpHost targetHost;
     private HttpProcessor httpProcessor;

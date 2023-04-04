@@ -200,7 +200,7 @@ public final class Scanner implements Iterator<String>, Closeable {
             position -= offset;
             cast(buf).flip();
         } else {
-            int newSize = buf.capacity() << 1;
+            int newSize = buf.capacity() << 1; // buf.capacity() * 2
             CharBuffer newBuf = CharBuffer.allocate(newSize);
             newBuf.put(buf);
             cast(newBuf).flip();

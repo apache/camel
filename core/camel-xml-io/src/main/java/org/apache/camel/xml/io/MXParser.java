@@ -2080,6 +2080,7 @@ public class MXParser implements XmlPullParser {
                 while (true) {
                     ch = more();
                     if (ch >= '0' && ch <= '9') {
+                        // (charRef << 4) means charRef * 16
                         charRef = (char)((charRef << 4) + (ch - '0'));
                     } else if (ch >= 'a' && ch <= 'f') {
                         charRef = (char)((charRef << 4) + (ch - ('a' - 10)));

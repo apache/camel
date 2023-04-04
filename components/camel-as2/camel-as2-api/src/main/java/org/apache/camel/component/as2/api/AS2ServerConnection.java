@@ -51,7 +51,7 @@ public class AS2ServerConnection {
 
     private static final Logger LOG = LoggerFactory.getLogger(AS2ServerConnection.class);
 
-    private static final int DEFAULT_BUFFER_SIZE = 8192;
+    private static final int DEFAULT_BUFFER_SIZE = 8192; // 8 * 1024
     private static final String REQUEST_LISTENER_THREAD_NAME_PREFIX = "AS2Svr-";
     private static final String REQUEST_HANDLER_THREAD_NAME_PREFIX = "AS2Hdlr-";
 
