@@ -71,6 +71,8 @@ include::partial$component-endpoint-options.adoc[]
 
 |=======================================================================
 
+The endpoints accept either Java request objects as shown in the examples below or JSON. In JSON camel case for property names is replaced with all lower case seperated by underscores, e.g. processId becomes process_id.
+
 *Examples*
 
 * startProcess
@@ -92,6 +94,29 @@ include::partial$component-endpoint-options.adoc[]
                 long processInstanceKey = body.getProcessInstanceKey();
             }
         });
+----------------------------------------------------------------------------------------------------------------------
+
+*JSON Request Example*
+
+[source,json]
+----------------------------------------------------------------------------------------------------------------------
+    {
+        "process_id" : "Process_0e3ldfm",
+        "variables" : { "v1": "a", "v2": 10 }
+    }
+----------------------------------------------------------------------------------------------------------------------
+
+*JSON Response Example*
+
+[source,json]
+----------------------------------------------------------------------------------------------------------------------
+    {
+        "success": true,
+        "process_id": "Process_0e3ldfm",
+        "process_instance_key": 2251799813688297,
+        "process_version": 4,
+        "process_key": 2251799813685906
+    }
 ----------------------------------------------------------------------------------------------------------------------
 
 * cancelProcess
@@ -134,6 +159,29 @@ include::partial$component-endpoint-options.adoc[]
                 String messageKey = body.getMessageKey();
             }
         });
+----------------------------------------------------------------------------------------------------------------------
+
+*JSON Request Example*
+
+[source,json]
+----------------------------------------------------------------------------------------------------------------------
+    {
+        "correlation_key" : "messageKey",
+        "time-to-live" : 100,
+        "variables" : { "v1": "a", "v2": 10 },
+        "name" : "MessageName"
+    }
+----------------------------------------------------------------------------------------------------------------------
+
+*JSON Response Example*
+
+[source,json]
+----------------------------------------------------------------------------------------------------------------------
+    {
+        "success": true,
+        "correlation_key": "messageKey",
+        "message_key": 2251799813688336
+    }
 ----------------------------------------------------------------------------------------------------------------------
 
 * completeJob

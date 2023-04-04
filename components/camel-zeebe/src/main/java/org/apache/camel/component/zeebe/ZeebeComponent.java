@@ -29,9 +29,9 @@ import org.apache.camel.support.DefaultComponent;
 public class ZeebeComponent extends DefaultComponent {
 
     @Metadata(defaultValue = "" + ZeebeConstants.DEFAULT_GATEWAY_HOST, label = "security")
-    String gatewayHost;
+    String gatewayHost = ZeebeConstants.DEFAULT_GATEWAY_HOST;
     @Metadata(defaultValue = "" + ZeebeConstants.DEFAULT_GATEWAY_PORT, label = "security")
-    int gatewayPort;
+    int gatewayPort = ZeebeConstants.DEFAULT_GATEWAY_PORT;
     @Metadata(label = "security", secret = true)
     String clientId;
     @Metadata(label = "security", secret = true)
