@@ -31,8 +31,18 @@ public class FieldsToNullPropertyFilter extends SimpleBeanPropertyFilter {
 
         AbstractSObjectBase sob = (AbstractSObjectBase) pojo;
         String fieldName = writer.getName();
-        Object fieldValue = FieldUtils.readField(pojo, fieldName, true);
-        if (sob.getFieldsToNull().contains(writer.getName()) || fieldValue != null) {
+        Object fieldValue = null;
+        boolean failedToReadFieldValue = false;
+        try {
+            fieldValue = FieldUtils.readField(pojo, fieldName, true);
+        }
+        catch (IllegalArgumentException e) {
+            // This happens if the backing field for the getter doesn't match the name provided to @JsonProperty
+            // This is expected to happen in the case of blob fields, e.g., ContentVersion.getVersionDataUrl(),
+            // whose backing property is specified as @JsonData("VersionData")
+            failedToReadFieldValue = true;
+        }
+        if (sob.getFieldsToNull().contains(writer.getName()) || fieldValue != null || failedToReadFieldValue) {
             writer.serializeAsField(pojo, jgen, provider);
         } else {
             writer.serializeAsOmittedField(pojo, jgen, provider);
