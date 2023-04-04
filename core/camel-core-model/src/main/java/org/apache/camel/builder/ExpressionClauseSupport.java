@@ -967,7 +967,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * @return            the builder to continue processing the DSL
      */
     public T tokenize(String token, String headerName, boolean regex, int group, boolean skipFirst) {
-        return tokenize(token, headerName, regex, "" + group, skipFirst);
+        return tokenize(token, headerName, regex, Integer.toString(group), skipFirst);
     }
 
     /**
@@ -1033,7 +1033,7 @@ public class ExpressionClauseSupport<T> implements ExpressionFactoryAware, Predi
      * @return                         the builder to continue processing the DSL
      */
     public T tokenizeXMLPair(String tagName, String inheritNamespaceTagName, int group) {
-        return tokenizeXMLPair(tagName, inheritNamespaceTagName, "" + group);
+        return tokenizeXMLPair(tagName, inheritNamespaceTagName, Integer.toString(group));
     }
 
     /**

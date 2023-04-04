@@ -55,7 +55,7 @@ public class DefaultServiceCallExpression extends ServiceCallExpressionSupport {
                 answer = answer.replaceFirst(name + "\\.host", host);
             }
             if (answer.contains(name + ".port") && port != null) {
-                answer = answer.replaceFirst(name + "\\.port", "" + port);
+                answer = answer.replaceFirst(name + "\\.port", Integer.toString(port));
             }
             if (answer.contains(name) && port != null) {
                 answer = answer.replaceFirst(name, host + ":" + port);

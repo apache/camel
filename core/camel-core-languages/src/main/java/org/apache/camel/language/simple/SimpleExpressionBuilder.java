@@ -144,7 +144,7 @@ public final class SimpleExpressionBuilder {
                 // first use simple then create the group expression
                 exp = context.resolveLanguage("simple").createExpression(expression);
                 exp.init(context);
-                exp = ExpressionBuilder.groupIteratorExpression(exp, null, "" + group, false);
+                exp = ExpressionBuilder.groupIteratorExpression(exp, null, Integer.toString(group), false);
                 exp.init(context);
             }
 

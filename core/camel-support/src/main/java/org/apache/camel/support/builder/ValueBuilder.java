@@ -186,7 +186,7 @@ public class ValueBuilder implements Expression, Predicate {
     }
 
     public ValueBuilder tokenize(String token, int group, boolean skipFirst) {
-        return tokenize(token, "" + group, skipFirst);
+        return tokenize(token, Integer.toString(group), skipFirst);
     }
 
     public ValueBuilder tokenize(String token, String group, boolean skipFirst) {

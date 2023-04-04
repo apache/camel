@@ -86,8 +86,8 @@ public class ManagedInflightRepository extends ManagedService implements Managed
                 String fromRouteId = entry.getFromRouteId();
                 String atRouteId = entry.getAtRouteId();
                 String nodeId = entry.getNodeId();
-                String elapsed = "" + entry.getElapsed();
-                String duration = "" + entry.getDuration();
+                String elapsed = Long.toString(entry.getElapsed());
+                String duration = Long.toString(entry.getDuration());
 
                 CompositeData data = new CompositeDataSupport(
                         ct,

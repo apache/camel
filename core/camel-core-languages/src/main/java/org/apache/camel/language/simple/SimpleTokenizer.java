@@ -228,7 +228,7 @@ public final class SimpleTokenizer {
 
         // fallback and create a character token
         char ch = expression.charAt(index);
-        SimpleToken token = new SimpleToken(new SimpleTokenType(TokenType.character, "" + ch), index);
+        SimpleToken token = new SimpleToken(new SimpleTokenType(TokenType.character, String.valueOf(ch)), index);
         return token;
     }
 

@@ -3093,7 +3093,7 @@ public class MXParser implements XmlPullParser {
         if (ch > 127 || ch < 32) {
             return "\\u" + Integer.toHexString((int)ch);
         }
-        return "" + ch;
+        return String.valueOf(ch);
     }
 
     protected String printable(String s) {

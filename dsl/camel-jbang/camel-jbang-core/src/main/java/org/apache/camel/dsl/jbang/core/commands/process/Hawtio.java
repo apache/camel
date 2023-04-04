@@ -85,7 +85,7 @@ public class Hawtio extends CamelCommand {
 
     protected void disconnectJolokia() throws Exception {
         Jolokia jolokia = new Jolokia(getMain());
-        jolokia.name = "" + pid;
+        jolokia.name = Long.toString(pid);
         jolokia.stop = true;
         jolokia.call();
     }

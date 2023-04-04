@@ -102,7 +102,7 @@ public class ListHealth extends ProcessWatchCommand {
                         for (int i = 0; i < array.size(); i++) {
                             JsonObject o = (JsonObject) array.get(i);
                             Row row = new Row();
-                            row.pid = "" + ph.pid();
+                            row.pid = Long.toString(ph.pid());
                             row.uptime = extractSince(ph);
                             row.ago = TimeUtils.printSince(row.uptime);
                             row.name = context.getString("name");

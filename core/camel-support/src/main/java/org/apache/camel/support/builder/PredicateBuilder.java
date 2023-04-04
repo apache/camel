@@ -574,7 +574,7 @@ public class PredicateBuilder {
 
             @Override
             public String toString() {
-                return "" + answer;
+                return String.valueOf(answer);
             }
         };
     }

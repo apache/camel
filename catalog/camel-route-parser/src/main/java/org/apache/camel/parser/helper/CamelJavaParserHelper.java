@@ -606,7 +606,7 @@ public final class CamelJavaParserHelper {
         if (expression instanceof StringLiteral) {
             return ((StringLiteral) expression).getLiteralValue();
         } else if (expression instanceof BooleanLiteral) {
-            return "" + ((BooleanLiteral) expression).booleanValue();
+            return String.valueOf(((BooleanLiteral) expression).booleanValue());
         } else if (expression instanceof NumberLiteral) {
             return ((NumberLiteral) expression).getToken();
         }

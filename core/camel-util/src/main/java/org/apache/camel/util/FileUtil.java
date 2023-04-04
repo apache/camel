@@ -270,7 +270,7 @@ public final class FileUtil {
      * {@link java.io.File#separator}).
      */
     public static String compactPath(String path) {
-        return compactPath(path, "" + File.separatorChar);
+        return compactPath(path, String.valueOf(File.separatorChar));
     }
 
     /**
@@ -278,7 +278,7 @@ public final class FileUtil {
      *
      */
     public static String compactPath(String path, char separator) {
-        return compactPath(path, "" + separator);
+        return compactPath(path, String.valueOf(separator));
     }
 
     /**

@@ -734,7 +734,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "" + value;
+                return String.valueOf(value);
             }
         };
     }
@@ -1238,7 +1238,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "" + expression;
+                return String.valueOf(expression);
             }
         };
     }
@@ -1267,7 +1267,7 @@ public class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "" + expression;
+                return String.valueOf(expression);
             }
         };
     }

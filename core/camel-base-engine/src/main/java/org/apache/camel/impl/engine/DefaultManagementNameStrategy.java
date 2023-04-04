@@ -118,7 +118,7 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
         String answer = pattern;
         if (pattern.contains("#counter#")) {
             // only increment the counter on-demand
-            answer = pattern.replace("#counter#", "" + nextNameCounter());
+            answer = pattern.replace("#counter#", Long.toString(nextNameCounter()));
         }
         // camelId and name is the same tokens
         answer = answer.replace("#camelId#", name);

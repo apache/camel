@@ -36,7 +36,7 @@ public final class RuntimeUtil {
             String level, boolean color, boolean json, boolean pipe, boolean export) {
         if (INIT_DONE.compareAndSet(false, true)) {
             long pid = ProcessHandle.current().pid();
-            System.setProperty("pid", "" + pid);
+            System.setProperty("pid", Long.toString(pid));
 
             if (export) {
                 Configurator.initialize("CamelJBang", "log4j2-export.properties");

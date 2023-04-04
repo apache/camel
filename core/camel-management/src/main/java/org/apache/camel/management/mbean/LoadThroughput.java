@@ -64,7 +64,7 @@ public final class LoadThroughput {
 
     @Override
     public String toString() {
-        return "" + thp;
+        return Double.toString(thp);
     }
 
 }

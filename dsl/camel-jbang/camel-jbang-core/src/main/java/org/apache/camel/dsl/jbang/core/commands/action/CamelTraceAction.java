@@ -302,7 +302,7 @@ public class CamelTraceAction extends ActionBaseCommand {
                     JsonObject root = loadStatus(ph.pid());
                     if (root != null) {
                         Pid row = new Pid();
-                        row.pid = "" + ph.pid();
+                        row.pid = Long.toString(ph.pid());
                         JsonObject context = (JsonObject) root.get("context");
                         if (context == null) {
                             return;
@@ -853,7 +853,7 @@ public class CamelTraceAction extends ActionBaseCommand {
         } else if (r.last) {
             return "*<--";
         } else {
-            return "" + r.nodeId;
+            return r.nodeId;
         }
     }
 
