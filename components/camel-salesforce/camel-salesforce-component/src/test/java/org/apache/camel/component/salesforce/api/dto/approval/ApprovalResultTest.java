@@ -19,7 +19,6 @@ package org.apache.camel.component.salesforce.api.dto.approval;
 import java.io.IOException;
 import java.util.Iterator;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult.Result;
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
@@ -34,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ApprovalResultTest {
 
     @Test
-    public void shouldDeserializeFromJson() throws JsonProcessingException, IOException {
+    public void shouldDeserializeFromJson() throws IOException {
         final String json = "["//
                             + "{"//
                             + "\"actorIds\":[\"0050Y000000u5NOQAY\"],"//

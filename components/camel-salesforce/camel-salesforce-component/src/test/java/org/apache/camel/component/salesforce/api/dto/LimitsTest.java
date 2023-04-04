@@ -48,7 +48,7 @@ public class LimitsTest {
     }
 
     @Test
-    public void shouldDeserializeFromSalesforceGeneratedJSON() throws JsonProcessingException, IOException {
+    public void shouldDeserializeFromSalesforceGeneratedJSON() throws IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final Object read = mapper.readerFor(Limits.class)
@@ -66,7 +66,7 @@ public class LimitsTest {
     }
 
     @Test
-    public void shouldDeserializeWithUnsupportedKeys() throws JsonProcessingException, IOException {
+    public void shouldDeserializeWithUnsupportedKeys() throws IOException {
         final ObjectMapper mapper = JsonUtils.createObjectMapper();
 
         final Limits withUnsupported
