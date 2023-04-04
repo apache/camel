@@ -140,6 +140,8 @@ public class DefaultRoutesLoader extends ServiceSupport implements RoutesLoader,
 
     @Override
     public RoutesBuilderLoader getRoutesLoader(String extension) throws Exception {
+        ObjectHelper.notNull(extension, "extension");
+
         RoutesBuilderLoader answer = getCamelContext().getRegistry().lookupByNameAndType(
                 ROUTES_LOADER_KEY_PREFIX + extension,
                 RoutesBuilderLoader.class);
