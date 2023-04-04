@@ -33,6 +33,7 @@ import org.apache.camel.spring.spi.ApplicationContextBeanRepository;
 import org.apache.camel.spring.spi.SpringInjector;
 import org.apache.camel.spring.spi.SpringManagementMBeanAssembler;
 import org.apache.camel.support.DefaultRegistry;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.ResolverHelper;
 import org.slf4j.Logger;
@@ -237,7 +238,7 @@ public class SpringCamelContext extends DefaultCamelContext
             return endpoint;
         }
 
-        BeanProcessorFactory bpf = getCamelContextExtension().getBeanProcessorFactory();
+        BeanProcessorFactory bpf = PluginHelper.getBeanProcessorFactory(getCamelContextExtension());
         try {
             Processor bp = bpf.createBeanProcessor(this, bean, null);
             return new ProcessorEndpoint(uri, this, bp);

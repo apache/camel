@@ -284,7 +284,7 @@ public class MXParser implements XmlPullParser {
      * to compute - so it also means diminishing hash quality for long strings
      * but for XML parsing it should be good enough ...
      */
-    protected static final int fastHash(char ch[], int off, int len) {
+    protected static int fastHash(char ch[], int off, int len) {
         if (len == 0)
             return 0;
         // assert len >0
@@ -465,11 +465,11 @@ public class MXParser implements XmlPullParser {
             // this, null);
             // reportNsAttribs = state;
         } else if (FEATURE_NAMES_INTERNED.equals(name)) {
-            if (state != false) {
+            if (state) {
                 throw new XmlPullParserException("interning names in this implementation is not supported");
             }
         } else if (FEATURE_PROCESS_DOCDECL.equals(name)) {
-            if (state != false) {
+            if (state) {
                 throw new XmlPullParserException("processing DOCDECL is not supported");
             }
             // } else if(REPORT_DOCDECL.equals(name)) {
@@ -584,7 +584,7 @@ public class MXParser implements XmlPullParser {
     }
 
     public int getNamespaceCount(int depth) throws XmlPullParserException {
-        if (processNamespaces == false || depth == 0) {
+        if (!processNamespaces || depth == 0) {
             return 0;
         }
         // int maxDepth = eventType == END_TAG ? this.depth + 1 : this.depth;
@@ -852,7 +852,7 @@ public class MXParser implements XmlPullParser {
     public String getAttributeNamespace(int index) {
         if (eventType != START_TAG)
             throw new IndexOutOfBoundsException("only START_TAG can have attributes");
-        if (processNamespaces == false)
+        if (!processNamespaces)
             return NO_NAMESPACE;
         if (index < 0 || index >= attributeCount)
             throw new IndexOutOfBoundsException("attribute position must be 0.." + (attributeCount - 1) + " and not " + index);
@@ -870,7 +870,7 @@ public class MXParser implements XmlPullParser {
     public String getAttributePrefix(int index) {
         if (eventType != START_TAG)
             throw new IndexOutOfBoundsException("only START_TAG can have attributes");
-        if (processNamespaces == false)
+        if (!processNamespaces)
             return null;
         if (index < 0 || index >= attributeCount)
             throw new IndexOutOfBoundsException("attribute position must be 0.." + (attributeCount - 1) + " and not " + index);
@@ -942,7 +942,7 @@ public class MXParser implements XmlPullParser {
     }
 
     public void require(int type, String namespace, String name) throws XmlPullParserException, IOException {
-        if (processNamespaces == false && namespace != null) {
+        if (!processNamespaces && namespace != null) {
             throw new XmlPullParserException("processing namespaces must be enabled on parser (or factory)" + " to have possible namespaces declared on elements"
                                              + (" (position:" + getPositionDescription()) + ")");
         }
@@ -1272,7 +1272,7 @@ public class MXParser implements XmlPullParser {
                     hadCharData = true;
 
                     boolean normalizedCR = false;
-                    final boolean normalizeInput = tokenize == false || roundtripSupported == false;
+                    final boolean normalizeInput = !tokenize || !roundtripSupported;
                     // use loop locality here!!!!
                     boolean seenBracket = false;
                     boolean seenBracketBracket = false;
@@ -1477,7 +1477,7 @@ public class MXParser implements XmlPullParser {
             return eventType = END_DOCUMENT;
         }
         boolean gotS = false;
-        final boolean normalizeIgnorableWS = tokenize == true && roundtripSupported == false;
+        final boolean normalizeIgnorableWS = tokenize && !roundtripSupported;
         boolean normalizedCR = false;
         try {
             // epilog: Misc*
@@ -2216,7 +2216,7 @@ public class MXParser implements XmlPullParser {
         final int curLine = lineNumber;
         final int curColumn = columnNumber;
         try {
-            final boolean normalizeIgnorableWS = tokenize == true && roundtripSupported == false;
+            final boolean normalizeIgnorableWS = tokenize && !roundtripSupported;
             boolean normalizedCR = false;
 
             boolean seenDash = false;
@@ -2305,7 +2305,7 @@ public class MXParser implements XmlPullParser {
         final int curColumn = columnNumber;
         int piTargetStart = pos + bufAbsoluteStart;
         int piTargetEnd = -1;
-        final boolean normalizeIgnorableWS = tokenize == true && roundtripSupported == false;
+        final boolean normalizeIgnorableWS = tokenize && !roundtripSupported;
         boolean normalizedCR = false;
 
         try {
@@ -2603,7 +2603,7 @@ public class MXParser implements XmlPullParser {
         // [28] doctypedecl ::= '<!DOCTYPE' S Name (S ExternalID)? S? ('['
         // (markupdecl | DeclSep)* ']' S?)? '>'
         int bracketLevel = 0;
-        final boolean normalizeIgnorableWS = tokenize == true && roundtripSupported == false;
+        final boolean normalizeIgnorableWS = tokenize && !roundtripSupported;
         boolean normalizedCR = false;
         while (true) {
             ch = more();
@@ -2685,7 +2685,7 @@ public class MXParser implements XmlPullParser {
         final int cdStart = pos + bufAbsoluteStart;
         final int curLine = lineNumber;
         final int curColumn = columnNumber;
-        final boolean normalizeInput = tokenize == false || roundtripSupported == false;
+        final boolean normalizeInput = !tokenize || !roundtripSupported;
         try {
             if (normalizeInput) {
                 if (hadCharData) {
@@ -2976,13 +2976,13 @@ public class MXParser implements XmlPullParser {
     protected static boolean lookupNameStartChar[] = new boolean[LOOKUP_MAX];
     protected static boolean lookupNameChar[] = new boolean[LOOKUP_MAX];
 
-    private static final void setName(char ch)
+    private static void setName(char ch)
     // { lookupNameChar[ (int)ch / 32 ] |= (1 << (ch % 32)); }
     {
         lookupNameChar[ch] = true;
     }
 
-    private static final void setNameStart(char ch)
+    private static void setNameStart(char ch)
     // { lookupNameStartChar[ (int)ch / 32 ] |= (1 << (ch % 32)); setName(ch); }
     {
         lookupNameStartChar[ch] = true;
@@ -3093,7 +3093,7 @@ public class MXParser implements XmlPullParser {
         if (ch > 127 || ch < 32) {
             return "\\u" + Integer.toHexString((int)ch);
         }
-        return "" + ch;
+        return String.valueOf(ch);
     }
 
     protected String printable(String s) {

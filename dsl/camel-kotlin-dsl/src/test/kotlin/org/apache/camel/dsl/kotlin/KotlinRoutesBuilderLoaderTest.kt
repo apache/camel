@@ -41,7 +41,7 @@ class KotlinRoutesBuilderLoaderTest {
     @Test
     fun `load routes`() {
         val ctx = DefaultCamelContext()
-        val res = ctx.resourceLoader.resolveResource("/routes/routes.kts")
+        val res = PluginHelper.getResourceLoader(ctx).resolveResource("/routes/routes.kts")
 
         PluginHelper.getRoutesLoader(ctx).loadRoutes(res)
 
@@ -56,7 +56,7 @@ class KotlinRoutesBuilderLoaderTest {
     @Test
     fun `load routes with endpoint dsl`() {
         val ctx = DefaultCamelContext()
-        val res = ctx.resourceLoader.resolveResource("/routes/routes-with-endpoint-dsl.kts")
+        val res = PluginHelper.getResourceLoader(ctx).resolveResource("/routes/routes-with-endpoint-dsl.kts")
 
         PluginHelper.getRoutesLoader(ctx).loadRoutes(res)
 
@@ -73,7 +73,7 @@ class KotlinRoutesBuilderLoaderTest {
     @Test
     fun `load integration with rest`() {
         val ctx = DefaultCamelContext()
-        val res = ctx.resourceLoader.resolveResource("/routes/routes-with-rest.kts")
+        val res = PluginHelper.getResourceLoader(ctx).resolveResource("/routes/routes-with-rest.kts")
 
         PluginHelper.getRoutesLoader(ctx).loadRoutes(res)
 
@@ -107,7 +107,7 @@ class KotlinRoutesBuilderLoaderTest {
     @Test
     fun `load integration with beans`() {
         val ctx = DefaultCamelContext()
-        val res = ctx.resourceLoader.resolveResource("/routes/routes-with-beans.kts")
+        val res = PluginHelper.getResourceLoader(ctx).resolveResource("/routes/routes-with-beans.kts")
 
         PluginHelper.getRoutesLoader(ctx).loadRoutes(res)
 
@@ -122,7 +122,7 @@ class KotlinRoutesBuilderLoaderTest {
     @Test
     fun `load integration with components configuration`() {
         val ctx = DefaultCamelContext()
-        val res = ctx.resourceLoader.resolveResource("/routes/routes-with-components-configuration.kts")
+        val res = PluginHelper.getResourceLoader(ctx).resolveResource("/routes/routes-with-components-configuration.kts")
 
         PluginHelper.getRoutesLoader(ctx).loadRoutes(res)
 
@@ -142,7 +142,7 @@ class KotlinRoutesBuilderLoaderTest {
         assertThatExceptionOfType(RuntimeCamelException::class.java)
                 .isThrownBy {
                     val ctx = DefaultCamelContext()
-                    val res = ctx.resourceLoader.resolveResource("/routes/routes-with-components-configuration-error.kts")
+                    val res = PluginHelper.getResourceLoader(ctx).resolveResource("/routes/routes-with-components-configuration-error.kts")
 
                     PluginHelper.getRoutesLoader(ctx).loadRoutes(res)
                 }
@@ -153,7 +153,7 @@ class KotlinRoutesBuilderLoaderTest {
     @Test
     fun `load integration with languages configuration`() {
         val ctx = DefaultCamelContext()
-        val res = ctx.resourceLoader.resolveResource("/routes/routes-with-languages-configuration.kts")
+        val res = PluginHelper.getResourceLoader(ctx).resolveResource("/routes/routes-with-languages-configuration.kts")
 
         PluginHelper.getRoutesLoader(ctx).loadRoutes(res)
 
@@ -169,7 +169,7 @@ class KotlinRoutesBuilderLoaderTest {
     @Test
     fun `load integration with dataformats configuration`() {
         val ctx = DefaultCamelContext()
-        val res = ctx.resourceLoader.resolveResource("/routes/routes-with-dataformats-configuration.kts")
+        val res = PluginHelper.getResourceLoader(ctx).resolveResource("/routes/routes-with-dataformats-configuration.kts")
 
         PluginHelper.getRoutesLoader(ctx).loadRoutes(res)
 
@@ -185,7 +185,7 @@ class KotlinRoutesBuilderLoaderTest {
     @Test
     fun `load integration with error handler`() {
         val ctx = DefaultCamelContext()
-        val res = ctx.resourceLoader.resolveResource("/routes/routes-with-error-handler.kts")
+        val res = PluginHelper.getResourceLoader(ctx).resolveResource("/routes/routes-with-error-handler.kts")
 
         PluginHelper.getRoutesLoader(ctx).loadRoutes(res)
         ctx.start()

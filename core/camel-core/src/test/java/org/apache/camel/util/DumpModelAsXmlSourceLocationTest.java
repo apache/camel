@@ -18,8 +18,8 @@ package org.apache.camel.util;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -36,8 +36,7 @@ public class DumpModelAsXmlSourceLocationTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXml() throws Exception {
-        ExtendedCamelContext ecc = context.getCamelContextExtension();
-        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
+        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("myRoute"));
         assertNotNull(xml);
         log.info(xml);
 
@@ -47,8 +46,7 @@ public class DumpModelAsXmlSourceLocationTest extends ContextTestSupport {
 
     @Test
     public void testDumpModelAsXmlExternal() throws Exception {
-        ExtendedCamelContext ecc = context.getCamelContextExtension();
-        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, context.getRouteDefinition("cool"));
+        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, context.getRouteDefinition("cool"));
         assertNotNull(xml);
         log.info(xml);
 

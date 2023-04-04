@@ -407,8 +407,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
      * @return list of children and data
      */
     public List<ChildData> getCurrentData() {
-        List<ChildData> answer = new ArrayList<>();
-        answer.addAll(currentData.values());
+        List<ChildData> answer = new ArrayList<>(currentData.values());
         return answer;
     }
 
@@ -549,7 +548,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
         List<String> fullPaths = children.stream().map(c -> ZKPaths.makePath(path, c)).collect(Collectors.toList());
 
         Set<String> removedNodes = new HashSet<>(currentData.keySet());
-        removedNodes.removeAll(fullPaths);
+        fullPaths.forEach(removedNodes::remove);
 
         for (String fullPath : removedNodes) {
             remove(fullPath);

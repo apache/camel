@@ -858,8 +858,7 @@ public class NotifyBuilder {
      * @see           #whenExactBodiesReceived(Object...)
      */
     public NotifyBuilder whenBodiesReceived(Object... bodies) {
-        List<Object> bodyList = new ArrayList<>();
-        bodyList.addAll(Arrays.asList(bodies));
+        List<Object> bodyList = new ArrayList<>(Arrays.asList(bodies));
         return doWhenBodies(bodyList, true, false);
     }
 
@@ -874,8 +873,7 @@ public class NotifyBuilder {
      * @see           #whenExactBodiesDone(Object...)
      */
     public NotifyBuilder whenBodiesDone(Object... bodies) {
-        List<Object> bodyList = new ArrayList<>();
-        bodyList.addAll(Arrays.asList(bodies));
+        List<Object> bodyList = new ArrayList<>(Arrays.asList(bodies));
         return doWhenBodies(bodyList, false, false);
     }
 
@@ -889,8 +887,7 @@ public class NotifyBuilder {
      * @see           #whenBodiesReceived(Object...)
      */
     public NotifyBuilder whenExactBodiesReceived(Object... bodies) {
-        List<Object> bodyList = new ArrayList<>();
-        bodyList.addAll(Arrays.asList(bodies));
+        List<Object> bodyList = new ArrayList<>(Arrays.asList(bodies));
         return doWhenBodies(bodyList, true, true);
     }
 
@@ -904,8 +901,7 @@ public class NotifyBuilder {
      * @see           #whenExactBodiesDone(Object...)
      */
     public NotifyBuilder whenExactBodiesDone(Object... bodies) {
-        List<Object> bodyList = new ArrayList<>();
-        bodyList.addAll(Arrays.asList(bodies));
+        List<Object> bodyList = new ArrayList<>(Arrays.asList(bodies));
         return doWhenBodies(bodyList, false, true);
     }
 
@@ -966,9 +962,9 @@ public class NotifyBuilder {
             @Override
             public String toString() {
                 if (received) {
-                    return "" + (exact ? "whenExactBodiesReceived(" : "whenBodiesReceived(") + bodies + ")";
+                    return (exact ? "whenExactBodiesReceived(" : "whenBodiesReceived(") + bodies + ")";
                 } else {
-                    return "" + (exact ? "whenExactBodiesDone(" : "whenBodiesDone(") + bodies + ")";
+                    return (exact ? "whenExactBodiesDone(" : "whenBodiesDone(") + bodies + ")";
                 }
             }
         });

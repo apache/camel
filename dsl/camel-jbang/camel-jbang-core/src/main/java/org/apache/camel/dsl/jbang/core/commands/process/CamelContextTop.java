@@ -81,7 +81,7 @@ public class CamelContextTop extends ProcessWatchCommand {
                         if ("CamelJBang".equals(row.name)) {
                             row.name = ProcessHelper.extractName(root, ph);
                         }
-                        row.pid = "" + ph.pid();
+                        row.pid = Long.toString(ph.pid());
                         row.uptime = extractSince(ph);
                         row.ago = TimeUtils.printSince(row.uptime);
                         JsonObject runtime = (JsonObject) root.get("runtime");

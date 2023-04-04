@@ -2245,14 +2245,20 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a> Adds a bean which is
      * invoked which could be a final destination, or could be a transformation in a pipeline
      *
-     * @param  bean   the bean to invoke, or a reference to a bean if the type is a String
+     * @param  bean   the bean to invoke (if String then a reference to a bean, prefix with type: to specify FQN java
+     *                class)
      * @param  method the method name to invoke on the bean (can be used to avoid ambiguity)
      * @return        the builder
      */
     public Type bean(Object bean, String method) {
         BeanDefinition answer = new BeanDefinition();
         if (bean instanceof String) {
-            answer.setRef((String) bean);
+            String str = (String) bean;
+            if (str.startsWith("type:")) {
+                answer.setBeanType(str.substring(5));
+            } else {
+                answer.setRef(str);
+            }
         } else {
             answer.setBean(bean);
         }

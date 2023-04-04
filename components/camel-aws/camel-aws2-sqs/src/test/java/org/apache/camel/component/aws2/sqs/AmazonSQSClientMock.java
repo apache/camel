@@ -48,7 +48,6 @@ import software.amazon.awssdk.services.sqs.model.ListQueuesResponse;
 import software.amazon.awssdk.services.sqs.model.Message;
 import software.amazon.awssdk.services.sqs.model.PurgeQueueRequest;
 import software.amazon.awssdk.services.sqs.model.PurgeQueueResponse;
-import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequest;
@@ -129,7 +128,7 @@ public class AmazonSQSClientMock implements SqsClient {
 
     @Override
     public ReceiveMessageResponse receiveMessage(ReceiveMessageRequest receiveMessageRequest) {
-        Integer maxNumberOfMessages = receiveMessageRequest.maxNumberOfMessages() != null
+        int maxNumberOfMessages = receiveMessageRequest.maxNumberOfMessages() != null
                 ? receiveMessageRequest.maxNumberOfMessages() : Integer.MAX_VALUE;
         ReceiveMessageResponse.Builder result = ReceiveMessageResponse.builder();
         Collection<Message> resultMessages = new ArrayList<>();
@@ -209,7 +208,7 @@ public class AmazonSQSClientMock implements SqsClient {
 
     @Override
     public DeleteQueueResponse deleteQueue(DeleteQueueRequest deleteQueueRequest)
-            throws AwsServiceException, SdkClientException, SqsException {
+            throws AwsServiceException, SdkClientException {
         if (deleteQueueRequest.queueUrl() == null) {
             throw SqsException.builder().message("Queue name must be specified.").build();
         }
@@ -277,7 +276,7 @@ public class AmazonSQSClientMock implements SqsClient {
 
     @Override
     public GetQueueUrlResponse getQueueUrl(GetQueueUrlRequest getQueueUrlRequest)
-            throws QueueDoesNotExistException, AwsServiceException, SdkClientException, SqsException {
+            throws AwsServiceException, SdkClientException {
         return GetQueueUrlResponse.builder()
                 .queueUrl("https://queue.amazonaws.com/queue/camel-836")
                 .build();

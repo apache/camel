@@ -69,7 +69,7 @@ public final class EntityUtils {
      */
     public static String createBoundaryValue() {
         // TODO: ensure boundary string is limited to 70 characters or less.
-        StringBuffer s = new StringBuffer();
+        StringBuilder s = new StringBuilder();
         s.append("----=_Part_").append(partNumber.incrementAndGet()).append("_").append(s.hashCode()).append(".")
                 .append(System.currentTimeMillis());
         return s.toString();

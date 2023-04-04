@@ -48,11 +48,10 @@ public class MessageResponse extends AbstractZeebeResponse {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("MessageResponse{");
-        sb.append("correlationKey='").append(correlationKey).append('\'');
-        sb.append(", messageKey=").append(messageKey);
-        sb.append('}');
-        return sb.toString();
+        String sb = "MessageResponse{" + "correlationKey='" + correlationKey + '\'' +
+                    ", messageKey=" + messageKey +
+                    '}';
+        return sb;
     }
 
     @Override

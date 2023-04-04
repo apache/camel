@@ -166,7 +166,7 @@ public class CamelThreadDump extends ActionWatchCommand {
 
     protected void singleTable(List<Row> rows) {
         System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().header("ID").headerAlign(HorizontalAlign.CENTER).with(r -> "" + r.id),
+                new Column().header("ID").headerAlign(HorizontalAlign.CENTER).with(r -> Long.toString(r.id)),
                 new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
                         .with(r -> r.name),
                 new Column().header("STATE").headerAlign(HorizontalAlign.RIGHT).with(r -> r.state),
@@ -179,7 +179,7 @@ public class CamelThreadDump extends ActionWatchCommand {
     protected void tableAndStackTrace(List<Row> rows) {
         for (Row row : rows) {
             System.out.println(AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(row), Arrays.asList(
-                    new Column().header("ID").headerAlign(HorizontalAlign.CENTER).with(r -> "" + r.id),
+                    new Column().header("ID").headerAlign(HorizontalAlign.CENTER).with(r -> Long.toString(r.id)),
                     new Column().header("NAME").dataAlign(HorizontalAlign.LEFT).maxWidth(60, OverflowBehaviour.ELLIPSIS_RIGHT)
                             .with(r -> r.name),
                     new Column().header("STATE").headerAlign(HorizontalAlign.RIGHT).with(r -> r.state),
@@ -235,7 +235,7 @@ public class CamelThreadDump extends ActionWatchCommand {
         if (r.blockedTime > 0) {
             return r.blocked + "(" + r.blockedTime + "ms)";
         } else {
-            return "" + r.blocked;
+            return Long.toString(r.blocked);
         }
     }
 
@@ -243,7 +243,7 @@ public class CamelThreadDump extends ActionWatchCommand {
         if (r.waitedTime > 0) {
             return r.waited + "(" + r.waitedTime + "ms)";
         } else {
-            return "" + r.waited;
+            return Long.toString(r.waited);
         }
     }
 
@@ -251,7 +251,7 @@ public class CamelThreadDump extends ActionWatchCommand {
         if (r.stackTrace == null || r.stackTrace.isEmpty()) {
             return "";
         }
-        return "" + r.stackTrace.get(0);
+        return r.stackTrace.get(0);
     }
 
     private static class Row {

@@ -84,14 +84,13 @@ public class MessageRequest implements ZeebeMessage {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("MessageRequest{");
-        sb.append("name='").append(name).append('\'');
-        sb.append(", correlationKey='").append(correlationKey).append('\'');
-        sb.append(", timeToLive=").append(timeToLive);
-        sb.append(", messageId='").append(messageId).append('\'');
-        sb.append(", variables=").append(variables);
-        sb.append('}');
-        return sb.toString();
+        String sb = "MessageRequest{" + "name='" + name + '\'' +
+                    ", correlationKey='" + correlationKey + '\'' +
+                    ", timeToLive=" + timeToLive +
+                    ", messageId='" + messageId + '\'' +
+                    ", variables=" + variables +
+                    '}';
+        return sb;
     }
 
     @Override

@@ -102,7 +102,7 @@ public class ListHealth extends ProcessWatchCommand {
                         for (int i = 0; i < array.size(); i++) {
                             JsonObject o = (JsonObject) array.get(i);
                             Row row = new Row();
-                            row.pid = "" + ph.pid();
+                            row.pid = Long.toString(ph.pid());
                             row.uptime = extractSince(ph);
                             row.ago = TimeUtils.printSince(row.uptime);
                             row.name = context.getString("name");
@@ -153,13 +153,14 @@ public class ListHealth extends ProcessWatchCommand {
                                         row.sinceStartFailure = TimeUtils.printAge(delta);
                                     }
                                 }
-                                for (String k : d.keySet()) {
+                                for (Map.Entry<String, Object> entry : d.entrySet()) {
+                                    String k = entry.getKey();
                                     // gather custom details
                                     if (!HealthCheckHelper.isReservedKey(k)) {
                                         if (row.customMeta == null) {
                                             row.customMeta = new TreeMap<>();
                                         }
-                                        row.customMeta.put(k, d.get(k));
+                                        row.customMeta.put(k, entry.getValue());
                                     }
                                 }
                             }

@@ -60,6 +60,7 @@ import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RoutesLoader;
 import org.apache.camel.spi.UriFactoryResolver;
 import org.apache.camel.startup.jfr.FlightRecorderStartupStepRecorder;
@@ -307,7 +308,6 @@ public class KameletMain extends MainCommandLineSupport {
     protected CamelContext createCamelContext() {
         // do not build/init camel context yet
         DefaultCamelContext answer = new DefaultCamelContext(false);
-        answer.setLogJvmUptime(true);
         if (download) {
             ClassLoader dynamicCL = createApplicationContextClassLoader();
             answer.setApplicationContextClassLoader(dynamicCL);
@@ -455,7 +455,8 @@ public class KameletMain extends MainCommandLineSupport {
                     new DependencyDownloaderDataFormatResolver(answer));
             answer.getCamelContextExtension().addContextPlugin(LanguageResolver.class,
                     new DependencyDownloaderLanguageResolver(answer));
-            answer.setResourceLoader(new DependencyDownloaderResourceLoader(answer));
+            answer.getCamelContextExtension().addContextPlugin(ResourceLoader.class,
+                    new DependencyDownloaderResourceLoader(answer));
             answer.setInjector(new KameletMainInjector(answer.getInjector(), stub));
             answer.addService(new DependencyDownloaderKamelet(answer));
             answer.getCamelContextExtension().getRegistry().bind(DownloadModelineParser.class.getSimpleName(),

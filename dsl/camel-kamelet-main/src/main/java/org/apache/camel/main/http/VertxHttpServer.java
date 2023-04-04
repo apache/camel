@@ -92,7 +92,7 @@ public final class VertxHttpServer {
 
     private static void doRegisterServer(CamelContext camelContext, int port, boolean stub) {
         // need to capture we use http-server
-        CamelJBangSettingsHelper.writeSettings("camel.jbang.platform-http.port", "" + port);
+        CamelJBangSettingsHelper.writeSettings("camel.jbang.platform-http.port", Integer.toString(port));
 
         if (stub) {
             return;

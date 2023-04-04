@@ -393,7 +393,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
                 String targetClass = oneToMany.mappedTo();
 
-                if (!targetClass.equals("")) {
+                if (!targetClass.isEmpty()) {
                     // Class cl = Class.forName(targetClass); Does not work in
                     // OSGI when class is defined in another bundle
                     Class<?> cl = null;

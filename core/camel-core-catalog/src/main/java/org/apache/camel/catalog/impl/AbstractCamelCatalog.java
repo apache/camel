@@ -840,22 +840,22 @@ public abstract class AbstractCamelCatalog {
         Map<String, String> copy = new TreeMap<>(properties);
 
         Matcher syntaxMatcher = COMPONENT_SYNTAX_PARSER.matcher(originalSyntax);
-        StringBuffer buf = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         while (syntaxMatcher.find()) {
-            buf.append(syntaxMatcher.group(1));
+            sb.append(syntaxMatcher.group(1));
             String propertyName = syntaxMatcher.group(2);
             String propertyValue = copy.remove(propertyName);
-            buf.append(propertyValue != null ? propertyValue : propertyName);
+            sb.append(propertyValue != null ? propertyValue : propertyName);
         }
         // clip the scheme from the syntax
-        String syntax = buf.toString();
+        String syntax = sb.toString();
 
         // do we have all the options the original syntax needs (easy way)
         String[] keys = syntaxKeys(originalSyntax);
         boolean hasAllKeys = properties.keySet().containsAll(Arrays.asList(keys));
 
         // build endpoint uri
-        StringBuilder sb = new StringBuilder();
+        sb = new StringBuilder();
         // add scheme later as we need to take care if there is any context-path or query parameters which
         // affect how the URI should be constructed
 

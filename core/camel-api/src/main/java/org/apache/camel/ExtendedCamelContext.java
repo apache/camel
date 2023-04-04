@@ -22,11 +22,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 import org.apache.camel.catalog.RuntimeCamelCatalog;
-import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.BeanIntrospection;
-import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.ExchangeFactory;
@@ -37,17 +33,14 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
-import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.StartupStepRecorder;
-import org.apache.camel.spi.UnitOfWorkFactory;
 
 /**
  * Extended {@link CamelContext} which contains the methods and APIs that are not primary intended for Camel end users
@@ -310,41 +303,6 @@ public interface ExtendedCamelContext {
     FactoryFinder getFactoryFinder(String path);
 
     /**
-     * Gets the {@link DeferServiceFactory} to use.
-     */
-    DeferServiceFactory getDeferServiceFactory();
-
-    /**
-     * Sets a custom {@link DeferServiceFactory} to use.
-     */
-    void setDeferServiceFactory(DeferServiceFactory deferServiceFactory);
-
-    /**
-     * Gets the {@link UnitOfWorkFactory} to use.
-     */
-    UnitOfWorkFactory getUnitOfWorkFactory();
-
-    /**
-     * Sets a custom {@link UnitOfWorkFactory} to use.
-     */
-    void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory);
-
-    /**
-     * Gets the {@link AnnotationBasedProcessorFactory} to use.
-     */
-    AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory();
-
-    /**
-     * Sets a custom {@link AnnotationBasedProcessorFactory} to use.
-     */
-    void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory);
-
-    /**
-     * Gets the {@link BeanProcessorFactory} to use.
-     */
-    BeanProcessorFactory getBeanProcessorFactory();
-
-    /**
      * Adds the given interceptor strategy
      *
      * @param interceptStrategy the strategy
@@ -374,16 +332,6 @@ public interface ExtendedCamelContext {
      * Adds a {@link LogListener}.
      */
     void addLogListener(LogListener listener);
-
-    /**
-     * Gets the {@link BeanIntrospection}
-     */
-    BeanIntrospection getBeanIntrospection();
-
-    /**
-     * Sets a custom {@link BeanIntrospection}.
-     */
-    void setBeanIntrospection(BeanIntrospection beanIntrospection);
 
     /**
      * Gets the {@link HeadersMapFactory} to use.
@@ -421,26 +369,6 @@ public interface ExtendedCamelContext {
      * there are no event listeners that are listening for exchange events.
      */
     void setEventNotificationApplicable(boolean eventNotificationApplicable);
-
-    /**
-     * Gets the {@link ResourceLoader} to be used.
-     */
-    ResourceLoader getResourceLoader();
-
-    /**
-     * Sets a custom {@link ResourceLoader} to be used.
-     */
-    void setResourceLoader(ResourceLoader resourceLoader);
-
-    /**
-     * Gets the {@link ModelToXMLDumper} to be used.
-     */
-    ModelToXMLDumper getModelToXMLDumper();
-
-    /**
-     * Sets a custom {@link ModelToXMLDumper} to be used.
-     */
-    void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper);
 
     /**
      * Internal {@link RouteController} that are only used internally by Camel to perform basic route operations. Do not

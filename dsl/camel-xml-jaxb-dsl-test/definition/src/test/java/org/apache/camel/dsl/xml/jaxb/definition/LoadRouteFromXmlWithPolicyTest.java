@@ -18,7 +18,6 @@ package org.apache.camel.dsl.xml.jaxb.definition;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -47,10 +46,10 @@ public class LoadRouteFromXmlWithPolicyTest extends ContextTestSupport {
 
     @Test
     public void testLoadRouteFromXmlWitPolicy() throws Exception {
-        ExtendedCamelContext ecc = context.getCamelContextExtension();
         Resource resource
-                = ecc.getResourceLoader().resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barPolicyRoute.xml");
-        PluginHelper.getRoutesLoader(ecc).loadRoutes(resource);
+                = PluginHelper.getResourceLoader(context)
+                        .resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barPolicyRoute.xml");
+        PluginHelper.getRoutesLoader(context).loadRoutes(resource);
         context.start();
 
         assertNotNull(context.getRoute("foo"), "Loaded foo route should be there");

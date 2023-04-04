@@ -369,11 +369,25 @@ the FQN, and *not* the simple name "MyOrder", then follow this example:
 .bean(OrderService.class, "doSomething(com.foo.MyOrder.class)")
 ----
 
-Camel currently only supports either specifying parameter binding or
+=== Declaring parameter type and value
+
+*Available as of Camel 4.0*
+
+Camel 3.x only supports either specifying parameter binding or
 type per parameter in the method name option. You *cannot* specify both
-at the same time, such as
+at the same time, such as:
 
 [source,text]
 ----
-doSomething(com.foo.MyOrder.class ${body}, boolean ${header.high})
+doSomething(com.foo.MyOrder.class ${body}, boolean ${header.high}, int 123)
 ----
+
+However, we have implemented support for this in Camel 4,
+where you can declare both using _name.class value_ syntax as shown:
+
+[source,text]
+----
+doSomething(com.foo.MyOrder.class ${body}, boolean.class ${header.high}, int.class 123)
+----
+
+Notice that you *MUST* use `name.class` when declaring the type, also for String, int, boolean etc.

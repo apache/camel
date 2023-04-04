@@ -117,9 +117,9 @@ public final class RouteCoverageXmlParser {
                                     .getContextPlugin(ManagedCamelContext.class).getManagedRoute(id);
                             if (route != null) {
                                 long total = route.getExchangesTotal();
-                                el.setAttribute("exchangesTotal", "" + total);
+                                el.setAttribute("exchangesTotal", Long.toString(total));
                                 long totalTime = route.getTotalProcessingTime();
-                                el.setAttribute("totalProcessingTime", "" + totalTime);
+                                el.setAttribute("totalProcessingTime", Long.toString(totalTime));
                             }
                         } else if ("from".equals(qName)) {
                             // grab statistics from the parent route as from would be the same
@@ -131,9 +131,9 @@ public final class RouteCoverageXmlParser {
                                                 .getManagedRoute(routeId);
                                 if (route != null) {
                                     long total = route.getExchangesTotal();
-                                    el.setAttribute("exchangesTotal", "" + total);
+                                    el.setAttribute("exchangesTotal", Long.toString(total));
                                     long totalTime = route.getTotalProcessingTime();
-                                    el.setAttribute("totalProcessingTime", "" + totalTime);
+                                    el.setAttribute("totalProcessingTime", Long.toString(totalTime));
                                     // from is index-0
                                     el.setAttribute("index", "0");
                                 }
@@ -144,11 +144,11 @@ public final class RouteCoverageXmlParser {
                                             .getManagedProcessor(id);
                             if (processor != null) {
                                 long total = processor.getExchangesTotal();
-                                el.setAttribute("exchangesTotal", "" + total);
+                                el.setAttribute("exchangesTotal", Long.toString(total));
                                 long totalTime = processor.getTotalProcessingTime();
-                                el.setAttribute("totalProcessingTime", "" + totalTime);
+                                el.setAttribute("totalProcessingTime", Long.toString(totalTime));
                                 int index = processor.getIndex();
-                                el.setAttribute("index", "" + index);
+                                el.setAttribute("index", Integer.toString(index));
                             }
                         }
                     } catch (Exception e) {

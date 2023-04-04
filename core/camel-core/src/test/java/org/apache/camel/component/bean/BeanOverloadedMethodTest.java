@@ -36,7 +36,7 @@ public class BeanOverloadedMethodTest extends ContextTestSupport {
     }
 
     @Test
-    public void testHelloOverloadedHeString() throws Exception {
+    public void testHelloOverloadedString() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {

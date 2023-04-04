@@ -42,6 +42,7 @@ import org.apache.camel.model.Model;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelLifecycleStrategy;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ContextReloadStrategy;
@@ -137,11 +138,12 @@ public final class DefaultConfigurationConfigurer {
 
         ecc.setLightweight(config.isLightweight());
         PluginHelper.getBeanPostProcessor(ecc).setEnabled(config.isBeanPostProcessorEnabled());
-        ecc.getBeanIntrospection().setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());
+        final BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(ecc);
+        beanIntrospection.setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());
         if (config.getBeanIntrospectionLoggingLevel() != null) {
-            ecc.getBeanIntrospection().setLoggingLevel(config.getBeanIntrospectionLoggingLevel());
+            beanIntrospection.setLoggingLevel(config.getBeanIntrospectionLoggingLevel());
         }
-        ecc.getBeanIntrospection().afterPropertiesConfigured(camelContext);
+        beanIntrospection.afterPropertiesConfigured(camelContext);
 
         if ("pooled".equals(config.getExchangeFactory())) {
             ecc.setExchangeFactory(new PooledExchangeFactory());
@@ -180,7 +182,8 @@ public final class DefaultConfigurationConfigurer {
         camelContext.getInflightRepository().setInflightBrowseEnabled(config.isInflightRepositoryBrowseEnabled());
 
         if (config.getLogDebugMaxChars() != 0) {
-            camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "" + config.getLogDebugMaxChars());
+            camelContext.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS,
+                    Integer.toString(config.getLogDebugMaxChars()));
         }
 
         // stream caching
@@ -399,7 +402,7 @@ public final class DefaultConfigurationConfigurer {
         }
         UnitOfWorkFactory uowf = getSingleBeanOfType(registry, UnitOfWorkFactory.class);
         if (uowf != null) {
-            ecc.getCamelContextExtension().setUnitOfWorkFactory(uowf);
+            ecc.getCamelContextExtension().addContextPlugin(UnitOfWorkFactory.class, uowf);
         }
         RuntimeEndpointRegistry rer = getSingleBeanOfType(registry, RuntimeEndpointRegistry.class);
         if (rer != null) {

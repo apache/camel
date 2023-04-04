@@ -109,7 +109,7 @@ public class FakeAWSDaemon {
                         for (String segment : segments) {
                             locSegment = segment;
                             LOG.trace("Processing received segment: {}", segment);
-                            if (!"".equals(segment)) {
+                            if (!segment.isEmpty()) {
                                 if (!segment.endsWith("}")
                                         || StringUtils.countMatches(segment, "{") != StringUtils.countMatches(segment, "}")
                                         || StringUtils.countMatches(segment, "[") != StringUtils.countMatches(segment, "]")) {

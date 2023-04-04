@@ -114,7 +114,8 @@ public class JsseParameters implements CamelContextAware {
     protected InputStream resolveResource(String resource) throws IOException {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
 
-        Resource res = getCamelContext().getCamelContextExtension().getResourceLoader().resolveResource(resource);
+        Resource res
+                = getCamelContext().getCamelContextExtension().getContextPlugin(ResourceLoader.class).resolveResource(resource);
         if (res == null) {
             throw new IOException("Could not open " + resource + " as a file, class path resource, or URL.");
         }

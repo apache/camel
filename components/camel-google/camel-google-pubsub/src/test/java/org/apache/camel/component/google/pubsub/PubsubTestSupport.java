@@ -133,7 +133,7 @@ public class PubsubTestSupport extends CamelTestSupport {
 
     private FixedTransportChannelProvider createChannelProvider() {
         ManagedChannel channel = ManagedChannelBuilder
-                .forTarget(String.format(service.getServiceAddress()))
+                .forTarget(service.getServiceAddress())
                 .usePlaintext()
                 .build();
 

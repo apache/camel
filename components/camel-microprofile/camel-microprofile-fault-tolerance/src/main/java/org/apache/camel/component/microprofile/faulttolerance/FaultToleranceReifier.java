@@ -173,7 +173,7 @@ public class FaultToleranceReifier extends ProcessorReifier<CircuitBreakerDefini
     }
 
     private void loadProperties(Map<String, Object> properties, Optional<?> optional, PropertyConfigurer configurer) {
-        BeanIntrospection beanIntrospection = camelContext.getCamelContextExtension().getBeanIntrospection();
+        BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(camelContext);
         optional.ifPresent(bean -> {
             if (configurer instanceof ExtendedPropertyConfigurerGetter) {
                 ExtendedPropertyConfigurerGetter getter = (ExtendedPropertyConfigurerGetter) configurer;

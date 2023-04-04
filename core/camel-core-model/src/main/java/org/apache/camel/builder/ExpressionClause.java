@@ -785,7 +785,7 @@ public class ExpressionClause<T> implements Expression, Predicate {
      * @return           the builder to continue processing the DSL
      */
     public T tokenize(String token, boolean regex, int group, String groupDelimiter, boolean skipFirst) {
-        return delegate.tokenize(token, null, regex, "" + group, groupDelimiter, skipFirst);
+        return delegate.tokenize(token, null, regex, Integer.toString(group), groupDelimiter, skipFirst);
     }
 
     /**

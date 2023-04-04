@@ -41,7 +41,7 @@ public class CamelLoadRoutesFromXMLTest extends ContextTestSupport {
         assertTrue(camel.getStatus().isStarted());
 
         // load routes from xml file
-        Resource resource = camel.getResourceLoader().resolveResource("org/apache/camel/spring/myRoutes.xml");
+        Resource resource = PluginHelper.getResourceLoader(camel).resolveResource("org/apache/camel/spring/myRoutes.xml");
         PluginHelper.getRoutesLoader(camel).loadRoutes(resource);
 
         assertEquals(2, camel.getRoutes().size());
@@ -77,7 +77,7 @@ public class CamelLoadRoutesFromXMLTest extends ContextTestSupport {
         //camel.getRouteController().removeRoute("bar");
 
         // load updated xml
-        resource = camel.getResourceLoader().resolveResource("org/apache/camel/spring/myUpdatedRoutes.xml");
+        resource = PluginHelper.getResourceLoader(camel).resolveResource("org/apache/camel/spring/myUpdatedRoutes.xml");
         PluginHelper.getRoutesLoader(camel).loadRoutes(resource);
 
         assertEquals(2, camel.getRoutes().size());

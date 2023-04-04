@@ -43,7 +43,7 @@ public final class UnitUtils {
             return bytes + " B";
         }
         int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = "" + "kMGTPE".charAt(exp - 1);
+        String pre = String.valueOf("kMGTPE".charAt(exp - 1));
         return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
@@ -75,7 +75,7 @@ public final class UnitUtils {
             return bytes + " B";
         }
         int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = "" + "kMGTPE".charAt(exp - 1);
+        String pre = String.valueOf("kMGTPE".charAt(exp - 1));
         String answer = String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
 
         char sep = DecimalFormatSymbols.getInstance().getDecimalSeparator();

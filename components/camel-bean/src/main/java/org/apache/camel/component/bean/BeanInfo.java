@@ -244,7 +244,7 @@ public class BeanInfo {
                         }
                     }
 
-                    if (methodInfo == null || name != null && !name.equals(methodInfo.getMethod().getName())) {
+                    if (methodInfo == null || !name.equals(methodInfo.getMethod().getName())) {
                         throw new AmbiguousMethodCallException(exchange, methods);
                     }
                 } else {
@@ -682,7 +682,7 @@ public class BeanInfo {
                     parameter = parameter.trim();
                 }
 
-                Class<?> parameterType = BeanHelper.getValidParameterType(parameter);
+                Class<?> parameterType = BeanHelper.getValidParameterType(exchange.getContext().getClassResolver(), parameter);
                 Class<?> expectedType = info.getParameters().get(index).getType();
 
                 if (parameterType != null && expectedType != null) {
@@ -1091,7 +1091,7 @@ public class BeanInfo {
         String types = StringHelper.betweenOuterPair(methodName, '(', ')');
         if (org.apache.camel.util.ObjectHelper.isNotEmpty(types)) {
             // we must qualify based on types to match method
-            String[] parameters = StringQuoteHelper.splitSafeQuote(types, ',');
+            String[] parameters = StringQuoteHelper.splitSafeQuote(types, ',', true, true);
             Class<?>[] parameterTypes = null;
             Iterator<?> it = ObjectHelper.createIterator(parameters);
             for (int i = 0; i < method.getParameterCount(); i++) {
@@ -1107,15 +1107,20 @@ public class BeanInfo {
                     }
                     // trim the type
                     qualifyType = qualifyType.trim();
+                    String value = qualifyType;
+                    int pos1 = qualifyType.indexOf(' ');
+                    int pos2 = qualifyType.indexOf(".class");
+                    if (pos1 != -1 && pos2 != -1 && pos1 > pos2) {
+                        // a parameter can include type in the syntax to help with choosing correct method
+                        // therefore we need to check if type is provided in syntax (name.class value, name2.class value2, ...)
+                        value = qualifyType.substring(pos1);
+                        value = value.trim();
+                        qualifyType = qualifyType.substring(0, pos1);
+                        qualifyType = qualifyType.trim();
+                    }
 
                     if ("*".equals(qualifyType)) {
                         // * is a wildcard so we accept and match that parameter type
-                        continue;
-                    }
-
-                    if (BeanHelper.isValidParameterValue(qualifyType)) {
-                        // its a parameter value, so continue to next parameter
-                        // as we should only check for FQN/type parameters
                         continue;
                     }
 
@@ -1124,6 +1129,13 @@ public class BeanInfo {
                             qualifyType, parameterType);
                     // the method will return null if the qualifyType is not a class
                     if (assignable != null && !assignable) {
+                        return false;
+                    }
+
+                    if (!qualifyType.endsWith(".class")
+                            && !BeanHelper.isValidParameterValue(getCamelContext().getClassResolver(), value)) {
+                        // its a parameter value, so continue to next parameter
+                        // as we should only check for FQN/type parameters
                         return false;
                     }
 
@@ -1157,7 +1169,7 @@ public class BeanInfo {
     }
 
     /**
-     * Do we have a method with the given name.
+     * Do we have a method with the given name?
      * <p/>
      * Shorthand method names for getters is supported, so you can pass in eg 'name' and Camel will can find the real
      * 'getName' method instead.

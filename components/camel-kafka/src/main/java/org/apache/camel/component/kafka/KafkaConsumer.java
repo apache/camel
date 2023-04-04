@@ -157,7 +157,7 @@ public class KafkaConsumer extends DefaultConsumer
         BridgeExceptionHandlerToErrorHandler bridge = new BridgeExceptionHandlerToErrorHandler(this);
         for (int i = 0; i < endpoint.getConfiguration().getConsumersCount(); i++) {
             KafkaFetchRecords task = new KafkaFetchRecords(
-                    this, bridge, topic, pattern, i + "", getProps(), consumerListener);
+                    this, bridge, topic, pattern, Integer.toString(i), getProps(), consumerListener);
 
             executor.submit(task);
 

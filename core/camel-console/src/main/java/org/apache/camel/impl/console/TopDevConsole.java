@@ -33,6 +33,7 @@ import org.apache.camel.spi.Resource;
 import org.apache.camel.spi.annotations.DevConsole;
 import org.apache.camel.support.LoggerHelper;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.console.AbstractDevConsole;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -107,8 +108,7 @@ public class TopDevConsole extends AbstractDevConsole {
                         int line = mpb.getSourceLineNumber();
                         try {
                             loc = LoggerHelper.stripSourceLocationLineNumber(loc);
-                            Resource resource = getCamelContext().getCamelContextExtension().getResourceLoader()
-                                    .resolveResource(loc);
+                            Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource(loc);
                             if (resource != null) {
                                 LineNumberReader reader = new LineNumberReader(resource.getReader());
                                 for (int i = 1; i < line + 3; i++) {
@@ -210,8 +210,7 @@ public class TopDevConsole extends AbstractDevConsole {
                         int line = mpb.getSourceLineNumber();
                         try {
                             loc = LoggerHelper.stripSourceLocationLineNumber(loc);
-                            Resource resource = getCamelContext().getCamelContextExtension().getResourceLoader()
-                                    .resolveResource(loc);
+                            Resource resource = PluginHelper.getResourceLoader(getCamelContext()).resolveResource(loc);
                             if (resource != null) {
                                 LineNumberReader reader = new LineNumberReader(resource.getReader());
                                 for (int i = 1; i < line + 3; i++) {

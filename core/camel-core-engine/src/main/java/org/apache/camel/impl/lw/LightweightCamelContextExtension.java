@@ -36,11 +36,7 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.spi.AnnotationBasedProcessorFactory;
-import org.apache.camel.spi.BeanIntrospection;
-import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BootstrapCloseable;
-import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EndpointUriFactory;
 import org.apache.camel.spi.ExchangeFactory;
@@ -50,19 +46,16 @@ import org.apache.camel.spi.HeadersMapFactory;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.ManagementMBeanAssembler;
-import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.NormalizedEndpointUri;
 import org.apache.camel.spi.PluginManager;
 import org.apache.camel.spi.ProcessorExchangeFactory;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.StartupStepRecorder;
 import org.apache.camel.spi.SupervisingRouteController;
-import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.support.NormalizedUri;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -235,57 +228,12 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public DeferServiceFactory getDeferServiceFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setDeferServiceFactory(DeferServiceFactory deferServiceFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public UnitOfWorkFactory getUnitOfWorkFactory() {
-        return camelContext.getCamelContextExtension().getUnitOfWorkFactory();
-    }
-
-    @Override
-    public void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setAnnotationBasedProcessorFactory(AnnotationBasedProcessorFactory annotationBasedProcessorFactory) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public BeanProcessorFactory getBeanProcessorFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public List<InterceptStrategy> getInterceptStrategies() {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public Set<LogListener> getLogListeners() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public BeanIntrospection getBeanIntrospection() {
-        return camelContext.getCamelContextExtension().getBeanIntrospection();
-    }
-
-    @Override
-    public void setBeanIntrospection(BeanIntrospection beanIntrospection) {
         throw new UnsupportedOperationException();
     }
 
@@ -350,16 +298,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
     }
 
     @Override
-    public ModelToXMLDumper getModelToXMLDumper() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setModelToXMLDumper(ModelToXMLDumper modelToXMLDumper) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void addRoute(Route route) {
         throw new UnsupportedOperationException();
     }
@@ -397,16 +335,6 @@ class LightweightCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void addLogListener(LogListener listener) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ResourceLoader getResourceLoader() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setResourceLoader(ResourceLoader resourceLoader) {
         throw new UnsupportedOperationException();
     }
 

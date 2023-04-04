@@ -27,7 +27,7 @@ class EmptyRouteFileTest extends YamlTestSupport {
 
     def "empty file"() {
         when:
-            RoutesLoader loader = PluginHelper.getRoutesLoader(context).getRoutesLoader()
+            RoutesLoader loader = PluginHelper.getRoutesLoader(context);
             Resource res = ResourceHelper.fromString("dummy.yaml", "");
         then:
             try {

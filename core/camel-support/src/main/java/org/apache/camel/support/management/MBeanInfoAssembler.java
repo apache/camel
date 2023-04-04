@@ -33,7 +33,6 @@ import javax.management.modelmbean.ModelMBeanNotificationInfo;
 import javax.management.modelmbean.ModelMBeanOperationInfo;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedNotification;
@@ -43,6 +42,7 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
@@ -65,8 +65,7 @@ public class MBeanInfoAssembler implements Service {
     private Map<Class<?>, MBeanAttributesAndOperations> cache;
 
     public MBeanInfoAssembler(CamelContext camelContext) {
-        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
-        this.beanIntrospection = ecc.getBeanIntrospection();
+        this.beanIntrospection = PluginHelper.getBeanIntrospection(camelContext);
     }
 
     @Override

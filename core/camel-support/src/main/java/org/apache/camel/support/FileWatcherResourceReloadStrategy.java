@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedResource;
@@ -285,9 +284,9 @@ public class FileWatcherResourceReloadStrategy extends ResourceReloadStrategySup
                         if (accept) {
                             LOG.debug("Accepted Modified/Created file: {}", name);
                             try {
-                                ExtendedCamelContext ecc = getCamelContext().getCamelContextExtension();
                                 // must use file resource loader as we cannot load from classpath
-                                Resource resource = ecc.getResourceLoader().resolveResource("file:" + name);
+                                Resource resource
+                                        = PluginHelper.getResourceLoader(getCamelContext()).resolveResource("file:" + name);
                                 getResourceReload().onReload(name, resource);
                                 incSucceededCounter();
                             } catch (Exception e) {

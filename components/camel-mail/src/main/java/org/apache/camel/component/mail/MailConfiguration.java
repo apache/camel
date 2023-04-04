@@ -272,7 +272,7 @@ public class MailConfiguration implements Cloneable {
         properties.put("mail." + protocol + ".connectiontimeout", connectionTimeout);
         properties.put("mail." + protocol + ".timeout", connectionTimeout);
         properties.put("mail." + protocol + ".host", host);
-        properties.put("mail." + protocol + ".port", "" + port);
+        properties.put("mail." + protocol + ".port", Integer.toString(port));
         String pUserName = getPasswordAuthentication().getUserName();
         if (pUserName != null) {
             properties.put("mail." + protocol + ".user", pUserName);
@@ -293,11 +293,11 @@ public class MailConfiguration implements Cloneable {
         if (sslContextParameters != null && isSecureProtocol()) {
             properties.put("mail." + protocol + ".socketFactory", createSSLContext(context).getSocketFactory());
             properties.put("mail." + protocol + ".socketFactory.fallback", "false");
-            properties.put("mail." + protocol + ".socketFactory.port", "" + port);
+            properties.put("mail." + protocol + ".socketFactory.port", Integer.toString(port));
         }
         if (sslContextParameters != null && isStartTlsEnabled()) {
             properties.put("mail." + protocol + ".ssl.socketFactory", createSSLContext(context).getSocketFactory());
-            properties.put("mail." + protocol + ".ssl.socketFactory.port", "" + port);
+            properties.put("mail." + protocol + ".ssl.socketFactory.port", Integer.toString(port));
         }
 
         return properties;

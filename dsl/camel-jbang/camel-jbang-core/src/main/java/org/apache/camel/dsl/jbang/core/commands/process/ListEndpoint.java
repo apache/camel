@@ -106,7 +106,7 @@ public class ListEndpoint extends ProcessWatchCommand {
                                 if ("CamelJBang".equals(row.name)) {
                                     row.name = ProcessHelper.extractName(root, ph);
                                 }
-                                row.pid = "" + ph.pid();
+                                row.pid = Long.toString(ph.pid());
                                 row.endpoint = o.getString("uri");
                                 row.direction = o.getString("direction");
                                 row.total = o.getString("hits");

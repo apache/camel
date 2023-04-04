@@ -21,16 +21,10 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         org.apache.camel.ExtendedCamelContext target = (org.apache.camel.ExtendedCamelContext) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "annotationbasedprocessorfactory":
-        case "AnnotationBasedProcessorFactory": target.setAnnotationBasedProcessorFactory(property(camelContext, org.apache.camel.spi.AnnotationBasedProcessorFactory.class, value)); return true;
         case "basepackagescan":
         case "BasePackageScan": target.setBasePackageScan(property(camelContext, java.lang.String.class, value)); return true;
-        case "beanintrospection":
-        case "BeanIntrospection": target.setBeanIntrospection(property(camelContext, org.apache.camel.spi.BeanIntrospection.class, value)); return true;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": target.setBootstrapFactoryFinder(property(camelContext, org.apache.camel.spi.FactoryFinder.class, value)); return true;
-        case "deferservicefactory":
-        case "DeferServiceFactory": target.setDeferServiceFactory(property(camelContext, org.apache.camel.spi.DeferServiceFactory.class, value)); return true;
         case "description":
         case "Description": target.setDescription(property(camelContext, java.lang.String.class, value)); return true;
         case "errorhandlerfactory":
@@ -45,8 +39,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "HeadersMapFactory": target.setHeadersMapFactory(property(camelContext, org.apache.camel.spi.HeadersMapFactory.class, value)); return true;
         case "lightweight":
         case "Lightweight": target.setLightweight(property(camelContext, boolean.class, value)); return true;
-        case "modeltoxmldumper":
-        case "ModelToXMLDumper": target.setModelToXMLDumper(property(camelContext, org.apache.camel.spi.ModelToXMLDumper.class, value)); return true;
         case "name":
         case "Name": target.setName(property(camelContext, java.lang.String.class, value)); return true;
         case "processorexchangefactory":
@@ -55,12 +47,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ReactiveExecutor": target.setReactiveExecutor(property(camelContext, org.apache.camel.spi.ReactiveExecutor.class, value)); return true;
         case "registry":
         case "Registry": target.setRegistry(property(camelContext, org.apache.camel.spi.Registry.class, value)); return true;
-        case "resourceloader":
-        case "ResourceLoader": target.setResourceLoader(property(camelContext, org.apache.camel.spi.ResourceLoader.class, value)); return true;
         case "startupsteprecorder":
         case "StartupStepRecorder": target.setStartupStepRecorder(property(camelContext, org.apache.camel.spi.StartupStepRecorder.class, value)); return true;
-        case "unitofworkfactory":
-        case "UnitOfWorkFactory": target.setUnitOfWorkFactory(property(camelContext, org.apache.camel.spi.UnitOfWorkFactory.class, value)); return true;
         default: return false;
         }
     }
@@ -68,16 +56,10 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "annotationbasedprocessorfactory":
-        case "AnnotationBasedProcessorFactory": return org.apache.camel.spi.AnnotationBasedProcessorFactory.class;
         case "basepackagescan":
         case "BasePackageScan": return java.lang.String.class;
-        case "beanintrospection":
-        case "BeanIntrospection": return org.apache.camel.spi.BeanIntrospection.class;
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return org.apache.camel.spi.FactoryFinder.class;
-        case "deferservicefactory":
-        case "DeferServiceFactory": return org.apache.camel.spi.DeferServiceFactory.class;
         case "description":
         case "Description": return java.lang.String.class;
         case "errorhandlerfactory":
@@ -92,8 +74,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "HeadersMapFactory": return org.apache.camel.spi.HeadersMapFactory.class;
         case "lightweight":
         case "Lightweight": return boolean.class;
-        case "modeltoxmldumper":
-        case "ModelToXMLDumper": return org.apache.camel.spi.ModelToXMLDumper.class;
         case "name":
         case "Name": return java.lang.String.class;
         case "processorexchangefactory":
@@ -102,12 +82,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ReactiveExecutor": return org.apache.camel.spi.ReactiveExecutor.class;
         case "registry":
         case "Registry": return org.apache.camel.spi.Registry.class;
-        case "resourceloader":
-        case "ResourceLoader": return org.apache.camel.spi.ResourceLoader.class;
         case "startupsteprecorder":
         case "StartupStepRecorder": return org.apache.camel.spi.StartupStepRecorder.class;
-        case "unitofworkfactory":
-        case "UnitOfWorkFactory": return org.apache.camel.spi.UnitOfWorkFactory.class;
         default: return null;
         }
     }
@@ -116,16 +92,10 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         org.apache.camel.ExtendedCamelContext target = (org.apache.camel.ExtendedCamelContext) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
-        case "annotationbasedprocessorfactory":
-        case "AnnotationBasedProcessorFactory": return target.getAnnotationBasedProcessorFactory();
         case "basepackagescan":
         case "BasePackageScan": return target.getBasePackageScan();
-        case "beanintrospection":
-        case "BeanIntrospection": return target.getBeanIntrospection();
         case "bootstrapfactoryfinder":
         case "BootstrapFactoryFinder": return target.getBootstrapFactoryFinder();
-        case "deferservicefactory":
-        case "DeferServiceFactory": return target.getDeferServiceFactory();
         case "description":
         case "Description": return target.getDescription();
         case "errorhandlerfactory":
@@ -140,8 +110,6 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "HeadersMapFactory": return target.getHeadersMapFactory();
         case "lightweight":
         case "Lightweight": return target.isLightweight();
-        case "modeltoxmldumper":
-        case "ModelToXMLDumper": return target.getModelToXMLDumper();
         case "name":
         case "Name": return target.getName();
         case "processorexchangefactory":
@@ -150,12 +118,8 @@ public class ExtendedCamelContextConfigurer extends org.apache.camel.support.com
         case "ReactiveExecutor": return target.getReactiveExecutor();
         case "registry":
         case "Registry": return target.getRegistry();
-        case "resourceloader":
-        case "ResourceLoader": return target.getResourceLoader();
         case "startupsteprecorder":
         case "StartupStepRecorder": return target.getStartupStepRecorder();
-        case "unitofworkfactory":
-        case "UnitOfWorkFactory": return target.getUnitOfWorkFactory();
         default: return null;
         }
     }

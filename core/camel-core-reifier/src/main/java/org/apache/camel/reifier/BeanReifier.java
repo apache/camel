@@ -24,6 +24,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.NodeIdFactory;
+import org.apache.camel.support.PluginHelper;
 
 public class BeanReifier extends ProcessorReifier<BeanDefinition> {
 
@@ -39,7 +40,7 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
         String beanType = parseString(definition.getBeanType());
         Class<?> beanClass = definition.getBeanClass();
 
-        BeanProcessorFactory fac = camelContext.getCamelContextExtension().getBeanProcessorFactory();
+        final BeanProcessorFactory fac = PluginHelper.getBeanProcessorFactory(camelContext);
         // use singleton as default scope
         BeanScope scope = BeanScope.Singleton;
         if (definition.getScope() != null) {

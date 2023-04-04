@@ -55,8 +55,8 @@ public final class SubscribeMethodProcessor extends AsyncProcessorSupport implem
     }
 
     public void addMethod(final Object pojo, final Method method, final Endpoint endpoint, String predicate) throws Exception {
-        Processor answer = endpoint.getCamelContext().getCamelContextExtension()
-                .getBeanProcessorFactory().createBeanProcessor(endpoint.getCamelContext(), pojo, method);
+        Processor answer = PluginHelper.getBeanProcessorFactory(endpoint.getCamelContext())
+                .createBeanProcessor(endpoint.getCamelContext(), pojo, method);
 
         // must ensure the consumer is being executed in an unit of work so synchronization callbacks etc is invoked
         answer = PluginHelper.getInternalProcessorFactory(endpoint.getCamelContext())

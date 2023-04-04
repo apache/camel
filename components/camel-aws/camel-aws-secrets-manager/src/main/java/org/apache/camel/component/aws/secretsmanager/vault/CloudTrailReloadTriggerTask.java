@@ -65,6 +65,8 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     private static final Logger LOG = LoggerFactory.getLogger(CloudTrailReloadTriggerTask.class);
     private static final String SECRETSMANAGER_AMAZONAWS_COM = "secretsmanager.amazonaws.com";
 
+    private static final String SECRETSMANAGER_UPDATE_EVENT = "PutSecretValue";
+
     private CamelContext camelContext;
     private boolean reloadEnabled = true;
     private String secrets;
@@ -209,7 +211,7 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
             LOG.debug("Found {} events", events.size());
             for (Event event : events) {
                 if (event.eventSource().equalsIgnoreCase(SECRETSMANAGER_AMAZONAWS_COM)) {
-                    if (event.eventName().equalsIgnoreCase("PutSecretValue")) {
+                    if (event.eventName().equalsIgnoreCase(SECRETSMANAGER_UPDATE_EVENT)) {
                         List<Resource> a = event.resources();
                         for (Resource res : a) {
                             String name = res.resourceName();

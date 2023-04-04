@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.xml.jaxb.definition;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
@@ -53,9 +52,9 @@ public class LoadRestFromXmlTest extends ContextTestSupport {
         foo.assertIsSatisfied();
 
         // load rest from XML and add them to the existing camel context
-        ExtendedCamelContext ecc = context.getCamelContextExtension();
-        Resource resource = ecc.getResourceLoader().resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barRest.xml");
-        PluginHelper.getRoutesLoader(ecc).loadRoutes(resource);
+        Resource resource = PluginHelper.getResourceLoader(context)
+                .resolveResource("org/apache/camel/dsl/xml/jaxb/definition/barRest.xml");
+        PluginHelper.getRoutesLoader(context).loadRoutes(resource);
 
         assertNotNull(context.getRoute("route1"), "Loaded rest route should be there");
         assertEquals(3, context.getRoutes().size());

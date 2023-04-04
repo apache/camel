@@ -548,7 +548,7 @@ public final class PropertyBindingSupport {
             boolean ignoreCase, boolean reference, boolean optional)
             throws Exception {
 
-        BeanIntrospection bi = context.getCamelContextExtension().getBeanIntrospection();
+        final BeanIntrospection bi = PluginHelper.getBeanIntrospection(context);
 
         int pos = name.indexOf('[');
         String lookupKey = name.substring(pos + 1, name.length() - 1);
@@ -868,7 +868,7 @@ public final class PropertyBindingSupport {
             }
         }
 
-        boolean hit = context.getCamelContextExtension().getBeanIntrospection().setProperty(context,
+        boolean hit = PluginHelper.getBeanIntrospection(context).setProperty(context,
                 context.getTypeConverter(), target, name, value, refName, fluentBuilder, allowPrivateSetter, ignoreCase);
         if (!hit && mandatory) {
             // there is no setter with this given name, so lets report this as a problem
@@ -1008,7 +1008,7 @@ public final class PropertyBindingSupport {
         Object answer;
         Class<?> type = null;
 
-        final BeanIntrospection introspection = context.getCamelContextExtension().getBeanIntrospection();
+        final BeanIntrospection introspection = PluginHelper.getBeanIntrospection(context);
         answer = introspection.getOrElseProperty(target, key, null, ignoreCase);
         if (answer != null) {
             type = answer.getClass();
@@ -1148,7 +1148,8 @@ public final class PropertyBindingSupport {
             CamelContext context, Class clazz, String name,
             boolean fluentBuilder, boolean allowPrivateSetter, boolean ignoreCase) {
         // is there a direct setter?
-        Set<Method> candidates = context.getCamelContextExtension().getBeanIntrospection().findSetterMethods(clazz, name,
+        final BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(context);
+        Set<Method> candidates = beanIntrospection.findSetterMethods(clazz, name,
                 false, allowPrivateSetter, ignoreCase);
         if (candidates.size() == 1) {
             return candidates.iterator().next();
@@ -1156,7 +1157,7 @@ public final class PropertyBindingSupport {
 
         // okay now try with builder pattern
         if (fluentBuilder) {
-            candidates = context.getCamelContextExtension().getBeanIntrospection().findSetterMethods(clazz, name,
+            candidates = beanIntrospection.findSetterMethods(clazz, name,
                     fluentBuilder, allowPrivateSetter, ignoreCase);
             if (candidates.size() == 1) {
                 return candidates.iterator().next();

@@ -70,13 +70,12 @@ public class ProcessResponse extends AbstractZeebeResponse {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("ProcessResponse{");
-        sb.append("processId='").append(processId).append('\'');
-        sb.append(", processInstanceKey=").append(processInstanceKey);
-        sb.append(", processVersion=").append(processVersion);
-        sb.append(", processKey=").append(processKey);
-        sb.append('}');
-        return sb.toString();
+        String sb = "ProcessResponse{" + "processId='" + processId + '\'' +
+                    ", processInstanceKey=" + processInstanceKey +
+                    ", processVersion=" + processVersion +
+                    ", processKey=" + processKey +
+                    '}';
+        return sb;
     }
 
     @Override

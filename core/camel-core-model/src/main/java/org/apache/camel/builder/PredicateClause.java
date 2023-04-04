@@ -34,7 +34,7 @@ public class PredicateClause<T> implements org.apache.camel.Predicate {
 
     @Override
     public boolean matches(Exchange exchange) {
-        return (predicate != null) ? predicate.test(exchange) : false;
+        return predicate != null && predicate.test(exchange);
     }
 
     // *******************************

@@ -22,8 +22,6 @@ import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.camel.component.whatsapp.WhatsAppTestSupport;
 import org.apache.camel.component.whatsapp.model.Address;
@@ -184,7 +182,7 @@ public class WhatsAppServiceIT extends WhatsAppTestSupport {
     }
 
     @Test
-    public void testMediaUploadVideoWithInputStream() throws URISyntaxException {
+    public void testMediaUploadVideoWithInputStream() {
         UploadMediaRequest uploadMediaRequest = new UploadMediaRequest();
         UploadMedia uploadMedia = new UploadMedia(
                 "sample.mp4",
@@ -210,7 +208,7 @@ public class WhatsAppServiceIT extends WhatsAppTestSupport {
     }
 
     @Test
-    public void testTemplateMessage() throws StreamReadException, DatabindException, IOException {
+    public void testTemplateMessage() throws IOException {
         TemplateMessageRequest request
                 = MAPPER.readValue(WhatsAppServiceIT.class.getResourceAsStream("/template-message.json"),
                         TemplateMessageRequest.class);

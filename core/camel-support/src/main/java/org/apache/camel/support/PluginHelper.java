@@ -24,7 +24,10 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.catalog.RuntimeCamelCatalog;
 import org.apache.camel.console.DevConsoleResolver;
 import org.apache.camel.health.HealthCheckResolver;
+import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
 import org.apache.camel.spi.CamelDependencyInjectionAnnotationFactory;
@@ -32,20 +35,24 @@ import org.apache.camel.spi.ComponentNameResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.DataFormatResolver;
+import org.apache.camel.spi.DeferServiceFactory;
 import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.InterceptEndpointFactory;
 import org.apache.camel.spi.InternalProcessorFactory;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.ModelJAXBContextFactory;
+import org.apache.camel.spi.ModelToXMLDumper;
 import org.apache.camel.spi.ModelineFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.PeriodTaskResolver;
 import org.apache.camel.spi.PeriodTaskScheduler;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.ResourceLoader;
 import org.apache.camel.spi.RestBindingJaxbDataFormatFactory;
 import org.apache.camel.spi.RouteFactory;
 import org.apache.camel.spi.RoutesLoader;
+import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UriFactoryResolver;
 
 public final class PluginHelper {
@@ -500,5 +507,104 @@ public final class PluginHelper {
      */
     public static BeanProxyFactory getBeanProxyFactory(ExtendedCamelContext extendedCamelContext) {
         return extendedCamelContext.getContextPlugin(BeanProxyFactory.class);
+    }
+
+    /**
+     * Gets the {@link UnitOfWorkFactory} to use.
+     */
+    public static UnitOfWorkFactory getUnitOfWorkFactory(CamelContext camelContext) {
+        return getUnitOfWorkFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link UnitOfWorkFactory} to use.
+     */
+    public static UnitOfWorkFactory getUnitOfWorkFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(UnitOfWorkFactory.class);
+    }
+
+    /**
+     * Gets the {@link BeanIntrospection}
+     */
+    public static BeanIntrospection getBeanIntrospection(CamelContext camelContext) {
+        return getBeanIntrospection(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link BeanIntrospection}
+     */
+    public static BeanIntrospection getBeanIntrospection(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(BeanIntrospection.class);
+    }
+
+    /**
+     * Gets the {@link ResourceLoader} to be used.
+     */
+    public static ResourceLoader getResourceLoader(CamelContext camelContext) {
+        return getResourceLoader(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link ResourceLoader} to be used.
+     */
+    public static ResourceLoader getResourceLoader(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ResourceLoader.class);
+    }
+
+    /**
+     * Gets the {@link BeanProcessorFactory} to use.
+     */
+    public static BeanProcessorFactory getBeanProcessorFactory(CamelContext camelContext) {
+        return getBeanProcessorFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link BeanProcessorFactory} to use.
+     */
+    public static BeanProcessorFactory getBeanProcessorFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(BeanProcessorFactory.class);
+    }
+
+    /**
+     * Gets the {@link ModelToXMLDumper} to be used.
+     */
+    public static ModelToXMLDumper getModelToXMLDumper(CamelContext camelContext) {
+        return getModelToXMLDumper(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link ModelToXMLDumper} to be used.
+     */
+    public static ModelToXMLDumper getModelToXMLDumper(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(ModelToXMLDumper.class);
+    }
+
+    /**
+     * Gets the {@link DeferServiceFactory} to use.
+     */
+    public static DeferServiceFactory getDeferServiceFactory(CamelContext camelContext) {
+        return getDeferServiceFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link DeferServiceFactory} to use.
+     */
+    public static DeferServiceFactory getDeferServiceFactory(ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(DeferServiceFactory.class);
+    }
+
+    /**
+     * Gets the {@link AnnotationBasedProcessorFactory} to use.
+     */
+    public static AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory(CamelContext camelContext) {
+        return getAnnotationBasedProcessorFactory(camelContext.getCamelContextExtension());
+    }
+
+    /**
+     * Gets the {@link AnnotationBasedProcessorFactory} to use.
+     */
+    public static AnnotationBasedProcessorFactory getAnnotationBasedProcessorFactory(
+            ExtendedCamelContext extendedCamelContext) {
+        return extendedCamelContext.getContextPlugin(AnnotationBasedProcessorFactory.class);
     }
 }

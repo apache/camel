@@ -190,7 +190,7 @@ public class CamelLogAction extends ActionBaseCommand {
                     JsonObject root = loadStatus(ph.pid());
                     if (root != null) {
                         Row row = new Row();
-                        row.pid = "" + ph.pid();
+                        row.pid = Long.toString(ph.pid());
                         JsonObject context = (JsonObject) root.get("context");
                         if (context == null) {
                             return;

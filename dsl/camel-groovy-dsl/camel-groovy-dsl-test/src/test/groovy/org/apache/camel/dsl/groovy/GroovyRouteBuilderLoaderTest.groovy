@@ -42,7 +42,7 @@ class GroovyRouteBuilderLoaderTest extends Specification {
     def context = new DefaultCamelContext()
 
     def loadRoute(String location) {
-        def route = context.getResourceLoader().resolveResource(location)
+        def route = PluginHelper.getResourceLoader(context).resolveResource(location)
         PluginHelper.getRoutesLoader(context).loadRoutes(route)
     }
 

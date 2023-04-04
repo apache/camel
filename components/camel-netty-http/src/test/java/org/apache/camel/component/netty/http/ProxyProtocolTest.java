@@ -22,7 +22,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
 import java.net.Proxy;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -232,7 +231,7 @@ public class ProxyProtocolTest {
         }
     }
 
-    private static InputStream request(final String url) throws IOException, MalformedURLException {
+    private static InputStream request(final String url) throws IOException {
         final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", PROXY_PORT));
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection(proxy);
@@ -246,7 +245,7 @@ public class ProxyProtocolTest {
     }
 
     private static InputStream request(final String url, final String payload, final String contentType)
-            throws IOException, MalformedURLException {
+            throws IOException {
         final Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("localhost", PROXY_PORT));
 
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection(proxy);

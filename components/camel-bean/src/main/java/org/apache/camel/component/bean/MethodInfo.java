@@ -54,6 +54,7 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
@@ -132,7 +133,7 @@ public class MethodInfo {
         org.apache.camel.RoutingSlip routingSlipAnnotation
                 = (org.apache.camel.RoutingSlip) collectedMethodAnnotation.get(org.apache.camel.RoutingSlip.class);
         if (routingSlipAnnotation != null) {
-            routingSlip = camelContext.getCamelContextExtension().getAnnotationBasedProcessorFactory()
+            routingSlip = PluginHelper.getAnnotationBasedProcessorFactory(camelContext)
                     .createRoutingSlip(camelContext, routingSlipAnnotation);
             // add created routingSlip as a service so we have its lifecycle managed
             try {
@@ -145,7 +146,7 @@ public class MethodInfo {
         org.apache.camel.DynamicRouter dynamicRouterAnnotation
                 = (org.apache.camel.DynamicRouter) collectedMethodAnnotation.get(org.apache.camel.DynamicRouter.class);
         if (dynamicRouterAnnotation != null) {
-            dynamicRouter = camelContext.getCamelContextExtension().getAnnotationBasedProcessorFactory()
+            dynamicRouter = PluginHelper.getAnnotationBasedProcessorFactory(camelContext)
                     .createDynamicRouter(camelContext, dynamicRouterAnnotation);
             // add created dynamicRouter as a service so we have its lifecycle managed
             try {
@@ -158,7 +159,7 @@ public class MethodInfo {
         org.apache.camel.RecipientList recipientListAnnotation
                 = (org.apache.camel.RecipientList) collectedMethodAnnotation.get(org.apache.camel.RecipientList.class);
         if (recipientListAnnotation != null) {
-            recipientList = camelContext.getCamelContextExtension().getAnnotationBasedProcessorFactory()
+            recipientList = PluginHelper.getAnnotationBasedProcessorFactory(camelContext)
                     .createRecipientList(camelContext, recipientListAnnotation);
             // add created recipientList as a service so we have its lifecycle managed
             try {
@@ -258,7 +259,6 @@ public class MethodInfo {
         if (hasParameters) {
             if (parametersExpression != null) {
                 parametersExpression.init(camelContext);
-
                 return parametersExpression.evaluate(exchange, Object[].class);
             }
         }
@@ -647,10 +647,16 @@ public class MethodInfo {
 
             // convert the parameter value to a String
             String exp = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, parameterValue);
+            boolean valid;
             if (exp != null) {
-                // check if its a valid parameter value
-                boolean valid = BeanHelper.isValidParameterValue(exp);
+                int pos1 = exp.indexOf(' ');
+                int pos2 = exp.indexOf(".class");
+                if (pos1 != -1 && pos2 != -1 && pos1 > pos2) {
+                    exp = exp.substring(pos2 + 7); // clip <space>.class
+                }
 
+                // check if its a valid parameter value (no type declared via .class syntax)
+                valid = BeanHelper.isValidParameterValue(exchange.getContext().getClassResolver(), exp);
                 if (!valid) {
                     // it may be a parameter type instead, and if so, then we should return null,
                     // as this method is only for evaluating parameter values
@@ -696,7 +702,7 @@ public class MethodInfo {
                             // which may change the parameterValue, so we have to check it again to see if it is now valid
                             exp = exchange.getContext().getTypeConverter().tryConvertTo(String.class, parameterValue);
                             // re-validate if the parameter was not valid the first time
-                            valid = BeanHelper.isValidParameterValue(exp);
+                            valid = BeanHelper.isValidParameterValue(exchange.getContext().getClassResolver(), exp);
                         }
                     }
                 }

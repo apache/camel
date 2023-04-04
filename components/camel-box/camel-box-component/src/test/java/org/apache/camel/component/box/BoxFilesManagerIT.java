@@ -138,9 +138,9 @@ public class BoxFilesManagerIT extends AbstractBoxITSupport {
         BoxFolder rootFolder = BoxFolder.getRootFolder(getConnection());
         Iterable<BoxItem.Info> it = rootFolder.search("^" + CAMEL_TEST_FILE + "$");
         int searchResults = sizeOfIterable(it);
-        boolean exists = searchResults > 0 ? true : false;
+        boolean exists = searchResults > 0;
         assertFalse(exists, "deleteFile exists");
-        LOG.debug("deleteFile: exists? " + exists);
+        LOG.debug("deleteFile doesn't exist");
 
     }
 

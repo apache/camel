@@ -558,8 +558,7 @@ public class JMXEndpoint extends DefaultEndpoint {
             StringBuilder sb = new StringBuilder(getObjectDomain()).append(':').append("name=").append(getObjectName());
             objectName = new ObjectName(sb.toString());
         } else {
-            Hashtable<String, String> ht = new Hashtable<>();
-            ht.putAll(getObjectProperties());
+            Hashtable<String, String> ht = new Hashtable<>(getObjectProperties());
             objectName = new ObjectName(getObjectDomain(), ht);
         }
         return objectName;

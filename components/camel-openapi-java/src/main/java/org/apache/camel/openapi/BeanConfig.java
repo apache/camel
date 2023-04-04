@@ -101,7 +101,7 @@ public class BeanConfig {
     }
 
     public void setBasePath(String basePath) {
-        if (!"".equals(basePath) && basePath != null) {
+        if (basePath != null && !basePath.isEmpty()) {
             if (!basePath.startsWith("/")) {
                 this.basePath = "/" + basePath;
             } else {

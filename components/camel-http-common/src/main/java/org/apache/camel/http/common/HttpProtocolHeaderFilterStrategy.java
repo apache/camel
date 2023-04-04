@@ -75,7 +75,6 @@ public class HttpProtocolHeaderFilterStrategy extends DefaultHeaderFilterStrateg
         getInFilter().add("cache-control");
         getInFilter().add("connection");
         getInFilter().add("date");
-        getInFilter().add("pragma");
         getInFilter().add("trailer");
         getInFilter().add("transfer-encoding");
         getInFilter().add("upgrade");

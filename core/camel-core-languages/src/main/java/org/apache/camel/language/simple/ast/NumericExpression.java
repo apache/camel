@@ -66,7 +66,7 @@ public class NumericExpression extends BaseSimpleNode {
 
             @Override
             public String toString() {
-                return "" + number;
+                return String.valueOf(number);
             }
         };
     }

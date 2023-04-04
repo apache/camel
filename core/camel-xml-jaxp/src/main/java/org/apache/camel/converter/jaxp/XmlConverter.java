@@ -928,7 +928,7 @@ public class XmlConverter {
             String key = (String) prop.getKey();
             if (key.startsWith(XmlConverter.DOCUMENT_BUILDER_FACTORY_FEATURE)) {
                 String uri = StringHelper.after(key, ":");
-                Boolean value = Boolean.valueOf((String) prop.getValue());
+                boolean value = Boolean.parseBoolean((String) prop.getValue());
                 try {
                     factory.setFeature(uri, value);
                     features.add("feature " + uri + " value " + value);

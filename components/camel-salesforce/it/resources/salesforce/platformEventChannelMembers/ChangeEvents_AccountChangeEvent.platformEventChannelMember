@@ -15,7 +15,6 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<?xml version="1.0" encoding="UTF-8"?>
 <PlatformEventChannelMember xmlns="http://soap.sforce.com/2006/04/metadata">
     <eventChannel>ChangeEvents</eventChannel>
     <selectedEntity>AccountChangeEvent</selectedEntity>

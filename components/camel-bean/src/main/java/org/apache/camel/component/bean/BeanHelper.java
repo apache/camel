@@ -35,7 +35,7 @@ public final class BeanHelper {
      * @param  value the value
      * @return       the parameter type the given value is being mapped as, or <tt>null</tt> if not valid.
      */
-    public static Class<?> getValidParameterType(String value) {
+    public static Class<?> getValidParameterType(ClassResolver resolver, String value) {
         if (ObjectHelper.isEmpty(value)) {
             return null;
         }
@@ -70,7 +70,12 @@ public final class BeanHelper {
 
         // numeric is valid
         boolean numeric = true;
-        for (char ch : value.toCharArray()) {
+        char[] chars = value.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            char ch = chars[i];
+            if (i == 0 && ch == '-') {
+                continue;
+            }
             if (!Character.isDigit(ch)) {
                 numeric = false;
                 break;
@@ -90,13 +95,13 @@ public final class BeanHelper {
      * @param  value the value
      * @return       <tt>true</tt> if valid, <tt>false</tt> otherwise
      */
-    public static boolean isValidParameterValue(String value) {
+    public static boolean isValidParameterValue(ClassResolver classResolver, String value) {
         if (ObjectHelper.isEmpty(value)) {
             // empty value is valid
             return true;
         }
 
-        return getValidParameterType(value) != null;
+        return getValidParameterType(classResolver, value) != null;
     }
 
     /**
@@ -117,7 +122,14 @@ public final class BeanHelper {
      *                       assignable, <tt>false</tt> if not assignable
      */
     public static Boolean isAssignableToExpectedType(ClassResolver resolver, String parameterType, Class<?> expectedType) {
-        if (parameterType == null || !parameterType.endsWith(".class")) {
+        if (parameterType == null || !parameterType.contains(".class")) {
+            // not a class so return null
+            return null;
+        }
+        if (parameterType.contains(" ")) {
+            parameterType = StringHelper.before(parameterType, " ");
+        }
+        if (!parameterType.endsWith(".class")) {
             // not a class so return null
             return null;
         }

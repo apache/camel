@@ -17,7 +17,6 @@
 package org.apache.camel.dsl.xml.jaxb.definition;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.Resource;
@@ -30,10 +29,10 @@ public class LoadRouteFromXmlWithNamespaceTest extends ContextTestSupport {
 
     @Test
     public void testLoadRouteWithNamespaceFromXml() throws Exception {
-        ExtendedCamelContext ecc = context.getCamelContextExtension();
         Resource resource
-                = ecc.getResourceLoader().resolveResource("org/apache/camel/dsl/xml/jaxb/definition/routeWithNamespace.xml");
-        PluginHelper.getRoutesLoader(ecc).loadRoutes(resource);
+                = PluginHelper.getResourceLoader(context)
+                        .resolveResource("org/apache/camel/dsl/xml/jaxb/definition/routeWithNamespace.xml");
+        PluginHelper.getRoutesLoader(context).loadRoutes(resource);
         context.start();
 
         Route routeWithNamespace = context.getRoute("routeWithNamespace");

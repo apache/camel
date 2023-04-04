@@ -316,7 +316,7 @@ public class JmsProducer extends DefaultAsyncProducer {
             // prefer to use destination over destination name
             destinationName = null;
         }
-        final String to = destinationName != null ? destinationName : "" + destination;
+        final String to = destinationName != null ? destinationName : String.valueOf(destination);
         MessageSentCallback messageSentCallback = getEndpoint().getConfiguration().isIncludeSentJMSMessageID()
                 ? new InOnlyMessageSentCallback(exchange) : null;
 

@@ -78,6 +78,12 @@ public class CompilationUnit {
             return classes.keySet();
         }
 
+        /**
+         * Set of the compiled classes by their names
+         */
+        public Set<String> getCompiledClassNames() {
+            return compiled.keySet();
+        }
     }
 
     static CompilationUnit.Result result() {

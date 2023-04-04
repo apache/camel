@@ -43,6 +43,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.attachment.Attachment;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.CastUtils;
@@ -270,7 +271,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             try {
                 LOG.trace("Calling setPeek(true) on mail message {}", mail);
                 BeanIntrospection beanIntrospection
-                        = getEndpoint().getCamelContext().getCamelContextExtension().getBeanIntrospection();
+                        = PluginHelper.getBeanIntrospection(getEndpoint().getCamelContext());
                 beanIntrospection.setProperty(getEndpoint().getCamelContext(), mail, "peek", true);
             } catch (Exception e) {
                 // ignore

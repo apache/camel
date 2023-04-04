@@ -80,7 +80,7 @@ public class ListMetric extends ProcessWatchCommand {
                         if ("CamelJBang".equals(row.name)) {
                             row.name = ProcessHelper.extractName(root, ph);
                         }
-                        row.pid = "" + ph.pid();
+                        row.pid = Long.toString(ph.pid());
                         row.uptime = extractSince(ph);
                         row.age = TimeUtils.printSince(row.uptime);
                         Row baseRow = row.copy();
@@ -244,7 +244,7 @@ public class ListMetric extends ProcessWatchCommand {
     }
 
     private String getNumber(double d) {
-        String s = "" + d;
+        String s = Double.toString(d);
         if (s.equals("0.0") || s.equals("0,0")) {
             return "";
         } else if (s.endsWith(".0") || s.endsWith(",0")) {

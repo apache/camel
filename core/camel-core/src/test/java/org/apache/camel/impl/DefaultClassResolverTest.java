@@ -145,4 +145,11 @@ public class DefaultClassResolverTest {
         assertNotNull(is);
     }
 
+    @Test
+    public void testResolveJavaMathClass() {
+        DefaultClassResolver resolver = new DefaultClassResolver();
+        Class<?> clazz = resolver.resolveClass("java.lang.Math");
+        assertNotNull(clazz);
+    }
+
 }

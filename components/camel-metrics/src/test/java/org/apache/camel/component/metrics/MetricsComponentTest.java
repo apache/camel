@@ -29,6 +29,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.engine.DefaultBeanIntrospection;
 import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -81,7 +82,7 @@ public class MetricsComponentTest {
         when(camelRegistry.lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class))
                 .thenReturn(metricRegistry);
         when(camelContext.getCamelContextExtension()).thenReturn(ecc);
-        when(ecc.getBeanIntrospection()).thenReturn(new DefaultBeanIntrospection());
+        when(PluginHelper.getBeanIntrospection(ecc)).thenReturn(new DefaultBeanIntrospection());
         when(ecc.getContextPlugin(ConfigurerResolver.class)).thenReturn((name, context) -> null);
 
         Map<String, Object> params = new HashMap<>();
@@ -110,11 +111,11 @@ public class MetricsComponentTest {
         when(camelRegistry.lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class))
                 .thenReturn(metricRegistry);
         when(camelContext.getCamelContextExtension()).thenReturn(ecc);
-        when(ecc.getBeanIntrospection()).thenReturn(new DefaultBeanIntrospection());
+        when(PluginHelper.getBeanIntrospection(ecc)).thenReturn(new DefaultBeanIntrospection());
         when(ecc.getContextPlugin(ConfigurerResolver.class)).thenReturn((name, context) -> null);
 
         Map<String, Object> params = new HashMap<>();
-        Long value = System.currentTimeMillis();
+        long value = System.currentTimeMillis();
         params.put("mark", value);
         component.init();
         Endpoint result = component.createEndpoint("metrics:meter:long.meter", "meter:long.meter", params);

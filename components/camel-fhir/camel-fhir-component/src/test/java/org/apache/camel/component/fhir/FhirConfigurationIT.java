@@ -28,6 +28,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirCreateApiMethod;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -95,7 +96,7 @@ public class FhirConfigurationIT extends AbstractFhirTestSupport {
 
         assertTrue(interceptors.contains(this.mockClientInterceptor), "User defined IClientInterceptor not found");
 
-        long counter = context.getCamelContextExtension().getBeanIntrospection().getInvokedCounter();
+        long counter = PluginHelper.getBeanIntrospection(context).getInvokedCounter();
         assertEquals(0, counter, "Should not use reflection");
     }
 

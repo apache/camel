@@ -121,7 +121,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
                 }
             }
         } else {
-            context.getCamelContextExtension().getBeanIntrospection().getProperties(endpointConfiguration, properties,
+            PluginHelper.getBeanIntrospection(context).getProperties(endpointConfiguration, properties,
                     null, false);
         }
         // remove component config properties so we only have endpoint properties
@@ -178,7 +178,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
                 }
             }
         } else {
-            context.getCamelContextExtension().getBeanIntrospection().getProperties(endpointConfiguration, properties,
+            PluginHelper.getBeanIntrospection(context).getProperties(endpointConfiguration, properties,
                     null, false);
         }
         if (LOG.isDebugEnabled()) {

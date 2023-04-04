@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import java.util.Collection;
+import java.util.StringJoiner;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
@@ -30,7 +31,7 @@ public class AmbiguousMethodCallException extends RuntimeExchangeException {
     private final Collection<MethodInfo> methods;
 
     public AmbiguousMethodCallException(Exchange exchange, Collection<MethodInfo> methods) {
-        super("Ambiguous method invocations possible: " + methods, exchange);
+        super(createMessage(methods), exchange);
         this.methods = methods;
     }
 
@@ -40,4 +41,18 @@ public class AmbiguousMethodCallException extends RuntimeExchangeException {
     public Collection<MethodInfo> getMethods() {
         return methods;
     }
+
+    private static String createMessage(Collection<MethodInfo> methods) {
+        Class<?> clazz = null;
+        StringJoiner sj = new StringJoiner("\n\t");
+        for (MethodInfo mi : methods) {
+            if (clazz == null) {
+                clazz = mi.getMethod().getDeclaringClass();
+                sj.add("\tClass: " + clazz.getName());
+            }
+            sj.add("\t" + mi.getMethod().toGenericString());
+        }
+        return "Ambiguous method invocations possible:\n" + sj + "\n\n";
+    }
+
 }

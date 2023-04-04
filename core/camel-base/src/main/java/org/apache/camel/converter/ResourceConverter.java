@@ -22,8 +22,8 @@ import java.io.Reader;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Converter;
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.PluginHelper;
 
 @Converter(generateBulkLoader = true)
 public final class ResourceConverter {
@@ -57,9 +57,8 @@ public final class ResourceConverter {
     }
 
     @Converter(order = 5)
-    public static Resource toResource(String uri, CamelContext camelContext) throws IOException {
-        ExtendedCamelContext ecc = camelContext.getCamelContextExtension();
-        return ecc.getResourceLoader().resolveResource(uri);
+    public static Resource toResource(String uri, CamelContext camelContext) {
+        return PluginHelper.getResourceLoader(camelContext).resolveResource(uri);
     }
 
 }

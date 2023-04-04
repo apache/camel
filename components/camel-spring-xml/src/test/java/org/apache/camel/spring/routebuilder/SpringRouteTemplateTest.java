@@ -19,13 +19,13 @@ package org.apache.camel.spring.routebuilder;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteTemplateDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -155,8 +155,7 @@ public class SpringRouteTemplateTest extends SpringTestSupport {
 
         RouteDefinition def = context.getRouteDefinition("first");
 
-        ExtendedCamelContext ecc = context.getCamelContextExtension();
-        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, def, true, true);
+        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, true, true);
 
         assertNotNull(xml);
         Assertions.assertTrue(xml.contains("<from uri=\"direct:one\"/>"));
@@ -172,8 +171,7 @@ public class SpringRouteTemplateTest extends SpringTestSupport {
         RoutesDefinition def = new RoutesDefinition();
         def.setRoutes(context.getRouteDefinitions());
 
-        ExtendedCamelContext ecc = context.getCamelContextExtension();
-        String xml = ecc.getModelToXMLDumper().dumpModelAsXml(context, def, true, true);
+        String xml = PluginHelper.getModelToXMLDumper(context).dumpModelAsXml(context, def, true, true);
 
         assertNotNull(xml);
         Assertions.assertTrue(xml.contains("<from uri=\"direct:one\"/>"));

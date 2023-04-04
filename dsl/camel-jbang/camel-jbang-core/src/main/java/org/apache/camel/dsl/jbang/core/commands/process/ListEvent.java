@@ -72,7 +72,7 @@ public class ListEvent extends ProcessWatchCommand {
                         if ("CamelJBang".equals(row.name)) {
                             row.name = ProcessHelper.extractName(root, ph);
                         }
-                        row.pid = "" + ph.pid();
+                        row.pid = Long.toString(ph.pid());
 
                         if (filter == null || filter.contains("context")) {
                             fetchEvents(root, row, "events", rows);

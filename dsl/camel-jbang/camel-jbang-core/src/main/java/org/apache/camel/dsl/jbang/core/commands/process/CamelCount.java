@@ -76,7 +76,7 @@ public class CamelCount extends ProcessWatchCommand {
                         if ("CamelJBang".equals(row.name)) {
                             row.name = ProcessHelper.extractName(root, ph);
                         }
-                        row.pid = "" + ph.pid();
+                        row.pid = Long.toString(ph.pid());
                         row.age = TimeUtils.printSince(extractSince(ph));
                         Map<String, ?> stats = context.getMap("statistics");
                         if (stats != null) {

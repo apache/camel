@@ -201,7 +201,6 @@ public final class KnativeResource {
         }
 
         this.ceOverrides.put(key, value);
-        this.ceOverrides.put(key, value);
     }
 
     public Map<String, String> getFilters() {

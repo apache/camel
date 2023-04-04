@@ -43,6 +43,7 @@ import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.RestProducerFactoryHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -399,7 +400,7 @@ public class HttpComponent extends HttpCommonComponent implements RestProducerFa
         // configure the endpoint with the common configuration from the component
         if (getHttpConfiguration() != null) {
             Map<String, Object> properties = new HashMap<>();
-            BeanIntrospection beanIntrospection = getCamelContext().getCamelContextExtension().getBeanIntrospection();
+            BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(getCamelContext());
             beanIntrospection.getProperties(getHttpConfiguration(), properties, null);
             setProperties(endpoint, properties);
         }

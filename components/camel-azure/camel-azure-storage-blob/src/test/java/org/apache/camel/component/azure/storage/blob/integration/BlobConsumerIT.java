@@ -46,25 +46,31 @@ class BlobConsumerIT extends Base {
     @EndpointInject("direct:start")
     private ProducerTemplate templateStart;
     private String batchContainerName;
+    private String prefixContainerName;
     private String blobName;
     private String blobName2;
 
     private BlobContainerClient containerClient;
     private BlobContainerClient batchContainerClient;
+    private BlobContainerClient prefixContainerClient;
     private final String regex = ".*\\.pdf";
+    private final String prefix = "blob-prefix";
 
     @BeforeAll
     public void setup() {
         batchContainerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
+        prefixContainerName = RandomStringUtils.randomAlphabetic(5).toLowerCase();
         blobName = RandomStringUtils.randomAlphabetic(5);
         blobName2 = RandomStringUtils.randomAlphabetic(5);
 
         containerClient = serviceClient.getBlobContainerClient(containerName);
         batchContainerClient = serviceClient.getBlobContainerClient(batchContainerName);
+        prefixContainerClient = serviceClient.getBlobContainerClient(prefixContainerName);
 
         // create test container
         containerClient.create();
         batchContainerClient.create();
+        prefixContainerClient.create();
     }
 
     @Test
@@ -182,6 +188,31 @@ class BlobConsumerIT extends Base {
         }
     }
 
+    @Test
+    void testPrefixBasedPolling() throws InterruptedException {
+        final MockEndpoint mockEndpoint = getMockEndpoint("mock:resultPrefix");
+        mockEndpoint.expectedMessageCount(1);
+
+        templateStart.send("direct:createBlob", exchange -> {
+            exchange.getIn().setBody("Blob 1");
+            exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, prefixContainerName);
+            exchange.getIn().setHeader(BlobConstants.BLOB_NAME, prefix + "/test_blob_1");
+        });
+
+        templateStart.send("direct:createBlob", exchange -> {
+            exchange.getIn().setBody("Blob 2");
+            exchange.getIn().setHeader(BlobConstants.BLOB_CONTAINER_NAME, prefixContainerName);
+            exchange.getIn().setHeader(BlobConstants.BLOB_NAME, "non_prefixed_blob");
+        });
+
+        mockEndpoint.assertIsSatisfied();
+
+        String text = mockEndpoint.getExchanges().get(0).getIn().getBody(String.class);
+
+        assertEquals("Blob 1", text);
+        assertEquals(1, mockEndpoint.getExchanges().size());
+    }
+
     private String generateRandomBlobName(String prefix, String extension) {
         return prefix + randomAlphabetic(5).toLowerCase() + "." + extension;
     }
@@ -191,6 +222,7 @@ class BlobConsumerIT extends Base {
         // delete container
         containerClient.delete();
         batchContainerClient.delete();
+        prefixContainerClient.delete();
     }
 
     @Override
@@ -220,6 +252,9 @@ class BlobConsumerIT extends Base {
                      + "?prefix=aaaa&regex=" + regex)
                         .idempotentConsumer(body(), new MemoryIdempotentRepository())
                         .to("mock:resultRegex");
+
+                from("azure-storage-blob://cameldev/" + prefixContainerName + "?prefix=" + prefix)
+                        .to("mock:resultPrefix");
             }
         };
     }

@@ -203,7 +203,7 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
     }
 
     private boolean isMatching(String s1, String s2) {
-        return s1.equals("") || s1.equals("*") || s1.equals(s2);
+        return s1.isEmpty() || s1.equals("*") || s1.equals(s2);
     }
 
     private boolean isWildcarded() {

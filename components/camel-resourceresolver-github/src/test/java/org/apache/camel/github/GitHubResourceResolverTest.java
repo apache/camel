@@ -16,8 +16,8 @@
  */
 package org.apache.camel.github;
 
-import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.spi.Resource;
+import org.apache.camel.support.PluginHelper;
 import org.apache.camel.test.junit5.CamelTestSupport;
 import org.junit.jupiter.api.Test;
 
@@ -29,8 +29,7 @@ public class GitHubResourceResolverTest extends CamelTestSupport {
 
     @Test
     public void testGitHubLoadPom() throws Exception {
-        ExtendedCamelContext ecc = context.getCamelContextExtension();
-        Resource res = ecc.getResourceLoader().resolveResource("github:apache:camel:main:core/pom.xml");
+        Resource res = PluginHelper.getResourceLoader(context).resolveResource("github:apache:camel:main:core/pom.xml");
         assertNotNull(res);
         assertTrue(res.exists());
 
@@ -41,8 +40,7 @@ public class GitHubResourceResolverTest extends CamelTestSupport {
 
     @Test
     public void testGitHubLoadMainDefault() throws Exception {
-        ExtendedCamelContext ecc = context.getCamelContextExtension();
-        Resource res = ecc.getResourceLoader().resolveResource("github:apache:camel:core/pom.xml");
+        Resource res = PluginHelper.getResourceLoader(context).resolveResource("github:apache:camel:core/pom.xml");
         assertNotNull(res);
         assertTrue(res.exists());
 
@@ -53,8 +51,7 @@ public class GitHubResourceResolverTest extends CamelTestSupport {
 
     @Test
     public void testGitHubDoesNotExist() {
-        ExtendedCamelContext ecc = context.getCamelContextExtension();
-        Resource res = ecc.getResourceLoader().resolveResource("github:apache:camel:main:core/unknown.xml");
+        Resource res = PluginHelper.getResourceLoader(context).resolveResource("github:apache:camel:main:core/unknown.xml");
         assertNotNull(res);
         assertFalse(res.exists());
     }
