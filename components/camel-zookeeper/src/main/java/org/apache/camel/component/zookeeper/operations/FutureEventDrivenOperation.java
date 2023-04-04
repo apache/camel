@@ -64,13 +64,6 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
 
         if (LOG.isTraceEnabled() && waitForAnyWatchedType.getCount() > 0) {
 
-            StringBuilder b = new StringBuilder();
-            for (EventType type : awaitedTypes) {
-                b.append(type).append(", ");
-            }
-            if (b.length() > 0) {
-                b.setLength(b.length() - 2);
-            }
             LOG.trace(String.format("Received event of type %s did not match any watched types %s", received,
                     Arrays.toString(awaitedTypes)));
         }
