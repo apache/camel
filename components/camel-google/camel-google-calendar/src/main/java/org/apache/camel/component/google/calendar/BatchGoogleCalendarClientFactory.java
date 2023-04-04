@@ -47,7 +47,8 @@ public class BatchGoogleCalendarClientFactory implements GoogleCalendarClientFac
             String emailAddress, String p12FileName, String user) {
         // if emailAddress and p12FileName values are present, assume Google
         // Service Account
-        boolean serviceAccount = null != emailAddress && !emailAddress.isEmpty() && null != p12FileName && !p12FileName.isEmpty();
+        boolean serviceAccount
+                = null != emailAddress && !emailAddress.isEmpty() && null != p12FileName && !p12FileName.isEmpty();
 
         if (!serviceAccount && (clientId == null || clientSecret == null)) {
             throw new IllegalArgumentException("clientId and clientSecret are required to create Google Calendar client.");
