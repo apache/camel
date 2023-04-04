@@ -326,7 +326,7 @@ public class ArangoDbProducer extends DefaultProducer {
                 try (ArangoCursor<?> cursor = database.query(query, bindParameters, queryOptions, resultClassType)) {
                     return cursor == null ? null : cursor.asListRemaining();
                 } catch (IOException e) {
-                    throw new RuntimeCamelException("failed to close instance of ArangoCursor", e);
+                    throw new RuntimeCamelException("Failed to close instance of ArangoCursor", e);
                 }
             } catch (InvalidPayloadException e) {
                 throw new RuntimeCamelException("Invalid payload for command", e);
