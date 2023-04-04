@@ -97,7 +97,7 @@ public class Web3jEndpoint extends DefaultEndpoint {
         }
 
         Web3jService web3jService;
-        if (clientAddress == null || clientAddress.equals("")) {
+        if (clientAddress == null || clientAddress.isEmpty()) {
             web3jService = new HttpService();
         } else if (clientAddress.startsWith("http")) {
             web3jService = new HttpService(clientAddress);

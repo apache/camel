@@ -170,9 +170,10 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
                 }
                 inTypeNameToQName.put(ti.getTypeName(), ti.getElName());
             }
-            if (info.getSoapAction() != null && !"".equals(info.getSoapAction())) {
-                soapActionToMethodInfo.put(info.getSoapAction(), info);
-                addExceptions(info.getSoapAction(), method);
+            String soapAction = info.getSoapAction();
+            if (soapAction != null && !soapAction.isEmpty()) {
+                soapActionToMethodInfo.put(soapAction, info);
+                addExceptions(soapAction, method);
             } else {
                 addExceptions(null, method);
             }

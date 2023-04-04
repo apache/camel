@@ -35,7 +35,7 @@ public class RobotFrameworkArguments {
     }
 
     protected boolean isFileValid(File file) {
-        return file != null && file.getPath() != null && !file.getPath().equals("");
+        return file != null && file.getPath() != null && !file.getPath().isEmpty();
     }
 
     public void addNonEmptyStringToArguments(String variableToAdd, String flag) {
