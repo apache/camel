@@ -68,7 +68,7 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
                         if ("CamelJBang".equals(row.name)) {
                             row.name = ProcessHelper.extractName(root, ph);
                         }
-                        row.pid = "" + ph.pid();
+                        row.pid = Long.toString(ph.pid());
                         row.uptime = extractSince(ph);
                         row.age = TimeUtils.printSince(row.uptime);
                         Row baseRow = row.copy();
@@ -161,27 +161,27 @@ public class ListCircuitBreaker extends ProcessWatchCommand {
         } else if (r.failureRate > 0) {
             return +r.failedCalls + " (" + String.format("%.0f", r.failureRate) + "%)";
         } else {
-            return "" + r.failedCalls;
+            return Integer.toString(r.failedCalls);
         }
     }
 
     private String getPending(Row r) {
         if ("resilience4j".equals(r.component)) {
-            return "" + r.bufferedCalls;
+            return Integer.toString(r.bufferedCalls);
         }
         return "";
     }
 
     private String getSuccess(Row r) {
         if ("resilience4j".equals(r.component)) {
-            return "" + r.successfulCalls;
+            return Integer.toString(r.successfulCalls);
         }
         return "";
     }
 
     private String getReject(Row r) {
         if ("resilience4j".equals(r.component)) {
-            return "" + r.notPermittedCalls;
+            return Long.toString(r.notPermittedCalls);
         }
         return "";
     }

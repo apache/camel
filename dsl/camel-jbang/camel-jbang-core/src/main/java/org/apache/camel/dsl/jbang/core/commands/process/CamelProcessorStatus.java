@@ -95,7 +95,7 @@ public class CamelProcessorStatus extends ProcessWatchCommand {
                             if ("CamelJBang".equals(row.name)) {
                                 row.name = ProcessHelper.extractName(root, ph);
                             }
-                            row.pid = "" + ph.pid();
+                            row.pid = Long.toString(ph.pid());
                             row.routeId = o.getString("routeId");
                             row.processor = o.getString("from");
                             row.source = o.getString("source");

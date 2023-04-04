@@ -271,7 +271,7 @@ public class RouteControllerAction extends ActionWatchCommand {
 
     protected String getAttempts(Row r) {
         if (r.supervising != null) {
-            return "" + r.attempts;
+            return Long.toString(r.attempts);
         }
         return "";
     }

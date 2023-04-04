@@ -59,8 +59,8 @@ public final class ActiveSpanManager {
         exchange.setProperty(ACTIVE_SPAN_PROPERTY,
                 new Holder((Holder) exchange.getProperty(ACTIVE_SPAN_PROPERTY), span));
         if (exchange.getContext().isUseMDCLogging()) {
-            MDC.put(MDC_TRACE_ID, "" + span.traceId());
-            MDC.put(MDC_SPAN_ID, "" + span.spanId());
+            MDC.put(MDC_TRACE_ID, span.traceId());
+            MDC.put(MDC_SPAN_ID, span.spanId());
         }
     }
 
@@ -81,8 +81,8 @@ public final class ActiveSpanManager {
                 Holder parent = holder.getParent();
                 if (parent != null) {
                     SpanAdapter span = holder.getParent().getSpan();
-                    MDC.put(MDC_TRACE_ID, "" + span.traceId());
-                    MDC.put(MDC_SPAN_ID, "" + span.spanId());
+                    MDC.put(MDC_TRACE_ID, span.traceId());
+                    MDC.put(MDC_SPAN_ID, span.spanId());
                 } else {
                     MDC.remove(MDC_TRACE_ID);
                     MDC.remove(MDC_SPAN_ID);

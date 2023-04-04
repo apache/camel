@@ -56,7 +56,7 @@ public class StopProcess extends ProcessBaseCommand {
         // stop by deleting the pid file
         for (Long pid : pids) {
             File dir = new File(System.getProperty("user.home"), ".camel");
-            File pidFile = new File(dir, "" + pid);
+            File pidFile = new File(dir, Long.toString(pid));
             if (pidFile.exists()) {
                 System.out.println("Shutting down Camel integration (PID: " + pid + ")");
                 FileUtil.deleteFile(pidFile);

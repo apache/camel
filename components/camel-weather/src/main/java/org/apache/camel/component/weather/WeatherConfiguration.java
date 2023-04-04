@@ -106,7 +106,7 @@ public class WeatherConfiguration {
             // ignore and fallback the period to be an empty string
         }
         if (result != 0) {
-            this.period = "" + result;
+            this.period = Integer.toString(result);
         }
     }
 

@@ -962,9 +962,9 @@ public class NotifyBuilder {
             @Override
             public String toString() {
                 if (received) {
-                    return "" + (exact ? "whenExactBodiesReceived(" : "whenBodiesReceived(") + bodies + ")";
+                    return (exact ? "whenExactBodiesReceived(" : "whenBodiesReceived(") + bodies + ")";
                 } else {
-                    return "" + (exact ? "whenExactBodiesDone(" : "whenBodiesDone(") + bodies + ")";
+                    return (exact ? "whenExactBodiesDone(" : "whenBodiesDone(") + bodies + ")";
                 }
             }
         });

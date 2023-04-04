@@ -80,7 +80,7 @@ public final class CSimpleHelper {
     }
 
     public static <T> T bodyAsIndex(Message message, Class<T> type, int key) {
-        return bodyAsIndex(message, type, "" + key);
+        return bodyAsIndex(message, type, Integer.toString(key));
     }
 
     public static <T> T bodyAsIndex(Message message, Class<T> type, String key) {
@@ -102,7 +102,7 @@ public final class CSimpleHelper {
     }
 
     public static <T> T mandatoryBodyAsIndex(Message message, Class<T> type, int key) throws InvalidPayloadException {
-        T out = bodyAsIndex(message, type, "" + key);
+        T out = bodyAsIndex(message, type, Integer.toString(key));
         if (out == null) {
             throw new InvalidPayloadException(message.getExchange(), type, message);
         }
