@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
 
 import org.apache.camel.CamelContextAware;
@@ -77,10 +78,22 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     private final Map<String, FactoryFinder> bootstrapFactories = new ConcurrentHashMap<>();
     private final Set<LogListener> logListeners = new LinkedHashSet<>();
     private final PluginManager pluginManager = new DefaultContextPluginManager();
+    private final RouteController internalRouteController;
+
+    // start auto assigning route ids using numbering 1000 and upwards
+    private final List<BootstrapCloseable> bootstraps = new CopyOnWriteArrayList<>();
+
     private volatile String description;
     private volatile ExchangeFactory exchangeFactory;
     private volatile ExchangeFactoryManager exchangeFactoryManager;
     private volatile ProcessorExchangeFactory processorExchangeFactory;
+    private volatile ReactiveExecutor reactiveExecutor;
+    private volatile Registry registry;
+    private volatile ManagementStrategy managementStrategy;
+    private volatile ManagementMBeanAssembler managementMBeanAssembler;
+    private volatile HeadersMapFactory headersMapFactory;
+    private volatile boolean eventNotificationApplicable;
+
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
     private String basePackageScan;
@@ -92,6 +105,7 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     public DefaultCamelContextExtension(AbstractCamelContext camelContext) {
         this.camelContext = camelContext;
+        this.internalRouteController = new InternalRouteController(camelContext);
     }
 
     @Override
@@ -189,7 +203,22 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public void addBootstrap(BootstrapCloseable bootstrap) {
-        camelContext.bootstraps.add(bootstrap);
+        bootstraps.add(bootstrap);
+    }
+
+    void closeBootstraps() {
+        for (BootstrapCloseable bootstrap : bootstraps) {
+            try {
+                bootstrap.close();
+            } catch (Exception e) {
+                LOG.warn("Error during closing bootstrap. This exception is ignored.", e);
+            }
+        }
+        bootstraps.clear();
+    }
+
+    List<BootstrapCloseable> getBootstraps() {
+        return bootstraps;
     }
 
     @Override
@@ -224,25 +253,29 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public ManagementMBeanAssembler getManagementMBeanAssembler() {
-        return camelContext.managementMBeanAssembler;
+        return managementMBeanAssembler;
+    }
+
+    void setManagementMBeanAssembler(ManagementMBeanAssembler managementMBeanAssembler) {
+        this.managementMBeanAssembler = camelContext.getInternalServiceManager().addService(managementMBeanAssembler, false);
     }
 
     @Override
     public Registry getRegistry() {
-        if (camelContext.registry == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.registry == null) {
+        if (registry == null) {
+            synchronized (lock) {
+                if (registry == null) {
                     setRegistry(camelContext.createRegistry());
                 }
             }
         }
-        return camelContext.registry;
+        return registry;
     }
 
     @Override
     public void setRegistry(Registry registry) {
         CamelContextAware.trySetCamelContext(registry, camelContext);
-        camelContext.registry = registry;
+        this.registry = registry;
     }
 
     @Override
@@ -290,12 +323,12 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public boolean isEventNotificationApplicable() {
-        return camelContext.eventNotificationApplicable;
+        return eventNotificationApplicable;
     }
 
     @Override
     public void setEventNotificationApplicable(boolean eventNotificationApplicable) {
-        camelContext.eventNotificationApplicable = eventNotificationApplicable;
+        this.eventNotificationApplicable = eventNotificationApplicable;
     }
 
     @Override
@@ -365,8 +398,8 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
         // preserve any existing event notifiers that may have been already added
         List<EventNotifier> notifiers = null;
-        if (camelContext.managementStrategy != null) {
-            notifiers = camelContext.managementStrategy.getEventNotifiers();
+        if (managementStrategy != null) {
+            notifiers = managementStrategy.getEventNotifiers();
         }
 
         try {
@@ -404,12 +437,29 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public HeadersMapFactory getHeadersMapFactory() {
-        return camelContext.headersMapFactory;
+        return headersMapFactory;
     }
 
     @Override
     public void setHeadersMapFactory(HeadersMapFactory headersMapFactory) {
-        camelContext.headersMapFactory = camelContext.getInternalServiceManager().addService(headersMapFactory);
+        this.headersMapFactory = camelContext.getInternalServiceManager().addService(headersMapFactory);
+    }
+
+    void initEagerMandatoryServices(boolean caseInsensitive, Supplier<HeadersMapFactory> headersMapFactorySupplier) {
+        if (this.headersMapFactory == null) {
+            // we want headers map to be created as then JVM can optimize using it as we use it per exchange/message
+            synchronized (lock) {
+                if (this.headersMapFactory == null) {
+                    if (caseInsensitive) {
+                        // use factory to find the map factory to use
+                        setHeadersMapFactory(headersMapFactorySupplier.get());
+                    } else {
+                        // case sensitive so we can use hash map
+                        setHeadersMapFactory(new HashMapHeadersMapFactory());
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -469,26 +519,26 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
 
     @Override
     public ReactiveExecutor getReactiveExecutor() {
-        if (camelContext.reactiveExecutor == null) {
-            synchronized (camelContext.lock) {
-                if (camelContext.reactiveExecutor == null) {
+        if (reactiveExecutor == null) {
+            synchronized (lock) {
+                if (reactiveExecutor == null) {
                     setReactiveExecutor(camelContext.createReactiveExecutor());
                 }
             }
         }
-        return camelContext.reactiveExecutor;
+        return reactiveExecutor;
     }
 
     @Override
     public void setReactiveExecutor(ReactiveExecutor reactiveExecutor) {
         // special for executorServiceManager as want to stop it manually so
         // false in stopOnShutdown
-        camelContext.reactiveExecutor = camelContext.getInternalServiceManager().addService(reactiveExecutor, false);
+        this.reactiveExecutor = camelContext.getInternalServiceManager().addService(reactiveExecutor, false);
     }
 
     @Override
     public RouteController getInternalRouteController() {
-        return camelContext.internalRouteController;
+        return internalRouteController;
     }
 
     @Override
@@ -534,6 +584,14 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public PluginManager getPluginManager() {
         return pluginManager;
+    }
+
+    ManagementStrategy getManagementStrategy() {
+        return managementStrategy;
+    }
+
+    void setManagementStrategy(ManagementStrategy managementStrategy) {
+        this.managementStrategy = managementStrategy;
     }
 
     @Override

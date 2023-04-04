@@ -153,13 +153,14 @@ public class ListHealth extends ProcessWatchCommand {
                                         row.sinceStartFailure = TimeUtils.printAge(delta);
                                     }
                                 }
-                                for (String k : d.keySet()) {
+                                for (Map.Entry<String, Object> entry : d.entrySet()) {
+                                    String k = entry.getKey();
                                     // gather custom details
                                     if (!HealthCheckHelper.isReservedKey(k)) {
                                         if (row.customMeta == null) {
                                             row.customMeta = new TreeMap<>();
                                         }
-                                        row.customMeta.put(k, d.get(k));
+                                        row.customMeta.put(k, entry.getValue());
                                     }
                                 }
                             }

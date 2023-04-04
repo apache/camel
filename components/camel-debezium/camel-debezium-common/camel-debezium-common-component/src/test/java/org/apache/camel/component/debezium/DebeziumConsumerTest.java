@@ -167,7 +167,7 @@ public class DebeziumConsumerTest extends CamelTestSupport {
         try {
             IoUtil.delete(path);
         } catch (IOException e) {
-            System.err.println(String.format("Unable to delete %s", path.toAbsolutePath()));
+            System.err.printf("Unable to delete %s%n", path.toAbsolutePath());
         }
     }
 

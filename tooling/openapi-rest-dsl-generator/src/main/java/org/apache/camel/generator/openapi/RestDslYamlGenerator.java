@@ -154,10 +154,10 @@ public class RestDslYamlGenerator extends RestDslGenerator<RestDslYamlGenerator>
 
         // add Routes
         if (generateRoutes) {
-            for (String uri : toTagData.keySet()) {
+            for (Map.Entry<String, String> entry : toTagData.entrySet()) {
                 ObjectNode from = JsonNodeFactory.instance.objectNode();
-                from.set("uri", new TextNode(uri));
-                String description = toTagData.get(uri);
+                from.set("uri", new TextNode(entry.getKey()));
+                String description = entry.getValue();
                 if (description != null && !description.isBlank()) {
                     from.set("description", new TextNode(description));
                 }
