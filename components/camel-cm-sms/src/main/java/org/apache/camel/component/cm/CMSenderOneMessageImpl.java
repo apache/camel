@@ -248,11 +248,12 @@ public class CMSenderOneMessageImpl implements CMSender {
         } catch (final IOException io) {
             throw new CMDirectException(io);
         } catch (Exception t) {
-            if (!(t instanceof CMDirectException)) {
+            Exception exception = t;
+            if (!(exception instanceof CMDirectException)) {
                 // Chain it
-                t = new CMDirectException(t);
+                exception = new CMDirectException(exception);
             }
-            throw (CMDirectException) t;
+            throw (CMDirectException) exception;
         }
     }
 }
