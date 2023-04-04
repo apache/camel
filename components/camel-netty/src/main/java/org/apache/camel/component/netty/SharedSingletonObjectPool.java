@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.netty;
 
-import java.util.NoSuchElementException;
-
 import org.apache.commons.pool2.ObjectPool;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.PooledObjectFactory;
@@ -41,14 +39,14 @@ public class SharedSingletonObjectPool<T> implements ObjectPool<T> {
     }
 
     @Override
-    public void addObject() throws Exception, IllegalStateException, UnsupportedOperationException {
+    public void addObject() throws Exception {
         // noop
     }
 
     @Override
-    public synchronized T borrowObject() throws Exception, NoSuchElementException, IllegalStateException {
+    public synchronized T borrowObject() throws Exception {
         if (t != null) {
-            // ensure the object is validate before we borrow it
+            // ensure the object is validated before we borrow it
             if (!factory.validateObject(t)) {
                 invalidateObject(t.getObject());
                 LOG.info("Recreating new connection as current connection is invalid: {}", t);
@@ -62,7 +60,7 @@ public class SharedSingletonObjectPool<T> implements ObjectPool<T> {
     }
 
     @Override
-    public void clear() throws Exception, UnsupportedOperationException {
+    public void clear() throws Exception {
         t = null;
     }
 
