@@ -679,9 +679,6 @@ public class ContentVersion extends AbstractDescribedSObjectBase {
         sObjectDescriptionUrls1.setLayouts("/services/data/v46.0/sobjects/ContentVersion/describe/layouts");
         sObjectDescriptionUrls1.setRowTemplate("/services/data/v46.0/sobjects/ContentVersion/{ID}");
         sObjectDescriptionUrls1.setSobject("/services/data/v46.0/sobjects/ContentVersion");
-        sObjectDescriptionUrls1.setUiDetailTemplate("https://emuedu.my.salesforce.com/{ID}");
-        sObjectDescriptionUrls1.setUiEditTemplate("https://emuedu.my.salesforce.com/{ID}/e");
-        sObjectDescriptionUrls1.setUiNewRecord("https://emuedu.my.salesforce.com/068/e");
         description.setUrls(sObjectDescriptionUrls1);
 
         return description;
