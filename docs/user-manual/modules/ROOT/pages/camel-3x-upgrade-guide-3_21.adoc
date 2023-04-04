@@ -116,6 +116,25 @@ The `certificatePath` parameter can now be specified as resource: for user point
 
 The deprecated option `componentName` was removed. Please use either `producerComponentName` or `consumerComponentName`.
 
+=== camel-micrometer
+
+The metrics has been renamed to follow Micrometer naming convention https://micrometer.io/docs/concepts#_naming_meters[Naming Meters].
+
+|===
+| Old Name | New Name
+| CamelExchangeEventNotifier | camel.exchange.event.notifier
+| CamelExchangesFailed | camel.exchanges.failed
+| CamelExchangesFailuresHandled | camel.exchanges.failures.handled
+| CamelExchangesInflight | camel.exchanges.external.redeliveries
+| CamelExchangesSucceeded | camel.exchanges.succeeded
+| CamelExchangesTotal | camel.exchanges.total
+| CamelMessageHistory | camel.message.history
+| CamelRoutePolicy | camel.route.policy
+| CamelRoutePolicyLongTask | camel.route.policy.long.task
+| CamelRoutesAdded | camel.routes.added
+| CamelRoutesRunning | camel.routes.running
+|===
+
 === Deprecated Components
 
 The following components that had been marked as deprecated, were removed in this release:
