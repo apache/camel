@@ -21,6 +21,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
     public boolean configure(CamelContext camelContext, Object obj, String name, Object value, boolean ignoreCase) {
         VertxWebsocketEndpoint target = (VertxWebsocketEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "alloworiginheader":
+        case "allowOriginHeader": target.getConfiguration().setAllowOriginHeader(property(camelContext, boolean.class, value)); return true;
         case "allowedoriginpattern":
         case "allowedOriginPattern": target.getConfiguration().setAllowedOriginPattern(property(camelContext, java.lang.String.class, value)); return true;
         case "bridgeerrorhandler":
@@ -41,6 +43,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "maxreconnectattempts":
         case "maxReconnectAttempts": target.getConfiguration().setMaxReconnectAttempts(property(camelContext, int.class, value)); return true;
+        case "originheaderurl":
+        case "originHeaderUrl": target.getConfiguration().setOriginHeaderUrl(property(camelContext, java.lang.String.class, value)); return true;
         case "reconnectinitialdelay":
         case "reconnectInitialDelay": target.getConfiguration().setReconnectInitialDelay(property(camelContext, int.class, value)); return true;
         case "reconnectinterval":
@@ -59,6 +63,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
     @Override
     public Class<?> getOptionType(String name, boolean ignoreCase) {
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "alloworiginheader":
+        case "allowOriginHeader": return boolean.class;
         case "allowedoriginpattern":
         case "allowedOriginPattern": return java.lang.String.class;
         case "bridgeerrorhandler":
@@ -79,6 +85,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "lazyStartProducer": return boolean.class;
         case "maxreconnectattempts":
         case "maxReconnectAttempts": return int.class;
+        case "originheaderurl":
+        case "originHeaderUrl": return java.lang.String.class;
         case "reconnectinitialdelay":
         case "reconnectInitialDelay": return int.class;
         case "reconnectinterval":
@@ -98,6 +106,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
     public Object getOptionValue(Object obj, String name, boolean ignoreCase) {
         VertxWebsocketEndpoint target = (VertxWebsocketEndpoint) obj;
         switch (ignoreCase ? name.toLowerCase() : name) {
+        case "alloworiginheader":
+        case "allowOriginHeader": return target.getConfiguration().isAllowOriginHeader();
         case "allowedoriginpattern":
         case "allowedOriginPattern": return target.getConfiguration().getAllowedOriginPattern();
         case "bridgeerrorhandler":
@@ -118,6 +128,8 @@ public class VertxWebsocketEndpointConfigurer extends PropertyConfigurerSupport 
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "maxreconnectattempts":
         case "maxReconnectAttempts": return target.getConfiguration().getMaxReconnectAttempts();
+        case "originheaderurl":
+        case "originHeaderUrl": return target.getConfiguration().getOriginHeaderUrl();
         case "reconnectinitialdelay":
         case "reconnectInitialDelay": return target.getConfiguration().getReconnectInitialDelay();
         case "reconnectinterval":

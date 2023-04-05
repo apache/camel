@@ -53,6 +53,10 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
     private String defaultHost = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_HOST;
     @Metadata(label = "advanced", defaultValue = "" + VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT)
     private int defaultPort = VertxWebsocketConstants.DEFAULT_VERTX_SERVER_PORT;
+    @Metadata(label = "advanced", defaultValue = "true")
+    private boolean allowOriginHeader = true;
+    @Metadata(label = "advanced")
+    private String originHeaderUrl;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -100,6 +104,8 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
 
         VertxWebsocketConfiguration configuration = new VertxWebsocketConfiguration();
         configuration.setWebsocketURI(websocketURI);
+        configuration.setAllowOriginHeader(isAllowOriginHeader());
+        configuration.setOriginHeaderUrl(getOriginHeaderUrl());
 
         VertxWebsocketEndpoint endpoint = createEndpointInstance(uri, configuration);
         setProperties(endpoint, parameters);
@@ -246,6 +252,29 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
 
     protected Map<VertxWebsocketHostKey, VertxWebsocketHost> getVertxHostRegistry() {
         return this.vertxHostRegistry;
+    }
+
+    public boolean isAllowOriginHeader() {
+        return allowOriginHeader;
+    }
+
+    /**
+     * Whether the WebSocket client should add the Origin header to the WebSocket handshake request.
+     */
+    public void setAllowOriginHeader(boolean allowOriginHeader) {
+        this.allowOriginHeader = allowOriginHeader;
+    }
+
+    public String getOriginHeaderUrl() {
+        return originHeaderUrl;
+    }
+
+    /**
+     * The value of the Origin header that the WebSocket client should use on the WebSocket handshake request. When not
+     * specified, the WebSocket client will automatically determine the value for the Origin from the request URL.
+     */
+    public void setOriginHeaderUrl(String originHeaderUrl) {
+        this.originHeaderUrl = originHeaderUrl;
     }
 
     protected VertxWebsocketHost createVertxWebsocketHost(

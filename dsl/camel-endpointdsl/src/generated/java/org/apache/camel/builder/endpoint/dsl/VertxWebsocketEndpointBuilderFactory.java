@@ -473,6 +473,59 @@ public interface VertxWebsocketEndpointBuilderFactory {
             return (AdvancedVertxWebsocketEndpointProducerBuilder) this;
         }
         /**
+         * Whether the WebSocket client should add the Origin header to the
+         * WebSocket handshake request.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param allowOriginHeader the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointProducerBuilder allowOriginHeader(
+                boolean allowOriginHeader) {
+            doSetProperty("allowOriginHeader", allowOriginHeader);
+            return this;
+        }
+        /**
+         * Whether the WebSocket client should add the Origin header to the
+         * WebSocket handshake request.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: true
+         * Group: consumer
+         * 
+         * @param allowOriginHeader the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointProducerBuilder allowOriginHeader(
+                String allowOriginHeader) {
+            doSetProperty("allowOriginHeader", allowOriginHeader);
+            return this;
+        }
+        /**
+         * The value of the Origin header that the WebSocket client should use
+         * on the WebSocket handshake request. When not specified, the WebSocket
+         * client will automatically determine the value for the Origin from the
+         * request URL.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: consumer
+         * 
+         * @param originHeaderUrl the value to set
+         * @return the dsl builder
+         */
+        default VertxWebsocketEndpointProducerBuilder originHeaderUrl(
+                String originHeaderUrl) {
+            doSetProperty("originHeaderUrl", originHeaderUrl);
+            return this;
+        }
+        /**
          * Sets customized options for configuring the WebSocket client used in
          * the producer.
          * 

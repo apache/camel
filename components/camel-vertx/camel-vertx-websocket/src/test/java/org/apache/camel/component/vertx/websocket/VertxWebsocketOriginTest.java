@@ -53,11 +53,28 @@ public class VertxWebsocketOriginTest extends VertxWebSocketTestSupport {
         assertEquals(403, upgradeRejectedException.getStatus());
     }
 
+    @Test
+    public void testCustomOrigin() throws InterruptedException {
+        String originUrl = "http://foohost:" + PORT2;
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedBodiesReceived("Hello world");
+        template.sendBody("vertx-websocket:localhost:" + PORT2 + "/test?originHeaderUrl=" + originUrl, "world");
+        mockEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void testOriginDisabled() throws InterruptedException {
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
+        mockEndpoint.expectedBodiesReceived("Hello world");
+        template.sendBody("vertx-websocket:localhost:" + PORT2 + "/test?allowOriginHeader=false", "world");
+        mockEndpoint.assertIsSatisfied();
+    }
+
     private UpgradeRejectedException unwrapException(CamelExecutionException e) {
         Throwable cause = e.getCause();
         if (cause instanceof ExecutionException) {
             Throwable originalCause = cause.getCause();
-            if (originalCause != null && originalCause instanceof UpgradeRejectedException) {
+            if (originalCause instanceof UpgradeRejectedException) {
                 return (UpgradeRejectedException) originalCause;
             }
         }

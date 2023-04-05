@@ -18,8 +18,11 @@ package org.apache.camel.component.vertx.websocket;
 
 import java.net.URI;
 
+import io.vertx.core.MultiMap;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
+import io.vertx.core.http.HttpClientOptions;
+import io.vertx.core.http.WebSocketConnectOptions;
 import io.vertx.core.metrics.MetricsOptions;
 import io.vertx.core.metrics.impl.DummyVertxMetrics;
 import org.apache.camel.CamelContext;
@@ -27,6 +30,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -116,6 +121,55 @@ public class VertxWebsocketComponentConfigurationTest {
                     = context.getEndpoint("vertx-websocket:foo.bar.com/test", VertxWebsocketEndpoint.class);
             URI websocketURI = endpoint.getConfiguration().getWebsocketURI();
             assertEquals(defaultPort, websocketURI.getPort());
+        }
+    }
+
+    @Test
+    void testAllowOriginHeader() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            VertxWebsocketComponent component = new VertxWebsocketComponent();
+            context.addComponent("vertx-websocket", component);
+            context.start();
+
+            VertxWebsocketEndpoint endpoint
+                    = context.getEndpoint("vertx-websocket:localhost/test", VertxWebsocketEndpoint.class);
+            WebSocketConnectOptions connectOptions = endpoint.getWebSocketConnectOptions(new HttpClientOptions());
+            assertTrue(connectOptions.getAllowOriginHeader());
+        }
+    }
+
+    @Test
+    void testDisallowOriginHeader() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            VertxWebsocketComponent component = new VertxWebsocketComponent();
+            component.setAllowOriginHeader(false);
+            context.addComponent("vertx-websocket", component);
+            context.start();
+
+            VertxWebsocketEndpoint endpoint
+                    = context.getEndpoint("vertx-websocket:localhost/test", VertxWebsocketEndpoint.class);
+            WebSocketConnectOptions connectOptions = endpoint.getWebSocketConnectOptions(new HttpClientOptions());
+            assertFalse(connectOptions.getAllowOriginHeader());
+        }
+    }
+
+    @Test
+    void testCustomOriginHeaderUrl() throws Exception {
+        try (CamelContext context = new DefaultCamelContext()) {
+            String originUrl = "https://foo.bar.com";
+            VertxWebsocketComponent component = new VertxWebsocketComponent();
+            component.setOriginHeaderUrl(originUrl);
+            context.addComponent("vertx-websocket", component);
+            context.start();
+
+            VertxWebsocketEndpoint endpoint
+                    = context.getEndpoint("vertx-websocket:localhost/test", VertxWebsocketEndpoint.class);
+
+            WebSocketConnectOptions connectOptions = endpoint.getWebSocketConnectOptions(new HttpClientOptions());
+            MultiMap headers = connectOptions.getHeaders();
+            String originHeaderValue = headers.get(VertxWebsocketConstants.ORIGIN_HTTP_HEADER_NAME);
+            assertNotNull(headers);
+            assertEquals(originUrl, originHeaderValue);
         }
     }
 }
