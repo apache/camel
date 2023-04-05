@@ -89,7 +89,7 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
                     headerContent.addAll(inboundSoapHeaders);
                 }
             }
-            bodyContent = getDataFormat().createContentFromObject(inputObject, soapAction, headerContent);
+            bodyContent = getDataFormat().createContentFromObject(inputObject, soapAction);
         }
 
         for (Object elem : bodyContent) {

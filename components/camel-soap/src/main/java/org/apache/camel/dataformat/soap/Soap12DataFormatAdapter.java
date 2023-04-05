@@ -92,7 +92,7 @@ public class Soap12DataFormatAdapter implements SoapDataFormatAdapter {
                     headerContent.addAll(inboundSoapHeaders);
                 }
             }
-            bodyContent = getDataFormat().createContentFromObject(inputObject, soapAction, headerContent);
+            bodyContent = getDataFormat().createContentFromObject(inputObject, soapAction);
         }
 
         for (Object elem : bodyContent) {
