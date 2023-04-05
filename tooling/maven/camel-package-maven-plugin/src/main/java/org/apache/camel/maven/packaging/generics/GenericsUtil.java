@@ -74,7 +74,7 @@ public final class GenericsUtil {
         } else if (beanType instanceof WildcardType) {
             return isAssignableFrom(isDelegateOrEvent, (Type) injectionPointType, (WildcardType) beanType);
         } else {
-            throw new IllegalArgumentException("Unsupported type " + injectionPointType.getClass());
+            throw new IllegalArgumentException("Unsupported type " + injectionPointType);
         }
     }
 
