@@ -32,6 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.vault.AwsVaultConfiguration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
@@ -82,6 +83,13 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     private static final String CAMEL_AWS_VAULT_REGION_ENV = "CAMEL_VAULT_AWS_REGION";
     private static final String CAMEL_AWS_VAULT_USE_DEFAULT_CREDENTIALS_PROVIDER_ENV
             = "CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER";
+
+    private static final String CAMEL_AWS_VAULT_USE_PROFILE_CREDENTIALS_PROVIDER_ENV
+            = "CAMEL_VAULT_AWS_USE_PROFILE_CREDENTIALS_PROVIDER";
+
+    private static final String CAMEL_AWS_VAULT_PROFILE_NAME_ENV
+            = "CAMEL_AWS_VAULT_PROFILE_NAME";
+
     private CamelContext camelContext;
     private SecretsManagerClient client;
 
@@ -89,6 +97,10 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
 
     private String region;
     private boolean defaultCredentialsProvider;
+
+    private boolean profleCredentialsProvider;
+
+    private String profileName;
 
     @Override
     protected void doStart() throws Exception {
@@ -99,6 +111,9 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         String region = System.getenv(CAMEL_AWS_VAULT_REGION_ENV);
         boolean useDefaultCredentialsProvider
                 = Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_USE_DEFAULT_CREDENTIALS_PROVIDER_ENV));
+        boolean useProfileCredentialsProvider
+                = Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_USE_PROFILE_CREDENTIALS_PROVIDER_ENV));
+        String profileName = System.getenv(CAMEL_AWS_VAULT_PROFILE_NAME_ENV);
         if (ObjectHelper.isEmpty(accessKey) && ObjectHelper.isEmpty(secretKey) && ObjectHelper.isEmpty(region)) {
             AwsVaultConfiguration awsVaultConfiguration = getCamelContext().getVaultConfiguration().aws();
             if (ObjectHelper.isNotEmpty(awsVaultConfiguration)) {
@@ -106,6 +121,8 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
                 secretKey = awsVaultConfiguration.getSecretKey();
                 region = awsVaultConfiguration.getRegion();
                 useDefaultCredentialsProvider = awsVaultConfiguration.isDefaultCredentialsProvider();
+                useProfileCredentialsProvider = awsVaultConfiguration.isProfileCredentialsProvider();
+                profileName = awsVaultConfiguration.getProfileName();
             }
         }
         this.region = region;
@@ -118,6 +135,13 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
         } else if (useDefaultCredentialsProvider && ObjectHelper.isNotEmpty(region)) {
             this.defaultCredentialsProvider = true;
             SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();
+            clientBuilder.region(Region.of(region));
+            client = clientBuilder.build();
+        } else if (useProfileCredentialsProvider && ObjectHelper.isNotEmpty(profileName)) {
+            this.profleCredentialsProvider = true;
+            this.profileName = profileName;
+            SecretsManagerClientBuilder clientBuilder = SecretsManagerClient.builder();
+            clientBuilder.credentialsProvider(ProfileCredentialsProvider.create(profileName));
             clientBuilder.region(Region.of(region));
             client = clientBuilder.build();
         } else {
@@ -264,9 +288,23 @@ public class SecretsManagerPropertiesFunction extends ServiceSupport implements 
     }
 
     /**
-     * Whether login is using default credentials provider, or access/secret keys
+     * Whether login is using default credentials provider
      */
     public boolean isDefaultCredentialsProvider() {
         return defaultCredentialsProvider;
+    }
+
+    /**
+     * Whether login is using default profile credentials provider
+     */
+    public boolean isProfleCredentialsProvider() {
+        return profleCredentialsProvider;
+    }
+
+    /**
+     * The profile name to use when using the profile credentials provider
+     */
+    public String getProfileName() {
+        return profileName;
     }
 }
