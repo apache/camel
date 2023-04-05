@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.vertx.websocket;
 
+import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.net.NetServerOptions;
 import org.apache.camel.spi.Metadata;
 
@@ -23,6 +24,8 @@ public final class VertxWebsocketConstants {
 
     public static final String DEFAULT_VERTX_SERVER_HOST = NetServerOptions.DEFAULT_HOST;
     public static final int DEFAULT_VERTX_SERVER_PORT = NetServerOptions.DEFAULT_PORT;
+    public static final int DEFAULT_VERTX_CLIENT_WS_PORT = HttpClientOptions.DEFAULT_DEFAULT_PORT;
+    public static final int DEFAULT_VERTX_CLIENT_WSS_PORT = 443;
 
     @Metadata(description = "Sends the message to the client with the given connection key. You can\n" +
                             "use a comma separated list of keys to send a message to multiple clients",

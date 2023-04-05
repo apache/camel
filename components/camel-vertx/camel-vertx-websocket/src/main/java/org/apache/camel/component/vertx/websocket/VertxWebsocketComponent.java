@@ -101,7 +101,7 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         VertxWebsocketConfiguration configuration = new VertxWebsocketConfiguration();
         configuration.setWebsocketURI(websocketURI);
 
-        VertxWebsocketEndpoint endpoint = new VertxWebsocketEndpoint(uri, this, configuration);
+        VertxWebsocketEndpoint endpoint = createEndpointInstance(uri, configuration);
         setProperties(endpoint, parameters);
 
         if (configuration.getSslContextParameters() == null) {
@@ -109,6 +109,10 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
         }
 
         return endpoint;
+    }
+
+    protected VertxWebsocketEndpoint createEndpointInstance(String uri, VertxWebsocketConfiguration configuration) {
+        return new VertxWebsocketEndpoint(uri, this, configuration);
     }
 
     @Override
