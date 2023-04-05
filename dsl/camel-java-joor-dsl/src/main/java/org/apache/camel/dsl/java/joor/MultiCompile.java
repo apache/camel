@@ -108,10 +108,10 @@ public final class MultiCompile {
                 String cp = System.getProperty("java.class.path");
                 String mp = System.getProperty("jdk.module.path");
 
-                if (cp != null && !"".equals(cp)) {
+                if (cp != null && !cp.isEmpty()) {
                     classpath.append(cp);
                 }
-                if (mp != null && !"".equals(mp)) {
+                if (mp != null && !mp.isEmpty()) {
                     classpath.append(mp);
                 }
 

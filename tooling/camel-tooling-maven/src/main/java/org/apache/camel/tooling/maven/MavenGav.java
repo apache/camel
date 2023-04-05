@@ -46,10 +46,10 @@ public final class MavenGav {
         answer.groupId = groupId;
         answer.artifactId = artifactId;
         answer.version = version;
-        if (classifier != null && !"".equals(classifier)) {
+        if (classifier != null && !classifier.isEmpty()) {
             answer.classifier = classifier;
         }
-        if (packaging != null && !"".equals(packaging)) {
+        if (packaging != null && !packaging.isEmpty()) {
             answer.packaging = packaging;
         }
         return answer;

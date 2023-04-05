@@ -731,10 +731,10 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
         // 3) ${user.home}/.m2/repository (if exists)
         // 4) /tmp/.m2/repository
         String localRepository = System.getProperty("maven.repo.local");
-        if (localRepository == null || "".equals(localRepository.trim())) {
+        if (localRepository == null || localRepository.trim().isEmpty()) {
             localRepository = settings.getLocalRepository();
         }
-        if (localRepository == null || "".equals(localRepository.trim())) {
+        if (localRepository == null || localRepository.trim().isEmpty()) {
             Path m2Repository = Paths.get(System.getProperty("user.home"), ".m2/repository");
             if (!m2Repository.toFile().isDirectory()) {
                 m2Repository = Paths.get(System.getProperty("java.io.tmpdir"), UUID.randomUUID().toString());
