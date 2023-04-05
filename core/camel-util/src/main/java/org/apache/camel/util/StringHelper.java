@@ -1165,4 +1165,12 @@ public final class StringHelper {
         return true;
     }
 
+    public static boolean startsWith(String str, char ch) {
+        return !str.isEmpty() && str.charAt(0) == ch;
+    }
+
+    public static boolean endsWith(String str, char ch) {
+        return !str.isEmpty() && str.charAt(str.length() - 1) == ch;
+    }
+
 }

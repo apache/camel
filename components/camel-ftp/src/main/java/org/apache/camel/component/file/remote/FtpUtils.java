@@ -23,6 +23,7 @@ import java.util.Iterator;
 
 import org.apache.camel.Component;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +40,7 @@ public final class FtpUtils {
     public static String extractDirNameFromAbsolutePath(String path) {
         // default is unix so try with '/'
         // otherwise force File.separator
-        if (path.endsWith("/") || path.endsWith("\\")) {
+        if (StringHelper.endsWith(path, '/') || StringHelper.endsWith(path, '\\')) {
             path = path.substring(0, path.length() - 1);
         }
         return FileUtil.stripPath(path);
@@ -64,10 +65,10 @@ public final class FtpUtils {
         }
 
         // preserve ending slash if given in input path
-        boolean endsWithSlash = path.endsWith("/") || path.endsWith("\\");
+        boolean endsWithSlash = StringHelper.endsWith(path, '/') || StringHelper.endsWith(path, '\\');
 
         // preserve starting slash if given in input path
-        boolean startsWithSlash = path.startsWith("/") || path.startsWith("\\");
+        boolean startsWithSlash = StringHelper.startsWith(path, '/') || StringHelper.startsWith(path, '\\');
 
         Deque<String> stack = new ArrayDeque<>();
 
@@ -115,7 +116,7 @@ public final class FtpUtils {
             boolean secondSlash = sb.charAt(1) == '/' || sb.charAt(1) == '\\';
             if (firstSlash && secondSlash) {
                 // remove 2nd clash
-                sb = sb.replace(1, 2, "");
+                sb.replace(1, 2, "");
             }
         }
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jmx;
 
+import org.apache.camel.util.StringHelper;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -171,7 +173,7 @@ public class JMXUriBuilder {
      * it's not present.
      */
     public JMXUriBuilder withObjectPropertiesReference(String aReferenceToHashtable) {
-        if (aReferenceToHashtable.startsWith("#")) {
+        if (StringHelper.startsWith(aReferenceToHashtable, '#')) {
             addProperty("objectProperties", aReferenceToHashtable);
         } else {
             addProperty("objectProperties", "#" + aReferenceToHashtable);

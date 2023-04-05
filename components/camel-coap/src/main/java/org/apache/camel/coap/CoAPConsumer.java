@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.apache.camel.util.StringHelper;
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.server.resources.Resource;
 
@@ -45,7 +46,7 @@ public class CoAPConsumer extends DefaultConsumer {
         super.doStart();
 
         String path = endpoint.getUri().getPath();
-        if (path.startsWith("/")) {
+        if (StringHelper.startsWith(path, '/')) {
             path = path.substring(1);
         }
         Resource cr = endpoint.getCoapServer().getRoot();

@@ -61,6 +61,7 @@ import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -665,7 +666,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         if (getCurrentDirectory().startsWith(path)) {
             // extract the path segment relative to the target path and make
             // sure it keeps the preceding '/' for the regex op
-            String p = getCurrentDirectory().substring(path.length() - (path.endsWith("/") ? 1 : 0));
+            String p = getCurrentDirectory().substring(path.length() - (StringHelper.endsWith(path, '/') ? 1 : 0));
             if (p.length() == 0) {
                 return;
             }
@@ -725,7 +726,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
         String parent = FileUtil.compactPath(current + "/..");
         // must start with absolute
-        if (!parent.startsWith("/")) {
+        if (!StringHelper.startsWith(parent, '/')) {
             parent = "/" + parent;
         }
 

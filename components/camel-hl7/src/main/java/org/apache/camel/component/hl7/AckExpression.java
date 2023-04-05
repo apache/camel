@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.ExpressionAdapter;
+import org.apache.camel.util.StringHelper;
 
 public class AckExpression extends ExpressionAdapter {
 
@@ -80,7 +81,7 @@ public class AckExpression extends ExpressionAdapter {
     }
 
     private boolean isSuccess(AcknowledgmentCode code) {
-        return code.name().endsWith("A");
+        return StringHelper.endsWith(code.name(),'A');
     }
 
 }

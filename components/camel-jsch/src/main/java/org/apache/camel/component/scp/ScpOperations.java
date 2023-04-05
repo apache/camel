@@ -42,6 +42,7 @@ import org.apache.camel.component.file.remote.RemoteFileOperations;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -446,7 +447,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
 
     private static String getRemoteFile(String name, ScpConfiguration config) {
         String dir = config.getDirectory();
-        dir = dir.endsWith("/") ? dir : dir + "/";
+        dir = StringHelper.endsWith(dir, '/') ? dir : dir + "/";
         return name.startsWith(dir) ? name.substring(dir.length()) : name;
     }
 

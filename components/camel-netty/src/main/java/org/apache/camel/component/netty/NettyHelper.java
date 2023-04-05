@@ -29,6 +29,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,13 +64,13 @@ public final class NettyHelper {
         if (autoAppendDelimiter) {
             if (TextLineDelimiter.LINE.equals(delimiter)) {
                 // line delimiter so ensure it ends with newline
-                if (!s.endsWith("\n")) {
+                if (!StringHelper.endsWith(s, '\n')) {
                     LOG.trace("Auto appending missing newline delimiter to body");
                     s = s + "\n";
                 }
             } else {
                 // null delimiter so ensure it ends with null
-                if (!s.endsWith("\u0000")) {
+                if (!StringHelper.endsWith(s, '\u0000')) {
                     LOG.trace("Auto appending missing null delimiter to body");
                     s = s + "\u0000";
                 }

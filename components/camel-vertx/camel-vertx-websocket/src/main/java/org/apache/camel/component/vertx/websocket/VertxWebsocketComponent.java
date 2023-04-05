@@ -30,6 +30,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
@@ -69,7 +70,7 @@ public class VertxWebsocketComponent extends DefaultComponent implements SSLCont
             String scheme = "ws://";
             // Preserves backwards compatibility for the vertx-websocket  on camel-quarkus / camel-k where the HTTP
             // server is provided by the runtime platform and the host:port configuration is not strictly required
-            if (remaining.startsWith("/")) {
+            if (StringHelper.startsWith(remaining, '/')) {
                 wsUri = scheme + "/" + remaining.replaceAll("^/+", "");
             } else {
                 wsUri = scheme + remaining;

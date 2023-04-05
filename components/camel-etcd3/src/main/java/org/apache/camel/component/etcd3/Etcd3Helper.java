@@ -19,6 +19,7 @@ package org.apache.camel.component.etcd3;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * The helper class for the etcd component.
@@ -44,7 +45,7 @@ public final class Etcd3Helper {
      * @return      the given path if it ends with slash, the given path with an appended slash otherwise.
      */
     public static String toPathPrefix(String path) {
-        if (path.endsWith("/")) {
+        if (StringHelper.endsWith(path, '/')) {
             return path;
         }
         return String.format("%s/", path);

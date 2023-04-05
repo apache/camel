@@ -23,6 +23,7 @@ import java.util.Map;
 
 import io.vertx.core.http.impl.HttpUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 public final class VertxWebsocketHelper {
 
@@ -70,7 +71,7 @@ public final class VertxWebsocketHelper {
         }
 
         // Paths ending with '*' are Vert.x wildcard routes so match on the path prefix
-        if (hostPath.endsWith("*")) {
+        if (StringHelper.endsWith(hostPath, '*')) {
             exactPathMatch = false;
             hostPath = hostPath.substring(0, hostPath.lastIndexOf('*'));
         }
@@ -89,7 +90,7 @@ public final class VertxWebsocketHelper {
             for (int i = 0; i < hostPathElements.length; i++) {
                 String hostPathElement = hostPathElements[i];
                 String targetPathElement = targetPathElements[i];
-                if (!hostPathElement.startsWith("{") && !hostPathElement.endsWith("}")
+                if (!StringHelper.startsWith(hostPathElement, '{') && !StringHelper.endsWith(hostPathElement, '}')
                         && !hostPathElement.equals(targetPathElement)) {
                     return false;
                 }

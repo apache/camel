@@ -42,6 +42,7 @@ import org.apache.camel.component.netty.http.NettyHttpConfiguration;
 import org.apache.camel.component.netty.http.NettyHttpConstants;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -288,7 +289,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         }
 
         // strip of ending /
-        if (path.endsWith("/")) {
+        if (StringHelper.endsWith(path, '/')) {
             path = path.substring(0, path.length() - 1);
         }
 

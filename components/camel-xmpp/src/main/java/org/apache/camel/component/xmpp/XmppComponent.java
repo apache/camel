@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.jivesoftware.smack.ReconnectionManager;
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ public class XmppComponent extends DefaultComponent {
         }
         String remainingPath = u.getPath();
         if (remainingPath != null) {
-            if (remainingPath.startsWith("/")) {
+            if (StringHelper.startsWith(remainingPath, '/')) {
                 remainingPath = remainingPath.substring(1);
             }
 

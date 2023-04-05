@@ -47,6 +47,7 @@ import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -643,7 +644,7 @@ public abstract class AbstractJacksonDataFormat extends ServiceSupport
                 Iterable<?> it = ObjectHelper.createIterable(moduleRefs);
                 for (Object o : it) {
                     String name = o.toString();
-                    if (name.startsWith("#")) {
+                    if (StringHelper.startsWith(name, '#')) {
                         name = name.substring(1);
                     }
                     Module module = CamelContextHelper.mandatoryLookup(camelContext, name, Module.class);

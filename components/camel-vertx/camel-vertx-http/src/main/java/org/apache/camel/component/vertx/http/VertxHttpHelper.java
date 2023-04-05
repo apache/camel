@@ -29,6 +29,7 @@ import org.apache.camel.ExchangePropertyKey;
 import org.apache.camel.Message;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 public final class VertxHttpHelper {
@@ -80,13 +81,13 @@ public final class VertxHttpHelper {
         // Append HTTP_PATH header value if is present
         String path = message.getHeader(VertxHttpConstants.HTTP_PATH, String.class);
         if (ObjectHelper.isNotEmpty(path)) {
-            if (path.startsWith("/")) {
+            if (StringHelper.startsWith(path, '/')) {
                 path = path.substring(1);
             }
             if (path.length() > 0) {
                 // make sure that there is exactly one "/" between HTTP_URI and
                 // HTTP_PATH
-                if (!uri.endsWith("/")) {
+                if (!StringHelper.endsWith(uri, '/')) {
                     uri = uri + "/";
                 }
                 uri = uri.concat(path);

@@ -233,4 +233,23 @@ public class StringHelperTest {
         assertEquals("----", StringHelper.fillChars('-', 4));
         assertEquals("..........", StringHelper.fillChars('.', 10));
     }
+
+    @Test
+    public void testStartsWith() {
+        assertTrue(StringHelper.startsWith("1", '1'));
+        assertTrue(StringHelper.startsWith("1_", '1'));
+        assertFalse(StringHelper.startsWith("", '1'));
+        assertFalse(StringHelper.startsWith("2", '1'));
+        assertFalse(StringHelper.startsWith("2_", '1'));
+    }
+
+    @Test
+    public void testEndsWith() {
+        assertTrue(StringHelper.endsWith("1", '1'));
+        assertTrue(StringHelper.endsWith("_1", '1'));
+        assertFalse(StringHelper.endsWith("", '1'));
+        assertFalse(StringHelper.endsWith("2", '1'));
+        assertFalse(StringHelper.endsWith("_2", '1'));
+    }
+
 }

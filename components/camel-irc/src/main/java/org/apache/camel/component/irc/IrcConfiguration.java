@@ -303,7 +303,7 @@ public class IrcConfiguration implements Cloneable {
         for (int i = 0; i < count; i++) {
             String channel = chs[i].trim();
             String key = ks != null && ks.length > i ? ks[i].trim() : null;
-            if (channel.startsWith("#") && !channel.startsWith("##")) {
+            if (StringHelper.startsWith(channel, '#') && !channel.startsWith("##")) {
                 channel = channel.substring(1);
             }
             if (key != null && !key.isEmpty()) {

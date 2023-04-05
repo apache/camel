@@ -641,7 +641,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         // folders/names starting with dot is always skipped (eg. ".", ".camel",
         // ".camelLock")
-        if (name.startsWith(".")) {
+        if (StringHelper.startsWith(name, '.')) {
             return false;
         }
 

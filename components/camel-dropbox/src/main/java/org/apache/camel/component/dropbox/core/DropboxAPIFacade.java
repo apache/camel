@@ -48,6 +48,7 @@ import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxResultCode;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.apache.camel.support.builder.OutputStreamBuilder;
+import org.apache.camel.util.StringHelper;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,7 +151,7 @@ public final class DropboxAPIFacade {
             for (File file : listFiles) {
                 String absPath = file.getAbsolutePath();
                 int indexRemainingPath = localPath.length();
-                if (!localPath.endsWith("/")) {
+                if (!StringHelper.endsWith(localPath, '/')) {
                     indexRemainingPath += 1;
                 }
                 String remainingPath = absPath.substring(indexRemainingPath);

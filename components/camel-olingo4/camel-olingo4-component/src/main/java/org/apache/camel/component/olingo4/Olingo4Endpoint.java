@@ -117,7 +117,7 @@ public class Olingo4Endpoint extends AbstractApiEndpoint<Olingo4ApiName, Olingo4
         Map<String, Object> query = new LinkedHashMap<>();
         Map<String, Object> known = new LinkedHashMap<>();
         options.forEach((k, v) -> {
-            if (k.startsWith("$")) {
+            if (StringHelper.startsWith(k, '$')) {
                 query.put(k, v);
             } else {
                 known.put(k, v);

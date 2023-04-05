@@ -34,6 +34,7 @@ import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_ENDPOINT_URI_PREFIX;
 import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_RESOURCE_URI;
@@ -157,7 +158,7 @@ public class MustacheEndpoint extends ResourceEndpoint {
     public String getResourceUri() {
         // do not have leading slash as mustache cannot find the resource, as that entails classpath root
         String uri = super.getResourceUri();
-        if (uri != null && (uri.startsWith("/") || uri.startsWith("\\"))) {
+        if (uri != null && (StringHelper.startsWith(uri, '/') || StringHelper.startsWith(uri, '\\'))) {
             return uri.substring(1);
         } else {
             return uri;

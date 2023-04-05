@@ -18,6 +18,7 @@ package org.apache.camel.component.undertow.cloud;
 
 import org.apache.camel.impl.cloud.DefaultServiceCallExpression;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 public final class UndertowServiceExpression extends DefaultServiceCallExpression {
     public UndertowServiceExpression() {
@@ -39,7 +40,7 @@ public final class UndertowServiceExpression extends DefaultServiceCallExpressio
         }
 
         if (contextPath != null) {
-            if (!contextPath.startsWith("/")) {
+            if (!StringHelper.startsWith(contextPath, '/')) {
                 contextPath = "/" + contextPath;
             }
 

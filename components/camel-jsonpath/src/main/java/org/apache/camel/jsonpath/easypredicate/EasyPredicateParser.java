@@ -16,6 +16,8 @@
  */
 package org.apache.camel.jsonpath.easypredicate;
 
+import org.apache.camel.util.StringHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +40,7 @@ public class EasyPredicateParser {
      */
     public String parse(String predicate) {
 
-        if (predicate.startsWith("$")) {
+        if (StringHelper.startsWith(predicate, '$')) {
             // regular json path so skip
             return predicate;
         }
@@ -70,7 +72,7 @@ public class EasyPredicateParser {
                     after = prev.substring(pos + 1);
                 }
                 sb.append("$");
-                if (!before.startsWith(".")) {
+                if (!StringHelper.startsWith(before, '.')) {
                     sb.append(".");
                 }
                 sb.append(before);

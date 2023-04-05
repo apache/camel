@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.util.StringHelper;
 
 @Component("telegram")
 public class TelegramComponent extends DefaultComponent {
@@ -46,7 +47,7 @@ public class TelegramComponent extends DefaultComponent {
         TelegramConfiguration configuration = new TelegramConfiguration();
 
         // ignore trailing slash
-        if (remaining.endsWith("/")) {
+        if (StringHelper.endsWith(remaining, '/')) {
             remaining = remaining.substring(0, remaining.length() - 1);
         }
         configuration.setType(remaining);

@@ -38,6 +38,7 @@ import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.eclipse.californium.core.CoapServer;
 import org.eclipse.californium.core.network.CoapEndpoint;
@@ -130,7 +131,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
         String path = basePath;
         if (uriTemplate != null) {
             // make sure to avoid double slashes
-            if (uriTemplate.startsWith("/")) {
+            if (StringHelper.startsWith(uriTemplate, '/')) {
                 path = path + uriTemplate;
             } else {
                 path = path + "/" + uriTemplate;

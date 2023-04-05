@@ -180,7 +180,7 @@ public class BeanInfo {
             if (methodName.contains("(")) {
                 name = StringHelper.before(methodName, "(");
                 // the must be a ending parenthesis
-                if (!methodName.endsWith(")")) {
+                if (!StringHelper.endsWith(methodName, ')')) {
                     throw new IllegalArgumentException("Method should end with parenthesis, was " + methodName);
                 }
                 // and there must be an even number of parenthesis in the syntax
@@ -1066,7 +1066,7 @@ public class BeanInfo {
             return true;
         }
 
-        if (methodName.contains("(") && !methodName.endsWith(")")) {
+        if (methodName.contains("(") && !StringHelper.endsWith(methodName, ')')) {
             throw new IllegalArgumentException("Name must have both starting and ending parenthesis, was: " + methodName);
         }
 

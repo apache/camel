@@ -36,6 +36,7 @@ import org.apache.camel.dataformat.soap.name.ElementNameStrategy;
 import org.apache.camel.dataformat.soap.name.ServiceInterfaceStrategy;
 import org.apache.camel.dataformat.soap.name.TypeNameStrategy;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -185,7 +186,7 @@ public class SoapDataFormat extends JaxbDataFormat {
         String soapAction = inMessage.getHeader(Exchange.SOAP_ACTION, String.class);
         if (soapAction == null) {
             soapAction = inMessage.getHeader("SOAPAction", String.class);
-            if (soapAction != null && soapAction.startsWith("\"")) {
+            if (soapAction != null && StringHelper.startsWith(soapAction, '\"')) {
                 soapAction = soapAction.substring(1, soapAction.length() - 1);
             }
         }

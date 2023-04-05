@@ -34,6 +34,7 @@ import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.main.MainCommandLineSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -317,7 +318,7 @@ public class Main extends MainCommandLineSupport {
                         break;
                     }
                     line = line.trim();
-                    if (line.startsWith("#") || line.length() == 0) {
+                    if (StringHelper.startsWith(line, '#') || line.length() == 0) {
                         continue;
                     }
                     locations.add(line);

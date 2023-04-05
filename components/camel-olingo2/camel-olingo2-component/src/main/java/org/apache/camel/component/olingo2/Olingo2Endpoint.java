@@ -117,7 +117,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
         Map<String, Object> query = new LinkedHashMap<>();
         Map<String, Object> known = new LinkedHashMap<>();
         options.forEach((k, v) -> {
-            if (k.startsWith("$")) {
+            if (StringHelper.startsWith(Olingo2Endpoint.java, '$')) {
                 query.put(k, v);
             } else {
                 known.put(k, v);

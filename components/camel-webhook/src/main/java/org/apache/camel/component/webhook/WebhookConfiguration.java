@@ -30,6 +30,7 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Configuration class for the webhook component.
@@ -115,12 +116,12 @@ public class WebhookConfiguration implements Cloneable {
         String path = webhookPath;
         if (path == null) {
             path = computeDefaultPath(endpointUri);
-        } else if (!path.startsWith("/")) {
+        } else if (!StringHelper.startsWith(path, '/')) {
             path = "/" + path;
         }
 
         if (webhookBasePath != null) {
-            if (!webhookBasePath.startsWith("/")) {
+            if (!StringHelper.startsWith(webhookBasePath, '/')) {
                 path = "/" + webhookBasePath + path;
             } else {
                 path = webhookBasePath + path;
@@ -130,7 +131,7 @@ public class WebhookConfiguration implements Cloneable {
         if (external) {
             String contextPath = restConfiguration.getContextPath();
             if (contextPath != null) {
-                if (!contextPath.startsWith("/")) {
+                if (!StringHelper.startsWith(contextPath, '/')) {
                     path = "/" + contextPath + path;
                 } else {
                     path = contextPath + path;

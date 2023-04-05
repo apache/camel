@@ -28,6 +28,7 @@ import javax.jcr.observation.EventListener;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +80,7 @@ public class JcrConsumer extends DefaultConsumer {
 
         if (absPath == null) {
             absPath = "/";
-        } else if (!absPath.startsWith("/")) {
+        } else if (!StringHelper.startsWith(absPath, '/')) {
             absPath = "/" + absPath;
         }
 

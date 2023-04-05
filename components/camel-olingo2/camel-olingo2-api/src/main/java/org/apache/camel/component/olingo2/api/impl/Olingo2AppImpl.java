@@ -45,6 +45,7 @@ import org.apache.camel.component.olingo2.api.batch.Olingo2BatchQueryRequest;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchRequest;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchResponse;
 import org.apache.camel.component.olingo2.api.batch.Operation;
+import org.apache.camel.util.StringHelper;
 import org.apache.http.Consts;
 import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
@@ -920,7 +921,7 @@ public final class Olingo2AppImpl implements Olingo2App {
         // build body string
         String resourcePath = batchRequest.getResourcePath();
         // is it a referenced entity?
-        if (resourcePath.startsWith("$")) {
+        if (StringHelper.startsWith(resourcePath, '$')) {
             resourcePath = replaceContentId(edm, resourcePath, contentIdMap);
         }
 
@@ -1076,7 +1077,7 @@ public final class Olingo2AppImpl implements Olingo2App {
         // resolve resource path and query params and parse batch part uri
         final String resourcePath = request.getResourcePath();
         final String resolvedResourcePath;
-        if (resourcePath.startsWith("$") && !(METADATA.equals(resourcePath) || BATCH.equals(resourcePath))) {
+        if (StringHelper.startsWith(resourcePath, '$') && !(METADATA.equals(resourcePath) || BATCH.equals(resourcePath))) {
             resolvedResourcePath = findLocation(resourcePath, contentIdLocationMap);
         } else {
             final String resourceLocation = response.getHeader(HttpHeaders.LOCATION);

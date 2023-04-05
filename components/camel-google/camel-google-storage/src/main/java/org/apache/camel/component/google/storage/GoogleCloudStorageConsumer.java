@@ -45,6 +45,7 @@ import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,7 +172,7 @@ public class GoogleCloudStorageConsumer extends ScheduledBatchPollingConsumer {
      */
     protected boolean includeObject(Blob blob) {
         // is the blog a folder
-        boolean folder = blob.getName().endsWith("/");
+        boolean folder = StringHelper.endsWith(blob.getName(), '/');
 
         if (folder && !getConfiguration().isIncludeFolders()) {
             // we should not include folders

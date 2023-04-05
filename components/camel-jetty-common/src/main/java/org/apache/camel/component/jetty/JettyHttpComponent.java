@@ -413,7 +413,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
                 pathSpec = "/";
             }
             if (endpoint.isMatchOnUriPrefix()) {
-                pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
+                pathSpec = StringHelper.endsWith(pathSpec, '/') ? pathSpec + "*" : pathSpec + "/*";
             }
             addFilter(context, filterHolder, pathSpec);
         }
@@ -449,7 +449,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
             pathSpec = "/";
         }
         if (endpoint.isMatchOnUriPrefix()) {
-            pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
+            pathSpec = StringHelper.endsWith(pathSpec, '/') ? pathSpec + "*" : pathSpec + "/*";
         }
         addFilter(context, filterHolder, pathSpec);
         LOG.debug("using multipart filter implementation {} for path {}", filter.getClass().getName(), pathSpec);
@@ -1052,7 +1052,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         String path = basePath;
         if (uriTemplate != null) {
             // make sure to avoid double slashes
-            if (uriTemplate.startsWith("/")) {
+            if (StringHelper.startsWith(uriTemplate, '/')) {
                 path = path + uriTemplate;
             } else {
                 path = path + "/" + uriTemplate;

@@ -356,7 +356,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             // If the path isn't empty, we need to add a trailing / if it isn't
             // already there
             baseDir = endpointPath;
-            boolean trailingSlash = endpointPath.endsWith("/") || endpointPath.endsWith("\\");
+            boolean trailingSlash = StringHelper.endsWith(endpointPath, '/') || StringHelper.endsWith(endpointPath, '\\');
             if (!trailingSlash) {
                 baseDir += getFileSeparator();
             }

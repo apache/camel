@@ -55,6 +55,7 @@ import org.apache.camel.support.DefaultDataFormat;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -305,7 +306,7 @@ public class MimeMultipartDataFormat extends DefaultDataFormat {
         // if there is no file name we use the Content-ID header
         if (key == null && bp instanceof MimeBodyPart) {
             key = ((MimeBodyPart) bp).getContentID();
-            if (key != null && key.startsWith("<") && key.length() > 2) {
+            if (key != null && StringHelper.startsWith(key, '<') && key.length() > 2) {
                 // strip <>
                 key = key.substring(1, key.length() - 1);
             }

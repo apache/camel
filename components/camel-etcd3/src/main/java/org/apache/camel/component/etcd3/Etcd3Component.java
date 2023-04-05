@@ -24,6 +24,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 @Component("etcd3")
 public class Etcd3Component extends DefaultComponent {
@@ -46,7 +47,7 @@ public class Etcd3Component extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // path must start with leading slash
         String path = ObjectHelper.isEmpty(remaining) ? "/" : remaining;
-        if (!path.startsWith("/")) {
+        if (!StringHelper.startsWith(path, '/')) {
             path = String.format("/%s", path);
         }
 

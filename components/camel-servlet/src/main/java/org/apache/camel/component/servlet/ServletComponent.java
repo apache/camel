@@ -95,7 +95,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             String scheme = StringHelper.before(uri, ":");
             String after = StringHelper.after(uri, ":");
             // rebuild uri to have exactly one leading slash
-            while (after.startsWith("/")) {
+            while (StringHelper.startsWith(after, '/')) {
                 after = after.substring(1);
             }
             after = "/" + after;
@@ -284,7 +284,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         String path = basePath;
         if (uriTemplate != null) {
             // make sure to avoid double slashes
-            if (uriTemplate.startsWith("/")) {
+            if (StringHelper.startsWith(uriTemplate, '/')) {
                 path = path + uriTemplate;
             } else {
                 path = path + "/" + uriTemplate;

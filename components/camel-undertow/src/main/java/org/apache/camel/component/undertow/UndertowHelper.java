@@ -27,6 +27,7 @@ import io.undertow.util.Methods;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
@@ -63,13 +64,13 @@ public final class UndertowHelper {
         String path = exchange.getIn().getHeader(UndertowConstants.HTTP_PATH, String.class);
         // NOW the HTTP_PATH is just related path, we don't need to trim it
         if (path != null) {
-            if (path.startsWith("/")) {
+            if (StringHelper.startsWith(path, '/')) {
                 path = path.substring(1);
             }
             if (path.length() > 0) {
                 // make sure that there is exactly one "/" between HTTP_URI and
                 // HTTP_PATH
-                if (!uri.endsWith("/")) {
+                if (!StringHelper.endsWith(uri, '/')) {
                     uri = uri + "/";
                 }
                 uri = uri.concat(path);

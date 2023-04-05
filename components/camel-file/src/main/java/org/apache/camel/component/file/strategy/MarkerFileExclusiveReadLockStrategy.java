@@ -179,7 +179,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
 
         for (File file : files) {
 
-            if (file.getName().startsWith(".")) {
+            if (StringHelper.startsWith(file.getName(), '.')) {
                 // files starting with dot should be skipped
                 continue;
             }

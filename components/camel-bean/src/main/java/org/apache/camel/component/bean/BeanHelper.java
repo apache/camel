@@ -44,12 +44,12 @@ public final class BeanHelper {
         value = value.trim();
 
         // single quoted is valid
-        if (value.startsWith("'") && value.endsWith("'")) {
+        if (StringHelper.startsWith(value, '\'') && StringHelper.endsWith(value, '\'')) {
             return String.class;
         }
 
         // double quoted is valid
-        if (value.startsWith("\"") && value.endsWith("\"")) {
+        if (StringHelper.startsWith(value, '\"') && StringHelper.endsWith(value, '\"')) {
             return String.class;
         }
 

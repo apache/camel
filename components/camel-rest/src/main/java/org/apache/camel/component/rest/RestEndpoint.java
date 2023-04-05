@@ -556,7 +556,7 @@ public class RestEndpoint extends DefaultEndpoint {
 
             // calculate the url to the rest service
             String path = getPath();
-            if (!path.startsWith("/")) {
+            if (!StringHelper.startsWith(path, '/')) {
                 path = "/" + path;
             }
 
@@ -565,7 +565,7 @@ public class RestEndpoint extends DefaultEndpoint {
             // during init of the servlet
             String contextPath = config.getContextPath();
             if (contextPath != null) {
-                if (!contextPath.startsWith("/")) {
+                if (!StringHelper.startsWith(contextPath, '/')) {
                     path = "/" + contextPath + path;
                 } else {
                     path = contextPath + path;
@@ -577,7 +577,7 @@ public class RestEndpoint extends DefaultEndpoint {
             String url = baseUrl;
             if (uriTemplate != null) {
                 // make sure to avoid double slashes
-                if (uriTemplate.startsWith("/")) {
+                if (StringHelper.startsWith(uriTemplate, '/')) {
                     url = url + uriTemplate;
                 } else {
                     url = url + "/" + uriTemplate;

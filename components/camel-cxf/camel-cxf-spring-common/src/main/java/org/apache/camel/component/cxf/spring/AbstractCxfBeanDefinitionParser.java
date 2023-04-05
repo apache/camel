@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.spring;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.util.StringHelper;
 import org.w3c.dom.Element;
 
 import org.apache.cxf.common.util.StringUtils;
@@ -43,7 +44,7 @@ public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefini
         }
 
         if (org.springframework.util.StringUtils.hasText(val)) {
-            if (val.startsWith("#")) {
+            if (StringHelper.startsWith(val, '#')) {
                 Map<String, Object> map = getPropertyMap(bean, true);
                 map.put(propertyName, val);
             } else {

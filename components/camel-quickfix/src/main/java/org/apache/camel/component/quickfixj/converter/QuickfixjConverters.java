@@ -78,7 +78,7 @@ public final class QuickfixjConverters {
         // if message ends with any sort of newline trim it so QuickfixJ's doesn't fail while parsing the string
         if (message.endsWith("\r\n")) {
             message = message.substring(0, message.length() - 2);
-        } else if (message.endsWith("\r") || message.endsWith("\n")) {
+        } else if (StringHelper.endsWith(message, '\r') || StringHelper.endsWith(message, '\n')) {
             message = message.substring(0, message.length() - 1);
         }
 

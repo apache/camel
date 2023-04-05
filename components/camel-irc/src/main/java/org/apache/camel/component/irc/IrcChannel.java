@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.irc;
 
+import org.apache.camel.util.StringHelper;
+
 public final class IrcChannel {
     private String name;
     private String key;
@@ -32,7 +34,7 @@ public final class IrcChannel {
         if (name == null || name.isEmpty()) {
             name = "";
         }
-        this.name = name.startsWith("#") || name.startsWith("&") ? name : "#" + name;
+        this.name = StringHelper.startsWith(name, '#') || StringHelper.startsWith(name, '&') ? name : "#" + name;
     }
 
     public String getName() {

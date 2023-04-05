@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.support.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -265,7 +266,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
         Map<?, ?> headersMap = safeMap(exchange.getIn().getHeaders());
 
         Object answer = null;
-        if ((nextParam.startsWith("$simple{") || nextParam.startsWith("${")) && nextParam.endsWith("}")) {
+        if ((nextParam.startsWith("$simple{") || nextParam.startsWith("${")) && StringHelper.endsWith(nextParam, '}')) {
             answer = exchange.getContext().resolveLanguage("simple").createExpression(nextParam).evaluate(exchange,
                     Object.class);
         } else if (bodyMap.containsKey(nextParam)) {
@@ -281,7 +282,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
         Map<?, ?> bodyMap = safeMap(exchange.getContext().getTypeConverter().tryConvertTo(Map.class, body));
         Map<?, ?> headersMap = safeMap(exchange.getIn().getHeaders());
 
-        if ((nextParam.startsWith("$simple{") || nextParam.startsWith("${")) && nextParam.endsWith("}")) {
+        if ((nextParam.startsWith("$simple{") || nextParam.startsWith("${")) && StringHelper.endsWith(nextParam, '}')) {
             return true;
         } else if (bodyMap.containsKey(nextParam)) {
             return true;

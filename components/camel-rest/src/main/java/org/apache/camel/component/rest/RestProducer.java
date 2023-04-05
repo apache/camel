@@ -42,6 +42,7 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
@@ -410,10 +411,10 @@ public class RestProducer extends DefaultAsyncProducer {
                     String a = v.toString();
                     // decode the key as { may be decoded to %NN
                     a = URLDecoder.decode(a, "UTF-8");
-                    if (a.startsWith("{") && a.endsWith("}")) {
+                    if (StringHelper.startsWith(a, '{') && StringHelper.endsWith(a, '}')) {
                         String key = a.substring(1, a.length() - 1);
                         boolean optional = false;
-                        if (key.endsWith("?")) {
+                        if (StringHelper.endsWith(key, '?')) {
                             key = key.substring(0, key.length() - 1);
                             optional = true;
                         }
@@ -431,7 +432,7 @@ public class RestProducer extends DefaultAsyncProducer {
             }
             query = URISupport.createQueryString(params);
             // remove any dangling & caused by the absence of optional parameters
-            while (query.endsWith("&")) {
+            while (StringHelper.endsWith(query, '&')) {
                 query = query.substring(0, query.length() - 1);
             }
         }

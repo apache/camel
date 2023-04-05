@@ -844,7 +844,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             List<String> soapActionList = transportHeaders.get(SoapBindingConstants.SOAP_ACTION);
             if (soapActionList != null && soapActionList.size() == 1) {
                 String soapAction = soapActionList.get(0);
-                if (!soapAction.isEmpty() && !soapAction.startsWith("\"")) {
+                if (!soapAction.isEmpty() && soapAction.charAt(0) != '\"') {
                     //Per RFC, the SOAPAction HTTP header should be quoted if not empty
                     transportHeaders.put(SoapBindingConstants.SOAP_ACTION, Collections.singletonList("\"" + soapAction + "\""));
                 }

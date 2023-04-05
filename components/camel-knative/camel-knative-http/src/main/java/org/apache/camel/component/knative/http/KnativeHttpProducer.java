@@ -39,6 +39,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -182,7 +183,7 @@ public class KnativeHttpProducer extends DefaultAsyncProducer {
             if (path.charAt(0) != '/') {
                 path = "/" + path;
             }
-            if (url.endsWith("/")) {
+            if (StringHelper.endsWith(url, '/')) {
                 url = url.substring(0, url.length() - 1);
             }
 

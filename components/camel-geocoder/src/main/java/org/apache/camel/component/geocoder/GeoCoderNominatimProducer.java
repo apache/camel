@@ -108,7 +108,7 @@ public class GeoCoderNominatimProducer extends DefaultProducer {
 
     private String queryForString(String operation, Map<String, String> params) throws IOException {
         String url = endpoint.getServerUrl();
-        if (!url.endsWith("/")) {
+        if (!StringHelper.endsWith(url, '/')) {
             url += "/";
         }
         url += operation;
@@ -133,7 +133,7 @@ public class GeoCoderNominatimProducer extends DefaultProducer {
         }
         exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.OK);
 
-        if (place.startsWith("[") && place.endsWith("]")) {
+        if (StringHelper.startsWith(place, '[') && StringHelper.endsWith(place, ']')) {
             place = place.substring(1, place.length() - 1);
         }
 

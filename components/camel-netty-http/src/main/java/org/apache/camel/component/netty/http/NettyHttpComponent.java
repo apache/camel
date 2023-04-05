@@ -48,6 +48,7 @@ import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.PropertiesHelper;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
@@ -377,7 +378,7 @@ public class NettyHttpComponent extends NettyComponent
         String path = basePath;
         if (uriTemplate != null) {
             // make sure to avoid double slashes
-            if (uriTemplate.startsWith("/")) {
+            if (StringHelper.startsWith(uriTemplate, '/')) {
                 path = path + uriTemplate;
             } else {
                 path = path + "/" + uriTemplate;

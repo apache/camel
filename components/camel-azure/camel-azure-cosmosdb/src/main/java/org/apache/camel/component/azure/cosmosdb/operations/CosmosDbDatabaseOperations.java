@@ -28,6 +28,7 @@ import com.azure.cosmos.models.CosmosQueryRequestOptions;
 import com.azure.cosmos.models.ThroughputProperties;
 import com.azure.cosmos.models.ThroughputResponse;
 import org.apache.camel.component.azure.cosmosdb.CosmosDbUtils;
+import org.apache.camel.util.StringHelper;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -55,7 +56,7 @@ public class CosmosDbDatabaseOperations {
 
         // containerPartitionKeyPath it needs to start with /
         final String enhancedContainerPartitionKeyPath;
-        if (!containerPartitionKeyPath.startsWith("/")) {
+        if (!StringHelper.startsWith(containerPartitionKeyPath, '/')) {
             enhancedContainerPartitionKeyPath = "/" + containerPartitionKeyPath;
         } else {
             enhancedContainerPartitionKeyPath = containerPartitionKeyPath;

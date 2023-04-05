@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Message;
+import org.apache.camel.util.StringHelper;
 import org.eclipse.californium.core.CoapResource;
 import org.eclipse.californium.core.coap.CoAP.ResponseCode;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
@@ -67,7 +68,8 @@ final class CamelCoapResource extends CoapResource {
         if (child == null) {
             final List<CamelCoapResource> possibles = new LinkedList<>();
             for (Resource r : getChildren()) {
-                if (r.getName().startsWith("{") && r.getName().endsWith("}")) {
+                String resourceName = r.getName();
+                if (StringHelper.startsWith(resourceName, '{') && StringHelper.endsWith(resourceName, '}')) {
                     possibles.add((CamelCoapResource) r);
                 }
             }

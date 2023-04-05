@@ -37,6 +37,7 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ScheduledBatchPollingConsumer;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -218,7 +219,7 @@ public class OBSConsumer extends ScheduledBatchPollingConsumer {
      * @param obsObject
      */
     private boolean includeObsObject(ObsObject obsObject) {
-        return endpoint.isIncludeFolders() || !obsObject.getObjectKey().endsWith("/");
+        return endpoint.isIncludeFolders() || !StringHelper.endsWith(obsObject.getObjectKey(), '/');
     }
 
     /**

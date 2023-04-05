@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 public final class MoveExistingFileStrategyUtils {
 
@@ -45,7 +46,7 @@ public final class MoveExistingFileStrategyUtils {
      */
     public static String completePartialRelativePath(String destinationPath, String fileOnlyName, String directoryName) {
 
-        if (destinationPath.length() > 1 && destinationPath.endsWith("/")) {
+        if (destinationPath.length() > 1 && StringHelper.endsWith(destinationPath, '/')) {
             destinationPath = destinationPath + fileOnlyName;
         }
 

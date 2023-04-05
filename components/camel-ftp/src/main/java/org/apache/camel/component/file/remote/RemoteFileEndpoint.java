@@ -240,7 +240,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
     @Override
     public boolean isAbsolute(String name) {
-        return name.startsWith("/");
+        return StringHelper.startsWith(name, '/');
     }
 
     public int getMaximumReconnectAttempts() {

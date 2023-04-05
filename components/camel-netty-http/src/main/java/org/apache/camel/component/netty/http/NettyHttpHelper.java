@@ -204,7 +204,7 @@ public final class NettyHttpHelper {
         String path = exchange.getIn().getHeader(NettyHttpConstants.HTTP_PATH, String.class);
         // NOW the HTTP_PATH is just related path, we don't need to trim it
         if (path != null && !path.isEmpty()) {
-            if (path.startsWith("/")) {
+            if (StringHelper.startsWith(path, '/')) {
                 path = path.substring(1);
             }
 
@@ -214,12 +214,12 @@ public final class NettyHttpHelper {
             // if there are no query params
             if (idx == -1) {
                 // make sure that there is exactly one "/" between HTTP_URI and HTTP_PATH
-                uri = uri.endsWith("/") ? uri : uri + "/";
+                uri = StringHelper.endsWith(uri, '/') ? uri : uri + "/";
                 uri = uri.concat(path);
             } else {
                 // there are query params, so inject the relative path in the right place
                 String base = uri.substring(0, idx);
-                base = base.endsWith("/") ? base : base + "/";
+                base = StringHelper.endsWith(base, '/') ? base : base + "/";
                 base = base.concat(path);
                 uri = base.concat(uri.substring(idx));
             }

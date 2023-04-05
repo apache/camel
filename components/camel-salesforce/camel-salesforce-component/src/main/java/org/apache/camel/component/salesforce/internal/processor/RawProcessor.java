@@ -33,6 +33,7 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.client.RawClient;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.StringHelper;
 import org.eclipse.jetty.util.StringUtil;
 
 public class RawProcessor extends AbstractSalesforceProcessor {
@@ -73,7 +74,7 @@ public class RawProcessor extends AbstractSalesforceProcessor {
             if (params != null) {
                 path.append("?");
                 for (String p : params.split(",")) {
-                    if (!path.toString().endsWith("?")) {
+                    if (!StringHelper.endsWith(path.toString(), '?')) {
                         path.append("&");
                     }
                     path.append(p).append("=");

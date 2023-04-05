@@ -32,6 +32,7 @@ import javax.management.remote.JMXServiceURL;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -118,7 +119,7 @@ public class JmxConnectorService extends ServiceSupport implements CamelContextA
         }
 
         // must start with leading slash
-        String path = serviceUrlPath.startsWith("/") ? serviceUrlPath : "/" + serviceUrlPath;
+        String path = StringHelper.startsWith(serviceUrlPath ,'/') ? serviceUrlPath : "/" + serviceUrlPath;
         // Create an RMI connector and start it
         final JMXServiceURL url;
         if (connectorPort > 0) {

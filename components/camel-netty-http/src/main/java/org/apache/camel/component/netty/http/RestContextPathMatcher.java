@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty.http;
 
+import org.apache.camel.util.StringHelper;
+
 import java.util.Locale;
 
 /**
@@ -60,17 +62,17 @@ public class RestContextPathMatcher extends DefaultContextPathMatcher {
      */
     public boolean matchRestPath(String requestPath, String consumerPath, boolean wildcard) {
         // remove starting/ending slashes
-        if (requestPath.startsWith("/")) {
+        if (StringHelper.startsWith(requestPath, '/')) {
             requestPath = requestPath.substring(1);
         }
-        if (requestPath.endsWith("/")) {
+        if (StringHelper.endsWith(requestPath, '/')) {
             requestPath = requestPath.substring(0, requestPath.length() - 1);
         }
         // remove starting/ending slashes
-        if (consumerPath.startsWith("/")) {
+        if (StringHelper.startsWith(consumerPath, '/')) {
             consumerPath = consumerPath.substring(1);
         }
-        if (consumerPath.endsWith("/")) {
+        if (StringHelper.endsWith(consumerPath, '/')) {
             consumerPath = consumerPath.substring(0, consumerPath.length() - 1);
         }
 
@@ -91,7 +93,7 @@ public class RestContextPathMatcher extends DefaultContextPathMatcher {
             String p1 = requestPaths[i];
             String p2 = consumerPaths[i];
 
-            if (wildcard && p2.startsWith("{") && p2.endsWith("}")) {
+            if (wildcard && StringHelper.startsWith(p2, '{') && StringHelper.endsWith(p2, '}')) {
                 // always matches
                 continue;
             }

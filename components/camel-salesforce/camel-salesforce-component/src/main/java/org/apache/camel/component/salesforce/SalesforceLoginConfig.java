@@ -18,6 +18,7 @@ package org.apache.camel.component.salesforce;
 
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Configuration object for Salesforce login properties
@@ -95,7 +96,7 @@ public class SalesforceLoginConfig {
         this.loginUrl = loginUrl;
         if (loginUrl != null) {
             // strip trailing slash
-            this.loginUrl = loginUrl.endsWith("/") ? loginUrl.substring(0, loginUrl.length() - 1) : loginUrl;
+            this.loginUrl = StringHelper.endsWith(loginUrl, '/') ? loginUrl.substring(0, loginUrl.length() - 1) : loginUrl;
         }
     }
 

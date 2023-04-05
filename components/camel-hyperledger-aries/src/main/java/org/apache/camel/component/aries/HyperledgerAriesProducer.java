@@ -31,6 +31,7 @@ import org.apache.camel.component.aries.handler.RevocationServiceHandler;
 import org.apache.camel.component.aries.handler.SchemasServiceHandler;
 import org.apache.camel.component.aries.handler.WalletServiceHandler;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.component.aries.Constants.HEADER_SERVICE;
 
@@ -104,7 +105,7 @@ public class HyperledgerAriesProducer extends DefaultProducer {
             service = getEndpoint().getConfiguration().getService();
         }
         AssertState.notNull(service, "Cannot obtain API service");
-        if (!service.startsWith("/")) {
+        if (!StringHelper.startsWith(service, '/')) {
             service = "/" + service;
         }
         return service;

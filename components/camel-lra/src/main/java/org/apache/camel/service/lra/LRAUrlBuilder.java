@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.service.lra.LRAConstants.URL_COMPENSATION_KEY;
 import static org.apache.camel.service.lra.LRAConstants.URL_COMPLETION_KEY;
@@ -116,10 +117,10 @@ public class LRAUrlBuilder {
     private String joinPath(String first, String second) {
         first = toNonnullString(first);
         second = toNonnullString(second);
-        while (first.endsWith("/")) {
+        while (StringHelper.endsWith(first, '/')) {
             first = first.substring(0, first.length() - 1);
         }
-        while (second.startsWith("/")) {
+        while (StringHelper.startsWith(second, '/')) {
             second = second.substring(1);
         }
         return first + "/" + second;

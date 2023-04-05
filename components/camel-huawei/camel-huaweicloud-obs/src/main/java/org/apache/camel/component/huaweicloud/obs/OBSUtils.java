@@ -27,6 +27,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSConstants;
 import org.apache.camel.component.huaweicloud.obs.constants.OBSHeaders;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 
 public final class OBSUtils {
     private OBSUtils() {
@@ -72,7 +73,7 @@ public final class OBSUtils {
 
         message.setHeader(OBSHeaders.FILE_NAME, obsObject.getObjectKey());
 
-        if (obsObject.getObjectKey().endsWith("/")) {
+        if (StringHelper.endsWith(obsObject.getObjectKey(), '/')) {
             message.setHeader(OBSHeaders.OBJECT_TYPE, OBSConstants.FOLDER);
         } else {
             message.setHeader(OBSHeaders.OBJECT_TYPE, OBSConstants.FILE);
