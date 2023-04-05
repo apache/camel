@@ -53,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -648,7 +649,7 @@ public class SimpleTest extends LanguageTestSupport {
 
     @Test
     public void testDateExchangeCreated() throws Exception {
-        Object out = evaluateExpression("${date:exchangeCreated:hh:mm:ss a}", "" + exchange.getCreated());
+        Object out = evaluateExpression("${date:exchangeCreated:hh:mm:ss a}", ("" + exchange.getCreated()).getClass());
         assertNotNull(out);
     }
 
@@ -2070,6 +2071,33 @@ public class SimpleTest extends LanguageTestSupport {
         // custom generator
         context.getRegistry().bind("mygen", (UuidGenerator) () -> "1234");
         assertExpression("${uuid(mygen)}", "1234");
+    }
+
+    @Test
+    public void testNewEmpty() {
+        assertExpressionCreateNewEmpty("list", List.class, v -> ((List) v).isEmpty());
+        assertExpressionCreateNewEmpty("LIST", List.class, v -> ((List) v).isEmpty());
+        assertExpressionCreateNewEmpty("List", List.class, v -> ((List) v).isEmpty());
+        assertExpressionCreateNewEmpty("map", Map.class, v -> ((Map) v).isEmpty());
+        assertExpressionCreateNewEmpty("MAP", Map.class, v -> ((Map) v).isEmpty());
+        assertExpressionCreateNewEmpty("Map", Map.class, v -> ((Map) v).isEmpty());
+        assertExpressionCreateNewEmpty("string", String.class, v -> ((String) v).isEmpty());
+        assertExpressionCreateNewEmpty("STRING", String.class, v -> ((String) v).isEmpty());
+        assertExpressionCreateNewEmpty("String", String.class, v -> ((String) v).isEmpty());
+
+        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${empty(falseSyntax}", null));
+        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${empty()}", null));
+        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${empty(}", null));
+        assertThrows(SimpleIllegalSyntaxException.class, () -> evaluateExpression("${empty}", null));
+        assertThrows(IllegalArgumentException.class, () -> evaluateExpression("${empty(unknownType)}", null));
+    }
+
+    private void assertExpressionCreateNewEmpty(
+            String type, Class<?> expectedClass, java.util.function.Predicate<Object> isEmptyAssertion) {
+        Object value = evaluateExpression("${empty(%s)}".formatted(type), null);
+        assertNotNull(value);
+        assertIsInstanceOf(expectedClass, value);
+        assertTrue(isEmptyAssertion.test(value));
     }
 
     @Override

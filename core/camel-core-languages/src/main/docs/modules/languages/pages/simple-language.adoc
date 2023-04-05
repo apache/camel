@@ -195,6 +195,12 @@ the given id.
 field you can append .FIELD_NAME. For example, you can refer to the
 constant field from Exchange as: `org.apache.camel.Exchange.FILE_NAME`
 
+|empty(type) |depends on parameter |Creates a new empty object of the type given as parameter. The type-parameter-Strings are case-insensitive. +
+
+`string` -> empty String +
+`list`   -> empty ArrayList +
+`map`    -> empty HashMap +
+
 |null |null |represents a *null*
 
 |random(value) |Integer |returns a random Integer between 0 (included) and _value_

@@ -19,6 +19,8 @@ package org.apache.camel.language.simple;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -270,6 +272,31 @@ public final class SimpleExpressionBuilder {
             @Override
             public String toString() {
                 return "random(" + min + "," + max + ")";
+            }
+        };
+    }
+
+    /**
+     * Returns a new empty object of the given type
+     */
+    public static Expression newEmptyExpression(String type) {
+
+        return new ExpressionAdapter() {
+            @Override
+            public Object evaluate(Exchange exchange) {
+                if ("map".equalsIgnoreCase(type)) {
+                    return new HashMap<>();
+                } else if ("string".equalsIgnoreCase(type)) {
+                    return "";
+                } else if ("list".equalsIgnoreCase(type)) {
+                    return new ArrayList<>();
+                }
+                throw new IllegalArgumentException("function empty(%s) has unknown type.".formatted(type));
+            }
+
+            @Override
+            public String toString() {
+                return "empty(%s)".formatted(type);
             }
         };
     }
