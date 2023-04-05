@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.DEFAULT_VERTX_CLIENT_WSS_PORT;
 import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.DEFAULT_VERTX_CLIENT_WS_PORT;
+import static org.apache.camel.component.vertx.websocket.VertxWebsocketConstants.ORIGIN_HTTP_HEADER_NAME;
 
 @UriEndpoint(firstVersion = "3.5.0", scheme = "vertx-websocket", title = "Vert.x WebSocket",
              syntax = "vertx-websocket:host:port/path", category = { Category.WEBSOCKET },
@@ -180,6 +181,14 @@ public class VertxWebsocketEndpoint extends DefaultEndpoint {
         if (ObjectHelper.isNotEmpty(subProtocols)) {
             connectOptions.setSubProtocols(Arrays.asList(subProtocols.split(",")));
         }
+
+        connectOptions.setAllowOriginHeader(configuration.isAllowOriginHeader());
+
+        String defaultOriginHeader = configuration.getOriginHeaderUrl();
+        if (ObjectHelper.isNotEmpty(defaultOriginHeader)) {
+            connectOptions.addHeader(ORIGIN_HTTP_HEADER_NAME, defaultOriginHeader);
+        }
+
         return connectOptions;
     }
 

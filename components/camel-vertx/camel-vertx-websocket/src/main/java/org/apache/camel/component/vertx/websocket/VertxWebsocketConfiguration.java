@@ -64,6 +64,10 @@ public class VertxWebsocketConfiguration {
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "consumer")
     private boolean fireWebSocketConnectionEvents;
+    @UriParam(label = "producer,consumer", defaultValue = "true")
+    private boolean allowOriginHeader = true;
+    @UriParam(label = "producer,consumer")
+    private String originHeaderUrl;
 
     /**
      * The WebSocket URI address to use.
@@ -247,5 +251,28 @@ public class VertxWebsocketConfiguration {
 
     public boolean isFireWebSocketConnectionEvents() {
         return fireWebSocketConnectionEvents;
+    }
+
+    public boolean isAllowOriginHeader() {
+        return allowOriginHeader;
+    }
+
+    /**
+     * Whether the WebSocket client should add the Origin header to the WebSocket handshake request.
+     */
+    public void setAllowOriginHeader(boolean allowOriginHeader) {
+        this.allowOriginHeader = allowOriginHeader;
+    }
+
+    public String getOriginHeaderUrl() {
+        return originHeaderUrl;
+    }
+
+    /**
+     * The value of the Origin header that the WebSocket client should use on the WebSocket handshake request. When not
+     * specified, the WebSocket client will automatically determine the value for the Origin from the request URL.
+     */
+    public void setOriginHeaderUrl(String originHeaderUrl) {
+        this.originHeaderUrl = originHeaderUrl;
     }
 }

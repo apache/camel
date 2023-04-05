@@ -21,7 +21,8 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(19);
+        Set<String> props = new HashSet<>(21);
+        props.add("allowOriginHeader");
         props.add("allowedOriginPattern");
         props.add("bridgeErrorHandler");
         props.add("clientOptions");
@@ -33,6 +34,7 @@ public class VertxWebsocketEndpointUriFactory extends org.apache.camel.support.c
         props.add("host");
         props.add("lazyStartProducer");
         props.add("maxReconnectAttempts");
+        props.add("originHeaderUrl");
         props.add("path");
         props.add("port");
         props.add("reconnectInitialDelay");
