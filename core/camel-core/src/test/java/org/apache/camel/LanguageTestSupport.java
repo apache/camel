@@ -16,8 +16,6 @@
  */
 package org.apache.camel;
 
-import java.util.function.Predicate;
-
 import org.apache.camel.spi.Language;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -63,16 +61,6 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
      */
     protected void assertExpression(Exchange exchange, String expressionText, Object expectedValue) {
         assertExpression(exchange, getLanguageName(), expressionText, expectedValue);
-    }
-
-    /**
-     * Asserts that this language expression evaluates in a way that the handed over predicate is true
-     */
-    protected void assertExpression(String expressionText, Predicate<Object> assertion) {
-
-        Object value = evaluateExpression(expressionText, null);
-
-        assertTrue(assertion.test(value));
     }
 
     /**
