@@ -221,9 +221,11 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
             // to the ones detected from ~/.m2/settings.xml and configured in
             // org.apache.camel.main.download.MavenDependencyDownloader#repos
             Set<String> extraRepositories = new LinkedHashSet<>(resolveExtraRepositories(extraRepos));
-            // and from known extra repositories (if any)
-            String known = knownReposResolver.getRepo(artifactId);
-            extraRepositories.addAll(resolveExtraRepositories(known));
+            if (knownReposResolver != null) {
+                // and from known extra repositories (if any)
+                String known = knownReposResolver.getRepo(artifactId);
+                extraRepositories.addAll(resolveExtraRepositories(known));
+            }
 
             List<MavenArtifact> artifacts = resolveDependenciesViaAether(deps, extraRepositories,
                     transitively, useApacheSnaphots);
