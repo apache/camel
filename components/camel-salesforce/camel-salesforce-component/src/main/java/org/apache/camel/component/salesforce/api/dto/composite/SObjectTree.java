@@ -27,9 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -152,9 +150,8 @@ public final class SObjectTree implements Serializable {
     }
 
     public Class[] objectTypes() {
-        final Set<Class> types = records.stream().flatMap(n -> n.objectTypes()).collect(Collectors.toSet());
 
-        return types.toArray(new Class[types.size()]);
+        return records.stream().flatMap(SObjectNode::objectTypes).distinct().toArray(Class[]::new);
     }
 
     /**

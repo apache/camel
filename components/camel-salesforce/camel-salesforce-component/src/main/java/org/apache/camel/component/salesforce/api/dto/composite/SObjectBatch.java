@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -350,12 +349,11 @@ public final class SObjectBatch implements Serializable {
      * @return all object types in this batch
      */
     public Class[] objectTypes() {
-        final Set<Class<?>> types = Stream
-                .concat(Stream.of(SObjectBatch.class, BatchRequest.class),
-                        batchRequests.stream().map(BatchRequest::getRichInput).filter(Objects::nonNull).map(Object::getClass))
-                .collect(Collectors.toSet());
 
-        return types.toArray(new Class[types.size()]);
+        return Stream
+                .concat(Stream.of(SObjectBatch.class, BatchRequest.class),
+                        batchRequests.stream().map(BatchRequest::getRichInput).filter(Objects::nonNull)
+                                .map(Object::getClass)).distinct().toArray(Class[]::new);
     }
 
     void addBatchRequest(final BatchRequest batchRequest) {
