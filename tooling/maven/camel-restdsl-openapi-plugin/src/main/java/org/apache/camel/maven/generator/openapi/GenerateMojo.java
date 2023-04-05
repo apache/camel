@@ -147,6 +147,14 @@ public class GenerateMojo extends AbstractGenerateMojo {
             throw new MojoExecutionException(
                     "Unable to generate REST DSL OpenApi sources from specification: " + specificationUri, e);
         }
+
+        // Add the generated classes to the maven build path
+        if (ObjectHelper.isNotEmpty(modelOutput)) {
+            project.addCompileSourceRoot(modelOutput);
+        }
+        if (ObjectHelper.isNotEmpty(outputDirectory)) {
+            project.addCompileSourceRoot(outputDirectory);
+        }
     }
 
 }
