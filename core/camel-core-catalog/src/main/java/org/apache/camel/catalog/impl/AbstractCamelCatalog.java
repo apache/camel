@@ -357,8 +357,7 @@ public abstract class AbstractCamelCatalog {
                 ApiModel api = model.getApiOptions().stream().filter(o -> o.getName().equalsIgnoreCase(key1)).findFirst().orElse(null);
                 if (api == null) {
                     result.addInvalidEnum(apiSyntax[0], key1);
-                    List<String> choices = model.getApiOptions().stream().map(ApiModel::getName).collect(Collectors.toList());
-                    result.addInvalidEnumChoices(apiSyntax[0], choices.toArray(new String[choices.size()]));
+                    result.addInvalidEnumChoices(apiSyntax[0], model.getApiOptions().stream().map(ApiModel::getName).toArray(String[]::new));
                 } else {
                     // walk each method and match against its name/alias
                     boolean found = false;
@@ -371,7 +370,8 @@ public abstract class AbstractCamelCatalog {
                     }
                     if (!found) {
                         result.addInvalidEnum(apiSyntax[1], key2);
-                        List<String> choices = api.getMethods().stream()
+
+                        result.addInvalidEnumChoices(apiSyntax[1], api.getMethods().stream()
                                 .map(m -> {
                                     // favour using method alias in choices
                                     String answer = apiMethodAlias(api, m);
@@ -379,10 +379,7 @@ public abstract class AbstractCamelCatalog {
                                         answer = m.getName();
                                     }
                                     return answer;
-                                })
-                                .collect(Collectors.toList());
-
-                        result.addInvalidEnumChoices(apiSyntax[1], choices.toArray(new String[choices.size()]));
+                                }).toArray(String[]::new));
                     }
                 }
             }

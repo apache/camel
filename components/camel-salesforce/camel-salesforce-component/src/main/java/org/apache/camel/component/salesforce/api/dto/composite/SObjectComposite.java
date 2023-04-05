@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -340,13 +338,11 @@ public final class SObjectComposite implements Serializable {
      */
     @SuppressWarnings("rawtypes")
     public Class[] objectTypes() {
-        final Set<Class<?>> types = Stream
+
+        return Stream
                 .concat(Stream.of(SObjectComposite.class, BatchRequest.class),
                         compositeRequests.stream().map(CompositeRequest::getBody).filter(Objects::nonNull)
-                                .map(Object::getClass))
-                .collect(Collectors.toSet());
-
-        return types.toArray(new Class[types.size()]);
+                                .map(Object::getClass)).distinct().toArray(Class[]::new);
     }
 
     void addCompositeRequest(final CompositeRequest compositeRequest) {
