@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.kafka.integration;
 
+import java.util.Arrays;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.integration.common.KafkaTestUtil;
@@ -27,8 +29,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
 
-import java.util.Arrays;
-
 import static org.apache.camel.component.kafka.serde.KafkaSerdeHelper.numericHeader;
 
 @DisabledIfSystemProperty(named = "enable.kafka.consumer.idempotency.tests", matches = "false")
@@ -39,7 +39,8 @@ public class KafkaConsumerIdempotentGroupIdIT extends KafkaConsumerIdempotentTes
     private int size = 200;
 
     @BindToRegistry("kafkaIdempotentRepository")
-    private KafkaIdempotentRepository testIdempotent = new KafkaIdempotentRepository("TEST_IDEMPOTENT", getBootstrapServers(), "test_1");
+    private KafkaIdempotentRepository testIdempotent
+            = new KafkaIdempotentRepository("TEST_IDEMPOTENT", getBootstrapServers(), "test_1");
 
     @BeforeEach
     public void before() {

@@ -143,7 +143,8 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
         this.pollDurationMs = pollDurationMs;
     }
 
-    public KafkaIdempotentRepository(String topic, String bootstrapServers, int maxCacheSize, int pollDurationMs, String groupId) {
+    public KafkaIdempotentRepository(String topic, String bootstrapServers, int maxCacheSize, int pollDurationMs,
+                                     String groupId) {
         this.topic = topic;
         this.bootstrapServers = bootstrapServers;
         this.maxCacheSize = maxCacheSize;
