@@ -226,10 +226,9 @@ public class DefaultFluentProducerTemplate extends ServiceSupport implements Flu
             throw new IllegalArgumentException("Cannot use both withBodyAs and withProcessor with FluentProducerTemplate");
         }
 
-        Object b = type != null
+        clone.body = type != null
                 ? clone.context.getTypeConverter().convertTo(type, body)
                 : body;
-        clone.body = b;
         return clone;
     }
 

@@ -795,8 +795,7 @@ public class UpdateReadmeMojo extends AbstractGeneratorMojo {
     }
 
     private OtherModel generateOtherModel(String json) {
-        OtherModel other = JsonMapper.generateOtherModel(json);
-        return other;
+        return JsonMapper.generateOtherModel(json);
     }
 
     private DataFormatModel generateDataFormatModel(String json) {

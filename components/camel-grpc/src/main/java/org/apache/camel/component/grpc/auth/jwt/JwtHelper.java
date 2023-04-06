@@ -30,8 +30,7 @@ public final class JwtHelper {
     public static String createJwtToken(JwtAlgorithm algorithmName, String secret, String issuer, String subject) {
         try {
             Algorithm algorithm = selectAlgorithm(algorithmName, secret);
-            String token = JWT.create().withIssuer(issuer).withSubject(subject).sign(algorithm);
-            return token;
+            return JWT.create().withIssuer(issuer).withSubject(subject).sign(algorithm);
         } catch (JWTCreationException e) {
             throw new IllegalArgumentException("Unable to create JWT token", e);
         }

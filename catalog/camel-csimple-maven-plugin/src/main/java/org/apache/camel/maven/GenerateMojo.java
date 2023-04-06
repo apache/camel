@@ -247,11 +247,10 @@ public class GenerateMojo extends AbstractExecMojo {
                 StringWriter w = new StringWriter();
                 w.append("# " + GENERATED_MSG + "\n");
                 classes.forEach(c -> w.write(c.getFqn() + "\n"));
-                String fileName = RESOURCE_FILE;
                 outputResourceDir.mkdirs();
                 boolean saved = updateResource(outputResourceDir.toPath().resolve(RESOURCE_FILE), w.toString());
                 if (saved) {
-                    getLog().info("Generated csimple resource file: " + fileName);
+                    getLog().info("Generated csimple resource file: " + RESOURCE_FILE);
                 }
             }
         }

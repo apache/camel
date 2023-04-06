@@ -458,11 +458,6 @@ class Yylex {
         int zzMarkedPosL;
         int zzEndReadL = zzEndRead;
         char[] zzBufferL = zzBuffer;
-        char[] zzCMapL = ZZ_CMAP;
-
-        int[] zzTransL = ZZ_TRANS;
-        int[] zzRowMapL = ZZ_ROWMAP;
-        int[] zzAttrL = ZZ_ATTRIBUTE;
 
         while (true) {
             zzMarkedPosL = zzMarkedPos;
@@ -500,13 +495,13 @@ class Yylex {
                             zzInput = zzBufferL[zzCurrentPosL++];
                         }
                     }
-                    int zzNext = zzTransL[zzRowMapL[zzState] + zzCMapL[zzInput]];
+                    int zzNext = ZZ_TRANS[ZZ_ROWMAP[zzState] + ZZ_CMAP[zzInput]];
                     if (zzNext == -1) {
                         break zzForAction;
                     }
                     zzState = zzNext;
 
-                    int zzAttributes = zzAttrL[zzState];
+                    int zzAttributes = ZZ_ATTRIBUTE[zzState];
                     if ((zzAttributes & 1) == 1) {
                         zzAction = zzState;
                         zzMarkedPosL = zzCurrentPosL;

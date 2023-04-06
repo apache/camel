@@ -84,13 +84,12 @@ public class MessageRequest implements ZeebeMessage {
 
     @Override
     public String toString() {
-        String sb = "MessageRequest{" + "name='" + name + '\'' +
+        return "MessageRequest{" + "name='" + name + '\'' +
                     ", correlationKey='" + correlationKey + '\'' +
                     ", timeToLive=" + timeToLive +
                     ", messageId='" + messageId + '\'' +
                     ", variables=" + variables +
                     '}';
-        return sb;
     }
 
     @Override

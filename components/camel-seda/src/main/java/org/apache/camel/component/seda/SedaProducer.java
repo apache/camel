@@ -163,8 +163,7 @@ public class SedaProducer extends DefaultAsyncProducer {
         // use a new copy of the exchange to route async (and use same message id)
         // if handover we need to do special handover to avoid handing over
         // RestBindingMarshalOnCompletion as it should not be handed over with SEDA
-        Exchange copy = ExchangeHelper.createCorrelatedCopy(exchange, handover, true);
-        return copy;
+        return ExchangeHelper.createCorrelatedCopy(exchange, handover, true);
     }
 
     @Override

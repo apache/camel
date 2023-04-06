@@ -58,9 +58,8 @@ public class WebsocketEndpoint extends ServletEndpoint {
 
         //TODO find a better way of assigning the store
         int idx = endPointURI.indexOf('?');
-        String name = idx > -1 ? endPointURI.substring(0, idx) : endPointURI;
 
-        this.servicePath = name;
+        this.servicePath = idx > -1 ? endPointURI.substring(0, idx) : endPointURI;
         this.store = component.getWebSocketStore(servicePath);
     }
 

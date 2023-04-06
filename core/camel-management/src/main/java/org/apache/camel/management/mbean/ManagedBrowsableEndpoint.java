@@ -75,9 +75,8 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
         }
 
         // must use java type with JMX such as java.lang.String
-        String body = exchange.getMessage().getBody(String.class);
 
-        return body;
+        return exchange.getMessage().getBody(String.class);
     }
 
     @Override
@@ -93,9 +92,8 @@ public class ManagedBrowsableEndpoint extends ManagedEndpoint implements Managed
         }
 
         Message msg = exchange.getMessage();
-        String xml = MessageHelper.dumpAsXml(msg, includeBody);
 
-        return xml;
+        return MessageHelper.dumpAsXml(msg, includeBody);
     }
 
     @Override

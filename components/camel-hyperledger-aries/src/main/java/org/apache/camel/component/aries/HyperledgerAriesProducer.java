@@ -94,8 +94,7 @@ public class HyperledgerAriesProducer extends DefaultProducer {
     }
 
     protected String getWalletName() {
-        String walletName = getEndpoint().getWalletName();
-        return walletName;
+        return getEndpoint().getWalletName();
     }
 
     private String getService(Exchange exchange) {

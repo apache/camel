@@ -463,12 +463,10 @@ public class FileOperations implements GenericFileOperations<File> {
             int bytesRead;
             while ((bytesRead = in.read(buffer)) != -1) {
                 if (bytesRead < size) {
-                    Buffer buf = byteBuffer;
-                    buf.limit(bytesRead);
+                    ((Buffer) byteBuffer).limit(bytesRead);
                 }
                 out.write(byteBuffer);
-                Buffer buf = byteBuffer;
-                buf.clear();
+                ((Buffer) byteBuffer).clear();
             }
 
             boolean append = endpoint.getFileExist() == GenericFileExist.Append;

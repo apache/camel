@@ -234,8 +234,7 @@ public class Init extends CamelCommand {
     static class FileConsumer extends ParameterConsumer<Init> {
         @Override
         protected void doConsumeParameters(Stack<String> args, Init cmd) {
-            String arg = args.pop();
-            cmd.file = arg;
+            cmd.file = args.pop();
         }
     }
 

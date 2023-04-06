@@ -184,8 +184,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                         // no data
                         return 0;
                     } else {
-                        int rows = processBatch(CastUtils.cast(answer));
-                        return rows;
+                        return processBatch(CastUtils.cast(answer));
                     }
                 } catch (Exception e) {
                     throw RuntimeCamelException.wrapRuntimeCamelException(e);

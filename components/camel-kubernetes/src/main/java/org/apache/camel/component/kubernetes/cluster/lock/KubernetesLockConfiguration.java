@@ -208,8 +208,7 @@ public class KubernetesLockConfiguration implements Cloneable {
 
     public KubernetesLockConfiguration copy() {
         try {
-            KubernetesLockConfiguration copy = (KubernetesLockConfiguration) this.clone();
-            return copy;
+            return (KubernetesLockConfiguration) this.clone();
         } catch (CloneNotSupportedException e) {
             throw new IllegalStateException("Cannot clone", e);
         }

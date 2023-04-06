@@ -70,10 +70,9 @@ public class OnCompletionReifier extends ProcessorReifier<OnCompletionDefinition
         boolean afterConsumer = definition.getMode() == null
                 || parse(OnCompletionMode.class, definition.getMode()) == OnCompletionMode.AfterConsumer;
 
-        OnCompletionProcessor answer = new OnCompletionProcessor(
+        return new OnCompletionProcessor(
                 camelContext, target, threadPool, shutdownThreadPool, isOnCompleteOnly, isOnFailureOnly, when,
                 original, afterConsumer, definition.isRouteScoped());
-        return answer;
     }
 
 }

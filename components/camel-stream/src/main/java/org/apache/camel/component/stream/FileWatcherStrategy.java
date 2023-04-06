@@ -166,7 +166,7 @@ public class FileWatcherStrategy extends ServiceSupport implements CamelContextA
     protected class WatchFileChangesTask implements Runnable {
 
         private final WatchService watcher;
-        private final Path folder;
+        private final Path folder; // path to reload
         private volatile boolean running;
         private OnChangeEvent changeEvent;
 
@@ -198,12 +198,11 @@ public class FileWatcherStrategy extends ServiceSupport implements CamelContextA
                 }
 
                 if (key != null) {
-                    Path pathToReload = folder;
 
                     for (WatchEvent<?> event : key.pollEvents()) {
                         WatchEvent<Path> we = (WatchEvent<Path>) event;
                         Path path = we.context();
-                        File file = pathToReload.resolve(path).toFile();
+                        File file = folder.resolve(path).toFile();
                         LOG.trace("Modified/Created/Deleted file: {}", file);
                         changeEvent.onChange(file);
                     }

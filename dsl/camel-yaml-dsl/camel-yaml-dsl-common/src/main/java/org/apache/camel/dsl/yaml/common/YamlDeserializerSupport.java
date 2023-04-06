@@ -389,8 +389,7 @@ public class YamlDeserializerSupport {
     public static Map<String, Object> parseParameters(NodeTuple node) {
         Node value = node.getValueNode();
         final YamlDeserializationContext dc = getDeserializationContext(value);
-        Map<String, Object> answer = asScalarMap(value);
-        return answer;
+        return asScalarMap(value);
     }
 
     public static void setSteps(Block target, Node node) {

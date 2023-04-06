@@ -93,13 +93,11 @@ public class TimeClause implements BinaryPredicate {
     // -------------------------------------------------------------------------
 
     public TimeClassUnit noLaterThan(int period) {
-        TimeClassUnit unit = new TimeClassUnit(this, period);
-        return unit;
+        return new TimeClassUnit(this, period);
     }
 
     public TimeClassUnit between(int from, int to) {
-        TimeClassUnit unit = new TimeClassUnit(this, from, to);
-        return unit;
+        return new TimeClassUnit(this, from, to);
     }
 
     public void beforeNext() {

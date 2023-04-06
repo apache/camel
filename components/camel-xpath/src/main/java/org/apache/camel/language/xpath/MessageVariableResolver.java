@@ -55,11 +55,10 @@ public class MessageVariableResolver implements XPathVariableResolver {
         String localPart = name.getLocalPart();
         Object answer = null;
 
-        Message in = exchange.get().getIn();
+        Message message = exchange.get().getIn();
         if (uri == null || uri.length() == 0) {
             answer = variables.get(localPart);
             if (answer == null) {
-                Message message = in;
                 if (message != null) {
                     answer = message.getHeader(localPart);
                 }
@@ -78,9 +77,9 @@ public class MessageVariableResolver implements XPathVariableResolver {
         } else if (uri.equals(EXCHANGE_PROPERTY)) {
             answer = exchange.get().getProperty(localPart);
         } else if (uri.equals(IN_NAMESPACE)) {
-            answer = in.getHeader(localPart);
+            answer = message.getHeader(localPart);
             if (answer == null && localPart.equals("body")) {
-                answer = in.getBody();
+                answer = message.getBody();
             }
         } else if (uri.equals(OUT_NAMESPACE)) {
             if (exchange.get().hasOut()) {

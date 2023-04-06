@@ -70,8 +70,7 @@ public class ZooObjectDetectionPredictor extends AbstractPredictor {
 
     public DetectedObjects classify(Image image) {
         try (Predictor<Image, DetectedObjects> predictor = model.newPredictor()) {
-            DetectedObjects detectedObjects = predictor.predict(image);
-            return detectedObjects;
+            return predictor.predict(image);
         } catch (TranslateException e) {
             throw new RuntimeCamelException("Could not process input or output", e);
         }
