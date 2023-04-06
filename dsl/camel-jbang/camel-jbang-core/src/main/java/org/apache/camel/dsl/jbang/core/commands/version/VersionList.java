@@ -64,9 +64,13 @@ public class VersionList extends CamelCommand {
                         description = "Runtime (spring-boot, quarkus, or camel-main)")
     String runtime;
 
-    @CommandLine.Option(names = { "--minimum-version" },
-                        description = "Minimum Camel version to avoid resolving too old releases", defaultValue = "3.14.0")
-    String minimumVersion = "3.14.0";
+    @CommandLine.Option(names = { "--from-version" },
+                        description = "Filter by Camel version (inclusive)", defaultValue = "3.14.0")
+    String fromVersion = "3.14.0";
+
+    @CommandLine.Option(names = { "--to-version" },
+                        description = "Filter by Camel version (exclusive)")
+    String toVersion;
 
     @CommandLine.Option(names = { "--repo" }, description = "Maven repository for downloading available versions")
     String repo;
@@ -104,7 +108,7 @@ public class VersionList extends CamelCommand {
                 a = "camel-quarkus-catalog";
             }
 
-            versions = downloader.resolveAvailableVersions(g, a, minimumVersion, repo);
+            versions = downloader.resolveAvailableVersions(g, a, fromVersion, repo);
             versions = versions.stream().filter(v -> acceptVersion(v[0])).collect(Collectors.toList());
 
             main.stop();
@@ -226,7 +230,10 @@ public class VersionList extends CamelCommand {
         if (version == null) {
             return false;
         }
-        return VersionHelper.isGE(version, minimumVersion);
+        if (fromVersion != null && toVersion != null) {
+            return VersionHelper.isBetween(version, fromVersion, toVersion);
+        }
+        return VersionHelper.isGE(version, fromVersion);
     }
 
     private ReleaseModel onlineRelease(String runtime, String coreVersion) throws Exception {

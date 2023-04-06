@@ -648,7 +648,7 @@ camel version list
 ----
 
 NOTE: The `version list` shows the latest releases going back a few versions, at this time of writing the minimum version
-is Camel 3.14. To show all Camel 3.x releases, you can specify `--minimum-version=3.0` and the list is longer.
+is Camel 3.14. To show all Camel 3.x releases, you can specify `--from-version=3.0` and the list is longer.
 The list can only go back to Camel 2.18, as we do not have all release meta-data for older releases.
 
 You can also show Camel releases for either Spring Boot or Quarkus using the `--runtime` option, such as:
