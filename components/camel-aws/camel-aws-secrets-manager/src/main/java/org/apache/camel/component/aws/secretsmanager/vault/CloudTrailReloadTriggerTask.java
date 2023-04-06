@@ -39,6 +39,7 @@ import org.apache.camel.vault.AwsVaultConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.cloudtrail.CloudTrailClient;
@@ -49,6 +50,8 @@ import software.amazon.awssdk.services.cloudtrail.model.LookupAttributeKey;
 import software.amazon.awssdk.services.cloudtrail.model.LookupEventsRequest;
 import software.amazon.awssdk.services.cloudtrail.model.LookupEventsResponse;
 import software.amazon.awssdk.services.cloudtrail.model.Resource;
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
+import software.amazon.awssdk.services.secretsmanager.SecretsManagerClientBuilder;
 
 /**
  * Period task which checks if AWS secrets has been updated and can trigger Camel to be reloaded.
@@ -61,6 +64,12 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
     private static final String CAMEL_AWS_VAULT_REGION_ENV = "CAMEL_VAULT_AWS_REGION";
     private static final String CAMEL_AWS_VAULT_USE_DEFAULT_CREDENTIALS_PROVIDER_ENV
             = "CAMEL_VAULT_AWS_USE_DEFAULT_CREDENTIALS_PROVIDER";
+
+    private static final String CAMEL_AWS_VAULT_USE_PROFILE_CREDENTIALS_PROVIDER_ENV
+            = "CAMEL_VAULT_AWS_USE_PROFILE_CREDENTIALS_PROVIDER";
+
+    private static final String CAMEL_AWS_VAULT_PROFILE_NAME_ENV
+            = "CAMEL_AWS_VAULT_PROFILE_NAME";
 
     private static final Logger LOG = LoggerFactory.getLogger(CloudTrailReloadTriggerTask.class);
     private static final String SECRETSMANAGER_AMAZONAWS_COM = "secretsmanager.amazonaws.com";
@@ -144,6 +153,9 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
         String region = System.getenv(CAMEL_AWS_VAULT_REGION_ENV);
         boolean useDefaultCredentialsProvider
                 = Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_USE_DEFAULT_CREDENTIALS_PROVIDER_ENV));
+        boolean useProfileCredentialsProvider
+                = Boolean.parseBoolean(System.getenv(CAMEL_AWS_VAULT_USE_PROFILE_CREDENTIALS_PROVIDER_ENV));
+        String profileName = System.getenv(CAMEL_AWS_VAULT_PROFILE_NAME_ENV);
         if (ObjectHelper.isEmpty(accessKey) && ObjectHelper.isEmpty(secretKey) && ObjectHelper.isEmpty(region)) {
             AwsVaultConfiguration awsVaultConfiguration = getCamelContext().getVaultConfiguration().aws();
             if (ObjectHelper.isNotEmpty(awsVaultConfiguration)) {
@@ -161,6 +173,11 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
             cloudTrailClient = clientBuilder.build();
         } else if (useDefaultCredentialsProvider && ObjectHelper.isNotEmpty(region)) {
             CloudTrailClientBuilder clientBuilder = CloudTrailClient.builder();
+            clientBuilder.region(Region.of(region));
+            cloudTrailClient = clientBuilder.build();
+        } else if (useProfileCredentialsProvider && ObjectHelper.isNotEmpty(profileName)) {
+            CloudTrailClientBuilder clientBuilder = CloudTrailClient.builder();
+            clientBuilder.credentialsProvider(ProfileCredentialsProvider.create(profileName));
             clientBuilder.region(Region.of(region));
             cloudTrailClient = clientBuilder.build();
         } else {
