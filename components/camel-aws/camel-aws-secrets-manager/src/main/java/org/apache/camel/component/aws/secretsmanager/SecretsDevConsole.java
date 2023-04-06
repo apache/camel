@@ -69,6 +69,8 @@ public class SecretsDevConsole extends AbstractDevConsole {
             sb.append(String.format("\n    Region: %s", propertiesFunction.getRegion()));
             if (propertiesFunction.isDefaultCredentialsProvider()) {
                 sb.append("\n    Login: DefaultCredentialsProvider");
+            } else if (propertiesFunction.isProfleCredentialsProvider()) {
+                sb.append("\n    Login: ProfileCredentialsProvider");
             } else {
                 sb.append("\n    Login: Access and Secret Keys");
             }
@@ -111,6 +113,8 @@ public class SecretsDevConsole extends AbstractDevConsole {
             root.put("region", propertiesFunction.getRegion());
             if (propertiesFunction.isDefaultCredentialsProvider()) {
                 root.put("login", "DefaultCredentialsProvider");
+            } else if (propertiesFunction.isProfleCredentialsProvider()) {
+                root.put("login", "ProfileCredentialsProvider");
             } else {
                 root.put("login", "Access and Secret Keys");
             }
