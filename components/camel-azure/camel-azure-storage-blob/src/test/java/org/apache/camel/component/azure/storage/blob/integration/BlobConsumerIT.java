@@ -67,7 +67,6 @@ class BlobConsumerIT extends Base {
         batchContainerClient = serviceClient.getBlobContainerClient(batchContainerName);
         prefixContainerClient = serviceClient.getBlobContainerClient(prefixContainerName);
 
-
         // create test container
         containerClient.create();
         batchContainerClient.create();
@@ -189,7 +188,7 @@ class BlobConsumerIT extends Base {
         }
     }
 
-     @Test
+    @Test
     void testPrefixBasedPolling() throws InterruptedException {
         final MockEndpoint mockEndpoint = getMockEndpoint("mock:resultPrefix");
         mockEndpoint.expectedMessageCount(1);
