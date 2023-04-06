@@ -50,8 +50,6 @@ import software.amazon.awssdk.services.cloudtrail.model.LookupAttributeKey;
 import software.amazon.awssdk.services.cloudtrail.model.LookupEventsRequest;
 import software.amazon.awssdk.services.cloudtrail.model.LookupEventsResponse;
 import software.amazon.awssdk.services.cloudtrail.model.Resource;
-import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
-import software.amazon.awssdk.services.secretsmanager.SecretsManagerClientBuilder;
 
 /**
  * Period task which checks if AWS secrets has been updated and can trigger Camel to be reloaded.
@@ -161,6 +159,8 @@ public class CloudTrailReloadTriggerTask extends ServiceSupport implements Camel
                 secretKey = awsVaultConfiguration.getSecretKey();
                 region = awsVaultConfiguration.getRegion();
                 useDefaultCredentialsProvider = awsVaultConfiguration.isDefaultCredentialsProvider();
+                useProfileCredentialsProvider = awsVaultConfiguration.isProfileCredentialsProvider();
+                profileName = awsVaultConfiguration.getProfileName();
             }
         }
         if (ObjectHelper.isNotEmpty(accessKey) && ObjectHelper.isNotEmpty(secretKey) && ObjectHelper.isNotEmpty(region)) {
