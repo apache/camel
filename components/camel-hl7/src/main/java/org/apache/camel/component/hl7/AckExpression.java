@@ -81,7 +81,7 @@ public class AckExpression extends ExpressionAdapter {
     }
 
     private boolean isSuccess(AcknowledgmentCode code) {
-        return StringHelper.endsWith(code.name(),'A');
+        return StringHelper.endsWith(code.name(), 'A');
     }
 
 }

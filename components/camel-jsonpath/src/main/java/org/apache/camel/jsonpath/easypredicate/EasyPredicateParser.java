@@ -16,10 +16,10 @@
  */
 package org.apache.camel.jsonpath.easypredicate;
 
-import org.apache.camel.util.StringHelper;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.camel.util.StringHelper;
 
 import static org.apache.camel.jsonpath.easypredicate.EasyPredicateOperators.hasOperator;
 import static org.apache.camel.jsonpath.easypredicate.EasyPredicateOperators.isOperator;

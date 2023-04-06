@@ -19,9 +19,9 @@ package org.apache.camel.component.cxf.spring;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.util.StringHelper;
 import org.w3c.dom.Element;
 
+import org.apache.camel.util.StringHelper;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
 import org.springframework.beans.PropertyValue;

@@ -40,6 +40,7 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Communicate with OData 4.0 services using Apache Olingo OData API.

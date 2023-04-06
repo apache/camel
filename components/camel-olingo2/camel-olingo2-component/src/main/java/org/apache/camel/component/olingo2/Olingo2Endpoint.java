@@ -40,6 +40,7 @@ import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Communicate with OData 2.0 services using Apache Olingo.
@@ -117,7 +118,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
         Map<String, Object> query = new LinkedHashMap<>();
         Map<String, Object> known = new LinkedHashMap<>();
         options.forEach((k, v) -> {
-            if (StringHelper.startsWith(Olingo2Endpoint.java, '$')) {
+            if (StringHelper.startsWith(k, '$')) {
                 query.put(k, v);
             } else {
                 known.put(k, v);

@@ -119,7 +119,7 @@ public class JmxConnectorService extends ServiceSupport implements CamelContextA
         }
 
         // must start with leading slash
-        String path = StringHelper.startsWith(serviceUrlPath ,'/') ? serviceUrlPath : "/" + serviceUrlPath;
+        String path = StringHelper.startsWith(serviceUrlPath, '/') ? serviceUrlPath : "/" + serviceUrlPath;
         // Create an RMI connector and start it
         final JMXServiceURL url;
         if (connectorPort > 0) {
