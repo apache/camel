@@ -62,7 +62,7 @@ import software.amazon.awssdk.services.secretsmanager.model.SecretsManagerExcept
  * <li><tt>camel.vault.aws.accessKey</tt></li>
  * <li><tt>camel.vault.aws.secretKey</tt></li>
  * <li><tt>camel.vault.aws.region</tt></li>
- * <li><tt>camel.vault.aws.useDefaultCredentialsProvider</tt></li>
+ * <li><tt>camel.vault.aws.defaultCredentialsProvider</tt></li>
  * <li><tt>camel.vault.aws.profileCredentialsProvider</tt></li>
  * <li><tt>camel.vault.aws.profileName</tt></li>
  * </ul>
