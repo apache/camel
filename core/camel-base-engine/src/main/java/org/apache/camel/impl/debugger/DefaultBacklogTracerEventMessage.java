@@ -183,9 +183,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
     @Override
     public String toXml(int indent) {
         StringBuilder prefix = new StringBuilder();
-        for (int i = 0; i < indent; i++) {
-            prefix.append(" ");
-        }
+        prefix.append(" ".repeat(Math.max(0, indent)));
 
         StringBuilder sb = new StringBuilder();
         sb.append(prefix).append("<").append(ROOT_TAG).append(">\n");

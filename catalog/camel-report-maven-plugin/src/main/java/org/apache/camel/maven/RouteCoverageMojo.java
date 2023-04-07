@@ -503,9 +503,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
 
     private static String padString(int level) {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < level; i++) {
-            sb.append("  ");
-        }
+        sb.append("  ".repeat(Math.max(0, level)));
         return sb.toString();
     }
 
