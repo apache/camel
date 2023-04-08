@@ -68,8 +68,7 @@ public class KnownKameletRoutesBuilderLoader extends KameletRoutesBuilderLoader 
                 if (clazz != null) {
                     Object catalog = getCamelContext().getInjector().newInstance(clazz);
                     Method m = ReflectionHelper.findMethod(clazz, "getKameletsName");
-                    List<String> names = (List<String>) ObjectHelper.invokeMethod(m, catalog);
-                    return names;
+                    return (List<String>) ObjectHelper.invokeMethod(m, catalog);
                 }
             } catch (Exception e) {
                 // ignore
