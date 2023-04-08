@@ -720,11 +720,9 @@ final class IntrospectionSupport {
                     // lets unwrap the exception
                     Throwable throwable = e.getCause();
                     if (throwable instanceof Exception) {
-                        Exception exception = (Exception) throwable;
-                        throw exception;
+                        throw (Exception) throwable;
                     } else {
-                        Error error = (Error) throwable;
-                        throw error;
+                        throw (Error) throwable;
                     }
                 }
                 // ignore exceptions as there could be another setter method where we could type convert successfully

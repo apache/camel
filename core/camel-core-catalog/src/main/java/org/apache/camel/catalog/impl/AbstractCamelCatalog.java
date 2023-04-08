@@ -771,8 +771,7 @@ public abstract class AbstractCamelCatalog {
         Map<String, String> answer = new LinkedHashMap<>();
 
         // and covert the values to String so its JMX friendly
-        parameters.forEach((k, v) -> {
-            String key = k;
+        parameters.forEach((key, v) -> {
             String value = v != null ? v.toString() : "";
 
             // is the key a prefix property

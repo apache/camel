@@ -54,11 +54,10 @@ public final class ThreadHelper {
         }
 
         // we support #longName# and #name# as name placeholders
-        String longName = name;
         String shortName = name.contains("?") ? StringHelper.before(name, "?") : name;
 
         // replace tokens
-        String answer = StringHelper.replaceFirst(pattern, "#longName#", longName);
+        String answer = StringHelper.replaceFirst(pattern, "#longName#", name);
         if (shortName != null) {
             answer = StringHelper.replaceFirst(answer, "#name#", shortName);
         }

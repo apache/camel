@@ -102,8 +102,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
     @Override
     public StreamCache copy(Exchange exchange) throws IOException {
         tempFileManager.addExchange(exchange);
-        FileInputStreamCache copy = new FileInputStreamCache(tempFileManager);
-        return copy;
+        return new FileInputStreamCache(tempFileManager);
     }
 
     @Override

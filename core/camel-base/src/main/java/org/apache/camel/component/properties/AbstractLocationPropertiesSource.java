@@ -150,8 +150,7 @@ public abstract class AbstractLocationPropertiesSource extends ServiceSupport
                 break;
             }
         }
-        String answer = s.substring(0, endIndex);
-        return answer;
+        return s.substring(0, endIndex);
     }
 
 }
