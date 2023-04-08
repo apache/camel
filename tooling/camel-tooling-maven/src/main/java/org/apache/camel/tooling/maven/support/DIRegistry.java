@@ -110,8 +110,7 @@ public class DIRegistry extends SupplierRegistry {
             if (isNamedAnnotation(a)) {
                 String s = a.toString();
                 // @javax.inject.Named("valueHere")
-                String name = StringHelper.between(s, "(\"", "\")");
-                return name;
+                return StringHelper.between(s, "(\"", "\")");
             }
         }
 
