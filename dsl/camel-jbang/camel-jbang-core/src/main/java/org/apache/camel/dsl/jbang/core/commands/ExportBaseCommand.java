@@ -357,7 +357,7 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected void copySourceFiles(
             File settings, File profile, File srcJavaDirRoot, File srcJavaDir, File srcResourcesDir, File srcCamelResourcesDir,
-            String packageName)
+            File srcKameletsResourcesDir, String packageName)
             throws Exception {
         // read the settings file and find the files to copy
         Properties prop = new CamelCaseOrderedProperties();
@@ -377,8 +377,8 @@ abstract class ExportBaseCommand extends CamelCommand {
                     }
                     String ext = FileUtil.onlyExt(f, true);
                     boolean java = "java".equals(ext);
-                    boolean camel = "camel.main.routesIncludePattern".equals(k)
-                            || "camel.component.kamelet.location".equals(k)
+                    boolean camel = "camel.main.routesIncludePattern".equals(k);
+                    boolean kamelet = "camel.component.kamelet.location".equals(k)
                             || "camel.jbang.localKameletDir".equals(k);
                     File target = java ? srcJavaDir : camel ? srcCamelResourcesDir : srcResourcesDir;
                     File source = new File(f);
@@ -389,7 +389,13 @@ abstract class ExportBaseCommand extends CamelCommand {
                         out = new File(target, source.getName());
                     }
                     if (!java) {
-                        safeCopy(source, out, true);
+                        if (camel) {
+                            safeCopy(source, out, true);
+                        }
+                        if (kamelet) {
+                            out = srcKameletsResourcesDir;
+                            safeCopy(source, out, true);
+                        }
                     } else {
                         // need to append package name in java source file
                         List<String> lines = Files.readAllLines(source.toPath());
