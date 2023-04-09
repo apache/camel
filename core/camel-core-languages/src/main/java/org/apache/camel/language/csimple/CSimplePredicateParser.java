@@ -26,8 +26,7 @@ public class CSimplePredicateParser {
     public String parsePredicate(String predicate) {
         // reuse simple language parser but output the result as java code
         SimplePredicateParser parser = new SimplePredicateParser(null, predicate, true, null);
-        String code = parser.parseCode();
-        return code;
+        return parser.parseCode();
     }
 
 }

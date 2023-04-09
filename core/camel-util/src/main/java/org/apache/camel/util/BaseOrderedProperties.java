@@ -96,8 +96,7 @@ abstract class BaseOrderedProperties extends Properties {
     @Override
     @SuppressWarnings("unchecked")
     public Set<Map.Entry<Object, Object>> entrySet() {
-        Set entrySet = map.entrySet();
-        return entrySet;
+        return (Set) map.entrySet();
     }
 
     @Override

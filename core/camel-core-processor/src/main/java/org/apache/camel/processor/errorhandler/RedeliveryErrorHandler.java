@@ -1424,9 +1424,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport
                 if (msg == null) {
                     msg = "New exception " + ExchangeHelper.logIds(exchange);
                     // special for logging the new exception
-                    Throwable cause = e;
-                    if (cause != null) {
-                        msg = msg + " due: " + cause.getMessage();
+                    if (e != null) {
+                        msg = msg + " due: " + e.getMessage();
                     }
                 }
 

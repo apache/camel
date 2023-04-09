@@ -106,8 +106,7 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
     // -------------------------------------------------------------------------
 
     protected RestDefinition createRest() {
-        RestDefinition rest = new RestDefinition();
-        return rest;
+        return new RestDefinition();
     }
 
 }
