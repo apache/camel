@@ -113,13 +113,12 @@ public class JobRequest implements ZeebeMessage {
 
     @Override
     public String toString() {
-        String sb = "JobRequest{" + "jobKey=" + jobKey +
+        return "JobRequest{" + "jobKey=" + jobKey +
                     ", variables=" + variables +
                     ", retries=" + retries +
                     ", failMessage='" + failMessage + '\'' +
                     ", errorMessage='" + errorMessage + '\'' +
                     ", errorCode='" + errorCode + '\'' +
                     '}';
-        return sb;
     }
 }

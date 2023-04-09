@@ -57,8 +57,7 @@ public class AvroConfiguration implements Cloneable {
 
     public AvroConfiguration copy() {
         try {
-            AvroConfiguration answer = (AvroConfiguration) clone();
-            return answer;
+            return (AvroConfiguration) clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }

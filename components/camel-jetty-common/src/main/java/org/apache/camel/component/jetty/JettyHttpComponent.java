@@ -189,8 +189,7 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         // extract filterInit. parameters
         Map filterInitParameters = PropertiesHelper.extractProperties(parameters, "filterInit.");
 
-        String address = remaining;
-        URI addressUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(address));
+        URI addressUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
         URI endpointUri = URISupport.createRemainingURI(addressUri, parameters);
         // need to keep the httpMethodRestrict parameter for the endpointUri
         String httpMethodRestrict = getAndRemoveParameter(parameters, "httpMethodRestrict", String.class);

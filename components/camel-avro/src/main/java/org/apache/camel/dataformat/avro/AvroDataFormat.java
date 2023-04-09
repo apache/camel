@@ -158,8 +158,7 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, DataFo
         DatumReader<GenericRecord> reader = new SpecificDatumReader<>(null, null, specificData);
         reader.setSchema(actualSchema);
         Decoder decoder = DecoderFactory.get().binaryDecoder(inputStream, null);
-        Object result = reader.read(null, decoder);
-        return result;
+        return reader.read(null, decoder);
     }
 
 }

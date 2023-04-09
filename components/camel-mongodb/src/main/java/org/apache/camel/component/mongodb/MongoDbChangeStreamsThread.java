@@ -55,8 +55,7 @@ class MongoDbChangeStreamsThread extends MongoAbstractConsumerThread {
             iterable = iterable.resumeAfter(resumeToken);
         }
 
-        MongoCursor<ChangeStreamDocument<Document>> cursor = iterable.iterator();
-        return cursor;
+        return iterable.iterator();
     }
 
     @Override

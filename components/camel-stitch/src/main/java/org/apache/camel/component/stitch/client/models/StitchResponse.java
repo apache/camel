@@ -68,10 +68,8 @@ public class StitchResponse implements StitchModel {
     }
 
     public String toString() {
-        final String result
-                = "HTTP Status Code: " + httpStatusCode + ", Response Status: " + status + ", Response Message: " + message;
 
-        return result;
+        return "HTTP Status Code: " + httpStatusCode + ", Response Status: " + status + ", Response Message: " + message;
     }
 
     @Override

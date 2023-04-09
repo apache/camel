@@ -154,36 +154,35 @@ public class JdbcAggregationRepository extends ServiceSupport
 
             public Exchange doInTransaction(TransactionStatus status) {
                 Exchange result = null;
-                final String key = correlationId;
 
                 try {
-                    LOG.debug("Adding exchange with key {}", key);
+                    LOG.debug("Adding exchange with key {}", correlationId);
 
                     boolean present = jdbcTemplate.queryForObject(
-                            "SELECT COUNT(1) FROM " + getRepositoryName() + " WHERE " + ID + " = ?", Integer.class, key) != 0;
+                            "SELECT COUNT(1) FROM " + getRepositoryName() + " WHERE " + ID + " = ?", Integer.class, correlationId) != 0;
 
                     // Recover existing exchange with that ID
                     if (isReturnOldExchange() && present) {
-                        result = get(key, getRepositoryName(), camelContext);
+                        result = get(correlationId, getRepositoryName(), camelContext);
                     }
 
                     if (present) {
                         Long versionLong = exchange.getProperty(VERSION_PROPERTY, Long.class);
                         if (versionLong == null) {
-                            LOG.debug("Race while inserting record with key {}", key);
+                            LOG.debug("Race while inserting record with key {}", correlationId);
                             throw new OptimisticLockingException();
                         } else {
                             long version = versionLong.longValue();
-                            LOG.debug("Updating record with key {} and version {}", key, version);
+                            LOG.debug("Updating record with key {} and version {}", correlationId, version);
                             update(camelContext, correlationId, exchange, getRepositoryName(), version);
                         }
                     } else {
-                        LOG.debug("Inserting record with key {}", key);
+                        LOG.debug("Inserting record with key {}", correlationId);
                         insert(camelContext, correlationId, exchange, getRepositoryName(), 1L);
                     }
 
                 } catch (Exception e) {
-                    throw new RuntimeException("Error adding to repository " + repositoryName + " with key " + key, e);
+                    throw new RuntimeException("Error adding to repository " + repositoryName + " with key " + correlationId, e);
                 }
 
                 return result;
@@ -333,9 +332,8 @@ public class JdbcAggregationRepository extends ServiceSupport
 
     @Override
     public Exchange get(final CamelContext camelContext, final String correlationId) {
-        final String key = correlationId;
-        Exchange result = get(key, getRepositoryName(), camelContext);
-        LOG.debug("Getting key {} -> {}", key, result);
+        Exchange result = get(correlationId, getRepositoryName(), camelContext);
+        LOG.debug("Getting key {} -> {}", correlationId, result);
         return result;
     }
 
@@ -378,20 +376,19 @@ public class JdbcAggregationRepository extends ServiceSupport
     public void remove(final CamelContext camelContext, final String correlationId, final Exchange exchange) {
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                final String key = correlationId;
                 final String confirmKey = exchange.getExchangeId();
                 final long version = exchange.getProperty(VERSION_PROPERTY, Long.class);
                 try {
-                    LOG.debug("Removing key {}", key);
+                    LOG.debug("Removing key {}", correlationId);
 
                     jdbcTemplate.update("DELETE FROM " + getRepositoryName() + " WHERE " + ID + " = ? AND " + VERSION + " = ?",
-                            key, version);
+                            correlationId, version);
 
                     insert(camelContext, confirmKey, exchange, getRepositoryNameCompleted(), version);
-                    LOG.debug("Removed key {}", key);
+                    LOG.debug("Removed key {}", correlationId);
 
                 } catch (Exception e) {
-                    throw new RuntimeException("Error removing key " + key + " from repository " + repositoryName, e);
+                    throw new RuntimeException("Error removing key " + correlationId + " from repository " + repositoryName, e);
                 }
             }
         });
@@ -407,12 +404,11 @@ public class JdbcAggregationRepository extends ServiceSupport
         return transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus status) {
                 LOG.debug("Confirming exchangeId {}", exchangeId);
-                final String confirmKey = exchangeId;
                 final int mustBeOne = jdbcTemplate
-                        .update("DELETE FROM " + getRepositoryNameCompleted() + " WHERE " + ID + " = ?", confirmKey);
+                        .update("DELETE FROM " + getRepositoryNameCompleted() + " WHERE " + ID + " = ?", exchangeId);
                 if (mustBeOne != 1) {
                     LOG.error("problem removing row {} from {} - DELETE statement did not return 1 but {}",
-                            confirmKey, getRepositoryNameCompleted(), mustBeOne);
+                            exchangeId, getRepositoryNameCompleted(), mustBeOne);
                     return false;
                 }
                 return true;
@@ -454,9 +450,8 @@ public class JdbcAggregationRepository extends ServiceSupport
 
     @Override
     public Exchange recover(CamelContext camelContext, String exchangeId) {
-        final String key = exchangeId;
-        Exchange answer = get(key, getRepositoryNameCompleted(), camelContext);
-        LOG.debug("Recovering exchangeId {} -> {}", key, answer);
+        Exchange answer = get(exchangeId, getRepositoryNameCompleted(), camelContext);
+        LOG.debug("Recovering exchangeId {} -> {}", exchangeId, answer);
         return answer;
     }
 

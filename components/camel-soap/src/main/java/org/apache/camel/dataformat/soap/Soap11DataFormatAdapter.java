@@ -103,8 +103,7 @@ public class Soap11DataFormatAdapter implements SoapDataFormatAdapter {
             envelope.setHeader(header);
         }
         envelope.setBody(body);
-        JAXBElement<Envelope> envelopeEl = objectFactory.createEnvelope(envelope);
-        return envelopeEl;
+        return objectFactory.createEnvelope(envelope);
     }
 
     /**

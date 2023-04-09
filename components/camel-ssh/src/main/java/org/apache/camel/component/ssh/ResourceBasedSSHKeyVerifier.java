@@ -71,8 +71,7 @@ public class ResourceBasedSSHKeyVerifier implements ServerKeyVerifier {
             PublicKey matchingKey = findKeyForServerToken(knownHostsInputStream, possibleTokens);
             if (matchingKey != null) {
                 log.debug("Found PublicKey match for server");
-                boolean match = Arrays.areEqual(matchingKey.getEncoded(), serverKey.getEncoded());
-                return match;
+                return Arrays.areEqual(matchingKey.getEncoded(), serverKey.getEncoded());
             }
         } catch (IOException ioException) {
             log.debug(String.format("Could not find known_hosts file %s", knownHostsResource), ioException);

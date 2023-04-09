@@ -84,9 +84,8 @@ public class DefaultHttpRegistry implements HttpRegistry {
 
     @SuppressWarnings("rawtypes")
     public void register(CamelServlet provider, Map properties) {
-        CamelServlet camelServlet = provider;
-        camelServlet.setServletName((String) properties.get("servlet-name"));
-        register(camelServlet);
+        provider.setServletName((String) properties.get("servlet-name"));
+        register(provider);
     }
 
     @Override

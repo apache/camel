@@ -788,9 +788,7 @@ public class HttpProducer extends DefaultProducer {
                         // force the body as an input stream since this is the fallback
                         InputStream is = in.getMandatoryBody(InputStream.class);
 
-                        InputStreamEntity entity = new InputStreamEntity(is, -1, contentType);
-
-                        answer = entity;
+                        answer = new InputStreamEntity(is, -1, contentType);
                     }
                 }
             } catch (UnsupportedEncodingException e) {
