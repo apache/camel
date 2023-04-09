@@ -46,6 +46,11 @@
             <artifactId>jslt</artifactId>
             <version>${jslt-version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson2-version}</version>
+        </dependency>
 
         <!-- testing -->
         <dependency>

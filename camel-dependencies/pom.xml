@@ -302,7 +302,7 @@
         <joor-version>0.9.14</joor-version>
         <johnzon-version>1.2.19</johnzon-version>
         <jose4j-version>0.6.4</jose4j-version>
-        <jslt-version>0.1.11</jslt-version>
+        <jslt-version>0.1.14</jslt-version>
         <jsmpp-version>2.3.11</jsmpp-version>
         <jsch-version>0.2.1</jsch-version>
         <json-api>1.0</json-api>
