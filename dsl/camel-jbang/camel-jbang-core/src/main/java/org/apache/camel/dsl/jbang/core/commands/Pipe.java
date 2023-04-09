@@ -89,8 +89,7 @@ public class Pipe extends CamelCommand {
     static class FileConsumer extends ParameterConsumer<Pipe> {
         @Override
         protected void doConsumeParameters(Stack<String> args, Pipe cmd) {
-            String arg = args.pop();
-            cmd.file = arg;
+            cmd.file = args.pop();
         }
     }
 

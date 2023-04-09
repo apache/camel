@@ -103,8 +103,7 @@ class AvailablePortFinder {
         try (ServerSocket ss = new ServerSocket()) {
             ss.setReuseAddress(true);
             ss.bind(new InetSocketAddress((InetAddress) null, port), 1);
-            int probedPort = ss.getLocalPort();
-            return probedPort;
+            return ss.getLocalPort();
         } catch (IOException e) {
             throw new IllegalStateException("Cannot find free port", e);
         }
