@@ -83,7 +83,7 @@ public class KafkaIdempotentRepository extends ServiceSupport implements Idempot
     private String topic;
     private String bootstrapServers;
 
-    private String groupId = null;
+    private String groupId;
     private Properties producerConfig;
     private Properties consumerConfig;
     private int maxCacheSize = DEFAULT_MAXIMUM_CACHE_SIZE;
