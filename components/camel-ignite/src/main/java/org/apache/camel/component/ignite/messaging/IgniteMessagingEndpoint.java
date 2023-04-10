@@ -95,9 +95,8 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     private IgniteMessaging createIgniteMessaging() {
         Ignite ignite = ignite();
-        IgniteMessaging messaging = clusterGroupExpression == null
+        return clusterGroupExpression == null
                 ? ignite.message() : ignite.message(clusterGroupExpression.getClusterGroup(ignite));
-        return messaging;
     }
 
     /**

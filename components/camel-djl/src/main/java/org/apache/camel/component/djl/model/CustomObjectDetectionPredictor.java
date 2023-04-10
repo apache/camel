@@ -64,8 +64,7 @@ public class CustomObjectDetectionPredictor extends AbstractPredictor {
 
     public DetectedObjects classify(Model model, Translator translator, Image image) {
         try (Predictor<Image, DetectedObjects> predictor = model.newPredictor(translator)) {
-            DetectedObjects detectedObjects = predictor.predict(image);
-            return detectedObjects;
+            return predictor.predict(image);
         } catch (TranslateException e) {
             LOG.error("Could not process input or output", e);
             throw new RuntimeCamelException("Could not process input or output", e);

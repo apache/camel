@@ -635,9 +635,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         final String name = parameter.getName();
 
         final String valueStr = String.valueOf(parameters.get(name));
-        final String encoded = UnsafeUriCharactersEncoder.encode(valueStr);
 
-        return encoded;
+        return UnsafeUriCharactersEncoder.encode(valueStr);
     }
 
     String literalQueryParameterValue(final OasParameter parameter) {

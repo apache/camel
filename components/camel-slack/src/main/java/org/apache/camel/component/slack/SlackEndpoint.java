@@ -83,8 +83,7 @@ public class SlackEndpoint extends ScheduledPollEndpoint {
             throw new RuntimeCamelException(
                     "Missing required endpoint configuration: token or webhookUrl must be defined for Slack producer");
         }
-        SlackProducer producer = new SlackProducer(this);
-        return producer;
+        return new SlackProducer(this);
     }
 
     @Override

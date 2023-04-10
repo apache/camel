@@ -48,10 +48,9 @@ public class MessageResponse extends AbstractZeebeResponse {
 
     @Override
     public String toString() {
-        String sb = "MessageResponse{" + "correlationKey='" + correlationKey + '\'' +
+        return "MessageResponse{" + "correlationKey='" + correlationKey + '\'' +
                     ", messageKey=" + messageKey +
                     '}';
-        return sb;
     }
 
     @Override

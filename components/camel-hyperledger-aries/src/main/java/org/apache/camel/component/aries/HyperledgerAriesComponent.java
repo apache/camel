@@ -103,8 +103,7 @@ public class HyperledgerAriesComponent extends DefaultComponent {
     }
 
     public NessusWallet getWallet(String walletName) {
-        NessusWallet wallet = walletRegistry.getWalletByName(walletName);
-        return wallet;
+        return walletRegistry.getWalletByName(walletName);
     }
 
     public NessusWallet assertWallet(String walletName) {

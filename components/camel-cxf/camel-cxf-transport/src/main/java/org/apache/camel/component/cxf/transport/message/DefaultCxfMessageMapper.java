@@ -141,13 +141,11 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
     }
 
     protected String getPath(org.apache.camel.Message camelMessage) {
-        String answer = camelMessage.getHeader(Exchange.HTTP_PATH, String.class);
-        return answer;
+        return camelMessage.getHeader(Exchange.HTTP_PATH, String.class);
     }
 
     protected String getRequestURI(org.apache.camel.Message camelMessage) {
-        String answer = camelMessage.getHeader(Exchange.HTTP_URI, String.class);
-        return answer;
+        return camelMessage.getHeader(Exchange.HTTP_URI, String.class);
     }
 
     protected String getBasePath(Exchange camelExchange) {
@@ -164,13 +162,11 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
     }
 
     protected String getVerb(org.apache.camel.Message camelMessage) {
-        String answer = camelMessage.getHeader(Exchange.HTTP_METHOD, String.class);
-        return answer;
+        return camelMessage.getHeader(Exchange.HTTP_METHOD, String.class);
     }
 
     protected String getQueryString(org.apache.camel.Message camelMessage) {
-        String answer = camelMessage.getHeader(Exchange.HTTP_QUERY, String.class);
-        return answer;
+        return camelMessage.getHeader(Exchange.HTTP_QUERY, String.class);
     }
 
     protected String getCharacterEncoding(org.apache.camel.Message camelMessage) {

@@ -102,8 +102,7 @@ public final class AS2HeaderUtils {
                 sb.append(NAME_VALUE_DELIMITER + element[1]);
             }
         }
-        BasicHeader header = new BasicHeader(headerName, sb.toString());
-        return header;
+        return new BasicHeader(headerName, sb.toString());
     }
 
     public static Parameter parseParameter(final CharArrayBuffer buffer, final ParserCursor cursor) {

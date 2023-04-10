@@ -81,8 +81,7 @@ public class ASN1GenericIterator<T> implements Iterator<T>, Closeable {
             ASN1Primitive current = getNextEntry();
 
             if (current != null) {
-                T instance = ObjectHelper.cast(clazz, createGenericTypeObject(current));
-                return instance;
+                return ObjectHelper.cast(clazz, createGenericTypeObject(current));
             } else {
                 LOGGER.trace("close asn1InputStream");
                 return null;

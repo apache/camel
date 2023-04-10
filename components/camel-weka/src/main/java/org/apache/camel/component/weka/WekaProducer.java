@@ -136,12 +136,10 @@ public class WekaProducer extends DefaultProducer {
         String fpath = getConfiguration().getPath();
 
         if (fpath != null) {
-            Dataset dataset = Dataset.create(fpath);
-            return dataset;
+            return Dataset.create(fpath);
         }
 
-        Dataset dataset = assertDatasetBody(exchange);
-        return dataset;
+        return assertDatasetBody(exchange);
     }
 
     Object handleWriteCmd(Exchange exchange) {

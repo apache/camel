@@ -407,8 +407,7 @@ public class ZooKeeperGroup<T extends NodeState> implements Group<T> {
      * @return list of children and data
      */
     public List<ChildData> getCurrentData() {
-        List<ChildData> answer = new ArrayList<>(currentData.values());
-        return answer;
+        return new ArrayList<>(currentData.values());
     }
 
     /**

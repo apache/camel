@@ -198,12 +198,11 @@ public class FileWatcherStrategy extends ServiceSupport implements CamelContextA
                 }
 
                 if (key != null) {
-                    Path pathToReload = folder;
 
                     for (WatchEvent<?> event : key.pollEvents()) {
                         WatchEvent<Path> we = (WatchEvent<Path>) event;
                         Path path = we.context();
-                        File file = pathToReload.resolve(path).toFile();
+                        File file = folder.resolve(path).toFile();
                         LOG.trace("Modified/Created/Deleted file: {}", file);
                         changeEvent.onChange(file);
                     }

@@ -91,8 +91,7 @@ public final class CxfConverter {
             throws SOAPException, IOException {
         CachedOutputStream cos = new CachedOutputStream(exchange);
         soapMessage.writeTo(cos);
-        InputStream in = cos.getInputStream();
-        return in;
+        return cos.getInputStream();
     }
 
     @Converter
