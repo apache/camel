@@ -345,7 +345,7 @@ public final class FileUtil {
             sb.append(":");
         }
 
-        sb.append(String.valueOf(separator).repeat(Math.max(0, cntSlashsAtStart)));
+        sb.append(String.valueOf(separator).repeat(cntSlashsAtStart));
 
         // now we build back using FIFO so need to use descending
         for (Iterator<String> it = stack.descendingIterator(); it.hasNext();) {
