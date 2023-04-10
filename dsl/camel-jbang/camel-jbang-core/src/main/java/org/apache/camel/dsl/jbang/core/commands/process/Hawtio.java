@@ -112,7 +112,7 @@ public class Hawtio extends CamelCommand {
             // turn off hawito auth
             System.setProperty("hawtio.authenticationEnabled", "false");
 
-            // use CL from camel context that now has the downloaded JAR
+            // use CL from that has the downloaded JAR
             Thread.currentThread().setContextClassLoader(cl);
             Class<?> clazz = cl.loadClass("io.hawt.embedded.Main");
             Object hawt = clazz.getDeclaredConstructor().newInstance();
@@ -151,8 +151,7 @@ public class Hawtio extends CamelCommand {
     }
 
     private ClassLoader createClassLoader() {
-        ClassLoader parentCL = Hawtio.class.getClassLoader();
-        return new DependencyDownloaderClassLoader(parentCL);
+        return new DependencyDownloaderClassLoader(null);
     }
 
     private void installHangupInterceptor() {
