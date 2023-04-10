@@ -502,11 +502,7 @@ public class RouteCoverageMojo extends AbstractExecMojo {
     }
 
     private static String padString(int level) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < level; i++) {
-            sb.append("  ");
-        }
-        return sb.toString();
+        return "  ".repeat(level);
     }
 
     private boolean matchFile(File file) {

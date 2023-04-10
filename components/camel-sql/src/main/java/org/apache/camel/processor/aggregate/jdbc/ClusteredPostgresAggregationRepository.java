@@ -78,9 +78,7 @@ public class ClusteredPostgresAggregationRepository extends ClusteredJdbcAggrega
 
         queryBuilder.append(") VALUES (");
 
-        for (int i = 0; i < totalParameterIndex - 1; i++) {
-            queryBuilder.append("?, ");
-        }
+        queryBuilder.append("?, ".repeat(Math.max(0, totalParameterIndex - 1)));
         queryBuilder.append("?)");
 
         queryBuilder.append(" ON CONFLICT DO NOTHING");

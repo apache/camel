@@ -495,9 +495,7 @@ public final class MessageHelper {
         StringBuilder sb = new StringBuilder();
 
         StringBuilder prefix = new StringBuilder();
-        for (int i = 0; i < indent; i++) {
-            prefix.append(" ");
-        }
+        prefix.append(" ".repeat(indent));
 
         // include exchangeId/exchangePattern/type as attribute on the <message> tag
         sb.append(prefix);
@@ -1002,9 +1000,7 @@ public final class MessageHelper {
      */
     public static String dumpExceptionAsXML(Throwable exception, int indent) {
         StringBuilder prefix = new StringBuilder();
-        for (int i = 0; i < indent; i++) {
-            prefix.append(" ");
-        }
+        prefix.append(" ".repeat(indent));
 
         StringBuilder sb = new StringBuilder();
         try {

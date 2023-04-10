@@ -513,9 +513,7 @@ public final class Jsoner {
                             || character >= '\u2000' && character <= '\u20FF') {
                         final String characterHexCode = Integer.toHexString(character);
                         builder.append("\\u");
-                        for (int k = 0; k < (4 - characterHexCode.length()); k++) {
-                            builder.append("0");
-                        }
+                        builder.append("0".repeat((4 - characterHexCode.length())));
                         builder.append(characterHexCode.toUpperCase());
                     } else {
                         /* Character didn't need escaping. */
@@ -647,11 +645,8 @@ public final class Jsoner {
         if (spaces > 10 || spaces < 2) {
             throw new IllegalArgumentException("Indentation with spaces must be between 2 and 10.");
         }
-        final StringBuilder indentation = new StringBuilder("");
-        for (int i = 0; i < spaces; i++) {
-            indentation.append(" ");
-        }
-        return Jsoner.prettyPrint(printable, indentation.toString(), depth);
+
+        return Jsoner.prettyPrint(printable, " ".repeat(spaces), depth);
     }
 
     /**
@@ -683,9 +678,7 @@ public final class Jsoner {
                         returnable.append(lexed.getValue());
                         if (level <= depth) {
                             returnable.append("\n");
-                            for (int i = 0; i < level; i++) {
-                                returnable.append(indentation);
-                            }
+                            returnable.append(String.valueOf(indentation).repeat(level));
                         } else {
                             returnable.append(" ");
                         }
@@ -698,9 +691,7 @@ public final class Jsoner {
                         returnable.append(lexed.getValue());
                         if (++level <= depth) {
                             returnable.append("\n");
-                            for (int i = 0; i < level; i++) {
-                                returnable.append(indentation);
-                            }
+                            returnable.append(String.valueOf(indentation).repeat(level));
                         } else {
                             returnable.append(" ");
                         }
@@ -709,9 +700,7 @@ public final class Jsoner {
                     case RIGHT_SQUARE:
                         if (level-- <= depth) {
                             returnable.append("\n");
-                            for (int i = 0; i < level; i++) {
-                                returnable.append(indentation);
-                            }
+                            returnable.append(String.valueOf(indentation).repeat(level));
                         } else {
                             returnable.append(" ");
                         }
@@ -756,11 +745,8 @@ public final class Jsoner {
         if (spaces > 10 || spaces < 2) {
             throw new IllegalArgumentException("Indentation with spaces must be between 2 and 10.");
         }
-        final StringBuilder indentation = new StringBuilder("");
-        for (int i = 0; i < spaces; i++) {
-            indentation.append(" ");
-        }
-        return Jsoner.colorPrint(printable, indentation.toString(), Integer.MAX_VALUE, pretty, color);
+
+        return Jsoner.colorPrint(printable, " ".repeat(spaces), Integer.MAX_VALUE, pretty, color);
     }
 
     public static String colorPrint(
@@ -784,9 +770,7 @@ public final class Jsoner {
                         if (level <= depth) {
                             if (pretty) {
                                 returnable.append("\n");
-                                for (int i = 0; i < level; i++) {
-                                    returnable.append(indentation);
-                                }
+                                returnable.append(String.valueOf(indentation).repeat(level));
                             }
                         } else {
                             if (pretty) {
@@ -804,9 +788,7 @@ public final class Jsoner {
                         if (++level <= depth) {
                             if (pretty) {
                                 returnable.append("\n");
-                                for (int i = 0; i < level; i++) {
-                                    returnable.append(indentation);
-                                }
+                                returnable.append(String.valueOf(indentation).repeat(level));
                             }
                         } else {
                             if (pretty) {
@@ -819,9 +801,7 @@ public final class Jsoner {
                         if (++level <= depth) {
                             if (pretty) {
                                 returnable.append("\n");
-                                for (int i = 0; i < level; i++) {
-                                    returnable.append(indentation);
-                                }
+                                returnable.append(String.valueOf(indentation).repeat(level));
                             }
                         } else {
                             if (pretty) {
@@ -833,9 +813,7 @@ public final class Jsoner {
                         if (level-- <= depth) {
                             if (pretty) {
                                 returnable.append("\n");
-                                for (int i = 0; i < level; i++) {
-                                    returnable.append(indentation);
-                                }
+                                returnable.append(String.valueOf(indentation).repeat(level));
                             }
                         } else {
                             if (pretty) {
@@ -848,9 +826,7 @@ public final class Jsoner {
                         if (level-- <= depth) {
                             if (pretty) {
                                 returnable.append("\n");
-                                for (int i = 0; i < level; i++) {
-                                    returnable.append(indentation);
-                                }
+                                returnable.append(String.valueOf(indentation).repeat(level));
                             }
                         } else {
                             if (pretty) {
