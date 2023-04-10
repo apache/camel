@@ -1123,7 +1123,7 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
     }
 
     private List<Method> findCandidateClassMethods(Class<?> classElement) {
-        List<Method> methods = Stream.of(classElement.getDeclaredMethods()).filter(method -> {
+        return Stream.of(classElement.getDeclaredMethods()).filter(method -> {
             Metadata metadata = method.getAnnotation(Metadata.class);
             String methodName = method.getName();
             if (metadata != null && metadata.skip()) {
@@ -1151,7 +1151,6 @@ public class EndpointSchemaGeneratorMojo extends AbstractGeneratorMojo {
             }
             return true;
         }).collect(Collectors.toList());
-        return methods;
     }
 
     private void processMetadataClassAnnotation(ComponentModel componentModel, Class<?> classElement, Set<String> excludes) {
