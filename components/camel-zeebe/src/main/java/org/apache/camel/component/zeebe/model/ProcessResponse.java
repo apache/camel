@@ -71,10 +71,10 @@ public class ProcessResponse extends AbstractZeebeResponse {
     @Override
     public String toString() {
         return "ProcessResponse{" + "processId='" + processId + '\'' +
-                    ", processInstanceKey=" + processInstanceKey +
-                    ", processVersion=" + processVersion +
-                    ", processKey=" + processKey +
-                    '}';
+               ", processInstanceKey=" + processInstanceKey +
+               ", processVersion=" + processVersion +
+               ", processKey=" + processKey +
+               '}';
     }
 
     @Override
