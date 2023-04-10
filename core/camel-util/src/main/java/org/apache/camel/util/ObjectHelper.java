@@ -791,7 +791,7 @@ public final class ObjectHelper {
         }
 
         if (exact) {
-            if (!source.getReturnType().equals(target.getReturnType())) {
+            if (source.getReturnType() != target.getReturnType()) {
                 return false;
             }
         } else {
@@ -815,7 +815,7 @@ public final class ObjectHelper {
         // test if parameter types is the same as well
         for (int i = 0; i < source.getParameterCount(); i++) {
             if (exact) {
-                if (!(sourceTypes[i].equals(targetTypes[i]))) {
+                if (sourceTypes[i] != targetTypes[i]) {
                     return false;
                 }
             } else {

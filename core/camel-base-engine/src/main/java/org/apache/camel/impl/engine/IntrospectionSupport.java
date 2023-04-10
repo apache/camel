@@ -142,7 +142,7 @@ final class IntrospectionSupport {
 
         // is it a getXXX method
         if (name.startsWith("get") && name.length() >= 4 && Character.isUpperCase(name.charAt(3))) {
-            return parameterCount == 0 && !type.equals(Void.TYPE);
+            return parameterCount == 0 && type != Void.TYPE;
         }
 
         // special for isXXX boolean
@@ -194,7 +194,7 @@ final class IntrospectionSupport {
         boolean validName = name.startsWith("set") && name.length() >= 4 && Character.isUpperCase(name.charAt(3));
         if (validName && parameterCount == 1) {
             // a setXXX can also be a builder pattern so check for its return type is itself
-            return type.equals(Void.TYPE) || allowBuilderPattern && ObjectHelper.isSubclass(self, type);
+            return type == Void.TYPE || allowBuilderPattern && ObjectHelper.isSubclass(self, type);
         }
         // or if its a builder method
         if (allowBuilderPattern && parameterCount == 1 && ObjectHelper.isSubclass(self, type)) {
@@ -815,7 +815,7 @@ final class IntrospectionSupport {
                 if (validName) {
                     if (isSetter(method, allowBuilderPattern)) {
                         Class<?>[] params = method.getParameterTypes();
-                        if (params[0].equals(Object.class)) {
+                        if (params[0] == Object.class) {
                             objectSetMethod = method;
                         } else {
                             candidates.add(method);

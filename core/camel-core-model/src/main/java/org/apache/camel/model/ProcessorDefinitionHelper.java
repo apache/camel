@@ -93,7 +93,7 @@ public final class ProcessorDefinitionHelper {
             return false;
         }
 
-        if (!(node.getParent().getClass().equals(parentType))) {
+        if (node.getParent().getClass() != parentType) {
             return false;
         }
 

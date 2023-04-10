@@ -201,7 +201,7 @@ public interface DataFormatCustomizer extends Ordered {
         }
 
         private BiPredicate<String, DataFormat> condition() {
-            if (type.equals(DataFormat.class)) {
+            if (type == DataFormat.class) {
                 return this.condition != null
                         ? this.condition
                         : new BiPredicate<String, DataFormat>() {

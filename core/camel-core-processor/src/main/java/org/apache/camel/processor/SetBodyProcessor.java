@@ -54,7 +54,7 @@ public class SetBodyProcessor extends AsyncProcessorSupport implements Traceable
 
             // create a new message container so we do not drag specialized message objects along
             // but that is only needed if the old message is a specialized message
-            boolean copyNeeded = !(old.getClass().equals(DefaultMessage.class));
+            boolean copyNeeded = old.getClass() != DefaultMessage.class;
 
             if (copyNeeded) {
                 Message msg = new DefaultMessage(exchange.getContext());

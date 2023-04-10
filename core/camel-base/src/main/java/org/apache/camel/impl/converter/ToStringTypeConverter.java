@@ -37,7 +37,7 @@ public class ToStringTypeConverter extends TypeConverterSupport {
             return (T) MISS_VALUE;
         }
 
-        if (toType.equals(String.class)) {
+        if (toType == String.class) {
             return (T) value.toString();
         }
         return null;

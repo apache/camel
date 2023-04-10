@@ -155,7 +155,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
                 }
 
                 // exact match then break
-                if (clazz.equals(exception.getClass())) {
+                if (clazz == exception.getClass()) {
                     candidate = type;
                     candidateDiff = 0;
                     break;

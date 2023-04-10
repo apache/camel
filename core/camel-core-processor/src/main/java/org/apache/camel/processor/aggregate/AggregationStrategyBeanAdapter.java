@@ -187,7 +187,7 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
         }
 
         // return type must not be void and it should not be a bridge method
-        if (method.getReturnType().equals(Void.TYPE) || method.isBridge()) {
+        if (method.getReturnType() == Void.TYPE || method.isBridge()) {
             return false;
         }
 

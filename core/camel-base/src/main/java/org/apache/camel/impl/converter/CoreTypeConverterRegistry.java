@@ -650,7 +650,7 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
 
             // try super then
             Class<?> fromSuperClass = fromType.getSuperclass();
-            if (fromSuperClass != null && !fromSuperClass.equals(Object.class)) {
+            if (fromSuperClass != null && fromSuperClass != Object.class) {
                 converter = doLookup(toType, fromSuperClass, true);
                 if (converter != null) {
                     return converter;
@@ -660,13 +660,13 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
 
         // only do these tests as fallback and only on the target type (eg not on its super)
         if (!isSuper) {
-            if (fromType != null && !fromType.equals(Object.class)) {
+            if (fromType != null && fromType != Object.class) {
 
                 // lets try classes derived from this toType
                 TypeConverter converter = typeMappings.getFirst(
                         toType::isAssignableFrom,
                         // skip Object based we do them last
-                        from -> !from.equals(Object.class) && from.isAssignableFrom(fromType));
+                        from -> from != Object.class && from.isAssignableFrom(fromType));
                 if (converter != null) {
                     return converter;
                 }

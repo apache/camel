@@ -295,7 +295,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             }
 
             Class<?> superclass = type.getSuperclass();
-            if (superclass != null && !superclass.equals(Object.class)) {
+            if (superclass != null && superclass != Object.class) {
                 loadConverterMethods(registry, superclass);
             }
         } catch (NoClassDefFoundError e) {
@@ -332,7 +332,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                         type.getCanonicalName(), method);
             } else {
                 Class<?> toType = method.getReturnType();
-                if (toType.equals(Void.class)) {
+                if (toType == Void.class) {
                     LOG.warn("Ignoring bad converter on type: {} method: {} as a converter method returns a void method",
                             type.getCanonicalName(), method);
                 } else {
@@ -367,7 +367,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                         type.getCanonicalName(), method);
             } else {
                 Class<?> toType = method.getReturnType();
-                if (toType.equals(Void.class)) {
+                if (toType == Void.class) {
                     LOG.warn("Ignoring bad fallback converter on type: {} method: {} as a fallback converter method "
                              + "returns a void method",
                             type.getCanonicalName(), method);

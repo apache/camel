@@ -201,7 +201,7 @@ public interface ComponentCustomizer extends Ordered {
         }
 
         private BiPredicate<String, Component> condition() {
-            if (type.equals(Component.class)) {
+            if (type == Component.class) {
                 return this.condition != null
                         ? this.condition
                         : new BiPredicate<String, Component>() {

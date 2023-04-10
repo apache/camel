@@ -1271,7 +1271,7 @@ public final class PropertyBindingSupport {
 
                 if (parameterType != null && expectedType != null) {
                     // skip java.lang.Object type, when we have multiple possible methods we want to avoid it if possible
-                    if (Object.class.equals(expectedType)) {
+                    if (Object.class == expectedType) {
                         fallbackCandidate = ctr;
                         matches = false;
                         break;
@@ -1369,7 +1369,7 @@ public final class PropertyBindingSupport {
 
                 if (parameterType != null && expectedType != null) {
                     // skip java.lang.Object type, when we have multiple possible methods we want to avoid it if possible
-                    if (Object.class.equals(expectedType)) {
+                    if (Object.class == expectedType) {
                         fallbackCandidate = method;
                         matches = false;
                         break;
@@ -1449,14 +1449,14 @@ public final class PropertyBindingSupport {
     }
 
     private static boolean isParameterMatchingType(Class<?> parameterType, Class<?> expectedType) {
-        if (Number.class.equals(parameterType)) {
+        if (Number.class == parameterType) {
             // number should match long/int/etc.
             if (Integer.class.isAssignableFrom(expectedType) || Long.class.isAssignableFrom(expectedType)
                     || int.class.isAssignableFrom(expectedType) || long.class.isAssignableFrom(expectedType)) {
                 return true;
             }
         }
-        if (Boolean.class.equals(parameterType)) {
+        if (Boolean.class == parameterType) {
             // boolean should match both Boolean and boolean
             if (Boolean.class.isAssignableFrom(expectedType) || boolean.class.isAssignableFrom(expectedType)) {
                 return true;

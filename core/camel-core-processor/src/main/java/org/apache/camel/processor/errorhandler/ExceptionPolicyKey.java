@@ -66,7 +66,7 @@ public final class ExceptionPolicyKey {
 
         ExceptionPolicyKey that = (ExceptionPolicyKey) o;
 
-        if (exceptionClass != null ? !exceptionClass.equals(that.exceptionClass) : that.exceptionClass != null) {
+        if (exceptionClass != null ? exceptionClass != that.exceptionClass : that.exceptionClass != null) {
             return false;
         }
         if (routeId != null ? !routeId.equals(that.routeId) : that.routeId != null) {
