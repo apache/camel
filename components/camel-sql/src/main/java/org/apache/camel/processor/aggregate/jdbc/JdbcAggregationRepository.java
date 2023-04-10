@@ -263,7 +263,7 @@ public class JdbcAggregationRepository extends ServiceSupport
 
         queryBuilder.append(") VALUES (");
 
-        queryBuilder.append("?, ".repeat(Math.max(0, totalParameterIndex - 1)));
+        queryBuilder.append("?, ".repeat(totalParameterIndex - 1));
         queryBuilder.append("?)");
 
         String sql = queryBuilder.toString();

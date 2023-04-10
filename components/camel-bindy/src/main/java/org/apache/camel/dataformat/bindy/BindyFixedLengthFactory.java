@@ -553,11 +553,9 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     }
 
     private String generatePaddingChars(char pad, int lengthField, int lengthString) {
-        StringBuilder buffer = new StringBuilder();
         int size = lengthField - lengthString;
 
-        buffer.append(Character.toString(pad).repeat(Math.max(0, size)));
-        return buffer.toString();
+        return Character.toString(pad).repeat(size);
     }
 
     /**

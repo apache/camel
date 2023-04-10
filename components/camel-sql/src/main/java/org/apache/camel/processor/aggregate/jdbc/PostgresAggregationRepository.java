@@ -78,7 +78,7 @@ public class PostgresAggregationRepository extends JdbcAggregationRepository {
 
         queryBuilder.append(") VALUES (");
 
-        queryBuilder.append("?, ".repeat(Math.max(0, totalParameterIndex - 1)));
+        queryBuilder.append("?, ".repeat(totalParameterIndex - 1));
         queryBuilder.append("?)");
 
         queryBuilder.append(" ON CONFLICT DO NOTHING");

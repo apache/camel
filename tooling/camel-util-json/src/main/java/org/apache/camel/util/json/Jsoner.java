@@ -645,9 +645,8 @@ public final class Jsoner {
         if (spaces > 10 || spaces < 2) {
             throw new IllegalArgumentException("Indentation with spaces must be between 2 and 10.");
         }
-        final StringBuilder indentation = new StringBuilder("");
-        indentation.append(" ".repeat(spaces));
-        return Jsoner.prettyPrint(printable, indentation.toString(), depth);
+
+        return Jsoner.prettyPrint(printable, " ".repeat(spaces), depth);
     }
 
     /**
@@ -679,7 +678,7 @@ public final class Jsoner {
                         returnable.append(lexed.getValue());
                         if (level <= depth) {
                             returnable.append("\n");
-                            returnable.append(String.valueOf(indentation).repeat(Math.max(0, level)));
+                            returnable.append(String.valueOf(indentation).repeat(level));
                         } else {
                             returnable.append(" ");
                         }
@@ -692,7 +691,7 @@ public final class Jsoner {
                         returnable.append(lexed.getValue());
                         if (++level <= depth) {
                             returnable.append("\n");
-                            returnable.append(String.valueOf(indentation).repeat(Math.max(0, level)));
+                            returnable.append(String.valueOf(indentation).repeat(level));
                         } else {
                             returnable.append(" ");
                         }
@@ -701,7 +700,7 @@ public final class Jsoner {
                     case RIGHT_SQUARE:
                         if (level-- <= depth) {
                             returnable.append("\n");
-                            returnable.append(String.valueOf(indentation).repeat(Math.max(0, level)));
+                            returnable.append(String.valueOf(indentation).repeat(level));
                         } else {
                             returnable.append(" ");
                         }
@@ -746,9 +745,8 @@ public final class Jsoner {
         if (spaces > 10 || spaces < 2) {
             throw new IllegalArgumentException("Indentation with spaces must be between 2 and 10.");
         }
-        final StringBuilder indentation = new StringBuilder("");
-        indentation.append(" ".repeat(spaces));
-        return Jsoner.colorPrint(printable, indentation.toString(), Integer.MAX_VALUE, pretty, color);
+
+        return Jsoner.colorPrint(printable, " ".repeat(spaces), Integer.MAX_VALUE, pretty, color);
     }
 
     public static String colorPrint(
@@ -772,7 +770,7 @@ public final class Jsoner {
                         if (level <= depth) {
                             if (pretty) {
                                 returnable.append("\n");
-                                returnable.append(String.valueOf(indentation).repeat(Math.max(0, level)));
+                                returnable.append(String.valueOf(indentation).repeat(level));
                             }
                         } else {
                             if (pretty) {
@@ -790,7 +788,7 @@ public final class Jsoner {
                         if (++level <= depth) {
                             if (pretty) {
                                 returnable.append("\n");
-                                returnable.append(String.valueOf(indentation).repeat(Math.max(0, level)));
+                                returnable.append(String.valueOf(indentation).repeat(level));
                             }
                         } else {
                             if (pretty) {
@@ -803,7 +801,7 @@ public final class Jsoner {
                         if (++level <= depth) {
                             if (pretty) {
                                 returnable.append("\n");
-                                returnable.append(String.valueOf(indentation).repeat(Math.max(0, level)));
+                                returnable.append(String.valueOf(indentation).repeat(level));
                             }
                         } else {
                             if (pretty) {
@@ -815,7 +813,7 @@ public final class Jsoner {
                         if (level-- <= depth) {
                             if (pretty) {
                                 returnable.append("\n");
-                                returnable.append(String.valueOf(indentation).repeat(Math.max(0, level)));
+                                returnable.append(String.valueOf(indentation).repeat(level));
                             }
                         } else {
                             if (pretty) {
@@ -828,7 +826,7 @@ public final class Jsoner {
                         if (level-- <= depth) {
                             if (pretty) {
                                 returnable.append("\n");
-                                returnable.append(String.valueOf(indentation).repeat(Math.max(0, level)));
+                                returnable.append(String.valueOf(indentation).repeat(level));
                             }
                         } else {
                             if (pretty) {
