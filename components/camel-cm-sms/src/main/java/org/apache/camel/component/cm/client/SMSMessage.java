@@ -105,10 +105,10 @@ public class SMSMessage {
     public String toString() {
         StringBuilder toS = new StringBuilder("{phoneNumber: " + phoneNumber + ", message: " + message);
         if (from != null && !from.isEmpty()) {
-            toS.append(", from: " + from);
+            toS.append(", from: ").append(from);
         }
         if (id != null && !id.isEmpty()) {
-            toS.append(", id: " + id);
+            toS.append(", id: ").append(id);
         }
         toS.append(" }");
         return toS.toString();

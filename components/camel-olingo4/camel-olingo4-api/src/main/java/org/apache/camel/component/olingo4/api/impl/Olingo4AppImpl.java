@@ -974,7 +974,7 @@ public final class Olingo4AppImpl implements Olingo4App {
 
         final StringBuilder absolutUri = new StringBuilder(resourceUri).append(SEPARATOR).append(resourcePath);
         if (queryOptions != null && !queryOptions.isEmpty()) {
-            absolutUri.append("?" + queryOptions);
+            absolutUri.append('?').append(queryOptions);
         }
         return absolutUri.toString();
 

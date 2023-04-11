@@ -60,11 +60,11 @@ public final class AS2HeaderUtils {
             StringBuilder sb = new StringBuilder();
             sb.append(attribute);
             if (importance != null) {
-                sb.append("=" + importance.toString());
+                sb.append('=').append(importance);
             }
             if (values != null) {
                 for (String value : values) {
-                    sb.append("," + value);
+                    sb.append(',').append(value);
                 }
             }
             return sb.toString();
@@ -99,7 +99,7 @@ public final class AS2HeaderUtils {
             }
             sb.append(element[0]);
             if (element.length > 1) {
-                sb.append(NAME_VALUE_DELIMITER + element[1]);
+                sb.append(NAME_VALUE_DELIMITER).append(element[1]);
             }
         }
         return new BasicHeader(headerName, sb.toString());
