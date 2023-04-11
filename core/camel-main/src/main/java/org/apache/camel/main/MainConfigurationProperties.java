@@ -18,6 +18,7 @@ package org.apache.camel.main;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 import org.apache.camel.CamelConfiguration;
 import org.apache.camel.RoutesBuilder;
@@ -376,19 +377,16 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     @SuppressWarnings("unchecked")
     private void addConfigurationClass(Class<? extends CamelConfiguration>... configuration) {
-        String existing = configurationClasses;
-        if (existing == null) {
-            existing = "";
+        StringJoiner existing = new StringJoiner(",");
+        if (configurationClasses != null && !configurationClasses.isEmpty()) {
+            existing.add(configurationClasses);
         }
         if (configuration != null) {
             for (Class<? extends CamelConfiguration> clazz : configuration) {
-                if (!existing.isEmpty()) {
-                    existing = existing + ",";
-                }
-                existing = existing + clazz.getName();
+                existing.add(clazz.getName());
             }
         }
-        setConfigurationClasses(existing);
+        setConfigurationClasses(existing.toString());
     }
 
     /**
@@ -452,19 +450,16 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      * Add an additional {@link RoutesBuilder} class to the known list of builders.
      */
     public void addRoutesBuilder(Class<?>... routeBuilder) {
-        String existing = routesBuilderClasses;
-        if (existing == null) {
-            existing = "";
+        StringJoiner existing = new StringJoiner(",");
+        if (routesBuilderClasses != null && !routesBuilderClasses.isEmpty()) {
+            existing.add(routesBuilderClasses);
         }
         if (routeBuilder != null) {
             for (Class<?> clazz : routeBuilder) {
-                if (!existing.isEmpty()) {
-                    existing = existing + ",";
-                }
-                existing = existing + clazz.getName();
+                existing.add(clazz.getName());
             }
         }
-        setRoutesBuilderClasses(existing);
+        setRoutesBuilderClasses(existing.toString());
     }
 
     /**
