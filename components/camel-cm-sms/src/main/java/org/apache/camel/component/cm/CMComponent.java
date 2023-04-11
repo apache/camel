@@ -75,9 +75,4 @@ public class CMComponent extends DefaultComponent {
         }
         return validator;
     }
-
-    @Override
-    protected void doInit() throws Exception {
-        super.doInit();
-    }
 }
