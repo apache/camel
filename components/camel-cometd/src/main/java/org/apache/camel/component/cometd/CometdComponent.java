@@ -358,11 +358,6 @@ public class CometdComponent extends DefaultComponent implements SSLContextParam
         super.doStop();
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-    }
-
     private void applyCrossOriginFiltering(CometdEndpoint endpoint, ServletContextHandler context) {
         if (endpoint.isCrossOriginFilterOn()) {
             FilterHolder filterHolder = new FilterHolder();
