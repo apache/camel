@@ -363,7 +363,7 @@ public class RunMojo extends AbstractExecMojo {
             extraPluginDependencyArtifactId = "camel-cdi";
             getLog().info("Using " + mainClass + " to initiate a CamelContext");
             getLog().warn("Running CDI in camel-maven-plugin is deprecated");
-        } else if (usingKameletMain) {
+        } else if (mainClass == null && usingKameletMain) {
             mainClass = "org.apache.camel.main.KameletMain";
             // must include plugin dependencies for kamelet
             extraPluginDependencyArtifactId = "camel-kamelet-main";
