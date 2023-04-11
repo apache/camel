@@ -76,11 +76,6 @@ public class CaffeineLoadCacheEndpoint extends DefaultEndpoint {
         }
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-    }
-
     CaffeineConfiguration getConfiguration() {
         return configuration;
     }
