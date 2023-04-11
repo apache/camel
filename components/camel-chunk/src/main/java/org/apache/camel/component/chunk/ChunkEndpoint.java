@@ -269,11 +269,4 @@ public class ChunkEndpoint extends ResourceEndpoint {
             theme = getOrCreateTheme();
         }
     }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-
-        // noop
-    }
 }
