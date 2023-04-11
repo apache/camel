@@ -342,7 +342,7 @@ public class RunMojo extends AbstractExecMojo {
             args.addAll(Arrays.asList(arguments));
         }
 
-        if (usingKameletMain) {
+        if (mainClass == null && usingKameletMain) {
             mainClass = "org.apache.camel.main.KameletMain";
             // must include plugin dependencies for kamelet
             extraPluginDependencyArtifactId = "camel-kamelet-main";
