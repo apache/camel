@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.TreeMap;
 
 import jakarta.activation.DataHandler;
@@ -748,15 +749,11 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     }
 
     protected String getContentTypeString(List<String> values) {
-        String result = "";
+        StringJoiner result = new StringJoiner("; ");
         for (String value : values) {
-            if (result.length() == 0) {
-                result = value;
-            } else {
-                result = result + "; " + value;
-            }
+            result.add(value);
         }
-        return result;
+        return result.toString();
     }
 
     @SuppressWarnings("unchecked")
