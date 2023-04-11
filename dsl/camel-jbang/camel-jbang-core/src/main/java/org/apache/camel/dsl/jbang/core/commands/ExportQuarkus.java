@@ -149,6 +149,7 @@ class ExportQuarkus extends Export {
 
             if ("camel.main.routesIncludePattern".equals(k)) {
                 v = Arrays.stream(v.split(","))
+                        .filter(d -> !d.endsWith(".java")) // skip .java as they are in the src/main/java folder
                         .map(ExportQuarkus::removeScheme) // remove scheme and routes are in camel sub-folder
                         .map(s -> "camel/" + s)
                         .collect(Collectors.joining(","));
@@ -157,6 +158,7 @@ class ExportQuarkus extends Export {
             // extra classpath files
             if ("camel.jbang.classpathFiles".equals(k)) {
                 v = Arrays.stream(v.split(","))
+                        .filter(d -> !d.endsWith(".jar")) // skip local lib JARs
                         .map(ExportQuarkus::removeScheme) // remove scheme
                         .collect(Collectors.joining(","));
                 sj2.add(v);
