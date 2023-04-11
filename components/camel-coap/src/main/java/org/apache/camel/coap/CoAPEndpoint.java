@@ -27,6 +27,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Category;
@@ -41,6 +42,7 @@ import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.server.resources.Resource;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.eclipse.californium.scandium.dtls.CertificateType;
@@ -76,6 +78,10 @@ public class CoAPEndpoint extends DefaultEndpoint {
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "security", defaultValue = "true")
     private boolean recommendedCipherSuitesOnly = true;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean observable;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean notify;
 
     private CoAPComponent component;
 
@@ -124,6 +130,19 @@ public class CoAPEndpoint extends DefaultEndpoint {
         return uri;
     }
 
+    public CamelCoapResource getCamelCoapResource(String path) throws IOException, GeneralSecurityException {
+        Iterator<String> pathSegments = CoAPHelper.getPathSegmentsFromPath(path).iterator();
+        if (!pathSegments.hasNext()) {
+            return null;
+        }
+
+        Resource current = getCoapServer().getRoot();
+        while (pathSegments.hasNext() && current != null) {
+            current = current.getChild(pathSegments.next());
+        }
+        return (CamelCoapResource) current;
+    }
+
     public List<String> getPathSegmentsFromURI() {
         return CoAPHelper.getPathSegmentsFromPath(getUri().getPath());
     }
@@ -152,6 +171,29 @@ public class CoAPEndpoint extends DefaultEndpoint {
      */
     public void setAlias(String alias) {
         this.alias = alias;
+    }
+
+    public boolean isObservable() {
+        return observable;
+    }
+
+    /**
+     * Make CoAP resource observable for source endpoint, based on RFC 7641.
+     */
+    public void setObservable(boolean observable) {
+        this.observable = observable;
+    }
+
+    public boolean isNotify() {
+        return notify;
+    }
+
+    /**
+     * Notify observers that the resource of this URI has changed, based on RFC 7641. Use this flag on a destination endpoint, with an URI
+     * that matches an existing source endpoint URI.
+     */
+    public void setNotify(boolean notify) {
+        this.notify = notify;
     }
 
     /**

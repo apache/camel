@@ -33,11 +33,16 @@ import org.eclipse.californium.core.network.config.NetworkConfig;
 import org.eclipse.californium.elements.tcp.netty.TcpClientConnector;
 import org.eclipse.californium.elements.tcp.netty.TlsClientConnector;
 import org.eclipse.californium.scandium.DTLSConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The CoAP producer.
  */
 public class CoAPProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CoAPProducer.class);
+
     private final CoAPEndpoint endpoint;
     private CoapClient client;
 
@@ -48,6 +53,11 @@ public class CoAPProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        if (endpoint.isNotify()) {
+            notifyResource(exchange);
+            return;
+        }
+
         CoapClient client = getClient(exchange);
         String ct = exchange.getIn().getHeader(CoAPConstants.CONTENT_TYPE, String.class);
         if (ct == null) {
@@ -132,5 +142,21 @@ public class CoAPProducer extends DefaultProducer {
 
         }
         return client;
+    }
+
+    private void notifyResource(Exchange exchange) throws IOException, GeneralSecurityException {
+        URI uri = exchange.getIn().getHeader(CoAPConstants.COAP_URI, URI.class);
+        if (uri == null) {
+            uri = endpoint.getUri();
+        }
+        CamelCoapResource resource = endpoint.getCamelCoapResource(uri.getPath());
+        if (resource == null) {
+            throw new IllegalStateException("Resource not found: " + endpoint.getUri());
+        }
+        if (!resource.isObservable()) {
+            LOG.warn("Ignoring notification attempt for resource that is not observable: " + endpoint.getUri());
+            return;
+        }
+        resource.changed();
     }
 }

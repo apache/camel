@@ -48,6 +48,7 @@ public class CoAPConsumer extends DefaultConsumer {
             Resource child = cr.getChild(pathSegment);
             if (child == null) {
                 child = new CamelCoapResource(pathSegment, this);
+                ((CamelCoapResource) child).setObservable(endpoint.isObservable());
                 cr.add(child);
                 cr = child;
             } else if (!pathSegmentIterator.hasNext()) {
