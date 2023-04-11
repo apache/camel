@@ -87,11 +87,6 @@ public final class CommandLineHelper {
         public CamelUserConfigDefaultValueProvider(File file) {
             super(file);
         }
-
-        @Override
-        public String defaultValue(CommandLine.Model.ArgSpec arg) throws Exception {
-            return super.defaultValue(arg);
-        }
     }
 
 }
