@@ -66,7 +66,8 @@ public class CamelExchangeException extends CamelException {
             if (sb.length() > 0) {
                 sb.append(". ");
             }
-            sb.append("Caused by: [" + cause.getClass().getName() + " - " + cause.getMessage() + "]");
+            sb.append("Caused by: [").append(cause.getClass().getName()).append(" - ")
+                    .append(cause.getMessage()).append(']');
         }
         return sb.toString().trim();
     }
