@@ -121,12 +121,6 @@ public class BeanEndpoint extends DefaultEndpoint {
         }
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        // noop
-    }
-
     // Properties
     //-------------------------------------------------------------------------
 
