@@ -57,11 +57,6 @@ public class SkipLastByteInputStream extends BufferedInputStream {
     }
 
     @Override
-    public void close() throws IOException {
-        super.close();
-    }
-
-    @Override
     public int read(byte[] buffer, int off, int len) throws IOException {
         final int count = super.read(buffer, off, len);
         if (count < 0) {
