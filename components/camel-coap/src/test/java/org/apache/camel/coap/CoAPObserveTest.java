@@ -32,33 +32,51 @@ public class CoAPObserveTest extends CoAPTestSupport {
     @Produce("direct:notify")
     protected ProducerTemplate notify;
 
-    @Produce("mock:result")
-    protected ProducerTemplate mockResult;
+    @Produce("mock:coapHandlerResults")
+    protected ProducerTemplate coapHandlerResults;
 
     @Test
-    void testCoAPComponent() throws Exception {
+    void testServerObservable() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:coapHandlerResults");
+        mock.expectedBodiesReceived("Hello 0");
+
         CoapClient client = createClient("/TestResource");
         client.observe(new CoapHandler() {
             @Override
             public void onLoad(CoapResponse response) {
-                mockResult.sendBody(response.getResponseText());
+                coapHandlerResults.sendBody(response.getResponseText());
             }
 
             @Override
             public void onError() {
-                mockResult.sendBody(null);
+                coapHandlerResults.sendBody(null);
             }
         });
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello 0");
         MockEndpoint.assertIsSatisfied(context());
         mock.reset();
 
+        mock.expectedBodiesReceivedInAnyOrder("Hello 1", "Hello 2");
+
         notify.sendBody(null);
         notify.sendBody(null);
 
+        MockEndpoint.assertIsSatisfied(context());
+    }
+
+    @Test
+    void testClientAndServerObservable() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:sourceResults");
+        mock.expectedBodiesReceived("Hello 0");
+
+        MockEndpoint.assertIsSatisfied(context());
+        mock.reset();
+
         mock.expectedBodiesReceivedInAnyOrder("Hello 1", "Hello 2");
+
+        notify.sendBody(null);
+        notify.sendBody(null);
+
         MockEndpoint.assertIsSatisfied(context());
     }
 
@@ -70,10 +88,14 @@ public class CoAPObserveTest extends CoAPTestSupport {
                 AtomicInteger i = new AtomicInteger(0);
 
                 fromF("coap://localhost:%d/TestResource?observable=true", PORT)
-                        .process(exchange -> exchange.getMessage().setBody("Hello " + i.getAndIncrement()));
+                        .process(exchange -> exchange.getMessage().setBody("Hello " + i.get()));
 
                 from("direct:notify")
+                        .process(exchange -> i.incrementAndGet())
                         .toF("coap://localhost:%d/TestResource?notify=true", PORT);
+
+                fromF("coap://localhost:%d/TestResource?observe=true", PORT)
+                        .to("mock:sourceResults");
             }
         };
     }

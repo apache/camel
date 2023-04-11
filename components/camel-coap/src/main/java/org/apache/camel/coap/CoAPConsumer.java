@@ -16,16 +16,21 @@
  */
 package org.apache.camel.coap;
 
+import java.io.IOException;
 import java.util.Iterator;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
+import org.eclipse.californium.core.CoapClient;
+import org.eclipse.californium.core.CoapHandler;
+import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.server.resources.Resource;
 
 /**
  * The CoAP consumer.
  */
-public class CoAPConsumer extends DefaultConsumer {
+public class CoAPConsumer extends DefaultConsumer implements CoapHandler {
     private final CoAPEndpoint endpoint;
 
     public CoAPConsumer(final CoAPEndpoint endpoint, final Processor processor) {
@@ -41,6 +46,14 @@ public class CoAPConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
+        if (endpoint.isObserve()) {
+            setupObserve();
+        } else {
+            setupResource();
+        }
+    }
+
+    private void setupResource() throws Exception {
         Iterator<String> pathSegmentIterator = endpoint.getPathSegmentsFromURI().iterator();
         Resource cr = endpoint.getCoapServer().getRoot();
         while (pathSegmentIterator.hasNext()) {
@@ -57,5 +70,31 @@ public class CoAPConsumer extends DefaultConsumer {
                 cr = child;
             }
         }
+    }
+
+    private void setupObserve() throws Exception {
+        CoapClient client = endpoint.createCoapClient(endpoint.getUri());
+        client.observe(this);
+    }
+
+    @Override
+    public void onLoad(CoapResponse response) {
+        Exchange camelExchange = createExchange(false);
+        try {
+            CoAPHelper.convertCoapResponseToMessage(response, camelExchange.getMessage());
+            getProcessor().process(camelExchange);
+        } catch (Exception ignored) {
+        } finally {
+            Exception exception = camelExchange.getException();
+            if (exception != null) {
+                getExceptionHandler().handleException("Error processing observed update", camelExchange, exception);
+            }
+            releaseExchange(camelExchange, false);
+        }
+    }
+
+    @Override
+    public void onError() {
+        getExceptionHandler().handleException(new IOException("CoAP request timed out or has been rejected by the server"));
     }
 }

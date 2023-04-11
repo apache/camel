@@ -86,6 +86,8 @@ public class CoAPEndpoint extends DefaultEndpoint {
     @UriParam(label = "security", defaultValue = "true")
     private boolean recommendedCipherSuitesOnly = true;
     @UriParam(label = "consumer", defaultValue = "false")
+    private boolean observe;
+    @UriParam(label = "consumer", defaultValue = "false")
     private boolean observable;
     @UriParam(label = "producer", defaultValue = "false")
     private boolean notify;
@@ -178,6 +180,17 @@ public class CoAPEndpoint extends DefaultEndpoint {
      */
     public void setAlias(String alias) {
         this.alias = alias;
+    }
+
+    public boolean isObserve() {
+        return observe;
+    }
+
+    /**
+     * Send an observe request from a source endpoint, based on RFC 7641.
+     */
+    public void setObserve(boolean observe) {
+        this.observe = observe;
     }
 
     public boolean isObservable() {

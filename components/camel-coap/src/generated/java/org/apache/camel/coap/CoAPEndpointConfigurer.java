@@ -38,6 +38,7 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": target.setLazyStartProducer(property(camelContext, boolean.class, value)); return true;
         case "notify": target.setNotify(property(camelContext, boolean.class, value)); return true;
         case "observable": target.setObservable(property(camelContext, boolean.class, value)); return true;
+        case "observe": target.setObserve(property(camelContext, boolean.class, value)); return true;
         case "privatekey":
         case "privateKey": target.setPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
         case "pskstore":
@@ -74,6 +75,7 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return boolean.class;
         case "notify": return boolean.class;
         case "observable": return boolean.class;
+        case "observe": return boolean.class;
         case "privatekey":
         case "privateKey": return java.security.PrivateKey.class;
         case "pskstore":
@@ -111,6 +113,7 @@ public class CoAPEndpointConfigurer extends PropertyConfigurerSupport implements
         case "lazyStartProducer": return target.isLazyStartProducer();
         case "notify": return target.isNotify();
         case "observable": return target.isObservable();
+        case "observe": return target.isObserve();
         case "privatekey":
         case "privateKey": return target.getPrivateKey();
         case "pskstore":
