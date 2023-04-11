@@ -513,7 +513,7 @@ public final class Jsoner {
                             || character >= '\u2000' && character <= '\u20FF') {
                         final String characterHexCode = Integer.toHexString(character);
                         builder.append("\\u");
-                        builder.append("0".repeat((4 - characterHexCode.length())));
+                        builder.append("0".repeat(4 - characterHexCode.length()));
                         builder.append(characterHexCode.toUpperCase());
                     } else {
                         /* Character didn't need escaping. */
