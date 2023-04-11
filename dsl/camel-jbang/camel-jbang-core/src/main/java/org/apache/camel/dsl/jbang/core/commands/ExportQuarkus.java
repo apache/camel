@@ -111,6 +111,8 @@ class ExportQuarkus extends Export {
         copyDockerFiles();
         // gather dependencies
         Set<String> deps = resolveDependencies(settings, profile);
+        // copy local lib JARs
+        copyLocalLibDependencies(deps);
         if ("maven".equals(buildTool)) {
             createMavenPom(settings, new File(BUILD_DIR, "pom.xml"), deps);
             if (mavenWrapper) {
@@ -363,7 +365,7 @@ class ExportQuarkus extends Export {
 
         List<MavenGav> gavs = new ArrayList<>();
         for (String dep : deps) {
-            MavenGav gav = MavenGav.parseGav(dep);
+            MavenGav gav = parseMavenGav(dep);
             String gid = gav.getGroupId();
             String aid = gav.getArtifactId();
             // transform to camel-quarkus extension GAV
@@ -398,6 +400,12 @@ class ExportQuarkus extends Export {
             sb.append("            <artifactId>").append(gav.getArtifactId()).append("</artifactId>\n");
             if (gav.getVersion() != null) {
                 sb.append("            <version>").append(gav.getVersion()).append("</version>\n");
+            }
+            // special for lib JARs
+            if ("lib".equals(gav.getPackaging())) {
+                sb.append("            <scope>system</scope>\n");
+                sb.append("            <systemPath>\\$\\{project.basedir}/lib/").append(gav.getArtifactId()).append("-")
+                        .append(gav.getVersion()).append(".jar</systemPath>\n");
             }
             // special for camel-kamelets-utils
             if ("camel-kamelets-utils".equals(gav.getArtifactId())) {

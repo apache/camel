@@ -289,6 +289,14 @@ abstract class ExportBaseCommand extends CamelCommand {
                         answer.add("org.apache.camel.kamelets:camel-kamelets:" + kameletsVersion);
                     }
                 }
+            } else if (line.startsWith("camel.jbang.classpathFiles")) {
+                String deps = StringHelper.after(line, "camel.jbang.classpathFiles=");
+                for (String d : deps.split(",")) {
+                    // special to include local JARs in export lib folder
+                    if (d.endsWith(".jar")) {
+                        answer.add("lib:" + d.trim());
+                    }
+                }
             } else if (line.startsWith("camel.main.routesIncludePattern=")) {
                 String routes = StringHelper.after(line, "camel.main.routesIncludePattern=");
                 for (String r : routes.split(",")) {
@@ -645,4 +653,42 @@ abstract class ExportBaseCommand extends CamelCommand {
         return matcher.find() ? matcher.group(1) : null;
     }
 
+    protected static MavenGav parseMavenGav(String dep) {
+        MavenGav gav;
+        if (dep.startsWith("lib:")) {
+            // lib:commons-lang3-3.12.0.jar
+            String n = dep.substring(4);
+            if (n.endsWith(".jar")) {
+                n = n.substring(0, n.length() - 4);
+            }
+            String v = "1.0";
+            String a = n;
+            int pos = n.lastIndexOf("-");
+            if (pos != -1) {
+                a = n.substring(0, pos);
+                v = n.substring(pos + 1);
+            }
+            gav = new MavenGav();
+            gav.setGroupId("custom");
+            gav.setArtifactId(a);
+            gav.setVersion(v);
+            gav.setPackaging("lib");
+        } else {
+            gav = MavenGav.parseGav(dep);
+        }
+        return gav;
+    }
+
+    protected void copyLocalLibDependencies(Set<String> deps) throws Exception {
+        for (String d : deps) {
+            if (d.startsWith("lib:")) {
+                File libDir = new File(BUILD_DIR, "lib");
+                libDir.mkdirs();
+                String n = d.substring(4);
+                File source = new File(n);
+                File target = new File(libDir, n);
+                safeCopy(source, target, true);
+            }
+        }
+    }
 }
