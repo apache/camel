@@ -296,10 +296,4 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         reset();
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        // noop
-    }
-
 }
