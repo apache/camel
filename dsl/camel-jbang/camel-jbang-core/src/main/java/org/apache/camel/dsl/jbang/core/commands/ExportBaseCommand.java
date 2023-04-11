@@ -658,6 +658,7 @@ abstract class ExportBaseCommand extends CamelCommand {
         MavenGav gav;
         if (dep.startsWith("lib:")) {
             // lib:commons-lang3-3.12.0.jar
+            // TODO: scan inside JAR in META-INF/maven and find pom.properties file
             String n = dep.substring(4);
             if (n.endsWith(".jar")) {
                 n = n.substring(0, n.length() - 4);
