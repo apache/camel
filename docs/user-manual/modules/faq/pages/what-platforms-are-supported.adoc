@@ -1,5 +1,7 @@
 = What platforms are supported?
 
 - Camel 2.x supports JDK 8
-- Camel 3.x supports JDK 8 (secondary) and 11 (primary)
+- Camel 3.x supports JDK 8 up to its 3.14.x branch
+- Camel 3.x supports JDK 11
+- Camel 4.x supports JDK 17
 
