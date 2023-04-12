@@ -35,6 +35,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -655,28 +657,61 @@ abstract class ExportBaseCommand extends CamelCommand {
 
     protected static MavenGav parseMavenGav(String dep) {
         MavenGav gav;
-        if (dep.startsWith("lib:")) {
+        if (dep.startsWith("lib:") && dep.endsWith(".jar")) {
             // lib:commons-lang3-3.12.0.jar
             String n = dep.substring(4);
-            if (n.endsWith(".jar")) {
-                n = n.substring(0, n.length() - 4);
+            n = n.substring(0, n.length() - 4);
+            // scan inside JAR in META-INF/maven and find pom.properties file
+            gav = parseLocalJar(n);
+            if (gav == null) {
+                // okay JAR was not maven build
+                gav = new MavenGav();
+                String v = "1.0";
+                String a = n;
+                int pos = n.lastIndexOf("-");
+                if (pos != -1) {
+                    a = n.substring(0, pos);
+                    v = n.substring(pos + 1);
+                }
+                gav.setGroupId("local");
+                gav.setArtifactId(a);
+                gav.setVersion(v);
+                gav.setPackaging("lib");
             }
-            String v = "1.0";
-            String a = n;
-            int pos = n.lastIndexOf("-");
-            if (pos != -1) {
-                a = n.substring(0, pos);
-                v = n.substring(pos + 1);
-            }
-            gav = new MavenGav();
-            gav.setGroupId("custom");
-            gav.setArtifactId(a);
-            gav.setVersion(v);
-            gav.setPackaging("lib");
         } else {
             gav = MavenGav.parseGav(dep);
         }
         return gav;
+    }
+
+    private static MavenGav parseLocalJar(String dep) {
+        File file = new File(dep + ".jar");
+        if (!file.isFile() || !file.exists()) {
+            return null;
+        }
+
+        try {
+            JarFile jf = new JarFile(file);
+            Optional<JarEntry> je = jf.stream().filter(e -> e.getName().startsWith("META-INF/maven/")
+                    && e.getName().endsWith("/pom.properties")).findFirst();
+            if (je.isPresent()) {
+                JarEntry e = je.get();
+                InputStream is = jf.getInputStream(e);
+                Properties prop = new Properties();
+                prop.load(is);
+                IOHelper.close(is);
+                MavenGav gav = new MavenGav();
+                gav.setGroupId(prop.getProperty("groupId"));
+                gav.setArtifactId(prop.getProperty("artifactId"));
+                gav.setVersion(prop.getProperty("version"));
+                gav.setPackaging("lib");
+                return gav;
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return null;
     }
 
     protected void copyLocalLibDependencies(Set<String> deps) throws Exception {
