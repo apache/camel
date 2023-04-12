@@ -234,7 +234,7 @@
         <jackson-version>1.9.12</jackson-version>
         <jackson2-version>2.14.2</jackson2-version>
         <jackson2-module-scala-version>2.14.0</jackson2-module-scala-version>
-        <jackrabbit-version>2.21.15</jackrabbit-version>
+        <jackrabbit-version>2.21.16</jackrabbit-version>
         <jasminb-jsonapi-version>0.11</jasminb-jsonapi-version>
         <jandex-version>3.0.3</jandex-version>
         <jansi-version>2.4.0</jansi-version>
