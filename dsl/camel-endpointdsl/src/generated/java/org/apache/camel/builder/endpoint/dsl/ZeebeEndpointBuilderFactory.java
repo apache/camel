@@ -482,7 +482,7 @@ public interface ZeebeEndpointBuilderFactory {
         /**
          * The name of the resource.
          * 
-         * The option is a: {@code } type.
+         * The option is a: {@code String} type.
          * 
          * Group: producer
          * 
@@ -495,7 +495,7 @@ public interface ZeebeEndpointBuilderFactory {
         /**
          * True if the operation was successful.
          * 
-         * The option is a: {@code } type.
+         * The option is a: {@code boolean} type.
          * 
          * Group: producer
          * 
@@ -508,7 +508,7 @@ public interface ZeebeEndpointBuilderFactory {
         /**
          * In case of an error, the error message.
          * 
-         * The option is a: {@code } type.
+         * The option is a: {@code String} type.
          * 
          * Group: producer
          * 
@@ -521,7 +521,7 @@ public interface ZeebeEndpointBuilderFactory {
         /**
          * In case of an error, the error code if available.
          * 
-         * The option is a: {@code } type.
+         * The option is a: {@code String} type.
          * 
          * Group: producer
          * 
@@ -534,7 +534,7 @@ public interface ZeebeEndpointBuilderFactory {
         /**
          * The process ID of a deployed process.
          * 
-         * The option is a: {@code } type.
+         * The option is a: {@code String} type.
          * 
          * Group: producer
          * 
@@ -547,7 +547,7 @@ public interface ZeebeEndpointBuilderFactory {
         /**
          * The version of a deployed process.
          * 
-         * The option is a: {@code } type.
+         * The option is a: {@code int} type.
          * 
          * Group: producer
          * 
@@ -560,7 +560,7 @@ public interface ZeebeEndpointBuilderFactory {
         /**
          * The process definition key of a deployed process.
          * 
-         * The option is a: {@code } type.
+         * The option is a: {@code long} type.
          * 
          * Group: producer
          * 
@@ -568,6 +568,21 @@ public interface ZeebeEndpointBuilderFactory {
          */
         public String zeebeProcessDefinitionKey() {
             return "ZeebeProcessDefinitionKey";
+        }
+
+        /**
+         * The key of a job. The worker consumer adds the job key to the headers
+         * and the operations completeJob and failJob accept the job key in the
+         * header if no JobRequest is provided in the body.
+         * 
+         * The option is a: {@code long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code ZeebeJobKey}.
+         */
+        public String zeebeJobKey() {
+            return "ZeebeJobKey";
         }
     }
     static ZeebeEndpointBuilder endpointBuilder(
