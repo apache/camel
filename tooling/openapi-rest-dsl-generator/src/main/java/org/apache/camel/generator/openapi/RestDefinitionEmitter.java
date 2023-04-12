@@ -69,7 +69,7 @@ class RestDefinitionEmitter implements CodeEmitter<RestsDefinition> {
             }
         }
 
-        return arguments.toArray(new Object[arguments.size()]);
+        return arguments.toArray(new Object[0]);
     }
 
     static Class<?>[] parameterTypesOf(final Object[] args) {
