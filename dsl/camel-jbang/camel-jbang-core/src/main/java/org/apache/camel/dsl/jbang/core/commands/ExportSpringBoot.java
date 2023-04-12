@@ -241,14 +241,13 @@ class ExportSpringBoot extends Export {
             if (gav.getVersion() != null) {
                 sb.append("            <version>").append(gav.getVersion()).append("</version>\n");
             }
-            // special for lib JARs
             if ("lib".equals(gav.getPackaging())) {
+                // special for lib JARs
                 sb.append("            <scope>system</scope>\n");
                 sb.append("            <systemPath>\\$\\{project.basedir}/lib/").append(gav.getArtifactId()).append("-")
                         .append(gav.getVersion()).append(".jar</systemPath>\n");
-            }
-            // special for camel-kamelets-utils
-            if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
+            } else if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
+                // special for camel-kamelets-utils
                 sb.append("            <exclusions>\n");
                 sb.append("                <exclusion>\n");
                 sb.append("                    <groupId>org.apache.camel</groupId>\n");
@@ -308,7 +307,7 @@ class ExportSpringBoot extends Export {
 
         List<MavenGav> gavs = new ArrayList<>();
         for (String dep : deps) {
-            MavenGav gav = MavenGav.parseGav(dep);
+            MavenGav gav = parseMavenGav(dep);
             String gid = gav.getGroupId();
             String aid = gav.getArtifactId();
             String v = gav.getVersion();
@@ -334,8 +333,12 @@ class ExportSpringBoot extends Export {
 
         StringBuilder sb = new StringBuilder();
         for (MavenGav gav : gavs) {
-            // special for camel-kamelets-utils
-            if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
+            if ("lib".equals(gav.getPackaging())) {
+                // special for lib JARs
+                sb.append("    implementation files('lib/").append(gav.getArtifactId())
+                        .append("-").append(gav.getVersion()).append(".jar')\n");
+            } else if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
+                // special for camel-kamelets-utils
                 sb.append("    implementation ('").append(gav).append("') {\n");
                 sb.append("        exclude group: 'org.apache.camel', module: '*'\n");
                 sb.append("    }\n");
