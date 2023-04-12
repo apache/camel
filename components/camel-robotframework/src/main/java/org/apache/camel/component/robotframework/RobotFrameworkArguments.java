@@ -87,7 +87,7 @@ public class RobotFrameworkArguments {
     }
 
     public String[] toArray() {
-        return arguments.toArray(new String[arguments.size()]);
+        return arguments.toArray(new String[0]);
     }
 
 }

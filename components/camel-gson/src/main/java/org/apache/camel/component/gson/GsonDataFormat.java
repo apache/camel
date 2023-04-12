@@ -179,7 +179,7 @@ public class GsonDataFormat extends ServiceSupport
         if (gson == null) {
             GsonBuilder builder = new GsonBuilder();
             if (exclusionStrategies != null && !exclusionStrategies.isEmpty()) {
-                ExclusionStrategy[] strategies = exclusionStrategies.toArray(new ExclusionStrategy[exclusionStrategies.size()]);
+                ExclusionStrategy[] strategies = exclusionStrategies.toArray(new ExclusionStrategy[0]);
                 builder.setExclusionStrategies(strategies);
             }
             if (longSerializationPolicy != null) {

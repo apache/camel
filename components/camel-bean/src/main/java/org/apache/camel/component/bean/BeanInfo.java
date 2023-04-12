@@ -415,7 +415,7 @@ public class BeanInfo {
         for (int i = 0; i < size; i++) {
             Class<?> parameterType = parameterTypes[i];
             Annotation[] parameterAnnotations
-                    = parametersAnnotations[i].toArray(new Annotation[parametersAnnotations[i].size()]);
+                    = parametersAnnotations[i].toArray(new Annotation[0]);
             Expression expression = createParameterUnmarshalExpression(method, parameterType, parameterAnnotations);
             hasCustomAnnotation |= expression != null;
 

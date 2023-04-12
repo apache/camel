@@ -130,7 +130,7 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
         if (inBody != null) {
             arguments.add(inBody);
         }
-        final String[] argNames = arguments.toArray(new String[arguments.size()]);
+        final String[] argNames = arguments.toArray(new String[0]);
 
         candidates = new ArrayList<>();
         candidates.addAll(getCandidateMethods(method, argNames));
