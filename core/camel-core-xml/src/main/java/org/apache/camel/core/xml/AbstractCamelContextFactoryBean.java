@@ -1464,7 +1464,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                 packages.add(name);
             }
         }
-        return packages.toArray(new String[packages.size()]);
+        return packages.toArray(new String[0]);
     }
 
     private void setupCustomServices() {

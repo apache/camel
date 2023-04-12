@@ -458,7 +458,7 @@ public class AntPathMatcher {
                 tokens.add(token);
             }
         }
-        return tokens.toArray(new String[tokens.size()]);
+        return tokens.toArray(new String[0]);
     }
 
     private static boolean different(boolean caseSensitive, char ch, char other) {

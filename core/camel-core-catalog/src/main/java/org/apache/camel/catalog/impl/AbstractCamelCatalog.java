@@ -1028,7 +1028,7 @@ public abstract class AbstractCamelCatalog {
             }
         }
 
-        return tokens.toArray(new String[tokens.size()]);
+        return tokens.toArray(new String[0]);
     }
 
     public ConfigurationPropertiesValidationResult validateConfigurationProperty(String line) {
