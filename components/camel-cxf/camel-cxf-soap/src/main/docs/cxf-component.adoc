@@ -120,6 +120,57 @@ exchange property, `CamelCXFDataFormat`. The exchange key constant is
 defined in
 `org.apache.camel.component.cxf.common.message.CxfConstants.DATA_FORMAT_PROPERTY`.
 
+== How to create simple CXF service with POJO data format
+
+Having simple java web service interface
+
+
+[source,java]
+----
+package org.apache.camel.component.cxf.soap.server;
+
+@WebService(targetNamespace = "http://server.soap.cxf.component.camel.apache.org/", name = "EchoService")
+public interface EchoService {
+
+    String echo(String text);
+}
+----
+
+and implementation
+
+[source,java]
+----
+
+package org.apache.camel.component.cxf.soap.server;
+
+@WebService(name = "EchoService", serviceName = "EchoService", targetNamespace = "http://server.soap.cxf.component.camel.apache.org/")
+public class EchoServiceImpl implements EchoService {
+
+    @Override
+    public String echo(String text) {
+        return text;
+    }
+
+}
+----
+
+We can then create the simplest CXF service (note we didn't specify the `POJO` mode, as it is the default mode):
+
+[source,java]
+----
+    from("cxf:echoServiceResponseFromImpl?serviceClass=org.apache.camel.component.cxf.soap.server.EchoServiceImpl&address=/echo-impl")// no body set here; the response comes from EchoServiceImpl
+                .log("${body}");
+----
+
+For more complicated implementation of the service (more "Camel way"), we can set the body from the route instead: 
+
+[source,java]
+----
+    from("cxf:echoServiceResponseFromRoute?serviceClass=org.apache.camel.component.cxf.soap.server.EchoServiceImpl&address=/echo-route")
+                .setBody(exchange -> exchange.getMessage().getBody(String.class) + " from Camel route");
+----
+
+
 == How to consume a message from a camel-cxf endpoint in POJO data format
 
 The `camel-cxf` endpoint consumer POJO data format is based on the
