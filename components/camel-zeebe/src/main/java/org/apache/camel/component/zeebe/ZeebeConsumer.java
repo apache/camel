@@ -101,6 +101,7 @@ public class ZeebeConsumer extends DefaultConsumer {
             if (getEndpoint().isFormatJSON()) {
                 try {
                     exchange.getMessage().setBody(objectMapper.writeValueAsString(message));
+                    exchange.getMessage().setHeader(ZeebeConstants.JOB_KEY, job.getKey());
                 } catch (JsonProcessingException jsonProcessingException) {
                     throw new IllegalArgumentException("Cannot convert result", jsonProcessingException);
                 }
