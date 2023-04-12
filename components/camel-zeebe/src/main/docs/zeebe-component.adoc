@@ -279,21 +279,13 @@ The endpoints accept either Java request objects as shown in the examples below 
         })
         .to("zeebe://deployResource")
         .process(exchange -> {
-            JobWorkerMessage body = exchange.getIn().getBody(JobWorkerMessage.class);
+            ProcessDeploymentResponse body = exchange.getIn().getBody(ProcessDeploymentResponse.class);
             if (body != null) {
-                long key = body.getKey();
-                String type = body.getType();
-                Map<String,String> customHeaders = body.getCustomHeaders();
-                long processInstanceKey = body.getProcessInstanceKey();
+                bool success = body.getSuccess();
                 String bpmnProcessId = body.getBpmnProcessId();
-                int processDefinitionVersion = body.getProcessDefinitionVersion();
+                int version = body.getVersion();
                 long processDefinitionKey = body.getProcessDefinitionKey();
-                String elementId = body.getElementId();
-                long elementInstanceKey = body.getElementInstanceKey();
-                String worker = body.getWorker();
-                int retries = body.getRetries();
-                long deadline = body.getDeadline();
-                Map<String,Object> variables = body.getVariables();
+                String resourceName = body.getResourceName();
             }
         });
 ----------------------------------------------------------------------------------------------------------------------
@@ -312,15 +304,23 @@ The endpoints accept either Java request objects as shown in the examples below 
 
 [source,java]
 ---------------------------------------------------------------------------------------------------------------------------------------------
-    from("zeebe://jobWorker?jobKey=job1&timeout=20")
+    from("zeebe://worker?jobKey=job1&timeout=20")
         .process(exchange -> {
-            ProcessDeploymentResponse body = exchange.getIn().getBody(ProcessDeploymentResponse.class);
+            JobWorkerMessage body = exchange.getIn().getBody(JobWorkerMessage.class);
             if (body != null) {
-                bool success = body.getSuccess();
+                long key = body.getKey();
+                String type = body.getType();
+                Map<String,String> customHeaders = body.getCustomHeaders();
+                long processInstanceKey = body.getProcessInstanceKey();
                 String bpmnProcessId = body.getBpmnProcessId();
-                int version = body.getVersion();
+                int processDefinitionVersion = body.getProcessDefinitionVersion();
                 long processDefinitionKey = body.getProcessDefinitionKey();
-                String resourceName = body.getResourceName();
+                String elementId = body.getElementId();
+                long elementInstanceKey = body.getElementInstanceKey();
+                String worker = body.getWorker();
+                int retries = body.getRetries();
+                long deadline = body.getDeadline();
+                Map<String,Object> variables = body.getVariables();
             }
         })
 ---------------------------------------------------------------------------------------------------------------------------------------------

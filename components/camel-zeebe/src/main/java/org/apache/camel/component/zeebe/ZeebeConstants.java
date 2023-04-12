@@ -26,26 +26,33 @@ public final class ZeebeConstants {
     public static final String DEFAULT_GATEWAY_HOST = "localhost";
     public static final int DEFAULT_GATEWAY_PORT = 26500;
 
-    @Metadata(label = "producer", description = "The name of the resource.")
+    @Metadata(label = "producer", description = "The name of the resource.", javaType = "String")
     public static final String RESOURCE_NAME = HEADER_PREFIX + "ResourceName";
 
-    @Metadata(label = "producer", description = "True if the operation was successful.")
+    @Metadata(label = "producer", description = "True if the operation was successful.", javaType = "boolean")
     public static final String IS_SUCCESS = HEADER_PREFIX + "IsSuccess";
 
-    @Metadata(label = "producer", description = "In case of an error, the error message.")
+    @Metadata(label = "producer", description = "In case of an error, the error message.", javaType = "String")
     public static final String ERROR_MESSAGE = HEADER_PREFIX + "ErrorMessage";
 
-    @Metadata(label = "producer", description = "In case of an error, the error code if available.")
+    @Metadata(label = "producer", description = "In case of an error, the error code if available.", javaType = "String")
     public static final String ERROR_CODE = HEADER_PREFIX + "ErrorCode";
 
-    @Metadata(label = "producer", description = "The process ID of a deployed process.")
+    @Metadata(label = "producer", description = "The process ID of a deployed process.", javaType = "String")
     public static final String BPMN_PROCESS_ID = HEADER_PREFIX + "BPMNProcessId";
 
-    @Metadata(label = "producer", description = "The version of a deployed process.")
+    @Metadata(label = "producer", description = "The version of a deployed process.", javaType = "int")
     public static final String VERSION = HEADER_PREFIX + "Version";
 
-    @Metadata(label = "producer", description = "The process definition key of a deployed process.")
+    @Metadata(label = "producer", description = "The process definition key of a deployed process.", javaType = "long")
     public static final String PROCESS_DEFINITION_KEY = HEADER_PREFIX + "ProcessDefinitionKey";
+
+    @Metadata(label = "common",
+              description = "The key of a job. " +
+                            "The worker consumer adds the job key to the headers and the operations completeJob and failJob " +
+                            "accept the job key in the header if no JobRequest is provided in the body.",
+              javaType = "long")
+    public static final String JOB_KEY = HEADER_PREFIX + "JobKey";
 
     private ZeebeConstants() {
     }

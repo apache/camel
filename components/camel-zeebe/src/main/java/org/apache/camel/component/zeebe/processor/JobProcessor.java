@@ -20,10 +20,12 @@ package org.apache.camel.component.zeebe.processor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.zeebe.ZeebeConstants;
 import org.apache.camel.component.zeebe.ZeebeEndpoint;
 import org.apache.camel.component.zeebe.internal.ZeebeService;
 import org.apache.camel.component.zeebe.model.JobRequest;
 import org.apache.camel.component.zeebe.model.JobResponse;
+import org.apache.camel.component.zeebe.model.JobWorkerMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +40,7 @@ public class JobProcessor extends AbstractBaseProcessor {
     public void process(Exchange exchange) throws Exception {
         JobRequest message = null;
 
+        Long headerJobKey = exchange.getMessage().getHeader(ZeebeConstants.JOB_KEY, Long.class);
         if (exchange.getMessage().getBody() instanceof JobRequest) {
             message = exchange.getMessage().getBody(JobRequest.class);
         } else if (exchange.getMessage().getBody() instanceof String) {
@@ -48,6 +51,14 @@ public class JobProcessor extends AbstractBaseProcessor {
             } catch (JsonProcessingException jsonProcessingException) {
                 throw new IllegalArgumentException("Cannot convert body to JobMessage", jsonProcessingException);
             }
+        } else if (exchange.getMessage().getBody() instanceof JobWorkerMessage) {
+            JobWorkerMessage jobWorkerMessage = exchange.getMessage().getBody(JobWorkerMessage.class);
+
+            message = new JobRequest();
+            message.setJobKey(jobWorkerMessage.getKey());
+        } else if (headerJobKey != null) {
+            message = new JobRequest();
+            message.setJobKey(headerJobKey);
         } else {
             throw new CamelException("Job data missing");
         }
