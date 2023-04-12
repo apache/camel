@@ -41,8 +41,6 @@ import org.apache.commons.io.FileUtils;
 
 class ExportQuarkus extends Export {
 
-    private String camelVersion;
-
     public ExportQuarkus(CamelJBangMain main) {
         super(main);
     }
@@ -239,8 +237,6 @@ class ExportQuarkus extends Export {
         if (camelVersion == null) {
             camelVersion = catalog.getCatalogVersion();
         }
-        String camelVersion = catalog.getCatalogVersion();
-        String camelQuarkusVersion = catalog.otherModel("camel-core-engine").getVersion();
 
         context = context.replaceFirst("\\{\\{ \\.GroupId }}", ids[0]);
         context = context.replaceFirst("\\{\\{ \\.ArtifactId }}", ids[1]);
@@ -270,7 +266,7 @@ class ExportQuarkus extends Export {
 
         List<MavenGav> gavs = new ArrayList<>();
         for (String dep : deps) {
-            MavenGav gav = MavenGav.parseGav(dep);
+            MavenGav gav = parseMavenGav(dep);
             String gid = gav.getGroupId();
             String aid = gav.getArtifactId();
             // transform to camel-quarkus extension GAV
@@ -281,7 +277,7 @@ class ExportQuarkus extends Export {
                     // use quarkus extension
                     gav.setGroupId(am.getGroupId());
                     gav.setArtifactId(am.getArtifactId());
-                    gav.setVersion(camelQuarkusVersion);
+                    gav.setVersion(null); // uses BOM so version should not be included
                 } else {
                     // there is no quarkus extension so use plain camel
                     gav.setVersion(camelVersion);
@@ -295,8 +291,12 @@ class ExportQuarkus extends Export {
 
         StringBuilder sb = new StringBuilder();
         for (MavenGav gav : gavs) {
-            // special for camel-kamelets-utils
-            if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
+            if ("lib".equals(gav.getPackaging())) {
+                // special for lib JARs
+                sb.append("    implementation files('lib/").append(gav.getArtifactId())
+                        .append("-").append(gav.getVersion()).append(".jar')\n");
+            } else if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
+                // special for camel-kamelets-utils
                 sb.append("    implementation ('").append(gav).append("') {\n");
                 sb.append("        exclude group: 'org.apache.camel', module: '*'\n");
                 sb.append("    }\n");
@@ -403,14 +403,13 @@ class ExportQuarkus extends Export {
             if (gav.getVersion() != null) {
                 sb.append("            <version>").append(gav.getVersion()).append("</version>\n");
             }
-            // special for lib JARs
             if ("lib".equals(gav.getPackaging())) {
+                // special for lib JARs
                 sb.append("            <scope>system</scope>\n");
                 sb.append("            <systemPath>\\$\\{project.basedir}/lib/").append(gav.getArtifactId()).append("-")
                         .append(gav.getVersion()).append(".jar</systemPath>\n");
-            }
-            // special for camel-kamelets-utils
-            if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
+            } else if ("camel-kamelets-utils".equals(gav.getArtifactId())) {
+                // special for camel-kamelets-utils
                 sb.append("            <exclusions>\n");
                 sb.append("                <exclusion>\n");
                 sb.append("                    <groupId>org.apache.camel</groupId>\n");
