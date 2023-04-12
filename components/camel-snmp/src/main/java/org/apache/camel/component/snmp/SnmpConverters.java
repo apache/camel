@@ -79,9 +79,9 @@ public final class SnmpConverters {
 
     private static void entryAppend(StringBuilder sb, String tag, String value) {
         sb.append(ENTRY_TAG_OPEN);
-        sb.append("<" + tag + ">");
+        sb.append('<').append(tag).append('>');
         sb.append(value);
-        sb.append("</" + tag + ">");
+        sb.append("</").append(tag).append('>');
         sb.append(ENTRY_TAG_CLOSE);
     }
 

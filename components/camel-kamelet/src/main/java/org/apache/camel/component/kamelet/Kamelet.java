@@ -112,7 +112,7 @@ public final class Kamelet {
             if (element == null) {
                 continue;
             }
-            prefixBuffer.append(element + ".");
+            prefixBuffer.append(element).append('.');
 
             Properties prefixed = pc.loadProperties(Kamelet.startsWith(prefixBuffer.toString()));
             for (String name : prefixed.stringPropertyNames()) {
