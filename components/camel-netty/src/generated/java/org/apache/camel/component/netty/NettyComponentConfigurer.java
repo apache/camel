@@ -154,6 +154,8 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "udpByteArrayCodec": getOrCreateConfiguration(target).setUdpByteArrayCodec(property(camelContext, boolean.class, value)); return true;
         case "udpconnectionlesssending":
         case "udpConnectionlessSending": getOrCreateConfiguration(target).setUdpConnectionlessSending(property(camelContext, boolean.class, value)); return true;
+        case "unixdomainsocketpath":
+        case "unixDomainSocketPath": getOrCreateConfiguration(target).setUnixDomainSocketPath(property(camelContext, java.lang.String.class, value)); return true;
         case "usebytebuf":
         case "useByteBuf": getOrCreateConfiguration(target).setUseByteBuf(property(camelContext, boolean.class, value)); return true;
         case "useglobalsslcontextparameters":
@@ -297,6 +299,8 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "udpByteArrayCodec": return boolean.class;
         case "udpconnectionlesssending":
         case "udpConnectionlessSending": return boolean.class;
+        case "unixdomainsocketpath":
+        case "unixDomainSocketPath": return java.lang.String.class;
         case "usebytebuf":
         case "useByteBuf": return boolean.class;
         case "useglobalsslcontextparameters":
@@ -441,6 +445,8 @@ public class NettyComponentConfigurer extends PropertyConfigurerSupport implemen
         case "udpByteArrayCodec": return getOrCreateConfiguration(target).isUdpByteArrayCodec();
         case "udpconnectionlesssending":
         case "udpConnectionlessSending": return getOrCreateConfiguration(target).isUdpConnectionlessSending();
+        case "unixdomainsocketpath":
+        case "unixDomainSocketPath": return getOrCreateConfiguration(target).getUnixDomainSocketPath();
         case "usebytebuf":
         case "useByteBuf": return getOrCreateConfiguration(target).isUseByteBuf();
         case "useglobalsslcontextparameters":
