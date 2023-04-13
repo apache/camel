@@ -95,10 +95,12 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor, Ca
         return enabled;
     }
 
+    @Override
     public boolean isUnbindEnabled() {
         return unbindEnabled;
     }
 
+    @Override
     public void setUnbindEnabled(boolean unbindEnabled) {
         this.unbindEnabled = unbindEnabled;
     }
