@@ -654,28 +654,28 @@ public abstract class JettyHttpComponent extends HttpCommonComponent
         if (ssl != null && ssl.getCipherSuitesFilter() != null) {
             List<String> includeCiphers = ssl.getCipherSuitesFilter().getInclude();
             if (includeCiphers != null && !includeCiphers.isEmpty()) {
-                String[] arr = includeCiphers.toArray(new String[includeCiphers.size()]);
+                String[] arr = includeCiphers.toArray(new String[0]);
                 answer.setIncludeCipherSuites(arr);
             } else {
                 answer.setIncludeCipherSuites(".*");
             }
             List<String> excludeCiphers = ssl.getCipherSuitesFilter().getExclude();
             if (excludeCiphers != null && !excludeCiphers.isEmpty()) {
-                String[] arr = excludeCiphers.toArray(new String[excludeCiphers.size()]);
+                String[] arr = excludeCiphers.toArray(new String[0]);
                 answer.setExcludeCipherSuites(arr);
             }
         }
         if (ssl != null && ssl.getSecureSocketProtocolsFilter() != null) {
             List<String> includeProtocols = ssl.getSecureSocketProtocolsFilter().getInclude();
             if (includeProtocols != null && !includeProtocols.isEmpty()) {
-                String[] arr = includeProtocols.toArray(new String[includeProtocols.size()]);
+                String[] arr = includeProtocols.toArray(new String[0]);
                 answer.setIncludeProtocols(arr);
             } else {
                 answer.setIncludeProtocols(".*");
             }
             List<String> excludeProtocols = ssl.getSecureSocketProtocolsFilter().getExclude();
             if (excludeProtocols != null && !excludeProtocols.isEmpty()) {
-                String[] arr = excludeProtocols.toArray(new String[excludeProtocols.size()]);
+                String[] arr = excludeProtocols.toArray(new String[0]);
                 answer.setExcludeProtocols(arr);
             }
         }

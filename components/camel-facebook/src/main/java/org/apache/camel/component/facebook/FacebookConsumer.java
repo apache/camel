@@ -125,7 +125,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         // add reading property for polling, if it doesn't already exist!
         argNames.add(READING_PROPERTY);
 
-        final String[] argNamesArray = argNames.toArray(new String[argNames.size()]);
+        final String[] argNamesArray = argNames.toArray(new String[0]);
         List<FacebookMethodsType> filteredMethods = filterMethods(
                 endpoint.getCandidates(), MatchType.SUPER_SET, argNamesArray);
 
@@ -208,7 +208,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         // must be a Collection
         // TODO add support for Paging using ResponseList
         Collection<?> collection = (Collection<?>) result;
-        return collection.toArray(new Object[collection.size()]);
+        return collection.toArray(new Object[0]);
     }
 
     private Map<String, Object> getMethodArguments() {

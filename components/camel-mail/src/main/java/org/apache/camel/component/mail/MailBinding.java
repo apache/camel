@@ -149,7 +149,7 @@ public class MailBinding {
                 replyToAddresses
                         .add(asEncodedInternetAddress(reply.trim(), determineCharSet(endpoint.getConfiguration(), exchange)));
             }
-            mimeMessage.setReplyTo(replyToAddresses.toArray(new InternetAddress[replyToAddresses.size()]));
+            mimeMessage.setReplyTo(replyToAddresses.toArray(new InternetAddress[0]));
         }
 
         // must have at least one recipients otherwise we do not know where to send the mail
@@ -835,7 +835,7 @@ public class MailBinding {
         }
 
         mimeMessage.addRecipients(asRecipientType(type),
-                recipientsAddresses.toArray(new InternetAddress[recipientsAddresses.size()]));
+                recipientsAddresses.toArray(new InternetAddress[0]));
     }
 
     private static String[] splitRecipients(String recipients) {

@@ -203,12 +203,12 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
         Map<java.lang.Short, Object> optinalParamater = in.getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
         if (optinalParamater != null) {
             List<OptionalParameter> optParams = createOptionalParametersByCode(optinalParamater);
-            dataSm.setOptionalParameters(optParams.toArray(new OptionalParameter[optParams.size()]));
+            dataSm.setOptionalParameters(optParams.toArray(new OptionalParameter[0]));
         } else {
             Map<String, String> optinalParamaters = in.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
             if (optinalParamaters != null) {
                 List<OptionalParameter> optParams = createOptionalParametersByName(optinalParamaters);
-                dataSm.setOptionalParameters(optParams.toArray(new OptionalParameter[optParams.size()]));
+                dataSm.setOptionalParameters(optParams.toArray(new OptionalParameter[0]));
             } else {
                 dataSm.setOptionalParameters();
             }

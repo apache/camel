@@ -149,7 +149,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
         String soapAction = (webMethod != null) ? webMethod.action() : null;
         return new MethodInfo(
                 method.getName(), soapAction,
-                inInfos.toArray(new TypeInfo[inInfos.size()]), outInfo);
+                inInfos.toArray(new TypeInfo[0]), outInfo);
     }
 
     private void analyzeServiceInterface(Class<?> serviceInterface) {
