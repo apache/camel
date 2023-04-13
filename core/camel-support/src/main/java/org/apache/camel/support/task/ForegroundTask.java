@@ -45,6 +45,7 @@ public class ForegroundTask implements BlockingTask {
          * @param  name the name
          * @return      an instance of this builder
          */
+        @Override
         public ForegroundTaskBuilder withName(String name) {
             this.name = name;
 
