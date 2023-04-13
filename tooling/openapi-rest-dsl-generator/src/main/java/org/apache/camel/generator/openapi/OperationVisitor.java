@@ -155,7 +155,7 @@ class OperationVisitor<T> {
             return emitter;
         }
 
-        return emitter.emit(method, new Object[] { values.toArray(new String[values.size()]) });
+        return emitter.emit(method, new Object[] { values.toArray(new String[0]) });
     }
 
     CodeEmitter<T> emit(final String method, final Object value) {

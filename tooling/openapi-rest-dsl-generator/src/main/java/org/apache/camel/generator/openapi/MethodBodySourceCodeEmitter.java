@@ -152,7 +152,7 @@ class MethodBodySourceCodeEmitter implements CodeEmitter<MethodSpec> {
             }
         }
 
-        return arguments.toArray(new Object[arguments.size()]);
+        return arguments.toArray(new Object[0]);
     }
 
     static Object[] extend(final Object first, final Object... others) {
