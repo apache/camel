@@ -344,7 +344,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             filteredCipherSuites);
                 }
 
-                engine.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
+                engine.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[0]));
 
                 Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
                         .filter(enabledSecureSocketProtocols, Arrays.asList(engine.getSSLParameters().getProtocols()),
@@ -364,7 +364,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                 }
 
                 engine.setEnabledProtocols(
-                        filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
+                        filteredSecureSocketProtocols.toArray(new String[0]));
 
                 return engine;
             }
@@ -516,7 +516,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             filteredCipherSuites);
                 }
 
-                socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
+                socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[0]));
 
                 Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
                         .filter(enabledSecureSocketProtocols, Arrays.asList(socket.getSSLParameters().getProtocols()),
@@ -536,7 +536,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                 }
 
                 socket.setEnabledProtocols(
-                        filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
+                        filteredSecureSocketProtocols.toArray(new String[0]));
                 return socket;
             }
         };
@@ -612,7 +612,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                             filteredCipherSuites);
                 }
 
-                socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[filteredCipherSuites.size()]));
+                socket.setEnabledCipherSuites(filteredCipherSuites.toArray(new String[0]));
 
                 Collection<String> filteredSecureSocketProtocols = BaseSSLContextParameters.this
                         .filter(enabledSecureSocketProtocols, Arrays.asList(socket.getSupportedProtocols()),
@@ -632,7 +632,7 @@ public abstract class BaseSSLContextParameters extends JsseParameters {
                 }
 
                 socket.setEnabledProtocols(
-                        filteredSecureSocketProtocols.toArray(new String[filteredSecureSocketProtocols.size()]));
+                        filteredSecureSocketProtocols.toArray(new String[0]));
                 return socket;
             }
         };

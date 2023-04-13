@@ -215,7 +215,7 @@ public final class StringQuoteHelper {
             answer.add(text);
         }
 
-        return answer.toArray(new String[answer.size()]);
+        return answer.toArray(new String[0]);
     }
 
 }

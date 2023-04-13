@@ -196,7 +196,7 @@ public abstract class ApiMethodParser<T> {
 
             Method method;
             try {
-                method = proxyType.getMethod(name, argTypes.toArray(new Class<?>[argTypes.size()]));
+                method = proxyType.getMethod(name, argTypes.toArray(new Class<?>[0]));
             } catch (NoSuchMethodException e) {
                 throw new IllegalArgumentException("Method not found [" + signature + "] in type " + proxyType.getName());
             }

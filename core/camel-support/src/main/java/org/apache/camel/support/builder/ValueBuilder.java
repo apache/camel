@@ -134,7 +134,7 @@ public class ValueBuilder implements Expression, Predicate {
             Predicate predicate = onNewPredicate(PredicateBuilder.isEqualTo(expression, right));
             predicates.add(predicate);
         }
-        return in(predicates.toArray(new Predicate[predicates.size()]));
+        return in(predicates.toArray(new Predicate[0]));
     }
 
     public Predicate in(Predicate... predicates) {
