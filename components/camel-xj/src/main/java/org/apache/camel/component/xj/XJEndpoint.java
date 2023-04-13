@@ -94,6 +94,7 @@ public class XJEndpoint extends XsltSaxonEndpoint {
     /**
      * Configures the result output depending on the {@link XJEndpoint#transformDirection}
      */
+    @Override
     protected void configureOutput(XsltBuilder xsltBuilder, String output) throws Exception {
         switch (this.transformDirection) {
             case JSON2XML:
