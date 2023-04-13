@@ -280,6 +280,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
         return applicationContext;
     }
 
+    @Override
     public Bus getBus() {
         if (bus == null) {
             bus = createBus(getCamelContext());
@@ -326,6 +327,7 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
 
             abstractApplicationContext.addApplicationListener((final ApplicationEvent event) -> {
                 new Thread() {
+                    @Override
                     public void run() {
                         if (event instanceof ContextClosedEvent && bus.getState() == BusState.RUNNING) {
 
