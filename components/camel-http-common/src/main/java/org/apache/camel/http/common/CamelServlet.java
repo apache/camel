@@ -89,6 +89,7 @@ public class CamelServlet extends HttpServlet implements HttpRegistryProvider {
         log.trace("servlet '{}' initialized with: async={}", servletName, async);
     }
 
+    @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) {
         log.trace("Service: {}", request);
         try {
