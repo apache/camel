@@ -345,7 +345,8 @@ public class NettyHttpComponent extends NettyComponent
     }
 
     private HttpServerBootstrapFactory newHttpServerBootstrapFactory(NettyHttpConsumer consumer) {
-        final HttpServerConsumerChannelFactory channelFactory = getMultiplexChannelHandler(consumer.getConfiguration().getPort());
+        final HttpServerConsumerChannelFactory channelFactory
+                = getMultiplexChannelHandler(consumer.getConfiguration().getPort());
         final HttpServerBootstrapFactory answer = new HttpServerBootstrapFactory(channelFactory);
 
         answer.init(getCamelContext(), consumer.getConfiguration(), new HttpServerInitializerFactory(consumer));
