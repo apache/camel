@@ -416,56 +416,6 @@ final class IntrospectionSupport {
         return false;
     }
 
-    static boolean setProperties(
-            Object target, Map<String, Object> properties, String optionPrefix, boolean allowBuilderPattern)
-            throws Exception {
-        ObjectHelper.notNull(target, "target");
-        ObjectHelper.notNull(properties, "properties");
-        boolean rc = false;
-
-        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
-            Map.Entry<String, Object> entry = it.next();
-            String name = entry.getKey();
-            if (name.startsWith(optionPrefix)) {
-                Object value = properties.get(name);
-                name = name.substring(optionPrefix.length());
-                if (setProperty(target, name, value, allowBuilderPattern)) {
-                    it.remove();
-                    rc = true;
-                }
-            }
-        }
-
-        return rc;
-    }
-
-    static boolean setProperties(
-            CamelContext context, TypeConverter typeConverter, Object target, Map<String, Object> properties)
-            throws Exception {
-        ObjectHelper.notNull(target, "target");
-        ObjectHelper.notNull(properties, "properties");
-        boolean rc = false;
-
-        for (Iterator<Map.Entry<String, Object>> iter = properties.entrySet().iterator(); iter.hasNext();) {
-            Map.Entry<String, Object> entry = iter.next();
-            if (setProperty(context, typeConverter, target, entry.getKey(), entry.getValue())) {
-                iter.remove();
-                rc = true;
-            }
-        }
-
-        return rc;
-    }
-
-    static boolean setProperties(TypeConverter typeConverter, Object target, Map<String, Object> properties)
-            throws Exception {
-        return setProperties(null, typeConverter, target, properties);
-    }
-
-    static boolean setProperties(Object target, Map<String, Object> properties) throws Exception {
-        return setProperties(null, target, properties);
-    }
-
     /**
      * This method supports three modes to set a property:
      *
