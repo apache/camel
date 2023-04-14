@@ -743,6 +743,90 @@ For example. you can copy this to your clipboard and then run it afterwards:
 camel run clipboard.xml
 ----
 
+=== Sending messages via Camel
+
+*Available since Camel 3.21*
+
+When building integrations with Camel JBang, you may find yourself in need of being able
+to send messages into Camel, to test your Camel routes. This can be challenging when the
+Camel routes are connecting to external systems using different protocols.
+
+The best approach is to send messages into these external systems using standard tools provided,
+by these systems, which often can be done using CLI tools. However, in some situations, where you
+may not be familiar with these tools, you can try to let Camel send the message. Note that this
+can only be possible in some scenarious, and should only be used as _quick way_.
+
+Suppose you have a Camel route that consumes messages from an external MQTT broker:
+
+[source,yaml]
+----
+- route:
+    from:
+      uri: kamelet:mqtt5-source
+      parameters:
+        topic: temperature
+        brokerUrl: tcp://mybroker:1883
+      steps:
+        - transform:
+            expression:
+              jq:
+                expression: .value
+        - log:
+            message: The temperature is ${body}
+----
+
+In the example above the MQTT broker is running on hostname `mybroker` port 1883.
+
+The idea with the `camel cmd send` command is to _tap into_ an existing running Camel integration,
+and reuse an existing endpoint (if possible). In this example we want to use the existing configuration
+to avoid having to configure this again.
+
+By executing the following from a shell
+
+[source,bash]
+----
+$ camel cmd send --body=file:payload.json mqtt
+----
+
+We can send a message, where the payload is loaded from a file (payload.json). You can also specify the payload in the CLI
+argument, but it's cumbersome to specify JSon structure so often its better to refer to a local file.
+
+[source,json]
+----
+{
+  "value": 21
+}
+----
+
+The `mqtt` argument is the name of the existing running Camel integration. You can also specify the PID instead.
+So what happens is that Camel will let the existing integration send the message.
+
+Because the existing integration only have 1 route, then the `send` command will automatic pick
+the _from_ endpoint, i.e. `kamelet:mqtt5-source` with all its configuration. If there are multiple routes,
+then you can filter which route/endpoint by the `--endpoint` option:
+
+For example to pick the first route by _route id_:
+
+[source,bash]
+----
+$ camel cmd send --body=file:payload.json --endpoint=route1 mqtt
+----
+
+Or to pick the first route that uses mqtt component:
+
+[source,bash]
+----
+$ camel cmd send --body=file:payload.json --endpoint=mqtt mqtt
+----
+
+We are fortunate in this situation as the endpoint can be used as both a _consumer_ and _producer_ in Camel,
+and therefore we are able to send the message to the MQTT broker via `tcp://mybroker:1883` on topic _temperate_.
+
+TIP: See more options with `camel cmd send --help`.
+
+The source for this example is provided on GitHub at https://github.com/apache/camel-kamelets-examples/tree/main/jbang/mqtt)[camel-jbang MQTT example].
+
+
 === Controlling local Camel integrations
 
 To list the currently running Camel integrations you use the `ps` command:
