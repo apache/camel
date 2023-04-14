@@ -877,7 +877,8 @@ public final class MessageHelper {
             Message message, boolean includeExchangeProperties, boolean includeBody, int indent,
             boolean allowCachedStreams, boolean allowStreams, boolean allowFiles, int maxChars, boolean pretty) {
 
-        JsonObject jo = dumpAsJSonObject(message, includeExchangeProperties, includeBody, allowCachedStreams, allowStreams, allowFiles, maxChars);
+        JsonObject jo = dumpAsJSonObject(message, includeExchangeProperties, includeBody, allowCachedStreams, allowStreams,
+                allowFiles, maxChars);
         String answer = jo.toJson();
         if (pretty) {
             if (indent > 0) {
@@ -1072,7 +1073,7 @@ public final class MessageHelper {
     /**
      * Dumps the exception as a generic JSon object.
      *
-     * @return        the JSon object
+     * @return the JSon object
      */
     public static JsonObject dumpExceptionAsJSonObject(Throwable exception) {
         JsonObject root = new JsonObject();
