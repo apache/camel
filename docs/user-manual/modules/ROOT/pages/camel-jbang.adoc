@@ -745,7 +745,7 @@ camel run clipboard.xml
 
 === Sending messages via Camel
 
-*Available since Camel 3.21*
+*Available since Camel 4*
 
 When building integrations with Camel JBang, you may find yourself in need of being able
 to send messages into Camel, to test your Camel routes. This can be challenging when the
