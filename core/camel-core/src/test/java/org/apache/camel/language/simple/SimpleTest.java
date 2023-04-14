@@ -57,7 +57,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
->>>>>>> 7ca0064683f (CAMEL-18904:  Add functions to simple language to create empty map/li… (#9770))
 
 public class SimpleTest extends LanguageTestSupport {
 
@@ -2071,7 +2070,7 @@ public class SimpleTest extends LanguageTestSupport {
 
     private void assertExpressionCreateNewEmpty(
             String type, Class<?> expectedClass, java.util.function.Predicate<Object> isEmptyAssertion) {
-        Object value = evaluateExpression("${empty(%s)}".formatted(type), null);
+        Object value = evaluateExpression("${empty(" + type + ")}", null);
         assertNotNull(value);
         assertIsInstanceOf(expectedClass, value);
         assertTrue(isEmptyAssertion.test(value));
