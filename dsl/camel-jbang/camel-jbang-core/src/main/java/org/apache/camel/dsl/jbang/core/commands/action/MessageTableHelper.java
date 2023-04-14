@@ -87,11 +87,11 @@ public class MessageTableHelper {
         String tab0 = null, tab1 = null, tab1b = null, tab2 = null, tab3 = null, tab4 = null, tab5 = null, tab6 = null;
 
         if (endpoint != null) {
-            eRow = new TableRow("Endpoint", endpoint.getString("endpoint"), null, null);
+            eRow = new TableRow("Endpoint", null, null, endpoint.getString("endpoint"));
             tab0 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
                     new Column().dataAlign(HorizontalAlign.LEFT)
                             .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
-                    new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAsString)));
+                    new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::valueAsString)));
         }
 
         if (root != null) {

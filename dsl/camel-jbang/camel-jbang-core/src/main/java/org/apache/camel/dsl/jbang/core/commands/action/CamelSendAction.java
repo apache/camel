@@ -207,7 +207,7 @@ public class CamelSendAction extends ActionBaseCommand {
         // endpoint
         String ids = jo.getString("endpoint");
         if (ids.length() > 40) {
-            ids = ids.substring(ids.length() - 40);
+            ids = ids.substring(0, 40);
         }
         ids = String.format("%40.40s", ids);
         if (loggingColor) {
