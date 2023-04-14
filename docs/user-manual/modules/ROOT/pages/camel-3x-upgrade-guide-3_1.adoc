@@ -15,7 +15,7 @@ These Camel components now no longer have dependency on Javax Servlet.
 The exception class `HttpOperationFailedException` is now from package `org.apache.camel.http.base` instead of `org.apache.camel.http.common`.
 The Camel undertow producer throws this exception.
 
-=== came-bean
+=== camel-bean
 
 The bean component has been changed to behave as singleton scoped by default.
 This means that the bean is created or looked up once and reused.
