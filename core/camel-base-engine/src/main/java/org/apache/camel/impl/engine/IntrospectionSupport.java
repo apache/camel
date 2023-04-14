@@ -726,11 +726,7 @@ final class IntrospectionSupport {
                     }
                 }
                 // ignore exceptions as there could be another setter method where we could type convert successfully
-            } catch (SecurityException e) {
-                typeConversionFailed = e;
-            } catch (NoTypeConversionAvailableException e) {
-                typeConversionFailed = e;
-            } catch (IllegalArgumentException e) {
+            } catch (SecurityException | NoTypeConversionAvailableException | IllegalArgumentException e) {
                 typeConversionFailed = e;
             }
 
