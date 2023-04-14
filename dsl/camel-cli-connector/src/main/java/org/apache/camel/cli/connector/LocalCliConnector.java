@@ -18,12 +18,15 @@ package org.apache.camel.cli.connector;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.RuntimeMXBean;
 import java.lang.management.ThreadMXBean;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -37,7 +40,12 @@ import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.api.management.ManagedCamelContext;
 import org.apache.camel.console.DevConsole;
@@ -46,12 +54,15 @@ import org.apache.camel.spi.CliConnector;
 import org.apache.camel.spi.CliConnectorFactory;
 import org.apache.camel.spi.ContextReloadStrategy;
 import org.apache.camel.support.DefaultContextReloadStrategy;
+import org.apache.camel.support.EndpointHelper;
+import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.support.PluginHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.concurrent.ThreadHelper;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -66,6 +77,8 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
 
     private static final Logger LOG = LoggerFactory.getLogger(LocalCliConnector.class);
 
+    private static final int BODY_MAX_CHARS = 128 * 1024;
+
     private final CliConnectorFactory cliConnectorFactory;
     private CamelContext camelContext;
     private int delay = 2000;
@@ -75,6 +88,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
     private final AtomicBoolean terminating = new AtomicBoolean();
     private ScheduledExecutorService executor;
     private volatile ExecutorService terminateExecutor;
+    private ProducerTemplate producer;
     private File lockFile;
     private File statusFile;
     private File actionFile;
@@ -126,6 +140,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             }
         }
         platformVersion = cliConnectorFactory.getRuntimeVersion();
+        producer = camelContext.createProducerTemplate();
 
         // create thread from JDK so it is not managed by Camel because we want the pool to be independent when
         // camel is being stopped which otherwise can lead to stopping the thread pool while the task is running
@@ -293,6 +308,133 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
                     JsonObject json = (JsonObject) dc.call(DevConsole.MediaType.JSON, Map.of("stacktrace", stacktrace));
                     LOG.trace("Updating output file: {}", outputFile);
                     IOHelper.writeText(json.toJson(), outputFile);
+                }
+            } else if ("send".equals(action)) {
+                StopWatch watch = new StopWatch();
+                long timestamp = System.currentTimeMillis();
+                String endpoint = root.getString("endpoint");
+                String body = root.getString("body");
+                String exchangePattern = root.getString("exchangePattern");
+                Collection<JsonObject> headers = root.getCollection("headers");
+                if (body != null) {
+                    InputStream is = null;
+                    Object b = body;
+                    Map<String, Object> map = null;
+                    if (body.startsWith("file:")) {
+                        File file = new File(body.substring(5));
+                        is = new FileInputStream(file);
+                        b = is;
+                    }
+                    if (headers != null) {
+                        map = new HashMap<>();
+                        for (JsonObject jo : headers) {
+                            map.put(jo.getString("key"), jo.getString("value"));
+                        }
+                    }
+                    final Object inputBody = b;
+                    final Map<String, Object> inputHeaders = map;
+                    Exchange out;
+                    Endpoint target = null;
+                    if (endpoint == null) {
+                        List<Route> routes = camelContext.getRoutes();
+                        if (!routes.isEmpty()) {
+                            // grab endpoint from 1st route
+                            target = routes.get(0).getEndpoint();
+                        }
+                    } else {
+                        // is the endpoint a pattern or route id
+                        boolean scheme = endpoint.contains(":");
+                        boolean pattern = endpoint.endsWith("*");
+                        if (!scheme || pattern) {
+                            if (!scheme) {
+                                endpoint = endpoint + "*";
+                            }
+                            for (Route route : camelContext.getRoutes()) {
+                                Endpoint e = route.getEndpoint();
+                                if (EndpointHelper.matchEndpoint(camelContext, e.getEndpointUri(), endpoint)) {
+                                    target = e;
+                                    break;
+                                }
+                            }
+                            if (target == null) {
+                                // okay it may refer to a route id
+                                for (Route route : camelContext.getRoutes()) {
+                                    String id = route.getRouteId();
+                                    Endpoint e = route.getEndpoint();
+                                    if (EndpointHelper.matchEndpoint(camelContext, id, endpoint)) {
+                                        target = e;
+                                        break;
+                                    }
+                                }
+                            }
+                        } else {
+                            target = camelContext.getEndpoint(endpoint);
+                        }
+                    }
+
+                    if (target != null) {
+                        out = producer.send(target, new Processor() {
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                exchange.getMessage().setBody(inputBody);
+                                if (inputHeaders != null) {
+                                    exchange.getMessage().setHeaders(inputHeaders);
+                                }
+                                exchange.setPattern(
+                                        "InOut".equals(exchangePattern) ? ExchangePattern.InOut : ExchangePattern.InOnly);
+                            }
+                        });
+                        IOHelper.close(is);
+                        LOG.trace("Updating output file: {}", outputFile);
+                        if (out.getException() != null) {
+                            JsonObject jo = new JsonObject();
+                            jo.put("endpoint", target.getEndpointUri());
+                            jo.put("exchangeId", out.getExchangeId());
+                            jo.put("exchangePattern", exchangePattern);
+                            jo.put("timestamp", timestamp);
+                            jo.put("elapsed", watch.taken());
+                            jo.put("status", "failed");
+                            // avoid double wrap
+                            jo.put("exception",
+                                    MessageHelper.dumpExceptionAsJSonObject(out.getException()).getMap("exception"));
+                            IOHelper.writeText(jo.toJson(), outputFile);
+                        } else if ("InOut".equals(exchangePattern)) {
+                            JsonObject jo = new JsonObject();
+                            jo.put("endpoint", target.getEndpointUri());
+                            jo.put("exchangeId", out.getExchangeId());
+                            jo.put("exchangePattern", exchangePattern);
+                            jo.put("timestamp", timestamp);
+                            jo.put("elapsed", watch.taken());
+                            jo.put("status", "success");
+                            // avoid double wrap
+                            jo.put("message", MessageHelper.dumpAsJSonObject(out.getMessage(), true, true, true, true, true,
+                                    BODY_MAX_CHARS).getMap("message"));
+                            IOHelper.writeText(jo.toJson(), outputFile);
+                        } else {
+                            JsonObject jo = new JsonObject();
+                            jo.put("endpoint", target.getEndpointUri());
+                            jo.put("exchangeId", out.getExchangeId());
+                            jo.put("exchangePattern", exchangePattern);
+                            jo.put("timestamp", timestamp);
+                            jo.put("elapsed", watch.taken());
+                            jo.put("status", "success");
+                            IOHelper.writeText(jo.toJson(), outputFile);
+                        }
+                    } else {
+                        // there is no valid endpoint
+                        JsonObject jo = new JsonObject();
+                        jo.put("endpoint", root.getString("endpoint"));
+                        jo.put("exchangeId", "");
+                        jo.put("exchangePattern", exchangePattern);
+                        jo.put("timestamp", timestamp);
+                        jo.put("elapsed", watch.taken());
+                        jo.put("status", "failed");
+                        // avoid double wrap
+                        jo.put("exception",
+                                MessageHelper.dumpExceptionAsJSonObject(new NoSuchEndpointException(root.getString("endpoint")))
+                                        .getMap("exception"));
+                        IOHelper.writeText(jo.toJson(), outputFile);
+                    }
                 }
             }
 
@@ -629,6 +771,7 @@ public class LocalCliConnector extends ServiceSupport implements CliConnector, C
             camelContext.getExecutorServiceManager().shutdown(executor);
             executor = null;
         }
+        ServiceHelper.stopService(producer);
     }
 
     private static String getPid() {

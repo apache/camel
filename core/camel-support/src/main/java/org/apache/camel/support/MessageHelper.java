@@ -808,7 +808,7 @@ public final class MessageHelper {
     }
 
     /**
-     * Dumps the message as a generic JSon structure.
+     * Dumps the message as a generic JSon structure as text.
      *
      * @param  message the message
      * @return         the JSon
@@ -818,7 +818,7 @@ public final class MessageHelper {
     }
 
     /**
-     * Dumps the message as a generic JSon structure.
+     * Dumps the message as a generic JSon structure as text.
      *
      * @param  message     the message
      * @param  includeBody whether or not to include the message body
@@ -829,7 +829,7 @@ public final class MessageHelper {
     }
 
     /**
-     * Dumps the message as a generic JSon structure.
+     * Dumps the message as a generic JSon structure as text.
      *
      * @param  message     the message
      * @param  includeBody whether or not to include the message body
@@ -841,7 +841,7 @@ public final class MessageHelper {
     }
 
     /**
-     * Dumps the message as a generic JSon structure.
+     * Dumps the message as a generic JSon structure as text.
      *
      * @param  message      the message
      * @param  includeBody  whether or not to include the message body
@@ -859,7 +859,7 @@ public final class MessageHelper {
     }
 
     /**
-     * Dumps the message as a generic JSon structure.
+     * Dumps the message as a generic JSon structure as text.
      *
      * @param  message                   the message
      * @param  includeExchangeProperties whether or not to include exchange properties
@@ -876,6 +876,35 @@ public final class MessageHelper {
     public static String dumpAsJSon(
             Message message, boolean includeExchangeProperties, boolean includeBody, int indent,
             boolean allowCachedStreams, boolean allowStreams, boolean allowFiles, int maxChars, boolean pretty) {
+
+        JsonObject jo = dumpAsJSonObject(message, includeExchangeProperties, includeBody, allowCachedStreams, allowStreams, allowFiles, maxChars);
+        String answer = jo.toJson();
+        if (pretty) {
+            if (indent > 0) {
+                answer = Jsoner.prettyPrint(answer, indent);
+            } else {
+                answer = Jsoner.prettyPrint(answer);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Dumps the message as a generic JSon Object.
+     *
+     * @param  message                   the message
+     * @param  includeExchangeProperties whether or not to include exchange properties
+     * @param  includeBody               whether or not to include the message body
+     * @param  allowCachedStreams        whether to include message body if they are stream cached based
+     * @param  allowStreams              whether to include message body if they are stream based
+     * @param  allowFiles                whether to include message body if they are file based
+     * @param  maxChars                  clip body after maximum chars (to avoid very big messages). Use 0 or negative
+     *                                   value to not limit at all.
+     * @return                           the JSon Object
+     */
+    public static JsonObject dumpAsJSonObject(
+            Message message, boolean includeExchangeProperties, boolean includeBody,
+            boolean allowCachedStreams, boolean allowStreams, boolean allowFiles, int maxChars) {
 
         JsonObject root = new JsonObject();
         JsonObject jo = new JsonObject();
@@ -981,15 +1010,7 @@ public final class MessageHelper {
             }
         }
 
-        String answer = root.toJson();
-        if (pretty) {
-            if (indent > 0) {
-                answer = Jsoner.prettyPrint(answer, indent);
-            } else {
-                answer = Jsoner.prettyPrint(answer);
-            }
-        }
-        return answer;
+        return root;
     }
 
     /**
@@ -1029,13 +1050,31 @@ public final class MessageHelper {
     }
 
     /**
-     * Dumps the exception as a generic JSon structure.
+     * Dumps the exception as a generic JSon structure as text.
      *
      * @param  indent number of spaces to indent
      * @param  pretty whether to pretty print JSon
      * @return        the JSon
      */
     public static String dumpExceptionAsJSon(Throwable exception, int indent, boolean pretty) {
+        JsonObject jo = dumpExceptionAsJSonObject(exception);
+        String answer = jo.toJson();
+        if (pretty) {
+            if (indent > 0) {
+                answer = Jsoner.prettyPrint(answer, indent);
+            } else {
+                answer = Jsoner.prettyPrint(answer);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Dumps the exception as a generic JSon object.
+     *
+     * @return        the JSon object
+     */
+    public static JsonObject dumpExceptionAsJSonObject(Throwable exception) {
         JsonObject root = new JsonObject();
         JsonObject jo = new JsonObject();
         root.put("exception", jo);
@@ -1058,15 +1097,7 @@ public final class MessageHelper {
         } catch (Throwable e) {
             // ignore as the body is for logging purpose
         }
-        String answer = root.toJson();
-        if (pretty) {
-            if (indent > 0) {
-                answer = Jsoner.prettyPrint(answer, indent);
-            } else {
-                answer = Jsoner.prettyPrint(answer);
-            }
-        }
-        return answer;
+        return root;
     }
 
 }

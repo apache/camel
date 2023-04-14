@@ -23,7 +23,6 @@ import java.io.LineNumberReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,15 +35,9 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.regex.Pattern;
 
-import com.github.freva.asciitable.AsciiTable;
-import com.github.freva.asciitable.Column;
-import com.github.freva.asciitable.HorizontalAlign;
-import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
-import org.apache.camel.dsl.jbang.core.common.JSonHelper;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
-import org.apache.camel.dsl.jbang.core.common.XmlHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -152,6 +145,8 @@ public class CamelTraceAction extends ActionBaseCommand {
     private int nameMaxWidth;
     private boolean prefixShown;
 
+    private MessageTableHelper tableHelper;
+
     private final Map<String, Ansi.Color> nameColors = new HashMap<>();
     private final Map<String, Ansi.Color> exchangeIdColors = new HashMap<>();
     private int exchangeIdColorsIndex = 1;
@@ -162,6 +157,25 @@ public class CamelTraceAction extends ActionBaseCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        // setup table helper
+        tableHelper = new MessageTableHelper();
+        tableHelper.setPretty(pretty);
+        tableHelper.setLoggingColor(loggingColor);
+        tableHelper.setShowExchangeProperties(showExchangeProperties);
+        tableHelper.setExchangeIdColorChooser(value -> {
+            Ansi.Color color = exchangeIdColors.get(value);
+            if (color == null) {
+                // grab a new color
+                exchangeIdColorsIndex++;
+                if (exchangeIdColorsIndex > 6) {
+                    exchangeIdColorsIndex = 2;
+                }
+                color = Ansi.Color.values()[exchangeIdColorsIndex];
+                exchangeIdColors.put(value, color);
+            }
+            return color;
+        });
+
         Map<Long, Pid> pids = new LinkedHashMap<>();
 
         if (latest) {
@@ -675,130 +689,7 @@ public class CamelTraceAction extends ActionBaseCommand {
     }
 
     private String getDataAsTable(Row r) {
-        List<TableRow> rows = new ArrayList<>();
-
-        TableRow eRow = new TableRow("Exchange", r.message.getString("exchangeType"), r.exchangePattern, r.exchangeId);
-        String tab1 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
-                new Column().dataAlign(HorizontalAlign.LEFT)
-                        .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
-                new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAsString)));
-        String tab1b = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
-                new Column().dataAlign(HorizontalAlign.CENTER)
-                        .minWidth(18).maxWidth(18).with(TableRow::mepAsKey),
-                new Column().dataAlign(HorizontalAlign.RIGHT)
-                        .maxWidth(80).with(TableRow::exchangeIdAsValue)));
-        // exchange properties
-        JsonArray arr = r.message.getCollection("exchangeProperties");
-        if (arr != null) {
-            for (Object o : arr) {
-                JsonObject jo = (JsonObject) o;
-                rows.add(new TableRow("Property", jo.getString("type"), jo.getString("key"), jo.get("value")));
-            }
-        }
-        // internal exchange properties
-        arr = r.message.getCollection("internalExchangeProperties");
-        if (arr != null) {
-            for (Object o : arr) {
-                JsonObject jo = (JsonObject) o;
-                rows.add(new TableRow("Property", jo.getString("type"), jo.getString("key"), jo.get("value")));
-            }
-        }
-        String tab2 = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().dataAlign(HorizontalAlign.LEFT)
-                        .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
-                new Column().dataAlign(HorizontalAlign.LEFT)
-                        .minWidth(25).maxWidth(50, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
-                new Column().dataAlign(HorizontalAlign.RIGHT)
-                        .minWidth(25).maxWidth(40, OverflowBehaviour.NEWLINE).with(TableRow::keyAsString),
-                new Column().dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(80, OverflowBehaviour.NEWLINE).with(TableRow::valueAsString)));
-        rows.clear();
-
-        // message type before headers
-        TableRow msgRow = new TableRow("Message", r.message.getString("messageType"), null, null);
-        String tab3 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(msgRow), Arrays.asList(
-                new Column().dataAlign(HorizontalAlign.LEFT)
-                        .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
-                new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAsString)));
-        arr = r.message.getCollection("headers");
-        if (arr != null) {
-            for (Object o : arr) {
-                JsonObject jo = (JsonObject) o;
-                rows.add(new TableRow("Header", jo.getString("type"), jo.getString("key"), jo.get("value")));
-            }
-        }
-        // headers
-        String tab4 = AsciiTable.getTable(AsciiTable.NO_BORDERS, rows, Arrays.asList(
-                new Column().dataAlign(HorizontalAlign.LEFT)
-                        .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
-                new Column().dataAlign(HorizontalAlign.LEFT)
-                        .minWidth(25).maxWidth(50, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
-                new Column().dataAlign(HorizontalAlign.RIGHT)
-                        .minWidth(25).maxWidth(40, OverflowBehaviour.NEWLINE).with(TableRow::keyAsString),
-                new Column().dataAlign(HorizontalAlign.LEFT)
-                        .maxWidth(80, OverflowBehaviour.NEWLINE).with(TableRow::valueAsString)));
-
-        // body and type
-        JsonObject jo = r.message.getMap("body");
-        TableRow bodyRow = new TableRow("Body", jo.getString("type"), null, jo.get("value"), jo.getLong("position"));
-        String tab5 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(bodyRow), Arrays.asList(
-                new Column().dataAlign(HorizontalAlign.LEFT)
-                        .minWidth(showExchangeProperties ? 12 : 10).with(TableRow::kindAsString),
-                new Column().dataAlign(HorizontalAlign.LEFT).with(TableRow::typeAndLengthAsString)));
-        // body value only (span)
-        String tab6 = null;
-        if (bodyRow.value != null) {
-            tab6 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(bodyRow), Arrays.asList(
-                    new Column().dataAlign(HorizontalAlign.LEFT).maxWidth(160, OverflowBehaviour.NEWLINE)
-                            .with(b -> pretty ? bodyRow.valueAsStringPretty() : bodyRow.valueAsString())));
-        }
-        String tab7 = null;
-        jo = r.exception;
-        if (jo != null) {
-            eRow = new TableRow("Exception", jo.getString("type"), null, jo.get("message"));
-            tab7 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
-                    new Column().dataAlign(HorizontalAlign.LEFT)
-                            .minWidth(showExchangeProperties ? 12 : 10)
-                            .with(TableRow::kindAsStringRed),
-                    new Column().dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(40, OverflowBehaviour.CLIP_LEFT).with(TableRow::typeAsString),
-                    new Column().dataAlign(HorizontalAlign.LEFT)
-                            .maxWidth(80, OverflowBehaviour.NEWLINE).with(TableRow::valueAsStringRed)));
-        }
-        // stacktrace only (span)
-        String tab8 = null;
-        if (jo != null) {
-            eRow = new TableRow("Stacktrace", null, null, jo.get("stackTrace"));
-            tab8 = AsciiTable.getTable(AsciiTable.NO_BORDERS, List.of(eRow), Arrays.asList(
-                    new Column().dataAlign(HorizontalAlign.LEFT).maxWidth(160, OverflowBehaviour.NEWLINE)
-                            .with(TableRow::valueAsStringRed)));
-        }
-        String answer = "";
-        if (tab1 != null && tab1b != null && !tab1.isEmpty()) {
-            answer = answer + tab1 + tab1b + System.lineSeparator();
-        }
-        if (tab2 != null && !tab2.isEmpty()) {
-            answer = answer + tab2 + System.lineSeparator();
-        }
-        if (tab3 != null && !tab3.isEmpty()) {
-            answer = answer + tab3 + System.lineSeparator();
-        }
-        if (tab4 != null && !tab4.isEmpty()) {
-            answer = answer + tab4 + System.lineSeparator();
-        }
-        if (tab5 != null && !tab5.isEmpty()) {
-            answer = answer + tab5 + System.lineSeparator();
-        }
-        if (tab6 != null && !tab6.isEmpty()) {
-            answer = answer + tab6 + System.lineSeparator();
-        }
-        if (tab7 != null && !tab7.isEmpty()) {
-            answer = answer + tab7 + System.lineSeparator();
-        }
-        if (tab8 != null && !tab8.isEmpty()) {
-            answer = answer + tab8 + System.lineSeparator();
-        }
-        return answer;
+        return tableHelper.getDataAsTable(r.exchangeId, r.exchangePattern, null, r.message, r.exception);
     }
 
     private String getElapsed(Row r) {
@@ -887,194 +778,6 @@ public class CamelTraceAction extends ActionBaseCommand {
 
         Row(Pid parent) {
             this.parent = parent;
-        }
-
-    }
-
-    private class TableRow {
-        String kind;
-        String type;
-        String key;
-        Object value;
-        Long position;
-
-        TableRow(String kind, String type, String key, Object value) {
-            this(kind, type, key, value, null);
-        }
-
-        TableRow(String kind, String type, String key, Object value, Long position) {
-            this.kind = kind;
-            this.type = type;
-            this.key = key;
-            this.value = value;
-            this.position = position;
-        }
-
-        String valueAsString() {
-            return value != null ? value.toString() : "null";
-        }
-
-        String valueAsStringPretty() {
-            if (value == null) {
-                return "null";
-            }
-            boolean json = false;
-            String s = value.toString();
-            if (!s.isEmpty()) {
-                try {
-                    s = Jsoner.unescape(s);
-                    if (loggingColor) {
-                        s = JSonHelper.colorPrint(s, 2, true);
-                    } else {
-                        s = JSonHelper.prettyPrint(s, 2);
-                    }
-                    if (s != null && !s.isEmpty()) {
-                        json = true;
-                    }
-                } catch (Throwable e) {
-                    // ignore as not json
-                }
-                if (s == null || s.isEmpty()) {
-                    s = value.toString();
-                }
-                if (!json) {
-                    // try with xml
-                    try {
-                        s = Jsoner.unescape(s);
-                        if (loggingColor) {
-                            s = XmlHelper.colorPrint(s, 2, true);
-                        } else {
-                            s = XmlHelper.prettyPrint(s, 2);
-                        }
-                    } catch (Throwable e) {
-                        // ignore as not xml
-                    }
-                }
-                if (s == null || s.isEmpty()) {
-                    s = value.toString();
-                }
-            }
-            if (s == null) {
-                return "null";
-            }
-            return s;
-        }
-
-        String valueAsStringRed() {
-            if (value != null) {
-                if (loggingColor) {
-                    return Ansi.ansi().fgRed().a(value).reset().toString();
-                } else {
-                    return value.toString();
-                }
-            }
-            return "";
-        }
-
-        String keyAsString() {
-            if (key == null) {
-                return "";
-            }
-            return key;
-        }
-
-        String kindAsString() {
-            return kind;
-        }
-
-        String kindAsStringRed() {
-            if (loggingColor) {
-                return Ansi.ansi().fgRed().a(kind).reset().toString();
-            } else {
-                return kind;
-            }
-        }
-
-        String typeAsString() {
-            String s;
-            if (type == null) {
-                s = "null";
-            } else if (type.startsWith("java.util.concurrent")) {
-                s = type.substring(21);
-            } else if (type.startsWith("java.lang.") || type.startsWith("java.util.")) {
-                s = type.substring(10);
-            } else if (type.startsWith("org.apache.camel.support.")) {
-                s = type.substring(25);
-            } else if (type.startsWith("org.apache.camel.converter.stream.")) {
-                s = type.substring(34);
-            } else {
-                s = type;
-            }
-            s = "(" + s + ")";
-            if (loggingColor) {
-                s = Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(s).reset().toString();
-            }
-            return s;
-        }
-
-        String typeAndLengthAsString() {
-            String s;
-            if (type == null) {
-                s = "null";
-            } else if (type.startsWith("java.util.concurrent")) {
-                s = type.substring(21);
-            } else if (type.startsWith("java.lang.") || type.startsWith("java.util.")) {
-                s = type.substring(10);
-            } else if (type.startsWith("org.apache.camel.support.")) {
-                s = type.substring(25);
-            } else if (type.startsWith("org.apache.camel.converter.stream.")) {
-                s = type.substring(34);
-            } else {
-                s = type;
-            }
-            s = "(" + s + ")";
-            int l = valueLength();
-            long p = position != null ? position : -1;
-            if (l != -1 & p != -1) {
-                s = s + " (pos: " + p + " length: " + l + ")";
-            } else if (l != -1) {
-                s = s + " (length: " + l + ")";
-            } else if (p != -1) {
-                s = s + " (pos: " + p + ")";
-            }
-            if (loggingColor) {
-                s = Ansi.ansi().fgBrightDefault().a(Ansi.Attribute.INTENSITY_FAINT).a(s).reset().toString();
-            }
-            return s;
-        }
-
-        String mepAsKey() {
-            String s = key;
-            if (loggingColor) {
-                s = Ansi.ansi().fgBrightMagenta().a(Ansi.Attribute.INTENSITY_FAINT).a(s).reset().toString();
-            }
-            return s;
-        }
-
-        String exchangeIdAsValue() {
-            String s = value.toString();
-            if (loggingColor) {
-                Ansi.Color color = exchangeIdColors.get(s);
-                if (color == null) {
-                    // grab a new color
-                    exchangeIdColorsIndex++;
-                    if (exchangeIdColorsIndex > 6) {
-                        exchangeIdColorsIndex = 2;
-                    }
-                    color = Ansi.Color.values()[exchangeIdColorsIndex];
-                    exchangeIdColors.put(s, color);
-                }
-                s = Ansi.ansi().fg(color).a(s).reset().toString();
-            }
-            return s;
-        }
-
-        int valueLength() {
-            if (value == null) {
-                return -1;
-            } else {
-                return valueAsString().length();
-            }
         }
 
     }
