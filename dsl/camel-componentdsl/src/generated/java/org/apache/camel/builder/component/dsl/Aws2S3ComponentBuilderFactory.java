@@ -136,6 +136,22 @@ public interface Aws2S3ComponentBuilderFactory {
             return this;
         }
         /**
+         * Set whether the S3 client should use path-style URL instead of
+         * virtual-hosted-style.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: common
+         * 
+         * @param forcePathStyle the value to set
+         * @return the dsl builder
+         */
+        default Aws2S3ComponentBuilder forcePathStyle(boolean forcePathStyle) {
+            doSetProperty("forcePathStyle", forcePathStyle);
+            return this;
+        }
+        /**
          * Set the need for overidding the endpoint. This option needs to be
          * used in combination with uriEndpointOverride option.
          * 
@@ -956,6 +972,7 @@ public interface Aws2S3ComponentBuilderFactory {
             case "autoCreateBucket": getOrCreateConfiguration((AWS2S3Component) component).setAutoCreateBucket((boolean) value); return true;
             case "configuration": ((AWS2S3Component) component).setConfiguration((org.apache.camel.component.aws2.s3.AWS2S3Configuration) value); return true;
             case "delimiter": getOrCreateConfiguration((AWS2S3Component) component).setDelimiter((java.lang.String) value); return true;
+            case "forcePathStyle": getOrCreateConfiguration((AWS2S3Component) component).setForcePathStyle((boolean) value); return true;
             case "overrideEndpoint": getOrCreateConfiguration((AWS2S3Component) component).setOverrideEndpoint((boolean) value); return true;
             case "pojoRequest": getOrCreateConfiguration((AWS2S3Component) component).setPojoRequest((boolean) value); return true;
             case "policy": getOrCreateConfiguration((AWS2S3Component) component).setPolicy((java.lang.String) value); return true;
