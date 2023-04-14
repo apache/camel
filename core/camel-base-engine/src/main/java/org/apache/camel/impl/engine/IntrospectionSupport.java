@@ -439,28 +439,6 @@ final class IntrospectionSupport {
         return rc;
     }
 
-    static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix, boolean remove) {
-        ObjectHelper.notNull(properties, "properties");
-
-        Map<String, Object> rc = new LinkedHashMap<>(properties.size());
-
-        for (Iterator<Map.Entry<String, Object>> it = properties.entrySet().iterator(); it.hasNext();) {
-            Map.Entry<String, Object> entry = it.next();
-            String name = entry.getKey();
-            if (name.startsWith(optionPrefix)) {
-                Object value = properties.get(name);
-                name = name.substring(optionPrefix.length());
-                rc.put(name, value);
-
-                if (remove) {
-                    it.remove();
-                }
-            }
-        }
-
-        return rc;
-    }
-
     static boolean setProperties(
             CamelContext context, TypeConverter typeConverter, Object target, Map<String, Object> properties)
             throws Exception {

@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -32,7 +31,6 @@ import org.apache.camel.util.AnotherExampleBean;
 import org.apache.camel.util.OtherExampleBean;
 import org.junit.jupiter.api.Test;
 
-import static org.apache.camel.impl.engine.IntrospectionSupport.extractProperties;
 import static org.apache.camel.impl.engine.IntrospectionSupport.findSetterMethodsOrderedByParameterType;
 import static org.apache.camel.impl.engine.IntrospectionSupport.getProperties;
 import static org.apache.camel.impl.engine.IntrospectionSupport.getProperty;
@@ -518,25 +516,6 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         Method setupSomething = bean.getClass().getMethod("setupSomething", Object.class);
         assertFalse(isGetter(setupSomething));
         assertFalse(isSetter(setupSomething));
-    }
-
-    @Test
-    public void testExtractProperties() throws Exception {
-        Map<String, Object> params = new LinkedHashMap<>();
-        params.put("foo.name", "Camel");
-        params.put("foo.age", 5);
-        params.put("bar", "yes");
-
-        // extract all "foo." properties
-        // and their keys should have the prefix removed
-        Map<String, Object> foo = extractProperties(params, "foo.", true);
-        assertEquals(2, foo.size());
-        assertEquals("Camel", foo.get("name"));
-        assertEquals(5, foo.get("age"));
-
-        // the extracted properties should be removed from original
-        assertEquals(1, params.size());
-        assertEquals("yes", params.get("bar"));
     }
 
     @Test
