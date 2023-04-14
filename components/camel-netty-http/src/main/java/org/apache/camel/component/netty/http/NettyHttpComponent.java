@@ -330,24 +330,25 @@ public class NettyHttpComponent extends NettyComponent
     }
 
     public synchronized HttpServerConsumerChannelFactory getMultiplexChannelHandler(int port) {
-        HttpServerConsumerChannelFactory answer = multiplexChannelHandlers.get(port);
-        if (answer == null) {
-            answer = new HttpServerMultiplexChannelHandler();
-            answer.init(port);
-            multiplexChannelHandlers.put(port, answer);
-        }
+        return multiplexChannelHandlers.computeIfAbsent(port, s -> newHttpServerConsumerChannelFactory(port));
+    }
+
+    private static HttpServerConsumerChannelFactory newHttpServerConsumerChannelFactory(int port) {
+        final HttpServerConsumerChannelFactory answer = new HttpServerMultiplexChannelHandler();
+        answer.init(port);
         return answer;
     }
 
     protected synchronized HttpServerBootstrapFactory getOrCreateHttpNettyServerBootstrapFactory(NettyHttpConsumer consumer) {
         String key = consumer.getConfiguration().getAddress();
-        HttpServerBootstrapFactory answer = bootstrapFactories.get(key);
-        if (answer == null) {
-            HttpServerConsumerChannelFactory channelFactory = getMultiplexChannelHandler(consumer.getConfiguration().getPort());
-            answer = new HttpServerBootstrapFactory(channelFactory);
-            answer.init(getCamelContext(), consumer.getConfiguration(), new HttpServerInitializerFactory(consumer));
-            bootstrapFactories.put(key, answer);
-        }
+        return bootstrapFactories.computeIfAbsent(key, s -> newHttpServerBootstrapFactory(consumer));
+    }
+
+    private HttpServerBootstrapFactory newHttpServerBootstrapFactory(NettyHttpConsumer consumer) {
+        final HttpServerConsumerChannelFactory channelFactory = getMultiplexChannelHandler(consumer.getConfiguration().getPort());
+        final HttpServerBootstrapFactory answer = new HttpServerBootstrapFactory(channelFactory);
+
+        answer.init(getCamelContext(), consumer.getConfiguration(), new HttpServerInitializerFactory(consumer));
         return answer;
     }
 
