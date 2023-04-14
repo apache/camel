@@ -519,6 +519,7 @@ public class AWS2S3Configuration implements Cloneable {
     public boolean isForcePathStyle() {
         return forcePathStyle;
     }
+
     /**
      * Set whether the S3 client should use path-style URL instead of virtual-hosted-style
      */
