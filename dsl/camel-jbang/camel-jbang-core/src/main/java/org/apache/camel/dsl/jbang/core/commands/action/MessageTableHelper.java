@@ -84,7 +84,14 @@ public class MessageTableHelper {
 
         List<TableRow> rows = new ArrayList<>();
         TableRow eRow;
-        String tab0 = null, tab1 = null, tab1b = null, tab2 = null, tab3 = null, tab4 = null, tab5 = null, tab6 = null;
+        String tab0 = null;
+        String tab1 = null;
+        String tab1b = null;
+        String tab2 = null;
+        String tab3 = null;
+        String tab4 = null;
+        String tab5 = null;
+        String tab6 = null;
 
         if (endpoint != null) {
             eRow = new TableRow("Endpoint", null, null, endpoint.getString("endpoint"));
