@@ -86,6 +86,7 @@ We have removed deprecated APIs such as the following:
 - Removed `archetypeCatalogAsXml` method from `org.apache.camel.catalog.CamelCatalog`.
 - The `org.apache.camel.health.HealthCheck` method `isLiveness` is now default `false` instead of `true`.
 - Added `position` method to `org.apache.camel.StreamCache`.
+- The method `configure` from the interface `org.apache.camel.main.Listener` was removed
 
 == EIP Changes
 
