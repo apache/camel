@@ -73,6 +73,9 @@ public class AWS2S3ClientIAMOptimizedImpl implements AWS2CamelS3InternalClient {
         if (configuration.isOverrideEndpoint()) {
             clientBuilder.endpointOverride(URI.create(configuration.getUriEndpointOverride()));
         }
+        if (configuration.isForcePathStyle()) {
+            clientBuilder.forcePathStyle(true);
+        }
         if (configuration.isTrustAllCertificates()) {
             SdkHttpClient ahc = ApacheHttpClient.builder().buildWithDefaults(AttributeMap
                     .builder()

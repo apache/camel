@@ -52,6 +52,8 @@ public class AWS2S3Configuration implements Cloneable {
     private boolean includeFolders = true;
     @UriParam
     private String region;
+    @UriParam
+    private boolean forcePathStyle;
     @UriParam(label = "consumer", defaultValue = "true")
     private boolean deleteAfterRead = true;
     @UriParam(label = "consumer")
@@ -516,6 +518,16 @@ public class AWS2S3Configuration implements Cloneable {
      */
     public void setCustomerAlgorithm(String customerAlgorithm) {
         this.customerAlgorithm = customerAlgorithm;
+    }
+
+    public boolean isForcePathStyle() {
+        return forcePathStyle;
+    }
+    /**
+     * Set whether the S3 client should use path-style URL instead of virtual-hosted-style
+     */
+    public void setForcePathStyle(boolean forcePathStyle) {
+        this.forcePathStyle = forcePathStyle;
     }
 
     /**
