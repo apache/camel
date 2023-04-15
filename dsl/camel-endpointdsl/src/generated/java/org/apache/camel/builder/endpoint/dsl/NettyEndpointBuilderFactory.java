@@ -1829,6 +1829,24 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
+         * Path to unix domain socket to use instead of inet socket. Host and
+         * port parameters will not be used, however required. It is ok to set
+         * dummy values for them. Must be used with nativeTransport=true and
+         * clientMode=false.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param unixDomainSocketPath the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointConsumerBuilder unixDomainSocketPath(
+                String unixDomainSocketPath) {
+            doSetProperty("unixDomainSocketPath", unixDomainSocketPath);
+            return this;
+        }
+        /**
          * When netty works on nio mode, it uses default workerCount parameter
          * from Netty (which is cpu_core_threads x 2). User can use this option
          * to override the default workerCount from Netty.
@@ -3625,6 +3643,24 @@ public interface NettyEndpointBuilderFactory {
             return this;
         }
         /**
+         * Path to unix domain socket to use instead of inet socket. Host and
+         * port parameters will not be used, however required. It is ok to set
+         * dummy values for them. Must be used with nativeTransport=true and
+         * clientMode=false.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param unixDomainSocketPath the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointProducerBuilder unixDomainSocketPath(
+                String unixDomainSocketPath) {
+            doSetProperty("unixDomainSocketPath", unixDomainSocketPath);
+            return this;
+        }
+        /**
          * When netty works on nio mode, it uses default workerCount parameter
          * from Netty (which is cpu_core_threads x 2). User can use this option
          * to override the default workerCount from Netty.
@@ -4827,6 +4863,24 @@ public interface NettyEndpointBuilderFactory {
         default AdvancedNettyEndpointBuilder udpByteArrayCodec(
                 String udpByteArrayCodec) {
             doSetProperty("udpByteArrayCodec", udpByteArrayCodec);
+            return this;
+        }
+        /**
+         * Path to unix domain socket to use instead of inet socket. Host and
+         * port parameters will not be used, however required. It is ok to set
+         * dummy values for them. Must be used with nativeTransport=true and
+         * clientMode=false.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Group: advanced
+         * 
+         * @param unixDomainSocketPath the value to set
+         * @return the dsl builder
+         */
+        default AdvancedNettyEndpointBuilder unixDomainSocketPath(
+                String unixDomainSocketPath) {
+            doSetProperty("unixDomainSocketPath", unixDomainSocketPath);
             return this;
         }
         /**
