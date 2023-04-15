@@ -18,6 +18,8 @@ package org.apache.camel.component.netty;
 
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.RejectedExecutionException;
@@ -31,12 +33,14 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollDatagramChannel;
+import io.netty.channel.epoll.EpollDomainSocketChannel;
 import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.channel.unix.DomainSocketAddress;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.AttributeKey;
 import io.netty.util.ReferenceCountUtil;
@@ -449,10 +453,14 @@ public class NettyProducer extends DefaultAsyncProducer {
         if (isTcp()) {
             // its okay to create a new bootstrap for each new channel
             Bootstrap clientBootstrap = new Bootstrap();
-            if (configuration.isNativeTransport()) {
-                clientBootstrap.channel(EpollSocketChannel.class);
+            if (configuration.getUnixDomainSocketPath() != null) {
+                clientBootstrap.channel(EpollDomainSocketChannel.class);
             } else {
-                clientBootstrap.channel(NioSocketChannel.class);
+                if (configuration.isNativeTransport()) {
+                    clientBootstrap.channel(EpollSocketChannel.class);
+                } else {
+                    clientBootstrap.channel(NioSocketChannel.class);
+                }
             }
             clientBootstrap.group(getWorkerGroup());
             clientBootstrap.option(ChannelOption.SO_KEEPALIVE, configuration.isKeepAlive());
@@ -471,11 +479,19 @@ public class NettyProducer extends DefaultAsyncProducer {
 
             // set the pipeline factory, which creates the pipeline for each newly created channels
             clientBootstrap.handler(pipelineFactory);
-            answer = clientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Created new TCP client bootstrap connecting to {}:{} with options: {}",
+            SocketAddress socketAddress;
+            if (configuration.getUnixDomainSocketPath() != null) {
+                Path udsPath = Path.of(configuration.getUnixDomainSocketPath()).toAbsolutePath();
+                LOG.debug("Creating new TCP client bootstrap connecting to {} with options {}",
+                        udsPath, clientBootstrap);
+                socketAddress = new DomainSocketAddress(udsPath.toFile());
+            } else {
+                LOG.debug("Creating new TCP client bootstrap connecting to {}:{} with options: {}",
                         configuration.getHost(), configuration.getPort(), clientBootstrap);
+                socketAddress = new InetSocketAddress(configuration.getHost(), configuration.getPort());
             }
+            answer = clientBootstrap.connect(socketAddress);
+            LOG.debug("TCP client bootstrap created");
             return answer;
         } else {
             // its okay to create a new bootstrap for each new channel
