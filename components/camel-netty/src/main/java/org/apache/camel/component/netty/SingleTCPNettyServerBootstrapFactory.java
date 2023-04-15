@@ -17,6 +17,8 @@
 package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
@@ -26,10 +28,12 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollServerDomainSocketChannel;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.unix.DomainSocketAddress;
 import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.CamelContextHelper;
@@ -143,10 +147,14 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         }
 
         serverBootstrap = new ServerBootstrap();
-        if (configuration.isNativeTransport()) {
-            serverBootstrap.group(bg, wg).channel(EpollServerSocketChannel.class);
+        if (configuration.getUnixDomainSocketPath() != null) {
+            serverBootstrap.group(bg, wg).channel(EpollServerDomainSocketChannel.class);
         } else {
-            serverBootstrap.group(bg, wg).channel(NioServerSocketChannel.class);
+            if (configuration.isNativeTransport()) {
+                serverBootstrap.group(bg, wg).channel(EpollServerSocketChannel.class);
+            } else {
+                serverBootstrap.group(bg, wg).channel(NioServerSocketChannel.class);
+            }
         }
         serverBootstrap.childOption(ChannelOption.SO_KEEPALIVE, configuration.isKeepAlive());
         serverBootstrap.childOption(ChannelOption.TCP_NODELAY, configuration.isTcpNoDelay());
@@ -179,9 +187,16 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
 
         LOG.debug("Created ServerBootstrap {}", serverBootstrap);
 
-        LOG.info("ServerBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
-        ChannelFuture channelFuture
-                = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort())).sync();
+        SocketAddress socketAddress;
+        if (configuration.getUnixDomainSocketPath() != null) {
+            Path udsPath = Path.of(configuration.getUnixDomainSocketPath()).toAbsolutePath();
+            LOG.info("ServerBootstrap binding to {}", udsPath);
+            socketAddress = new DomainSocketAddress(udsPath.toFile());
+        } else {
+            LOG.info("ServerBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
+            socketAddress = new InetSocketAddress(configuration.getHost(), configuration.getPort());
+        }
+        ChannelFuture channelFuture = serverBootstrap.bind(socketAddress).sync();
         channel = channelFuture.channel();
         // to keep track of all channels in use
         allChannels.add(channel);
@@ -189,7 +204,13 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
 
     protected void stopServerBootstrap() {
         // close all channels
-        LOG.info("ServerBootstrap unbinding from {}:{}", configuration.getHost(), configuration.getPort());
+        if (configuration.getUnixDomainSocketPath() != null) {
+            Path udsPath = Path.of(configuration.getUnixDomainSocketPath()).toAbsolutePath();
+            LOG.info("ServerBootstrap unbinding from {}", udsPath);
+        } else {
+            LOG.info("ServerBootstrap unbinding from {}:{}", configuration.getHost(), configuration.getPort());
+
+        }
 
         LOG.trace("Closing {} channels", allChannels.size());
         allChannels.close().awaitUninterruptibly();
