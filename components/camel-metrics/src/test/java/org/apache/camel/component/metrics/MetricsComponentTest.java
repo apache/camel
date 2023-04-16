@@ -27,7 +27,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.engine.DefaultBeanIntrospection;
-import org.apache.camel.spi.ConfigurerResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.PluginHelper;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,7 +82,7 @@ public class MetricsComponentTest {
                 .thenReturn(metricRegistry);
         when(camelContext.getCamelContextExtension()).thenReturn(ecc);
         when(PluginHelper.getBeanIntrospection(ecc)).thenReturn(new DefaultBeanIntrospection());
-        when(ecc.getContextPlugin(ConfigurerResolver.class)).thenReturn((name, context) -> null);
+        when(PluginHelper.getConfigurerResolver(ecc)).thenReturn((name, context) -> null);
 
         Map<String, Object> params = new HashMap<>();
         Long value = System.currentTimeMillis();
@@ -112,7 +111,7 @@ public class MetricsComponentTest {
                 .thenReturn(metricRegistry);
         when(camelContext.getCamelContextExtension()).thenReturn(ecc);
         when(PluginHelper.getBeanIntrospection(ecc)).thenReturn(new DefaultBeanIntrospection());
-        when(ecc.getContextPlugin(ConfigurerResolver.class)).thenReturn((name, context) -> null);
+        when(PluginHelper.getConfigurerResolver(ecc)).thenReturn((name, context) -> null);
 
         Map<String, Object> params = new HashMap<>();
         long value = System.currentTimeMillis();
