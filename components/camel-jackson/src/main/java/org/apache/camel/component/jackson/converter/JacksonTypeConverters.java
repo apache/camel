@@ -30,6 +30,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Converter;
@@ -142,6 +144,64 @@ public final class JacksonTypeConverters {
     public Reader toReader(JsonNode node, Exchange exchange) throws Exception {
         InputStream is = toInputStream(node, exchange);
         return new InputStreamReader(is);
+    }
+
+    @Converter
+    public Integer toInteger(JsonNode node, Exchange exchange) throws Exception {
+        if (node instanceof NumericNode) {
+            NumericNode nn = (NumericNode) node;
+            if (nn.canConvertToInt()) {
+                return nn.asInt();
+            }
+        }
+        String text = node.asText();
+        return Integer.valueOf(text);
+    }
+
+    @Converter
+    public Long toLong(JsonNode node, Exchange exchange) throws Exception {
+        if (node instanceof NumericNode) {
+            NumericNode nn = (NumericNode) node;
+            if (nn.canConvertToLong()) {
+                return nn.asLong();
+            }
+        }
+        String text = node.asText();
+        return Long.valueOf(text);
+    }
+
+    @Converter
+    public Boolean toBoolean(JsonNode node, Exchange exchange) throws Exception {
+        if (node instanceof BooleanNode) {
+            BooleanNode bn = (BooleanNode) node;
+            return bn.asBoolean();
+        }
+        String text = node.asText();
+        return org.apache.camel.util.ObjectHelper.toBoolean(text);
+    }
+
+    @Converter
+    public Double toDouble(JsonNode node, Exchange exchange) throws Exception {
+        if (node instanceof NumericNode) {
+            NumericNode nn = (NumericNode) node;
+            if (nn.isFloatingPointNumber()) {
+                return nn.asDouble();
+            }
+        }
+        String text = node.asText();
+        return Double.valueOf(text);
+    }
+
+    @Converter
+    public Float toFloat(JsonNode node, Exchange exchange) throws Exception {
+        if (node instanceof NumericNode) {
+            NumericNode nn = (NumericNode) node;
+            if (nn.isFloat()) {
+                return nn.floatValue();
+            }
+        }
+        String text = node.asText();
+        return Float.valueOf(text);
     }
 
     @Converter(fallback = true)

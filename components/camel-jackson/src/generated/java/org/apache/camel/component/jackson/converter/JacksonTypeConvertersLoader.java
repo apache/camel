@@ -60,6 +60,16 @@ public final class JacksonTypeConvertersLoader implements TypeConverterLoader, C
             (type, exchange, value) -> getJacksonTypeConverters().toInputStream((com.fasterxml.jackson.databind.JsonNode) value, exchange));
         addTypeConverter(registry, java.io.Reader.class, com.fasterxml.jackson.databind.JsonNode.class, false,
             (type, exchange, value) -> getJacksonTypeConverters().toReader((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+        addTypeConverter(registry, java.lang.Boolean.class, com.fasterxml.jackson.databind.JsonNode.class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toBoolean((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+        addTypeConverter(registry, java.lang.Double.class, com.fasterxml.jackson.databind.JsonNode.class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toDouble((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+        addTypeConverter(registry, java.lang.Float.class, com.fasterxml.jackson.databind.JsonNode.class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toFloat((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+        addTypeConverter(registry, java.lang.Integer.class, com.fasterxml.jackson.databind.JsonNode.class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toInteger((com.fasterxml.jackson.databind.JsonNode) value, exchange));
+        addTypeConverter(registry, java.lang.Long.class, com.fasterxml.jackson.databind.JsonNode.class, false,
+            (type, exchange, value) -> getJacksonTypeConverters().toLong((com.fasterxml.jackson.databind.JsonNode) value, exchange));
         addTypeConverter(registry, java.lang.String.class, com.fasterxml.jackson.databind.JsonNode.class, false,
             (type, exchange, value) -> getJacksonTypeConverters().toString((com.fasterxml.jackson.databind.JsonNode) value, exchange));
         addTypeConverter(registry, java.util.Map.class, com.fasterxml.jackson.databind.JsonNode.class, false,
