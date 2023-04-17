@@ -28,6 +28,7 @@ import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.PidNameAgeCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonArray;
 import org.apache.camel.util.json.JsonObject;
@@ -74,7 +75,8 @@ public class CamelContextStatus extends ProcessWatchCommand {
                         row.age = TimeUtils.printSince(row.uptime);
                         JsonObject runtime = (JsonObject) root.get("runtime");
                         row.platform = extractPlatform(ph, runtime);
-                        row.platformVersion = runtime != null ? runtime.getString("platformVersion") : null;
+                        row.platformVersion = extractPlatformVersion(row.platform,
+                                runtime != null ? runtime.getString("platformVersion") : null);
                         row.state = context.getInteger("phase");
                         row.camelVersion = context.getString("version");
                         Map<String, ?> stats = context.getMap("statistics");
@@ -168,6 +170,15 @@ public class CamelContextStatus extends ProcessWatchCommand {
             }
         }
         return answer;
+    }
+
+    private String extractPlatformVersion(String platform, String platformVersion) {
+        if (platformVersion == null) {
+            if ("JBang".equals(platform)) {
+                platformVersion = VersionHelper.getJBangVersion();
+            }
+        }
+        return platformVersion;
     }
 
     protected int sortRow(Row o1, Row o2) {

@@ -16,11 +16,31 @@
  */
 package org.apache.camel.dsl.jbang.core.common;
 
+import java.io.File;
+import java.io.FileInputStream;
+
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
 
 public final class VersionHelper {
 
     private VersionHelper() {
+    }
+
+    public static String getJBangVersion() {
+        try {
+            File file = new File(System.getProperty("user.home"), ".jbang/cache/version.txt");
+            if (file.exists() && file.isFile()) {
+                FileInputStream fis = new FileInputStream(file);
+                String text = IOHelper.loadText(fis);
+                IOHelper.close(fis);
+                text = text.trim();
+                return text;
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+        return null;
     }
 
     public static boolean isGE(String source, String target) {

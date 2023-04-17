@@ -21,6 +21,7 @@ import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.dsl.jbang.core.commands.CamelCommand;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.CommandLineHelper;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import picocli.CommandLine;
 
 @CommandLine.Command(name = "get", description = "Displays current Camel version")
@@ -32,6 +33,11 @@ public class VersionGet extends CamelCommand {
 
     @Override
     public Integer doCall() throws Exception {
+        String jv = VersionHelper.getJBangVersion();
+        if (jv != null) {
+            System.out.println("JBang version: " + jv);
+        }
+
         CamelCatalog catalog = new DefaultCamelCatalog();
         String v = catalog.getCatalogVersion();
         System.out.println("Camel JBang version: " + v);

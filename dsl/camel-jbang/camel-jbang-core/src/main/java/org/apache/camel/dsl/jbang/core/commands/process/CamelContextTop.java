@@ -28,6 +28,7 @@ import com.github.freva.asciitable.HorizontalAlign;
 import com.github.freva.asciitable.OverflowBehaviour;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.json.JsonObject;
 import picocli.CommandLine;
@@ -86,7 +87,8 @@ public class CamelContextTop extends ProcessWatchCommand {
                         row.ago = TimeUtils.printSince(row.uptime);
                         JsonObject runtime = (JsonObject) root.get("runtime");
                         row.platform = extractPlatform(ph, runtime);
-                        row.platformVersion = runtime != null ? runtime.getString("platformVersion") : null;
+                        row.platformVersion = extractPlatformVersion(row.platform,
+                                runtime != null ? runtime.getString("platformVersion") : null);
                         row.javaVersion = runtime != null ? runtime.getString("javaVersion") : null;
                         row.state = context.getInteger("phase");
                         row.camelVersion = context.getString("version");
@@ -170,6 +172,15 @@ public class CamelContextTop extends ProcessWatchCommand {
             }
         }
         return answer;
+    }
+
+    private String extractPlatformVersion(String platform, String platformVersion) {
+        if (platformVersion == null) {
+            if ("JBang".equals(platform)) {
+                platformVersion = VersionHelper.getJBangVersion();
+            }
+        }
+        return platformVersion;
     }
 
     protected int sortRow(Row o1, Row o2) {
