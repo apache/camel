@@ -67,9 +67,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
         Class<?> type = null;
         try {
             type = findLanguageResolver("default", context);
-        } catch (NoFactoryAvailableException e) {
-            // ignore
-        } catch (ClassNotFoundException e) {
+        } catch (NoFactoryAvailableException | ClassNotFoundException e) {
             // ignore
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid URI, no LanguageResolver registered for scheme: " + name, e);
