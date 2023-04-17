@@ -405,9 +405,7 @@ public class FileOperations implements GenericFileOperations<File> {
             }
 
             return true;
-        } catch (IOException e) {
-            throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
-        } catch (InvalidPayloadException e) {
+        } catch (InvalidPayloadException | IOException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
         }
     }
