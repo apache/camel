@@ -25,7 +25,6 @@ import java.util.Set;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameClassPair;
-import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
@@ -86,8 +85,6 @@ public class JndiBeanRepository implements BeanRepository {
     public Object lookupByName(String name) {
         try {
             return unwrap(getContext().lookup(name));
-        } catch (NameNotFoundException e) {
-            return null;
         } catch (NamingException e) {
             return null;
         }
