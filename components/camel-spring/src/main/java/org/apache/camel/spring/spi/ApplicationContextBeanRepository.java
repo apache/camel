@@ -46,9 +46,7 @@ public class ApplicationContextBeanRepository implements BeanRepository {
             } else {
                 return null;
             }
-        } catch (NoSuchBeanDefinitionException e) {
-            return null;
-        } catch (BeanNotOfRequiredTypeException e) {
+        } catch (NoSuchBeanDefinitionException | BeanNotOfRequiredTypeException e) {
             return null;
         }
 
