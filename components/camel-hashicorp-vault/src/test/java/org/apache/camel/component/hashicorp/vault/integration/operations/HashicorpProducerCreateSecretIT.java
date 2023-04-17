@@ -62,7 +62,7 @@ public class HashicorpProducerCreateSecretIT extends HashicorpVaultBase {
         MockEndpoint.assertIsSatisfied(context);
         Exchange ret = mockRead.getExchanges().get(0);
         assertNotNull(ret);
-        assertEquals(((Map) ret.getMessage().getBody(Map.class).get("data")).get("integer"), "30");
+        assertEquals("30", ((Map) ret.getMessage().getBody(Map.class).get("data")).get("integer"));
     }
 
     @Override
