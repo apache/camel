@@ -65,8 +65,8 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
         // Get the operation name
         final Holder<byte[]> responsePhoto = (Holder<byte[]>) parameter.get(1);
         assertNotNull(responsePhoto.value, "The photo should not be null");
-        assertEquals(new String(responsePhoto.value, "UTF-8"),
-                "ResponseFromCamel", "Should get the right response");
+        assertEquals("ResponseFromCamel",
+                new String(responsePhoto.value, "UTF-8"), "Should get the right response");
 
         final Holder<Image> responseImage = (Holder<Image>) parameter.get(2);
         assertNotNull(responseImage.value, "We should get the image here");

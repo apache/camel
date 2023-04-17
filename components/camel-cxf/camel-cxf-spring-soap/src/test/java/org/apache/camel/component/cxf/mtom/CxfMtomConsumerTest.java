@@ -73,8 +73,8 @@ public class CxfMtomConsumerTest extends CamelTestSupport {
                         // Get the operation name
                         Holder<byte[]> photo = (Holder<byte[]>) parameter.get(0);
                         assertNotNull(photo.value, "The photo should not be null");
-                        assertEquals(new String(photo.value, "UTF-8"),
-                                "RequestFromCXF", "Should get the right request");
+                        assertEquals("RequestFromCXF",
+                                new String(photo.value, "UTF-8"), "Should get the right request");
                         photo.value = "ResponseFromCamel".getBytes("UTF-8");
                         Holder<Image> image = (Holder<Image>) parameter.get(1);
                         assertNotNull(image.value, "We should get the image here");
