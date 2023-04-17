@@ -287,8 +287,8 @@ public class PubSubApiClient extends ServiceSupport {
             String topic = consumer.getTopic();
 
             LOG.debug("Received {} events on topic: {}", fetchResponse.getEventsList().size(), topic);
-            LOG.debug("rpcId: " + fetchResponse.getRpcId());
-            LOG.debug("pending_num_requested: " + fetchResponse.getPendingNumRequested());
+            LOG.debug("rpcId: {}", fetchResponse.getRpcId());
+            LOG.debug("pending_num_requested: {}", fetchResponse.getPendingNumRequested());
             for (ConsumerEvent ce : fetchResponse.getEventsList()) {
                 try {
                     processEvent(ce);
