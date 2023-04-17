@@ -30,7 +30,6 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedValidatorRegistryMBean;
 import org.apache.camel.spi.DataType;
-import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.Validator;
 import org.apache.camel.spi.ValidatorRegistry;
 
@@ -41,11 +40,6 @@ public class ManagedValidatorRegistry extends ManagedService implements ManagedV
     public ManagedValidatorRegistry(CamelContext context, ValidatorRegistry validatorRegistry) {
         super(context, validatorRegistry);
         this.validatorRegistry = validatorRegistry;
-    }
-
-    @Override
-    public void init(ManagementStrategy strategy) {
-        super.init(strategy);
     }
 
     public ValidatorRegistry getValidatorRegistry() {
