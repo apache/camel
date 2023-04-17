@@ -54,11 +54,9 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         assertTrue(notify.matchesWaitTime());
 
-
         // the done file should be deleted
         Awaitility.await().atLeast(50, TimeUnit.MILLISECONDS).untilAsserted(
-                () -> assertFalse(Files.exists(testFile("done/foo.done")), "Done file should be deleted")
-        );
+                () -> assertFalse(Files.exists(testFile("done/foo.done")), "Done file should be deleted"));
     }
 
     @Test
@@ -85,8 +83,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
 
         // the done file should be deleted
         Awaitility.await().atLeast(50, TimeUnit.MILLISECONDS).untilAsserted(
-                () -> assertFalse(Files.exists(testFile("done2/a.txt.done")), "Done file should be deleted")
-        );
+                () -> assertFalse(Files.exists(testFile("done2/a.txt.done")), "Done file should be deleted"));
 
         // the done file should be deleted
         assertFalse(Files.exists(testFile("done2/b.txt.done")), "Done file should be deleted");
@@ -118,8 +115,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
 
         // the done file should be deleted
         Awaitility.await().atLeast(50, TimeUnit.MILLISECONDS).untilAsserted(
-                () -> assertFalse(Files.exists(testFile("done2/$a$.txt.done")), "Done file should be deleted")
-        );
+                () -> assertFalse(Files.exists(testFile("done2/$a$.txt.done")), "Done file should be deleted"));
 
         assertFalse(Files.exists(testFile("done2/$b.txt.done")), "Done file should be deleted");
         assertFalse(Files.exists(testFile("done2/c$.txt.done")), "Done file should be deleted");
