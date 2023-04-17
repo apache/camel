@@ -79,7 +79,7 @@ class DynamicRouterProcessorTest extends DynamicRouterTestSupport {
         List<PrioritizedFilterProcessor> matchingFilters = processor.matchFilters(exchange);
         assertEquals(1, matchingFilters.size());
         PrioritizedFilterProcessor matchingFilter = matchingFilters.get(0);
-        assertEquals(matchingFilter.getId(), TEST_ID);
+        assertEquals(TEST_ID, matchingFilter.getId());
     }
 
     @Test
