@@ -28,7 +28,7 @@ public class BasicEnumConverterTest {
     @Test
     public void testConvertFromString() {
         StatusCodeEnum code = converter.convertTo(StatusCodeEnum.class, "OK");
-        assertEquals(code, StatusCodeEnum.OK, "String should be converted to corresponding Enum value");
+        assertEquals(StatusCodeEnum.OK, code, "String should be converted to corresponding Enum value");
     }
 
     @Test
