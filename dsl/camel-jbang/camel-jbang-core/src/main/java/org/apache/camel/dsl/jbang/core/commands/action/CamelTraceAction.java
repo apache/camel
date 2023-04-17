@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.catalog.impl.TimePatternConverter;
 import org.apache.camel.dsl.jbang.core.commands.CamelJBangMain;
 import org.apache.camel.dsl.jbang.core.common.ProcessHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
@@ -262,25 +263,31 @@ public class CamelTraceAction extends ActionBaseCommand {
     private void positionTraceLatest(Map<Long, Pid> pids) throws Exception {
         for (Pid pid : pids.values()) {
             File file = getTraceFile(pid.pid);
-            boolean marked = false;
+            long position = -1;
             if (file.exists()) {
                 pid.reader = new LineNumberReader(new FileReader(file));
                 String line;
+                long counter = 0;
                 do {
                     line = pid.reader.readLine();
                     if (line != null) {
+                        counter++;
                         List<Row> rows = parseTraceLine(pid, line);
                         for (Row r : rows) {
                             if (r.first) {
-                                pid.reader.mark(8192);
-                                marked = true;
+                                position = counter;
                             }
                         }
                     }
                 } while (line != null);
             }
-            if (marked) {
-                pid.reader.reset();
+            if (position != -1) {
+                IOHelper.close(pid.reader);
+                // re-create reader and forward to position
+                pid.reader = new LineNumberReader(new FileReader(file));
+                while (--position > 0) {
+                    pid.reader.readLine();
+                }
             }
         }
     }
