@@ -28,7 +28,7 @@ class ZeebeComponentTest {
         // Verify Defaults
         ZeebeComponent component = new ZeebeComponent();
 
-        assertEquals(component.getGatewayHost(), ZeebeConstants.DEFAULT_GATEWAY_HOST);
-        assertEquals(component.getGatewayPort(), ZeebeConstants.DEFAULT_GATEWAY_PORT);
+        assertEquals(ZeebeConstants.DEFAULT_GATEWAY_HOST, component.getGatewayHost());
+        assertEquals(ZeebeConstants.DEFAULT_GATEWAY_PORT, component.getGatewayPort());
     }
 }
