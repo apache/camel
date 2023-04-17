@@ -101,8 +101,6 @@ public class FileConcurrentWriteAppendSameFileTest extends ContextTestSupport {
         log.info(txt);
     }
 
-
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
