@@ -235,9 +235,7 @@ public abstract class AbstractSalesforceExecution {
             SecurityUtils.adaptToIBMCipherNames(sslContextFactory);
 
             httpClient = new SalesforceHttpClient(sslContextFactory);
-        } catch (final GeneralSecurityException e) {
-            throw new RuntimeException("Error creating default SSL context: " + e.getMessage(), e);
-        } catch (final IOException e) {
+        } catch (GeneralSecurityException | IOException e) {
             throw new RuntimeException("Error creating default SSL context: " + e.getMessage(), e);
         }
 

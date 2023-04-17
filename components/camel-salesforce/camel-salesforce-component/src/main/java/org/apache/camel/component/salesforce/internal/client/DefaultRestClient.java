@@ -335,10 +335,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
             setAccessToken(request);
 
             doHttpRequest(request, new DelegatingClientCallback(callback));
-        } catch (UnsupportedEncodingException e) {
-            String msg = "Unexpected error: " + e.getMessage();
-            callback.onResponse(null, Collections.emptyMap(), new SalesforceException(msg, e));
-        } catch (URISyntaxException e) {
+        } catch (UnsupportedEncodingException | URISyntaxException e) {
             String msg = "Unexpected error: " + e.getMessage();
             callback.onResponse(null, Collections.emptyMap(), new SalesforceException(msg, e));
         }
