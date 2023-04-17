@@ -257,7 +257,7 @@ public class HdfsConsumerIntegrationIT extends CamelTestSupport {
         scheduler.getScheduledExecutorService().awaitTermination(5000, TimeUnit.MILLISECONDS);
 
         FileSystem fs = FileSystem.get(dir.toUri(), conf);
-        assertEquals(fs.listStatus(dir).length, 1);
+        assertEquals(1, fs.listStatus(dir).length);
         assertTrue(fs.delete(new Path(file.toUri() + ".handled")));
     }
 
