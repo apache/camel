@@ -401,7 +401,6 @@ public class MavenDependencyDownloader extends ServiceSupport implements Depende
     private Set<String> resolveExtraRepositories(String repositoryList) {
         Set<String> repositories = new LinkedHashSet<>();
         if (repositoryList != null) {
-            Set<String> repositoryURLs = new HashSet<>();
             for (String repo : repositoryList.split("\\s*,\\s*")) {
                 try {
                     URL url = new URL(repo);
