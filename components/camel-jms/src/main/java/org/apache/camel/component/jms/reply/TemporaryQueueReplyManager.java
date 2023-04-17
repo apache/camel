@@ -53,8 +53,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         try {
             destResolver.destinationReady();
         } catch (InterruptedException e) {
-            log.warn("Interrupted while waiting for JMSReplyTo destination refresh due to: " + e.getMessage()
-                     + ". This exception is ignored.");
+            log.warn("Interrupted while waiting for JMSReplyTo destination refresh due to: {}. This exception is ignored.",
+                    e.getMessage());
         }
         return super.getReplyTo();
     }
