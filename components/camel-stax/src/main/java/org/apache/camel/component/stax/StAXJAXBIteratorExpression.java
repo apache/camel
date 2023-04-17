@@ -134,16 +134,7 @@ public class StAXJAXBIteratorExpression<T> extends ExpressionAdapter {
                 clazz = (Class<T>) exchange.getContext().getClassResolver().resolveMandatoryClass(handledName);
             }
             return createIterator(reader, clazz, inputStream);
-        } catch (InvalidPayloadException e) {
-            exchange.setException(e);
-            return null;
-        } catch (JAXBException e) {
-            exchange.setException(e);
-            return null;
-        } catch (ClassNotFoundException e) {
-            exchange.setException(e);
-            return null;
-        } catch (XMLStreamException e) {
+        } catch (InvalidPayloadException | JAXBException | ClassNotFoundException | XMLStreamException e) {
             exchange.setException(e);
             return null;
         }
