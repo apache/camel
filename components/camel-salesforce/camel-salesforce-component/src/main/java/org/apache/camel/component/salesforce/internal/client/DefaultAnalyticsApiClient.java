@@ -267,10 +267,6 @@ public class DefaultAnalyticsApiClient extends AbstractClientBase implements Ana
 
                 return new SalesforceException(errors, statusCode);
             }
-        } catch (UnsupportedEncodingException e) {
-            // log and ignore
-            String msg = "Unexpected Error parsing JSON error response body + [" + responseContent + "] : " + e.getMessage();
-            log.warn(msg, e);
         } catch (IOException e) {
             // log and ignore
             String msg = "Unexpected Error parsing JSON error response body + [" + responseContent + "] : " + e.getMessage();
