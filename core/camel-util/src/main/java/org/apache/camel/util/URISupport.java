@@ -797,7 +797,6 @@ public final class URISupport {
     public static String buildMultiValueQuery(String key, Iterable<Object> values) {
         StringBuilder sb = new StringBuilder();
         for (Object v : values) {
-            String s = v.toString();
             if (sb.length() > 0) {
                 sb.append("&");
             }
