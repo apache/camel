@@ -161,9 +161,7 @@ public class Olingo4Component extends AbstractApiComponent<Olingo4ApiName, Oling
             }
             try {
                 asyncClientBuilder.setSSLContext(sslContextParameters.createSSLContext(getCamelContext()));
-            } catch (GeneralSecurityException e) {
-                throw RuntimeCamelException.wrapRuntimeCamelException(e);
-            } catch (IOException e) {
+            } catch (IOException | GeneralSecurityException e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
 
