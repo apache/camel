@@ -76,7 +76,7 @@ public class ZeebeServiceIT {
 
         ProcessDeploymentResponse processDeploymentResult = (ProcessDeploymentResponse) deploymentResponse;
         assertTrue(processDeploymentResult.getVersion() > 0);
-        assertEquals(processDeploymentResult.getResourceName(), TEST_1_DEFINITION_BPMN);
+        assertEquals(TEST_1_DEFINITION_BPMN, processDeploymentResult.getResourceName());
         assertNotNull(processDeploymentResult.getBpmnProcessId());
     }
 
