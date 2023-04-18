@@ -50,6 +50,11 @@
             <artifactId>jackson-jq</artifactId>
             <version>${jackson-jq-version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.thisptr</groupId>
+            <artifactId>jackson-jq-extra</artifactId>
+            <version>${jackson-jq-version}</version>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>
