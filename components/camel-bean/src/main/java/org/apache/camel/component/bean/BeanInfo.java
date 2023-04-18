@@ -682,7 +682,7 @@ public class BeanInfo {
                     parameter = parameter.trim();
                 }
 
-                Class<?> parameterType = BeanHelper.getValidParameterType(exchange.getContext().getClassResolver(), parameter);
+                Class<?> parameterType = BeanHelper.getValidParameterType(parameter);
                 Class<?> expectedType = info.getParameters().get(index).getType();
 
                 if (parameterType != null && expectedType != null) {
@@ -1133,7 +1133,7 @@ public class BeanInfo {
                     }
 
                     if (!qualifyType.endsWith(".class")
-                            && !BeanHelper.isValidParameterValue(getCamelContext().getClassResolver(), value)) {
+                            && !BeanHelper.isValidParameterValue(value)) {
                         // its a parameter value, so continue to next parameter
                         // as we should only check for FQN/type parameters
                         return false;

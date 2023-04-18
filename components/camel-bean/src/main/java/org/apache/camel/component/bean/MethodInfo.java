@@ -656,7 +656,7 @@ public class MethodInfo {
                 }
 
                 // check if its a valid parameter value (no type declared via .class syntax)
-                valid = BeanHelper.isValidParameterValue(exchange.getContext().getClassResolver(), exp);
+                valid = BeanHelper.isValidParameterValue(exp);
                 if (!valid) {
                     // it may be a parameter type instead, and if so, then we should return null,
                     // as this method is only for evaluating parameter values
@@ -702,7 +702,7 @@ public class MethodInfo {
                             // which may change the parameterValue, so we have to check it again to see if it is now valid
                             exp = exchange.getContext().getTypeConverter().tryConvertTo(String.class, parameterValue);
                             // re-validate if the parameter was not valid the first time
-                            valid = BeanHelper.isValidParameterValue(exchange.getContext().getClassResolver(), exp);
+                            valid = BeanHelper.isValidParameterValue(exp);
                         }
                     }
                 }
