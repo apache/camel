@@ -33,7 +33,6 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
-import org.apache.cxf.service.model.EndpointInfo;
 
 /**
  * Just copy the from WSDLGetInterceptor to provide backward compatible support for 2.7.x
@@ -60,7 +59,7 @@ public class RawMessageWSDLGetInterceptor extends AbstractPhaseInterceptor<Messa
         String ctx = (String) message.get(Message.PATH_INFO);
 
         Map<String, String> map = UrlUtils.parseQueryString(query);
-        if (isRecognizedQuery(map, baseUri, ctx, message.getExchange().getEndpoint().getEndpointInfo())) {
+        if (isRecognizedQuery(map)) {
             Document doc = getDocument(message, baseUri, map, ctx);
 
             Endpoint e = message.getExchange().get(Endpoint.class);
@@ -109,10 +108,7 @@ public class RawMessageWSDLGetInterceptor extends AbstractPhaseInterceptor<Messa
         }
     }
 
-    private boolean isRecognizedQuery(
-            Map<String, String> map, String baseUri, String ctx,
-            EndpointInfo endpointInfo) {
-
+    private boolean isRecognizedQuery(Map<String, String> map) {
         if (map.containsKey("wsdl") || map.containsKey("xsd")) {
             return true;
         }

@@ -23,7 +23,6 @@ import jakarta.xml.ws.WebServiceProvider;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
@@ -103,9 +102,8 @@ public final class CxfEndpointUtils {
      * Create a CXF bus with either BusFactory or SpringBusFactory if Camel Context is SpringCamelContext. In the latter
      * case, this method updates the bus configuration with the applicationContext which SpringCamelContext holds
      *
-     * @param context - the Camel Context
      */
-    public static Bus createBus(CamelContext context) {
+    public static Bus createBus() {
         BusFactory busFactory = BusFactory.newInstance();
 
         return busFactory.createBus();
