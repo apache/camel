@@ -49,13 +49,13 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
 
     @Override
     public Processor createErrorHandler(final Processor processor) throws Exception {
-        JtaTransactionPolicy transactionPolicy = resolveTransactionPolicy(definition, camelContext);
+        JtaTransactionPolicy transactionPolicy = resolveTransactionPolicy(definition);
         ObjectHelper.notNull(transactionPolicy, "transactionPolicy", this);
 
         // optimize to use shared default instance if using out of the box settings
         RedeliveryPolicy redeliveryPolicy = resolveRedeliveryPolicy(definition, camelContext);
-        CamelLogger logger = resolveLogger(definition, camelContext);
-        LoggingLevel rollbackLoggingLevel = resolveRollbackLoggingLevel(definition, camelContext);
+        CamelLogger logger = resolveLogger(definition);
+        LoggingLevel rollbackLoggingLevel = resolveRollbackLoggingLevel(definition);
 
         JtaTransactionErrorHandler answer = new JtaTransactionErrorHandler(
                 camelContext, processor, logger,
@@ -73,7 +73,7 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
     }
 
     private JtaTransactionPolicy resolveTransactionPolicy(
-            JtaTransactionErrorHandlerDefinition definition, CamelContext camelContext) {
+            JtaTransactionErrorHandlerDefinition definition) {
 
         JtaTransactionPolicy answer = (JtaTransactionPolicy) definition.getTransactedPolicy();
         if (answer == null && definition.getTransactedPolicyRef() != null) {
@@ -107,7 +107,7 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
         return answer;
     }
 
-    private CamelLogger resolveLogger(TransactionErrorHandlerDefinition definition, CamelContext camelContext) {
+    private CamelLogger resolveLogger(TransactionErrorHandlerDefinition definition) {
         CamelLogger answer = definition.getLoggerBean();
         if (answer == null && definition.getLoggerRef() != null) {
             answer = mandatoryLookup(definition.getLoggerRef(), CamelLogger.class);
@@ -121,7 +121,7 @@ public class JtaTransactionErrorHandlerReifier extends ErrorHandlerReifier<JtaTr
         return answer;
     }
 
-    private LoggingLevel resolveRollbackLoggingLevel(TransactionErrorHandlerDefinition definition, CamelContext camelContext) {
+    private LoggingLevel resolveRollbackLoggingLevel(TransactionErrorHandlerDefinition definition) {
         LoggingLevel answer = LoggingLevel.WARN;
         if (definition.getRollbackLoggingLevel() != null) {
             answer = parse(LoggingLevel.class, definition.getRollbackLoggingLevel());
