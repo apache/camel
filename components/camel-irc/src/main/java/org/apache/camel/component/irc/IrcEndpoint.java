@@ -92,7 +92,7 @@ public class IrcEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
-    public void handleIrcError(int num, String msg) {
+    public void handleIrcError(int num) {
         if (IRCConstants.ERR_NICKNAMEINUSE == num) {
             handleNickInUse();
         }
