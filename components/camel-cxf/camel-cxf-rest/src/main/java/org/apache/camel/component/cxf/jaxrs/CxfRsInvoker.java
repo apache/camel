@@ -69,10 +69,10 @@ public class CxfRsInvoker extends JAXRSInvoker {
         Continuation continuation;
         if (!endpoint.isSynchronous() && (continuation = getContinuation(cxfExchange)) != null) {
             LOG.trace("Calling the Camel async processors.");
-            return asyncInvoke(cxfExchange, serviceObject, method, paramArray, continuation, response);
+            return asyncInvoke(cxfExchange, method, paramArray, continuation, response);
         } else {
             LOG.trace("Calling the Camel sync processors.");
-            return syncInvoke(cxfExchange, serviceObject, method, paramArray, response);
+            return syncInvoke(cxfExchange, method, paramArray, response);
         }
     }
 
@@ -83,7 +83,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
     }
 
     private Object asyncInvoke(
-            Exchange cxfExchange, final Object serviceObject, Method method,
+            Exchange cxfExchange, Method method,
             Object[] paramArray, final Continuation continuation, Object response)
             throws Exception {
         synchronized (continuation) {
@@ -136,7 +136,7 @@ public class CxfRsInvoker extends JAXRSInvoker {
     }
 
     private Object syncInvoke(
-            Exchange cxfExchange, final Object serviceObject, Method method,
+            Exchange cxfExchange, Method method,
             Object[] paramArray,
             Object response)
             throws Exception {
