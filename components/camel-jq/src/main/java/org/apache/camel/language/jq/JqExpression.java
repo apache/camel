@@ -128,9 +128,9 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
     }
 
     /**
-     * Name of header to use as input, instead of the message body
+     * Name of the header to use as input instead of the message body.
      * </p>
-     * It has as higher precedent than the propertyName if both are set.
+     * It has higher precedence than the propertyName if both are set.
      */
     public void setHeaderName(String headerName) {
         this.headerName = headerName;
@@ -141,9 +141,9 @@ public class JqExpression extends ExpressionAdapter implements ExpressionResultT
     }
 
     /**
-     * Name of property to use as input, instead of the message body.
+     * Name of the property to use as input instead of the message body.
      * </p>
-     * It has a lower precedent than the headerName if both are set.
+     * It has lower precedence than the headerName if both are set.
      */
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
