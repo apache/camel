@@ -35,7 +35,7 @@ public final class BeanHelper {
      * @param  value the value
      * @return       the parameter type the given value is being mapped as, or <tt>null</tt> if not valid.
      */
-    public static Class<?> getValidParameterType(ClassResolver resolver, String value) {
+    public static Class<?> getValidParameterType(String value) {
         if (ObjectHelper.isEmpty(value)) {
             return null;
         }
@@ -95,13 +95,13 @@ public final class BeanHelper {
      * @param  value the value
      * @return       <tt>true</tt> if valid, <tt>false</tt> otherwise
      */
-    public static boolean isValidParameterValue(ClassResolver classResolver, String value) {
+    public static boolean isValidParameterValue(String value) {
         if (ObjectHelper.isEmpty(value)) {
             // empty value is valid
             return true;
         }
 
-        return getValidParameterType(classResolver, value) != null;
+        return getValidParameterType(value) != null;
     }
 
     /**
