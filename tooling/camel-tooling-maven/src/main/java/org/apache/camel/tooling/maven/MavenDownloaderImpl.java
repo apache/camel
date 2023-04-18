@@ -541,7 +541,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     RepositorySystem configureRepositorySystem(
             DIRegistry registry,
             Properties systemProperties, String settingsSecurityLocation) {
-        basicRepositorySystemConfiguration(registry, systemProperties);
+        basicRepositorySystemConfiguration(registry);
         transportConfiguration(registry, systemProperties);
         settingsConfiguration(registry, settingsSecurityLocation);
 
@@ -551,7 +551,7 @@ public class MavenDownloaderImpl extends ServiceSupport implements MavenDownload
     /**
      * Configure the basic, necessary requirements of {@link RepositorySystem} in {@link DIRegistry}
      */
-    private static void basicRepositorySystemConfiguration(DIRegistry registry, Properties systemProperties) {
+    private static void basicRepositorySystemConfiguration(DIRegistry registry) {
         // this is the first one registered in DefaultServiceLocator - what follows up is BFS dependencies
         registry.bind(RepositorySystem.class, DefaultRepositorySystem.class);
 
