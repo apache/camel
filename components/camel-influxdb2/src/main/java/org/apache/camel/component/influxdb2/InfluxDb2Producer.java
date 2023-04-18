@@ -75,24 +75,24 @@ public class InfluxDb2Producer extends DefaultProducer {
             throws InvalidPayloadException {
         Object body = exchange.getIn().getBody();
         if (body instanceof Point) {
-            insertPoint(exchange, orgName, bucketName, writePrecision);
+            insertPoint(exchange, orgName, bucketName);
         } else if (body instanceof Measurement) {
             insertMeasurement(exchange, orgName, bucketName, writePrecision);
         } else if (body instanceof Record) {
             insertRecord(exchange, orgName, bucketName, writePrecision);
         } else if (body instanceof Points) {
-            insertPoints(exchange, orgName, bucketName, writePrecision);
+            insertPoints(exchange, orgName, bucketName);
         } else if (body instanceof Measurements) {
             insertMeasurements(exchange, orgName, bucketName, writePrecision);
         } else if (body instanceof Records) {
             insertRecords(exchange, orgName, bucketName, writePrecision);
         } else {
             // default insert as point
-            insertPoint(exchange, orgName, bucketName, writePrecision);
+            insertPoint(exchange, orgName, bucketName);
         }
     }
 
-    private void insertPoint(Exchange exchange, String orgName, String bucketName, WritePrecision writePrecision)
+    private void insertPoint(Exchange exchange, String orgName, String bucketName)
             throws InvalidPayloadException {
         Point point = exchange.getIn().getMandatoryBody(Point.class);
         try {
@@ -131,7 +131,7 @@ public class InfluxDb2Producer extends DefaultProducer {
         }
     }
 
-    private void insertPoints(Exchange exchange, String orgName, String bucketName, WritePrecision writePrecision)
+    private void insertPoints(Exchange exchange, String orgName, String bucketName)
             throws InvalidPayloadException {
         @SuppressWarnings("unchecked")
         Points points = exchange.getIn().getMandatoryBody(Points.class);
