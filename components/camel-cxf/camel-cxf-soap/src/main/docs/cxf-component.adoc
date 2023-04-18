@@ -241,7 +241,7 @@ If you don't specify the operation name in the message header,
 list.
 
 If you want to get the object array from the message body, you can get
-the body using `message.getBody(Object[].class)`, as shown in https://github.com/apache/camel/blob/e818e0103490a106fa1538219f91a732ddebc562/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/CxfProducerRouterTest.java#L116[CxfProducerRouterTest.testInvokingSimpleServerWithParams]:
+the body using `message.getBody(Object[].class)`, as shown in https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/CxfProducerRouterTest.java#L117[CxfProducerRouterTest.testInvokingSimpleServerWithParams]:
 
 [source,java]
 ----
@@ -274,7 +274,7 @@ envelope as a native CxfPayload. `Message.getBody()` will return a
 `org.apache.camel.component.cxf.CxfPayload` object, with getters
 for SOAP message headers and the SOAP body.
 
-See https://github.com/apache/camel/blob/e818e0103490a106fa1538219f91a732ddebc562/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/CxfConsumerPayloadTest.java#L66[CxfConsumerPayloadTest]:
+See https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/CxfConsumerPayloadTest.java#L68[CxfConsumerPayloadTest]:
 
 [source,java]
 ----
@@ -355,7 +355,7 @@ InsertResponseOutHeaderProcessor and InsertRequestOutHeaderProcessor are
 actually the same. The only difference between the two processors is
 setting the direction of the inserted SOAP header.
 
-You can find the `InsertResponseOutHeaderProcessor` example in https://github.com/apache/camel/blob/e818e0103490a106fa1538219f91a732ddebc562/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java#L730[CxfMessageHeadersRelayTest]:
+You can find the `InsertResponseOutHeaderProcessor` example in https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-spring-soap/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java#L731CxfMessageHeadersRelayTest]:
 
 [source,java]
 ----
@@ -390,7 +390,7 @@ Once you obtain a CxfPayload object, you can invoke the
 CxfPayload.getHeaders() method that returns a List of DOM Elements (SOAP
 headers).
 
-For an example see https://github.com/apache/camel/blob/e818e0103490a106fa1538219f91a732ddebc562/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/CxfPayLoadSoapHeaderTest.java#L51[CxfPayLoadSoapHeaderTest]:
+For an example see https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/CxfPayLoadSoapHeaderTest.java#L53[CxfPayLoadSoapHeaderTest]:
 
 [source,java]
 ----
@@ -447,7 +447,7 @@ If you are using a `camel-cxf` endpoint to consume the SOAP request, you
 may need to throw the SOAP Fault from the camel context. +
  Basically, you can use the `throwFault` DSL to do that; it works for
 `POJO`, `PAYLOAD` and `RAW` data format. +
- You can define the soap fault as shown in https://github.com/apache/camel/blob/e818e0103490a106fa1538219f91a732ddebc562/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/CxfCustomizedExceptionTest.java#L64[CxfCustomizedExceptionTest]:
+ You can define the soap fault as shown in https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/CxfCustomizedExceptionTest.java#L65[CxfCustomizedExceptionTest]:
 
 [source,java]
 ----
@@ -468,7 +468,7 @@ from(routerEndpointURI).setFaultBody(constant(SOAP_FAULT));
 
 If your CXF endpoint is working in the `RAW` data format, you could
 set the SOAP Fault message in the message body and set the response
-code in the message header as demonstrated by https://github.com/apache/camel/blob/e818e0103490a106fa1538219f91a732ddebc562/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/CxfMessageStreamExceptionTest.java#L43[CxfMessageStreamExceptionTest]
+code in the message header as demonstrated by https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/CxfMessageStreamExceptionTest.java#L43[CxfMessageStreamExceptionTest]
 
 [source,java]
 ----
@@ -618,7 +618,7 @@ assertEquals(300, image.getHeight());
 
 You can also consume a Camel message received from a CXF endpoint in
 Payload mode.
-The https://github.com/apache/camel/blob/e818e0103490a106fa1538219f91a732ddebc562/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/mtom/CxfMtomConsumerPayloadModeTest.java#L98[CxfMtomConsumerPayloadModeTest] illustrates how this works:
+The https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-spring-soap/src/test/java/org/apache/camel/component/cxf/mtom/CxfMtomConsumerPayloadModeTest.java#L97[CxfMtomConsumerPayloadModeTest] illustrates how this works:
 
 [source,java]
 ----
@@ -674,7 +674,7 @@ public static class MyProcessor implements Processor {
 }
 ----
 
-*Message Mode:* Attachments are not supported as it does not process the
+*RAW Mode:* Attachments are not supported as it does not process the
 message at all.
 
 *CXF_MESSAGE Mode*: MTOM is supported, and Attachments can be retrieved
@@ -828,7 +828,7 @@ ambiguity in name spaces to relay instance mappings.
 Take a look at the tests that show how you'd be able to relay/drop
 headers here:
 
-https://github.com/apache/camel/blob/main/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java[https://github.com/apache/camel/blob/main/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java]
+https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-spring-soap/src/test/java/org/apache/camel/component/cxf/soap/headers/CxfMessageHeadersRelayTest.java[CxfMessageHeadersRelayTest]
 
 * `POJO` and `PAYLOAD` modes are supported. In `POJO` mode, only
 out-of-band message headers are available for filtering as the in-band
@@ -926,7 +926,7 @@ Error:sendSms: SoapFault exception: [Client] looks like we got no XML document i
 ---------------------------------------------------------------------------------------
 
 To resolve this issue, you just need to tell StaxOutInterceptor to
-write the XML start document for you, as in the https://github.com/apache/camel/blob/main/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/WriteXmlDeclarationInterceptor.java[WriteXmlDeclarationInterceptor] below:
+write the XML start document for you, as in the https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/WriteXmlDeclarationInterceptor.java[WriteXmlDeclarationInterceptor] below:
 
 [source,java]
 ----
@@ -943,7 +943,7 @@ public class WriteXmlDeclarationInterceptor extends AbstractPhaseInterceptor<Soa
 }
 ----
 
-As an alternative you can add a message header for it as demonstrated in https://github.com/apache/camel/blob/e818e0103490a106fa1538219f91a732ddebc562/components/camel-cxf/src/test/java/org/apache/camel/component/cxf/CxfConsumerTest.java#L59[CxfConsumerTest]:
+As an alternative you can add a message header for it as demonstrated in https://github.com/apache/camel/blob/main/components/camel-cxf/camel-cxf-soap/src/test/java/org/apache/camel/component/cxf/jaxws/CxfConsumerTest.java#L62[CxfConsumerTest]:
 
 [source,java]
 -------------------------------------------------------------------
