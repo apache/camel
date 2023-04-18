@@ -218,8 +218,8 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Notify observers that the resource of this URI has changed, based on RFC 7641. Use this flag on a destination endpoint, with an URI
-     * that matches an existing source endpoint URI.
+     * Notify observers that the resource of this URI has changed, based on RFC 7641. Use this flag on a destination
+     * endpoint, with an URI that matches an existing source endpoint URI.
      */
     public void setNotify(boolean notify) {
         this.notify = notify;
