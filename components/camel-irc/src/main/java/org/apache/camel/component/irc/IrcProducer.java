@@ -146,7 +146,7 @@ public class IrcProducer extends DefaultProducer {
 
         @Override
         public void onError(int num, String msg) {
-            IrcProducer.this.getEndpoint().handleIrcError(num, msg);
+            IrcProducer.this.getEndpoint().handleIrcError(num);
         }
 
     }
