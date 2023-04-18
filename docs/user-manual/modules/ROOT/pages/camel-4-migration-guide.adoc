@@ -34,9 +34,9 @@ The following components has been removed:
 | camel-jbpm                           | none
 | camel-jclouds                        | none
 | camel-johnzon                        | camel-jackson, camel-fastjson, camel-gson
-| camel-microprofile-metrics           | camel-micrometer, camel-opentelemtry
+| camel-microprofile-metrics           | camel-micrometer, camel-opentelemetry
 | camel-milo                           | none
-| camel-opentracing                    | camel-micrometer, camel-opentelemtry
+| camel-opentracing                    | camel-micrometer, camel-opentelemetry
 | camel-optaplanner                    | none
 | camel-rabbitmq                       | spring-rabbitmq-component
 | camel-rest-swagger                   | camel-openapi-rest
@@ -51,7 +51,7 @@ The following components has been removed:
 | camel-vertx-kafka                    | camel-kafka
 | camel-vm                             | camel-seda
 | camel-xstream                        | camel-jacksonxml
-| camel-zipkin                         | camel-micrometer, camel-opentelemtry
+| camel-zipkin                         | camel-micrometer, camel-opentelemetry
 |===
 
 == Logging
