@@ -325,7 +325,7 @@ public interface EventFactory {
      * This is guaranteed to run on the same thread on which {@code RoutePolicySupport.onExchangeBegin} was called
      * and/or {@code ExchangeSendingEvent} was fired.
      *
-     * Special event only in use for camel-tracing / camel-opentelemtry. This event is NOT (by default) in use.
+     * Special event only in use for camel-tracing / camel-opentelemetry. This event is NOT (by default) in use.
      *
      * @param  exchange the exchange
      * @return          the created event
