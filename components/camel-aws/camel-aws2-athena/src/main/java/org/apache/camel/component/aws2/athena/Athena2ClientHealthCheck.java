@@ -39,7 +39,7 @@ public class Athena2ClientHealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try {
+        try (AthenaClient client = athena2Endpoint.getAthenaClient()) {
             if (ObjectHelper.isNotEmpty(athena2Endpoint.getConfiguration().getRegion())) {
                 if (!AthenaClient.serviceMetadata().regions()
                         .contains(Region.of(athena2Endpoint.getConfiguration().getRegion()))) {
@@ -48,7 +48,6 @@ public class Athena2ClientHealthCheck extends AbstractHealthCheck {
                     return;
                 }
             }
-            AthenaClient client = athena2Endpoint.getAthenaClient();
 
             client.listQueryExecutions(ListQueryExecutionsRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
