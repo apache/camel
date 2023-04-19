@@ -464,8 +464,8 @@
         <spring-vault-core-version>3.0.2</spring-vault-core-version>
         <spring-version>6.0.8</spring-version>
         <spring-rabbitmq-version>3.0.2</spring-rabbitmq-version>
-        <spring-security-version>6.0.2</spring-security-version>
-        <spring-ws-version>4.0.2</spring-ws-version>
+        <spring-security-version>6.0.3</spring-security-version>
+        <spring-ws-version>4.0.3</spring-ws-version>
         <sql-maven-plugin-version>1.5</sql-maven-plugin-version>
         <squareup-okhttp-version>3.14.9</squareup-okhttp-version>
         <squareup-okio-version>1.17.2</squareup-okio-version>
