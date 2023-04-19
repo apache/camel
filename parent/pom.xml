@@ -2790,7 +2790,9 @@
                                 <addDefaultSpecificationEntries>false</addDefaultSpecificationEntries>
                             </manifest>
                             <manifestEntries>
+                            <!-- include build-date if needed in the future 
                                 <Build-Date>${maven.build.timestamp}</Build-Date>
+                            -->
                             </manifestEntries>
                         </archive>
                     </configuration>
