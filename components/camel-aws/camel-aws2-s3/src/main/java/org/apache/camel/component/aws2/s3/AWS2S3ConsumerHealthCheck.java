@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.aws2.s3;
 
-import java.util.Map;
-
 import org.apache.camel.health.HealthCheckResultBuilder;
 import org.apache.camel.impl.health.AbstractHealthCheck;
 import org.apache.camel.util.ObjectHelper;
@@ -28,6 +26,8 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
 import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+
+import java.util.Map;
 
 public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
 
@@ -49,26 +49,14 @@ public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try {
+        try (S3Client client = buildClient(aws2S3Consumer.getConfiguration())) {
             AWS2S3Configuration configuration = aws2S3Consumer.getConfiguration();
             if (!S3Client.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();
                 return;
             }
-            S3Client client;
-            if (!configuration.isUseDefaultCredentialsProvider()) {
-                AwsBasicCredentials cred
-                        = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
-                S3ClientBuilder clientBuilder = S3Client.builder();
-                client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
-                        .region(Region.of(configuration.getRegion())).build();
-            } else if (ObjectHelper.isNotEmpty(configuration.getAmazonS3Client())) {
-                client = configuration.getAmazonS3Client();
-            } else {
-                S3ClientBuilder clientBuilder = S3Client.builder();
-                client = clientBuilder.region(Region.of(configuration.getRegion())).build();
-            }
+
             client.headBucket(HeadBucketRequest.builder().bucket(configuration.getBucketName()).build());
         } catch (SdkClientException e) {
             builder.message(e.getMessage());
@@ -84,5 +72,22 @@ public class AWS2S3ConsumerHealthCheck extends AbstractHealthCheck {
 
         builder.up();
 
+    }
+
+    public S3Client buildClient(AWS2S3Configuration configuration) {
+        if (!configuration.isUseDefaultCredentialsProvider()) {
+            AwsBasicCredentials cred
+                    = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
+            S3ClientBuilder clientBuilder = S3Client.builder();
+            return clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
+                    .region(Region.of(configuration.getRegion())).build();
+        }
+
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonS3Client())) {
+            return configuration.getAmazonS3Client();
+        }
+
+        S3ClientBuilder clientBuilder = S3Client.builder();
+        return clientBuilder.region(Region.of(configuration.getRegion())).build();
     }
 }

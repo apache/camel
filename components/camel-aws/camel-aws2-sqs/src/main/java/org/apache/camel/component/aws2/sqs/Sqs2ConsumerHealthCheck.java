@@ -48,26 +48,14 @@ public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try {
+        try (SqsClient client = buildClient(sqs2Consumer.getConfiguration())) {
             Sqs2Configuration configuration = sqs2Consumer.getConfiguration();
             if (!SqsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();
                 return;
             }
-            SqsClient client;
-            if (!configuration.isUseDefaultCredentialsProvider()) {
-                AwsBasicCredentials cred
-                        = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
-                SqsClientBuilder clientBuilder = SqsClient.builder();
-                client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
-                        .region(Region.of(configuration.getRegion())).build();
-            } else if (ObjectHelper.isNotEmpty(configuration.getAmazonSQSClient())) {
-                client = configuration.getAmazonSQSClient();
-            } else {
-                SqsClientBuilder clientBuilder = SqsClient.builder();
-                client = clientBuilder.region(Region.of(configuration.getRegion())).build();
-            }
+
             client.listQueues();
         } catch (SdkClientException e) {
             builder.message(e.getMessage());
@@ -82,6 +70,25 @@ public class Sqs2ConsumerHealthCheck extends AbstractHealthCheck {
         }
 
         builder.up();
+
+    }
+
+    public SqsClient buildClient(Sqs2Configuration configuration) {
+
+        if (!configuration.isUseDefaultCredentialsProvider()) {
+            AwsBasicCredentials cred
+                    = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
+            SqsClientBuilder clientBuilder = SqsClient.builder();
+            return clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
+                    .region(Region.of(configuration.getRegion())).build();
+        }
+
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonSQSClient())) {
+            return configuration.getAmazonSQSClient();
+        }
+
+        SqsClientBuilder clientBuilder = SqsClient.builder();
+        return clientBuilder.region(Region.of(configuration.getRegion())).build();
 
     }
 }

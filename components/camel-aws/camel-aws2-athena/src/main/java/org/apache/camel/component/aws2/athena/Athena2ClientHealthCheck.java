@@ -49,25 +49,13 @@ public class Athena2ClientHealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try {
+        try (AthenaClient client = buildClient(athena2Endpoint)) {
             if (!AthenaClient.serviceMetadata().regions().contains(Region.of(athena2Endpoint.getConfiguration().getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();
                 return;
             }
-            AthenaClient client;
-            if (!athena2Endpoint.getConfiguration().isUseDefaultCredentialsProvider()) {
-                AwsBasicCredentials cred = AwsBasicCredentials.create(athena2Endpoint.getConfiguration().getAccessKey(),
-                        athena2Endpoint.getConfiguration().getSecretKey());
-                AthenaClientBuilder clientBuilder = AthenaClient.builder();
-                client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
-                        .region(Region.of(athena2Endpoint.getConfiguration().getRegion())).build();
-            } else if (ObjectHelper.isNotEmpty(athena2Endpoint.getConfiguration().getAmazonAthenaClient())) {
-                client = athena2Endpoint.getConfiguration().getAmazonAthenaClient();
-            } else {
-                AthenaClientBuilder clientBuilder = AthenaClient.builder();
-                client = clientBuilder.region(Region.of(athena2Endpoint.getConfiguration().getRegion())).build();
-            }
+
             client.listQueryExecutions();
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
@@ -81,5 +69,24 @@ public class Athena2ClientHealthCheck extends AbstractHealthCheck {
             return;
         }
         builder.up();
+    }
+
+    public AthenaClient buildClient(Athena2Endpoint athena2Endpoint) {
+
+        if (!athena2Endpoint.getConfiguration().isUseDefaultCredentialsProvider()) {
+            AwsBasicCredentials cred = AwsBasicCredentials.create(athena2Endpoint.getConfiguration().getAccessKey(),
+                    athena2Endpoint.getConfiguration().getSecretKey());
+            AthenaClientBuilder clientBuilder = AthenaClient.builder();
+            return clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
+                    .region(Region.of(athena2Endpoint.getConfiguration().getRegion())).build();
+        }
+
+        if (ObjectHelper.isNotEmpty(athena2Endpoint.getConfiguration().getAmazonAthenaClient())) {
+            return athena2Endpoint.getConfiguration().getAmazonAthenaClient();
+        }
+
+        AthenaClientBuilder clientBuilder = AthenaClient.builder();
+        return clientBuilder.region(Region.of(athena2Endpoint.getConfiguration().getRegion())).build();
+
     }
 }
