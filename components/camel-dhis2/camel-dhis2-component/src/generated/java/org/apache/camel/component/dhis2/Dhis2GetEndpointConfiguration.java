@@ -15,8 +15,8 @@ import org.apache.camel.spi.UriParams;
  * Camel endpoint configuration for {@link org.apache.camel.component.dhis2.api.Dhis2Get}.
  */
 @ApiParams(apiName = "get", 
-           description = "Sample API used by Dhis2 Component whose method signatures are read from Java source",
-           apiMethods = {@ApiMethod(methodName = "collection", signatures={"java.util.Iterator collection(String path, String itemType, Boolean paging, String fields, String filter, java.util.Map<String, Object> queryParams)"}), @ApiMethod(methodName = "resource", signatures={"java.io.InputStream resource(String path, String fields, String filter, java.util.Map<String, Object> queryParams)"})}, aliases = {})
+           description = "",
+           apiMethods = {@ApiMethod(methodName = "collection", signatures={"java.util.Iterator collection(String path, String itemType, Boolean paging, String fields, String filter, org.apache.camel.component.dhis2.api.RootJunctionEnum rootJunction, java.util.Map<String, Object> queryParams)"}), @ApiMethod(methodName = "resource", signatures={"java.io.InputStream resource(String path, String fields, String filter, org.apache.camel.component.dhis2.api.RootJunctionEnum rootJunction, java.util.Map<String, Object> queryParams)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
 public final class Dhis2GetEndpointConfiguration extends Dhis2Configuration {
@@ -38,6 +38,9 @@ public final class Dhis2GetEndpointConfiguration extends Dhis2Configuration {
     @UriParam
     @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "collection"), @ApiMethod(methodName = "resource")})
     private java.util.Map<String, Object> queryParams;
+    @UriParam
+    @ApiParam(optional = true, apiMethods = {@ApiMethod(methodName = "collection"), @ApiMethod(methodName = "resource")})
+    private org.apache.camel.component.dhis2.api.RootJunctionEnum rootJunction;
 
     public String getFields() {
         return fields;
@@ -85,5 +88,13 @@ public final class Dhis2GetEndpointConfiguration extends Dhis2Configuration {
 
     public void setQueryParams(java.util.Map<String, Object> queryParams) {
         this.queryParams = queryParams;
+    }
+
+    public org.apache.camel.component.dhis2.api.RootJunctionEnum getRootJunction() {
+        return rootJunction;
+    }
+
+    public void setRootJunction(org.apache.camel.component.dhis2.api.RootJunctionEnum rootJunction) {
+        this.rootJunction = rootJunction;
     }
 }

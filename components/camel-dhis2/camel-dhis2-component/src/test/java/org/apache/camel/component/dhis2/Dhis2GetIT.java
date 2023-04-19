@@ -45,7 +45,7 @@ public class Dhis2GetIT extends AbstractDhis2TestSupport {
         // parameter type is String
         headers.put("CamelDhis2.path", "organisationUnits");
         // parameter type is String
-        headers.put("CamelDhis2.itemType", "org.hisp.dhis.api.model.v2_38_1.OrganisationUnit");
+        headers.put("CamelDhis2.itemType", "org.hisp.dhis.api.model.v2_39_1.OrganisationUnit");
         // parameter type is Boolean
         headers.put("CamelDhis2.paging", true);
         // parameter type is String

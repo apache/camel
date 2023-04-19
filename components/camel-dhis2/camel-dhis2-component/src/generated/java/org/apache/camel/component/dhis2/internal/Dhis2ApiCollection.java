@@ -14,6 +14,8 @@ import org.apache.camel.component.dhis2.Dhis2Configuration;
 import org.apache.camel.component.dhis2.Dhis2PostEndpointConfiguration;
 import org.apache.camel.component.dhis2.Dhis2ResourceTablesEndpointConfiguration;
 import org.apache.camel.component.dhis2.Dhis2GetEndpointConfiguration;
+import org.apache.camel.component.dhis2.Dhis2DeleteEndpointConfiguration;
+import org.apache.camel.component.dhis2.Dhis2PutEndpointConfiguration;
 
 import org.apache.camel.support.component.ApiCollection;
 import org.apache.camel.support.component.ApiMethod;
@@ -44,9 +46,19 @@ public final class Dhis2ApiCollection extends ApiCollection<Dhis2ApiName, Dhis2C
         apiMethods.put(Dhis2ResourceTablesApiMethod.class, Dhis2ApiName.RESOURCE_TABLES);
 
         aliases.clear();
-        nullableArgs = Arrays.asList("itemType", "paging", "fields", "filter", "queryParams");
+        nullableArgs = Arrays.asList("itemType", "paging", "fields", "filter", "rootJunction", "queryParams");
         apiHelpers.put(Dhis2ApiName.GET, new ApiMethodHelper<Dhis2GetApiMethod>(Dhis2GetApiMethod.class, aliases, nullableArgs));
         apiMethods.put(Dhis2GetApiMethod.class, Dhis2ApiName.GET);
+
+        aliases.clear();
+        nullableArgs = Arrays.asList("resource", "queryParams");
+        apiHelpers.put(Dhis2ApiName.DELETE, new ApiMethodHelper<Dhis2DeleteApiMethod>(Dhis2DeleteApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(Dhis2DeleteApiMethod.class, Dhis2ApiName.DELETE);
+
+        aliases.clear();
+        nullableArgs = Arrays.asList("resource", "queryParams");
+        apiHelpers.put(Dhis2ApiName.PUT, new ApiMethodHelper<Dhis2PutApiMethod>(Dhis2PutApiMethod.class, aliases, nullableArgs));
+        apiMethods.put(Dhis2PutApiMethod.class, Dhis2ApiName.PUT);
 
         setApiHelpers(apiHelpers);
         setApiMethods(apiMethods);
@@ -63,6 +75,12 @@ public final class Dhis2ApiCollection extends ApiCollection<Dhis2ApiName, Dhis2C
                 break;
             case GET:
                 result = new Dhis2GetEndpointConfiguration();
+                break;
+            case DELETE:
+                result = new Dhis2DeleteEndpointConfiguration();
+                break;
+            case PUT:
+                result = new Dhis2PutEndpointConfiguration();
                 break;
         }
         return result;

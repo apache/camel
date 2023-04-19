@@ -25,42 +25,47 @@ import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dhis2.internal.Dhis2ApiCollection;
-import org.apache.camel.component.dhis2.internal.Dhis2PostApiMethod;
+import org.apache.camel.component.dhis2.internal.Dhis2PutApiMethod;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.hisp.dhis.api.model.v2_39_1.OrganisationUnit;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test class for {@link org.apache.camel.component.dhis2.api.Dhis2Post} APIs.
  */
-public class Dhis2PostIT extends AbstractDhis2TestSupport {
+public class Dhis2PutIT extends AbstractDhis2TestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Dhis2PostIT.class);
-    private static final String PATH_PREFIX = Dhis2ApiCollection.getCollection().getApiName(Dhis2PostApiMethod.class).getName();
+    private static final Logger LOG = LoggerFactory.getLogger(Dhis2PutIT.class);
+    private static final String PATH_PREFIX = Dhis2ApiCollection.getCollection().getApiName(Dhis2PutApiMethod.class).getName();
 
     @Test
     public void testResourceGivenInBody() {
-        postResource("direct://RESOURCE_WITH_INBODY");
+        putResource("direct://RESOURCE_WITH_INBODY");
     }
 
     @Test
     public void testResource() {
-        postResource("direct://RESOURCE");
+        putResource("direct://RESOURCE");
     }
 
-    private void postResource(String endpointUri) {
+    private void putResource(String endpointUri) {
         final Map<String, Object> headers = new HashMap<>();
         // parameter type is String
-        headers.put("CamelDhis2.path", "organisationUnits");
+        headers.put("CamelDhis2.path", String.format("organisationUnits/%s", Environment.ORG_UNIT_ID));
         // parameter type is java.util.Map
         headers.put("CamelDhis2.queryParams", new HashMap<>());
 
+        String name = RandomStringUtils.randomAlphabetic(8);
         final java.io.InputStream result = requestBodyAndHeaders(endpointUri,
-                new OrganisationUnit().withName("Foo").withShortName("Foo").withOpeningDate(new Date()),
-                headers);
+                new OrganisationUnit().withName(name).withShortName(name).withOpeningDate(new Date()), headers);
+        OrganisationUnit organisationUnit = Environment.DHIS2_CLIENT.get("organisationUnits/{id}", Environment.ORG_UNIT_ID)
+                .transfer().returnAs(OrganisationUnit.class);
+        assertEquals(name, organisationUnit.getName().get());
 
         assertNotNull(result, "resource result");
         LOG.debug("resource: " + result);
@@ -70,7 +75,6 @@ public class Dhis2PostIT extends AbstractDhis2TestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // test route for resource
                 from("direct://RESOURCE_WITH_INBODY")
                         .to("dhis2://" + PATH_PREFIX + "/resource?inBody=resource");
 

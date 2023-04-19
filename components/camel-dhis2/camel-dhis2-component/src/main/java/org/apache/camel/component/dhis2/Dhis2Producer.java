@@ -16,13 +16,27 @@
  */
 package org.apache.camel.component.dhis2;
 
+import java.util.Map;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.component.dhis2.internal.Dhis2ApiName;
 import org.apache.camel.component.dhis2.internal.Dhis2PropertiesHelper;
 import org.apache.camel.support.component.AbstractApiProducer;
+import org.apache.camel.support.component.ApiMethod;
 
 public class Dhis2Producer extends AbstractApiProducer<Dhis2ApiName, Dhis2Configuration> {
 
     public Dhis2Producer(Dhis2Endpoint endpoint) {
         super(endpoint, Dhis2PropertiesHelper.getHelper(endpoint.getCamelContext()));
     }
+
+    @Override
+    protected ApiMethod findMethod(Exchange exchange, Map<String, Object> properties) {
+        ApiMethod apiMethod = super.findMethod(exchange, properties);
+        if (!properties.containsKey("resource")) {
+            properties.put("resource", exchange.getIn().getBody());
+        }
+        return apiMethod;
+    }
+
 }
