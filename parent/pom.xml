@@ -473,7 +473,7 @@
         <rocketmq-version>4.9.4</rocketmq-version>
         <rome-version>1.18.0</rome-version>
         <rxjava2-version>2.2.21</rxjava2-version>
-        <saxon-version>11.4</saxon-version>
+        <saxon-version>11.5</saxon-version>
         <scala-version>2.11.12</scala-version>
         <scala-datasonnet-version>2.13.9</scala-datasonnet-version>
         <servicemix-specs-version>2.9.0</servicemix-specs-version>
