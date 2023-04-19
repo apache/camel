@@ -211,9 +211,9 @@ public class Dhis2GetTestCase {
         };
         when(getOperation.transfer()).thenReturn(dhis2Response);
         when(getOperation.withPaging()).thenReturn(
-            new DefaultPagingCollectOperation(
-                "https://play.dhis2.org/2.39.0.1", "", null,
-                new JacksonConverterFactory(), getOperation));
+                new DefaultPagingCollectOperation(
+                        "https://play.dhis2.org/2.39.0.1", "", null,
+                        new JacksonConverterFactory(), getOperation));
 
         Dhis2Get dhis2Get = new Dhis2Get(dhis2Client);
         dhis2Get.collection("bunnies", null, null, null, null, RootJunctionEnum.OR, null);
@@ -243,7 +243,7 @@ public class Dhis2GetTestCase {
         };
         when(getOperation.transfer()).thenReturn(dhis2Response);
         when(getOperation.withPaging()).thenReturn(new DefaultPagingCollectOperation(
-            "https://play.dhis2.org/2.39.0.1", "", null, new JacksonConverterFactory(), getOperation));
+                "https://play.dhis2.org/2.39.0.1", "", null, new JacksonConverterFactory(), getOperation));
 
         Dhis2Get dhis2Get = new Dhis2Get(dhis2Client);
         dhis2Get.collection("bunnies", null, null, null, null, RootJunctionEnum.AND, null);
