@@ -44,16 +44,13 @@ public class Sns2HealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try {
+        try (SnsClient client = sns2Endpoint.getSNSClient()) {
             Sns2Configuration configuration = sns2Endpoint.getConfiguration();
             if (!SnsClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
                 builder.message("The service is not supported in this region");
                 builder.down();
                 return;
             }
-
-            SnsClient client = sns2Endpoint.getSNSClient();
-
             client.listSubscriptions();
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());

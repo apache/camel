@@ -48,7 +48,7 @@ public class Kinesis2ConsumerHealthCheck extends AbstractHealthCheck {
     @Override
     protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
 
-        try {
+        try (KinesisClient client = buildClient(kinesis2Consumer.getConfiguration())) {
             Kinesis2Configuration configuration = kinesis2Consumer.getConfiguration();
             if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
                 if (!KinesisClient.serviceMetadata().regions().contains(Region.of(configuration.getRegion()))) {
@@ -57,19 +57,7 @@ public class Kinesis2ConsumerHealthCheck extends AbstractHealthCheck {
                     return;
                 }
             }
-            KinesisClient client;
-            if (!configuration.isUseDefaultCredentialsProvider()) {
-                AwsBasicCredentials cred
-                        = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
-                KinesisClientBuilder clientBuilder = KinesisClient.builder();
-                client = clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
-                        .region(Region.of(configuration.getRegion())).build();
-            } else if (ObjectHelper.isNotEmpty(configuration.getAmazonKinesisClient())) {
-                client = configuration.getAmazonKinesisClient();
-            } else {
-                KinesisClientBuilder clientBuilder = KinesisClient.builder();
-                client = clientBuilder.region(Region.of(configuration.getRegion())).build();
-            }
+
             client.listStreams();
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
@@ -90,6 +78,23 @@ public class Kinesis2ConsumerHealthCheck extends AbstractHealthCheck {
         }
 
         builder.up();
+
+    }
+
+    private KinesisClient buildClient(Kinesis2Configuration configuration) {
+
+        if (!configuration.isUseDefaultCredentialsProvider()) {
+            AwsBasicCredentials cred
+                    = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
+            KinesisClientBuilder clientBuilder = KinesisClient.builder();
+            return clientBuilder.credentialsProvider(StaticCredentialsProvider.create(cred))
+                    .region(Region.of(configuration.getRegion())).build();
+        }
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonKinesisClient())) {
+            return configuration.getAmazonKinesisClient();
+        }
+        KinesisClientBuilder clientBuilder = KinesisClient.builder();
+        return clientBuilder.region(Region.of(configuration.getRegion())).build();
 
     }
 

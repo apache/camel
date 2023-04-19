@@ -52,9 +52,7 @@ public class Translate2ClientHealthCheck extends AbstractHealthCheck {
                 return;
             }
         }
-        try {
-            TranslateClient translateClient = translate2Endpoint.getTranslateClient();
-
+        try (TranslateClient translateClient = translate2Endpoint.getTranslateClient()) {
             translateClient.listLanguages(ListLanguagesRequest.builder().maxResults(1).build());
         } catch (AwsServiceException e) {
             builder.message(e.getMessage());
