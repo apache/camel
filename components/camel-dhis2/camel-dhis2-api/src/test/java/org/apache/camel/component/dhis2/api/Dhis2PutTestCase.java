@@ -17,14 +17,13 @@
 package org.apache.camel.component.dhis2.api;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
 import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 import org.hisp.dhis.integration.sdk.api.Dhis2Response;
-import org.hisp.dhis.integration.sdk.api.operation.PostOperation;
+import org.hisp.dhis.integration.sdk.api.operation.PutOperation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,18 +34,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class Dhis2PostTestCase {
+public class Dhis2PutTestCase {
     @Mock
     private Dhis2Client dhis2Client;
 
     @Mock
-    private PostOperation postOperation;
+    private PutOperation putOperation;
 
     @BeforeEach
     public void beforeEach() {
-        when(dhis2Client.post(any())).thenReturn(postOperation);
-        when(postOperation.withParameter(any(), any())).thenReturn(postOperation);
-        when(postOperation.transfer()).thenReturn(new Dhis2Response() {
+        when(dhis2Client.put(any())).thenReturn(putOperation);
+        when(putOperation.withParameter(any(), any())).thenReturn(putOperation);
+        when(putOperation.transfer()).thenReturn(new Dhis2Response() {
             @Override
             public <T> T returnAs(Class<T> responseType) {
                 return null;
@@ -66,13 +65,13 @@ public class Dhis2PostTestCase {
 
     @Test
     public void testResourceGivenMapOfListsQueryParams() {
-        Dhis2Post dhis2Post = new Dhis2Post(dhis2Client);
-        dhis2Post.resource(null, null, Map.of("foo", List.of("bar")));
+        Dhis2Put dhis2Put = new Dhis2Put(dhis2Client);
+        dhis2Put.resource(null, null, Map.of("foo", List.of("bar")));
     }
 
     @Test
     public void testResourceGivenMapOfStringsQueryParams() {
-        Dhis2Post dhis2Post = new Dhis2Post(dhis2Client);
-        dhis2Post.resource(null, null, Map.of("foo", "bar"));
+        Dhis2Put dhis2Put = new Dhis2Put(dhis2Client);
+        dhis2Put.resource(null, null, Map.of("foo", "bar"));
     }
 }

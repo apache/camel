@@ -109,6 +109,25 @@
                                         <nullableOption>paging</nullableOption>
                                         <nullableOption>fields</nullableOption>
                                         <nullableOption>filter</nullableOption>
+                                        <nullableOption>rootJunction</nullableOption>
+                                        <nullableOption>queryParams</nullableOption>
+                                    </nullableOptions>
+                                </api>
+                                <api>
+                                    <apiName>delete</apiName>
+                                    <proxyClass>org.apache.camel.component.dhis2.api.Dhis2Delete</proxyClass>
+                                    <fromJavasource />
+                                    <nullableOptions>
+                                        <nullableOption>resource</nullableOption>
+                                        <nullableOption>queryParams</nullableOption>
+                                    </nullableOptions>
+                                </api>
+                                <api>
+                                    <apiName>put</apiName>
+                                    <proxyClass>org.apache.camel.component.dhis2.api.Dhis2Put</proxyClass>
+                                    <fromJavasource />
+                                    <nullableOptions>
+                                        <nullableOption>resource</nullableOption>
                                         <nullableOption>queryParams</nullableOption>
                                     </nullableOptions>
                                 </api>

@@ -7,7 +7,7 @@ package org.apache.camel.component.dhis2.internal;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import org.apache.camel.component.dhis2.api.Dhis2Get;
+import org.apache.camel.component.dhis2.api.Dhis2Put;
 
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodArg;
@@ -16,34 +16,21 @@ import org.apache.camel.support.component.ApiMethodImpl;
 import static org.apache.camel.support.component.ApiMethodArg.arg;
 
 /**
- * Camel {@link ApiMethod} Enumeration for org.apache.camel.component.dhis2.api.Dhis2Get
+ * Camel {@link ApiMethod} Enumeration for org.apache.camel.component.dhis2.api.Dhis2Put
  */
-public enum Dhis2GetApiMethod implements ApiMethod {
-
-    COLLECTION(
-        java.util.Iterator.class,
-        "collection",
-        arg("path", String.class),
-        arg("itemType", String.class),
-        arg("paging", Boolean.class),
-        arg("fields", String.class),
-        arg("filter", String.class),
-        arg("rootJunction", org.apache.camel.component.dhis2.api.RootJunctionEnum.class),
-        arg("queryParams", java.util.Map.class)),
+public enum Dhis2PutApiMethod implements ApiMethod {
 
     RESOURCE(
         java.io.InputStream.class,
         "resource",
         arg("path", String.class),
-        arg("fields", String.class),
-        arg("filter", String.class),
-        arg("rootJunction", org.apache.camel.component.dhis2.api.RootJunctionEnum.class),
+        arg("resource", Object.class),
         arg("queryParams", java.util.Map.class));
 
     private final ApiMethod apiMethod;
 
-    private Dhis2GetApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
-        this.apiMethod = new ApiMethodImpl(Dhis2Get.class, resultType, name, args);
+    private Dhis2PutApiMethod(Class<?> resultType, String name, ApiMethodArg... args) {
+        this.apiMethod = new ApiMethodImpl(Dhis2Put.class, resultType, name, args);
     }
 
     @Override

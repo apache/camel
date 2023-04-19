@@ -15,7 +15,11 @@ public enum Dhis2ApiName implements ApiName {
 
     RESOURCE_TABLES("resourceTables"),
 
-    GET("get");
+    GET("get"),
+
+    DELETE("delete"),
+
+    PUT("put");
 
 
     private final String name;

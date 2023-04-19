@@ -60,7 +60,6 @@ public class Dhis2ResourceTablesIT extends AbstractDhis2TestSupport {
                 // test route for analytics
                 from("direct://ANALYTICS")
                         .to("dhis2://" + PATH_PREFIX + "/analytics");
-
             }
         };
     }

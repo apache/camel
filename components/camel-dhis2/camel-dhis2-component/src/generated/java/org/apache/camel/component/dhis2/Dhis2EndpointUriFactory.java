@@ -21,7 +21,7 @@ public class Dhis2EndpointUriFactory extends org.apache.camel.support.component.
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(38);
+        Set<String> props = new HashSet<>(39);
         props.add("apiName");
         props.add("backoffErrorThreshold");
         props.add("backoffIdleThreshold");
@@ -49,6 +49,7 @@ public class Dhis2EndpointUriFactory extends org.apache.camel.support.component.
         props.add("queryParams");
         props.add("repeatCount");
         props.add("resource");
+        props.add("rootJunction");
         props.add("runLoggingLevel");
         props.add("scheduledExecutorService");
         props.add("scheduler");

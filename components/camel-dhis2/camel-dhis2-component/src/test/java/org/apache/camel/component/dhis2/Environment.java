@@ -20,9 +20,9 @@ import java.time.Duration;
 import java.util.Date;
 import java.util.Map;
 
-import org.hisp.dhis.api.model.v2_38_1.OrganisationUnit;
-import org.hisp.dhis.api.model.v2_38_1.OrganisationUnitLevel;
-import org.hisp.dhis.api.model.v2_38_1.WebMessage;
+import org.hisp.dhis.api.model.v2_39_1.OrganisationUnit;
+import org.hisp.dhis.api.model.v2_39_1.OrganisationUnitLevel;
+import org.hisp.dhis.api.model.v2_39_1.WebMessage;
 import org.hisp.dhis.integration.sdk.Dhis2ClientBuilder;
 import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 import org.testcontainers.containers.BindMode;
@@ -34,6 +34,8 @@ import org.testcontainers.utility.DockerImageName;
 
 public final class Environment {
 
+    public static final Dhis2Client DHIS2_CLIENT;
+
     public static final String ORG_UNIT_ID;
 
     private static final Network NETWORK = Network.newNetwork();
@@ -41,8 +43,6 @@ public final class Environment {
     private static final PostgreSQLContainer<?> POSTGRESQL_CONTAINER;
 
     private static final GenericContainer<?> DHIS2_CONTAINER;
-
-    private static final Dhis2Client DHIS2_CLIENT;
 
     private Environment() {
 
