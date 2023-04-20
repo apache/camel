@@ -126,7 +126,7 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
     @Parameter
     String basePath;
 
-    @Parameter(defaultValue = "3.0.36")
+    @Parameter(defaultValue = "3.0.42")
     String swaggerCodegenMavenPluginVersion;
 
     @Parameter(defaultValue = "${project}", readonly = true)
@@ -214,13 +214,19 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         if (modelWithXml != null) {
             elements.add(new MojoExecutor.Element("withXml", modelWithXml));
         }
-        if (configOptions != null) {
-            elements.add(new MojoExecutor.Element(
-                    "configOptions", configOptions.entrySet().stream()
-                            .map(e -> new MojoExecutor.Element(e.getKey(), e.getValue()))
-                            .toArray(MojoExecutor.Element[]::new)));
+        if (configOptions == null) {
+            configOptions = new HashMap<>(1);
         }
-
+        /* workaround for https://github.com/swagger-api/swagger-codegen/issues/11797
+         * with the next release jakarta=true should be used
+         * https://github.com/swagger-api/swagger-codegen-generators/pull/1131
+         */
+        configOptions.put("hideGenerationTimestamp", "true");
+        elements.add(new MojoExecutor.Element(
+                "configOptions", configOptions.entrySet().stream()
+                    .map(e -> new MojoExecutor.Element(e.getKey(), e.getValue()))
+                    .toArray(MojoExecutor.Element[]::new)));
+        
         executeMojo(
                 plugin(
                         groupId("io.swagger.codegen.v3"),
