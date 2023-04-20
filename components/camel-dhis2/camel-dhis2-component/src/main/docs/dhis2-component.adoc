@@ -233,6 +233,134 @@ public class MyRouteBuilder extends RouteBuilder {
 }
 ----
 
+== API: put
+
+*Both producer and consumer are supported*
+
+The post API is defined in the syntax as follows:
+
+....
+dhis2:put/methodName?[parameters]
+....
+
+== METHOD resource
+
+Signatures:
+
+* java.io.InputStream resource(java.lang.String path, java.lang.Object resource, java.util.Map<String, Object queryParams)
+
+The put/resource API method has the parameters listed in the table
+below:
+
+[cols=",,",options="header",]
+|===
+| Parameter | Description | Type
+| path | Resource URL path | String
+| resource | Updated resource | Object
+| queryParams | Custom query parameters | Map
+|===
+
+In addition to the parameters above, the put/resource API can also use any of the link:#query-parameters[Query Parameters].
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header. The message header name must be of the format CamelDhis2.parameter. The inBody parameter overrides message header, i.e. the endpoint parameter inBody=myParameterNameHere would override a CamelDhis2.myParameterNameHere header.
+
+* Update an organisation unit
++
+[source,java]
+----
+package org.camel.dhis2.example;
+
+import org.apache.camel.LoggingLevel;
+import org.apache.camel.builder.RouteBuilder;
+import org.hisp.dhis.api.model.v2_39_1.OrganisationUnit;
+import org.hisp.dhis.api.model.v2_39_1.DescriptiveWebMessage;
+import org.hisp.dhis.api.model.v2_39_1.ImportReportWebMessageResponse;
+import org.hisp.dhis.integration.sdk.support.period.PeriodBuilder;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
+
+public class MyRouteBuilder extends RouteBuilder {
+
+    public void configure() {
+        from("direct:putResource")
+            .setBody(exchange -> new OrganisationUnit().withName("Acme").withShortName("Acme").withOpeningDate(new Date()))
+            .to("dhis2://put/resource?path=organisationUnits/jUb8gELQApl&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
+            .unmarshal().json(ImportReportWebMessageResponse.class)
+            .choice()
+            .when(exchange -> !exchange.getMessage().getBody(ImportReportWebMessageResponse.class).getStatus().get().equals(DescriptiveWebMessage.Status.OK))
+                .log(LoggingLevel.ERROR, "Import error from DHIS2 while updating org unit => ${body}")
+            .end();
+    }
+}
+----
+
+== API: delete
+
+*Both producer and consumer are supported*
+
+The delete API is defined in the syntax as follows:
+
+....
+dhis2:delete/methodName?[parameters]
+....
+
+== METHOD resource
+
+Signatures:
+
+* java.io.InputStream resource(java.lang.String path, java.lang.Object resource, java.util.Map<String, Object queryParams)
+
+The delete/resource API method has the parameters listed in the table
+below:
+
+[cols=",,",options="header",]
+|===
+| Parameter | Description | Type
+| path | Resource URL path | String
+| resource | Deleted resource | Object
+| queryParams | Custom query parameters | Map
+|===
+
+In addition to the parameters above, the delete/resource API can also use any of the link:#query-parameters[Query Parameters].
+
+Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header. The message header name must be of the format CamelDhis2.parameter. The inBody parameter overrides message header, i.e. the endpoint parameter inBody=myParameterNameHere would override a CamelDhis2.myParameterNameHere header.
+
+* Delete an organisation unit
+
+[source,java]
+----
+package org.camel.dhis2.example;
+
+import org.apache.camel.LoggingLevel;
+import org.apache.camel.builder.RouteBuilder;
+import org.hisp.dhis.api.model.v2_39_1.DescriptiveWebMessage;
+import org.hisp.dhis.api.model.v2_39_1.ImportReportWebMessageResponse;
+import org.hisp.dhis.integration.sdk.support.period.PeriodBuilder;
+
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
+
+public class MyRouteBuilder extends RouteBuilder {
+
+    public void configure() {
+        from("direct:deleteResource")
+            .to("dhis2://delete/resource?path=organisationUnits/jUb8gELQApl&username=admin&password=district&baseApiUrl=https://play.dhis2.org/2.39.1/api")
+            .unmarshal().json(ImportReportWebMessageResponse.class)
+            .choice()
+            .when(exchange -> !exchange.getMessage().getBody(ImportReportWebMessageResponse.class).getStatus().get().equals(DescriptiveWebMessage.Status.OK))
+                .log(LoggingLevel.ERROR, "Import error from DHIS2 while deleting org unit => ${body}")
+            .end();
+    }
+}
+----
+
 == API: resourceTables
 
 *Both producer and consumer are supported*
@@ -261,6 +389,8 @@ The resourceTables/analytics API method has the parameters listed in the table b
 | lastYears | Number of last years of data to include | Integer
 | interval | Duration in milliseconds between completeness checks | Integer
 |===
+
+In addition to the parameters above, the resourceTables/analytics API can also use any of the link:#query-parameters[Query Parameters].
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header. The message header name must be of the format CamelDhis2.parameter. The inBody parameter overrides message header, i.e. the endpoint parameter inBody=myParameterNameHere would override a CamelDhis2.myParameterNameHere header.
 

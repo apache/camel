@@ -21,34 +21,33 @@ import java.util.List;
 import java.util.Map;
 
 import org.hisp.dhis.integration.sdk.api.Dhis2Client;
-import org.hisp.dhis.integration.sdk.api.operation.PostOperation;
+import org.hisp.dhis.integration.sdk.api.operation.PutOperation;
 
-public class Dhis2Post {
+public class Dhis2Put {
     private final Dhis2Client dhis2Client;
 
-    public Dhis2Post(Dhis2Client dhis2Client) {
+    public Dhis2Put(Dhis2Client dhis2Client) {
         this.dhis2Client = dhis2Client;
     }
 
     public InputStream resource(String path, Object resource, Map<String, Object> queryParams) {
-        PostOperation postOperation = dhis2Client.post(path);
+        PutOperation putOperation = dhis2Client.put(path);
         if (queryParams != null) {
             for (Map.Entry<String, Object> queryParam : queryParams.entrySet()) {
                 if (queryParam.getValue() instanceof List) {
                     for (String queryValue : (List<String>) queryParam.getValue()) {
-                        postOperation.withParameter(queryParam.getKey(), queryValue);
+                        putOperation.withParameter(queryParam.getKey(), queryValue);
                     }
                 } else {
-                    postOperation.withParameter(queryParam.getKey(), (String) queryParam.getValue());
+                    putOperation.withParameter(queryParam.getKey(), (String) queryParam.getValue());
                 }
             }
         }
 
         if (resource != null) {
-            postOperation.withResource(resource);
+            putOperation.withResource(resource);
         }
 
-        return postOperation.transfer().read();
-
+        return putOperation.transfer().read();
     }
 }

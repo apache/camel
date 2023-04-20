@@ -22,8 +22,10 @@ import org.apache.camel.Category;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.dhis2.api.Dhis2Delete;
 import org.apache.camel.component.dhis2.api.Dhis2Get;
 import org.apache.camel.component.dhis2.api.Dhis2Post;
+import org.apache.camel.component.dhis2.api.Dhis2Put;
 import org.apache.camel.component.dhis2.api.Dhis2ResourceTables;
 import org.apache.camel.component.dhis2.internal.Dhis2ApiCollection;
 import org.apache.camel.component.dhis2.internal.Dhis2ApiName;
@@ -41,8 +43,7 @@ import org.hisp.dhis.integration.sdk.api.Dhis2Client;
  * <p>
  */
 @UriEndpoint(firstVersion = "4.0.0", scheme = "dhis2", title = "DHIS2", syntax = "dhis2:methodName",
-             apiSyntax = "apiName/methodName", category = {
-                     Category.API })
+             apiSyntax = "apiName/methodName", category = { Category.API })
 public class Dhis2Endpoint extends AbstractApiEndpoint<Dhis2ApiName, Dhis2Configuration> {
 
     @UriParam
@@ -57,13 +58,11 @@ public class Dhis2Endpoint extends AbstractApiEndpoint<Dhis2ApiName, Dhis2Config
         this.configuration = endpointConfiguration;
     }
 
-    public Producer createProducer()
-            throws Exception {
+    public Producer createProducer() throws Exception {
         return new Dhis2Producer(this);
     }
 
-    public Consumer createConsumer(Processor processor)
-            throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         // make sure inBody is not set for consumers
         if (inBody != null) {
             throw new IllegalArgumentException("Option inBody is not supported for consumer endpoint");
@@ -92,6 +91,12 @@ public class Dhis2Endpoint extends AbstractApiEndpoint<Dhis2ApiName, Dhis2Config
                 break;
             case POST:
                 apiProxy = new Dhis2Post(dhis2Client);
+                break;
+            case DELETE:
+                apiProxy = new Dhis2Delete(dhis2Client);
+                break;
+            case PUT:
+                apiProxy = new Dhis2Put(dhis2Client);
                 break;
             case RESOURCE_TABLES:
                 apiProxy = new Dhis2ResourceTables(dhis2Client);
