@@ -23,7 +23,7 @@ import java.util.Map;
 
 import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 import org.hisp.dhis.integration.sdk.api.Dhis2Response;
-import org.hisp.dhis.integration.sdk.api.operation.PostOperation;
+import org.hisp.dhis.integration.sdk.api.operation.DeleteOperation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,18 +34,18 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class Dhis2PostTestCase {
+public class Dhis2DeleteTestCase {
     @Mock
     private Dhis2Client dhis2Client;
 
     @Mock
-    private PostOperation postOperation;
+    private DeleteOperation deleteOperation;
 
     @BeforeEach
     public void beforeEach() {
-        when(dhis2Client.post(any())).thenReturn(postOperation);
-        when(postOperation.withParameter(any(), any())).thenReturn(postOperation);
-        when(postOperation.transfer()).thenReturn(new Dhis2Response() {
+        when(dhis2Client.delete(any())).thenReturn(deleteOperation);
+        when(deleteOperation.withParameter(any(), any())).thenReturn(deleteOperation);
+        when(deleteOperation.transfer()).thenReturn(new Dhis2Response() {
             @Override
             public <T> T returnAs(Class<T> responseType) {
                 return null;
@@ -65,13 +65,13 @@ public class Dhis2PostTestCase {
 
     @Test
     public void testResourceGivenMapOfListsQueryParams() {
-        Dhis2Post dhis2Post = new Dhis2Post(dhis2Client);
-        dhis2Post.resource(null, null, Map.of("foo", List.of("bar")));
+        Dhis2Delete dhis2Delete = new Dhis2Delete(dhis2Client);
+        dhis2Delete.resource(null, null, Map.of("foo", List.of("bar")));
     }
 
     @Test
     public void testResourceGivenMapOfStringsQueryParams() {
-        Dhis2Post dhis2Post = new Dhis2Post(dhis2Client);
-        dhis2Post.resource(null, null, Map.of("foo", "bar"));
+        Dhis2Delete dhis2Delete = new Dhis2Delete(dhis2Client);
+        dhis2Delete.resource(null, null, Map.of("foo", "bar"));
     }
 }

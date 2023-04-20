@@ -18,4 +18,6 @@
 public String get(String resource);
 public String get(String collection);
 public String post(String resource);
+public String delete(String resource);
+public String put(String resource);
 public String resourceTables(String analytics);

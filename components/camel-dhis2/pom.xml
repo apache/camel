@@ -33,6 +33,10 @@
     <name>Camel :: DHIS2 :: Parent</name>
     <description>Camel DHIS2 Component</description>
 
+    <properties>
+        <dhis2-java-sdk.version>2.0.0</dhis2-java-sdk.version>
+    </properties>
+
     <modules>
         <module>camel-dhis2-api</module>
         <module>camel-dhis2-component</module>
@@ -40,14 +44,26 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.hisp.dhis.integration.sdk</groupId>
+            <artifactId>dhis2-java-sdk</artifactId>
+            <version>${dhis2-java-sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hisp.dhis.integration.sdk</groupId>
+            <artifactId>jackson-resource-model</artifactId>
+            <version>${dhis2-java-sdk.version}</version>
+            <classifier>v2.39.1</classifier>
+        </dependency>
+        <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-junit5</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.hisp.dhis.integration.sdk</groupId>
-            <artifactId>dhis2-java-sdk</artifactId>
-            <version>1.0.0</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.12.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

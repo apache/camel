@@ -25,9 +25,6 @@ import org.hisp.dhis.integration.sdk.api.Dhis2Client;
 import org.hisp.dhis.integration.sdk.api.IterableDhis2Response;
 import org.hisp.dhis.integration.sdk.api.operation.GetOperation;
 
-/**
- * Sample API used by Dhis2 Component whose method signatures are read from Java source.
- */
 public class Dhis2Get {
     private final Dhis2Client dhis2Client;
 
@@ -35,13 +32,17 @@ public class Dhis2Get {
         this.dhis2Client = dhis2Client;
     }
 
-    public InputStream resource(String path, String fields, String filter, Map<String, Object> queryParams) {
-        GetOperation getOperation = newGetOperation(path, fields, filter, queryParams);
+    public InputStream resource(
+            String path, String fields, String filter, RootJunctionEnum rootJunction,
+            Map<String, Object> queryParams) {
+        GetOperation getOperation = newGetOperation(path, fields, filter, rootJunction, queryParams);
 
         return getOperation.withParameter("paging", "false").transfer().read();
     }
 
-    protected GetOperation newGetOperation(String path, String fields, String filter, Map<String, Object> queryParams) {
+    protected GetOperation newGetOperation(
+            String path, String fields, String filter, RootJunctionEnum rootJunction,
+            Map<String, Object> queryParams) {
         GetOperation getOperation = dhis2Client.get(path);
         if (fields != null) {
             getOperation.withFields(fields);
@@ -49,6 +50,14 @@ public class Dhis2Get {
 
         if (filter != null) {
             getOperation.withFilter(filter);
+        }
+
+        if (rootJunction != null) {
+            if (rootJunction.equals(RootJunctionEnum.AND)) {
+                getOperation.withAndRootJunction();
+            } else {
+                getOperation.withOrRootJunction();
+            }
         }
 
         if (queryParams != null) {
@@ -67,9 +76,9 @@ public class Dhis2Get {
     }
 
     public <T> Iterator<T> collection(
-            String path, String itemType, Boolean paging, String fields, String filter,
+            String path, String itemType, Boolean paging, String fields, String filter, RootJunctionEnum rootJunction,
             Map<String, Object> queryParams) {
-        GetOperation getOperation = newGetOperation(path, fields, filter, queryParams);
+        GetOperation getOperation = newGetOperation(path, fields, filter, rootJunction, queryParams);
         Iterable<T> iterable;
 
         IterableDhis2Response iteratorDhis2Response;

@@ -12,14 +12,14 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 /**
- * Camel endpoint configuration for {@link org.apache.camel.component.dhis2.api.Dhis2Post}.
+ * Camel endpoint configuration for {@link org.apache.camel.component.dhis2.api.Dhis2Delete}.
  */
-@ApiParams(apiName = "post", 
+@ApiParams(apiName = "delete", 
            description = "",
            apiMethods = {@ApiMethod(methodName = "resource", signatures={"java.io.InputStream resource(String path, Object resource, java.util.Map<String, Object> queryParams)"})}, aliases = {})
 @UriParams
 @Configurer(extended = true)
-public final class Dhis2PostEndpointConfiguration extends Dhis2Configuration {
+public final class Dhis2DeleteEndpointConfiguration extends Dhis2Configuration {
     @UriParam
     @ApiParam(optional = false, apiMethods = {@ApiMethod(methodName = "resource")})
     private String path;
