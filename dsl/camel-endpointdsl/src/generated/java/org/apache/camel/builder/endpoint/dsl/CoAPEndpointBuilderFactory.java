@@ -60,6 +60,68 @@ public interface CoAPEndpointBuilderFactory {
             return this;
         }
         /**
+         * Make CoAP resource observable for source endpoint, based on RFC 7641.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param observable the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder observable(boolean observable) {
+            doSetProperty("observable", observable);
+            return this;
+        }
+        /**
+         * Make CoAP resource observable for source endpoint, based on RFC 7641.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param observable the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder observable(String observable) {
+            doSetProperty("observable", observable);
+            return this;
+        }
+        /**
+         * Send an observe request from a source endpoint, based on RFC 7641.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param observe the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder observe(boolean observe) {
+            doSetProperty("observe", observe);
+            return this;
+        }
+        /**
+         * Send an observe request from a source endpoint, based on RFC 7641.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: consumer
+         * 
+         * @param observe the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointConsumerBuilder observe(String observe) {
+            doSetProperty("observe", observe);
+            return this;
+        }
+        /**
          * Sets the alias used to query the KeyStore for the private key and
          * certificate. This parameter is used when we are enabling TLS with
          * certificates on the service side, and similarly on the client side
@@ -449,6 +511,41 @@ public interface CoAPEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedCoAPEndpointProducerBuilder advanced() {
             return (AdvancedCoAPEndpointProducerBuilder) this;
+        }
+        /**
+         * Notify observers that the resource of this URI has changed, based on
+         * RFC 7641. Use this flag on a destination endpoint, with an URI that
+         * matches an existing source endpoint URI.
+         * 
+         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param notify the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder notify(boolean notify) {
+            doSetProperty("notify", notify);
+            return this;
+        }
+        /**
+         * Notify observers that the resource of this URI has changed, based on
+         * RFC 7641. Use this flag on a destination endpoint, with an URI that
+         * matches an existing source endpoint URI.
+         * 
+         * The option will be converted to a &lt;code&gt;boolean&lt;/code&gt;
+         * type.
+         * 
+         * Default: false
+         * Group: producer
+         * 
+         * @param notify the value to set
+         * @return the dsl builder
+         */
+        default CoAPEndpointProducerBuilder notify(String notify) {
+            doSetProperty("notify", notify);
+            return this;
         }
         /**
          * Sets the alias used to query the KeyStore for the private key and
@@ -1164,6 +1261,32 @@ public interface CoAPEndpointBuilderFactory {
          * methods representing the name of headers.
          */
         private static final CoAPHeaderNameBuilder INSTANCE = new CoAPHeaderNameBuilder();
+
+        /**
+         * The CoAP ETag for the response.
+         * 
+         * The option is a: {@code byte[]} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code CoapETag}.
+         */
+        public String coapETag() {
+            return "CoapETag";
+        }
+
+        /**
+         * The CoAP Max-Age for the response body.
+         * 
+         * The option is a: {@code java.lang.Long} type.
+         * 
+         * Group: common
+         * 
+         * @return the name of the header {@code CoapMaxAge}.
+         */
+        public String coapMaxAge() {
+            return "CoapMaxAge";
+        }
 
         /**
          * The request method that the CoAP producer should use when calling the

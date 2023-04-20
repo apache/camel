@@ -27,7 +27,10 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
+
+import javax.net.ssl.SSLContext;
 
 import org.apache.camel.Category;
 import org.apache.camel.Consumer;
@@ -40,7 +43,13 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
+import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapServer;
+import org.eclipse.californium.core.network.CoapEndpoint;
+import org.eclipse.californium.core.network.config.NetworkConfig;
+import org.eclipse.californium.core.server.resources.Resource;
+import org.eclipse.californium.elements.tcp.netty.TcpClientConnector;
+import org.eclipse.californium.elements.tcp.netty.TlsClientConnector;
 import org.eclipse.californium.scandium.DTLSConnector;
 import org.eclipse.californium.scandium.config.DtlsConnectorConfig;
 import org.eclipse.californium.scandium.dtls.CertificateType;
@@ -76,6 +85,12 @@ public class CoAPEndpoint extends DefaultEndpoint {
     private SSLContextParameters sslContextParameters;
     @UriParam(label = "security", defaultValue = "true")
     private boolean recommendedCipherSuitesOnly = true;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean observe;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private boolean observable;
+    @UriParam(label = "producer", defaultValue = "false")
+    private boolean notify;
 
     private CoAPComponent component;
 
@@ -103,12 +118,21 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new CoAPProducer(this);
+        if (isNotify()) {
+            return new CoAPNotifier(this);
+        } else {
+            return new CoAPProducer(this);
+        }
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        CoAPConsumer consumer = new CoAPConsumer(this, processor);
+        final Consumer consumer;
+        if (isObserve()) {
+            consumer = new CoAPObserver(this, processor);
+        } else {
+            consumer = new CoAPConsumer(this, processor);
+        }
         configureConsumer(consumer);
         return consumer;
     }
@@ -122,6 +146,23 @@ public class CoAPEndpoint extends DefaultEndpoint {
      */
     public URI getUri() {
         return uri;
+    }
+
+    public CamelCoapResource getCamelCoapResource(String path) throws IOException, GeneralSecurityException {
+        Iterator<String> pathSegments = CoAPHelper.getPathSegmentsFromPath(path).iterator();
+        if (!pathSegments.hasNext()) {
+            return null;
+        }
+
+        Resource current = getCoapServer().getRoot();
+        while (pathSegments.hasNext() && current != null) {
+            current = current.getChild(pathSegments.next());
+        }
+        return (CamelCoapResource) current;
+    }
+
+    public List<String> getPathSegmentsFromURI() {
+        return CoAPHelper.getPathSegmentsFromPath(getUri().getPath());
     }
 
     public CoapServer getCoapServer() throws IOException, GeneralSecurityException {
@@ -148,6 +189,40 @@ public class CoAPEndpoint extends DefaultEndpoint {
      */
     public void setAlias(String alias) {
         this.alias = alias;
+    }
+
+    public boolean isObserve() {
+        return observe;
+    }
+
+    /**
+     * Send an observe request from a source endpoint, based on RFC 7641.
+     */
+    public void setObserve(boolean observe) {
+        this.observe = observe;
+    }
+
+    public boolean isObservable() {
+        return observable;
+    }
+
+    /**
+     * Make CoAP resource observable for source endpoint, based on RFC 7641.
+     */
+    public void setObservable(boolean observable) {
+        this.observable = observable;
+    }
+
+    public boolean isNotify() {
+        return notify;
+    }
+
+    /**
+     * Notify observers that the resource of this URI has changed, based on RFC 7641. Use this flag on a destination
+     * endpoint, with an URI that matches an existing source endpoint URI.
+     */
+    public void setNotify(boolean notify) {
+        this.notify = notify;
     }
 
     /**
@@ -412,5 +487,38 @@ public class CoAPEndpoint extends DefaultEndpoint {
         }
 
         return new DTLSConnector(builder.build());
+    }
+
+    public CoapClient createCoapClient(URI uri) throws IOException, GeneralSecurityException {
+        CoapClient client = new CoapClient(uri);
+
+        // Configure TLS and / or TCP
+        if (CoAPEndpoint.enableDTLS(uri)) {
+            DTLSConnector connector = createDTLSConnector(null, true);
+            CoapEndpoint.Builder coapBuilder = new CoapEndpoint.Builder();
+            coapBuilder.setConnector(connector);
+
+            client.setEndpoint(coapBuilder.build());
+        } else if (CoAPEndpoint.enableTCP(getUri())) {
+            NetworkConfig config = NetworkConfig.createStandardWithoutFile();
+            int tcpThreads = config.getInt(NetworkConfig.Keys.TCP_WORKER_THREADS);
+            int tcpConnectTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECT_TIMEOUT);
+            int tcpIdleTimeout = config.getInt(NetworkConfig.Keys.TCP_CONNECTION_IDLE_TIMEOUT);
+            TcpClientConnector tcpConnector = null;
+
+            // TLS + TCP
+            if (getUri().getScheme().startsWith("coaps")) {
+                SSLContext sslContext = getSslContextParameters().createSSLContext(getCamelContext());
+                tcpConnector = new TlsClientConnector(sslContext, tcpThreads, tcpConnectTimeout, tcpIdleTimeout);
+            } else {
+                tcpConnector = new TcpClientConnector(tcpThreads, tcpConnectTimeout, tcpIdleTimeout);
+            }
+
+            CoapEndpoint.Builder tcpBuilder = new CoapEndpoint.Builder();
+            tcpBuilder.setConnector(tcpConnector);
+
+            client.setEndpoint(tcpBuilder.build());
+        }
+        return client;
     }
 }
