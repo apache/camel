@@ -32,6 +32,14 @@
     <maven.compiler.release>17</maven.compiler.release>
   </properties>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <version>@project.version@</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
       <plugin>
