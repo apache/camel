@@ -16,6 +16,8 @@
  */
 package org.apache.camel.support.builder.xml;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -204,8 +206,10 @@ public class XMLConverterHelper {
     /**
      * Make a Saxon TransformerFactory more JAXP compliant by configuring it to send &lt;xsl:message&gt; output to the
      * ErrorListener.
+     *
+     * @param factory the TransformerFactory
      */
-    private void configureSaxonTransformerFactory(TransformerFactory factory) {
+    public void configureSaxonTransformerFactory(TransformerFactory factory) {
         // check whether we have a Saxon TransformerFactory ("net.sf.saxon" for open source editions (HE / B)
         // and "com.saxonica" for commercial editions (PE / EE / SA))
         Class<?> factoryClass = factory.getClass();
@@ -216,26 +220,53 @@ public class XMLConverterHelper {
             // TransformerFactory's class loader to find Saxon support classes
             ClassLoader loader = factoryClass.getClassLoader();
 
-            // try to find Saxon's MessageWarner class that redirects <xsl:message> to the ErrorListener
-            Class<?> messageWarner = null;
-            try {
-                // Saxon >= 9.3
-                messageWarner = loader.loadClass("net.sf.saxon.serialize.MessageWarner");
-            } catch (ClassNotFoundException cnfe) {
-                try {
-                    // Saxon < 9.3 (including Saxon-B / -SA)
-                    messageWarner = loader.loadClass("net.sf.saxon.event.MessageWarner");
-                } catch (ClassNotFoundException cnfe2) {
-                    LOG.warn("Error loading Saxon's net.sf.saxon.serialize.MessageWarner class from the classpath!"
-                             + " <xsl:message> output will not be redirected to the ErrorListener!");
+            int[] version = retrieveSaxonVersion(loader);
+
+            if (null != version && version[0] < 12) {
+                // try to find Saxon's MessageWarner class that redirects <xsl:message> to the ErrorListener
+                Class<?> messageWarner = null;
+                if (version[0] > 9 || version[0] == 9 && version[1] >= 3) {
+                    try {
+                        messageWarner = loader.loadClass("net.sf.saxon.serialize.MessageWarner");
+                    } catch (ClassNotFoundException e) {
+                        LOG.warn("Error loading Saxon's net.sf.saxon.serialize.MessageWarner class from the classpath!"
+                                 + " <xsl:message> output will not be redirected to the ErrorListener!");
+                    }
+                } else {
+                    try {
+                        // Saxon < 9.3 (including Saxon-B / -SA)
+                        messageWarner = loader.loadClass("net.sf.saxon.event.MessageWarner");
+                    } catch (ClassNotFoundException cnfe2) {
+                        LOG.warn("Error loading Saxon's net.sf.saxon.event.MessageWarner class from the classpath!"
+                                 + " <xsl:message> output will not be redirected to the ErrorListener!");
+                    }
+                }
+
+                if (messageWarner != null) {
+                    // set net.sf.saxon.FeatureKeys.MESSAGE_EMITTER_CLASS
+                    factory.setAttribute("http://saxon.sf.net/feature/messageEmitterClass", messageWarner.getName());
                 }
             }
-
-            if (messageWarner != null) {
-                // set net.sf.saxon.FeatureKeys.MESSAGE_EMITTER_CLASS
-                factory.setAttribute("http://saxon.sf.net/feature/messageEmitterClass", messageWarner.getName());
-            }
         }
+    }
+
+    private int[] retrieveSaxonVersion(ClassLoader loader) {
+        try {
+            final Class<?> versionClass = loader.loadClass("net.sf.saxon.Version");
+            final Method method = versionClass.getDeclaredMethod("getStructuredVersionNumber", int[].class);
+            final Object result = method.invoke(null);
+            return (int[]) result;
+        } catch (ClassNotFoundException e) {
+            LOG.warn("Error loading Saxon's net.sf.saxon.Version class from the classpath!");
+        } catch (InvocationTargetException e) {
+            LOG.warn("Error retrieving Saxon version from net.sf.saxon.Version!");
+        } catch (NoSuchMethodException e) {
+            LOG.warn("Method getStructuredVersionNumber not available on net.sf.saxon.Version!");
+        } catch (IllegalAccessException e) {
+            LOG.warn("Unable to access method getStructuredVersionNumber on net.sf.saxon.Version!");
+        }
+
+        return null;
     }
 
     public Document createDocument() throws ParserConfigurationException {
