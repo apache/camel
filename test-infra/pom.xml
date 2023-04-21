@@ -76,5 +76,6 @@
         <module>camel-test-infra-core</module>
         <module>camel-test-infra-opensearch</module>
         <module>camel-test-infra-smb</module>
+        <module>camel-test-infra-cli</module>
     </modules>
 </project>

@@ -18,26 +18,38 @@
 
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
     <parent>
+        <artifactId>camel-test-infra-parent</artifactId>
         <groupId>org.apache.camel</groupId>
-        <artifactId>dsl</artifactId>
+        <relativePath>../camel-test-infra-parent/pom.xml</relativePath>
         <version>4.4.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
-
-    <artifactId>camel-jbang-parent</artifactId>
-    <packaging>pom</packaging>
-
-    <name>Camel :: JBang :: Parent</name>
-    <description>Camel JBang Modules (parent)</description>
-
-    <modules>
-        <module>camel-jbang-console</module>
-        <module>camel-jbang-core</module>
-        <module>camel-jbang-main</module>
-        <module>camel-jbang-plugin-k</module>
-        <module>camel-jbang-it</module>
-    </modules>
+    
+    <modelVersion>4.0.0</modelVersion>
+    
+    <artifactId>camel-test-infra-cli</artifactId>
+    <name>Camel :: Test Infra :: Cli (Camel JBang)</name>
+    
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-infra-common</artifactId>
+            <version>${project.version}</version>
+            <type>test-jar</type>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>${testcontainers-version}</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
