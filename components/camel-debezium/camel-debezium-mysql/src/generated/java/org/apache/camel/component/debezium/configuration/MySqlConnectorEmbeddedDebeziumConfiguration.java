@@ -46,8 +46,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private String databaseUser;
     @UriParam(label = LABEL_NAME)
     private String datatypePropagateSourceType;
-    @UriParam(label = LABEL_NAME, defaultValue = "false")
-    private boolean sanitizeFieldNames = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "disabled")
+    private String snapshotTablesOrderByRowCount = "disabled";
     @UriParam(label = LABEL_NAME)
     private String gtidSourceExcludes;
     @UriParam(label = LABEL_NAME)
@@ -103,6 +103,8 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     private long snapshotDelayMs = 0;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean provideTransactionMetadata = false;
+    @UriParam(label = LABEL_NAME, defaultValue = "true")
+    private boolean schemaHistoryInternalStoreOnlyCapturedDatabasesDdl = true;
     @UriParam(label = LABEL_NAME, defaultValue = "false")
     private boolean schemaHistoryInternalStoreOnlyCapturedTablesDdl = false;
     @UriParam(label = LABEL_NAME)
@@ -403,14 +405,18 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
     }
 
     /**
-     * Whether field names will be sanitized to Avro naming conventions
+     * Controls the order in which tables are processed in the initial snapshot.
+     * A `descending` value will order the tables by row count descending. A
+     * `ascending` value will order the tables by row count ascending. A value
+     * of `disabled` (the default) will disable ordering by row count.
      */
-    public void setSanitizeFieldNames(boolean sanitizeFieldNames) {
-        this.sanitizeFieldNames = sanitizeFieldNames;
+    public void setSnapshotTablesOrderByRowCount(
+            String snapshotTablesOrderByRowCount) {
+        this.snapshotTablesOrderByRowCount = snapshotTablesOrderByRowCount;
     }
 
-    public boolean isSanitizeFieldNames() {
-        return sanitizeFieldNames;
+    public String getSnapshotTablesOrderByRowCount() {
+        return snapshotTablesOrderByRowCount;
     }
 
     /**
@@ -785,6 +791,21 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
 
     /**
      * Controls what DDL will Debezium store in database schema history. By
+     * default (true) only DDL that manipulates a table from captured
+     * schema/database will be stored. If set to false, then Debezium will store
+     * all incoming DDL statements.
+     */
+    public void setSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl(
+            boolean schemaHistoryInternalStoreOnlyCapturedDatabasesDdl) {
+        this.schemaHistoryInternalStoreOnlyCapturedDatabasesDdl = schemaHistoryInternalStoreOnlyCapturedDatabasesDdl;
+    }
+
+    public boolean isSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl() {
+        return schemaHistoryInternalStoreOnlyCapturedDatabasesDdl;
+    }
+
+    /**
+     * Controls what DDL will Debezium store in database schema history. By
      * default (false) Debezium will store all incoming DDL statements. If set
      * to true, then only DDL that manipulates a captured table will be stored.
      */
@@ -1135,7 +1156,10 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
      * Specify how schema names should be adjusted for compatibility with the
      * message converter used by the connector, including: 'avro' replaces the
      * characters that cannot be used in the Avro type name with underscore;
-     * 'none' does not apply any adjustment (default)
+     * 'avro_unicode' replaces the underscore or characters that cannot be used
+     * in the Avro type name with corresponding unicode like _uxxxx. Note: _ is
+     * an escape sequence like backslash in Java;'none' does not apply any
+     * adjustment (default)
      */
     public void setSchemaNameAdjustmentMode(String schemaNameAdjustmentMode) {
         this.schemaNameAdjustmentMode = schemaNameAdjustmentMode;
@@ -1231,7 +1255,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "snapshot.lock.timeout.ms", snapshotLockTimeoutMs);
         addPropertyIfNotNull(configBuilder, "database.user", databaseUser);
         addPropertyIfNotNull(configBuilder, "datatype.propagate.source.type", datatypePropagateSourceType);
-        addPropertyIfNotNull(configBuilder, "sanitize.field.names", sanitizeFieldNames);
+        addPropertyIfNotNull(configBuilder, "snapshot.tables.order.by.row.count", snapshotTablesOrderByRowCount);
         addPropertyIfNotNull(configBuilder, "gtid.source.excludes", gtidSourceExcludes);
         addPropertyIfNotNull(configBuilder, "snapshot.select.statement.overrides", snapshotSelectStatementOverrides);
         addPropertyIfNotNull(configBuilder, "database.ssl.keystore", databaseSslKeystore);
@@ -1259,6 +1283,7 @@ public class MySqlConnectorEmbeddedDebeziumConfiguration
         addPropertyIfNotNull(configBuilder, "retriable.restart.connector.wait.ms", retriableRestartConnectorWaitMs);
         addPropertyIfNotNull(configBuilder, "snapshot.delay.ms", snapshotDelayMs);
         addPropertyIfNotNull(configBuilder, "provide.transaction.metadata", provideTransactionMetadata);
+        addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.databases.ddl", schemaHistoryInternalStoreOnlyCapturedDatabasesDdl);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.store.only.captured.tables.ddl", schemaHistoryInternalStoreOnlyCapturedTablesDdl);
         addPropertyIfNotNull(configBuilder, "schema.history.internal.file.filename", schemaHistoryInternalFileFilename);
         addPropertyIfNotNull(configBuilder, "tombstones.on.delete", tombstonesOnDelete);

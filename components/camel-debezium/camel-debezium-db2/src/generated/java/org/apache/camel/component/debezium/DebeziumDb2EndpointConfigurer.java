@@ -96,14 +96,14 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "queryFetchSize": target.getConfiguration().setQueryFetchSize(property(camelContext, int.class, value)); return true;
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": target.getConfiguration().setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "sanitizefieldnames":
-        case "sanitizeFieldNames": target.getConfiguration().setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
         case "schemahistoryinternal":
         case "schemaHistoryInternal": target.getConfiguration().setSchemaHistoryInternal(property(camelContext, java.lang.String.class, value)); return true;
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": target.getConfiguration().setSchemaHistoryInternalFileFilename(property(camelContext, java.lang.String.class, value)); return true;
         case "schemahistoryinternalskipunparseableddl":
         case "schemaHistoryInternalSkipUnparseableDdl": target.getConfiguration().setSchemaHistoryInternalSkipUnparseableDdl(property(camelContext, boolean.class, value)); return true;
+        case "schemahistoryinternalstoreonlycaptureddatabasesddl":
+        case "schemaHistoryInternalStoreOnlyCapturedDatabasesDdl": target.getConfiguration().setSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl(property(camelContext, boolean.class, value)); return true;
         case "schemahistoryinternalstoreonlycapturedtablesddl":
         case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": target.getConfiguration().setSchemaHistoryInternalStoreOnlyCapturedTablesDdl(property(camelContext, boolean.class, value)); return true;
         case "schemanameadjustmentmode":
@@ -124,6 +124,8 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "snapshotMode": target.getConfiguration().setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": target.getConfiguration().setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshottablesorderbyrowcount":
+        case "snapshotTablesOrderByRowCount": target.getConfiguration().setSnapshotTablesOrderByRowCount(property(camelContext, java.lang.String.class, value)); return true;
         case "tableexcludelist":
         case "tableExcludeList": target.getConfiguration().setTableExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "tableignorebuiltin":
@@ -220,14 +222,14 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "queryFetchSize": return int.class;
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": return long.class;
-        case "sanitizefieldnames":
-        case "sanitizeFieldNames": return boolean.class;
         case "schemahistoryinternal":
         case "schemaHistoryInternal": return java.lang.String.class;
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": return java.lang.String.class;
         case "schemahistoryinternalskipunparseableddl":
         case "schemaHistoryInternalSkipUnparseableDdl": return boolean.class;
+        case "schemahistoryinternalstoreonlycaptureddatabasesddl":
+        case "schemaHistoryInternalStoreOnlyCapturedDatabasesDdl": return boolean.class;
         case "schemahistoryinternalstoreonlycapturedtablesddl":
         case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": return boolean.class;
         case "schemanameadjustmentmode":
@@ -248,6 +250,8 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "snapshotMode": return java.lang.String.class;
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": return java.lang.String.class;
+        case "snapshottablesorderbyrowcount":
+        case "snapshotTablesOrderByRowCount": return java.lang.String.class;
         case "tableexcludelist":
         case "tableExcludeList": return java.lang.String.class;
         case "tableignorebuiltin":
@@ -345,14 +349,14 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "queryFetchSize": return target.getConfiguration().getQueryFetchSize();
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": return target.getConfiguration().getRetriableRestartConnectorWaitMs();
-        case "sanitizefieldnames":
-        case "sanitizeFieldNames": return target.getConfiguration().isSanitizeFieldNames();
         case "schemahistoryinternal":
         case "schemaHistoryInternal": return target.getConfiguration().getSchemaHistoryInternal();
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": return target.getConfiguration().getSchemaHistoryInternalFileFilename();
         case "schemahistoryinternalskipunparseableddl":
         case "schemaHistoryInternalSkipUnparseableDdl": return target.getConfiguration().isSchemaHistoryInternalSkipUnparseableDdl();
+        case "schemahistoryinternalstoreonlycaptureddatabasesddl":
+        case "schemaHistoryInternalStoreOnlyCapturedDatabasesDdl": return target.getConfiguration().isSchemaHistoryInternalStoreOnlyCapturedDatabasesDdl();
         case "schemahistoryinternalstoreonlycapturedtablesddl":
         case "schemaHistoryInternalStoreOnlyCapturedTablesDdl": return target.getConfiguration().isSchemaHistoryInternalStoreOnlyCapturedTablesDdl();
         case "schemanameadjustmentmode":
@@ -373,6 +377,8 @@ public class DebeziumDb2EndpointConfigurer extends PropertyConfigurerSupport imp
         case "snapshotMode": return target.getConfiguration().getSnapshotMode();
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": return target.getConfiguration().getSnapshotSelectStatementOverrides();
+        case "snapshottablesorderbyrowcount":
+        case "snapshotTablesOrderByRowCount": return target.getConfiguration().getSnapshotTablesOrderByRowCount();
         case "tableexcludelist":
         case "tableExcludeList": return target.getConfiguration().getTableExcludeList();
         case "tableignorebuiltin":

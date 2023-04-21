@@ -140,8 +140,6 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "queryFetchSize": getOrCreateConfiguration(target).setQueryFetchSize(property(camelContext, int.class, value)); return true;
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": getOrCreateConfiguration(target).setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "sanitizefieldnames":
-        case "sanitizeFieldNames": getOrCreateConfiguration(target).setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
         case "schemaexcludelist":
         case "schemaExcludeList": getOrCreateConfiguration(target).setSchemaExcludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "schemahistoryinternalfilefilename":
@@ -182,6 +180,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "snapshotMode": getOrCreateConfiguration(target).setSnapshotMode(property(camelContext, java.lang.String.class, value)); return true;
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": getOrCreateConfiguration(target).setSnapshotSelectStatementOverrides(property(camelContext, java.lang.String.class, value)); return true;
+        case "snapshottablesorderbyrowcount":
+        case "snapshotTablesOrderByRowCount": getOrCreateConfiguration(target).setSnapshotTablesOrderByRowCount(property(camelContext, java.lang.String.class, value)); return true;
         case "statusupdateintervalms":
         case "statusUpdateIntervalMs": getOrCreateConfiguration(target).setStatusUpdateIntervalMs(property(camelContext, int.class, value)); return true;
         case "tableexcludelist":
@@ -321,8 +321,6 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "queryFetchSize": return int.class;
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": return long.class;
-        case "sanitizefieldnames":
-        case "sanitizeFieldNames": return boolean.class;
         case "schemaexcludelist":
         case "schemaExcludeList": return java.lang.String.class;
         case "schemahistoryinternalfilefilename":
@@ -363,6 +361,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "snapshotMode": return java.lang.String.class;
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": return java.lang.String.class;
+        case "snapshottablesorderbyrowcount":
+        case "snapshotTablesOrderByRowCount": return java.lang.String.class;
         case "statusupdateintervalms":
         case "statusUpdateIntervalMs": return int.class;
         case "tableexcludelist":
@@ -503,8 +503,6 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "queryFetchSize": return getOrCreateConfiguration(target).getQueryFetchSize();
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": return getOrCreateConfiguration(target).getRetriableRestartConnectorWaitMs();
-        case "sanitizefieldnames":
-        case "sanitizeFieldNames": return getOrCreateConfiguration(target).isSanitizeFieldNames();
         case "schemaexcludelist":
         case "schemaExcludeList": return getOrCreateConfiguration(target).getSchemaExcludeList();
         case "schemahistoryinternalfilefilename":
@@ -545,6 +543,8 @@ public class DebeziumPostgresComponentConfigurer extends PropertyConfigurerSuppo
         case "snapshotMode": return getOrCreateConfiguration(target).getSnapshotMode();
         case "snapshotselectstatementoverrides":
         case "snapshotSelectStatementOverrides": return getOrCreateConfiguration(target).getSnapshotSelectStatementOverrides();
+        case "snapshottablesorderbyrowcount":
+        case "snapshotTablesOrderByRowCount": return getOrCreateConfiguration(target).getSnapshotTablesOrderByRowCount();
         case "statusupdateintervalms":
         case "statusUpdateIntervalMs": return getOrCreateConfiguration(target).getStatusUpdateIntervalMs();
         case "tableexcludelist":

@@ -21,7 +21,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(96);
+        Set<String> props = new HashSet<>(97);
         props.add("additionalProperties");
         props.add("binaryHandlingMode");
         props.add("bridgeErrorHandler");
@@ -94,10 +94,10 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("queryFetchSize");
         props.add("racNodes");
         props.add("retriableRestartConnectorWaitMs");
-        props.add("sanitizeFieldNames");
         props.add("schemaHistoryInternal");
         props.add("schemaHistoryInternalFileFilename");
         props.add("schemaHistoryInternalSkipUnparseableDdl");
+        props.add("schemaHistoryInternalStoreOnlyCapturedDatabasesDdl");
         props.add("schemaHistoryInternalStoreOnlyCapturedTablesDdl");
         props.add("schemaNameAdjustmentMode");
         props.add("signalDataCollection");
@@ -111,6 +111,7 @@ public class DebeziumOracleEndpointUriFactory extends org.apache.camel.support.c
         props.add("snapshotMaxThreads");
         props.add("snapshotMode");
         props.add("snapshotSelectStatementOverrides");
+        props.add("snapshotTablesOrderByRowCount");
         props.add("tableExcludeList");
         props.add("tableIncludeList");
         props.add("timePrecisionMode");

@@ -21,7 +21,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(90);
+        Set<String> props = new HashSet<>(91);
         props.add("additionalProperties");
         props.add("bigintUnsignedHandlingMode");
         props.add("binaryHandlingMode");
@@ -88,10 +88,10 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("provideTransactionMetadata");
         props.add("queryFetchSize");
         props.add("retriableRestartConnectorWaitMs");
-        props.add("sanitizeFieldNames");
         props.add("schemaHistoryInternal");
         props.add("schemaHistoryInternalFileFilename");
         props.add("schemaHistoryInternalSkipUnparseableDdl");
+        props.add("schemaHistoryInternalStoreOnlyCapturedDatabasesDdl");
         props.add("schemaHistoryInternalStoreOnlyCapturedTablesDdl");
         props.add("schemaNameAdjustmentMode");
         props.add("signalDataCollection");
@@ -105,6 +105,7 @@ public class DebeziumMySqlEndpointUriFactory extends org.apache.camel.support.co
         props.add("snapshotMode");
         props.add("snapshotNewTables");
         props.add("snapshotSelectStatementOverrides");
+        props.add("snapshotTablesOrderByRowCount");
         props.add("tableExcludeList");
         props.add("tableIgnoreBuiltin");
         props.add("tableIncludeList");

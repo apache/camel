@@ -41,12 +41,6 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "collectionincludelist":
         case "collectionIncludeList": getOrCreateConfiguration(target).setCollectionIncludeList(property(camelContext, java.lang.String.class, value)); return true;
         case "configuration": target.setConfiguration(property(camelContext, org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration.class, value)); return true;
-        case "connectbackoffinitialdelayms":
-        case "connectBackoffInitialDelayMs": getOrCreateConfiguration(target).setConnectBackoffInitialDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "connectbackoffmaxdelayms":
-        case "connectBackoffMaxDelayMs": getOrCreateConfiguration(target).setConnectBackoffMaxDelayMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "connectmaxattempts":
-        case "connectMaxAttempts": getOrCreateConfiguration(target).setConnectMaxAttempts(property(camelContext, int.class, value)); return true;
         case "converters": getOrCreateConfiguration(target).setConverters(property(camelContext, java.lang.String.class, value)); return true;
         case "cursormaxawaittimems":
         case "cursorMaxAwaitTimeMs": getOrCreateConfiguration(target).setCursorMaxAwaitTimeMs(property(camelContext, int.class, value)); return true;
@@ -78,14 +72,12 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "mongodbAuthsource": getOrCreateConfiguration(target).setMongodbAuthsource(property(camelContext, java.lang.String.class, value)); return true;
         case "mongodbconnecttimeoutms":
         case "mongodbConnectTimeoutMs": getOrCreateConfiguration(target).setMongodbConnectTimeoutMs(property(camelContext, int.class, value)); return true;
+        case "mongodbconnectionmode":
+        case "mongodbConnectionMode": getOrCreateConfiguration(target).setMongodbConnectionMode(property(camelContext, java.lang.String.class, value)); return true;
         case "mongodbconnectionstring":
         case "mongodbConnectionString": getOrCreateConfiguration(target).setMongodbConnectionString(property(camelContext, java.lang.String.class, value)); return true;
         case "mongodbheartbeatfrequencyms":
         case "mongodbHeartbeatFrequencyMs": getOrCreateConfiguration(target).setMongodbHeartbeatFrequencyMs(property(camelContext, int.class, value)); return true;
-        case "mongodbhosts":
-        case "mongodbHosts": getOrCreateConfiguration(target).setMongodbHosts(property(camelContext, java.lang.String.class, value)); return true;
-        case "mongodbmembersautodiscover":
-        case "mongodbMembersAutoDiscover": getOrCreateConfiguration(target).setMongodbMembersAutoDiscover(property(camelContext, boolean.class, value)); return true;
         case "mongodbpassword":
         case "mongodbPassword": getOrCreateConfiguration(target).setMongodbPassword(property(camelContext, java.lang.String.class, value)); return true;
         case "mongodbpollintervalms":
@@ -124,8 +116,6 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "queryFetchSize": getOrCreateConfiguration(target).setQueryFetchSize(property(camelContext, int.class, value)); return true;
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": getOrCreateConfiguration(target).setRetriableRestartConnectorWaitMs(property(camelContext, java.time.Duration.class, value).toMillis()); return true;
-        case "sanitizefieldnames":
-        case "sanitizeFieldNames": getOrCreateConfiguration(target).setSanitizeFieldNames(property(camelContext, boolean.class, value)); return true;
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": getOrCreateConfiguration(target).setSchemaHistoryInternalFileFilename(property(camelContext, java.lang.String.class, value)); return true;
         case "schemanameadjustmentmode":
@@ -172,12 +162,6 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "collectionincludelist":
         case "collectionIncludeList": return java.lang.String.class;
         case "configuration": return org.apache.camel.component.debezium.configuration.MongoDbConnectorEmbeddedDebeziumConfiguration.class;
-        case "connectbackoffinitialdelayms":
-        case "connectBackoffInitialDelayMs": return long.class;
-        case "connectbackoffmaxdelayms":
-        case "connectBackoffMaxDelayMs": return long.class;
-        case "connectmaxattempts":
-        case "connectMaxAttempts": return int.class;
         case "converters": return java.lang.String.class;
         case "cursormaxawaittimems":
         case "cursorMaxAwaitTimeMs": return int.class;
@@ -209,14 +193,12 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "mongodbAuthsource": return java.lang.String.class;
         case "mongodbconnecttimeoutms":
         case "mongodbConnectTimeoutMs": return int.class;
+        case "mongodbconnectionmode":
+        case "mongodbConnectionMode": return java.lang.String.class;
         case "mongodbconnectionstring":
         case "mongodbConnectionString": return java.lang.String.class;
         case "mongodbheartbeatfrequencyms":
         case "mongodbHeartbeatFrequencyMs": return int.class;
-        case "mongodbhosts":
-        case "mongodbHosts": return java.lang.String.class;
-        case "mongodbmembersautodiscover":
-        case "mongodbMembersAutoDiscover": return boolean.class;
         case "mongodbpassword":
         case "mongodbPassword": return java.lang.String.class;
         case "mongodbpollintervalms":
@@ -255,8 +237,6 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "queryFetchSize": return int.class;
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": return long.class;
-        case "sanitizefieldnames":
-        case "sanitizeFieldNames": return boolean.class;
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": return java.lang.String.class;
         case "schemanameadjustmentmode":
@@ -304,12 +284,6 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "collectionincludelist":
         case "collectionIncludeList": return getOrCreateConfiguration(target).getCollectionIncludeList();
         case "configuration": return target.getConfiguration();
-        case "connectbackoffinitialdelayms":
-        case "connectBackoffInitialDelayMs": return getOrCreateConfiguration(target).getConnectBackoffInitialDelayMs();
-        case "connectbackoffmaxdelayms":
-        case "connectBackoffMaxDelayMs": return getOrCreateConfiguration(target).getConnectBackoffMaxDelayMs();
-        case "connectmaxattempts":
-        case "connectMaxAttempts": return getOrCreateConfiguration(target).getConnectMaxAttempts();
         case "converters": return getOrCreateConfiguration(target).getConverters();
         case "cursormaxawaittimems":
         case "cursorMaxAwaitTimeMs": return getOrCreateConfiguration(target).getCursorMaxAwaitTimeMs();
@@ -341,14 +315,12 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "mongodbAuthsource": return getOrCreateConfiguration(target).getMongodbAuthsource();
         case "mongodbconnecttimeoutms":
         case "mongodbConnectTimeoutMs": return getOrCreateConfiguration(target).getMongodbConnectTimeoutMs();
+        case "mongodbconnectionmode":
+        case "mongodbConnectionMode": return getOrCreateConfiguration(target).getMongodbConnectionMode();
         case "mongodbconnectionstring":
         case "mongodbConnectionString": return getOrCreateConfiguration(target).getMongodbConnectionString();
         case "mongodbheartbeatfrequencyms":
         case "mongodbHeartbeatFrequencyMs": return getOrCreateConfiguration(target).getMongodbHeartbeatFrequencyMs();
-        case "mongodbhosts":
-        case "mongodbHosts": return getOrCreateConfiguration(target).getMongodbHosts();
-        case "mongodbmembersautodiscover":
-        case "mongodbMembersAutoDiscover": return getOrCreateConfiguration(target).isMongodbMembersAutoDiscover();
         case "mongodbpassword":
         case "mongodbPassword": return getOrCreateConfiguration(target).getMongodbPassword();
         case "mongodbpollintervalms":
@@ -387,8 +359,6 @@ public class DebeziumMongodbComponentConfigurer extends PropertyConfigurerSuppor
         case "queryFetchSize": return getOrCreateConfiguration(target).getQueryFetchSize();
         case "retriablerestartconnectorwaitms":
         case "retriableRestartConnectorWaitMs": return getOrCreateConfiguration(target).getRetriableRestartConnectorWaitMs();
-        case "sanitizefieldnames":
-        case "sanitizeFieldNames": return getOrCreateConfiguration(target).isSanitizeFieldNames();
         case "schemahistoryinternalfilefilename":
         case "schemaHistoryInternalFileFilename": return getOrCreateConfiguration(target).getSchemaHistoryInternalFileFilename();
         case "schemanameadjustmentmode":

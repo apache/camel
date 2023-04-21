@@ -33,7 +33,7 @@ public class DebeziumMongodbComponentTest {
     void testIfConnectorEndpointCreatedWithConfig() throws Exception {
         final Map<String, Object> params = new HashMap<>();
         params.put("offsetStorageFileName", "/offset_test_file");
-        params.put("mongodbHosts", "localhost");
+        params.put("mongodbConnectionString", "mongodb://localhost:27017/?replicaSet=rs0");
         params.put("mongodbUser", "dbz");
         params.put("mongodbPassword", "pwd");
         params.put("topicPrefix", "test");
@@ -55,7 +55,7 @@ public class DebeziumMongodbComponentTest {
                     = (MongoDbConnectorEmbeddedDebeziumConfiguration) debeziumEndpoint.getConfiguration();
             assertEquals("test_name", configuration.getName());
             assertEquals("/offset_test_file", configuration.getOffsetStorageFileName());
-            assertEquals("localhost", configuration.getMongodbHosts());
+            assertEquals("mongodb://localhost:27017/?replicaSet=rs0", configuration.getMongodbConnectionString());
             assertEquals("dbz", configuration.getMongodbUser());
             assertEquals("pwd", configuration.getMongodbPassword());
             assertEquals("test", configuration.getTopicPrefix());

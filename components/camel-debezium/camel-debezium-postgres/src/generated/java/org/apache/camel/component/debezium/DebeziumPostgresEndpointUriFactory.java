@@ -80,7 +80,6 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("publicationName");
         props.add("queryFetchSize");
         props.add("retriableRestartConnectorWaitMs");
-        props.add("sanitizeFieldNames");
         props.add("schemaExcludeList");
         props.add("schemaHistoryInternalFileFilename");
         props.add("schemaIncludeList");
@@ -101,6 +100,7 @@ public class DebeziumPostgresEndpointUriFactory extends org.apache.camel.support
         props.add("snapshotMaxThreads");
         props.add("snapshotMode");
         props.add("snapshotSelectStatementOverrides");
+        props.add("snapshotTablesOrderByRowCount");
         props.add("statusUpdateIntervalMs");
         props.add("tableExcludeList");
         props.add("tableIgnoreBuiltin");
