@@ -1950,9 +1950,6 @@ The follow options related to _exporting_, can be configured in `application.pro
 |`camel.jbang.javaVersion`
 |Java version (11 or 17)
 
-|`camel.jbang.camelVersion`
-|The Camel version
-
 |`camel.jbang.kameletsVersion`
 |Apache Camel Kamelets version
 

@@ -600,7 +600,6 @@ public class Run extends CamelCommand {
             openapi = answer.getProperty("camel.jbang.open-api", openapi);
             download = "true".equals(answer.getProperty("camel.jbang.download", download ? "true" : "false"));
             background = "true".equals(answer.getProperty("camel.jbang.background", background ? "true" : "false"));
-            camelVersion = answer.getProperty("camel.jbang.camel-version", camelVersion);
         }
         return answer;
     }
