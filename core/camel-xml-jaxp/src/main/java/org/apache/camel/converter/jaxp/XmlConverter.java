@@ -27,6 +27,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -597,8 +599,7 @@ public class XmlConverter {
         if (node instanceof Document) {
             return (Document) node;
             // If the node is an element
-        } else if (node instanceof Element) {
-            Element elem = (Element) node;
+        } else if (node instanceof Element elem) {
             // If this is the root element, return its owner document
             if (elem.getOwnerDocument().getDocumentElement() == elem) {
                 return elem.getOwnerDocument();
@@ -687,10 +688,9 @@ public class XmlConverter {
     public Document toDOMDocument(InputStream in, Exchange exchange)
             throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder documentBuilder = createDocumentBuilder(getDocumentBuilderFactory(exchange));
-        if (in instanceof IOHelper.EncodingInputStream) {
+        if (in instanceof IOHelper.EncodingInputStream encIn) {
             // DocumentBuilder detects encoding from XML declaration, so we need to
             // revert the converted encoding for the input stream
-            IOHelper.EncodingInputStream encIn = (IOHelper.EncodingInputStream) in;
             return documentBuilder.parse(encIn.toOriginalInputStream());
         } else {
             return documentBuilder.parse(in);
@@ -1088,26 +1088,54 @@ public class XmlConverter {
             // TransformerFactory's class loader to find Saxon support classes
             ClassLoader loader = factoryClass.getClassLoader();
 
-            // try to find Saxon's MessageWarner class that redirects <xsl:message> to the ErrorListener
-            Class<?> messageWarner = null;
-            try {
-                // Saxon >= 9.3
-                messageWarner = loader.loadClass("net.sf.saxon.serialize.MessageWarner");
-            } catch (ClassNotFoundException cnfe) {
-                try {
-                    // Saxon < 9.3 (including Saxon-B / -SA)
-                    messageWarner = loader.loadClass("net.sf.saxon.event.MessageWarner");
-                } catch (ClassNotFoundException cnfe2) {
-                    LOG.warn("Error loading Saxon's net.sf.saxon.serialize.MessageWarner class from the classpath!"
-                             + " <xsl:message> output will not be redirected to the ErrorListener!");
+            int[] version = retrieveSaxonVersion(loader);
+
+            if (null != version && version[0] < 11) {
+                // try to find Saxon's MessageWarner class that redirects <xsl:message> to the ErrorListener
+                Class<?> messageWarner = null;
+                // Saxon [9.3, 11]
+                if (version[0] > 9 || (version[0] == 9 && version[1] >= 3)) {
+                    try {
+                        messageWarner = loader.loadClass("net.sf.saxon.serialize.MessageWarner");
+                    } catch (ClassNotFoundException e) {
+                        LOG.warn("Error loading Saxon's net.sf.saxon.serialize.MessageWarner class from the classpath!"
+                                 + " <xsl:message> output will not be redirected to the ErrorListener!");
+                    }
+                } else {
+                    try {
+                        // Saxon < 9.3 (including Saxon-B / -SA)
+                        messageWarner = loader.loadClass("net.sf.saxon.event.MessageWarner");
+                    } catch (ClassNotFoundException cnfe2) {
+                        LOG.warn("Error loading Saxon's net.sf.saxon.event.MessageWarner class from the classpath!"
+                                 + " <xsl:message> output will not be redirected to the ErrorListener!");
+                    }
+                }
+
+                if (messageWarner != null) {
+                    // set net.sf.saxon.FeatureKeys.MESSAGE_EMITTER_CLASS
+                    factory.setAttribute("http://saxon.sf.net/feature/messageEmitterClass", messageWarner.getName());
                 }
             }
-
-            if (messageWarner != null) {
-                // set net.sf.saxon.FeatureKeys.MESSAGE_EMITTER_CLASS
-                factory.setAttribute("http://saxon.sf.net/feature/messageEmitterClass", messageWarner.getName());
-            }
         }
+    }
+
+    private int[] retrieveSaxonVersion(ClassLoader loader) {
+        try {
+            final Class<?> versionClass = loader.loadClass("net.sf.saxon.Version");
+            final Method method = versionClass.getDeclaredMethod("getStructuredVersionNumber", int[].class);
+            final Object result = method.invoke(null);
+            return (int[]) result;
+        } catch (ClassNotFoundException e) {
+            LOG.warn("Error loading Saxon's net.sf.saxon.Version class from the classpath!");
+        } catch (InvocationTargetException e) {
+            LOG.warn("Error retrieving Saxon version from net.sf.saxon.Version!");
+        } catch (NoSuchMethodException e) {
+            LOG.warn("Method getStructuredVersionNumber not available on net.sf.saxon.Version!");
+        } catch (IllegalAccessException e) {
+            LOG.warn("Unable to access method getStructuredVersionNumber on net.sf.saxon.Version!");
+        }
+
+        return null;
     }
 
     public SAXParserFactory createSAXParserFactory() {
