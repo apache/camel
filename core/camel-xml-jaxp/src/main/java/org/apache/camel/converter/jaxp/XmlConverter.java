@@ -1094,7 +1094,7 @@ public class XmlConverter {
                 // try to find Saxon's MessageWarner class that redirects <xsl:message> to the ErrorListener
                 Class<?> messageWarner = null;
                 // Saxon [9.3, 11]
-                if (version[0] > 9 || (version[0] == 9 && version[1] >= 3)) {
+                if (version[0] > 9 || version[0] == 9 && version[1] >= 3) {
                     try {
                         messageWarner = loader.loadClass("net.sf.saxon.serialize.MessageWarner");
                     } catch (ClassNotFoundException e) {
