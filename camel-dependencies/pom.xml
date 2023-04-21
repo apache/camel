@@ -352,7 +352,7 @@
     <jsmpp-version>2.3.11</jsmpp-version>
     <json-api>1.0</json-api>
     <json-patch-version>1.13</json-patch-version>
-    <json-path-version>2.6.0</json-path-version>
+    <json-path-version>2.8.0</json-path-version>
     <json-schema-validator-version>2.2.14</json-schema-validator-version>
     <json-simple-version>1.1.1</json-simple-version>
     <jsonassert-version>1.5.1</jsonassert-version>
