@@ -115,7 +115,7 @@
         <consul-client-version>1.5.3</consul-client-version>
         <cobertura-maven-plugin-version>2.7</cobertura-maven-plugin-version>
         <corda-version>4.10</corda-version>
-        <couchbase-client-version>3.4.3</couchbase-client-version>
+        <couchbase-client-version>3.4.5</couchbase-client-version>
         <curator-version>5.4.0</curator-version>
         <cxf-version>4.0.0</cxf-version>
         <cxf-codegen-plugin-version>4.0.0</cxf-codegen-plugin-version>
@@ -331,7 +331,7 @@
         <!-- virtual dependency only used by Eclipse m2e -->
         <lifecycle-mapping-version>1.0.0</lifecycle-mapping-version>
         <log4j2-version>2.20.0</log4j2-version>
-        <logback-version>1.4.5</logback-version>
+        <logback-version>1.4.7</logback-version>
         <lucene-version>8.11.2</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
         <mapstruct-version>1.5.3.Final</mapstruct-version>
@@ -384,7 +384,7 @@
         <nessus-hyperledger-aries-version>0.2.0</nessus-hyperledger-aries-version>
         <nessus-weka-version>1.0.1</nessus-weka-version>
         <neoscada-version>0.4.0</neoscada-version>
-        <netty-version>4.1.90.Final</netty-version>
+        <netty-version>4.1.91.Final</netty-version>
         <netty-reactive-streams-version>2.0.5</netty-reactive-streams-version>
         <networknt-json-schema-validator-version>1.0.73</networknt-json-schema-validator-version>
         <nimbus-jose-jwt>9.22</nimbus-jose-jwt>
@@ -476,7 +476,7 @@
         <tika-version>2.7.0</tika-version>
         <twilio-version>9.2.3</twilio-version>
         <twitter4j-version>4.0.7</twitter4j-version>
-        <undertow-version>2.3.4.Final</undertow-version>
+        <undertow-version>2.3.5.Final</undertow-version>
         <univocity-parsers-version>2.9.1</univocity-parsers-version>
         <validation-api-version>2.0.1.Final</validation-api-version>
         <vavr-version>0.10.2</vavr-version>
@@ -503,7 +503,7 @@
         <xmlsec-version>2.2.3</xmlsec-version>
         <xmlunit-version>2.9.1</xmlunit-version>
         <xpp3-version>1.1.4c</xpp3-version>
-        <yasson-version>3.0.2</yasson-version>
+        <yasson-version>3.0.3</yasson-version>
         <yetus-audience-annotations-version>0.13.0</yetus-audience-annotations-version>
         <zendesk-client-version>0.19.0</zendesk-client-version>
         <zookeeper-version>3.8.1</zookeeper-version>
