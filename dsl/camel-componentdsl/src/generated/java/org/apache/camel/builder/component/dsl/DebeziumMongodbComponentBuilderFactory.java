@@ -352,62 +352,6 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * The initial delay when trying to reconnect to a primary after a
-         * connection cannot be made or when no primary is available, given in
-         * milliseconds. Defaults to 1 second (1,000 ms).
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 1s
-         * Group: mongodb
-         * 
-         * @param connectBackoffInitialDelayMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMongodbComponentBuilder connectBackoffInitialDelayMs(
-                long connectBackoffInitialDelayMs) {
-            doSetProperty("connectBackoffInitialDelayMs", connectBackoffInitialDelayMs);
-            return this;
-        }
-        /**
-         * The maximum delay when trying to reconnect to a primary after a
-         * connection cannot be made or when no primary is available, given in
-         * milliseconds. Defaults to 120 second (120,000 ms).
-         * 
-         * The option is a: &lt;code&gt;long&lt;/code&gt; type.
-         * 
-         * Default: 2m
-         * Group: mongodb
-         * 
-         * @param connectBackoffMaxDelayMs the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMongodbComponentBuilder connectBackoffMaxDelayMs(
-                long connectBackoffMaxDelayMs) {
-            doSetProperty("connectBackoffMaxDelayMs", connectBackoffMaxDelayMs);
-            return this;
-        }
-        /**
-         * Maximum number of failed connection attempts to a replica set primary
-         * before an exception occurs and task is aborted. Defaults to 16, which
-         * with the defaults for 'connect.backoff.initial.delay.ms' and
-         * 'connect.backoff.max.delay.ms' results in just over 20 minutes of
-         * attempts before failing.
-         * 
-         * The option is a: &lt;code&gt;int&lt;/code&gt; type.
-         * 
-         * Default: 16
-         * Group: mongodb
-         * 
-         * @param connectMaxAttempts the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMongodbComponentBuilder connectMaxAttempts(
-                int connectMaxAttempts) {
-            doSetProperty("connectMaxAttempts", connectMaxAttempts);
-            return this;
-        }
-        /**
          * Optional list of custom converters that would be used instead of
          * default ones. The converters are defined using '.type' config option
          * and configured using options '.'.
@@ -629,6 +573,25 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
+         * The method used to connect to MongoDB cluster. Options include:
+         * 'replica_set' (the default) to individually connect to each replica
+         * set / shard 'sharded' to connect via single connection obtained from
+         * connection string.
+         * 
+         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
+         * 
+         * Default: replica_set
+         * Group: mongodb
+         * 
+         * @param mongodbConnectionMode the value to set
+         * @return the dsl builder
+         */
+        default DebeziumMongodbComponentBuilder mongodbConnectionMode(
+                java.lang.String mongodbConnectionMode) {
+            doSetProperty("mongodbConnectionMode", mongodbConnectionMode);
+            return this;
+        }
+        /**
          * Database connection string.
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
@@ -675,41 +638,6 @@ public interface DebeziumMongodbComponentBuilderFactory {
         default DebeziumMongodbComponentBuilder mongodbHeartbeatFrequencyMs(
                 int mongodbHeartbeatFrequencyMs) {
             doSetProperty("mongodbHeartbeatFrequencyMs", mongodbHeartbeatFrequencyMs);
-            return this;
-        }
-        /**
-         * The hostname and port pairs (in the form 'host' or 'host:port') of
-         * the MongoDB server(s) in the replica set.
-         * 
-         * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
-         * 
-         * Group: mongodb
-         * 
-         * @param mongodbHosts the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMongodbComponentBuilder mongodbHosts(
-                java.lang.String mongodbHosts) {
-            doSetProperty("mongodbHosts", mongodbHosts);
-            return this;
-        }
-        /**
-         * Specifies whether the addresses in 'hosts' are seeds that should be
-         * used to discover all members of the cluster or replica set ('true'),
-         * or whether the address(es) in 'hosts' should be used as is ('false').
-         * The default is 'true'.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: true
-         * Group: mongodb
-         * 
-         * @param mongodbMembersAutoDiscover the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMongodbComponentBuilder mongodbMembersAutoDiscover(
-                boolean mongodbMembersAutoDiscover) {
-            doSetProperty("mongodbMembersAutoDiscover", mongodbMembersAutoDiscover);
             return this;
         }
         /**
@@ -893,22 +821,6 @@ public interface DebeziumMongodbComponentBuilderFactory {
             return this;
         }
         /**
-         * Whether field names will be sanitized to Avro naming conventions.
-         * 
-         * The option is a: &lt;code&gt;boolean&lt;/code&gt; type.
-         * 
-         * Default: false
-         * Group: mongodb
-         * 
-         * @param sanitizeFieldNames the value to set
-         * @return the dsl builder
-         */
-        default DebeziumMongodbComponentBuilder sanitizeFieldNames(
-                boolean sanitizeFieldNames) {
-            doSetProperty("sanitizeFieldNames", sanitizeFieldNames);
-            return this;
-        }
-        /**
          * The path to the file that will be used to record the database schema
          * history.
          * 
@@ -928,7 +840,10 @@ public interface DebeziumMongodbComponentBuilderFactory {
          * Specify how schema names should be adjusted for compatibility with
          * the message converter used by the connector, including: 'avro'
          * replaces the characters that cannot be used in the Avro type name
-         * with underscore; 'none' does not apply any adjustment (default).
+         * with underscore; 'avro_unicode' replaces the underscore or characters
+         * that cannot be used in the Avro type name with corresponding unicode
+         * like _uxxxx. Note: _ is an escape sequence like backslash in
+         * Java;'none' does not apply any adjustment (default).
          * 
          * The option is a: &lt;code&gt;java.lang.String&lt;/code&gt; type.
          * 
@@ -1180,9 +1095,6 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "captureMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCaptureMode((java.lang.String) value); return true;
             case "collectionExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCollectionExcludeList((java.lang.String) value); return true;
             case "collectionIncludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCollectionIncludeList((java.lang.String) value); return true;
-            case "connectBackoffInitialDelayMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConnectBackoffInitialDelayMs((long) value); return true;
-            case "connectBackoffMaxDelayMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConnectBackoffMaxDelayMs((long) value); return true;
-            case "connectMaxAttempts": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConnectMaxAttempts((int) value); return true;
             case "converters": getOrCreateConfiguration((DebeziumMongodbComponent) component).setConverters((java.lang.String) value); return true;
             case "cursorMaxAwaitTimeMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setCursorMaxAwaitTimeMs((int) value); return true;
             case "databaseExcludeList": getOrCreateConfiguration((DebeziumMongodbComponent) component).setDatabaseExcludeList((java.lang.String) value); return true;
@@ -1196,11 +1108,10 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "maxQueueSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxQueueSize((int) value); return true;
             case "maxQueueSizeInBytes": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMaxQueueSizeInBytes((long) value); return true;
             case "mongodbAuthsource": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbAuthsource((java.lang.String) value); return true;
+            case "mongodbConnectionMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbConnectionMode((java.lang.String) value); return true;
             case "mongodbConnectionString": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbConnectionString((java.lang.String) value); return true;
             case "mongodbConnectTimeoutMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbConnectTimeoutMs((int) value); return true;
             case "mongodbHeartbeatFrequencyMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbHeartbeatFrequencyMs((int) value); return true;
-            case "mongodbHosts": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbHosts((java.lang.String) value); return true;
-            case "mongodbMembersAutoDiscover": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbMembersAutoDiscover((boolean) value); return true;
             case "mongodbPassword": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbPassword((java.lang.String) value); return true;
             case "mongodbPollIntervalMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbPollIntervalMs((long) value); return true;
             case "mongodbServerSelectionTimeoutMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setMongodbServerSelectionTimeoutMs((int) value); return true;
@@ -1212,7 +1123,6 @@ public interface DebeziumMongodbComponentBuilderFactory {
             case "provideTransactionMetadata": getOrCreateConfiguration((DebeziumMongodbComponent) component).setProvideTransactionMetadata((boolean) value); return true;
             case "queryFetchSize": getOrCreateConfiguration((DebeziumMongodbComponent) component).setQueryFetchSize((int) value); return true;
             case "retriableRestartConnectorWaitMs": getOrCreateConfiguration((DebeziumMongodbComponent) component).setRetriableRestartConnectorWaitMs((long) value); return true;
-            case "sanitizeFieldNames": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSanitizeFieldNames((boolean) value); return true;
             case "schemaHistoryInternalFileFilename": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSchemaHistoryInternalFileFilename((java.lang.String) value); return true;
             case "schemaNameAdjustmentMode": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSchemaNameAdjustmentMode((java.lang.String) value); return true;
             case "signalDataCollection": getOrCreateConfiguration((DebeziumMongodbComponent) component).setSignalDataCollection((java.lang.String) value); return true;

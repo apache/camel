@@ -973,12 +973,13 @@ public interface IgniteCacheEndpointBuilderFactory {
         }
 
         /**
-         * This header carries the old cache value when passed in the incoming
-         * cache event.
+         * (producer) The old cache value to be replaced when invoking the
+         * REPLACE operation. (consumer) This header carries the old cache value
+         * when passed in the incoming cache event.
          * 
          * The option is a: {@code Object} type.
          * 
-         * Group: consumer
+         * Group: common
          * 
          * @return the name of the header {@code IgniteCacheOldValue}.
          */
