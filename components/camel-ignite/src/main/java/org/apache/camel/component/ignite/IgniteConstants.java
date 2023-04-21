@@ -55,8 +55,8 @@ public final class IgniteConstants {
                             "It does not allow you to dynamically change the cache against which a producer operation is performed. Use EIPs for that (e.g. recipient list, dynamic router).",
               javaType = "String", applicableFor = SCHEME_CACHE)
     public static final String IGNITE_CACHE_NAME = "CamelIgniteCacheName";
-    @Metadata(label = "consumer",
-              description = "This header carries the old cache value when passed in the incoming cache event.",
+    @Metadata(description = "(producer) The old cache value to be replaced when invoking the REPLACE operation. \n" +
+                            "(consumer) This header carries the old cache value when passed in the incoming cache event.",
               javaType = "Object", applicableFor = SCHEME_CACHE)
     public static final String IGNITE_CACHE_OLD_VALUE = "CamelIgniteCacheOldValue";
 

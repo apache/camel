@@ -85,6 +85,10 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
                 doRebalance(in, out);
                 break;
 
+            case REPLACE:
+                doReplace(in, out);
+                break;
+
             default:
                 break;
         }
@@ -194,6 +198,24 @@ public class IgniteCacheProducer extends DefaultAsyncProducer {
         }
 
         out.setBody(result);
+    }
+
+    private void doReplace(Message in, Message out) {
+        Object cacheKey = in.getHeader(IgniteConstants.IGNITE_CACHE_KEY);
+
+        if (cacheKey == null) {
+            throw new RuntimeCamelException(
+                    "Cache REPLACE operation requires the cache key in the CamelIgniteCacheKey header");
+        }
+
+        Object oldValue = in.getHeader(IgniteConstants.IGNITE_CACHE_OLD_VALUE);
+        if (oldValue == null) {
+            cache.replace(cacheKey, in.getBody());
+        } else {
+            cache.replace(cacheKey, oldValue, in.getBody());
+        }
+
+        IgniteHelper.maybePropagateIncomingBody(endpoint, in, out);
     }
 
     private Object cacheKey(Message msg) {
