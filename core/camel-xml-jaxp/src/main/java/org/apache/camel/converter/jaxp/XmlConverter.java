@@ -1090,7 +1090,7 @@ public class XmlConverter {
 
             int[] version = retrieveSaxonVersion(loader);
 
-            if (null != version && version[0] < 11) {
+            if (null != version && version[0] < 12) {
                 // try to find Saxon's MessageWarner class that redirects <xsl:message> to the ErrorListener
                 Class<?> messageWarner = null;
                 // Saxon [9.3, 11]
