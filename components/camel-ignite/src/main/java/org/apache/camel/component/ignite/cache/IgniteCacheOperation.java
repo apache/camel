@@ -27,6 +27,7 @@ public enum IgniteCacheOperation {
     SIZE,
     REBALANCE,
     QUERY,
-    CLEAR
+    CLEAR,
+    REPLACE,
 
 }
