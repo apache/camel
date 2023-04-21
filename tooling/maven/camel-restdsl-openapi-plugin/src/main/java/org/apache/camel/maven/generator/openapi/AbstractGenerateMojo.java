@@ -224,9 +224,9 @@ abstract class AbstractGenerateMojo extends AbstractMojo {
         configOptions.put("hideGenerationTimestamp", "true");
         elements.add(new MojoExecutor.Element(
                 "configOptions", configOptions.entrySet().stream()
-                    .map(e -> new MojoExecutor.Element(e.getKey(), e.getValue()))
-                    .toArray(MojoExecutor.Element[]::new)));
-        
+                        .map(e -> new MojoExecutor.Element(e.getKey(), e.getValue()))
+                        .toArray(MojoExecutor.Element[]::new)));
+
         executeMojo(
                 plugin(
                         groupId("io.swagger.codegen.v3"),
