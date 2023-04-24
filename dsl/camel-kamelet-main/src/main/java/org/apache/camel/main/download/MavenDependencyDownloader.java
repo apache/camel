@@ -52,9 +52,6 @@ import org.slf4j.LoggerFactory;
 
 public class MavenDependencyDownloader extends ServiceSupport implements DependencyDownloader {
 
-    public static final String MAVEN_CENTRAL_REPO = "https://repo1.maven.org/maven2";
-    public static final String APACHE_SNAPSHOT_REPO = "https://repository.apache.org/snapshots";
-
     private static final String MINIMUM_QUARKUS_VERSION = "2.0.0";
 
     private static final Logger LOG = LoggerFactory.getLogger(MavenDependencyDownloader.class);
