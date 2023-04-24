@@ -71,9 +71,9 @@ public class Sns2Component extends DefaultComponent {
         Sns2Endpoint endpoint = new Sns2Endpoint(uri, this, epConfiguration);
         setProperties(endpoint, nonTransientParameters);
 
-        if (!epConfiguration.isUseDefaultCredentialsProvider() && epConfiguration.getAmazonSNSClient() == null
+        if (!epConfiguration.isUseDefaultCredentialsProvider() && !epConfiguration.isUseProfileCredentialsProvider() && epConfiguration.getAmazonSNSClient() == null
                 && (epConfiguration.getAccessKey() == null || epConfiguration.getSecretKey() == null)) {
-            throw new IllegalArgumentException("AmazonSNSClient or accessKey and secretKey must be specified");
+            throw new IllegalArgumentException("useDefaultCredentialsProvider is set to false, useProfileCredentialsProvider is set to false, AmazonSNSClient or accessKey and secretKey must be specified");
         }
 
         return endpoint;
