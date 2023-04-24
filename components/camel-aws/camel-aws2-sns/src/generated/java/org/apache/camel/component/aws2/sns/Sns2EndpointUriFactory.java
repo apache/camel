@@ -21,7 +21,7 @@ public class Sns2EndpointUriFactory extends org.apache.camel.support.component.E
     private static final Set<String> SECRET_PROPERTY_NAMES;
     private static final Set<String> MULTI_VALUE_PREFIXES;
     static {
-        Set<String> props = new HashSet<>(24);
+        Set<String> props = new HashSet<>(26);
         props.add("accessKey");
         props.add("amazonSNSClient");
         props.add("autoCreateTopic");
@@ -33,6 +33,7 @@ public class Sns2EndpointUriFactory extends org.apache.camel.support.component.E
         props.add("messageStructure");
         props.add("overrideEndpoint");
         props.add("policy");
+        props.add("profileCredentialsName");
         props.add("proxyHost");
         props.add("proxyPort");
         props.add("proxyProtocol");
@@ -46,6 +47,7 @@ public class Sns2EndpointUriFactory extends org.apache.camel.support.component.E
         props.add("trustAllCertificates");
         props.add("uriEndpointOverride");
         props.add("useDefaultCredentialsProvider");
+        props.add("useProfileCredentialsProvider");
         PROPERTY_NAMES = Collections.unmodifiableSet(props);
         Set<String> secretProps = new HashSet<>(2);
         secretProps.add("accessKey");

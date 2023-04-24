@@ -42,6 +42,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "overrideendpoint":
         case "overrideEndpoint": target.getConfiguration().setOverrideEndpoint(property(camelContext, boolean.class, value)); return true;
         case "policy": target.getConfiguration().setPolicy(property(camelContext, java.lang.String.class, value)); return true;
+        case "profilecredentialsname":
+        case "profileCredentialsName": target.getConfiguration().setProfileCredentialsName(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyhost":
         case "proxyHost": target.getConfiguration().setProxyHost(property(camelContext, java.lang.String.class, value)); return true;
         case "proxyport":
@@ -64,6 +66,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "uriEndpointOverride": target.getConfiguration().setUriEndpointOverride(property(camelContext, java.lang.String.class, value)); return true;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": target.getConfiguration().setUseDefaultCredentialsProvider(property(camelContext, boolean.class, value)); return true;
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": target.getConfiguration().setUseProfileCredentialsProvider(property(camelContext, boolean.class, value)); return true;
         default: return false;
         }
     }
@@ -97,6 +101,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "overrideendpoint":
         case "overrideEndpoint": return boolean.class;
         case "policy": return java.lang.String.class;
+        case "profilecredentialsname":
+        case "profileCredentialsName": return java.lang.String.class;
         case "proxyhost":
         case "proxyHost": return java.lang.String.class;
         case "proxyport":
@@ -119,6 +125,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "uriEndpointOverride": return java.lang.String.class;
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return boolean.class;
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": return boolean.class;
         default: return null;
         }
     }
@@ -148,6 +156,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "overrideendpoint":
         case "overrideEndpoint": return target.getConfiguration().isOverrideEndpoint();
         case "policy": return target.getConfiguration().getPolicy();
+        case "profilecredentialsname":
+        case "profileCredentialsName": return target.getConfiguration().getProfileCredentialsName();
         case "proxyhost":
         case "proxyHost": return target.getConfiguration().getProxyHost();
         case "proxyport":
@@ -170,6 +180,8 @@ public class Sns2EndpointConfigurer extends PropertyConfigurerSupport implements
         case "uriEndpointOverride": return target.getConfiguration().getUriEndpointOverride();
         case "usedefaultcredentialsprovider":
         case "useDefaultCredentialsProvider": return target.getConfiguration().isUseDefaultCredentialsProvider();
+        case "useprofilecredentialsprovider":
+        case "useProfileCredentialsProvider": return target.getConfiguration().isUseProfileCredentialsProvider();
         default: return null;
         }
     }
