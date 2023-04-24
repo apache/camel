@@ -48,7 +48,7 @@ public class ZooKeeperContainer extends GenericContainer {
     }
 
     public ZooKeeperContainer(String name, int clientPort) {
-        super(CONTAINER_IMAGE);
+        super(name);
 
         setWaitStrategy(Wait.forListeningPort());
 
