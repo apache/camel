@@ -260,7 +260,7 @@ below:
 | queryParams | Custom query parameters | Map
 |===
 
-In addition to the parameters above, the put/resource API can also use any of the link:#query-parameters[Query Parameters].
+In addition to the parameters above, the put/resource API can also use any of the Query Parameters.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header. The message header name must be of the format CamelDhis2.parameter. The inBody parameter overrides message header, i.e. the endpoint parameter inBody=myParameterNameHere would override a CamelDhis2.myParameterNameHere header.
 
@@ -325,7 +325,7 @@ below:
 | queryParams | Custom query parameters | Map
 |===
 
-In addition to the parameters above, the delete/resource API can also use any of the link:#query-parameters[Query Parameters].
+In addition to the parameters above, the delete/resource API can also use any of the Query Parameters.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header. The message header name must be of the format CamelDhis2.parameter. The inBody parameter overrides message header, i.e. the endpoint parameter inBody=myParameterNameHere would override a CamelDhis2.myParameterNameHere header.
 
@@ -390,7 +390,7 @@ The resourceTables/analytics API method has the parameters listed in the table b
 | interval | Duration in milliseconds between completeness checks | Integer
 |===
 
-In addition to the parameters above, the resourceTables/analytics API can also use any of the link:#query-parameters[Query Parameters].
+In addition to the parameters above, the resourceTables/analytics API can also use any of the Query parameters.
 
 Any of the parameters can be provided in either the endpoint URI, or dynamically in a message header. The message header name must be of the format CamelDhis2.parameter. The inBody parameter overrides message header, i.e. the endpoint parameter inBody=myParameterNameHere would override a CamelDhis2.myParameterNameHere header.
 
