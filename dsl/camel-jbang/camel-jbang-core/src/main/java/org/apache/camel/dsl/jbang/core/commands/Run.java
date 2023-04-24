@@ -54,7 +54,7 @@ import org.apache.camel.dsl.jbang.core.common.LoggingLevelCompletionCandidates;
 import org.apache.camel.dsl.jbang.core.common.RuntimeUtil;
 import org.apache.camel.dsl.jbang.core.common.VersionHelper;
 import org.apache.camel.generator.openapi.RestDslGenerator;
-import org.apache.camel.impl.lw.LightweightCamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.main.KameletMain;
 import org.apache.camel.main.download.DownloadListener;
 import org.apache.camel.support.ResourceHelper;
@@ -895,7 +895,7 @@ public class Run extends CamelCommand {
         final JsonNode node = mapper.readTree(Paths.get(openapi).toFile());
         OasDocument document = (OasDocument) Library.readDocument(node);
         Configurator.setRootLevel(Level.OFF);
-        try (CamelContext context = new LightweightCamelContext()) {
+        try (CamelContext context = new DefaultCamelContext()) {
             String out = RestDslGenerator.toYaml(document).generate(context, false);
             Files.write(Paths.get(OPENAPI_GENERATED_FILE), out.getBytes());
         }

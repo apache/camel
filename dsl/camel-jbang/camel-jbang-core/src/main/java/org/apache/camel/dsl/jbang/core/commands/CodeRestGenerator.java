@@ -30,7 +30,7 @@ import io.apicurio.datamodels.Library;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import org.apache.camel.CamelContext;
 import org.apache.camel.generator.openapi.RestDslGenerator;
-import org.apache.camel.impl.lw.LightweightCamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.openapitools.codegen.ClientOptInput;
@@ -71,7 +71,7 @@ public class CodeRestGenerator extends CamelCommand {
         final JsonNode node = input.endsWith("json") ? readNodeFromJson() : readNodeFromYaml();
         OasDocument document = (OasDocument) Library.readDocument(node);
         Configurator.setRootLevel(Level.OFF);
-        try (CamelContext context = new LightweightCamelContext()) {
+        try (CamelContext context = new DefaultCamelContext()) {
             String text = null;
             if ("yaml".equalsIgnoreCase(type)) {
                 text = RestDslGenerator.toYaml(document).generate(context, generateRoutes);
