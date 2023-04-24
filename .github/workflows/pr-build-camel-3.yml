@@ -20,8 +20,8 @@ name: PR Build (Camel 3.x)
 on:
   pull_request:
     branches:
+      - camel-3.20.x
       - camel-3.18.x
-      - camel-3.14.x
       - camel-3.x
     paths-ignore:
       - README.md
