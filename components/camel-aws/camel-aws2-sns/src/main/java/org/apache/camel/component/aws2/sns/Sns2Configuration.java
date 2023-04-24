@@ -72,6 +72,10 @@ public class Sns2Configuration implements Cloneable {
     private boolean trustAllCertificates;
     @UriParam(defaultValue = "false")
     private boolean useDefaultCredentialsProvider;
+    @UriParam(defaultValue = "false")
+    private boolean useProfileCredentialsProvider;
+    @UriParam
+    private String profileCredentialsName;
     @UriParam(label = "producer", javaType = "java.lang.String", enums = "useConstant,useExchangeId,usePropertyValue")
     private MessageGroupIdStrategy messageGroupIdStrategy;
     @UriParam(label = "producer", javaType = "java.lang.String", defaultValue = "useExchangeId",
@@ -288,6 +292,28 @@ public class Sns2Configuration implements Cloneable {
      */
     public void setUseDefaultCredentialsProvider(boolean useDefaultCredentialsProvider) {
         this.useDefaultCredentialsProvider = useDefaultCredentialsProvider;
+    }
+
+    /**
+     * Set whether the SNS client should expect to load credentials through a profile credentials provider.
+     */
+    public void setUseProfileCredentialsProvider(boolean useProfileCredentialsProvider) {
+        this.useProfileCredentialsProvider = useProfileCredentialsProvider;
+    }
+
+    public boolean isUseProfileCredentialsProvider() {
+        return useProfileCredentialsProvider;
+    }
+
+    public String getProfileCredentialsName() {
+        return profileCredentialsName;
+    }
+
+    /**
+     * If using a profile credentials provider this parameter will set the profile name
+     */
+    public void setProfileCredentialsName(String profileCredentialsName) {
+        this.profileCredentialsName = profileCredentialsName;
     }
 
     /**
