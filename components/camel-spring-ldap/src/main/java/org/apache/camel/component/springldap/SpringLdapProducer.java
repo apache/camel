@@ -93,13 +93,15 @@ public class SpringLdapProducer extends DefaultProducer {
         LdapTemplate ldapTemplate = endpoint.getLdapTemplate();
 
         String dn = (String) body.get(DN);
-        if (ObjectHelper.isEmpty(dn)) {
-            ContextSource contextSource = ldapTemplate.getContextSource();
-            if (contextSource instanceof BaseLdapPathContextSource) {
-                dn = ((BaseLdapPathContextSource) contextSource).getBaseLdapPathAsString();
+        boolean dnSetOnLdapTemplate = false;
+        ContextSource contextSource = ldapTemplate.getContextSource();
+        if (contextSource instanceof BaseLdapPathContextSource) {
+            if (ObjectHelper.isNotEmpty(((BaseLdapPathContextSource) contextSource).getBaseLdapPathAsString())) {
+                dn = ""; // DN already set on the ldapTemplate
+                dnSetOnLdapTemplate = true;
             }
         }
-        if (operation != LdapOperation.FUNCTION_DRIVEN && (ObjectHelper.isEmpty(dn))) {
+        if (operation != LdapOperation.FUNCTION_DRIVEN && ObjectHelper.isEmpty(dn) && !dnSetOnLdapTemplate) {
             throw new UnsupportedOperationException("DN must not be empty, but you provided an empty DN");
         }
 
