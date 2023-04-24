@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.aws2.sns.client.impl;
 
+import java.net.URI;
+
 import org.apache.camel.component.aws2.sns.Sns2Configuration;
 import org.apache.camel.component.aws2.sns.client.Sns2InternalClient;
 import org.apache.camel.util.ObjectHelper;
@@ -30,8 +32,6 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.sns.SnsClient;
 import software.amazon.awssdk.services.sns.SnsClientBuilder;
 import software.amazon.awssdk.utils.AttributeMap;
-
-import java.net.URI;
 
 /**
  * Manage an AWS SNS client for all users to use. This implementation is for remote instances to manage the credentials
@@ -70,8 +70,8 @@ public class Sns2ClientIAMProfileOptimized implements Sns2InternalClient {
             clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder);
         }
         if (configuration.getProfileCredentialsName() != null) {
-                clientBuilder = clientBuilder
-                        .credentialsProvider(ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
+            clientBuilder = clientBuilder
+                    .credentialsProvider(ProfileCredentialsProvider.create(configuration.getProfileCredentialsName()));
         }
         if (ObjectHelper.isNotEmpty(configuration.getRegion())) {
             clientBuilder = clientBuilder.region(Region.of(configuration.getRegion()));
