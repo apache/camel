@@ -2501,11 +2501,6 @@ public abstract class AbstractCamelContext extends BaseService
                     "Pooled mode enabled. Camel pools and reuses objects to reduce JVM object allocations. The pool capacity is: {} elements.",
                     camelContextExtension.getExchangeFactory().getCapacity());
         }
-        if (camelContextExtension.isLightweight()) {
-            LOG.info("Lightweight mode enabled. Performing optimizations and memory reduction.");
-            ReifierStrategy.clearReifiers();
-            disposeModel();
-        }
     }
 
     protected void logDuplicateComponents() {
@@ -4122,14 +4117,6 @@ public abstract class AbstractCamelContext extends BaseService
         synchronized (routes) {
             routes.remove(route);
         }
-    }
-
-    public boolean isLightweight() {
-        return camelContextExtension.isLightweight();
-    }
-
-    public void setLightweight(boolean lightweight) {
-        camelContextExtension.setLightweight(lightweight);
     }
 
     public String resolvePropertyPlaceholders(String text, boolean keepUnresolvedOptional) {

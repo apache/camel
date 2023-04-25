@@ -192,7 +192,7 @@ public abstract class MainSupport extends BaseMainSupport {
     protected void registerMainBootstrap() {
         CamelContext context = getCamelContext();
         if (context != null) {
-            context.getCamelContextExtension().addBootstrap(new MainBootstrapCloseable(this));
+            context.getCamelContextExtension().addBootstrap(new MainBootstrapCloseable());
         }
     }
 

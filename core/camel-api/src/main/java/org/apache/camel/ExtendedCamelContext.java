@@ -415,18 +415,6 @@ public interface ExtendedCamelContext {
     Processor createErrorHandler(Route route, Processor processor) throws Exception;
 
     /**
-     * Whether to run in lightweight mode which triggers some optimizations and memory reduction. Danger this causes
-     * Camel to be less dynamic such as adding new route after Camel is started would not be possible.
-     */
-    boolean isLightweight();
-
-    /**
-     * Whether to run in lightweight mode which triggers some optimizations and memory reduction. Danger this causes
-     * Camel to be less dynamic such as adding new route after Camel is started would not be possible.
-     */
-    void setLightweight(boolean lightweight);
-
-    /**
      * Danger!!! This will dispose the route model from the {@link CamelContext} which is used for lightweight mode.
      * This means afterwards no new routes can be dynamically added. Any operations on the
      * org.apache.camel.model.ModelCamelContext will return null or be a noop operation.
