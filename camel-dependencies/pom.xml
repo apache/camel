@@ -339,7 +339,7 @@
         <logback-version>1.4.7</logback-version>
         <lucene-version>8.11.2</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
-        <mapstruct-version>1.5.3.Final</mapstruct-version>
+        <mapstruct-version>1.5.5.Final</mapstruct-version>
         <!-- needed from tooling/archetypes -->
         <maven-version>3.8.7</maven-version>
         <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
