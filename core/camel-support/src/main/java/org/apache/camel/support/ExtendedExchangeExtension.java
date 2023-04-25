@@ -30,6 +30,7 @@ import org.apache.camel.spi.UnitOfWork;
 
 public class ExtendedExchangeExtension implements ExchangeExtension {
     private final AbstractExchange exchange;
+    private Boolean errorHandlerHandled;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -66,22 +67,22 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public boolean isErrorHandlerHandledSet() {
-        return this.exchange.isErrorHandlerHandledSet();
+        return errorHandlerHandled != null;
     }
 
     @Override
     public Boolean getErrorHandlerHandled() {
-        return this.exchange.errorHandlerHandled;
+        return this.errorHandlerHandled;
     }
 
     @Override
     public void setErrorHandlerHandled(Boolean errorHandlerHandled) {
-        this.exchange.errorHandlerHandled = errorHandlerHandled;
+        this.errorHandlerHandled = errorHandlerHandled;
     }
 
     @Override
     public boolean isErrorHandlerHandled() {
-        return this.exchange.errorHandlerHandled;
+        return this.errorHandlerHandled;
     }
 
     @Override

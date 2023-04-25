@@ -85,7 +85,6 @@ class AbstractExchange implements Exchange {
     boolean redeliveryExhausted;
     boolean streamCacheDisabled;
     boolean failureHandled;
-    Boolean errorHandlerHandled;
     AsyncCallback defaultConsumerCallback; // optimize (do not reset)
     Map<String, SafeCopyProperty> safeCopyProperties;
     private final ExtendedExchangeExtension privateExtension;
@@ -157,10 +156,11 @@ class AbstractExchange implements Exchange {
         exchange.setRouteStop(routeStop);
         exchange.setRollbackOnly(rollbackOnly);
         exchange.setRollbackOnlyLast(rollbackOnlyLast);
-        exchange.getExchangeExtension().setNotifyEvent(notifyEvent);
-        exchange.getExchangeExtension().setRedeliveryExhausted(redeliveryExhausted);
-        exchange.getExchangeExtension().setErrorHandlerHandled(errorHandlerHandled);
-        exchange.getExchangeExtension().setStreamCacheDisabled(streamCacheDisabled);
+        final ExtendedExchangeExtension newExchangeExtension = exchange.getExchangeExtension();
+        newExchangeExtension.setNotifyEvent(notifyEvent);
+        newExchangeExtension.setRedeliveryExhausted(redeliveryExhausted);
+        newExchangeExtension.setErrorHandlerHandled(getExchangeExtension().getErrorHandlerHandled());
+        newExchangeExtension.setStreamCacheDisabled(streamCacheDisabled);
 
         // copy properties after body as body may trigger lazy init
         if (hasProperties()) {
@@ -760,10 +760,6 @@ class AbstractExchange implements Exchange {
         if (interruptable) {
             this.interrupted = interrupted;
         }
-    }
-
-    boolean isErrorHandlerHandledSet() {
-        return errorHandlerHandled != null;
     }
 
     /**
