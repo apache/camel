@@ -44,6 +44,11 @@ public interface ExchangeExtension {
     void setFromEndpoint(Endpoint fromEndpoint);
 
     /**
+     * Returns the endpoint which originated this message exchange. See {@link Exchange#getFromEndpoint()} for details.
+     **/
+    Endpoint getFromEndpoint();
+
+    /**
      * Sets the route id which originated this message exchange. This method should typically only be called by the
      * internal framework.
      */
