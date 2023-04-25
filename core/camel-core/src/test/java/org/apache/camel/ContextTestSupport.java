@@ -27,7 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.lw.LightweightCamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
@@ -49,7 +48,6 @@ public abstract class ContextTestSupport extends TestSupport {
     protected volatile ConsumerTemplate consumer;
     protected volatile NotifyBuilder oneExchangeDone;
     private boolean useRouteBuilder = true;
-    private boolean useLightweightContext;
     private Service camelContextService;
 
     /**
@@ -64,14 +62,6 @@ public abstract class ContextTestSupport extends TestSupport {
 
     public void setUseRouteBuilder(boolean useRouteBuilder) {
         this.useRouteBuilder = useRouteBuilder;
-    }
-
-    public boolean isUseLightweightContext() {
-        return useLightweightContext;
-    }
-
-    public void setUseLightweightContext(boolean useLightweightContext) {
-        this.useLightweightContext = useLightweightContext;
     }
 
     public Service getCamelContextService() {
@@ -199,15 +189,7 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context;
-        if (useLightweightContext) {
-            LightweightCamelContext ctx = new LightweightCamelContext(createRegistry());
-            context = ctx;
-        } else {
-            DefaultCamelContext ctx = new DefaultCamelContext(true);
-            ctx.getCamelContextExtension().setRegistry(createRegistry());
-            context = ctx;
-        }
+        CamelContext context = new DefaultCamelContext(true);
         if (!useJmx()) {
             context.disableJMX();
         }

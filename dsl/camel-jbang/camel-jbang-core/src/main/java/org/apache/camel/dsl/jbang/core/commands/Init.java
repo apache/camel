@@ -28,7 +28,7 @@ import org.apache.camel.dsl.jbang.core.commands.catalog.KameletCatalogHelper;
 import org.apache.camel.dsl.jbang.core.common.ResourceDoesNotExist;
 import org.apache.camel.github.GistResourceResolver;
 import org.apache.camel.github.GitHubResourceResolver;
-import org.apache.camel.impl.lw.LightweightCamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Resource;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
@@ -177,7 +177,7 @@ public class Init extends CamelCommand {
                 dir.mkdirs();
             }
 
-            CamelContext tiny = new LightweightCamelContext();
+            CamelContext tiny = new DefaultCamelContext();
             GitHubResourceResolver resolver = new GitHubResourceResolver();
             resolver.setCamelContext(tiny);
             for (String u : all.toString().split(",")) {
@@ -211,7 +211,7 @@ public class Init extends CamelCommand {
                 dir.mkdirs();
             }
 
-            CamelContext tiny = new LightweightCamelContext();
+            CamelContext tiny = new DefaultCamelContext();
             GistResourceResolver resolver = new GistResourceResolver();
             resolver.setCamelContext(tiny);
             for (String u : all.toString().split(",")) {
