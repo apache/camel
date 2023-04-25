@@ -74,7 +74,18 @@ You can use xref:languages:simple-language.adoc[Simple] expressions as parameter
 sql:select * from table where id=:#${exchangeProperty.myId} order by name[?options]
 ----
 
-Notice that the standard `?` symbol that denotes the parameters to an
+And the xref:languages:simple-language.adoc[Simple] can also be used with POJO message bodies,
+to use getters for SQL parameters such as:
+
+----
+sql:insert into project (FIRST, LAST, CONTACT_MAIL)
+  values (:#${body.firstName}, :#${body.lastName}, :#${body.email})
+----
+
+TIP: See more details in xref:languages:simple-language.adoc[Simple] for more complex
+syntax that can be used in the SQL queries, than the small example above.
+
+IMPORTANT: Notice that the standard `?` symbol that denotes the parameters to an
 SQL query is substituted with the `pass:[#]` symbol, because the `?` symbol is
 used to specify options for the endpoint. The `?` symbol replacement can
 be configured on endpoint basis.
