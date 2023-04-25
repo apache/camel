@@ -50,14 +50,14 @@ class ShardTree {
         return shards.values()
                 .stream()
                 .filter(s -> s.sequenceNumberRange().endingSequenceNumber() == null)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     List<Shard> getChildren(String shardId) {
         return shards.values()
                 .stream()
                 .filter(s -> shardId.equals(s.parentShardId()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
