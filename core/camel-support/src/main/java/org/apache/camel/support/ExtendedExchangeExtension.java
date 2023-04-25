@@ -31,6 +31,7 @@ import org.apache.camel.spi.UnitOfWork;
 public class ExtendedExchangeExtension implements ExchangeExtension {
     private final AbstractExchange exchange;
     private Boolean errorHandlerHandled;
+    private boolean failureHandled;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -217,11 +218,11 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public boolean isFailureHandled() {
-        return this.exchange.failureHandled;
+        return this.failureHandled;
     }
 
     @Override
     public void setFailureHandled(boolean failureHandled) {
-        this.exchange.failureHandled = failureHandled;
+        this.failureHandled = failureHandled;
     }
 }
