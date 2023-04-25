@@ -125,6 +125,30 @@ class MyBean extends RouteBuilder {
 }
 ----
 
+== Default Camel Metrics
+
+
+Some Camel specific metrics are available out of the box.
+
+[width="100%",options="header"]
+|=====================================================
+|Name |Type |Description
+|camel.message.history|timer |Sample of performance of each node in the route when message history is enabled
+|camel.routes.added |gauge |Number of routes added
+|camel.routes.running |gauge |Number of routes runnning
+|camel.exchanges.inflight |gauge |Route inflight messages
+|camel.exchanges.total |counter |Total number of processed exchanges
+|camel.exchanges.succeeded |counter |Number of successfully completed exchange
+|camel.exchanges.failed |counter |Number of failed exchanges
+|camel.exchanges.failures.handled |counter |Number of failures handled
+|camel.exchanges.external.redeliveries |counter |Number of external initiated redeliveries (such as from JMS broker)
+|camel.exchange.event.notifier |gauge + summary | Metrics for message created, sent, completed, and failed events
+|camel.route.policy |gauge + summary |Route performance metrics
+|camel.route.policy.long.task |gauge + summary |Route long task metric
+|=====================================================
+
+
+
 == Usage of producers
 
 Each meter has type and name. Supported types are
