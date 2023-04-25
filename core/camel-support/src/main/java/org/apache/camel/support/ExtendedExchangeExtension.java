@@ -32,6 +32,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private final AbstractExchange exchange;
     private Boolean errorHandlerHandled;
     private boolean failureHandled;
+    private Endpoint fromEndpoint;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -39,7 +40,12 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public void setFromEndpoint(Endpoint fromEndpoint) {
-        this.exchange.fromEndpoint = fromEndpoint;
+        this.fromEndpoint = fromEndpoint;
+    }
+
+    @Override
+    public Endpoint getFromEndpoint() {
+        return fromEndpoint;
     }
 
     @Override

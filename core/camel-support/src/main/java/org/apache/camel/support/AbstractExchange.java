@@ -68,7 +68,6 @@ class AbstractExchange implements Exchange {
     String exchangeId;
     UnitOfWork unitOfWork;
     ExchangePattern pattern;
-    Endpoint fromEndpoint;
     String fromRouteId;
     List<Synchronization> onCompletions;
     Boolean externalRedelivered;
@@ -104,29 +103,29 @@ class AbstractExchange implements Exchange {
         this.context = parent.getContext();
         this.pattern = parent.getPattern();
         this.created = parent.getCreated();
-        this.fromEndpoint = parent.getFromEndpoint();
         this.fromRouteId = parent.getFromRouteId();
         this.unitOfWork = parent.getUnitOfWork();
 
         privateExtension = new ExtendedExchangeExtension(this);
+        privateExtension.setFromEndpoint(parent.getFromEndpoint());
     }
 
     public AbstractExchange(Endpoint fromEndpoint) {
         this.context = fromEndpoint.getCamelContext();
         this.pattern = fromEndpoint.getExchangePattern();
         this.created = System.currentTimeMillis();
-        this.fromEndpoint = fromEndpoint;
 
         privateExtension = new ExtendedExchangeExtension(this);
+        privateExtension.setFromEndpoint(fromEndpoint);
     }
 
     public AbstractExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
         this.context = fromEndpoint.getCamelContext();
         this.pattern = pattern;
         this.created = System.currentTimeMillis();
-        this.fromEndpoint = fromEndpoint;
 
         privateExtension = new ExtendedExchangeExtension(this);
+        privateExtension.setFromEndpoint(fromEndpoint);
     }
 
     @Override
@@ -609,7 +608,7 @@ class AbstractExchange implements Exchange {
 
     @Override
     public Endpoint getFromEndpoint() {
-        return fromEndpoint;
+        return privateExtension.getFromEndpoint();
     }
 
     @Override
