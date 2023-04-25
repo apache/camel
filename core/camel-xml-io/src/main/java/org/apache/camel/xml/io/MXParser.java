@@ -35,6 +35,8 @@ import java.io.Reader;
 
 import org.apache.camel.xml.io.util.XmlStreamReader;
 
+// https://github.com/codelibs/xpp3/blob/master/src/main/java/org/xmlpull/mxp1/MXParser.java
+
 //TODO best handling of interning issues
 //   have isAllNewStringInterned ???
 
