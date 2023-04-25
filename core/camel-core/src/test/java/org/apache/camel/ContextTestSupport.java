@@ -189,7 +189,7 @@ public abstract class ContextTestSupport extends TestSupport {
     }
 
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = new DefaultCamelContext(true);
+        CamelContext context = new DefaultCamelContext(createRegistry());
         if (!useJmx()) {
             context.disableJMX();
         }
