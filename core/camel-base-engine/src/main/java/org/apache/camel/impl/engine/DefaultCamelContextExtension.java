@@ -97,7 +97,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Deprecated
     private ErrorHandlerFactory errorHandlerFactory;
     private String basePackageScan;
-    private boolean lightweight;
 
     private final Object lock = new Object();
 
@@ -423,16 +422,6 @@ class DefaultCamelContextExtension implements ExtendedCamelContext {
     @Override
     public void setBasePackageScan(String basePackageScan) {
         this.basePackageScan = basePackageScan;
-    }
-
-    @Override
-    public boolean isLightweight() {
-        return lightweight;
-    }
-
-    @Override
-    public void setLightweight(boolean lightweight) {
-        this.lightweight = lightweight;
     }
 
     @Override
