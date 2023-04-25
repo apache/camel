@@ -221,6 +221,17 @@
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>${skipTests}</skipTests>
+                            <reuseForks>true</reuseForks>
+                            <systemPropertyVariables>
+                                <zookeeper.container>icr.io/ppc64le-oss/zookeeper-ppc64le:3.5.10</zookeeper.container>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <configuration>
                             <skipITs>${skipTests}</skipITs>
