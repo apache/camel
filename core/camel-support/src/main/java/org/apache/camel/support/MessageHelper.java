@@ -377,9 +377,7 @@ public final class MessageHelper {
         InputStream is = null;
         if (obj instanceof StreamCache) {
             cache = (StreamCache) obj;
-            is = null;
         } else if (obj instanceof InputStream) {
-            cache = null;
             is = (InputStream) obj;
         }
 
