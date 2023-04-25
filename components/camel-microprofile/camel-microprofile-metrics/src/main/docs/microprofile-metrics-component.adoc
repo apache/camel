@@ -65,6 +65,30 @@ component.setRegistry(myMetricRegistryImpl);
 Or by binding it to the Camel registry using the binding name 'metricRegistry' (See `MicroProfileMetricsConstants.METRIC_REGISTRY_NAME`).
 
 
+== Default Camel Metrics
+
+
+Some Camel specific metrics are available out of the box.
+
+[width="100%",options="header"]
+|=====================================================
+|Name |Type |Description
+|application_camel_message_history_processing|timer |Sample of performance of each node in the route when message history is enabled
+|application_camel_route_count |gauge |Number of routes added
+|application_camel_route_running_count |gauge |Number of routes runnning
+|application_camel_[route or context]_exchanges_inflight_count |gauge |Route inflight messages for a CamelContext or a route
+|application_camel_[route or context]_exchanges_total |counter |Total number of processed exchanges for a CamelContext or a route
+|application_camel_[route or context]_exchanges_completed_total |counter |Number of successfully completed exchange for a CamelContext or a route
+|application_camel_[route or context]_exchanges_failed_total |counter |Number of failed exchanges for a CamelContext or a route
+|application_camel_[route or context]_failuresHandled_total |counter |Number of failures handled for a CamelContext or a route
+|application_camel_[route or context]_externalRedeliveries_total |counter |Number of external initiated redeliveries (such as from JMS broker) for a CamelContext or a route
+|application_camel_context_status |gauge |The status of the Camel Context
+|application_camel_context_uptime_seconds |gauge| The amount of time since the Camel Context was started
+|application_camel_[route or exchange]_processing_[rate_per_second or one_min_rate_per_second or five_min_rate_per_second or fifteen_min_rate_per_second or min_seconds or max_seconds or mean_second or stddev_seconds] |gauge | Exchange message or route processing with multiple options
+|application_camel_[route or exchange]_processing_seconds |summary | Exchange message or route processing metric
+|=====================================================
+
+
 == [[MicroProfileMetrics-counter]]Counter
 
 ----
