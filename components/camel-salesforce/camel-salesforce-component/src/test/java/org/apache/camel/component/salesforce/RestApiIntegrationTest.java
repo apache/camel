@@ -464,8 +464,7 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
         cv.setVersionDataUrl(enc);
         cv.setPathOnClient("camel-test-doc.pdf");
         cv.setTitle("Camel Test Doc");
-        final CreateSObjectResult result =
-                template.requestBody("salesforce:createSObject", cv, CreateSObjectResult.class);
+        final CreateSObjectResult result = template.requestBody("salesforce:createSObject", cv, CreateSObjectResult.class);
         assertNotNull(result.getId());
     }
 
