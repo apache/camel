@@ -21,8 +21,8 @@ on:
   pull_request:
     branches:
       - main
+      - camel-3.20.x
       - camel-3.18.x
-      - camel-3.14.x
     paths-ignore:
       - README.md
       - SECURITY.md

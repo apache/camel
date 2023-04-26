@@ -20,7 +20,7 @@ name: reformat and build
 on:
   push:
     branches:
-      - main
+      - camel-3.20.x
     paths-ignore:
       - .github/**/*
       - README.md
