@@ -39,7 +39,6 @@ public class ZooKeeperLocalContainerService implements ZooKeeperService, Contain
     }
 
     protected ZooKeeperContainer initContainer(String imageName) {
-        System.out.println("Using container: " + imageName);
         if (imageName == null) {
             return new ZooKeeperContainer();
         } else {

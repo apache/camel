@@ -16,16 +16,13 @@
  */
 package org.apache.camel.test.infra.zookeeper.services;
 
-import org.apache.camel.test.infra.zookeeper.common.ZooKeeperProperties;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
 import org.testcontainers.containers.wait.strategy.Wait;
 
 public class ZooKeeperContainer extends GenericContainer {
-    public static final String CONTAINER_IMAGE = System.getProperty(ZooKeeperProperties.ZOOKEEPER_CONTAINER, "zookeeper:3.5");
-    // public static final String CONTAINER_IMAGE = "zookeeper:3.5";
+    public static final String CONTAINER_IMAGE = "zookeeper:3.5";
     public static final String CONTAINER_NAME = "zookeeper";
     public static final int CLIENT_PORT = 2181;
 
