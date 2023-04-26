@@ -25,9 +25,7 @@ import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
-/**
- * A KafkaContainer that supports JAAS+SASL based authentication
- */
+
 public class ContainerLocalAuthKafkaService implements KafkaService, ContainerService<KafkaContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalAuthKafkaService.class);
     private final KafkaContainer kafka;

@@ -47,6 +47,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.api.condition.DisabledIfSystemProperty;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +56,14 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * A KafkaContainer that supports JAAS+SASL based authentication
+ */
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "local-kafka3-container",
+                                 disabledReason = "Requires Kafka 3.x"),
+        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "kafka", disabledReason = "Requires Kafka 3.x")
+})
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KafkaConsumerAuthInvalidIT {
