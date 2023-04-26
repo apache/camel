@@ -41,6 +41,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private String historyNodeLabel;
     private boolean transacted;
     private boolean notifyEvent;
+    private boolean interruptable = true;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -200,7 +201,11 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public void setInterruptable(boolean interruptable) {
-        this.exchange.interruptable = interruptable;
+        this.interruptable = interruptable;
+    }
+
+    public boolean isInterruptable() {
+        return interruptable;
     }
 
     @Override
