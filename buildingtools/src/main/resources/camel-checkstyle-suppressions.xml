@@ -72,4 +72,7 @@
     <suppress checks=".*"
               files=".*/camel-xml-io-dsl/src/generated/.*"
     />
+    <suppress checks=".*"
+              files=".*/camel-xml-jaxb-dsl/src/generated/.*"
+    />
 </suppressions>
