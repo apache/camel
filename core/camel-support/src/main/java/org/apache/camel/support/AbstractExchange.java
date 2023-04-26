@@ -756,12 +756,7 @@ class AbstractExchange implements Exchange {
 
     void copyInternalProperties(Exchange target) {
         AbstractExchange ae = (AbstractExchange) target;
-        for (int i = 0; i < internalProperties.length; i++) {
-            Object value = internalProperties[i];
-            if (value != null) {
-                ae.internalProperties[i] = value;
-            }
-        }
+        System.arraycopy(internalProperties, 0, ae.internalProperties, 0, INTERNAL_LENGTH);
     }
 
     Map<String, Object> getInternalProperties() {
