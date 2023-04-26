@@ -42,6 +42,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private boolean transacted;
     private boolean notifyEvent;
     private boolean interruptable = true;
+    private boolean interrupted;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -204,18 +205,16 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         this.interruptable = interruptable;
     }
 
-    public boolean isInterruptable() {
-        return interruptable;
-    }
-
     @Override
     public boolean isInterrupted() {
-        return this.exchange.interrupted;
+        return this.interrupted;
     }
 
     @Override
     public void setInterrupted(boolean interrupted) {
-        this.exchange.setInterrupted(interrupted);
+        if (interruptable) {
+            this.interrupted = interrupted;
+        }
     }
 
     @Override

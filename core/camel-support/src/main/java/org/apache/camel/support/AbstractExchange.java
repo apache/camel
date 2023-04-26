@@ -73,7 +73,6 @@ class AbstractExchange implements Exchange {
     boolean routeStop;
     boolean rollbackOnly;
     boolean rollbackOnlyLast;
-    boolean interrupted;
     AsyncCallback defaultConsumerCallback; // optimize (do not reset)
     Map<String, SafeCopyProperty> safeCopyProperties;
     private final ExtendedExchangeExtension privateExtension;
@@ -583,7 +582,7 @@ class AbstractExchange implements Exchange {
         }
         if (t instanceof InterruptedException) {
             // mark the exchange as interrupted due to the interrupt exception
-            setInterrupted(true);
+            privateExtension.setInterrupted(true);
         }
     }
 
@@ -743,12 +742,6 @@ class AbstractExchange implements Exchange {
             onCompletions = null;
         }
         return answer;
-    }
-
-    void setInterrupted(boolean interrupted) {
-        if (privateExtension.isInterruptable()) {
-            this.interrupted = interrupted;
-        }
     }
 
     /**
