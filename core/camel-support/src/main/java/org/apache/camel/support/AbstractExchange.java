@@ -73,7 +73,6 @@ class AbstractExchange implements Exchange {
     boolean routeStop;
     boolean rollbackOnly;
     boolean rollbackOnlyLast;
-    AsyncCallback defaultConsumerCallback; // optimize (do not reset)
     Map<String, SafeCopyProperty> safeCopyProperties;
     private final ExtendedExchangeExtension privateExtension;
 
@@ -774,14 +773,6 @@ class AbstractExchange implements Exchange {
             }
         }
         return map;
-    }
-
-    public AsyncCallback getDefaultConsumerCallback() {
-        return defaultConsumerCallback;
-    }
-
-    public void setDefaultConsumerCallback(AsyncCallback defaultConsumerCallback) {
-        this.defaultConsumerCallback = defaultConsumerCallback;
     }
 
     protected String createExchangeId() {
