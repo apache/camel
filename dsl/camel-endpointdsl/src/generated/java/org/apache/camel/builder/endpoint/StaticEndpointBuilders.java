@@ -12693,53 +12693,6 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.SnmpEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
-     * Solr (camel-solr)
-     * Perform operations against Apache Lucene Solr.
-     * 
-     * Category: monitoring,search
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-solr
-     * 
-     * Syntax: <code>solr:url</code>
-     * 
-     * Path parameter: url (required)
-     * Hostname and port for the Solr server(s). Multiple hosts can be
-     * specified, separated with a comma. See the solrClient parameter for more
-     * information on the SolrClient used to connect to Solr.
-     * 
-     * @param path url
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solr(
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder("solr", path);
-    }
-    /**
-     * Solr (camel-solr)
-     * Perform operations against Apache Lucene Solr.
-     * 
-     * Category: monitoring,search
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-solr
-     * 
-     * Syntax: <code>solr:url</code>
-     * 
-     * Path parameter: url (required)
-     * Hostname and port for the Solr server(s). Multiple hosts can be
-     * specified, separated with a comma. See the solrClient parameter for more
-     * information on the SolrClient used to connect to Solr.
-     * 
-     * @param componentName to use a custom component name for the endpoint
-     * instead of the default name
-     * @param path url
-     * @return the dsl builder
-     */
-    public static org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.SolrEndpointBuilder solr(
-            String componentName,
-            String path) {
-        return org.apache.camel.builder.endpoint.dsl.SolrEndpointBuilderFactory.endpointBuilder(componentName, path);
-    }
-    /**
      * Splunk (camel-splunk)
      * Publish or search for events in Splunk.
      * 

@@ -3688,45 +3688,6 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.SnmpComponentBuilderFactory.snmp();
     }
     /**
-     * Solr (camel-solr)
-     * Perform operations against Apache Lucene Solr.
-     * 
-     * Category: monitoring,search
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-solr
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.SolrComponentBuilderFactory.SolrComponentBuilder solr() {
-        return org.apache.camel.builder.component.dsl.SolrComponentBuilderFactory.solr();
-    }
-    /**
-     * Solr (camel-solr)
-     * Perform operations against Apache Lucene Solr.
-     * 
-     * Category: monitoring,search
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-solr
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.SolrcloudComponentBuilderFactory.SolrcloudComponentBuilder solrcloud() {
-        return org.apache.camel.builder.component.dsl.SolrcloudComponentBuilderFactory.solrcloud();
-    }
-    /**
-     * Solr (Secure) (camel-solr)
-     * Perform operations against Apache Lucene Solr.
-     * 
-     * Category: monitoring,search
-     * Since: 2.9
-     * Maven coordinates: org.apache.camel:camel-solr
-     * 
-     * @return the dsl builder
-     */
-    static org.apache.camel.builder.component.dsl.SolrsComponentBuilderFactory.SolrsComponentBuilder solrs() {
-        return org.apache.camel.builder.component.dsl.SolrsComponentBuilderFactory.solrs();
-    }
-    /**
      * Splunk (camel-splunk)
      * Publish or search for events in Splunk.
      * 
