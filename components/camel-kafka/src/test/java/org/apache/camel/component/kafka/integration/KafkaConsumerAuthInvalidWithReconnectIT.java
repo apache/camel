@@ -41,6 +41,8 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperties;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +50,14 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 
+/**
+ * A KafkaContainer that supports JAAS+SASL based authentication
+ */
+@EnabledIfSystemProperties({
+        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "local-kafka3-container",
+                                 disabledReason = "Requires Kafka 3.x"),
+        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "kafka", disabledReason = "Requires Kafka 3.x")
+})
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class KafkaConsumerAuthInvalidWithReconnectIT {
     public static final String TOPIC = "test-auth-invalid-with-reconnect";
