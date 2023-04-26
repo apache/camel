@@ -40,6 +40,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private String historyNodeSource;
     private String historyNodeLabel;
     private boolean transacted;
+    private boolean notifyEvent;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -170,12 +171,12 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public boolean isNotifyEvent() {
-        return this.exchange.notifyEvent;
+        return this.notifyEvent;
     }
 
     @Override
     public void setNotifyEvent(boolean notifyEvent) {
-        this.exchange.notifyEvent = notifyEvent;
+        this.notifyEvent = notifyEvent;
     }
 
     @Override

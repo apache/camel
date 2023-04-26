@@ -73,7 +73,6 @@ class AbstractExchange implements Exchange {
     boolean routeStop;
     boolean rollbackOnly;
     boolean rollbackOnlyLast;
-    boolean notifyEvent;
     boolean interrupted;
     boolean interruptable = true;
     AsyncCallback defaultConsumerCallback; // optimize (do not reset)
@@ -148,7 +147,7 @@ class AbstractExchange implements Exchange {
         exchange.setRollbackOnly(rollbackOnly);
         exchange.setRollbackOnlyLast(rollbackOnlyLast);
         final ExtendedExchangeExtension newExchangeExtension = exchange.getExchangeExtension();
-        newExchangeExtension.setNotifyEvent(notifyEvent);
+        newExchangeExtension.setNotifyEvent(getExchangeExtension().isNotifyEvent());
         newExchangeExtension.setRedeliveryExhausted(getExchangeExtension().isRedeliveryExhausted());
         newExchangeExtension.setErrorHandlerHandled(getExchangeExtension().getErrorHandlerHandled());
         newExchangeExtension.setStreamCacheDisabled(getExchangeExtension().isStreamCacheDisabled());
