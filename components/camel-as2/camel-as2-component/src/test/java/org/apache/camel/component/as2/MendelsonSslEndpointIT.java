@@ -127,6 +127,7 @@ public class MendelsonSslEndpointIT extends AbstractAS2ITSupport {
                         exchange -> exchange.getIn().setBody(EDI_MESSAGE));
         Throwable cause = out.getException();
         Assertions.assertNull(cause);
-        LOG.debug("Sending done, check your message in http://testas2.mendelson-e-c.com:8080/webas2/ Login guest, password guest");
+        LOG.debug(
+                "Sending done, check your message in http://testas2.mendelson-e-c.com:8080/webas2/ Login guest, password guest");
     }
 }
