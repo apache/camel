@@ -40,6 +40,10 @@ public class XmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         super(EXTENSION);
     }
 
+    XmlRoutesBuilderLoader(String extension) {
+        super(extension);
+    }
+
     @Override
     public RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
         return new RouteConfigurationBuilder() {
