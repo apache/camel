@@ -71,7 +71,6 @@ class AbstractExchange implements Exchange {
     List<Synchronization> onCompletions;
     Boolean externalRedelivered;
     String historyNodeLabel;
-    String historyNodeSource;
     boolean transacted;
     boolean routeStop;
     boolean rollbackOnly;

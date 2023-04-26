@@ -37,6 +37,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private boolean streamCacheDisabled;
     private boolean redeliveryExhausted;
     private String historyNodeId;
+    private String historyNodeSource;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -147,12 +148,12 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public String getHistoryNodeSource() {
-        return this.exchange.historyNodeSource;
+        return this.historyNodeSource;
     }
 
     @Override
     public void setHistoryNodeSource(String historyNodeSource) {
-        this.exchange.historyNodeSource = historyNodeSource;
+        this.historyNodeSource = historyNodeSource;
     }
 
     @Override
