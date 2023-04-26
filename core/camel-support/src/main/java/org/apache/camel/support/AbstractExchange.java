@@ -74,7 +74,6 @@ class AbstractExchange implements Exchange {
     boolean rollbackOnly;
     boolean rollbackOnlyLast;
     boolean interrupted;
-    boolean interruptable = true;
     AsyncCallback defaultConsumerCallback; // optimize (do not reset)
     Map<String, SafeCopyProperty> safeCopyProperties;
     private final ExtendedExchangeExtension privateExtension;
@@ -747,7 +746,7 @@ class AbstractExchange implements Exchange {
     }
 
     void setInterrupted(boolean interrupted) {
-        if (interruptable) {
+        if (privateExtension.isInterruptable()) {
             this.interrupted = interrupted;
         }
     }
