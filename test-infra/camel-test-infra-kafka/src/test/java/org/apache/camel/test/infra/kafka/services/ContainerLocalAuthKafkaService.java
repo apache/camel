@@ -25,7 +25,6 @@ import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
-
 public class ContainerLocalAuthKafkaService implements KafkaService, ContainerService<KafkaContainer> {
     private static final Logger LOG = LoggerFactory.getLogger(ContainerLocalAuthKafkaService.class);
     private final KafkaContainer kafka;
