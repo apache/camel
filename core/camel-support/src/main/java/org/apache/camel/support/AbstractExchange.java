@@ -80,7 +80,6 @@ class AbstractExchange implements Exchange {
     boolean notifyEvent;
     boolean interrupted;
     boolean interruptable = true;
-    boolean redeliveryExhausted;
     AsyncCallback defaultConsumerCallback; // optimize (do not reset)
     Map<String, SafeCopyProperty> safeCopyProperties;
     private final ExtendedExchangeExtension privateExtension;
@@ -154,7 +153,7 @@ class AbstractExchange implements Exchange {
         exchange.setRollbackOnlyLast(rollbackOnlyLast);
         final ExtendedExchangeExtension newExchangeExtension = exchange.getExchangeExtension();
         newExchangeExtension.setNotifyEvent(notifyEvent);
-        newExchangeExtension.setRedeliveryExhausted(redeliveryExhausted);
+        newExchangeExtension.setRedeliveryExhausted(getExchangeExtension().isRedeliveryExhausted());
         newExchangeExtension.setErrorHandlerHandled(getExchangeExtension().getErrorHandlerHandled());
         newExchangeExtension.setStreamCacheDisabled(getExchangeExtension().isStreamCacheDisabled());
 

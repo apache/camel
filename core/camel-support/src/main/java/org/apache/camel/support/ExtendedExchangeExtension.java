@@ -35,6 +35,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private Endpoint fromEndpoint;
     private String fromRouteId;
     private boolean streamCacheDisabled;
+    private boolean redeliveryExhausted;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -100,12 +101,12 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public boolean isRedeliveryExhausted() {
-        return this.exchange.redeliveryExhausted;
+        return this.redeliveryExhausted;
     }
 
     @Override
     public void setRedeliveryExhausted(boolean redeliveryExhausted) {
-        this.exchange.redeliveryExhausted = redeliveryExhausted;
+        this.redeliveryExhausted = redeliveryExhausted;
     }
 
     @Override
