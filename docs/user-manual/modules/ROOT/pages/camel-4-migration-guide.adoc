@@ -253,10 +253,12 @@ Now the context-path is not in use, and the endpoint can be called with `http://
 NOTE: The `platform-http-starter` can also be used with Rest DSL.
 
 == camel-optaplanner
+
 The `camel-optaplanner` component has been change to use `SolverManager`. If you were using `SoverManager` in Camel 3, you don't need anymore the boolean useSolverManager in the Route.
 Deprecated `ProblemFactChange` has been replaced by `ProblemChange`.
 
-The new URI path is :
+The new URI path is:
+
 [source,java]
 ----
 from("optaplanner:myProblemName")
@@ -264,12 +266,14 @@ from("optaplanner:myProblemName")
 ----
 
 You can pass the Optaplanner SolverManager in 2 ways:
+
 - as #parameter
 - as header
 
-When running `camel-optaplanner` on Spring Boot or Quarkus, it is preferrable to use the Spring Boot or Quarkus way of creating the SolverManager.
+When running `camel-optaplanner` on Spring Boot or Quarkus, it is preferable to use the Spring Boot or Quarkus way of creating the SolverManager.
 
 It is possible to migrate legacy Camel Optaplanner Routes, by putting the XML config file, as show in the code below. Camel Optaplanner will handle creating the SolverManager for those legacy Routes:
+
 [source,java]
 ----
 from("optaplanner:myProblemName?configFile=PATH/TO/CONFIG.FILE.xml")
