@@ -40,6 +40,7 @@ public interface SolrComponentBuilderFactory {
      * 
      * @return the dsl builder
      */
+    @Deprecated
     static SolrComponentBuilder solr() {
         return new SolrComponentBuilderImpl();
     }
