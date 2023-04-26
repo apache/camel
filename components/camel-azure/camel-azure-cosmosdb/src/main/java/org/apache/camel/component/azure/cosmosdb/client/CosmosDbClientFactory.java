@@ -53,7 +53,7 @@ public final class CosmosDbClientFactory {
         if (ObjectHelper.isNotEmpty(configuration.getPreferredRegions())) {
             builder.preferredRegions(Stream.of(configuration.getPreferredRegions().split(","))
                     .map(String::trim)
-                    .collect(Collectors.toList()));
+                            .toList());
         }
 
         return builder;

@@ -136,7 +136,6 @@ public final class DefaultConfigurationConfigurer {
         ecc.getStartupStepRecorder().setRecordingDir(config.getStartupRecorderDir());
         ecc.getStartupStepRecorder().setRecordingProfile(config.getStartupRecorderProfile());
 
-        ecc.setLightweight(config.isLightweight());
         PluginHelper.getBeanPostProcessor(ecc).setEnabled(config.isBeanPostProcessorEnabled());
         final BeanIntrospection beanIntrospection = PluginHelper.getBeanIntrospection(ecc);
         beanIntrospection.setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());

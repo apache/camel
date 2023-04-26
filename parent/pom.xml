@@ -334,7 +334,7 @@
         <logback-version>1.4.7</logback-version>
         <lucene-version>8.11.2</lucene-version>
         <lightcouch-version>0.2.0</lightcouch-version>
-        <mapstruct-version>1.5.3.Final</mapstruct-version>
+        <mapstruct-version>1.5.5.Final</mapstruct-version>
         <!-- needed from tooling/archetypes -->
         <maven-version>3.8.7</maven-version>
         <maven-antrun-plugin-version>3.1.0</maven-antrun-plugin-version>
@@ -398,7 +398,7 @@
         <openstack4j-version>3.10</openstack4j-version>
         <opentelemetry-version>1.23.1</opentelemetry-version>
         <opentelemetry-alpha-version>${opentelemetry-version}-alpha</opentelemetry-alpha-version>
-        <optaplanner-version>8.32.0.Final</optaplanner-version>
+        <optaplanner-version>9.37.0.Final</optaplanner-version>
         <os-maven-plugin-version>1.7.0</os-maven-plugin-version>
         <paho-version>1.2.5</paho-version>
         <partial-build-plugin-version>2.7</partial-build-plugin-version>
@@ -1886,6 +1886,11 @@
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-opentelemetry</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-optaplanner</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

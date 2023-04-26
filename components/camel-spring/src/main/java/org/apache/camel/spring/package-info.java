@@ -14,9 +14,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * The classes for working with Camel and Spring along with the primary factory beans.
- */
-@jakarta.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring",
-                                       elementFormDefault = jakarta.xml.bind.annotation.XmlNsForm.QUALIFIED)
+
 package org.apache.camel.spring;

@@ -30,6 +30,9 @@ import org.apache.camel.spi.UnitOfWork;
 
 public class ExtendedExchangeExtension implements ExchangeExtension {
     private final AbstractExchange exchange;
+    private Boolean errorHandlerHandled;
+    private boolean failureHandled;
+    private Endpoint fromEndpoint;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -37,7 +40,12 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public void setFromEndpoint(Endpoint fromEndpoint) {
-        this.exchange.fromEndpoint = fromEndpoint;
+        this.fromEndpoint = fromEndpoint;
+    }
+
+    @Override
+    public Endpoint getFromEndpoint() {
+        return fromEndpoint;
     }
 
     @Override
@@ -66,22 +74,22 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public boolean isErrorHandlerHandledSet() {
-        return this.exchange.isErrorHandlerHandledSet();
+        return errorHandlerHandled != null;
     }
 
     @Override
     public Boolean getErrorHandlerHandled() {
-        return this.exchange.errorHandlerHandled;
+        return this.errorHandlerHandled;
     }
 
     @Override
     public void setErrorHandlerHandled(Boolean errorHandlerHandled) {
-        this.exchange.errorHandlerHandled = errorHandlerHandled;
+        this.errorHandlerHandled = errorHandlerHandled;
     }
 
     @Override
     public boolean isErrorHandlerHandled() {
-        return this.exchange.errorHandlerHandled;
+        return this.errorHandlerHandled;
     }
 
     @Override
@@ -216,11 +224,11 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public boolean isFailureHandled() {
-        return this.exchange.failureHandled;
+        return this.failureHandled;
     }
 
     @Override
     public void setFailureHandled(boolean failureHandled) {
-        this.exchange.failureHandled = failureHandled;
+        this.failureHandled = failureHandled;
     }
 }
