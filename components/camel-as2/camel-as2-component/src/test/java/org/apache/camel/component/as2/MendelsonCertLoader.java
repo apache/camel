@@ -22,11 +22,15 @@ import javax.net.ssl.SSLContext;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.conn.ssl.TrustAllStrategy;
 import org.apache.http.ssl.SSLContexts;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * That's a utility class for preparing Mendelson-specific certificate chain, private key, ssl context
  */
 public class MendelsonCertLoader {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MendelsonCertLoader.class);
 
     private static final String MENDELSON_CERT = "mendelson/key4.cer";
     private static final String MENDELSON_PRIVATE_KEY = "mendelson/key3.pfx";
@@ -43,14 +47,8 @@ public class MendelsonCertLoader {
             sslContext = SSLContexts.custom().setKeyStoreType("PKCS12")
                     .loadTrustMaterial(keyStore, new TrustAllStrategy())
                     .build();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+        } catch (KeyStoreException | IOException | KeyManagementException | NoSuchAlgorithmException e) {
+            LOG.error("Failed to configure SSLContext", e);
         }
 
         if (sslContext == null) {
@@ -66,9 +64,9 @@ public class MendelsonCertLoader {
             ks.load(inputStream, password.toCharArray());
             return ks;
         } catch (KeyStoreException e) {
-            e.printStackTrace();
+            LOG.error("Failed to create instance of KeyStore", e);
         } catch (CertificateException e) {
-            e.printStackTrace();
+            LOG.error("Failed to load KeyStore");
         }
         throw new IllegalStateException("about to return null");
     }
@@ -95,17 +93,18 @@ public class MendelsonCertLoader {
             privateKey = getPrivateKeyFromPKCSStream(mendelsonPrivateKeyAsStream);
 
         } catch (IOException e) {
-            String errMsg = "Error while trying to load certificate to the keyload. IO error when reading a byte array.  " + e;
-            System.out.println(errMsg);
+            String errMsg
+                    = "Error while trying to load certificate to the key store. IO error when reading a byte array.  " + e;
+            LOG.error(errMsg);
         } catch (NoSuchAlgorithmException e) {
-            String errMsg = "Error while trying to load certificate to the keyload. Requested algorithm isn't found.  " + e;
-            System.out.println(errMsg);
+            String errMsg = "Error while trying to load certificate to the key store. Requested algorithm isn't found.  " + e;
+            LOG.error(errMsg);
         } catch (CertificateException e) {
-            String errMsg = "Error while trying to load certificate to the keyload. There is a certificate problem.  " + e;
-            System.out.println(errMsg);
+            String errMsg = "Error while trying to load certificate to the key store. There is a certificate problem.  " + e;
+            LOG.error(errMsg);
         } catch (InvalidKeySpecException e) {
             String errMsg = "Can not init private key store  " + e;
-            System.out.println(errMsg);
+            LOG.error(errMsg);
         }
     }
 
@@ -130,7 +129,7 @@ public class MendelsonCertLoader {
         return privateKey;
     }
 
-    private List<Certificate> getCertificatesFromStream(InputStream inputStream) throws IOException, CertificateException {
+    private List<Certificate> getCertificatesFromStream(InputStream inputStream) throws CertificateException {
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
         return (List<Certificate>) certificateFactory.generateCertificates(inputStream);
     }
@@ -148,25 +147,23 @@ public class MendelsonCertLoader {
         try {
             ks = KeyStore.getInstance("PKCS12");
         } catch (KeyStoreException e) {
-            e.printStackTrace();
+            LOG.error("Error while getting instance of KeyStore" + e);
         }
         try {
             ks.load(inputStream, password.toCharArray());
         } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("Error while loading the certificate" + e);
         }
         try {
             return (PrivateKey) ks.getKey(
                     ks.aliases().nextElement(),
                     password.toCharArray());
         } catch (KeyStoreException e) {
-            e.printStackTrace();
+            LOG.error("Error while retrieving private key" + e);
         } catch (UnrecoverableKeyException e) {
-            e.printStackTrace();
+            LOG.error("Error while retrieving private key" + e);
         }
-        throw new IllegalStateException("about to return null");
+        throw new IllegalStateException("Failed to construct a PrivateKey from provided InputStream");
     }
 
     private byte[] getBytesFromPem(InputStream inputStream) throws IOException {
