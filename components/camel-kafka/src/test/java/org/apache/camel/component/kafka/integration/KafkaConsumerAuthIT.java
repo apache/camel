@@ -51,9 +51,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @EnabledIfSystemProperties({
-    @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "local-kafka3-container",
-                             disabledReason = "Requires Kafka 3.x"),
-    @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "kafka", disabledReason = "Requires Kafka 3.x")
+        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "local-kafka3-container",
+                                 disabledReason = "Requires Kafka 3.x"),
+        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "kafka", disabledReason = "Requires Kafka 3.x")
 })
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

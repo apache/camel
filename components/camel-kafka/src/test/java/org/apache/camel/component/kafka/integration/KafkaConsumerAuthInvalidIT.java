@@ -49,9 +49,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @EnabledIfSystemProperties({
-    @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "local-kafka3-container",
-                             disabledReason = "Requires Kafka 3.x"),
-    @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "kafka", disabledReason = "Requires Kafka 3.x")
+        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "local-kafka3-container",
+                                 disabledReason = "Requires Kafka 3.x"),
+        @EnabledIfSystemProperty(named = "kafka.instance.type", matches = "kafka", disabledReason = "Requires Kafka 3.x")
 })
 @DisabledIfSystemProperty(named = "ci.env.name", matches = "github.com", disabledReason = "Flaky on Github CI")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
