@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.infra.zookeeper.services;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.output.Slf4jLogConsumer;
