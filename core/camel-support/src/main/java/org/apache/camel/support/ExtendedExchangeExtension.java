@@ -34,6 +34,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private boolean failureHandled;
     private Endpoint fromEndpoint;
     private String fromRouteId;
+    private boolean streamCacheDisabled;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -62,14 +63,14 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
      * Is stream caching disabled on the given exchange
      */
     public boolean isStreamCacheDisabled() {
-        return this.exchange.streamCacheDisabled;
+        return this.streamCacheDisabled;
     }
 
     /**
      * Used to force disabling stream caching which some components can do in special use-cases.
      */
     public void setStreamCacheDisabled(boolean streamCacheDisabled) {
-        this.exchange.streamCacheDisabled = streamCacheDisabled;
+        this.streamCacheDisabled = streamCacheDisabled;
     }
 
     @Override
