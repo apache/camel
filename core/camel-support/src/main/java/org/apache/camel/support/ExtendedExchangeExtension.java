@@ -38,6 +38,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private boolean redeliveryExhausted;
     private String historyNodeId;
     private String historyNodeSource;
+    private String historyNodeLabel;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -158,12 +159,12 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public String getHistoryNodeLabel() {
-        return this.exchange.historyNodeSource;
+        return this.historyNodeLabel;
     }
 
     @Override
     public void setHistoryNodeLabel(String historyNodeLabel) {
-        this.exchange.historyNodeLabel = historyNodeLabel;
+        this.historyNodeLabel = historyNodeLabel;
     }
 
     @Override
