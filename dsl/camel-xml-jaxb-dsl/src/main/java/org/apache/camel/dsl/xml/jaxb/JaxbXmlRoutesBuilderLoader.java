@@ -48,6 +48,10 @@ public class JaxbXmlRoutesBuilderLoader extends RouteBuilderLoaderSupport {
         super(EXTENSION);
     }
 
+    JaxbXmlRoutesBuilderLoader(String extension) {
+        super(extension);
+    }
+
     @Override
     public RouteBuilder doLoadRouteBuilder(Resource resource) throws Exception {
         return new RouteConfigurationBuilder() {
