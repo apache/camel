@@ -33,6 +33,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private Boolean errorHandlerHandled;
     private boolean failureHandled;
     private Endpoint fromEndpoint;
+    private String fromRouteId;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -50,7 +51,11 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public void setFromRouteId(String fromRouteId) {
-        exchange.fromRouteId = fromRouteId;
+        this.fromRouteId = fromRouteId;
+    }
+
+    public String getFromRouteId() {
+        return fromRouteId;
     }
 
     /**
