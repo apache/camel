@@ -252,4 +252,16 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     public void setFailureHandled(boolean failureHandled) {
         this.failureHandled = failureHandled;
     }
+
+    public void reset() {
+        setHistoryNodeId(null);
+        setHistoryNodeLabel(null);
+        setTransacted(false);
+        setNotifyEvent(false);
+        setInterrupted(false);
+        setInterruptable(true);
+        setRedeliveryExhausted(false);
+        setErrorHandlerHandled(null);
+        setStreamCacheDisabled(false);
+    }
 }
