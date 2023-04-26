@@ -43,6 +43,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private boolean notifyEvent;
     private boolean interruptable = true;
     private boolean interrupted;
+    private AsyncCallback defaultConsumerCallback; // optimize (do not reset)
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -224,12 +225,12 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public AsyncCallback getDefaultConsumerCallback() {
-        return this.exchange.defaultConsumerCallback;
+        return this.defaultConsumerCallback;
     }
 
     @Override
     public void setDefaultConsumerCallback(AsyncCallback callback) {
-        this.exchange.defaultConsumerCallback = callback;
+        this.defaultConsumerCallback = callback;
     }
 
     @Override
