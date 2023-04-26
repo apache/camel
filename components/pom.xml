@@ -287,6 +287,7 @@
         <module>camel-stringtemplate</module>
         <module>camel-stitch</module>
         <module>camel-openapi-java</module>
+        <module>camel-optaplanner</module>
         <module>camel-syslog</module>
         <module>camel-tarfile</module>
         <module>camel-telegram</module>

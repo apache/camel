@@ -5164,6 +5164,28 @@
     "producerOnly": true,
     "lenientProperties": false
   },
+  "OptaplannerComponentBuilderFactory": {
+    "kind": "component",
+    "name": "optaplanner",
+    "title": "OptaPlanner",
+    "description": "Solve planning problems with OptaPlanner.",
+    "deprecated": false,
+    "firstVersion": "2.13.0",
+    "label": "engine,planning",
+    "javaType": "org.apache.camel.component.optaplanner.OptaPlannerComponent",
+    "supportLevel": "Stable",
+    "groupId": "org.apache.camel",
+    "artifactId": "camel-optaplanner",
+    "version": "4.0.0-SNAPSHOT",
+    "scheme": "optaplanner",
+    "extendsScheme": "",
+    "syntax": "optaplanner:problemName",
+    "async": false,
+    "api": false,
+    "consumerOnly": false,
+    "producerOnly": false,
+    "lenientProperties": false
+  },
   "PahoComponentBuilderFactory": {
     "kind": "component",
     "name": "paho",

@@ -37,7 +37,6 @@ The following components has been removed:
 | camel-microprofile-metrics           | camel-micrometer, camel-opentelemetry
 | camel-milo                           | none
 | camel-opentracing                    | camel-micrometer, camel-opentelemetry
-| camel-optaplanner                    | none
 | camel-rabbitmq                       | spring-rabbitmq-component
 | camel-rest-swagger                   | camel-openapi-rest
 | camel-restdsl-swagger-plugin         | camel-restdsl-openapi-plugin
@@ -252,3 +251,30 @@ Then calling _myservice_ would before require to include the context-path, such 
 Now the context-path is not in use, and the endpoint can be called with `http://localhost:8080/myservice`.
 
 NOTE: The `platform-http-starter` can also be used with Rest DSL.
+
+== camel-optaplanner
+The `camel-optaplanner` component has been change to use `SolverManager`. If you were using `SoverManager` in Camel 3, you don't need anymore the boolean useSolverManager in the Route.
+Deprecated `ProblemFactChange` has been replaced by `ProblemChange`.
+
+The new URI path is :
+[source,java]
+----
+from("optaplanner:myProblemName")
+  .to("...")
+----
+
+You can pass the Optaplanner SolverManager in 2 ways:
+- as #parameter
+- as header
+
+When running `camel-optaplanner` on Spring Boot or Quarkus, it is preferrable to use the Spring Boot or Quarkus way of creating the SolverManager.
+
+It is possible to migrate legacy Camel Optaplanner Routes, by putting the XML config file, as show in the code below. Camel Optaplanner will handle creating the SolverManager for those legacy Routes:
+[source,java]
+----
+from("optaplanner:myProblemName?configFile=PATH/TO/CONFIG.FILE.xml")
+  .to("...")
+----
+
+Solver Daemon solutions should be migrated to use SolverManager.
+
