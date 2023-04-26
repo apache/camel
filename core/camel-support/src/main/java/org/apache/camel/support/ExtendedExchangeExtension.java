@@ -17,6 +17,7 @@
 
 package org.apache.camel.support;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,8 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private boolean interruptable = true;
     private boolean interrupted;
     private AsyncCallback defaultConsumerCallback; // optimize (do not reset)
+    private UnitOfWork unitOfWork;
+    private List<Synchronization> onCompletions;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -84,7 +87,16 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public void addOnCompletion(Synchronization onCompletion) {
-        this.exchange.addOnCompletion(onCompletion);
+        if (unitOfWork == null) {
+            // unit of work not yet registered so we store the on completion temporary
+            // until the unit of work is assigned to this exchange by the unit of work
+            if (onCompletions == null) {
+                onCompletions = new ArrayList<>();
+            }
+            onCompletions.add(onCompletion);
+        } else {
+            unitOfWork.addSynchronization(onCompletion);
+        }
     }
 
     @Override
@@ -119,17 +131,44 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public void handoverCompletions(Exchange target) {
-        this.exchange.handoverCompletions(target);
+        if (onCompletions != null) {
+            for (Synchronization onCompletion : onCompletions) {
+                target.getExchangeExtension().addOnCompletion(onCompletion);
+            }
+            // cleanup the temporary on completion list as they have been handed over
+            onCompletions.clear();
+            onCompletions = null;
+        } else if (unitOfWork != null) {
+            // let unit of work handover
+            unitOfWork.handoverSynchronization(target);
+        }
     }
 
     @Override
     public List<Synchronization> handoverCompletions() {
-        return this.exchange.handoverCompletions();
+        List<Synchronization> answer = null;
+        if (onCompletions != null) {
+            answer = new ArrayList<>(onCompletions);
+            onCompletions.clear();
+            onCompletions = null;
+        }
+        return answer;
     }
 
     @Override
     public void setUnitOfWork(UnitOfWork unitOfWork) {
-        this.exchange.setUnitOfWork(unitOfWork);
+        this.unitOfWork = unitOfWork;
+        if (unitOfWork != null && onCompletions != null) {
+            // now an unit of work has been assigned so add the on completions
+            // we might have registered already
+            for (Synchronization onCompletion : onCompletions) {
+                unitOfWork.addSynchronization(onCompletion);
+            }
+            // cleanup the temporary on completion list as they now have been registered
+            // on the unit of work
+            onCompletions.clear();
+            onCompletions = null;
+        }
     }
 
     @Override
@@ -189,7 +228,13 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public boolean containsOnCompletion(Synchronization onCompletion) {
-        return this.exchange.containsOnCompletion(onCompletion);
+        if (unitOfWork != null) {
+            // if there is an unit of work then the completions is moved there
+            return unitOfWork.containsSynchronization(onCompletion);
+        } else {
+            // check temporary completions if no unit of work yet
+            return onCompletions != null && onCompletions.contains(onCompletion);
+        }
     }
 
     @Override
@@ -253,7 +298,19 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
         this.failureHandled = failureHandled;
     }
 
+    public UnitOfWork getUnitOfWork() {
+        return unitOfWork;
+    }
+
     public void reset() {
+        if (this.unitOfWork != null) {
+            this.unitOfWork.reset();
+        }
+
+        if (this.onCompletions != null) {
+            this.onCompletions.clear();
+        }
+
         setHistoryNodeId(null);
         setHistoryNodeLabel(null);
         setTransacted(false);

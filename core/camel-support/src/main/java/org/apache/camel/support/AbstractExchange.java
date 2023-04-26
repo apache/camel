@@ -66,9 +66,7 @@ class AbstractExchange implements Exchange {
     Message out;
     Exception exception;
     String exchangeId;
-    UnitOfWork unitOfWork;
     ExchangePattern pattern;
-    List<Synchronization> onCompletions;
     Boolean externalRedelivered;
     boolean routeStop;
     boolean rollbackOnly;
@@ -92,11 +90,11 @@ class AbstractExchange implements Exchange {
         this.context = parent.getContext();
         this.pattern = parent.getPattern();
         this.created = parent.getCreated();
-        this.unitOfWork = parent.getUnitOfWork();
 
         privateExtension = new ExtendedExchangeExtension(this);
         privateExtension.setFromEndpoint(parent.getFromEndpoint());
         privateExtension.setFromRouteId(parent.getFromRouteId());
+        privateExtension.setUnitOfWork(parent.getUnitOfWork());
     }
 
     public AbstractExchange(Endpoint fromEndpoint) {
@@ -678,69 +676,7 @@ class AbstractExchange implements Exchange {
 
     @Override
     public UnitOfWork getUnitOfWork() {
-        return unitOfWork;
-    }
-
-    void setUnitOfWork(UnitOfWork unitOfWork) {
-        this.unitOfWork = unitOfWork;
-        if (unitOfWork != null && onCompletions != null) {
-            // now an unit of work has been assigned so add the on completions
-            // we might have registered already
-            for (Synchronization onCompletion : onCompletions) {
-                unitOfWork.addSynchronization(onCompletion);
-            }
-            // cleanup the temporary on completion list as they now have been registered
-            // on the unit of work
-            onCompletions.clear();
-            onCompletions = null;
-        }
-    }
-
-    void addOnCompletion(Synchronization onCompletion) {
-        if (unitOfWork == null) {
-            // unit of work not yet registered so we store the on completion temporary
-            // until the unit of work is assigned to this exchange by the unit of work
-            if (onCompletions == null) {
-                onCompletions = new ArrayList<>();
-            }
-            onCompletions.add(onCompletion);
-        } else {
-            getUnitOfWork().addSynchronization(onCompletion);
-        }
-    }
-
-    boolean containsOnCompletion(Synchronization onCompletion) {
-        if (unitOfWork != null) {
-            // if there is an unit of work then the completions is moved there
-            return unitOfWork.containsSynchronization(onCompletion);
-        } else {
-            // check temporary completions if no unit of work yet
-            return onCompletions != null && onCompletions.contains(onCompletion);
-        }
-    }
-
-    void handoverCompletions(Exchange target) {
-        if (onCompletions != null) {
-            for (Synchronization onCompletion : onCompletions) {
-                target.getExchangeExtension().addOnCompletion(onCompletion);
-            }
-            // cleanup the temporary on completion list as they have been handed over
-            onCompletions.clear();
-            onCompletions = null;
-        } else if (unitOfWork != null) {
-            // let unit of work handover
-            unitOfWork.handoverSynchronization(target);
-        }
-    }
-
-    List<Synchronization> handoverCompletions() {
-        List<Synchronization> answer = null;
-        if (onCompletions != null) {
-            answer = new ArrayList<>(onCompletions);
-            onCompletions.clear();
-            onCompletions = null;
-        }
-        return answer;
+        return privateExtension.getUnitOfWork();
     }
 
     /**
