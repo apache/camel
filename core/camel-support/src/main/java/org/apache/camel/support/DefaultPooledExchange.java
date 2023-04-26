@@ -99,15 +99,9 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
                 out.reset();
                 this.out = null;
             }
-            if (this.unitOfWork != null) {
-                this.unitOfWork.reset();
-            }
             this.exception = null;
             // reset pattern to original
             this.pattern = originalPattern;
-            if (this.onCompletions != null) {
-                this.onCompletions.clear();
-            }
             // do not reset endpoint/fromRouteId as it would be the same consumer/endpoint again
             this.externalRedelivered = null;
             this.routeStop = false;
