@@ -104,8 +104,8 @@ public class Init extends CamelCommand {
             } else {
                 ext = "kamelet-action.yaml";
             }
-        } else if (ext != null && ext.startsWith("camel.yaml")) {
-            // we allow xxx.camel.yaml
+        } else if (ext != null && (ext.startsWith("camel.yaml") || ext.startsWith("camel.xml"))) {
+            // we allow xxx.camel.yaml / xxx.camel.xml
             ext = ext.substring(6);
         }
 
