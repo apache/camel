@@ -20,6 +20,9 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.time.Duration;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.as2.api.AS2CompressionAlgorithm;
 import org.apache.camel.component.as2.api.AS2EncryptionAlgorithm;
@@ -110,6 +113,11 @@ public class AS2Configuration {
     private Duration httpConnectionPoolTtl = Duration.ofMinutes(15);
     @UriParam(label = "security")
     private Certificate[] validateSigningCertificateChain;
+    @UriParam
+    private SSLContext sslContext;
+    // If you use localhost-based AS2 server, you don't need to specify a hostnameVerifier
+    @UriParam
+    private HostnameVerifier hostnameVerifier;
 
     public AS2ApiName getApiName() {
         return apiName;
@@ -497,11 +505,36 @@ public class AS2Configuration {
     }
 
     /**
-     * Certifiates to validate the messages signature against. If not supplied, validation will not take place. Server:
-     * validates the received message. Client: not yet implemented, should validate the MDN
+     * Certificates to validate the message's signature against. If not supplied, validation will not take place.
+     * Server: validates the received message. Client: not yet implemented, should validate the MDN
      */
     public void setValidateSigningCertificateChain(Certificate[] validateSigningCertificateChain) {
         this.validateSigningCertificateChain = validateSigningCertificateChain;
     }
 
+    public SSLContext getSslContext() {
+        return sslContext;
+    }
+
+    /**
+     * Set SSL context for connection to remote server.
+     *
+     * @param sslContext
+     */
+    public void setSslContext(SSLContext sslContext) {
+        this.sslContext = sslContext;
+    }
+
+    public HostnameVerifier getHostnameVerifier() {
+        return hostnameVerifier;
+    }
+
+    /**
+     * Set hostname verifier for SSL session.
+     *
+     * @param hostnameVerifier
+     */
+    public void setHostnameVerifier(HostnameVerifier hostnameVerifier) {
+        this.hostnameVerifier = hostnameVerifier;
+    }
 }

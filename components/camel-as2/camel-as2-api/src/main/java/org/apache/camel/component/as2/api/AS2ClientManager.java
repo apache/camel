@@ -220,9 +220,9 @@ public class AS2ClientManager {
         ObjectHelper.notNull(ediMessage, "EDI Message");
         ObjectHelper.notNull(requestUri, "Request URI");
         ObjectHelper.notNull(subject, "Subject");
-        ObjectHelper.notNull(from, "Subject");
-        ObjectHelper.notNull(as2From, "Subject");
-        ObjectHelper.notNull(as2To, "Subject");
+        ObjectHelper.notNull(from, "From");
+        ObjectHelper.notNull(as2From, "AS2From");
+        ObjectHelper.notNull(as2To, "AS2To");
         ObjectHelper.notNull(as2MessageStructure, "AS2 Message Structure");
         ObjectHelper.notNull(ediMessageContentType, "EDI Message Content Type");
 
@@ -266,9 +266,9 @@ public class AS2ClientManager {
             }
             case SIGNED: {
                 // Create Multipart Signed Entity containing EDI Entity
-                AS2SignedDataGenerator signingGenrator = createSigningGenerator(httpContext);
+                AS2SignedDataGenerator signingGenerator = createSigningGenerator(httpContext);
                 MultipartSignedEntity multipartSignedEntity = new MultipartSignedEntity(
-                        applicationEDIEntity, signingGenrator,
+                        applicationEDIEntity, signingGenerator,
                         StandardCharsets.US_ASCII.name(), AS2TransferEncoding.BASE64, true, null);
 
                 // Add Multipart Signed Entity to main body of request.

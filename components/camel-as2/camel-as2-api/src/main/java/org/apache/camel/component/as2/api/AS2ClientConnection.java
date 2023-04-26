@@ -23,6 +23,10 @@ import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+
 import org.apache.camel.component.as2.api.io.AS2BHttpClientConnection;
 import org.apache.camel.component.as2.api.protocol.RequestAS2;
 import org.apache.camel.component.as2.api.protocol.RequestMDN;
@@ -34,11 +38,16 @@ import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.conn.HttpConnectionFactory;
 import org.apache.http.conn.ManagedHttpClientConnection;
 import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpCoreContext;
@@ -67,14 +76,16 @@ public class AS2ClientConnection {
 
     public AS2ClientConnection(String as2Version, String userAgent, String clientFqdn, String targetHostName,
                                Integer targetPortNumber, Duration socketTimeout, Duration connectionTimeout,
-                               Integer connectionPoolMaxSize, Duration connectionPoolTtl) throws IOException {
+                               Integer connectionPoolMaxSize, Duration connectionPoolTtl,
+                               SSLContext sslContext, HostnameVerifier hostnameVerifier) throws IOException {
 
         this.as2Version = ObjectHelper.notNull(as2Version, "as2Version");
         this.userAgent = ObjectHelper.notNull(userAgent, "userAgent");
         this.clientFqdn = ObjectHelper.notNull(clientFqdn, "clientFqdn");
         this.targetHost = new HttpHost(
                 ObjectHelper.notNull(targetHostName, "targetHostName"),
-                ObjectHelper.notNull(targetPortNumber, "targetPortNumber"));
+                ObjectHelper.notNull(targetPortNumber, "targetPortNumber"),
+                sslContext != null ? "https" : "http");
         ObjectHelper.notNull(socketTimeout, "socketTimeout");
         this.connectionTimeoutMilliseconds = (int) ObjectHelper.notNull(connectionTimeout, "connectionTimeout").toMillis();
         ObjectHelper.notNull(connectionPoolMaxSize, "connectionPoolMaxSize");
@@ -91,11 +102,24 @@ public class AS2ClientConnection {
                 .add(new RequestConnControl())
                 .add(new RequestExpectContinue(true)).build();
 
-        HttpConnectionFactory<HttpRoute, ManagedHttpClientConnection> connFactory = (route, config) -> {
-            return new AS2BHttpClientConnection(UUID.randomUUID().toString(), 8 * 1024);
-        };
+        HttpConnectionFactory<HttpRoute, ManagedHttpClientConnection> connFactory
+                = (route, config) -> new AS2BHttpClientConnection(UUID.randomUUID().toString(), 8 * 1024);
 
-        connectionPoolManager = new PoolingHttpClientConnectionManager(connFactory);
+        if (sslContext == null) {
+            connectionPoolManager = new PoolingHttpClientConnectionManager(connFactory);
+        } else {
+            SSLConnectionSocketFactory sslConnectionSocketFactory;
+            if (hostnameVerifier == null) {
+                sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext);
+            } else {
+                sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+            }
+            Registry<ConnectionSocketFactory> socketFactoryRegistry = RegistryBuilder.<ConnectionSocketFactory> create()
+                    .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                    .register("https", sslConnectionSocketFactory)
+                    .build();
+            connectionPoolManager = new PoolingHttpClientConnectionManager(socketFactoryRegistry, connFactory);
+        }
         connectionPoolManager.setMaxTotal(connectionPoolMaxSize);
         connectionPoolManager.setSocketConfig(targetHost,
                 SocketConfig.copy(SocketConfig.DEFAULT)
@@ -122,7 +146,12 @@ public class AS2ClientConnection {
 
         // Check if a connection can be established
         try (AS2BHttpClientConnection testConnection = new AS2BHttpClientConnection("test", 8 * 1024)) {
-            testConnection.bind(new Socket(targetHost.getHostName(), targetHost.getPort()));
+            if (sslContext == null) {
+                testConnection.bind(new Socket(targetHost.getHostName(), targetHost.getPort()));
+            } else {
+                SSLSocketFactory factory = sslContext.getSocketFactory();
+                testConnection.bind(factory.createSocket(targetHost.getHostName(), targetHost.getPort()));
+            }
         }
 
     }

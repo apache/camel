@@ -849,6 +849,38 @@ public interface AS2EndpointBuilderFactory {
             doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
             return this;
         }
+
+        /**
+         * Add sslContext.
+         *
+         * The option is a: &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt;
+         * type.
+         *
+         * Group: common
+         *
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder sslContext(
+                javax.net.ssl.SSLContext sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * Add sslContext.
+         *
+         * The option will be converted to a
+         * &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt; type.
+         *
+         * Group: common
+         *
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointConsumerBuilder sslContext(String sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
     }
 
     /**
@@ -1747,6 +1779,38 @@ public interface AS2EndpointBuilderFactory {
             doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
             return this;
         }
+
+        /**
+         * Add sslContext.
+         *
+         * The option is a: &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt;
+         * type.
+         *
+         * Group: common
+         *
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder sslContext(
+                javax.net.ssl.SSLContext sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * Add sslContext.
+         *
+         * The option will be converted to a
+         * &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt; type.
+         *
+         * Group: common
+         *
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointProducerBuilder sslContext(String sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
     }
 
     /**
@@ -2614,6 +2678,38 @@ public interface AS2EndpointBuilderFactory {
         default AS2EndpointBuilder validateSigningCertificateChain(
                 String validateSigningCertificateChain) {
             doSetProperty("validateSigningCertificateChain", validateSigningCertificateChain);
+            return this;
+        }
+
+        /**
+         * Add sslContext.
+         *
+         * The option is a: &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt;
+         * type.
+         *
+         * Group: common
+         *
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder sslContext(
+                javax.net.ssl.SSLContext sslContext) {
+            doSetProperty("sslContext", sslContext);
+            return this;
+        }
+        /**
+         * Add sslContext.
+         *
+         * The option will be converted to a
+         * &lt;code&gt;javax.net.ssl.SSLContext&lt;/code&gt; type.
+         *
+         * Group: common
+         *
+         * @param sslContext the value to set
+         * @return the dsl builder
+         */
+        default AS2EndpointBuilder sslContext(String sslContext) {
+            doSetProperty("sslContext", sslContext);
             return this;
         }
     }
