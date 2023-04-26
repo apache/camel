@@ -119,7 +119,7 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
             this.notifyEvent = false;
             this.interrupted = false;
             this.interruptable = true;
-            this.redeliveryExhausted = false;
+            getExchangeExtension().setRedeliveryExhausted(false);
             getExchangeExtension().setErrorHandlerHandled(null);
             getExchangeExtension().setStreamCacheDisabled(false);
 
