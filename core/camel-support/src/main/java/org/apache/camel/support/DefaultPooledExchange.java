@@ -110,18 +110,11 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
             }
             // do not reset endpoint/fromRouteId as it would be the same consumer/endpoint again
             this.externalRedelivered = null;
-            getExchangeExtension().setHistoryNodeId(null);
-            getExchangeExtension().setHistoryNodeLabel(null);
-            getExchangeExtension().setTransacted(false);
             this.routeStop = false;
             this.rollbackOnly = false;
             this.rollbackOnlyLast = false;
-            getExchangeExtension().setNotifyEvent(false);
-            getExchangeExtension().setInterrupted(false);
-            getExchangeExtension().setInterruptable(true);
-            getExchangeExtension().setRedeliveryExhausted(false);
-            getExchangeExtension().setErrorHandlerHandled(null);
-            getExchangeExtension().setStreamCacheDisabled(false);
+
+            getExchangeExtension().reset();
 
             if (onDone != null) {
                 onDone.onDone(this);
