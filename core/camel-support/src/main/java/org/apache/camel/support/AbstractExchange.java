@@ -70,7 +70,6 @@ class AbstractExchange implements Exchange {
     ExchangePattern pattern;
     List<Synchronization> onCompletions;
     Boolean externalRedelivered;
-    boolean transacted;
     boolean routeStop;
     boolean rollbackOnly;
     boolean rollbackOnlyLast;
@@ -630,7 +629,7 @@ class AbstractExchange implements Exchange {
 
     @Override
     public boolean isTransacted() {
-        return transacted;
+        return privateExtension.isTransacted();
     }
 
     @Override

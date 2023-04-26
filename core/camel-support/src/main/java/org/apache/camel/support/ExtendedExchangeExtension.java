@@ -39,6 +39,7 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
     private String historyNodeId;
     private String historyNodeSource;
     private String historyNodeLabel;
+    private boolean transacted;
 
     ExtendedExchangeExtension(AbstractExchange exchange) {
         this.exchange = exchange;
@@ -189,7 +190,11 @@ public class ExtendedExchangeExtension implements ExchangeExtension {
 
     @Override
     public void setTransacted(boolean transacted) {
-        this.exchange.transacted = transacted;
+        this.transacted = transacted;
+    }
+
+    public boolean isTransacted() {
+        return transacted;
     }
 
     @Override

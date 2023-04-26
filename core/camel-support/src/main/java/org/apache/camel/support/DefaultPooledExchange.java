@@ -112,7 +112,7 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
             this.externalRedelivered = null;
             getExchangeExtension().setHistoryNodeId(null);
             getExchangeExtension().setHistoryNodeLabel(null);
-            this.transacted = false;
+            getExchangeExtension().setTransacted(false);
             this.routeStop = false;
             this.rollbackOnly = false;
             this.rollbackOnlyLast = false;
