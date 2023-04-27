@@ -261,10 +261,10 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
     }
 
     private static void copyResultsWithoutCorrelationId(Exchange target, Exchange source) {
-        Object correlationId = source.removeProperty(ExchangePropertyKey.CORRELATION_ID);
+        Object correlationId = target.removeProperty(ExchangePropertyKey.CORRELATION_ID);
         copyResultsPreservePattern(target, source);
         if (correlationId != null) {
-            source.setProperty(ExchangePropertyKey.CORRELATION_ID, correlationId);
+            target.setProperty(ExchangePropertyKey.CORRELATION_ID, correlationId);
         }
     }
 
