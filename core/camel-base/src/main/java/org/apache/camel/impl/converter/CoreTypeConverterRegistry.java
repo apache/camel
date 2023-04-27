@@ -155,22 +155,9 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 return (T) answer;
             } else if (type == Boolean.class && value instanceof String) {
                 // String -> Boolean
-                String str = (String) value;
-                // must be 4 or 5 in length
-                int len = str.length();
-                // fast check the value as-is in lower case which is most common
-                if (len == 4 && "true".equals(str)) {
-                    return (T) Boolean.TRUE;
-                } else if (len == 5 && "false".equals(str)) {
-                    return (T) Boolean.FALSE;
-                } else {
-                    // do check for ignore case
-                    str = str.toUpperCase();
-                    if (len == 4 && "TRUE".equals(str)) {
-                        return (T) Boolean.TRUE;
-                    } else if (len == 5 && "FALSE".equals(str)) {
-                        return (T) Boolean.FALSE;
-                    }
+                T parsedBoolean = customParseBoolean((String) value);
+                if (parsedBoolean != null) {
+                    return parsedBoolean;
                 }
             } else if (type.isPrimitive()) {
                 // okay its a wrapper -> primitive then return as-is for some common types
@@ -202,6 +189,37 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
         return (T) doConvertTo(type, exchange, value, false, false);
     }
 
+    // must be 4 or 5 in length
+    private static <T> T customParseBoolean(String str) {
+        int len = str.length();
+        // fast check the value as-is in lower case which is most common
+        if (len == 4) {
+            if ("true".equals(str)) {
+                return (T) Boolean.TRUE;
+            }
+
+            if ("TRUE".equals(str.toUpperCase())) {
+                return (T) Boolean.TRUE;
+            }
+
+            return null;
+        }
+
+        if (len == 5) {
+            if ("false".equals(str)) {
+                return (T) Boolean.FALSE;
+            }
+
+            if ("FALSE".equals(str.toUpperCase())) {
+                return (T) Boolean.FALSE;
+            }
+
+            return null;
+        }
+
+        return null;
+    }
+
     public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
         return mandatoryConvertTo(type, null, value);
     }
@@ -225,22 +243,9 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 return (T) answer;
             } else if (type == Boolean.class && value instanceof String) {
                 // String -> Boolean
-                String str = (String) value;
-                // must be 4 or 5 in length
-                int len = str.length();
-                // fast check the value as-is in lower case which is most common
-                if (len == 4 && "true".equals(str)) {
-                    return (T) Boolean.TRUE;
-                } else if (len == 5 && "false".equals(str)) {
-                    return (T) Boolean.FALSE;
-                } else {
-                    // do check for ignore case
-                    str = str.toUpperCase();
-                    if (len == 4 && "TRUE".equals(str)) {
-                        return (T) Boolean.TRUE;
-                    } else if (len == 5 && "FALSE".equals(str)) {
-                        return (T) Boolean.FALSE;
-                    }
+                T parsedBoolean = customParseBoolean((String) value);
+                if (parsedBoolean != null) {
+                    return parsedBoolean;
                 }
             } else if (type.isPrimitive()) {
                 // okay its a wrapper -> primitive then return as-is for some common types
@@ -299,22 +304,9 @@ public class CoreTypeConverterRegistry extends ServiceSupport implements TypeCon
                 return (T) answer;
             } else if (type == Boolean.class && value instanceof String) {
                 // String -> Boolean
-                String str = (String) value;
-                // must be 4 or 5 in length
-                int len = str.length();
-                // fast check the value as-is in lower case which is most common
-                if (len == 4 && "true".equals(str)) {
-                    return (T) Boolean.TRUE;
-                } else if (len == 5 && "false".equals(str)) {
-                    return (T) Boolean.FALSE;
-                } else {
-                    // do check for ignore case
-                    str = str.toUpperCase();
-                    if (len == 4 && "TRUE".equals(str)) {
-                        return (T) Boolean.TRUE;
-                    } else if (len == 5 && "FALSE".equals(str)) {
-                        return (T) Boolean.FALSE;
-                    }
+                T parsedBoolean = customParseBoolean((String) value);
+                if (parsedBoolean != null) {
+                    return parsedBoolean;
                 }
             } else if (type.isPrimitive()) {
                 // okay its a wrapper -> primitive then return as-is for some common types
