@@ -161,29 +161,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
                     executor.runningWorkers.increment();
                 }
                 try {
-                    for (;;) {
-                        final Runnable polled = queue.pollFirst();
-                        if (polled == null) {
-                            if (back != null && !back.isEmpty()) {
-                                queue = back.pollFirst();
-                                continue;
-                            } else {
-                                break;
-                            }
-                        }
-                        try {
-                            if (stats) {
-                                executor.pendingTasks.decrement();
-                            }
-                            if (LOG.isTraceEnabled()) {
-                                LOG.trace("Worker #{} running: {}", number, polled);
-                            }
-                            polled.run();
-                        } catch (Throwable t) {
-                            LOG.warn("Error executing reactive work due to {}. This exception is ignored.",
-                                    t.getMessage(), t);
-                        }
-                    }
+                    executeReactiveWork();
                 } finally {
                     running = false;
                     if (stats) {
@@ -193,6 +171,32 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
             } else {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Queuing reactive work: {}", runnable);
+                }
+            }
+        }
+
+        private void executeReactiveWork() {
+            for (;;) {
+                final Runnable polled = queue.pollFirst();
+                if (polled == null) {
+                    if (back != null && !back.isEmpty()) {
+                        queue = back.pollFirst();
+                        continue;
+                    } else {
+                        break;
+                    }
+                }
+                try {
+                    if (stats) {
+                        executor.pendingTasks.decrement();
+                    }
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Worker #{} running: {}", number, polled);
+                    }
+                    polled.run();
+                } catch (Throwable t) {
+                    LOG.warn("Error executing reactive work due to {}. This exception is ignored.",
+                            t.getMessage(), t);
                 }
             }
         }
