@@ -50,25 +50,25 @@ import static org.apache.camel.support.MessageHelper.copyBody;
  */
 class AbstractExchange implements Exchange {
     // number of elements in array
-    static final int INTERNAL_LENGTH = ExchangePropertyKey.values().length;
+    protected static final int INTERNAL_LENGTH = ExchangePropertyKey.values().length;
     // empty array for reset
-    static final Object[] EMPTY_INTERNAL_PROPERTIES = new Object[INTERNAL_LENGTH];
+    protected static final Object[] EMPTY_INTERNAL_PROPERTIES = new Object[INTERNAL_LENGTH];
 
-    final CamelContext context;
-    Map<String, Object> properties; // create properties on-demand as we use internal properties mostly
+    protected final CamelContext context;
+    protected Map<String, Object> properties; // create properties on-demand as we use internal properties mostly
     // optimize for internal exchange properties (not intended for end users)
-    final Object[] internalProperties = new Object[INTERNAL_LENGTH];
-    long created;
-    Message in;
-    Message out;
-    Exception exception;
-    String exchangeId;
-    ExchangePattern pattern;
-    Boolean externalRedelivered;
-    boolean routeStop;
-    boolean rollbackOnly;
-    boolean rollbackOnlyLast;
-    Map<String, SafeCopyProperty> safeCopyProperties;
+    protected final Object[] internalProperties = new Object[INTERNAL_LENGTH];
+    protected long created;
+    protected Message in;
+    protected Message out;
+    protected Exception exception;
+    protected String exchangeId;
+    protected ExchangePattern pattern;
+    protected Boolean externalRedelivered;
+    protected boolean routeStop;
+    protected boolean rollbackOnly;
+    protected boolean rollbackOnlyLast;
+    protected Map<String, SafeCopyProperty> safeCopyProperties;
     private final ExtendedExchangeExtension privateExtension;
 
     public AbstractExchange(CamelContext context) {
