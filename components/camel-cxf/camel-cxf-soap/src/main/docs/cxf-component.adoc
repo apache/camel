@@ -538,7 +538,7 @@ As an alternative you can add a message header for it as demonstrated in https:/
  // set up the response context which force start document
  Map<String, Object> map = new HashMap<String, Object>();
  map.put("org.apache.cxf.stax.force-start-document", Boolean.TRUE);
- exchange.getOut().setHeader(Client.RESPONSE_CONTEXT, map);
+ exchange.getMessage().setHeader(Client.RESPONSE_CONTEXT, map);
 -------------------------------------------------------------------
 
 == How to override the CXF producer address from message header
@@ -856,7 +856,7 @@ code in the message header as demonstrated by https://github.com/apache/camel/bl
 from(routerEndpointURI).process(new Processor() {
 
     public void process(Exchange exchange) throws Exception {
-        Message out = exchange.getOut();
+        Message out = exchange.getMessage();
         // Set the message body with the
         out.setBody(this.getClass().getResourceAsStream("SoapFaultMessage.xml"));
         // Set the response code here
@@ -892,7 +892,7 @@ response context with the following code:
                  exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, GREET_ME_OPERATION);
              }
          });
-         org.apache.camel.Message out = exchange.getOut();
+         org.apache.camel.Message out = exchange.getMessage();
          // The output is an object array, the first element of the array is the return value
          Object\[\] output = out.getBody(Object\[\].class);
          LOG.info("Received output text: " + output\[0\]);
