@@ -42,24 +42,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * That's a utility class for preparing Mendelson-specific certificate chain, private key, ssl context
+ * That's a utility class for preparing Mendelson-specific certificate chain, private key, ssl context. It has no
+ * mention of paths to Mendelson certificate, keystore and keystore password, but we can't ensure that it works with any
+ * provided certificate and keystore without modifications. At least due to certificate chain for Mendelson consists of
+ * the only certificate.
  */
 public class MendelsonCertLoader {
 
     private static final Logger LOG = LoggerFactory.getLogger(MendelsonCertLoader.class);
-
-    private static final String MENDELSON_CERT = "mendelson/key4.cer";
-    private static final String MENDELSON_PRIVATE_KEY = "mendelson/key3.pfx";
 
     private final List<Certificate> chainAsList = new ArrayList<>();
 
     private PrivateKey privateKey;
     private SSLContext sslContext;
 
-    public void setupSslContext() {
+    public void setupSslContext(String keyStorePath, String keyStorePassword) {
         try {
-            InputStream mendelsonPrivateKeyAsStream = getClass().getClassLoader().getResourceAsStream(MENDELSON_PRIVATE_KEY);
-            KeyStore keyStore = getKeyStore(mendelsonPrivateKeyAsStream);
+            InputStream keyStoreAsStream = getClass().getClassLoader().getResourceAsStream(keyStorePath);
+            KeyStore keyStore = getKeyStore(keyStoreAsStream, keyStorePassword);
             sslContext = SSLContexts.custom().setKeyStoreType("PKCS12")
                     .loadTrustMaterial(keyStore, new TrustAllStrategy())
                     .build();
@@ -68,16 +68,16 @@ public class MendelsonCertLoader {
         }
 
         if (sslContext == null) {
-            throw new IllegalStateException("failed to configure SSL context");
+            LOG.error("failed to configure SSL context");
         }
     }
 
-    private KeyStore getKeyStore(InputStream inputStream) throws IOException, NoSuchAlgorithmException {
-        String password = "test";
+    private KeyStore getKeyStore(InputStream inputStream, String keyStorePassword)
+            throws IOException, NoSuchAlgorithmException {
         KeyStore ks;
         try {
             ks = KeyStore.getInstance("PKCS12");
-            ks.load(inputStream, password.toCharArray());
+            ks.load(inputStream, keyStorePassword.toCharArray());
             return ks;
         } catch (KeyStoreException e) {
             LOG.error("Failed to create instance of KeyStore", e);
@@ -87,26 +87,26 @@ public class MendelsonCertLoader {
         throw new IllegalStateException("about to return null");
     }
 
-    public void setupCertificateChain() {
+    public void setupCertificateChain(String certificatePath, String keyStorePath, String keyStorePassword) {
 
-        InputStream mendelsonCertAsStream = getClass().getClassLoader().getResourceAsStream(MENDELSON_CERT);
-        if (mendelsonCertAsStream == null) {
+        InputStream certificateAsStream = getClass().getClassLoader().getResourceAsStream(certificatePath);
+        if (certificateAsStream == null) {
             //LOG.error("Couldn't read out client certificate as stream.");
             throw new IllegalStateException("Couldn't read out certificate as stream.");
         }
 
-        InputStream mendelsonPrivateKeyAsStream = getClass().getClassLoader().getResourceAsStream(MENDELSON_PRIVATE_KEY);
-        if (mendelsonPrivateKeyAsStream == null) {
+        InputStream keyStoreAsStream = getClass().getClassLoader().getResourceAsStream(keyStorePath);
+        if (keyStoreAsStream == null) {
             //LOG.error("Couldn't read out private key as stream.");
             throw new IllegalStateException("Couldn't read out key storage as stream.");
         }
 
         try {
-            Certificate mendelsonCert = getCertificateFromStream(mendelsonCertAsStream);
-            chainAsList.add(mendelsonCert);
+            Certificate certificate = getCertificateFromStream(certificateAsStream);
+            chainAsList.add(certificate);
 
             //private key
-            privateKey = getPrivateKeyFromPKCSStream(mendelsonPrivateKeyAsStream);
+            privateKey = getPrivateKeyFromPKCSStream(keyStoreAsStream, keyStorePassword);
 
         } catch (IOException e) {
             String errMsg
@@ -156,9 +156,8 @@ public class MendelsonCertLoader {
     }
 
     //https://stackoverflow.com/questions/18644286/creating-privatekey-object-from-pkcs12
-    private PrivateKey getPrivateKeyFromPKCSStream(InputStream inputStream)
+    private PrivateKey getPrivateKeyFromPKCSStream(InputStream inputStream, String keyStorePassword)
             throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
-        String password = "test";
         KeyStore ks = null;
         try {
             ks = KeyStore.getInstance("PKCS12");
@@ -166,14 +165,14 @@ public class MendelsonCertLoader {
             LOG.error("Error while getting instance of KeyStore" + e);
         }
         try {
-            ks.load(inputStream, password.toCharArray());
+            ks.load(inputStream, keyStorePassword.toCharArray());
         } catch (CertificateException e) {
             LOG.error("Error while loading the certificate" + e);
         }
         try {
             return (PrivateKey) ks.getKey(
                     ks.aliases().nextElement(),
-                    password.toCharArray());
+                    keyStorePassword.toCharArray());
         } catch (KeyStoreException e) {
             LOG.error("Error while retrieving private key" + e);
         } catch (UnrecoverableKeyException e) {
