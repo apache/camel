@@ -204,6 +204,10 @@ public class JpaProducer extends DefaultProducer {
         if (maxResults > 0) {
             query.setMaxResults(maxResults);
         }
+        int firstResult = getEndpoint().getFirstResult();
+        if (firstResult > 0) {
+            query.setFirstResult(firstResult);
+        }
         // setup the parameters
         Map<String, ?> params;
         if (parameters != null) {
