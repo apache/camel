@@ -1,4 +1,5 @@
 = Event Message
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/EventMessage.html[Event Message]
@@ -40,14 +41,18 @@ IMPORTANT: This is only possible on endpoints used by consumers (i.e. in `<from>
 In the example below the message will be forced as an event message as the consumer
 is in `InOnly` mode.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("mq:someQueue?exchangePattern=InOnly")
   .to("activemq:queue:one-way");
 ----
 
-And with XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -55,12 +60,17 @@ And with XML:
     <to uri="activemq:queue:one-way"/>
 </route>
 ----
+====
 
 == Using setExchangePattern EIP
 
 You can specify the
 xref:manual::exchange-pattern.adoc[Exchange Pattern] using `setExchangePattern` in the DSL.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("mq:someQueue")
@@ -68,8 +78,8 @@ from("mq:someQueue")
   .to("activemq:queue:one-way");
 ----
 
-And with XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -78,6 +88,7 @@ And with XML:
     <to uri="activemq:queue:one-way"/>
 </route>
 ----
+====
 
 When using `setExchangePattern` then the xref:manual::exchange-pattern.adoc[Exchange Pattern]
 on the xref:manual::exchange.adoc[Exchange] is changed from this point onwards in the route.

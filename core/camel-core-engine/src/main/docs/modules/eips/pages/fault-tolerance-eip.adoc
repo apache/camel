@@ -1,4 +1,5 @@
 = Fault Tolerance EIP
+:tabs-sync-option:
 
 This component supports the xref:circuitBreaker-eip.adoc[Circuit Breaker] EIP with the
 xref:others:microprofile-fault-tolerance.adoc[MicroProfile Fault Tolerance] library.
@@ -24,6 +25,10 @@ on the Fault Tolerance xref:circuitBreaker-eip.adoc[Circuit Breaker].
 Below is an example route showing a Fault Tolerance EIP circuit breaker
 that protects against a downstream HTTP operation with fallback.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -35,8 +40,8 @@ from("direct:start")
     .to("mock:result");
 ----
 
-And in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -52,6 +57,7 @@ And in XML DSL:
     <to uri="mock:result"/>
 </route>
 ----
+====
 
 In case the calling the downstream HTTP service is failing, and an exception is thrown
 then the circuit breaker will react and execute the fallback route instead.
@@ -66,6 +72,10 @@ You can fine-tune the Fault Tolerance EIP by the many xref:faultToleranceConfigu
 
 For example to use 2 second execution timeout, you can do as follows:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -79,8 +89,8 @@ from("direct:start")
     .log("After Fault Tolerance ${body}");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -94,6 +104,7 @@ And in XML:
   <log message="After Fault Tolerance: ${body}"/>
 </route>
 ----
+====
 
 In this example if calling the downstream service does not return a response within 2 seconds,
 a timeout is triggered, and the exchange will fail with a TimeoutException.

@@ -4,6 +4,7 @@
 :description: Controls the rate at which messages are passed to the next node in the route
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 How can I throttle messages to ensure that a specific endpoint does not get overloaded, or we don’t exceed an agreed SLA with some external service?
 
@@ -22,6 +23,10 @@ include::partial$eip-options.adoc[]
 The below example will throttle messages received on seda:a before being sent to mock:result
 ensuring that a maximum of 3 messages are sent during a running 10-seconds window slot.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:a")
@@ -29,20 +34,8 @@ from("seda:a")
   .to("mock:result");
 ----
 
-To use 10-seconds window we set the `timePeriodMillis` to ten-thousand. The default value is 1000 (i.e. 1 second),
-meaning that setting just `throttle(3)` has the effect of setting the maximum number of requests per second.
-
-To throttle by 50 requests per second, would look like this:
-
-[source,java]
-----
-from("seda:a")
-  .throttle(50)
-  .to("seda:b");
-----
-
-And the same examples but in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -54,8 +47,40 @@ And the same examples but in XML:
 </route>
 ----
 
-And to throttle 50 messages per second:
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:a
+    steps:
+      - throttle:
+          expression:
+            constant: 3
+          timePeriodMillis: 10000
+      - to: 
+          uri: mock:result
+----
+====
 
+To use 10-seconds window we set the `timePeriodMillis` to ten-thousand. The default value is 1000 (i.e. 1 second),
+meaning that setting just `throttle(3)` has the effect of setting the maximum number of requests per second.
+
+To throttle by 50 requests per second, would look like this:
+
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("seda:a")
+  .throttle(50)
+  .to("seda:b");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -66,6 +91,21 @@ And to throttle 50 messages per second:
   <to uri="mock:result"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:a
+    steps:
+      - throttle:
+          expression:
+            constant: 50
+      - to: 
+          uri: mock:result
+----
+====
 
 === Dynamically changing maximum requests per period
 
@@ -78,6 +118,10 @@ At runtime Camel evaluates the expression and converts the result to a `java.lan
 In the example below we use a header from the message to determine the maximum requests per period.
 If the header is absent, then the Throttler uses the old value. This allows you to only provide a header if the value is to be changed:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:a")
@@ -85,8 +129,8 @@ from("seda:a")
   .to("seda:b")
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -99,33 +143,70 @@ And in XML:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:a
+    steps:
+      - throttle:
+          expression:
+            # use a header to determine how many messages to throttle per 0.5 sec
+            header: throttleValue
+          timePeriodMillis: 500
+      - to:
+          uri: seda:b
+----
+====
+
 === Asynchronous delaying
 
 You can let the Throttler use non-blocking asynchronous delaying,
 which means Camel will use a scheduler to schedule a task to be executed in the future.
 The task will then continue routing. This allows the caller thread to not block and be able to service other messages, etc.
 
-In Java DSL you enable asynchronous delaying using `asyncDelayed` as shown:
+You enable asynchronous delaying using `asyncDelayed` as shown:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------
+----
 from("seda:a")
   .throttle(100).asyncDelayed()
   .to("seda:b");
----------------------
+----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
   <from uri="seda:a"/>
-  <throttle timePeriodMillis="100" asyncDelayed="true">
+  <throttle asyncDelayed="true">
     <constant>100</constant>
   </throttle>
   <to uri="seda:b"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:a
+    steps:
+      - throttle:
+          expression:
+            constant: 100
+          asyncDelayed: true
+      - to:
+          uri: seda:b
+----
+====
 
 === Rejecting processing if rate limit hit
 
@@ -135,15 +216,19 @@ the Throttler will by default wait until there is _free space_ before continue r
 Instead of waiting you can also configure the Throttler to reject the message by throwing `ThrottlerRejectedExecutionException`
 exception.
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------
+----
 from("seda:a")
   .throttle(100).rejectExecution(true)
   .to("seda:b");
----------------------
+----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -155,6 +240,23 @@ And in XML:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:a
+    steps:
+      - throttle:
+          expression:
+            constant: 100
+          timePeriodMillis: 100
+          rejectExecution: true
+      - to:
+          uri: seda:b
+----
+====
+
 === Throttling per group
 
 The Throttler will by default throttle all messages in the same group. However, it is possible to use
@@ -162,19 +264,19 @@ a _correlation expression_ to diving into multiple groups, where each group is t
 
 For example, you can throttle by a xref:message.adoc[message] header as shown in the following example:
 
+[tabs]
+====
+Java::
++
 [source,java]
----------------------
+----
 from("seda:a")
   .throttle(100).correlationExpression(header("region"))
   .to("seda:b");
----------------------
+----
 
-In the example above messages are throttled by the header with name region.
-So suppose there are regions for US, EMEA, and ASIA, then we have three different groups, that each
-are throttled by 100 messages per second.
-
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -188,3 +290,24 @@ And in XML:
   <to uri="seda:b"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:a
+    steps:
+      - throttle:
+          expression:
+            constant: 100
+          correlationExpression:
+            header: region
+      - to:
+          uri: seda:b
+----
+====
+
+In the example above messages are throttled by the header with name region.
+So suppose there are regions for US, EMEA, and ASIA, then we have three different groups, that each
+are throttled by 100 messages per second.

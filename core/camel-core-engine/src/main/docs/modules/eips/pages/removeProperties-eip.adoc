@@ -4,6 +4,7 @@
 :description: Removes message exchange properties whose name matches a specified pattern
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Remove Properties EIP allows you to remove one or more `Exchange` properties,
 based on pattern syntax.
@@ -25,6 +26,10 @@ matching by the following rules in the given order:
 
 == Remove all properties
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:b")
@@ -32,8 +37,8 @@ from("seda:b")
   .to("mock:result");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -42,6 +47,7 @@ And in XML:
   <to uri="mock:result"/>
 </route>
 ----
+====
 
 NOTE: Be careful to remove all exchange properties as Camel uses internally exchange properties
 to keep state on the `Exchange` during routing. So use this with care. You should generally only remove
@@ -51,6 +57,10 @@ custom exchange properties that are under your own control.
 
 To remove all exchange properties that start with `Foo` then use `Foo*` as shown:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:b")
@@ -58,8 +68,8 @@ from("seda:b")
   .to("mock:result");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -68,6 +78,7 @@ And in XML:
   <to uri="mock:result"/>
 </route>
 ----
+====
 
 == See Also
 

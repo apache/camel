@@ -4,6 +4,7 @@
 :description: Removes a named property from the message exchange
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Remove Property EIP allows you to remove a single property from the `Exchange`.
 
@@ -17,6 +18,10 @@ include::partial$eip-options.adoc[]
 
 We want to remove an exchange property with key "myProperty" from the exchange:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:b")
@@ -24,8 +29,8 @@ from("seda:b")
   .to("mock:result");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -34,6 +39,7 @@ And in XML:
   <to uri="mock:result"/>
 </route>
 ----
+====
 
 == See Also
 

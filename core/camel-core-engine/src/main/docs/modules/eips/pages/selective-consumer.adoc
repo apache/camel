@@ -1,4 +1,5 @@
 = Selective Consumer
+:tabs-sync-option:
 
 Camel supports the
 https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageSelector.html[Selective Consumer]
@@ -23,14 +24,18 @@ The first solution is to provide a Message Selector to the underlying URIs when 
 For example when using xref:components::jms-component.adoc[JMS] you can specify a
 JMS selector parameter so that the message broker will only deliver messages matching your criteria.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("jms:queue:hello?selector=color='red'")
   .to("bean:red");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -38,12 +43,17 @@ And in XML:
   <to uri="bean:red"/>
 </route>
 ----
+====
 
 === Selective Consumer using Filter EIP
 
 The other approach is to use a xref:filter-eip.adoc[Message Filter] which is applied;
 if the filter matches the message your "consumer" is invoked as shown in the following example:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:colors")
@@ -51,8 +61,8 @@ from("seda:colors")
         .to("bean:red")
 ----
 
-And in XML
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -63,4 +73,4 @@ And in XML
     </filter>
 </route>
 ----
-
+====

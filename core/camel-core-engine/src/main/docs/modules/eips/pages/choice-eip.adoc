@@ -4,6 +4,7 @@
 :description: Route messages based on a series of predicates
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The
 http://www.enterpriseintegrationpatterns.com/ContentBasedRouter.html[Content
@@ -25,6 +26,10 @@ The Camel xref:languages:simple-language.adoc[Simple] language
 is great to use with the Choice EIP when routing is based on the content of the message,
 such as checking message headers.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:a")
@@ -37,8 +42,8 @@ from("direct:a")
             .to("direct:d");
 ----
 
-And the same example using XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -58,6 +63,30 @@ And the same example using XML DSL:
     </choice>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:a
+    steps:
+      - choice:
+          when:
+            - simple: "${header.foo} == 'bar'"
+              steps:
+                - to:
+                    uri: direct:b
+            - simple: "${header.foo} == 'cheese'"
+              steps:
+                - to:
+                    uri: direct:c
+          otherwise:
+            steps:
+              - to:
+                  uri: direct:d
+----
+====
 
 === Why can I not use otherwise in Java DSL
 
@@ -170,6 +199,10 @@ Here we select from the Switch the first predicate that matches. So if there is
 a property placeholder with the key `foo` then its select, and so on.
 Notice how we can use `{{?foo}}` to mark the property placeholder as optional.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:a")
@@ -179,8 +212,8 @@ from("direct:a")
         .otherwise().to("direct:other");
 ----
 
-And the same example using XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -201,8 +234,8 @@ And the same example using XML DSL:
 </route>
 ----
 
-And in YAML DSL:
-
+YAML::
++
 [source,yaml]
 ----
 - from:
@@ -221,5 +254,6 @@ And in YAML DSL:
             steps:
               - to: "direct:other"
 ----
+====
 
 TIP: Otherwise, is optional, and if none of the predicates would match, then no branches is selected.

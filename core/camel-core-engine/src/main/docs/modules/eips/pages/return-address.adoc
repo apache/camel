@@ -1,4 +1,5 @@
 = Return Address
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/ReturnAddress.html[Return
@@ -20,14 +21,18 @@ component via the `JMSReplyTo` header.
 In the example below we send a message to the JMS cheese queue using `InOut` mode, this means
 that Camel will automatically configure the `JMSReplyTo` header with a temporary queue as the Return Address.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:foo")
   .to(ExchangePattern.InOut, "jms:queue:cheese");
 ----
 
-And in XML
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -35,18 +40,23 @@ And in XML
     <to pattern="InOut" uri="jms:queue:cheese"/>
 </route>
 ----
+====
 
 You can also specify a named reply queue with the `replyTo` option (instead of a temporary queue).
 When doing so then `InOut` mode is implied:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:foo")
   .to("jms:queue:cheese?replyTo=myReplyQueue");
 ----
 
-And in XML
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -54,6 +64,7 @@ And in XML
     <to uri="jms:queue:cheese?replyTo=myReplyQueue"/>
 </route>
 ----
+====
 
 == See Also
 

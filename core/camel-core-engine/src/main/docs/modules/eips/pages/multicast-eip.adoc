@@ -4,6 +4,7 @@
 :description: Routes the same message to multiple paths either sequentially or in parallel.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Multicast EIP allows to route *the same* message to a number of xref:manual::endpoint.adoc[endpoints]
 and process them in a different way.
@@ -37,6 +38,10 @@ The following exchange properties are set on each `Exchange` that are multicaste
 The following example shows how to take a request from the direct:a
 endpoint, then multicast these request to direct:x, direct:y, and direct:z.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:a")
@@ -46,8 +51,8 @@ from("direct:a")
     .to("direct:z");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -59,6 +64,7 @@ And in XML:
     </multicast>
 </route>
 ----
+====
 
 By default, Multicast EIP runs in single threaded mode, which mean
 that the next multicasted message is processed only when the previous is finished.
@@ -71,6 +77,10 @@ is processed by its own thread in parallel.
 
 The example below enabled parallel mode:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:a")
@@ -80,8 +90,8 @@ from("direct:a")
     .to("direct:z");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -93,16 +103,20 @@ And in XML:
     </multicast>
 </route>
 ----
+====
 
 === Ending a Multicast block
 
-You may want to continue routing the exchange after the Multicast EIP. In Java DSL you need to use `end()`
-to mark where multicast ends, and where other EIPs can be added to continue the route.
+You may want to continue routing the exchange after the Multicast EIP. 
 
 In the example above then sending to mock:result happens after the Multicast EIP has finished.
 In other words direct:y, direct:y, and direct:z should be completed first, before the message
 continues.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:a")
@@ -113,9 +127,12 @@ from("direct:a")
   .end()
   .to("mock:result");
 ----
++
+Note that you need to use `end()` to mark where multicast ends, and where other 
+EIPs can be added to continue the route.
 
-And in XML its intuitive as `</multicast>` marks the end of the block:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -128,6 +145,7 @@ And in XML its intuitive as `</multicast>` marks the end of the block:
     <to uri="mock:result"/>
 </route>
 ----
+====
 
 === Aggregating
 
@@ -136,6 +154,10 @@ as a single response exchange, that becomes the outgoing exchange after the Mult
 
 The example now aggregates with the `MyAggregationStrategy` class:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -147,8 +169,10 @@ from("direct:start")
   .to("mock:result");
 ----
 
-And in XML we can refer to the FQN class name with `#class:` syntax as shown below:
-
+XML::
++
+We can refer to the FQN class name with `#class:` syntax as shown below:
++
 [source,xml]
 ----
 <route>
@@ -162,6 +186,7 @@ And in XML we can refer to the FQN class name with `#class:` syntax as shown bel
     <to uri="mock:result"/>
 </route>
 ----
+====
 
 [NOTE]
 ====
@@ -188,6 +213,10 @@ handle it. You can do this by specifying that it should stop in case of an
 exception occurred. This is done by the `stopOnException` option as
 shown below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -203,11 +232,8 @@ from("direct:start")
     from("direct:baz").to("mock:baz");
 ----
 
-In the example above, then `MyProcessor` is causing a failure and throws an exception.
-This means the Multicast EIP will stop after this, and not the last route (direct:baz).
-
-And using XML DSL you specify it as follows:
-
+XML::
++
 [source,xml]
 ----
 <routes>
@@ -238,6 +264,10 @@ And using XML DSL you specify it as follows:
     </route>
 </routes>
 ----
+====
+
+In the example above, then `MyProcessor` is causing a failure and throws an exception.
+This means the Multicast EIP will stop after this, and not the last route (direct:baz).
 
 === Preparing the message by deep copying before multicasting
 

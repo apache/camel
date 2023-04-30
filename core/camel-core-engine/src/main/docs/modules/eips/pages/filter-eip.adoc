@@ -4,6 +4,7 @@
 :description: Filter out messages based using a predicate
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The http://www.enterpriseintegrationpatterns.com/Filter.html[Message
 Filter] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
@@ -30,6 +31,10 @@ The Camel xref:languages:simple-language.adoc[Simple] language
 is great to use with the Filter EIP when routing is based on the content of the message,
 such as checking message headers.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:a")
@@ -39,8 +44,8 @@ from("direct:a")
     .to("direct:b")
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -52,9 +57,14 @@ And in XML:
     <to uri="direct:b"/>
 </route>
 ----
+====
 
 You can use many languages as the predicate, such as xref:languages:xpath-language.adoc[XPath]:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start").
@@ -62,8 +72,8 @@ from("direct:start").
         to("mock:result");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -74,6 +84,7 @@ And in XML:
     </filter>
 </route>
 ----
+====
 
 Here is another example of calling a xref:languages:bean-language.adoc[method on a bean]
 to define the filter behavior:
@@ -85,7 +96,6 @@ from("direct:start")
       .to("mock:gold")
     .end()
     .to("mock:all");
-}
 ----
 
 And then bean can have a method that returns a `boolean` as the predicate:
@@ -101,7 +111,7 @@ public static class MyBean {
 }
 ----
 
-And in XML we can call the bean in `<method> where we can specify the FQN classname
+And in XML we can call the bean in `<method>` where we can specify the FQN classname
 of the bean as shown:
 
 [source,xml]
@@ -121,6 +131,10 @@ of the bean as shown:
 To know whether an `Exchange` was filtered or not, then you can choose to specify a name of a property
 to store on the exchange with the result (boolean), using `statusPropertyName` as shown below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -128,11 +142,10 @@ from("direct:start")
       .to("mock:gold")
     .end()
     .to("mock:all");
-}
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -144,6 +157,7 @@ And in XML:
     <to uri="mock:all"/>
 </route>
 ----
+====
 
 In the example above then Camel will store an exchange property with key `gold` with the result of the filtering,
 whether it was `true` or `false`.

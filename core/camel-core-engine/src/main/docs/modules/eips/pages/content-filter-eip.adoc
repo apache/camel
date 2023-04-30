@@ -1,4 +1,5 @@
 = Content Filter
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/ContentFilter.html[Content
@@ -35,9 +36,13 @@ from("direct:start")
 
 == Message Content filtering using a Bean EIP
 
-we can use xref:bean-eip.adoc[Bean EIP] to use any Java
+We can use xref:bean-eip.adoc[Bean EIP] to use any Java
 method on any bean to act as content filter:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:My.Queue")
@@ -45,8 +50,8 @@ from("activemq:My.Queue")
     .to("activemq:Another.Queue");
 ----
 
-And in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -56,6 +61,21 @@ And in XML DSL:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: activemq:Input
+    steps:
+      - bean:
+          ref: myBeanName
+          method: doFilter
+      - to:
+          uri: activemq:Output
+----
+====
+
 == Message Content filtering using expression
 
 Some languages like xref:languages:xpath-language.adoc[XPath], and xref:languages:xquery-language.adoc[XQuery]
@@ -63,6 +83,10 @@ can be used to transform and filter content from messages.
 
 In the example we use xpath to filter a XML message to select all the `<foo><bar>` elements:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:Input")
@@ -70,14 +94,30 @@ from("activemq:Input")
   .to("activemq:Output");
 ----
 
-And in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
   <from uri="activemq:Input"/>
-  <setBody><xpath>//foo:bar</xpath></setBody>
+  <setBody>
+    <xpath>//foo:bar</xpath>
+  </setBody>
   <to uri="activemq:Output"/>
 </route> 
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from: 
+    uri: activemq:Input
+    steps:
+      - setBody:
+          expression:
+            xpath: //foo:bar
+      - to:
+          uri: activemq:Output
+----
+====

@@ -1,4 +1,5 @@
 = Point to Point Channel
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/PointToPointChannel.html[Point
@@ -28,6 +29,10 @@ TIP: See also the related xref:publish-subscribe-channel.adoc[Publish Scribe Cha
 The following example demonstrates point to point messaging using
 the xref:ROOT:jms-component.adoc[JMS] component:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -37,8 +42,8 @@ from("jms:queue:foo")
     .to("bean:foo");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <routes>
@@ -52,4 +57,4 @@ And in XML:
     </route>
 </routes>
 ----
-
+====

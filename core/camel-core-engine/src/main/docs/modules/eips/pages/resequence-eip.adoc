@@ -4,6 +4,7 @@
 :description: Resequences (re-order) messages based on an expression
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/Resequencer.html[Resequencer]
@@ -44,15 +45,19 @@ then they are sorted, and sent out, to continue being routed.
 In the example below we re-order the message based on content of the message body.
 The default batch modes will collect up till 100 messages per batch, or timeout every second.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
     .resequence().body()
     .to("mock:result");
 ----
-
++
 This is equivalent to:
-
++
 [source,java]
 ----
 from("direct:start")
@@ -60,8 +65,8 @@ from("direct:start")
     .to("mock:result");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -72,9 +77,14 @@ And in XML:
     </resequence>
 </route>
 ----
+====
 
 The batch resequencer can be further configured via the `size()` and `timeout()` methods:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -82,10 +92,8 @@ from("direct:start")
     .to("mock:result")
 ----
 
-This sets the batch size to 300 and the batch timeout to 4000 ms (by default, the batch size is 100 and the timeout is 1000 ms).
-
-And the example in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -97,11 +105,18 @@ And the example in XML DSL:
     </resequence>
 </route>
 ----
+====
+
+This sets the batch size to 300 and the batch timeout to 4000 ms (by default, the batch size is 100 and the timeout is 1000 ms).
 
 So the above example will reorder messages  in order of their bodies.
 Typically, you'd use a header rather than the body to order things; or maybe a part of the body.
 So you could replace this expression with:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -109,8 +124,8 @@ from("direct:start")
     .to("mock:result")
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -121,6 +136,7 @@ And in XML:
     </resequence>
 </route>
 ----
+====
 
 This reorders messages using a custom sequence number with the header name mySeqNo.
 
@@ -131,6 +147,10 @@ of keeping only last duplicated message.
 
 In batch mode, you can turn on duplicates as follows:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -138,8 +158,8 @@ from("direct:start")
     .to("mock:result")
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -151,6 +171,7 @@ And in XML:
     </resequence>
 </route>
 ----
+====
 
 === Reverse Ordering
 
@@ -160,6 +181,9 @@ In some cases you want to reverse the ordering.
 
 In batch mode, you can turn on reverse as follows:
 
+[tabs]
+====
++
 [source,java]
 ----
 from("direct:start")
@@ -167,8 +191,8 @@ from("direct:start")
     .to("mock:result")
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -180,6 +204,7 @@ And in XML:
     </resequence>
 </route>
 ----
+====
 
 === Ignoring invalid messages
 
@@ -190,6 +215,10 @@ You can ignore these kinds of errors, and let the Resequencer skip the invalid E
 
 To do this you do as follows in Java DSL:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -199,8 +228,8 @@ from("direct:start")
     .to("mock:result");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -212,6 +241,7 @@ And in XML:
     </resequence>
 </route>
 ----
+====
 
 This option is available for both batch and stream mode.
 
@@ -242,6 +272,10 @@ that are ordered 1,2,3...N.
 
 The following example uses the header seqnum for the ordering:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -249,8 +283,8 @@ from("direct:start")
   .to("mock:result");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -262,10 +296,15 @@ And in XML:
     </resequence>
 </route>
 ----
+====
 
 The Resequencer keeps a backlog of pending messages in a backlog.
 The default capacity is 1000 elements, which can be configured:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -273,8 +312,8 @@ from("direct:start")
     .to("mock:result")
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -286,6 +325,7 @@ And in XML:
     </resequence>
 </route>
 ----
+====
 
 This uses a capacity of 5000 elements. And the timeout has been set to 4 seconds.
 In case of a timeout, then the resequencer disreards the current exepected sequence number,
@@ -355,6 +395,10 @@ This provides an extra level of control in regard to delayed message ordering.
 
 In the example below old messages are rejected:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -362,8 +406,8 @@ from("direct:start")
     .to("mock:result");
 ----
 
-And in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -375,5 +419,6 @@ And in XML DSL:
     </resequence>
 </route>
 ----
+====
 
 If an old message is detected then Camel throws `MessageRejectedException`.

@@ -4,6 +4,7 @@
 :description: Stops the processing of the current message
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 How can I stop continue routing a message?
 
@@ -22,6 +23,10 @@ include::partial$eip-options.adoc[]
 We want to stop routing a message if the message body contains the word Bye.
 In the xref:choice-eip.adoc[Content Based Router] below we use `stop` in such case.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -33,8 +38,8 @@ from("direct:start")
 .to("mock:result");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -54,6 +59,7 @@ And in XML:
   </choice>
 </route>
 ----
+====
 
 === Calling stop from Java
 

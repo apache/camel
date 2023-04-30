@@ -1,4 +1,5 @@
 = Message Translator
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageTranslator.html[Message
@@ -28,6 +29,10 @@ xref:manual::expression.adoc[Expression] to do the transformation:
 In the example below we prepend Hello to the message body using the
 xref:components:languages:simple-language.adoc[Simple] language:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:cheese")
@@ -35,8 +40,8 @@ from("direct:cheese")
     .to("log:hello");
 ----
 
-And in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -47,6 +52,7 @@ And in XML DSL:
     <to uri="activemq:wine"/>
 </route>
 ----
+====
 
 === Message Translator with Bean
 
@@ -54,6 +60,10 @@ You can transform a message using Camels
 xref:manual::bean-integration.adoc[Bean Integration] to call any method on a bean
 that performs the message translation:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:cheese")
@@ -61,8 +71,8 @@ from("activemq:cheese")
   .to("activemq:wine");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -71,12 +81,17 @@ And in XML:
     <to uri="activemq:wine"/>
 </route>
 ----
+====
 
 === Message Translator with Processor
 
 You can also use a xref:manual::processor.adoc[Processor] to do
 the transformation:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:cheese")
@@ -84,8 +99,8 @@ from("activemq:cheese")
   .to("activemq:wine");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -94,6 +109,7 @@ And in XML:
     <to uri="activemq:wine"/>
 </route>
 ----
+====
 
 === Message Translator using Templating Components
 
@@ -101,6 +117,10 @@ You can also consume a message from one destination, transform it with something
 xref:ROOT:velocity-component.adoc[Velocity] or xref:ROOT:xquery-component.adoc[XQuery] and then send
 it on to another destination.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("activemq:cheese")
@@ -108,8 +128,8 @@ from("activemq:cheese")
     .to("activemq:wine");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -118,6 +138,7 @@ And in XML:
     <to uri="activemq:wine"/>
 </route>
 ----
+====
 
 === Message Translator using Data Format
 

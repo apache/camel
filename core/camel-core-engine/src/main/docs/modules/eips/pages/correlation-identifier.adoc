@@ -1,4 +1,5 @@
 = Correlation Identifier
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/CorrelationIdentifier.html[Correlation
@@ -44,6 +45,10 @@ The following EIPs does this:
 The following example uses a request/reply pattern in
 the xref:ROOT:jms-component.adoc[JMS] component, where correlation identifiers are automatically handled:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -51,8 +56,8 @@ from("direct:start")
     .to("mock:result");
 ----
 
-And with XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -62,3 +67,17 @@ And with XML DSL:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - to:
+          uri: jms:queue:foo
+          pattern: InOut
+      - to:
+          uri: mock:result
+----
+====

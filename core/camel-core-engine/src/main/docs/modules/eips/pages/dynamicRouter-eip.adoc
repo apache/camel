@@ -4,6 +4,7 @@
 :description: Route messages based on dynamic rules
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The
 http://www.enterpriseintegrationpatterns.com/DynamicRouter.html[Dynamic
@@ -30,8 +31,12 @@ with the current slip. This allows you to know how far we have processed in the 
 
 == Example
 
-In Java DSL you can use the `dynamicRouter` as shown below:
+You can use the `dynamicRouter` as shown below:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -39,8 +44,8 @@ from("direct:start")
     .dynamicRouter(method(MySlipBean.class, "slip"));
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -51,6 +56,20 @@ And in XML:
     </dynamicRouter>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - dynamicRouter:
+          method:
+            beanType: com.foo.MySlipBean
+            method: slip
+----
+====
 
 Which will call a xref:languages:bean-language.adoc[Bean Method] to compute the slip
 _on-the-fly_. The bean could be implemented as follows:

@@ -4,6 +4,7 @@
 :description: Route messages in a fault tolerance way using Circuit Breaker
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Circuit Breaker pattern is inspired by the real-world electrical circuit breaker,
 which is used to detect excessive current draw and fail fast to protect electrical equipment.
@@ -34,6 +35,10 @@ slow operation by falling back to the in-lined fallback route.
 
 By default, the timeout request is just *1000ms, so the HTTP endpoint has to be fairly quick to succeed.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -45,8 +50,8 @@ from("direct:start")
     .to("mock:result");
 ----
 
-And in XML DSL:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -62,6 +67,7 @@ And in XML DSL:
   <to uri="mock:result"/>
 </route>
 ----
+====
 
 == Circuit Breaker components
 

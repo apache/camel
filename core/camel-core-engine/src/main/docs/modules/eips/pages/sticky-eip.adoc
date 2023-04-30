@@ -4,6 +4,7 @@
 :description: Sticky load balancing using an expression to calculate a correlation key to perform the sticky load balancing.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 Sticky mode for the xref:loadBalance-eip.adoc[Load Balancer] EIP.
 
@@ -20,6 +21,10 @@ include::partial$eip-options.adoc[]
 
 In this case we are using the header myKey as correlation expression:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -30,8 +35,8 @@ from("direct:start")
     .end();
 ----
 
-In XML you'll have a route like this:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -48,3 +53,4 @@ In XML you'll have a route like this:
     </loadBalance> 
 </route>
 ----
+====

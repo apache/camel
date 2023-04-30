@@ -4,6 +4,7 @@
 :description: The Claim Check EIP allows you to replace message content with a claim check (a unique key), which can be used to retrieve the message content at a later time.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The http://www.enterpriseintegrationpatterns.com/patterns/messaging/StoreInLibrary.html[Claim Check] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
 allows you to replace message content with a claim check (a unique key), which can be used to retrieve the message content at a later time.
@@ -154,6 +155,10 @@ from("direct:start")
 
 The following example shows the `Push` and `Pop` operations in action:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -165,50 +170,8 @@ from("direct:start")
     .to("mock:c");
 ----
 
-In the above example, imagine message body from the beginning is `Hello World`. That data is pushed on the stack of the Claim Check EIP.
-Then the message body is transformed to `Bye World`, which is what `mock:b` endpoint receives. When we `Pop` from the Claim Check EIP,
-the original message body is retrieved and merged back, so `mock:c` will retrieve the message body with `Hello World`.
-
-Here is an example using `Get` and `Set` operations, which uses the key `foo`:
-
-[source,java]
-----
-from("direct:start")
-    .to("mock:a")
-    .claimCheck(ClaimCheckOperation.Set, "foo")
-    .transform().constant("Bye World")
-    .to("mock:b")
-    .claimCheck(ClaimCheckOperation.Get, "foo")
-    .to("mock:c")
-    .transform().constant("Hi World")
-    .to("mock:d")
-    .claimCheck(ClaimCheckOperation.Get, "foo")
-    .to("mock:e");
-----
-
-Notice how we can `Get` the same data twice using the `Get` operation as it will not remove the data. If you only want
-to get the data once, you can use `GetAndRemove`.
-
-The last example shows how to use the `filter` option where we only want to get back header named `foo` or `bar`:
-
-[source,java]
-----
-from("direct:start")
-    .to("mock:a")
-    .claimCheck(ClaimCheckOperation.Push)
-    .transform().constant("Bye World")
-    .setHeader("foo", constant(456))
-    .removeHeader("bar")
-    .to("mock:b")
-    // only merge in the message headers foo or bar
-    .claimCheck(ClaimCheckOperation.Pop, null, "header:(foo|bar)")
-    .to("mock:c");
-----
-
-=== XML examples
-
-The following example shows the `Push` and `Pop` operations in action;
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -224,12 +187,55 @@ The following example shows the `Push` and `Pop` operations in action;
 </route>
 ----
 
-For example if the message body from the beginning is `Hello World` then that data is pushed on the stack of the Claim Check EIP.
-And then the message body is transformed to `Bye World`, which is what `mock:b` endpoint receives. When we `Pop` from the Claim Check EIP
-then the original message body is retrieved and merged back so `mock:c` will retrieve the message body with `Hello World`.
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - to: mock:a
+      - claimCheck:
+          operation: Push
+      - transform:
+          expression:
+            constant: Bye World
+      - to:
+          uri: mock:b
+      - claimCheck:
+          operation: Pop
+      - to:
+          uri: mock:c
+----
+====
+
+In the above example, imagine message body from the beginning is `Hello World`. That data is pushed on the stack of the Claim Check EIP.
+Then the message body is transformed to `Bye World`, which is what `mock:b` endpoint receives. When we `Pop` from the Claim Check EIP,
+the original message body is retrieved and merged back, so `mock:c` will retrieve the message body with `Hello World`.
 
 Here is an example using `Get` and `Set` operations, which uses the key `foo`:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("mock:a")
+    .claimCheck(ClaimCheckOperation.Set, "foo")
+    .transform().constant("Bye World")
+    .to("mock:b")
+    .claimCheck(ClaimCheckOperation.Get, "foo")
+    .to("mock:c")
+    .transform().constant("Hi World")
+    .to("mock:d")
+    .claimCheck(ClaimCheckOperation.Get, "foo")
+    .to("mock:e");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -251,11 +257,65 @@ Here is an example using `Get` and `Set` operations, which uses the key `foo`:
 </route>
 ----
 
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - to: mock:a
+      - claimCheck:
+          operation: Set
+          key: foo
+      - transform:
+          expression:
+            constant: Bye World
+      - to:
+          uri: mock:b
+      - claimCheck:
+          operation: Get
+          key: foo
+      - to:
+          uri: mock:c
+      - transform:
+          expression:
+            constant: Hi World
+      - to:
+          uri: mock:d
+      - claimCheck:
+          operation: Get
+          key: foo
+      - to:
+          uri: mock:e
+----
+====
+
 Notice how we can `Get` the same data twice using the `Get` operation as it will not remove the data. If you only want
 to get the data once, you can use `GetAndRemove`.
 
 The last example shows how to use the `filter` option where we only want to get back header named `foo` or `bar`:
 
+[tabs]
+====
+Java::
++
+[source,java]
+----
+from("direct:start")
+    .to("mock:a")
+    .claimCheck(ClaimCheckOperation.Push)
+    .transform().constant("Bye World")
+    .setHeader("foo", constant(456))
+    .removeHeader("bar")
+    .to("mock:b")
+    // only merge in the message headers foo or bar
+    .claimCheck(ClaimCheckOperation.Pop, null, "header:(foo|bar)")
+    .to("mock:c");
+----
+
+XML::
++
 [source,xml]
 ----
 <route>
@@ -275,3 +335,33 @@ The last example shows how to use the `filter` option where we only want to get 
   <to uri="mock:c"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: direct:start
+    steps:
+      - to: 
+          uri: mock:a
+      - claimCheck:
+          operation: Push
+      - transform:
+          expression:
+            constant: ByeWorld
+      - setHeader:
+          name: foo
+          expression:
+            constant: 456
+      - removeHeader:
+          name: bar
+      - to:
+          uri: mock:b
+      - claimCheck:
+          operation: Pop
+          filter: "header:(foo|bar)"
+      - to:
+          uri: mock:c
+----
+====

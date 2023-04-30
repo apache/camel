@@ -1,4 +1,5 @@
 = Message Expiration
+:tabs-sync-option:
 
 Camel supports the
 https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageExpiration.html[Message Expiration]
@@ -19,14 +20,18 @@ IMPORTANT: When using message expiration then mind about keeping clock's synchro
 
 A message should expire after 5 seconds:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:cheese")
   .to("jms:queue:cheese?timeToLive=5000");
 ----
 
-And in XML
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -34,3 +39,4 @@ And in XML
     <to uri="jms:queue:cheese?timeToLive=5000"/>
 </route>
 ----
+====

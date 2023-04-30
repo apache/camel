@@ -1,4 +1,5 @@
 = Message Channel
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageChannel.html[Message
@@ -21,16 +22,20 @@ the following:
 jms:queue:foo
 -------------
 
-The following shows a little Java route snippet:
+The following shows a little route snippet:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:foo")
     .to("jms:queue:foo")
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -38,3 +43,4 @@ And in XML:
   <to uri="jms:queue:foo"/>
 </route>
 ----
+====

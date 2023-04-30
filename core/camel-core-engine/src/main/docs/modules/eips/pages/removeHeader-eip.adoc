@@ -4,6 +4,7 @@
 :description: Removes a named header from the message
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Remove Header EIP allows you to remove a single header from the xref:message.adoc[Message].
 
@@ -17,6 +18,10 @@ include::partial$eip-options.adoc[]
 
 We want to remove a header with key "myHeader" from the message:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:b")
@@ -24,8 +29,8 @@ from("seda:b")
   .to("mock:result");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -34,6 +39,20 @@ And in XML:
   <to uri="mock:result"/>
 </route>
 ----
+
+YAML::
++
+[source,yaml]
+----
+- from:
+    uri: seda:b
+    steps:
+      - removeHeader:
+          name: myHeader
+      - to:
+          uri: mock:result
+----
+====
 
 == See Also
 

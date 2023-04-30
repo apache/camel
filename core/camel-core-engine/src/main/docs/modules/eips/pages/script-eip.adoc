@@ -4,6 +4,7 @@
 :description: Executes a script from a language which does not change the message body.
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 The Script EIP is used for executing a coding script.
 
@@ -24,6 +25,10 @@ include::partial$eip-options.adoc[]
 
 The route below will read the file contents and call a groovy script
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("file:inbox")
@@ -31,8 +36,8 @@ from("file:inbox")
   .to("bean:myServiceBean.processLine");
 ----
 
-And from XML:
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -44,7 +49,7 @@ And from XML:
 </route>
 ----
 
-Mind that you can use _CDATA_ in XML if the script uses `< >` etc:
+Mind that you can use _CDATA_ if the script uses `< >` etc:
 
 [source,xml]
 ----
@@ -56,6 +61,7 @@ Mind that you can use _CDATA_ in XML if the script uses `< >` etc:
   <to uri="bean:myServiceBean.processLine"/>
 </route>
 ----
+====
 
 === Scripting Context
 

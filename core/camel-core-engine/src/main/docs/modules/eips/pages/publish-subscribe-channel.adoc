@@ -1,4 +1,5 @@
 = Publish Subscribe Channel
+:tabs-sync-option:
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/PublishSubscribeChannel.html[Publish Subscribe Channel]
@@ -26,6 +27,10 @@ TIP: See also the related xref:point-to-point-channel.adoc[Point to Point Channe
 The following example demonstrates publish sbuscriber messaging using
 the xref:ROOT:jms-component.adoc[JMS] component with JMS topics:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("direct:start")
@@ -38,8 +43,8 @@ from("jms:topic:cheese")
     .to("bean:bar");
 ----
 
-And in XML:
-
+XML::
++
 [source,xml]
 ----
 <routes>
@@ -53,4 +58,4 @@ And in XML:
     </route>
 </routes>
 ----
-
+====

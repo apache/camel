@@ -4,6 +4,7 @@
 :description: Specifies that all steps after this node are processed asynchronously
 :since: 
 :supportlevel: Stable
+:tabs-sync-option:
 
 How can I decouple the continued routing of a message from the current thread?
 
@@ -23,6 +24,10 @@ include::partial$eip-options.adoc[]
 
 The example below will add a Thread pool with a pool size of 5 threads before sending to mock:result.
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:a")
@@ -30,8 +35,8 @@ from("seda:a")
   .to("mock:result");
 ----
 
-And in XML DSL
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -40,9 +45,14 @@ And in XML DSL
     <to uri="mock:result"/>
 </route>
 ----
+====
 
 And to use a thread pool with a task queue of only 20 elements:
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:a")
@@ -50,8 +60,8 @@ from("seda:a")
   .to("mock:result");
 ----
 
-And in XML DSL
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -60,9 +70,14 @@ And in XML DSL
     <to uri="mock:result"/>
 </route>
 ----
+====
 
 And you can also use a thread pool with no queue (meaning that a task cannot be pending on a queue):
 
+[tabs]
+====
+Java::
++
 [source,java]
 ----
 from("seda:a")
@@ -70,8 +85,8 @@ from("seda:a")
   .to("mock:result");
 ----
 
-And in XML DSL
-
+XML::
++
 [source,xml]
 ----
 <route>
@@ -80,6 +95,7 @@ And in XML DSL
     <to uri="mock:result"/>
 </route>
 ----
+====
 
 === About rejected tasks
 
