@@ -19,6 +19,7 @@ package org.apache.camel.component.jpa;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -200,11 +201,15 @@ public class JpaProducer extends DefaultProducer {
 
     @SuppressWarnings("unchecked")
     private void configureParameters(Query query, Exchange exchange) {
-        int maxResults = getEndpoint().getMaximumResults();
+        final int maxResults = Objects.requireNonNullElse(
+                exchange.getIn().getHeader(JpaConstants.JPA_MAXIMUM_RESULTS, Integer.class),
+                getEndpoint().getMaximumResults());
         if (maxResults > 0) {
             query.setMaxResults(maxResults);
         }
-        int firstResult = getEndpoint().getFirstResult();
+        final int firstResult = Objects.requireNonNullElse(
+                exchange.getIn().getHeader(JpaConstants.JPA_FIRST_RESULT, Integer.class),
+                getEndpoint().getFirstResult());
         if (firstResult > 0) {
             query.setFirstResult(firstResult);
         }
