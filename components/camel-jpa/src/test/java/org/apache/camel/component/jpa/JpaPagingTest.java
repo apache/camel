@@ -34,22 +34,27 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JpaPagingTest extends AbstractJpaMethodSupport {
 
     private static final String ENDPOINT_URI = "jpa://" + Customer.class.getName() +
                                                "?query=select c from Customer c order by c.name";
 
-    // should be less than 1000 as numbers in entries' names are formatted for sorting with %03d
+    // should be less than 1000 as numbers in entries' names are formatted for sorting with %03d (or change format)
     private static final int ENTRIES_COUNT = 30;
 
+    private static final String ENTRY_SEQ_FORMAT = "%03d";
+
+    // both should be less than ENTRIES_COUNT / 2
     private static final int FIRST_RESULT = 5;
+    private static final int MAXIMUM_RESULTS = 10;
 
     protected String additionalQueryParameters = "";
 
     @Test
     public void testUnrestrictedQueryReturnsAll() throws Exception {
-        final List<Customer> customers = runQueryTest(noopProcessor());
+        final List<Customer> customers = runQueryTest();
 
         assertEquals(ENTRIES_COUNT, customers.size());
     }
@@ -57,16 +62,79 @@ public class JpaPagingTest extends AbstractJpaMethodSupport {
     @Test
     @AdditionalQueryParameters("firstResult=" + FIRST_RESULT)
     public void testFirstResultInUri() throws Exception {
-        final List<Customer> customers = runQueryTest(noopProcessor());
+        final List<Customer> customers = runQueryTest();
 
         assertEquals(ENTRIES_COUNT - FIRST_RESULT, customers.size());
     }
 
+    @Test
+    public void testMaxResultsInHeader() throws Exception {
+        final List<Customer> customers
+                = runQueryTest(exchange -> exchange.getIn().setHeader(JpaConstants.JPA_MAXIMUM_RESULTS, MAXIMUM_RESULTS));
+
+        assertEquals(MAXIMUM_RESULTS, customers.size());
+    }
+
+    @Test
+    @AdditionalQueryParameters("maximumResults=" + MAXIMUM_RESULTS)
+    public void testFirstInHeaderMaxInUri() throws Exception {
+        final List<Customer> customers = runQueryTest(
+                withHeader(JpaConstants.JPA_FIRST_RESULT, FIRST_RESULT));
+
+        assertEquals(MAXIMUM_RESULTS, customers.size());
+        assertFirstCustomerSequence(customers, FIRST_RESULT);
+    }
+
+    @Test
+    @AdditionalQueryParameters("maximumResults=" + MAXIMUM_RESULTS)
+    public void testMaxHeaderPrevailsOverUri() throws Exception {
+        final List<Customer> customers = runQueryTest(
+                withHeader(JpaConstants.JPA_MAXIMUM_RESULTS, MAXIMUM_RESULTS * 2));
+
+        assertEquals(MAXIMUM_RESULTS * 2, customers.size());
+    }
+
+    @Test
+    @AdditionalQueryParameters("firstResult=" + FIRST_RESULT)
+    public void testFirstHeaderPrevailsOverUri() throws Exception {
+        final List<Customer> customers = runQueryTest(
+                withHeader(JpaConstants.JPA_FIRST_RESULT, FIRST_RESULT * 2));
+
+        assertEquals(ENTRIES_COUNT - (FIRST_RESULT * 2), customers.size());
+        assertFirstCustomerSequence(customers, FIRST_RESULT * 2);
+    }
+
+    @Test
+    public void testBothInHeader() throws Exception {
+        final List<Customer> customers = runQueryTest(
+                withHeader(JpaConstants.JPA_FIRST_RESULT, FIRST_RESULT),
+                withHeader(JpaConstants.JPA_MAXIMUM_RESULTS, MAXIMUM_RESULTS));
+
+        assertEquals(MAXIMUM_RESULTS, customers.size());
+        assertFirstCustomerSequence(customers, FIRST_RESULT);
+    }
+
+    @Test
+    @AdditionalQueryParameters("firstResult=" + ENTRIES_COUNT)
+    public void testFirstResultAfterTheEnd() throws Exception {
+        final List<Customer> customers = runQueryTest();
+
+        assertEquals(0, customers.size());
+    }
+
+    private static void assertFirstCustomerSequence(final List<Customer> customers, final int firstResult) {
+        assertTrue(customers.get(0).getName().endsWith(String.format(ENTRY_SEQ_FORMAT, firstResult)));
+    }
+
     @SuppressWarnings("unchecked")
-    protected List<Customer> runQueryTest(final Processor preRun) throws Exception {
+    protected List<Customer> runQueryTest(final Processor... preRun) throws Exception {
         setUp(getEndpointUri());
 
-        final Exchange result = template.send("direct:start", preRun);
+        final Exchange result = template.send("direct:start", exchange -> {
+            for (Processor processor : preRun) {
+                processor.process(exchange);
+            }
+        });
 
         return (List<Customer>) result.getMessage().getBody(List.class);
     }
@@ -97,7 +165,7 @@ public class JpaPagingTest extends AbstractJpaMethodSupport {
     protected void createCustomers() {
         IntStream.range(0, ENTRIES_COUNT).forEach(idx -> {
             Customer customer = createDefaultCustomer();
-            customer.setName(String.format("%s %03d", customer.getName(), idx));
+            customer.setName(String.format("%s " + ENTRY_SEQ_FORMAT, customer.getName(), idx));
             save(customer);
         });
     }
@@ -118,9 +186,8 @@ public class JpaPagingTest extends AbstractJpaMethodSupport {
                (additionalQueryParameters.isBlank() ? "" : "&" + additionalQueryParameters);
     }
 
-    protected Processor noopProcessor() {
-        return exchange -> {
-        };
+    protected Processor withHeader(final String headerName, final Object headerValue) {
+        return exchange -> exchange.getIn().setHeader(headerName, headerValue);
     }
 
     @Retention(RetentionPolicy.RUNTIME)
