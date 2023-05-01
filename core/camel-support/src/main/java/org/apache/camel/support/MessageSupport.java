@@ -16,8 +16,6 @@
  */
 package org.apache.camel.support;
 
-import java.util.Arrays;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -36,8 +34,6 @@ import org.apache.camel.trait.message.MessageTrait;
  * from {@link DefaultMessage}
  */
 public abstract class MessageSupport implements Message, CamelContextAware, DataTypeAware {
-    private static final int NUM_TRAITS = MessageTrait.values().length;
-
     CamelContext camelContext;
     TypeConverter typeConverter;
     private Exchange exchange;
@@ -45,13 +41,14 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
     private String messageId;
     private long messageTimestamp;
 
-    private final Object[] traits = new Object[NUM_TRAITS];
+    private final EnumArray<MessageTrait> traits = new EnumArray<>(MessageTrait.values());
 
     @Override
     public void reset() {
         body = null;
         messageId = null;
-        Arrays.fill(traits, null);
+
+        traits.reset();
     }
 
     @Override
@@ -312,18 +309,16 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
 
     @Override
     public boolean hasTrait(MessageTrait trait) {
-        Object payload = traits[trait.ordinal()];
-
-        return payload != null;
+        return traits.contains(trait);
     }
 
     @Override
     public Object getPayloadForTrait(MessageTrait trait) {
-        return traits[trait.ordinal()];
+        return traits.get(trait);
     }
 
     @Override
     public void setPayloadForTrait(MessageTrait trait, Object object) {
-        traits[trait.ordinal()] = object;
+        traits.set(trait, object);
     }
 }

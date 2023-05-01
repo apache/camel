@@ -83,8 +83,7 @@ public final class DefaultPooledExchange extends AbstractExchange implements Poo
         if (created > 0) {
             this.created = 0; // by setting to 0 we also flag that this exchange is done and needs to be reset to use again
             this.properties.clear();
-            // reset array by copying over from empty which is a very fast JVM optimized operation
-            System.arraycopy(EMPTY_INTERNAL_PROPERTIES, 0, this.internalProperties, 0, INTERNAL_LENGTH);
+            this.internalProperties.reset();
             if (this.safeCopyProperties != null) {
                 this.safeCopyProperties.clear();
             }
