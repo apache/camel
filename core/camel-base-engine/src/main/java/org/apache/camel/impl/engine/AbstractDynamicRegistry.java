@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl.engine;
 
-import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,7 +39,7 @@ import org.apache.camel.support.service.ServiceHelper;
  * Base implementation for {@link org.apache.camel.spi.EndpointRegistry},
  * {@link org.apache.camel.spi.TransformerRegistry}, and {@link org.apache.camel.spi.ValidatorRegistry}.
  */
-public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements StaticService {
+public class AbstractDynamicRegistry<K, V> extends ConcurrentHashMap<K, V> implements StaticService {
 
     protected final CamelContext context;
     protected final RouteController routeController;
@@ -208,6 +207,11 @@ public class AbstractDynamicRegistry<K, V> extends AbstractMap<K, V> implements 
             }
         }
         return Collections.unmodifiableCollection(answer);
+    }
+
+    @Override
+    public Collection<V> values() {
+        return Collections.unmodifiableCollection(super.values());
     }
 
     public Map<String, V> getReadOnlyMap() {

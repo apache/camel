@@ -16,10 +16,19 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.engine.DefaultEndpointRegistry;
+import org.apache.camel.impl.engine.SimpleCamelContext;
 import org.apache.camel.spi.EndpointRegistry;
+import org.apache.camel.support.NormalizedUri;
 import org.junit.jupiter.api.Test;
+
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -66,6 +75,52 @@ public class DefaultEndpointRegistryTest {
         assertTrue(reg.isStatic("direct:error"));
         assertTrue(reg.isStatic("mock:error"));
         assertTrue(reg.isStatic("file:error"));
+    }
+
+    //Testing the issue https://issues.apache.org/jira/browse/CAMEL-19295
+    @Test
+    public void testConcurrency() throws InterruptedException {
+
+        SimpleCamelContext context = new SimpleCamelContext();
+        context.start();
+
+        ProducerTemplate producerTemplate = context.createProducerTemplate();
+        EndpointRegistry<NormalizedUri> endpointRegistry = context.getEndpointRegistry();
+
+        int nThreads = 4;
+        ExecutorService executorService = Executors.newFixedThreadPool(nThreads);
+        int iterations = 500;
+
+        for (int j = 0; j < iterations; j++) {
+            CountDownLatch allThreadCompletionSemaphore = new CountDownLatch(nThreads);
+            for (int i = 0; i < nThreads; i++) {
+
+                executorService.submit(() -> {
+
+                    producerTemplate.requestBody("controlbus:route?routeId=route1&action=ACTION_STATUS&loggingLevel=off", null,
+                            ServiceStatus.class);
+                    producerTemplate.requestBody("controlbus:route?routeId=route2&action=ACTION_STATUS&loggingLevel=off", null,
+                            ServiceStatus.class);
+                    producerTemplate.requestBody("controlbus:route?routeId=route3&action=ACTION_STATUS&loggingLevel=off", null,
+                            ServiceStatus.class);
+                    producerTemplate.requestBody("controlbus:route?routeId=route4&action=ACTION_STATUS&loggingLevel=off", null,
+                            ServiceStatus.class);
+                    producerTemplate.requestBody("controlbus:route?routeId=route5&action=ACTION_STATUS&loggingLevel=off", null,
+                            ServiceStatus.class);
+
+                    allThreadCompletionSemaphore.countDown();
+
+                });
+            }
+
+            allThreadCompletionSemaphore.await();
+
+            assertTrue( endpointRegistry.values().toArray() != null);
+
+        }
+
+        executorService.shutdown();
+
     }
 
 }
