@@ -29,7 +29,6 @@ import org.apache.camel.spi.EndpointRegistry;
 import org.apache.camel.support.NormalizedUri;
 import org.junit.jupiter.api.Test;
 
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DefaultEndpointRegistryTest {
@@ -115,7 +114,7 @@ public class DefaultEndpointRegistryTest {
 
             allThreadCompletionSemaphore.await();
 
-            assertTrue( endpointRegistry.values().toArray() != null);
+            assertTrue(endpointRegistry.values().toArray() != null);
 
         }
 
