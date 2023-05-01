@@ -19,7 +19,6 @@ package org.apache.camel.component.jpa;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -203,15 +202,17 @@ public class JpaProducer extends DefaultProducer {
 
     @SuppressWarnings("unchecked")
     private void configureParameters(Query query, Exchange exchange) {
-        final int maxResults = Objects.requireNonNullElse(
-                exchange.getIn().getHeader(JpaConstants.JPA_MAXIMUM_RESULTS, Integer.class),
-                getEndpoint().getMaximumResults());
+        final int maxResults = exchange.getIn().getHeader(
+                JpaConstants.JPA_MAXIMUM_RESULTS,
+                getEndpoint().getMaximumResults(),
+                Integer.class);
         if (maxResults > 0) {
             query.setMaxResults(maxResults);
         }
-        final int firstResult = Objects.requireNonNullElse(
-                exchange.getIn().getHeader(JpaConstants.JPA_FIRST_RESULT, Integer.class),
-                getEndpoint().getFirstResult());
+        final int firstResult = exchange.getIn().getHeader(
+                JpaConstants.JPA_FIRST_RESULT,
+                getEndpoint().getFirstResult(),
+                Integer.class);
         if (firstResult > 0) {
             query.setFirstResult(firstResult);
         }
