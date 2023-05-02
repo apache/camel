@@ -35,6 +35,7 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         map.put("EncryptingAlgorithm", org.apache.camel.component.as2.api.AS2EncryptionAlgorithm.class);
         map.put("EncryptingCertificateChain", java.security.cert.Certificate[].class);
         map.put("From", java.lang.String.class);
+        map.put("HostnameVerifier", javax.net.ssl.HostnameVerifier.class);
         map.put("HttpConnectionPoolSize", java.lang.Integer.class);
         map.put("HttpConnectionPoolTtl", java.time.Duration.class);
         map.put("HttpConnectionTimeout", java.time.Duration.class);
@@ -50,6 +51,7 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         map.put("SigningAlgorithm", org.apache.camel.component.as2.api.AS2SignatureAlgorithm.class);
         map.put("SigningCertificateChain", java.security.cert.Certificate[].class);
         map.put("SigningPrivateKey", java.security.PrivateKey.class);
+        map.put("SslContext", javax.net.ssl.SSLContext.class);
         map.put("Subject", java.lang.String.class);
         map.put("TargetHostname", java.lang.String.class);
         map.put("TargetPortNumber", java.lang.Integer.class);
@@ -92,6 +94,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "EncryptingCertificateChain": target.setEncryptingCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
         case "from":
         case "From": target.setFrom(property(camelContext, java.lang.String.class, value)); return true;
+        case "hostnameverifier":
+        case "HostnameVerifier": target.setHostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
         case "httpconnectionpoolsize":
         case "HttpConnectionPoolSize": target.setHttpConnectionPoolSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "httpconnectionpoolttl":
@@ -122,6 +126,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "SigningCertificateChain": target.setSigningCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
         case "signingprivatekey":
         case "SigningPrivateKey": target.setSigningPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
+        case "sslcontext":
+        case "SslContext": target.setSslContext(property(camelContext, javax.net.ssl.SSLContext.class, value)); return true;
         case "subject":
         case "Subject": target.setSubject(property(camelContext, java.lang.String.class, value)); return true;
         case "targethostname":
@@ -174,6 +180,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "EncryptingCertificateChain": return java.security.cert.Certificate[].class;
         case "from":
         case "From": return java.lang.String.class;
+        case "hostnameverifier":
+        case "HostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
         case "httpconnectionpoolsize":
         case "HttpConnectionPoolSize": return java.lang.Integer.class;
         case "httpconnectionpoolttl":
@@ -204,6 +212,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "SigningCertificateChain": return java.security.cert.Certificate[].class;
         case "signingprivatekey":
         case "SigningPrivateKey": return java.security.PrivateKey.class;
+        case "sslcontext":
+        case "SslContext": return javax.net.ssl.SSLContext.class;
         case "subject":
         case "Subject": return java.lang.String.class;
         case "targethostname":
@@ -252,6 +262,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "EncryptingCertificateChain": return target.getEncryptingCertificateChain();
         case "from":
         case "From": return target.getFrom();
+        case "hostnameverifier":
+        case "HostnameVerifier": return target.getHostnameVerifier();
         case "httpconnectionpoolsize":
         case "HttpConnectionPoolSize": return target.getHttpConnectionPoolSize();
         case "httpconnectionpoolttl":
@@ -282,6 +294,8 @@ public class AS2ServerManagerEndpointConfigurationConfigurer extends org.apache.
         case "SigningCertificateChain": return target.getSigningCertificateChain();
         case "signingprivatekey":
         case "SigningPrivateKey": return target.getSigningPrivateKey();
+        case "sslcontext":
+        case "SslContext": return target.getSslContext();
         case "subject":
         case "Subject": return target.getSubject();
         case "targethostname":

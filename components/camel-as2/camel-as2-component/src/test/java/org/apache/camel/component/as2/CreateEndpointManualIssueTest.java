@@ -55,7 +55,6 @@ public class CreateEndpointManualIssueTest {
         endpointConfiguration.setEdiMessageType(contentTypeEdifact);
         endpointConfiguration.setFrom("dk2kEdi");
         endpointConfiguration.setSubject("mysubject");
-        endpointConfiguration.setSubject("mysubject");
         endpointConfiguration.setSigningAlgorithm(AS2SignatureAlgorithm.MD2WITHRSA);
         endpointConfiguration.setEdiMessageTransferEncoding("7bit");
 

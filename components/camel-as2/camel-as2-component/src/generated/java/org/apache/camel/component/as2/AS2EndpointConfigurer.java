@@ -33,6 +33,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("ediMessageTransferEncoding", java.lang.String.class);
         map.put("ediMessageType", org.apache.http.entity.ContentType.class);
         map.put("from", java.lang.String.class);
+        map.put("hostnameVerifier", javax.net.ssl.HostnameVerifier.class);
         map.put("httpConnectionPoolSize", java.lang.Integer.class);
         map.put("httpConnectionPoolTtl", java.time.Duration.class);
         map.put("httpConnectionTimeout", java.time.Duration.class);
@@ -43,6 +44,7 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         map.put("server", java.lang.String.class);
         map.put("serverFqdn", java.lang.String.class);
         map.put("serverPortNumber", java.lang.Integer.class);
+        map.put("sslContext", javax.net.ssl.SSLContext.class);
         map.put("subject", java.lang.String.class);
         map.put("targetHostname", java.lang.String.class);
         map.put("targetPortNumber", java.lang.Integer.class);
@@ -96,6 +98,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangepattern":
         case "exchangePattern": target.setExchangePattern(property(camelContext, org.apache.camel.ExchangePattern.class, value)); return true;
         case "from": target.getConfiguration().setFrom(property(camelContext, java.lang.String.class, value)); return true;
+        case "hostnameverifier":
+        case "hostnameVerifier": target.getConfiguration().setHostnameVerifier(property(camelContext, javax.net.ssl.HostnameVerifier.class, value)); return true;
         case "httpconnectionpoolsize":
         case "httpConnectionPoolSize": target.getConfiguration().setHttpConnectionPoolSize(property(camelContext, java.lang.Integer.class, value)); return true;
         case "httpconnectionpoolttl":
@@ -125,6 +129,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signingCertificateChain": target.getConfiguration().setSigningCertificateChain(property(camelContext, java.security.cert.Certificate[].class, value)); return true;
         case "signingprivatekey":
         case "signingPrivateKey": target.getConfiguration().setSigningPrivateKey(property(camelContext, java.security.PrivateKey.class, value)); return true;
+        case "sslcontext":
+        case "sslContext": target.getConfiguration().setSslContext(property(camelContext, javax.net.ssl.SSLContext.class, value)); return true;
         case "subject": target.getConfiguration().setSubject(property(camelContext, java.lang.String.class, value)); return true;
         case "targethostname":
         case "targetHostname": target.getConfiguration().setTargetHostname(property(camelContext, java.lang.String.class, value)); return true;
@@ -177,6 +183,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangepattern":
         case "exchangePattern": return org.apache.camel.ExchangePattern.class;
         case "from": return java.lang.String.class;
+        case "hostnameverifier":
+        case "hostnameVerifier": return javax.net.ssl.HostnameVerifier.class;
         case "httpconnectionpoolsize":
         case "httpConnectionPoolSize": return java.lang.Integer.class;
         case "httpconnectionpoolttl":
@@ -206,6 +214,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signingCertificateChain": return java.security.cert.Certificate[].class;
         case "signingprivatekey":
         case "signingPrivateKey": return java.security.PrivateKey.class;
+        case "sslcontext":
+        case "sslContext": return javax.net.ssl.SSLContext.class;
         case "subject": return java.lang.String.class;
         case "targethostname":
         case "targetHostname": return java.lang.String.class;
@@ -254,6 +264,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "exchangepattern":
         case "exchangePattern": return target.getExchangePattern();
         case "from": return target.getConfiguration().getFrom();
+        case "hostnameverifier":
+        case "hostnameVerifier": return target.getConfiguration().getHostnameVerifier();
         case "httpconnectionpoolsize":
         case "httpConnectionPoolSize": return target.getConfiguration().getHttpConnectionPoolSize();
         case "httpconnectionpoolttl":
@@ -283,6 +295,8 @@ public class AS2EndpointConfigurer extends PropertyConfigurerSupport implements 
         case "signingCertificateChain": return target.getConfiguration().getSigningCertificateChain();
         case "signingprivatekey":
         case "signingPrivateKey": return target.getConfiguration().getSigningPrivateKey();
+        case "sslcontext":
+        case "sslContext": return target.getConfiguration().getSslContext();
         case "subject": return target.getConfiguration().getSubject();
         case "targethostname":
         case "targetHostname": return target.getConfiguration().getTargetHostname();

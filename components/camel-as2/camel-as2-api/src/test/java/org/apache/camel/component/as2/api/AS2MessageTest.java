@@ -216,7 +216,7 @@ public class AS2MessageTest {
         testServer = new AS2ServerConnection(
                 AS2_VERSION, "MyServer-HTTP/1.1", SERVER_FQDN, TARGET_PORT, AS2SignatureAlgorithm.SHA256WITHRSA,
                 certList.toArray(new Certificate[0]), signingKP.getPrivate(), decryptingKP.getPrivate(), MDN_MESSAGE_TEMPLATE,
-                VALIDATE_SIGNING_CERTIFICATE_CHAIN);
+                VALIDATE_SIGNING_CERTIFICATE_CHAIN, null);
         testServer.listen("*", new HttpRequestHandler() {
             @Override
             public void handle(HttpRequest request, HttpResponse response, HttpContext context)
@@ -1071,7 +1071,7 @@ public class AS2MessageTest {
         AS2ClientConnection clientConnection = new AS2ClientConnection(
                 AS2_VERSION, USER_AGENT, CLIENT_FQDN,
                 TARGET_HOST, TARGET_PORT, HTTP_SOCKET_TIMEOUT, HTTP_CONNECTION_TIMEOUT, HTTP_CONNECTION_POOL_SIZE,
-                HTTP_CONNECTION_POOL_TTL);
+                HTTP_CONNECTION_POOL_TTL, null, null);
         return new AS2ClientManager(clientConnection);
     }
 }

@@ -82,7 +82,7 @@ public final class AS2Utils {
 
     /**
      * Generates a globally unique message ID which includes <code>fqdn</code>: a fully qualified domain name (FQDN)
-     * 
+     *
      * @param  fqdn - the fully qualified domain name to use in message id.
      * @return      The generated message id.
      */
@@ -93,7 +93,7 @@ public final class AS2Utils {
 
     /**
      * Determines if <code>c</code> is a printable character.
-     * 
+     *
      * @param  c - the character to test
      * @return   <code>true</code> if <code>c</code> is a printable character; <code>false</code> otherwise.
      */

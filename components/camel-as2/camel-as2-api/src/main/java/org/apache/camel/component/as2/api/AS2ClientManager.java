@@ -220,9 +220,9 @@ public class AS2ClientManager {
         ObjectHelper.notNull(ediMessage, "EDI Message");
         ObjectHelper.notNull(requestUri, "Request URI");
         ObjectHelper.notNull(subject, "Subject");
-        ObjectHelper.notNull(from, "Subject");
-        ObjectHelper.notNull(as2From, "Subject");
-        ObjectHelper.notNull(as2To, "Subject");
+        ObjectHelper.notNull(from, "From");
+        ObjectHelper.notNull(as2From, "AS2From");
+        ObjectHelper.notNull(as2To, "AS2To");
         ObjectHelper.notNull(as2MessageStructure, "AS2 Message Structure");
         ObjectHelper.notNull(ediMessageContentType, "EDI Message Content Type");
 
